@@ -44,9 +44,18 @@ button{font:inherit;color:inherit}
 .top{
   position:relative;
   background:var(--tinta) url("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/David_-_The_Death_of_Socrates.jpg/1920px-David_-_The_Death_of_Socrates.jpg") center 38%/cover no-repeat;
-  color:#eceee8;border-bottom:3px solid var(--lacre);isolation:isolate
+  color:#eceee8;isolation:isolate;padding-bottom:84px
 }
 .top::before{content:"";position:absolute;inset:0;background:rgba(20,27,33,.48);z-index:0}
+.top::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:84px;z-index:2;pointer-events:none;
+  background:linear-gradient(to bottom,
+    rgba(222,225,216,0) 0%,
+    rgba(222,225,216,.06) 20%,
+    rgba(222,225,216,.28) 45%,
+    rgba(222,225,216,.68) 72%,
+    var(--papel2) 100%)
+}
 .top-in,.top .nav{position:relative;z-index:1}
 .top-in{max-width:1180px;margin:0 auto;padding:20px 20px 14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .sello{
@@ -92,6 +101,8 @@ a.mini:hover{color:var(--lacre)}
 
 /* ---------- estructura ---------- */
 .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 70px;display:grid;grid-template-columns:210px 1fr;gap:28px;align-items:start}
+.wrap.sin-rail{grid-template-columns:1fr}
+.wrap.sin-rail .rail{display:none}
 .rail{position:sticky;top:56px}
 .rail h2,.blk h2{
   font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
@@ -207,12 +218,38 @@ textarea{
 }
 mark{background:#f7dfa8;color:var(--tinta);padding:0 1px;border-radius:2px;box-decoration-break:clone}
 mark.actual{background:var(--lacre);color:#fff}
-.meta{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.meta-i{
-  background:#fff;border:1px solid var(--linea);border-left:2px solid var(--acequia);
-  border-radius:2px;padding:5px 10px;font-size:14px;max-width:100%
+.lector-grid{display:grid;grid-template-columns:262px minmax(0,1fr);gap:16px;align-items:start;margin-bottom:12px}
+.meta{
+  background:var(--ficha);border:1px solid var(--linea);border-radius:2px;
+  padding:14px 15px;max-height:64vh;overflow:auto
 }
-.meta-i b{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--humo);display:block;font-weight:600}
+.meta-top{background:var(--papel2);border:1px solid var(--linea);border-radius:3px;padding:10px 14px;margin-bottom:14px}
+.meta-car{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--tinta2);margin:0 0 7px;padding-bottom:7px;border-bottom:1px dotted var(--linea)}
+.meta-fila{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between}
+.meta-fila .izq{flex:1 1 auto;font-size:13.5px;color:var(--tinta2)}
+.meta-fila .izq b{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--humo);font-weight:600;margin-right:3px}
+.meta-fila .izq .sep{color:var(--linea);margin:0 3px}
+.meta-fila .der{font-family:var(--mono);font-size:11px;color:var(--humo);white-space:nowrap;flex:0 0 auto}
+.meta-cuerpo{display:flex;flex-direction:column;gap:16px;margin-bottom:14px}
+.meta-bloque h3{
+  font-family:var(--mono);font-weight:600;font-size:11px;margin:0 0 8px;
+  letter-spacing:.09em;text-transform:uppercase;color:#8f9a99
+}
+.meta-bloque.cn h3{color:#b8860b}
+.meta-cat{
+  font-family:var(--mono);font-weight:700;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tinta2);margin:0;padding-top:10px;
+  border-top:1px dotted var(--linea)
+}
+.meta-cat:first-child{padding-top:0;border-top:0}
+.meta-tags{display:flex;flex-wrap:wrap;gap:6px}
+.meta-tag{
+  background:#fff;border:1px solid var(--linea);border-radius:999px;
+  padding:3px 11px;font-family:var(--mono);font-size:12px;color:var(--tinta2);white-space:nowrap
+}
+.meta-bloque.pendiente h3{color:var(--humo);font-weight:400;font-style:italic}
+.meta-bloque.pendiente .meta-tag{background:transparent;border-style:dashed;color:var(--humo)}
+.meta-acc{display:flex;gap:8px;flex-wrap:wrap}
 .pasaje{background:var(--ficha);border:1px solid var(--linea);border-left:3px solid var(--oro);border-radius:2px;padding:11px 13px;margin-bottom:9px}
 .pasaje .txt{font-family:var(--serif);font-size:15.5px;line-height:1.6;margin-bottom:8px}
 .pasaje .acc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
@@ -229,14 +266,30 @@ mark.actual{background:var(--lacre);color:#fff}
 .entrada{
   position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
   background:var(--tinta) url("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/David_-_The_Death_of_Socrates.jpg/1920px-David_-_The_Death_of_Socrates.jpg") center/cover no-repeat;
-  color:#f4f2ec;text-align:center;isolation:isolate;animation:salida-entrada 2.4s ease-in-out forwards;
+  color:#f4f2ec;text-align:center;isolation:isolate;cursor:pointer;
+  opacity:1;transition:opacity .6s ease-out;
 }
 .entrada::before{content:"";position:absolute;inset:0;background:rgba(20,27,33,.52);z-index:-1}
-.entrada-contenido{padding:24px;animation:aparece-entrada 1s ease-out both}
+.entrada.saliendo{opacity:0;pointer-events:none}
+.entrada-contenido{padding:24px;display:flex;flex-direction:column;align-items:center;animation:aparece-entrada 1s ease-out both}
+.entrada .sello{
+  width:clamp(120px,16vw,190px);height:clamp(120px,16vw,190px);
+  margin:0 0 18px;display:flex;align-items:center;justify-content:center
+}
+.entrada .sello img{width:100%;height:100%;display:block;object-fit:contain;object-position:center}
 .entrada h1{margin:0;font-family:var(--serif);font-size:clamp(34px,7vw,74px);font-weight:400;letter-spacing:.08em;color:#b8860b}
 .entrada p{margin:12px 0 0;font-family:var(--serif);font-style:italic;font-size:clamp(16px,2.5vw,25px);color:#d7d8d1}
+.entrada .sub{
+  margin-top:14px;font-family:var(--mono);font-size:clamp(11px,1.4vw,14px);letter-spacing:.09em;
+  text-transform:uppercase;color:#8f9a99
+}
+.entrada .sub .dorado{color:#b8860b}
+.entrada .toque{
+  margin-top:22px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:#6d7877;animation:parpadeo-toque 1.8s ease-in-out infinite
+}
+@keyframes parpadeo-toque{0%,100%{opacity:.55}50%{opacity:1}}
 @keyframes aparece-entrada{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-@keyframes salida-entrada{0%,65%{opacity:1}100%{opacity:0;visibility:hidden;pointer-events:none}}
 
 @media (max-width:860px){
   .top-in{gap:6px}
@@ -248,6 +301,8 @@ mark.actual{background:var(--lacre);color:#fff}
   .rail-list button[aria-pressed="true"]{border:0;background:transparent;font-weight:400;color:#9f2638;text-shadow:none}
   .f-top{flex-wrap:wrap}
   .leader{display:none}
+  .lector-grid{grid-template-columns:1fr}
+  .meta{max-height:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -255,10 +310,13 @@ mark.actual{background:var(--lacre);color:#fff}
 <body>
 
 <div id="panic" role="alert"></div>
-<div class="entrada" aria-label="Entrada de Iuris et de iure">
+<div class="entrada" id="entrada" role="button" tabindex="0" aria-label="Entrada de Iuris et de iure. Tocar para continuar">
   <div class="entrada-contenido">
+    <div class="sello"><img src="./emblemaaa.png" alt="Emblema de Iuris et de iure"></div>
     <h1>IURIS ET DE IURE</h1>
-    <p>Jurisprudencia</p>
+    <p>edición especial para mamá &lt;3</p>
+    <div class="sub"><span class="dorado">Jurisprudencia</span> · Provincial · Nacional · Internacional</div>
+    <div class="toque">Tocá para continuar</div>
   </div>
 </div>
 
@@ -282,7 +340,7 @@ mark.actual{background:var(--lacre);color:#fff}
   </div>
 </div>
 
-<main class="wrap">
+<main class="wrap" id="wrap">
   <aside class="rail" id="rail"></aside>
   <div class="col" id="vista"></div>
 </main>
@@ -313,6 +371,24 @@ function panic(msg){
   }catch(e){}
 }
 window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
+
+/* ============================================================
+   0.1. Pantalla de entrada — se cierra recién cuando la tocan
+   ============================================================ */
+(function(){
+  try{
+    var entrada=document.getElementById("entrada");
+    if(!entrada) return;
+    function cerrar(){
+      entrada.classList.add("saliendo");
+      entrada.addEventListener("transitionend",function(){ entrada.style.display="none"; },{once:true});
+    }
+    entrada.addEventListener("click",cerrar);
+    entrada.addEventListener("keydown",function(e){
+      if(e.key==="Enter"||e.key===" "||e.key==="Spacebar"){ e.preventDefault(); cerrar(); }
+    });
+  }catch(e){}
+})();
 
 /* ============================================================
    1. RAMAS DEL DERECHO — vocabulario de búsqueda ("voces")
@@ -948,6 +1024,98 @@ function pasajesDe(texto,cs){
    como propuesta para confirmar, nunca como dato cerrado. */
 var MESES={enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,
            septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
+
+/* Jerarquía normativa: cada fuente detectada cae en una categoría fija,
+   de mayor a menor jerarquía, para que el lector se lea de arriba abajo
+   igual que se razona un caso. */
+var CATEGORIA_FUENTE={
+  "Constitución Nacional":"cn",
+  "CADH":"tratados","PIDCP":"tratados","PIDESC":"tratados",
+  "Protocolo Facultativo del PIDCP":"tratados",
+  "Declaración Americana de los Derechos y Deberes del Hombre":"tratados",
+  "Declaración Universal de Derechos Humanos":"tratados",
+  "Convención para la Prevención y la Sanción del Delito de Genocidio":"tratados",
+  "Convención sobre la Eliminación de Todas las Formas de Discriminación Racial":"tratados",
+  "Convención contra la Tortura":"tratados",
+  "Convención sobre los Derechos del Niño":"tratados",
+  "Convención Interamericana sobre Desaparición Forzada de Personas":"tratados",
+  "Convención sobre la Imprescriptibilidad de los Crímenes de Guerra y de Lesa Humanidad":"tratados",
+  "Convención de Belém do Pará":"tratados","CEDAW":"tratados",
+  "CCyC (vigente)":"fondo","Código Civil (derogado)":"fondo","Código de Comercio (derogado)":"fondo",
+  "Código Penal":"fondo","LCT":"fondo","LDC":"fondo","Ley de Seguros (LS)":"fondo",
+  "CPCCN":"provincial","CPC":"provincial","Código Procesal Penal":"provincial","Ley Arancelaria (LA)":"provincial"
+};
+function categoriaDeFuente(label,esProvincial){
+  if(CATEGORIA_FUENTE.hasOwnProperty(label)) return CATEGORIA_FUENTE[label];
+  if(/^(Decreto|Ordenanza|Resoluci[oó]n)\b/i.test(label)) return "local";
+  if(/^Ley\s/.test(label)) return esProvincial?"provincial":"leyes";
+  return "otras";
+}
+
+/* Base de leyes verificada contra fuente oficial (Boletín Oficial,
+   argentina.gob.ar/normativa, SAIJ, jusmendoza.gob.ar), nacional y de
+   Mendoza. Es un punto de partida — no pretende cubrir todo el
+   ordenamiento, sino las normas que más se citan en las ramas que ya
+   están mapeadas en RAMAS. Se amplía con el uso, a medida que aparecen
+   leyes nuevas en fallos reales. Clave = número de ley sin puntos. */
+var LEYES_BASE={
+  "11179":{nombre:"Código Penal",cat:"fondo",vigente:true},
+  "20744":{nombre:"Ley de Contrato de Trabajo (LCT)",cat:"fondo",vigente:true},
+  "24240":{nombre:"Ley de Defensa del Consumidor (LDC)",cat:"fondo",vigente:true},
+  "17418":{nombre:"Ley de Seguros",cat:"fondo",vigente:true},
+  "24557":{nombre:"Ley de Riesgos del Trabajo",cat:"fondo",vigente:true},
+  "19550":{nombre:"Ley General de Sociedades",cat:"fondo",vigente:true},
+  "24522":{nombre:"Ley de Concursos y Quiebras",cat:"fondo",vigente:true},
+  "26485":{nombre:"Ley de Protección Integral a las Mujeres",cat:"fondo",vigente:true},
+  "26994":{nombre:"Ley aprobatoria del Código Civil y Comercial",cat:"fondo",vigente:true},
+  "17454":{nombre:"Código Procesal Civil y Comercial de la Nación (CPCCN)",cat:"provincial",vigente:true},
+  "9001":{nombre:"Código Procesal Civil, Comercial y Tributario de Mendoza",cat:"provincial",vigente:true},
+  "9177":{nombre:"Modificatoria del Código Procesal Civil, Comercial y Tributario de Mendoza",cat:"provincial",vigente:true},
+  "6730":{nombre:"Código Procesal Penal de Mendoza",cat:"provincial",vigente:true},
+  "9608":{nombre:"Reforma 2025 al Código Procesal Penal de Mendoza",cat:"provincial",vigente:true},
+  "9003":{nombre:"Ley de Procedimiento Administrativo de Mendoza",cat:"provincial",vigente:true},
+  "3909":{nombre:"Ley de Procedimiento Administrativo de Mendoza (anterior a la ley 9.003)",cat:"provincial",vigente:false},
+  "4362":{nombre:"Código Fiscal de Mendoza",cat:"provincial",vigente:true},
+  "322":{nombre:"Organización del Departamento General de Irrigación",cat:"provincial",vigente:true},
+
+  /* Sumadas contra la Base SAIJ de Normativa Provincial (Ministerio de
+     Justicia, datos.gob.ar) y, para lo nacional, fuentes oficiales
+     (argentina.gob.ar/normativa, InfoLeg). Ver conversación del 10/8/2026. */
+  "26657":{nombre:"Ley de Salud Mental",cat:"fondo",vigente:true},
+  "25871":{nombre:"Ley de Migraciones",cat:"fondo",vigente:true},
+  "26618":{nombre:"Ley de Matrimonio Igualitario",cat:"fondo",vigente:true},
+  "26061":{nombre:"Ley de Protección Integral de los Derechos de Niñas, Niños y Adolescentes",cat:"fondo",vigente:true},
+  "25326":{nombre:"Ley de Protección de Datos Personales",cat:"fondo",vigente:true},
+  "24660":{nombre:"Ley de Ejecución de la Pena Privativa de la Libertad",cat:"fondo",vigente:true},
+  "26743":{nombre:"Ley de Identidad de Género",cat:"fondo",vigente:true},
+  "27610":{nombre:"Ley de Acceso a la Interrupción Voluntaria del Embarazo (IVE)",cat:"fondo",vigente:true},
+
+  "552":{nombre:"Ley Orgánica de Tribunales de Mendoza",cat:"provincial",vigente:true},
+  "8008":{nombre:"Ley Orgánica del Ministerio Público de Mendoza",cat:"provincial",vigente:true},
+  "9577":{nombre:"Ley Orgánica de la Dirección de Personas Jurídicas y Registro Público de Mendoza",cat:"provincial",vigente:true},
+  "9292":{nombre:"Ley Orgánica del Tribunal de Cuentas de Mendoza",cat:"provincial",vigente:true},
+  "1079":{nombre:"Ley Orgánica de Municipalidades de Mendoza",cat:"provincial",vigente:true},
+  "2144":{nombre:"Código Procesal Laboral de Mendoza",cat:"provincial",vigente:true},
+  "3918":{nombre:"Código Procesal Administrativo de Mendoza",cat:"provincial",vigente:true},
+  "9120":{nombre:"Código Procesal de Familia y Violencia Familiar de Mendoza",cat:"provincial",vigente:true},
+  "9099":{nombre:"Código de Contravenciones de la Provincia de Mendoza",cat:"provincial",vigente:true},
+  "8465":{nombre:"Código de Ejecución de la Pena Privativa de la Libertad de Mendoza",cat:"provincial",vigente:true},
+  "6913":{nombre:"Código de Procedimientos Mineros de Mendoza",cat:"provincial",vigente:true},
+  "9361":{nombre:"Código Tributario Municipal Armonizado de Mendoza",cat:"provincial",vigente:true},
+  "1920":{nombre:"Uso del Agua Pública para Agricultura (Mendoza)",cat:"provincial",vigente:true},
+  "5961":{nombre:"Ley de Preservación del Ambiente de Mendoza",cat:"provincial",vigente:true},
+  "8051":{nombre:"Ley de Ordenamiento Territorial y Usos del Suelo de Mendoza",cat:"provincial",vigente:true},
+  "9659":{nombre:"Ley de Gestión Integral de Residuos Sólidos Urbanos de Mendoza",cat:"provincial",vigente:true},
+  "6672":{nombre:"Ley de Violencia Familiar de Mendoza",cat:"provincial",vigente:true},
+  "9100":{nombre:"Ley de Paridad de Género en Materia Electoral de Mendoza",cat:"provincial",vigente:true},
+  "9314":{nombre:"Ley de Defensa del Consumidor de Mendoza",cat:"provincial",vigente:true},
+  "1447":{nombre:"Ley General de Expropiaciones de Mendoza",cat:"provincial",vigente:true},
+  "9070":{nombre:"Ley de Acceso a la Información Pública de Mendoza",cat:"provincial",vigente:true},
+  "560":{nombre:"Estatuto del Empleado Público de Mendoza",cat:"provincial",vigente:true},
+  "2551":{nombre:"Ley Electoral de la Provincia de Mendoza",cat:"provincial",vigente:true},
+  "9131":{nombre:"Aranceles de Abogados y Procuradores de Mendoza",cat:"provincial",vigente:true}
+};
+function soloDigitos(s){ return String(s).replace(/\./g,"").replace(/^0+(?=\d)/,""); }
 function detectar(texto){
   var t=texto.slice(0,9000),d={},m;
   m=t.match(/["“']?\s*([A-ZÁÉÍÓÚÑ][^"“”\n]{4,120}?\s+c\/\s+[^"“”\n]{2,120}?\s+(?:s\/|p\/)\s+[^"“”\n]{2,90}?)\s*["”']?(?:\n|\.|$)/);
@@ -974,15 +1142,152 @@ function detectar(texto){
   }
   m=t.match(/Sala\s+([IVXLC]+|\d+|[ÚU]nica|Primera|Segunda|Tercera|Cuarta)\b/i);
   if(m) d.sala="Sala "+m[1];
-  var norm={},arts=texto.match(/\bart(?:s)?\.?\s*\d{1,4}(?:\s*(?:bis|ter|qu[áa]ter))?/gi)||[];
-  arts.forEach(function(a){ norm[a.replace(/\s+/g," ").toLowerCase()]=1; });
-  d.arts=Object.keys(norm).slice(0,14);
-  var leyes={},ls=texto.match(/\bley(?:es)?\s*(?:n[°ºo.]?\s*)?[\d][\d\.]{2,7}/gi)||[];
-  ls.forEach(function(a){ leyes[a.replace(/\s+/g," ").toLowerCase()]=1; });
-  d.leyes=Object.keys(leyes).slice(0,14);
+  var CODIGOS=[
+    [/c[oó]digo\s+civil\s+y\s+comercial(\s+de\s+la\s+naci[oó]n)?|\bccyc(?:n)?\b|\bcccn\b|\bc\.\s*c\.\s*y\s*c\.?(?:\s*n\.?)?\b/i,"CCyC (vigente)"],
+    [/c[oó]digo\s+civil\b|\bc\.\s*c\.(?!\s*y)/i,"Código Civil (derogado)"],
+    [/\bCC\b/,"Código Civil (derogado)"],
+    [/c[oó]digo\s+procesal\s+civil\s+y\s+comercial(\s+de\s+la\s+naci[oó]n)?|\bcpccn\b|\bc\.\s*p\.\s*c\.\s*c\.\s*n\.?\b/i,"CPCCN"],
+    [/c[oó]digo\s+procesal\s+civil\b|\bcpc\b|\bc\.\s*p\.\s*c\.(?!\s*c)/i,"CPC"],
+    [/c[oó]digo\s+penal\b|\bcp\b/i,"Código Penal"],
+    [/c[oó]digo\s+procesal\s+penal\b|\bcpp\b/i,"Código Procesal Penal"],
+    [/c[oó]digo\s+de\s+comercio\b/i,"Código de Comercio (derogado)"],
+    [/constituci[oó]n\s+nacional\b|\bcn\b/i,"Constitución Nacional"],
+    [/ley\s+de\s+contrato\s+de\s+trabajo|\blct\b/i,"LCT"],
+    [/ley\s+de\s+defensa\s+del\s+consumidor|\bldc\b/i,"LDC"],
+    [/\bley\s+de\s+seguros\b|\bL\.?\s*S\.?\b(?!\d)/,"Ley de Seguros (LS)"],
+    [/\bley\s+arancelaria\b|\bL\.?\s*A\.?\b(?!\d)/,"Ley Arancelaria (LA)"],
+    [/convenci[oó]n\s+americana\s+sobre\s+derechos\s+humanos|pacto\s+de\s+san\s+jos[ée]\s+de\s+costa\s+rica|\bcadh\b/i,"CADH"],
+    [/pacto\s+internacional\s+de\s+derechos\s+civiles\s+y\s+pol[ií]ticos|\bpidcp\b/i,"PIDCP"],
+    [/pacto\s+internacional\s+de\s+derechos\s+econ[oó]micos,?\s+sociales\s+y\s+culturales|\bpidesc\b/i,"PIDESC"],
+    [/convenci[oó]n\s+sobre\s+los\s+derechos\s+del\s+ni[ñn]o|\bcdn\b/i,"Convención sobre los Derechos del Niño"],
+    [/convenci[oó]n\s+interamericana\s+para\s+prevenir,?\s+sancionar\s+y\s+erradicar\s+la\s+violencia\s+contra\s+la\s+mujer|convenci[oó]n\s+de\s+bel[ée]m\s+do\s+par[áa]/i,"Convención de Belém do Pará"],
+    [/convenci[oó]n\s+sobre\s+la\s+eliminaci[oó]n\s+de\s+todas\s+las\s+formas\s+de\s+discriminaci[oó]n\s+contra\s+la\s+mujer|\bcedaw\b/i,"CEDAW"],
+    [/declaraci[oó]n\s+universal\s+de\s+derechos\s+humanos|\bdudh\b/i,"Declaración Universal de Derechos Humanos"],
+    [/declaraci[oó]n\s+americana\s+de\s+los\s+derechos\s+y\s+deberes\s+del\s+hombre/i,"Declaración Americana de los Derechos y Deberes del Hombre"],
+    [/protocolo\s+facultativo\s+del\s+pacto\s+internacional\s+de\s+derechos\s+civiles\s+y\s+pol[ií]ticos/i,"Protocolo Facultativo del PIDCP"],
+    [/convenci[oó]n\s+(?:para\s+la\s+prevenci[oó]n\s+y\s+la?\s+sanci[oó]n\s+del\s+delito\s+de\s+genocidio|contra\s+el\s+genocidio)/i,"Convención para la Prevención y la Sanción del Delito de Genocidio"],
+    [/convenci[oó]n\s+internacional\s+sobre\s+la\s+eliminaci[oó]n\s+de\s+todas\s+las\s+formas\s+de\s+discriminaci[oó]n\s+racial|\bcerd\b/i,"Convención sobre la Eliminación de Todas las Formas de Discriminación Racial"],
+    [/convenci[oó]n\s+contra\s+la\s+tortura(\s+y\s+otros\s+tratos)?/i,"Convención contra la Tortura"],
+    [/convenci[oó]n\s+interamericana\s+sobre\s+desaparici[oó]n\s+forzada\s+de\s+personas/i,"Convención Interamericana sobre Desaparición Forzada de Personas"],
+    [/convenci[oó]n\s+sobre\s+la\s+imprescriptibilidad\s+de\s+los\s+cr[ií]menes\s+de\s+guerra\s+y\s+de\s+lesa\s+humanidad/i,"Convención sobre la Imprescriptibilidad de los Crímenes de Guerra y de Lesa Humanidad"]
+  ];
+  function formatLeyNum(s){
+    var n=soloDigitos(s);
+    return n.length>3?n.replace(/\B(?=(\d{3})+(?!\d))/g,"."):n;
+  }
+  function capitalizar(s){ return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase(); }
+  var reLeyAdelante=/^(?:\s*(?:,|del|de\s+la)?\s*){0,3}\s*ley\s*(?:provincial\s+|nacional\s+|federal\s+)?(?:n[°ºo.]?\s*)?(\d[\d\.]{2,7})/i;
+  var reLeyAtras=/ley\s*(?:provincial\s+|nacional\s+|federal\s+)?(?:n[°ºo.]?\s*)?(\d[\d\.]{2,7})\s*(?:,|del|de\s+la)?\s*(?:en\s+sus?\s*)?$/i;
+  var reDecAdelante=/^(?:\s*(?:,|del|de\s+la)?\s*){0,3}\s*(decreto|ordenanza|resoluci[oó]n)\s*(?:reglamentario\s+)?(?:n[°ºo.]?\s*)?(\d[\d\.]{1,6}(?:\/\d{2,4})?)/i;
+  var reDecAtras=/(decreto|ordenanza|resoluci[oó]n)\s*(?:n[°ºo.]?\s*)?(\d[\d\.]{1,6}(?:\/\d{2,4})?)\s*(?:,|del|de\s+la)?\s*$/i;
+  function ultimoQueTermineCerca(regex,ventana,margen){
+    var re=new RegExp(regex.source,"gi"),m,ultimo=null;
+    while((m=re.exec(ventana))) ultimo=m;
+    if(!ultimo) return null;
+    if(ventana.length-(ultimo.index+ultimo[0].length)>margen) return null;
+    return ultimo;
+  }
+  function codigoMasCercaAdelante(ventana){
+    var mejorLabel=null,mejorPos=Infinity;
+    for(var i=0;i<CODIGOS.length;i++){
+      var re=new RegExp(CODIGOS[i][0].source,CODIGOS[i][0].flags.replace("g","")+"g");
+      var mm=re.exec(ventana);
+      if(mm&&mm.index<mejorPos){ mejorPos=mm.index; mejorLabel=CODIGOS[i][1]; }
+    }
+    return mejorLabel;
+  }
+  function codigoMasCercaAtras(ventana,margen){
+    var mejorLabel=null,mejorDist=Infinity;
+    for(var i=0;i<CODIGOS.length;i++){
+      var re=new RegExp(CODIGOS[i][0].source,CODIGOS[i][0].flags.replace("g","")+"g"),m,ultimo=null;
+      while((m=re.exec(ventana))) ultimo=m;
+      if(ultimo){
+        var dist=ventana.length-(ultimo.index+ultimo[0].length);
+        if(dist<=margen&&dist<mejorDist){ mejorDist=dist; mejorLabel=CODIGOS[i][1]; }
+      }
+    }
+    return mejorLabel;
+  }
+  function fuenteDe(adelante,atras){
+    var m=adelante.match(reLeyAdelante);
+    if(m){ fuenteEraProvincial=/provincial/i.test(m[0]); return "Ley "+formatLeyNum(m[1]); }
+    m=adelante.match(reDecAdelante);
+    if(m){ fuenteEraProvincial=false; return capitalizar(m[1])+" "+m[2]; }
+    var lbl=codigoMasCercaAdelante(adelante);
+    if(lbl){ fuenteEraProvincial=false; return lbl; }
+    m=ultimoQueTermineCerca(reLeyAtras,atras,0);
+    if(m){ fuenteEraProvincial=/provincial/i.test(m[0]); return "Ley "+formatLeyNum(m[1]); }
+    m=ultimoQueTermineCerca(reDecAtras,atras,0);
+    if(m){ fuenteEraProvincial=false; return capitalizar(m[1])+" "+m[2]; }
+    lbl=codigoMasCercaAtras(atras,25);
+    if(lbl){ fuenteEraProvincial=false; return lbl; }
+    fuenteEraProvincial=false;
+    return "Sin ley identificada";
+  }
+  var NUM_ART="\\d{1,4}(?:\\.\\d{3})?";
+  var grupos={},ordenGrupos=[],catDeGrupo={},fuenteEraProvincial=false,
+    reArt=new RegExp("\\bart(?:\\.|s\\.?|[íi]culos?)?\\s*(?:n[°ºo]\\.?\\s*)?((?:"+NUM_ART+"(?:\\s*(?:bis|ter|qu[áa]ter))?(?:\\s*(?:,|y|e|a)\\s*)?)+)","gi"),
+    reNumArt=new RegExp(NUM_ART+"(?:\\s*(?:bis|ter|qu[áa]ter))?","gi"),mArt;
+  while((mArt=reArt.exec(texto))){
+    var numsArt=mArt[1].match(reNumArt)||[];
+    var fin=mArt.index+mArt[0].length;
+    var ventAd=texto.slice(fin,fin+80),ventAt=texto.slice(Math.max(0,mArt.index-60),mArt.index);
+    var fuente=fuenteDe(ventAd,ventAt);
+    if(!grupos[fuente]){
+      grupos[fuente]=[]; ordenGrupos.push(fuente);
+      catDeGrupo[fuente]=categoriaDeFuente(fuente,fuenteEraProvincial);
+    }
+    numsArt.forEach(function(n){
+      var a="art. "+n.replace(/\s+/g," ").replace(/\.(\d{3})/,"$1").toLowerCase();
+      if(grupos[fuente].indexOf(a)===-1) grupos[fuente].push(a);
+    });
+  }
+  if(grupos["Sin ley identificada"]){
+    grupos["Sin ley identificada"]=grupos["Sin ley identificada"].filter(function(a){
+      for(var k in grupos){ if(k!=="Sin ley identificada"&&grupos[k].indexOf(a)!==-1) return false; }
+      return true;
+    });
+    if(!grupos["Sin ley identificada"].length){
+      ordenGrupos=ordenGrupos.filter(function(k){ return k!=="Sin ley identificada"; });
+      delete grupos["Sin ley identificada"];
+    }
+  }
+  /* Si el número coincide con una ley de LEYES_BASE, cambiamos el rótulo
+     genérico "Ley N" por el nombre real y la categoría verificada — la
+     tabla manda por sobre la adivinanza por proximidad. */
+  function etiquetaBase(n){
+    var b=LEYES_BASE[soloDigitos(n)];
+    return b?"Ley "+formatLeyNum(n)+" — "+b.nombre+(b.vigente===false?" (derogada)":""):null;
+  }
+  var reLeyBase=/^Ley\s+([\d.]+)$/;
+  var grupos2={},ordenGrupos2=[],catDeGrupo2={};
+  ordenGrupos.forEach(function(k){
+    var mm=k.match(reLeyBase),destino=k,catOverride=null;
+    if(mm){
+      var b=LEYES_BASE[soloDigitos(mm[1])];
+      if(b){ destino=etiquetaBase(mm[1]); catOverride=b.cat; }
+    }
+    if(!grupos2[destino]){
+      grupos2[destino]=[]; ordenGrupos2.push(destino);
+      catDeGrupo2[destino]=catOverride||catDeGrupo[k];
+    }
+    grupos[k].forEach(function(a){ if(grupos2[destino].indexOf(a)===-1) grupos2[destino].push(a); });
+  });
+  grupos=grupos2; ordenGrupos=ordenGrupos2; catDeGrupo=catDeGrupo2;
+  d.artsPorFuente=ordenGrupos.map(function(k){ return [k,grupos[k],catDeGrupo[k]]; });
+  d.arts=[].concat.apply([],ordenGrupos.map(function(k){ return grupos[k]; }));
+  var leyes={},reLey=/\bley(?:es)?\s*(?:provincial(?:es)?\s+|nacional(?:es)?\s+|federal(?:es)?\s+)?(?:n[°ºo.]?\s*)?((?:\d[\d\.]{2,7}(?:\s*(?:,|y|e)\s*(?:n[°ºo.]?\s*)?)?)+)/gi,mLey;
+  while((mLey=reLey.exec(texto))){
+    var numsLey=mLey[1].match(/\d[\d\.]{2,7}/g)||[];
+    numsLey.forEach(function(n){ leyes[etiquetaBase(n)||("Ley "+formatLeyNum(n))]=1; });
+  }
+  /* Si esa ley ya tiene su propio contenedor con artículos puntuales,
+     no la repitamos como tag suelto: una sola aparición por norma. */
+  Object.keys(grupos).forEach(function(k){ delete leyes[k]; });
+  d.leyes=Object.keys(leyes);
   var cit={},cs2=texto.match(/Fallos:?\s*\d{2,3}\s*:\s*\d{1,4}/gi)||[];
   cs2.forEach(function(a){ cit[a.replace(/\s+/g," ")]=1; });
-  d.citados=Object.keys(cit).slice(0,20);
+  d.citados=Object.keys(cit);
   return d;
 }
 function hoy(){
@@ -1034,7 +1339,10 @@ function pintarNav(){
 
 function pintarRail(){
   var r=document.getElementById("rail");
-  if(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"){ r.innerHTML=""; return; }
+  var w=document.getElementById("wrap");
+  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector");
+  if(w) w.classList.toggle("sin-rail",sinRail);
+  if(sinRail){ r.innerHTML=""; return; }
   r.innerHTML='<h2>Rama del derecho</h2><div class="rail-list">'+
     '<button data-rama="" aria-pressed="'+(estado.rama===""?"true":"false")+'">Todas las ramas</button>'+
     RAMAS.map(function(x){
@@ -1096,6 +1404,8 @@ function vistaBuscar(){
   return '<div class="aviso"><strong>Cómo funciona.</strong> Esta web no escribe fallos ni los resume: arma tu consulta con los operadores correctos y te deposita en las bases oficiales, que son las únicas que hacen fe. '+
     'Cuando abras la sentencia, copiá el texto y pegálo en <strong>Lector</strong>: ahí la vas a ver con tu búsqueda resaltada y la cita armada.</div>'+
 
+    sug+
+
     '<div class="panel">'+
       '<label class="campo"><span>Qué buscás</span>'+
         '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off"></label>'+
@@ -1115,7 +1425,6 @@ function vistaBuscar(){
         '<button class="btn sec" data-act="limpiar">Empezar de nuevo</button>'+
       '</div>'+
     '</div>'+
-    sug+
     '<p class="conteo">'+fs.length+' fuentes disponibles'+(estado.rama?" para "+esc(nombreRama(estado.rama)):"")+
       (c?"":" · escribí algo arriba para activar la búsqueda directa")+'</p>'+
     listaPorAmbito(fs);
@@ -1207,8 +1516,10 @@ function vistaLector(){
     '<div class="panel" style="padding:12px 14px;margin-bottom:14px">'+
       '<label class="campo" style="margin:0"><span>Qué buscar dentro del fallo</span>'+
       '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></label></div>'+
-    '<div class="meta" id="doc-meta"></div>'+
-    '<div class="doc" id="doc"></div>'+
+    '<div class="lector-grid">'+
+      '<div class="meta" id="doc-meta"></div>'+
+      '<div class="doc" id="doc"></div>'+
+    '</div>'+
     '<h2 style="margin:20px 0 9px" class="conteo" id="doc-tit-pas">Pasajes</h2>'+
     '<div id="pasajes"></div>';
 }
@@ -1227,6 +1538,28 @@ function conteoLector(cs){
     ' · '+(estado.marca+1)+' de '+vis;
 }
 
+/* Orden de lectura de la ficha del Lector: jerarquía legal de arriba hacia
+   abajo (Constitución > tratados/leyes > fondo > forma), y adentro de cada
+   norma, los artículos ordenados numéricamente en vez de por orden de
+   aparición en el texto. */
+function numDeCadena(s){
+  var m=String(s).replace(/\./g,"").match(/(\d+)/);
+  return m?parseInt(m[1],10):0;
+}
+function ordenArt(a,b){
+  var na=numDeCadena(a),nb=numDeCadena(b);
+  return na!==nb?na-nb:a.localeCompare(b);
+}
+function ordenLey(a,b){ return numDeCadena(a)-numDeCadena(b); }
+var RANGO_FUENTE={
+  "CCyC (vigente)":10,"Código Civil (derogado)":11,"Código de Comercio (derogado)":12,"Código Penal":13,
+  "LCT":14,"LDC":15,"Ley de Seguros (LS)":16,
+  "CPCCN":30,"CPC":31,"Código Procesal Penal":32,"Ley Arancelaria (LA)":33
+};
+function rangoDeFuente(label){
+  return RANGO_FUENTE.hasOwnProperty(label)?RANGO_FUENTE[label]:99;
+}
+
 function pintarLector(){
   if(estado.tab!=="lector"||!estado.texto) return;
   var texto=estado.texto,cs=coincidencias(texto),d=detectar(texto);
@@ -1235,26 +1568,94 @@ function pintarLector(){
 
   var meta=document.getElementById("doc-meta");
   if(meta){
-    var items=[];
-    if(d.car) items.push(["Carátula detectada",d.car]);
-    if(d.trib) items.push(["Tribunal",d.trib+(d.sala?" · "+d.sala:"")]);
-    if(d.fecha) items.push(["Fecha",d.fecha]);
-    if(d.exp) items.push(["Expediente",d.exp]);
-    if(d.tomo&&d.pag) items.push(["Colección","Fallos: "+d.tomo+":"+d.pag]);
-    if(estado.infoDoc) items.push(["Descargado de",
-      estado.infoDoc.tipo.toUpperCase()+
+    var top=[];
+    if(d.trib) top.push(["Tribunal",d.trib+(d.sala?" · "+d.sala:"")]);
+    if(d.fecha) top.push(["Fecha",d.fecha]);
+    if(d.exp) top.push(["Expediente",d.exp]);
+    if(d.tomo&&d.pag) top.push(["Colección","Fallos: "+d.tomo+":"+d.pag]);
+    var infoDer=estado.infoDoc?esc(estado.infoDoc.tipo.toUpperCase()+
       (estado.infoDoc.paginas?" · "+estado.infoDoc.paginas+" pág.":"")+
       " · "+estado.infoDoc.caracteres.toLocaleString("es-AR")+" caracteres"+
-      (estado.infoDoc.desdeCache?" · desde caché":"")]);
-    if(d.leyes&&d.leyes.length) items.push(["Leyes citadas",d.leyes.join(" · ")]);
-    if(d.arts&&d.arts.length) items.push(["Artículos citados",d.arts.join(" · ")]);
-    if(d.citados&&d.citados.length) items.push(["Fallos citados",d.citados.join(" · ")]);
-    meta.innerHTML=(items.length?items.map(function(x){
-        return '<div class="meta-i"><b>'+esc(x[0])+'</b>'+esc(x[1])+'</div>';}).join("")
-      :'<div class="meta-i"><b>Sin datos detectados</b>El encabezado no sigue un formato reconocible. Cargá los datos a mano en «Cómo citar».</div>')+
-      '<div style="flex-basis:100%;height:0"></div>'+
+      (estado.infoDoc.desdeCache?" · desde caché":"")):"";
+
+    var htmlTop=(top.length||d.car||infoDer)?(
+      '<div class="meta-top">'+
+        (d.car?'<div class="meta-car">'+esc(d.car)+'</div>':"")+
+        (top.length||infoDer?'<div class="meta-fila">'+
+          '<div class="izq">'+top.map(function(x){ return '<b>'+esc(x[0])+':</b> '+esc(x[1]); }).join(' <span class="sep">·</span> ')+'</div>'+
+          (infoDer?'<div class="der">'+infoDer+'</div>':"")+
+        '</div>':"")+
+      '</div>'
+    ):"";
+
+    var porFuente=d.artsPorFuente||[];
+    var pend=porFuente.filter(function(g){ return g[0]==="Sin ley identificada"; })[0];
+    var porCat={cn:[],tratados:[],fondo:[],leyes:[],provincial:[],local:[]};
+    porFuente.forEach(function(g){
+      if(g[0]==="Sin ley identificada") return;
+      var cat=porCat.hasOwnProperty(g[2])?g[2]:"leyes";
+      porCat[cat].push(g);
+    });
+    porCat.leyes.sort(function(a,b){ return numDeCadena(a[0])-numDeCadena(b[0]); });
+    porCat.fondo.sort(function(a,b){ return rangoDeFuente(a[0])-rangoDeFuente(b[0]); });
+    porCat.provincial.sort(function(a,b){ return rangoDeFuente(a[0])-rangoDeFuente(b[0]); });
+    porCat.tratados.sort(function(a,b){ return a[0].localeCompare(b[0]); });
+    porCat.local.sort(function(a,b){ return a[0].localeCompare(b[0]); });
+
+    function bloqueNorma(g,claseExtra){
+      return '<div class="meta-bloque'+(claseExtra?" "+claseExtra:"")+'"><h3>'+esc(g[0])+'</h3>'+
+        '<div class="meta-tags">'+g[1].slice().sort(ordenArt).map(function(a){
+          return '<span class="meta-tag">'+esc(a)+'</span>';
+        }).join("")+'</div></div>';
+    }
+    function bloqueTags(items){
+      return '<div class="meta-bloque"><div class="meta-tags">'+
+        items.map(function(x){ return '<span class="meta-tag">'+esc(x)+'</span>'; }).join("")+
+      '</div></div>';
+    }
+
+    /* Jerarquía normativa decreciente: Constitución > tratados > códigos de
+       fondo > leyes nacionales > leyes provinciales/procesales > normativa
+       local. Cada norma aparece una sola vez, con todos sus artículos
+       consolidados en el mismo contenedor. */
+    var bloques="";
+    porCat.cn.forEach(function(g){ bloques+=bloqueNorma(g,"cn"); });
+    if(porCat.tratados.length){
+      bloques+='<div class="meta-cat">Tratados internacionales</div>';
+      porCat.tratados.forEach(function(g){ bloques+=bloqueNorma(g); });
+    }
+    if(porCat.fondo.length){
+      bloques+='<div class="meta-cat">Códigos de fondo</div>';
+      porCat.fondo.forEach(function(g){ bloques+=bloqueNorma(g); });
+    }
+    if(porCat.leyes.length||(d.leyes&&d.leyes.length)){
+      bloques+='<div class="meta-cat">Leyes nacionales</div>';
+      porCat.leyes.forEach(function(g){ bloques+=bloqueNorma(g); });
+      if(d.leyes&&d.leyes.length) bloques+=bloqueTags(d.leyes.slice().sort(ordenLey));
+    }
+    if(porCat.provincial.length){
+      bloques+='<div class="meta-cat">Leyes provinciales y códigos procesales</div>';
+      porCat.provincial.forEach(function(g){ bloques+=bloqueNorma(g); });
+    }
+    if(porCat.local.length){
+      bloques+='<div class="meta-cat">Normativa local y decretos</div>';
+      porCat.local.forEach(function(g){ bloques+=bloqueNorma(g); });
+    }
+    if(d.citados&&d.citados.length){
+      bloques+='<div class="meta-cat">Jurisprudencia citada</div>'+bloqueTags(d.citados);
+    }
+    if(pend) bloques+='<div class="meta-bloque pendiente"><h3>Artículos pendientes de clasificación</h3>'+
+      '<div class="meta-tags">'+pend[1].slice().sort(ordenArt).map(function(a){
+        return '<span class="meta-tag">'+esc(a)+'</span>';
+      }).join("")+'</div></div>';
+
+    meta.innerHTML=htmlTop+
+      (bloques?'<div class="meta-cuerpo">'+bloques+'</div>'
+        :(htmlTop?"":'<div class="meta-bloque"><h3>Sin datos detectados</h3><div class="txt">El encabezado no sigue un formato reconocible. Cargá los datos a mano en «Cómo citar».</div></div>'))+
+      '<div class="meta-acc">'+
       '<button class="mini" data-act="meta-a-cita">Pasar estos datos al formateador de citas</button>'+
-      '<button class="mini" data-act="copiar-doc-cita">Copiar solo la cita</button>';
+      '<button class="mini" data-act="copiar-doc-cita">Copiar solo la cita</button>'+
+      '</div>';
   }
 
   var doc=document.getElementById("doc");

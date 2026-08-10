@@ -3,3 +3,4 @@ cache/
 .env
 *.log
 .DS_Store
+.claude/
