@@ -55,11 +55,6 @@ juris-et-de-jure/
 │   └── cache/                  Se crea sola. Podés borrarla cuando quieras.
 ```
 
-> **Nota transitoria:** todavía quedan un `package.json`/`package-lock.json` en la raíz del repo, de
-> antes de este reordenamiento. Ya no hacen nada (apuntan a una carpeta `server/` que no existe más) —
-> se dejaron a propósito para no perder nada hasta validar que todo lo de abajo funciona. El manifiesto
-> que importa ahora es `backend/package.json`.
-
 ---
 
 ## 2. Puesta en marcha
