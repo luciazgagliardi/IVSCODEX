@@ -812,11 +812,18 @@ function nuevoEstado(){
 /* ---- Servidor de extracción (opcional) ----
    Si está levantado, el Lector suma la opción de pegar un enlace y traer
    el fallo solo. Si no está, todo lo demás sigue funcionando igual: el
-   archivo es autónomo y esa es la garantía que no se toca. */
+   archivo es autónomo y esa es la garantía que no se toca.
+
+   Prueba los candidatos en orden: mismo origen (sirve cuando el backend
+   sirve este archivo), localhost (desarrollo), y por último el backend
+   ya desplegado (para cuando este HTML se publica solo, p. ej. en
+   GitHub Pages, sin backend propio en el mismo origen). Reemplazá el
+   placeholder de abajo por la URL real una vez que despliegues backend/. */
 function detectarServidor(){
   var candidatos=[];
   if(location.protocol==="http:"||location.protocol==="https:") candidatos.push("/api");
   candidatos.push("http://localhost:3000/api");
+  candidatos.push("https://TU-BACKEND-DESPLEGADO.example.com/api"); // TODO: reemplazar tras desplegar backend/
   var i=0;
   (function probar(){
     if(i>=candidatos.length){ estado.api=false; if(estado.tab==="lector") render(); return; }
