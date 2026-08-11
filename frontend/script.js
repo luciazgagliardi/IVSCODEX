@@ -263,10 +263,12 @@
      Si lo abrís con Live Server en el 5500, apuntá acá al backend.
      Si esto se publicó solo (p. ej. GitHub Pages, sin backend en el mismo
      origen), no hay '/api' que valga: apuntá al backend ya desplegado. */
+  var BACKEND_DESPLEGADO = 'https://TU-BACKEND-DESPLEGADO.example.com/api'; // TODO: reemplazar tras desplegar backend/
+  var backendConfigurado = BACKEND_DESPLEGADO.indexOf('TU-BACKEND') === -1;
   var API = (location.protocol === 'file:' || location.port === '5500')
     ? 'http://localhost:3000/api'
     : location.hostname.endsWith('github.io')
-      ? 'https://TU-BACKEND-DESPLEGADO.example.com/api' // TODO: reemplazar tras desplegar backend/
+      ? BACKEND_DESPLEGADO
       : '/api';
 
   function mostrarError(codigo, mensaje) {
@@ -287,6 +289,14 @@
   async function procesar(refrescar) {
     var url = $('url').value.trim();
     if (!url) { flash('Pegá el enlace del fallo'); $('url').focus(); return; }
+
+    if (location.hostname.endsWith('github.io') && !backendConfigurado) {
+      mostrarError(
+        'SIN_BACKEND',
+        'Esta página está publicada sin un backend conectado todavía. Quien la administra tiene que desplegar backend/ y reemplazar el placeholder de la URL en script.js.'
+      );
+      return;
+    }
 
     $('error').hidden = true;
     $('resultado').hidden = true;
