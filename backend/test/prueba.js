@@ -62,7 +62,7 @@ process.env.PERMITIR_CUALQUIER_DOMINIO='true';
 process.env.ESPERA_POR_HOST_MS='0';
 process.env.CACHE_HORAS='0';
 process.env.PORT='9912';
-await import('../server/index.js');
+await import('../index.js');
 await new Promise(r=>setTimeout(r,700));
 
 const api=async(url,extra={})=>{
@@ -102,14 +102,14 @@ r = await api('http://10.0.0.5/interno');
 chk('bloquea la red local 10.x', r.cuerpo.codigo==='RED_PRIVADA', r.cuerpo.codigo);
 r = await api('http://192.168.1.1/router');
 chk('bloquea la red domestica 192.168.x', r.cuerpo.codigo==='RED_PRIVADA', r.cuerpo.codigo);
-const { ipEsPrivada, dominioHabilitado } = await import('../server/lib/descargador.js');
+const { ipEsPrivada, dominioHabilitado } = await import('../lib/descargador.js');
 chk('la funcion marca 127.0.0.1 como privada', ipEsPrivada('127.0.0.1')===true);
 chk('la funcion marca 169.254.169.254 como privada', ipEsPrivada('169.254.169.254')===true);
 chk('la funcion acepta una IP publica', ipEsPrivada('200.5.4.3')===false);
 // La lista blanca se prueba en un proceso aparte, con el modo abierto apagado.
 const { execFileSync } = await import('node:child_process');
 const listaBlanca = JSON.parse(execFileSync(process.execPath, ['-e', `
-  import('./server/lib/descargador.js').then(m=>{
+  import('./lib/descargador.js').then(m=>{
     console.log(JSON.stringify({
       sub:   m.dominioHabilitado('sjconsulta.csjn.gov.ar'),
       exacto:m.dominioHabilitado('csjn.gov.ar'),
@@ -146,7 +146,7 @@ chk('/api/salud responde', s.ok===true);
 let v=await (await fetch('http://127.0.0.1:9912/api/verificar?url=https://www.csjn.gov.ar/x')).json();
 chk('/api/verificar acepta una fuente oficial', v.valida===true);
 let f=await fetch('http://127.0.0.1:9912/');
-chk('sirve el frontend en la raiz', f.status===200 && (await f.text()).includes('Juris et de jure'));
+chk('sirve el frontend en la raiz', f.status===200 && (await f.text()).includes('Iuris Et De Iure'));
 let n=await (await fetch('http://127.0.0.1:9912/api/inexistente')).json();
 chk('las rutas inexistentes devuelven JSON', n.ok===false && n.codigo==='RUTA_INEXISTENTE');
 
