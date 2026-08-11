@@ -1,6 +1,22 @@
+# Estos patrones no llevan "/" adelante a propósito: así matchean a
+# cualquier profundidad (backend/node_modules/, backend/cache/,
+# backend/.env, etc.), sin tener que repetir una línea por carpeta.
+
+# Dependencias
 node_modules/
+
+# Estado de runtime del backend (se recrea solo)
 cache/
+
+# Secretos / config local
 .env
+.env.local
+
+# Logs y artefactos varios
 *.log
+npm-debug.log*
+
+# Sistema operativo y editores
 .DS_Store
 .claude/
+.vscode/

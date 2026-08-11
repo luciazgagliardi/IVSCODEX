@@ -6,69 +6,84 @@ los pasajes recortados con contexto y la cita armada.
 
 **No genera ni resume jurisprudencia.** El texto que ves es el del documento oficial que indicaste.
 
+El proyecto tiene dos mitades independientes, pensadas para desplegarse por separado:
+
+- **`frontend/`** — estático, sin build. Se puede abrir directo o publicar en GitHub Pages.
+- **`backend/`** — Express, con su propio `package.json`. Se despliega aparte (Render, Railway, Fly, tu
+  propio servidor, lo que sea) y expone la API que el frontend usa para traer un fallo por enlace.
+
+El frontend funciona igual sin el backend: lo único que se pierde es el botón "traer el fallo por
+enlace" del Lector. Todo lo demás —pegar el texto a mano, resaltar, armar citas, el catálogo de
+fuentes— es 100% archivo estático y anda sin ningún servidor.
+
 ---
 
 ## 1. Estructura de carpetas
 
 ```
 juris-et-de-jure/
-├── package.json              Dependencias y scripts
-├── .env.example              Plantilla de configuración (copiala como .env)
-├── .gitignore
 ├── README.md                 Este archivo
+├── .gitignore
 │
-├── server/
-│   ├── index.js              Express: CORS, rate limit, estáticos, arranque
-│   ├── config.js             Variables de entorno y lista blanca de dominios
+├── frontend/                  Estático — esto es lo que se publica en GitHub Pages
+│   ├── index.html             Página principal: buscador + Lector de fallos
+│   ├── clasico.html           Versión original del extractor (formulario simple)
+│   ├── catalogo.html          Catálogo de ~100 fuentes oficiales, standalone (no usa la API)
+│   ├── script.js               Lógica de clasico.html: llamada a la API, resaltado, cita
+│   ├── styles.css              Estilos de clasico.html
+│   └── emblemaaa.png           Emblema/favicon
+│
+├── backend/                    Express — se despliega aparte de frontend/
+│   ├── package.json            Manifiesto propio (dependencias, scripts)
+│   ├── .env.example            Plantilla de configuración (copiala como backend/.env)
+│   ├── index.js                CORS, rate limit, estáticos (sirve frontend/ en desarrollo), arranque
+│   ├── config.js               Variables de entorno y lista blanca de dominios
 │   │
 │   ├── routes/
-│   │   └── extraer.js        POST /api/extraer y rutas auxiliares
+│   │   └── extraer.js          POST /api/extraer y rutas auxiliares
 │   │
-│   └── lib/
-│       ├── descargador.js    Descarga segura: SSRF, redirecciones, charset
-│       ├── extraerHtml.js    Readability + limpieza propia de respaldo
-│       ├── extraerPdf.js     pdf.js: líneas, párrafos, detección de escaneos
-│       ├── cache.js          Caché en disco con vencimiento
-│       └── errores.js        Errores tipados con mensaje en castellano
-│
-├── public/                   Frontend estático
-│   ├── index.html            Formulario, botón y contenedor del texto
-│   ├── script.js             Llamada a la API, resaltado, pasajes, cita
-│   └── styles.css            Estilos
-│
-├── test/
-│   └── prueba.js             33 pruebas: extracción, seguridad, errores
-│
-└── cache/                    Se crea sola. Podés borrarla cuando quieras.
+│   ├── lib/
+│   │   ├── descargador.js      Descarga segura: SSRF, redirecciones, charset
+│   │   ├── extraerHtml.js      Readability + limpieza propia de respaldo
+│   │   ├── extraerPdf.js       pdf.js: líneas, párrafos, detección de escaneos
+│   │   ├── cache.js            Caché en disco con vencimiento
+│   │   └── errores.js          Errores tipados con mensaje en castellano
+│   │
+│   ├── test/
+│   │   └── prueba.js           33 pruebas: extracción, seguridad, errores
+│   │
+│   └── cache/                  Se crea sola. Podés borrarla cuando quieras.
 ```
+
+> **Nota transitoria:** todavía quedan un `package.json`/`package-lock.json` en la raíz del repo, de
+> antes de este reordenamiento. Ya no hacen nada (apuntan a una carpeta `server/` que no existe más) —
+> se dejaron a propósito para no perder nada hasta validar que todo lo de abajo funciona. El manifiesto
+> que importa ahora es `backend/package.json`.
 
 ---
 
-## 2. Guía de ejecución paso a paso
+## 2. Puesta en marcha
 
-### Requisitos
+### Frontend — no necesita nada instalado
 
-**Node.js 18.17 o superior.** Verificá con:
+Es HTML/CSS/JS puro. Para probarlo:
+
+- **Directo:** abrí `frontend/index.html` con doble clic, o arrastralo a una pestaña del navegador.
+- **Publicado:** subí el contenido de `frontend/` a GitHub Pages (Settings → Pages → elegí la carpeta
+  `frontend/` como fuente, o copiala a una rama `gh-pages`) y listo — no hace falta build ni backend
+  para que funcione la búsqueda, el Lector con texto pegado a mano, ni el catálogo.
+
+Si además querés que el botón "traer el fallo por enlace" funcione una vez publicado (sin backend en el
+mismo origen), mirá la sección 3.
+
+### Backend — Node 18.17 o superior
 
 ```bash
-node --version
-```
+node --version   # confirmá que sea 18.17+; si no, bajalo de nodejs.org (LTS)
 
-Si no lo tenés, bajalo de [nodejs.org](https://nodejs.org) (la versión LTS).
-
-### Puesta en marcha
-
-```bash
-# 1. Entrá a la carpeta del proyecto
-cd juris-et-de-jure
-
-# 2. Instalá las librerías (tarda un minuto la primera vez)
-npm install
-
-# 3. Copiá la configuración de ejemplo (opcional: anda igual sin esto)
-cp .env.example .env        # en Windows: copy .env.example .env
-
-# 4. Levantá el servidor
+cd backend
+npm install                   # tarda un minuto la primera vez
+cp .env.example .env          # opcional: anda igual sin esto — en Windows: copy .env.example .env
 npm start
 ```
 
@@ -82,26 +97,41 @@ Vas a ver:
   Dominios   solo la lista blanca de config.js
 ```
 
-### Abrir la página
+En desarrollo, el backend también sirve `frontend/` en la raíz (`http://localhost:3000`) — es la forma
+más simple de probar todo junto sin publicar nada. El punto verde arriba a la derecha de la página
+confirma que el frontend encontró la API.
 
-Entrá a **http://localhost:3000** en el navegador. El punto verde arriba a la derecha
-confirma que el frontend habla con el servidor.
-
-Pegá el enlace de un fallo, escribí qué querés resaltar y tocá **Procesar el enlace**.
-
-### Comandos útiles
+### Comandos útiles (desde `backend/`)
 
 ```bash
 npm run dev             # se reinicia solo al guardar cambios
 npm test                # corre las 33 pruebas
-npm run limpiar-cache   # vacía la caché
+npm run limpiar-cache   # vacía backend/cache
 ```
 
 Para cortar el servidor: **Ctrl+C**.
 
 ---
 
-## 3. La API
+## 3. Conectar un frontend publicado con un backend desplegado
+
+Cuando `frontend/` y `backend/` viven en dominios distintos (por ejemplo, frontend en GitHub Pages y
+backend en Render), dos cosas tienen que coincidir:
+
+1. **El frontend tiene que saber la URL del backend.** `frontend/index.html`
+   (función `detectarServidor()`) y `frontend/script.js` (constante `API`) ya prueban, en este orden:
+   mismo origen (`/api`) → `http://localhost:3000/api` (desarrollo) → un placeholder
+   (`https://TU-BACKEND-DESPLEGADO.example.com/api`). Reemplazá ese placeholder por la URL real de tu
+   backend una vez desplegado, en los dos archivos.
+2. **El backend tiene que aceptar ese origen.** Sumá la URL de tu frontend publicado (por ejemplo
+   `https://tu-usuario.github.io`) a `CORS_ORIGENES` en `backend/.env`, separada por coma del resto.
+
+Sin el paso 2, el navegador va a bloquear la respuesta aunque la URL esté bien apuntada — es la protección
+CORS del propio navegador, no algo que dependa de este código.
+
+---
+
+## 4. La API
 
 | Método | Ruta | Qué hace |
 |---|---|---|
@@ -141,26 +171,28 @@ Ante un error siempre llega JSON con `codigo` (estable, para el frontend) y `men
 
 ---
 
-## 4. Configuración
+## 5. Configuración
 
-Todo se ajusta por variables de entorno en `.env`. Lo más habitual:
+Todo se ajusta por variables de entorno en `backend/.env`. Lo más habitual:
 
 | Variable | Default | Para qué |
 |---|---|---|
 | `PORT` | `3000` | Puerto del servidor |
-| `CORS_ORIGENES` | localhost 3000 y 5500 | Desde dónde se puede llamar a la API |
+| `CORS_ORIGENES` | localhost 3000 y 5500 | Desde dónde se puede llamar a la API (ver sección 3) |
 | `TIMEOUT_MS` | `25000` | Cuánto esperamos al sitio de origen |
 | `MAX_BYTES` | `26214400` (25 MB) | Tope de descarga |
 | `CACHE_HORAS` | `24` | Duración de la caché (`0` la desactiva) |
+| `DIR_CACHE` | `backend/cache` | Dónde se guarda la caché en disco |
 | `ESPERA_POR_HOST_MS` | `1500` | Pausa mínima entre pedidos al mismo sitio |
 | `PERMITIR_CUALQUIER_DOMINIO` | `false` | `true` acepta cualquier dominio público |
+| `PERMITIR_RED_PRIVADA` | `false` | Solo para los tests automáticos — nunca en producción |
 
-**Agregar una fuente:** abrí `server/config.js`, sumá el dominio a `DOMINIOS_PERMITIDOS`
+**Agregar una fuente:** abrí `backend/config.js`, sumá el dominio a `DOMINIOS_PERMITIDOS`
 y reiniciá. Acepta subdominios: poniendo `csjn.gov.ar` habilitás también `sjconsulta.csjn.gov.ar`.
 
 ---
 
-## 5. Seguridad: por qué la lista blanca no es un capricho
+## 6. Seguridad: por qué la lista blanca no es un capricho
 
 Un servidor que descarga "cualquier URL que le manden" es una vulnerabilidad conocida
 llamada **SSRF**. Alguien te pasa `http://169.254.169.254/` (la IP de metadatos de AWS,
@@ -182,7 +214,7 @@ Si lo publicás en internet, activá HTTPS y no toques `PERMITIR_RED_PRIVADA`.
 
 ---
 
-## 6. Ser buen vecino con los servidores oficiales
+## 7. Ser buen vecino con los servidores oficiales
 
 Esto no es un scraper masivo: baja **un documento por vez, el que vos pediste**.
 Aun así trae tres cosas que conviene no sacar:
@@ -197,7 +229,7 @@ volumen bajo, y no redistribuyas bases enteras.
 
 ---
 
-## 7. Límites conocidos
+## 8. Límites conocidos
 
 Hablemos claro de lo que **no** va a funcionar:
 
@@ -216,7 +248,7 @@ texto y `pdf.js` no puede inventarla. El sistema lo detecta y te avisa con `PDF_
 en vez de devolverte una página en blanco.
 
 Para los tres casos, el plan B es el mismo y funciona siempre: abrí el enlace en el
-navegador, copiá el texto y pegalo en el lector del archivo autónomo.
+navegador, copiá el texto y pegalo en el Lector del frontend (funciona sin backend).
 
 ### PDFs escaneados: cómo resolverlos
 
@@ -237,7 +269,7 @@ Después subí el PDF resultante a algún lado accesible, o abrilo y copiá el t
 
 ---
 
-## 8. Verificar antes de citar
+## 9. Verificar antes de citar
 
 El extractor te ahorra el copiar y pegar, no la verificación. Antes de que una cita
 entre en un escrito:
@@ -255,7 +287,7 @@ confirmarlos.
 
 ---
 
-## 9. Licencia
+## 10. Licencia
 
 MIT para el código. El contenido de los fallos pertenece a sus organismos de origen y se
 rige por sus condiciones de uso.
