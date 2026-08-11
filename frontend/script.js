@@ -263,7 +263,7 @@
      Si lo abrís con Live Server en el 5500, apuntá acá al backend.
      Si esto se publicó solo (p. ej. GitHub Pages, sin backend en el mismo
      origen), no hay '/api' que valga: apuntá al backend ya desplegado. */
-  var BACKEND_DESPLEGADO = 'https://TU-BACKEND-DESPLEGADO.example.com/api'; // TODO: reemplazar tras desplegar backend/
+  var BACKEND_DESPLEGADO = 'https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api';
   var backendConfigurado = BACKEND_DESPLEGADO.indexOf('TU-BACKEND') === -1;
   var API = (location.protocol === 'file:' || location.port === '5500')
     ? 'http://localhost:3000/api'

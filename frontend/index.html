@@ -823,7 +823,7 @@ function detectarServidor(){
   var candidatos=[];
   if(location.protocol==="http:"||location.protocol==="https:") candidatos.push("/api");
   candidatos.push("http://localhost:3000/api");
-  var desplegado="https://TU-BACKEND-DESPLEGADO.example.com/api"; // TODO: reemplazar tras desplegar backend/
+  var desplegado="https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api";
   if(desplegado.indexOf("TU-BACKEND")===-1) candidatos.push(desplegado); // si nadie reemplazo el placeholder, ni lo intenta: ahorra el timeout de red a un dominio que sabemos que no existe
   var i=0;
   (function probar(){
