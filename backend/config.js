@@ -11,16 +11,16 @@ import { fileURLToPath } from 'node:url';
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 
-/** Raiz del proyecto (una carpeta arriba de /server). */
+/** Raiz del proyecto (una carpeta arriba de /backend, donde vive frontend/). */
 export const RAIZ = path.resolve(aqui, '..');
 
-/** Carpeta de archivos estaticos que sirve el backend. */
-export const DIR_PUBLICO = path.join(RAIZ, 'public');
+/** Carpeta de archivos estaticos que sirve el backend (hermana de /backend). */
+export const DIR_PUBLICO = path.join(RAIZ, 'frontend');
 
-/** Carpeta donde se guarda el cache en disco. */
+/** Carpeta donde se guarda el cache en disco (propia de este backend). */
 export const DIR_CACHE = process.env.DIR_CACHE
   ? path.resolve(process.env.DIR_CACHE)
-  : path.join(RAIZ, 'cache');
+  : path.join(aqui, 'cache');
 
 /** Puerto del servidor HTTP. */
 export const PUERTO = Number(process.env.PORT || 3000);
