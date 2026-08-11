@@ -64,9 +64,12 @@ juris-et-de-jure/
 Es HTML/CSS/JS puro. Para probarlo:
 
 - **Directo:** abrí `frontend/index.html` con doble clic, o arrastralo a una pestaña del navegador.
-- **Publicado:** subí el contenido de `frontend/` a GitHub Pages (Settings → Pages → elegí la carpeta
-  `frontend/` como fuente, o copiala a una rama `gh-pages`) y listo — no hace falta build ni backend
-  para que funcione la búsqueda, el Lector con texto pegado a mano, ni el catálogo.
+- **Publicado con GitHub Pages:** el repo ya trae `.github/workflows/pages.yml`, que publica el
+  contenido de `frontend/` solo (GitHub Pages, en su modo simple, no deja elegir una subcarpeta como
+  fuente — por eso el workflow). Activalo una sola vez: en el repo, Settings → Pages → "Build and
+  deployment" → Source: **GitHub Actions**. De ahí en más, cada push a `main` que toque `frontend/`
+  publica solo. No hace falta build ni backend para que funcione la búsqueda, el Lector con texto
+  pegado a mano, ni el catálogo.
 
 Si además querés que el botón "traer el fallo por enlace" funcione una vez publicado (sin backend en el
 mismo origen), mirá la sección 3.
