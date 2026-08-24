@@ -153,6 +153,18 @@ for (const { slug, buscar } of FUENTES) {
         if (!resultados.length) throw e instanceof ErrorApp ? e : errores.indiceFuenteFalla(slug, e?.message);
       }
 
+      if (slug === 'caba' && total === 0) {
+        const locales = await buscarEnIndice(slug, q, { modo, excluir });
+        if (locales.length) {
+          resultados = locales;
+          total = locales.length;
+          totalParcial = true;
+          revisados = locales.length;
+          desdeIndiceLocal = true;
+          avisoFalla = 'La fuente CABA no devolvió coincidencias; muestro resultados guardados localmente, que pueden estar desactualizados.';
+        }
+      }
+
       const guardados = desdeIndiceLocal
         ? (await estadoIndice(slug)).guardados
         : await upsertRegistros(slug, resultados);
