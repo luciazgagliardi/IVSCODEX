@@ -24,7 +24,11 @@
 
 /** Sin tildes y en minusculas, para comparar sin sorpresas. */
 export function plegar(s) {
-  return String(s || '')
+  const texto = String(s || '');
+  const reparado = /(?:Ã|Â|â)[\x80-\xBF]/.test(texto)
+    ? Buffer.from(texto, 'latin1').toString('utf8')
+    : texto;
+  return reparado
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .toLowerCase();
