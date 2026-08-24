@@ -182,12 +182,35 @@ const CAMPO_POR_MODO = {
  * No marca ninguna Secretaría: eso hace que busque en todas las bases, tal
  * como indica el propio formulario del sitio.
  */
+/**
+ * El propio sitio a veces devuelve 200 con su error pegado al final del HTML,
+ * en vez de un codigo de error. Visto en vivo:
+ *
+ *   <!-- RS.RecordCount:438 -->[MySQL][ODBC 3.51 Driver]Lost connection to
+ *   MySQL server at 'reading initial communication packet'...
+ *
+ * O sea: contesta el contador (que sale de otra consulta) pero se le cae la
+ * base al ir a listar las filas. Detectarlo sirve para decir qué pasó de
+ * verdad, en vez de "cortó la respuesta" a secas — que sonaba a problema de
+ * red nuestro cuando en realidad su base de datos está caída.
+ */
+function errorDelSitio(html) {
+  const cola = String(html || '').slice(-1200);
+  if (/Lost connection to MySQL|\[MySQL\]\[ODBC/i.test(cola)) {
+    return 'la base de datos del TSJ está caída en este momento (su propio servidor lo informa así). No es algo que podamos arreglar de este lado: hay que esperar a que la repongan.';
+  }
+  if (/An error occurred on the server when processing the URL/i.test(cola)) {
+    return 'su servidor devolvió un error interno al listar los resultados. Probá de nuevo en un rato.';
+  }
+  return null;
+}
+
 export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20 }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
   const campo = CAMPO_POR_MODO[modo] || CAMPO_POR_MODO.todas;
-  const html = await pedirBusqueda({
+  const parametros = {
     [campo]: termino,
     // El sitio también sabe excluir por su cuenta, así que no hace falta
     // filtrar después: se le pasa tal cual lo que se escribió en "Excluir".
@@ -195,18 +218,28 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
     hdnPaginaOrigen: 'busqueda.asp',
     pag: String(pagina),
     cantRegPagina: String(porPagina),
-  });
-  const total = sacarTotal(html);
+  };
+
+  // Es un servidor viejo que trunca la respuesta cada tanto sin motivo. Un
+  // reintento cubre ese caso; si vuelve a fallar es que está caído de verdad,
+  // y ahí no se insiste más: esperarTurno ya deja una pausa entre los dos.
+  let html = await pedirBusqueda(parametros);
+  let total = sacarTotal(html);
+  let resultados = total ? parsearFilas(html) : [];
+  if (total && !resultados.length) {
+    html = await pedirBusqueda(parametros);
+    total = sacarTotal(html);
+    resultados = total ? parsearFilas(html) : [];
+  }
 
   if (total === null) throw errores.indiceFuenteFalla('caba', 'no encontré el contador de resultados');
   if (total === 0) return { total: 0, pagina, porPagina, resultados: [] };
 
-  const resultados = parsearFilas(html);
-  // El servidor a veces corta la respuesta antes de listar las filas: si dice
-  // que hay resultados pero no pudimos parsear ninguno, es mejor avisar que
+  // Dice que hay resultados pero no vino ninguno: pasa cuando su servidor
+  // corta la respuesta o se le cae la base. Mejor avisar qué pasó que
   // devolver una lista vacía como si la búsqueda no hubiera encontrado nada.
   if (!resultados.length) {
-    throw errores.indiceFuenteFalla('caba', 'el servidor cortó la respuesta antes de listar los resultados, probá de nuevo');
+    throw errores.indiceFuenteFalla('caba', errorDelSitio(html) || 'cortó la respuesta antes de listar los resultados, probá de nuevo');
   }
 
   return { total, pagina, porPagina, resultados };

@@ -51,6 +51,23 @@ const TIPOS = {
   todo: 'Total|Tipo de Documento/Jurisprudencia',
 };
 
+/**
+ * SAIJ ademas expone una faceta por tribunal, y ahi esta la Corte Suprema.
+ *
+ * Sirve para ofrecer jurisprudencia de la CSJN sin pasar por el sitio de la
+ * propia Corte: sjconsulta.csjn.gov.ar protege TODOS sus buscadores
+ * (sumarios, fallos, fallos destacados y hasta novedades) con reCAPTCHA, o
+ * sea que pide expresamente que del otro lado haya una persona. Eso se
+ * respeta. SAIJ publica ese mismo material de forma abierta, asi que la
+ * consulta va por ahi — y en la interfaz se dice de donde sale.
+ */
+const TRIBUNAL_CSJN = 'CORTE SUPREMA DE JUSTICIA DE LA NACION';
+// Solo los FALLOS traen el campo "tribunal"; los sumarios no, asi que
+// filtrarlos por tribunal devuelve siempre cero. Por eso esta fuente busca
+// siempre entre fallos y no ofrece elegir: una opcion que nunca trae nada es
+// peor que no tenerla.
+const FACETA_CSJN = `Total|Tipo de Documento/Jurisprudencia/Fallo|Tribunal/${TRIBUNAL_CSJN}`;
+
 async function pedirBusqueda(parametros) {
   await esperarTurno(HOST);
 
@@ -176,11 +193,11 @@ function aRegistro(bruto) {
 const PAGINAS_A_REVISAR = 3;
 const POR_PEDIDO = 100;
 
-export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20 }) {
+export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
-  const faceta = TIPOS[tribunal] || TIPOS.sumarios;
+  const faceta = soloCsjn ? FACETA_CSJN : (TIPOS[tribunal] || TIPOS.sumarios);
   const arranque = (Math.max(1, pagina) - 1) * porPagina;
 
   // Como SAIJ ordena por relevancia pero busca con OR, los primeros

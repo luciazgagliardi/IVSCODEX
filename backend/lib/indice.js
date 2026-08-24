@@ -13,6 +13,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { DIR_INDICE } from '../config.js';
+import { filtrarPorModo } from './relevancia.js';
 
 let listo = false;
 
@@ -59,15 +60,23 @@ export async function upsertRegistros(fuente, registros) {
   return Object.keys(dato.registros).length;
 }
 
-/** Búsqueda simple en memoria sobre lo ya guardado (voces + sumario + carátula). */
-export async function buscarEnIndice(fuente, texto) {
-  const q = String(texto || '').trim().toLowerCase();
+/**
+ * Busca en lo ya guardado. Es el respaldo para cuando el sitio oficial no
+ * responde, asi que tiene que encontrar de verdad.
+ *
+ * Antes comparaba la consulta ENTERA como un unico texto literal y sin
+ * plegar acentos: "daño moral" solo servia si esas dos palabras aparecian
+ * pegadas y con la ñ igual. Resultado: con 815 fichas de CABA guardadas, el
+ * respaldo devolvia CERO justo el dia que el buscador oficial se cayo, que
+ * es exactamente cuando tenia que servir. Ahora usa el mismo filtro por
+ * modo que el resto de la app (lib/relevancia.js).
+ */
+export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '' } = {}) {
+  const q = String(texto || '').trim();
   if (!q) return [];
   const dato = await leer(fuente);
-  return Object.values(dato.registros).filter((r) => {
-    const bolsa = [r.caratula, r.sumario, ...(r.voces || [])].join(' ').toLowerCase();
-    return bolsa.includes(q);
-  });
+  const { lista } = filtrarPorModo(Object.values(dato.registros), { q, modo, excluir });
+  return lista;
 }
 
 /** Cuántos registros hay guardados y cuándo se actualizó por última vez. */
