@@ -1872,8 +1872,13 @@ function traerDocEnLector(url,opciones){
     .then(function(d){
       estado.cargando=false;
       if(!d||!d.ok){
+        // El servidor no pudo, pero el documento sigue estando a un clic:
+        // se guarda el enlace para ofrecer abrirlo y subirlo a mano, que es
+        // el camino que sí funciona cuando el sitio de origen no le contesta
+        // al servidor (le pasa a los PDF del TSJ de CABA desde Azure).
         estado.errorLink={mensaje:(d&&d.mensaje)||"El servidor no devolvió el documento.",
-                          ayuda:AYUDAS_ERROR_LINK[d&&d.codigo]||""};
+                          ayuda:AYUDAS_ERROR_LINK[d&&d.codigo]||"",
+                          url:url};
         render(); return;
       }
       estado.texto=d.texto; estado.fuenteDe=d.urlFinal||url; estado.infoDoc=d; estado.marca=0;
@@ -2295,7 +2300,15 @@ function vistaLector(){
         '</div>'+
         (estado.errorLink
           ? '<div class="aviso" style="margin:12px 0 0"><strong>No se pudo traer.</strong> '+esc(estado.errorLink.mensaje)+
-            (estado.errorLink.ayuda?'<br><span style="color:var(--humo);font-size:12.5px">'+esc(estado.errorLink.ayuda)+'</span>':'')+'</div>'
+            (estado.errorLink.ayuda?'<br><span style="color:var(--humo);font-size:12.5px">'+esc(estado.errorLink.ayuda)+'</span>':'')+
+            // El documento sigue estando: tu navegador sí puede abrirlo
+            // aunque el servidor no. Los dos pasos, acá mismo.
+            (estado.errorLink.url
+              ?'<div class="f-acc" style="margin-top:10px">'+
+                 '<a class="mini" href="'+esc(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">1 · Abrir el original y guardarlo</a>'+
+                 '<button class="mini" data-act="elegir-archivo">2 · Subirlo acá</button>'+
+               '</div>'
+              :'')+'</div>'
           : '')+
         '</div>'+
         // Subir el archivo desde la computadora: sirve para lo que no tiene

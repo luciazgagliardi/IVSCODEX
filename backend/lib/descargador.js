@@ -299,7 +299,7 @@ export async function descargar(urlInicial) {
     }
 
     if (!respuesta.ok) {
-      throw errores.respuestaNoOk(respuesta.status, actual.hostname);
+      throw errores.respuestaNoOk(respuesta.status, actual.hostname, new URL(saltos[0]).hostname);
     }
 
     const buffer = await leerConTope(respuesta, MAX_BYTES);
