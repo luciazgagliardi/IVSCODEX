@@ -224,3 +224,34 @@ for (const { slug, buscar } of FUENTES) {
     }
   });
 }
+
+/**
+ * Si cada buscador oficial le contesta a ESTE servidor, y cuánto tarda.
+ *
+ * Nació de un problema concreto: SAIJ funciona desde una conexión común
+ * pero devuelve 403 al servidor publicado (un datacenter en Brasil), y
+ * desde afuera eso se veía como "no aparecen resultados" sin más. Con esta
+ * ruta se distingue de un vistazo si el problema es el sitio de origen, la
+ * red del servidor, o nuestro código. El frontend, cuando el servidor no
+ * llega a SAIJ, repite la consulta desde el navegador de quien busca.
+ */
+router.get('/fuentes/estado', async (_req, res) => {
+  const fuentes = await Promise.all(
+    FUENTES.map(async ({ slug, buscar }) => {
+      const arranque = Date.now();
+      try {
+        const r = await buscar({ q: 'daño', pagina: 1 });
+        return { slug, alcanzable: true, resultados: r.resultados.length, ms: Date.now() - arranque };
+      } catch (e) {
+        return {
+          slug,
+          alcanzable: false,
+          codigo: e?.codigo || 'ERROR',
+          motivo: e instanceof ErrorApp ? e.message : String(e?.message || e).slice(0, 200),
+          ms: Date.now() - arranque,
+        };
+      }
+    })
+  );
+  res.json({ ok: true, fuentes });
+});
