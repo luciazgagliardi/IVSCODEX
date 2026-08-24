@@ -1,0 +1,146 @@
+/**
+ * Rutas de la API.
+ *
+ *   POST   /api/extraer          { url, refrescar? }  -> texto del documento
+ *   POST   /api/extraer-archivo  bytes del archivo    -> texto del documento
+ *   GET    /api/salud                                 -> estado del servidor
+ *   GET    /api/dominios                              -> lista blanca vigente
+ *   DELETE /api/cache                                 -> vacia el cache
+ */
+
+import express from 'express';
+import { dominioHabilitado } from '../lib/descargador.js';
+import { obtenerDocumento, extraerDesdeBuffer } from '../lib/documento.js';
+import { vaciarCache } from '../lib/cache.js';
+import { errores, ErrorApp } from '../lib/errores.js';
+import {
+  DOMINIOS_PERMITIDOS,
+  PERMITIR_CUALQUIER_DOMINIO,
+  CACHE_HORAS,
+  MAX_BYTES,
+  TIMEOUT_MS,
+} from '../config.js';
+
+export const router = express.Router();
+
+router.post('/extraer', async (req, res, next) => {
+  try {
+    const { url, refrescar } = req.body || {};
+    const arranque = Date.now();
+    const salida = await obtenerDocumento(url, { refrescar });
+    res.json({ ...salida, ms: Date.now() - arranque });
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * Lee un archivo que la persona sube desde su computadora.
+ *
+ * Llega como bytes crudos en el cuerpo (express.raw, sin dependencias
+ * nuevas: no hace falta multipart para un unico archivo). El nombre viaja
+ * en la cabecera X-Nombre-Archivo solo para poder nombrarlo en la respuesta
+ * —para decidir como leerlo mandan los bytes, no la extension.
+ *
+ * No se cachea: el cache va por URL y aca no hay ninguna. Tampoco se
+ * guarda el archivo en el servidor; se lee en memoria y se devuelve el
+ * texto.
+ */
+router.post(
+  '/extraer-archivo',
+  express.raw({ type: () => true, limit: MAX_BYTES }),
+  async (req, res, next) => {
+    try {
+      const arranque = Date.now();
+      const crudo = req.body;
+      if (!Buffer.isBuffer(crudo) || !crudo.length) throw errores.archivoVacio();
+
+      const nombre = String(req.get('X-Nombre-Archivo') || '').slice(0, 200);
+
+      let resultado;
+      try {
+        resultado = await extraerDesdeBuffer(crudo, req.get('Content-Type') || '');
+      } catch (e) {
+        // "El servidor devolvió tal tipo" no tiene sentido cuando el archivo
+        // lo puso la persona: acá el problema es el archivo que eligió.
+        if (e?.codigo === 'TIPO_NO_SOPORTADO') throw errores.archivoNoSoportado(nombre);
+        throw e;
+      }
+
+      res.json({
+        ok: true,
+        url: '',
+        urlFinal: '',
+        origen: 'archivo',
+        nombreArchivo: nombre,
+        redirecciones: 0,
+        tipo: resultado.tipo,
+        titulo: resultado.titulo || '',
+        texto: resultado.texto,
+        caracteres: resultado.texto.length,
+        palabras: resultado.texto.split(/\s+/).filter(Boolean).length,
+        paginas: resultado.paginas || null,
+        metodo: resultado.metodo,
+        bytesDescargados: crudo.length,
+        obtenidoEn: new Date().toISOString(),
+        desdeCache: false,
+        ms: Date.now() - arranque,
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+router.get('/salud', (_req, res) => {
+  res.json({
+    ok: true,
+    servicio: 'juris-et-de-jure',
+    node: process.version,
+    tiempoActivoSeg: Math.round(process.uptime()),
+    cacheHoras: CACHE_HORAS,
+    maxMB: Math.round(MAX_BYTES / 1024 / 1024),
+    timeoutSeg: Math.round(TIMEOUT_MS / 1000),
+    modoAbierto: PERMITIR_CUALQUIER_DOMINIO,
+    dominiosPermitidos: DOMINIOS_PERMITIDOS.length,
+  });
+});
+
+router.get('/dominios', (_req, res) => {
+  res.json({ ok: true, modoAbierto: PERMITIR_CUALQUIER_DOMINIO, dominios: DOMINIOS_PERMITIDOS });
+});
+
+/** Chequeo rapido, sin descargar: ¿este enlace lo puedo procesar? */
+router.get('/verificar', (req, res) => {
+  const url = String(req.query.url || '');
+  try {
+    const u = new URL(url);
+    const okEsquema = u.protocol === 'http:' || u.protocol === 'https:';
+    const okDominio = dominioHabilitado(u.hostname);
+    res.json({ ok: true, valida: okEsquema && okDominio, host: u.hostname, okEsquema, okDominio });
+  } catch {
+    res.json({ ok: true, valida: false, host: null, okEsquema: false, okDominio: false });
+  }
+});
+
+router.delete('/cache', async (_req, res, next) => {
+  try {
+    const n = await vaciarCache();
+    res.json({ ok: true, borradas: n });
+  } catch (e) {
+    next(e);
+  }
+});
+
+/** Manejador de errores propio de la API: siempre responde JSON. */
+export function manejadorErrores(err, _req, res, _next) {
+  if (err instanceof ErrorApp) {
+    return res.status(err.http).json(err.aJSON());
+  }
+  console.error('[error no previsto]', err);
+  res.status(500).json({
+    ok: false,
+    codigo: 'ERROR_INTERNO',
+    mensaje: 'Se rompió algo del lado del servidor. Mirá la consola donde corre npm start para ver el detalle.',
+  });
+}

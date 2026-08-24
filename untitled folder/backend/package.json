@@ -1,0 +1,31 @@
+{
+  "name": "juris-et-de-jure-backend",
+  "version": "1.0.0",
+  "description": "Extractor de texto de sentencias argentinas: descarga un documento judicial (HTML o PDF) desde su enlace oficial y lo devuelve como texto limpio para leerlo con la busqueda resaltada.",
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": ">=18.17.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "test": "node --test",
+    "limpiar-cache": "node -e \"import('node:fs').then(fs=>{fs.rmSync('cache',{recursive:true,force:true});fs.mkdirSync('cache');console.log('cache vacia')})\""
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.5.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "iconv-lite": "^0.6.3",
+    "jsdom": "^24.1.1",
+    "pdfjs-dist": "^4.5.136",
+    "word-extractor": "^1.0.4"
+  },
+  "devDependencies": {
+    "pdf-lib": "^1.17.1"
+  },
+  "license": "MIT",
+  "private": true
+}
