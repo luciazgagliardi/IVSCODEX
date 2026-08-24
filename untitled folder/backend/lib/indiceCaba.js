@@ -83,7 +83,7 @@ async function pedirBusqueda(parametros) {
       signal: control.signal,
       headers: {
         'User-Agent': USER_AGENT,
-        'Content-Type': 'application/x-www-form-urlencoded; charset=windows-1252',
+        'Content-Type': 'application/x-www-form-urlencoded',
         Accept: 'text/html, */*;q=0.8',
       },
       body: cuerpoWin1252(parametros),
