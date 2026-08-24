@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Juris et de jure — Extractor de sentencias</title>
+<meta name="description" content="Pegá el enlace de un fallo argentino y leelo acá, con tu búsqueda resaltada y la cita armada.">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<div id="panic" role="alert"></div>
+
+<header class="top">
+  <div class="top-in">
+    <div class="sello" aria-hidden="true">IVRIS<br>ET DE<br>IVRE</div>
+    <div class="marca">
+      <h1>Juris et de jure</h1>
+      <div class="lat">praesumptio iuris et de iure — lo que no admite prueba en contrario</div>
+      <div class="sub">Extractor de sentencias · Mendoza · Argentina · Internacional</div>
+    </div>
+    <div class="estado" id="estado-servidor" title="Estado del servidor">
+      <span class="punto" id="punto"></span><span id="estado-txt">Conectando…</span>
+    </div>
+  </div>
+</header>
+
+<div class="cadena">
+  <div class="cadena-in">
+    <code id="cadena">Pegá un enlace para empezar</code>
+    <button class="mini" id="btn-copiar-todo" type="button">Copiar el texto</button>
+    <button class="mini" id="btn-nuevo" type="button">Otro fallo</button>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ============ Formulario ============ -->
+  <section class="panel" id="form-panel">
+    <div class="aviso">
+      <strong>Cómo funciona.</strong> Pegá el enlace directo del fallo en la base oficial. El servidor lo descarga,
+      le saca el texto —sirve HTML y PDF— y te lo muestra acá abajo con tu búsqueda resaltada.
+      El texto que leés es el del documento: acá no se genera ni se resume nada.
+    </div>
+
+    <label class="campo" for="url">
+      <span>Enlace del fallo</span>
+      <input type="url" id="url" placeholder="https://sjconsulta.csjn.gov.ar/sjconsulta/…" autocomplete="off" spellcheck="false">
+    </label>
+    <p class="pista" id="pista-url">Se aceptan las fuentes oficiales del catálogo. <a href="#" id="ver-dominios">Ver la lista completa</a>.</p>
+
+    <label class="campo" for="q">
+      <span>Qué resaltar dentro del fallo (opcional)</span>
+      <input type="text" id="q" placeholder="daño moral" autocomplete="off">
+    </label>
+
+    <div class="campo">
+      <span>Cómo combinar las palabras</span>
+      <div class="chips" id="modos">
+        <button type="button" class="chip" data-modo="exacta" aria-pressed="true">Frase exacta</button>
+        <button type="button" class="chip" data-modo="todas" aria-pressed="false">Todas las palabras</button>
+        <button type="button" class="chip" data-modo="alguna" aria-pressed="false">Alguna palabra</button>
+        <button type="button" class="chip" id="chip-parcial" aria-pressed="true">Coincidencia parcial</button>
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" class="btn" id="btn-procesar">Procesar el enlace</button>
+      <button type="button" class="btn sec" id="btn-refrescar" title="Ignora el caché y vuelve a pedir el documento">Volver a descargar</button>
+    </div>
+  </section>
+
+  <!-- ============ Estados ============ -->
+  <div id="cargando" class="cargando" hidden>
+    <span class="giro" aria-hidden="true"></span>
+    <span id="cargando-txt">Descargando el documento…</span>
+  </div>
+
+  <div id="error" class="error-box" hidden>
+    <strong id="error-tit">No se pudo procesar</strong>
+    <p id="error-msg"></p>
+    <p id="error-ayuda" class="ayuda"></p>
+  </div>
+
+  <!-- ============ Resultado ============ -->
+  <section id="resultado" hidden>
+    <div class="barra-doc">
+      <span class="cnt" id="doc-cnt">—</span>
+      <button type="button" class="mini" id="btn-ant">‹ Anterior</button>
+      <button type="button" class="mini" id="btn-sig">Siguiente ›</button>
+      <a class="mini" id="link-origen" target="_blank" rel="noopener noreferrer">Abrir la fuente</a>
+    </div>
+
+    <div class="meta" id="doc-meta"></div>
+
+    <div class="doc" id="doc" tabindex="0"></div>
+
+    <h2 class="conteo" id="tit-pasajes">Pasajes</h2>
+    <div id="pasajes"></div>
+  </section>
+
+  <!-- ============ Lista de dominios ============ -->
+  <section class="panel" id="panel-dominios" hidden>
+    <h2 class="conteo" id="tit-dominios">Fuentes habilitadas</h2>
+    <div class="voces" id="lista-dominios"></div>
+    <p class="pista">Para sumar una fuente, agregá el dominio en <code>server/config.js</code> y reiniciá el servidor.</p>
+  </section>
+
+</main>
+
+<footer class="pie">
+  <hr>
+  <p>
+    <a href="./catalogo.html">Catálogo de fuentes y buscador</a> · 106 bases oficiales, 28 ramas del derecho.<br><br>
+    <strong>Juris et de jure</strong> — el texto proviene del documento oficial que indicaste. La aplicación no genera,
+    resume ni interpreta jurisprudencia. Verificá siempre la cita en la fuente antes de usarla en un escrito.
+  </p>
+</footer>
+
+<div id="flash" role="status" aria-live="polite"></div>
+
+<script src="./script.js"></script>
+</body>
+</html>

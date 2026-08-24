@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # IURIS ET DE IURE
+=======
+# Juris et de jure — extractor de sentencias
+>>>>>>> 44bb01e (fix: permitir guardado de datos de usuario)
 
 Pegás el enlace de un fallo argentino (o internacional) de una base oficial, el servidor lo descarga,
 le saca el texto —sirve HTML y PDF— y te lo muestra en la página con tu búsqueda resaltada,
