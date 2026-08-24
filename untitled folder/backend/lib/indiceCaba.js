@@ -33,6 +33,7 @@
  */
 
 import { JSDOM, VirtualConsole } from 'jsdom';
+import iconv from 'iconv-lite';
 import { SCRAPER_API_KEY, USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
@@ -52,9 +53,17 @@ const URL_BUSQUEDA = `http://${HOST}/jurisprudencia/resultadoBusqueda.asp`;
  * siempre codifica en UTF-8 y no tiene forma de cambiarlo).
  */
 function cuerpoWin1252(parametros) {
-  return new URLSearchParams(
-    Object.entries(parametros).map(([clave, valor]) => [clave, String(valor ?? '')])
-  ).toString();
+  return Object.entries(parametros)
+    .map(([clave, valor]) => {
+      const bytes = iconv.encode(String(valor ?? ''), 'win1252');
+      let codificado = '';
+      for (const b of bytes) {
+        const c = String.fromCharCode(b);
+        codificado += /[A-Za-z0-9\-_.!~*'()]/.test(c) ? c : '%' + b.toString(16).padStart(2, '0').toUpperCase();
+      }
+      return `${encodeURIComponent(clave)}=${codificado}`;
+    })
+    .join('&');
 }
 
 async function pedirBusqueda(parametros) {
