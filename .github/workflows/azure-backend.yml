@@ -3,7 +3,7 @@ name: Publicar backend en Azure App Service
 on:
   push:
     branches: [main]
-    paths: ["backend/**"]
+    paths: ["untitled folder/backend/**"]
   workflow_dispatch: {}
 
 permissions:
@@ -22,11 +22,11 @@ jobs:
         with:
           node-version: '24'
       - name: Instalar dependencias
-        working-directory: backend
+        working-directory: untitled folder/backend
         run: npm ci
       - name: Desplegar en Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: IURIS
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: backend
+          package: untitled folder/backend
