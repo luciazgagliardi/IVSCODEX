@@ -34,17 +34,13 @@
 
 import { JSDOM, VirtualConsole } from 'jsdom';
 import iconv from 'iconv-lite';
-import { USER_AGENT, TIMEOUT_MS } from '../config.js';
+import { SCRAPER_API_KEY, USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
 
 const HOST = 'jurisprudencia.tsjbaires.gob.ar';
 // Este servidor no habla HTTPS (IIS 6, año ~2003): es a propósito que sea http.
 const URL_BUSQUEDA = `http://${HOST}/jurisprudencia/resultadoBusqueda.asp`;
-
-// CONFIGURACIÓN SCRAPERAPI - PEGÁ TU API KEY ACÁ
-const SCRAPER_API_KEY = '47c868801ce4f171326b694a423294a6';
-
 
 /**
  * Este sitio habla windows-1252, no UTF-8 — ni para lo que le mandamos ni
