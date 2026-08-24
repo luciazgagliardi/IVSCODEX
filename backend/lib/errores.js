@@ -82,13 +82,18 @@ export const errores = {
       504
     ),
 
-  respuestaNoOk: (estado, host) =>
-    new ErrorApp(
-      'RESPUESTA_NO_OK',
-      `"${host}" respondió ${estado}. Si es 403 o 404, revisá que el enlace sea el del documento y no el del buscador.`,
-      502,
-      { estadoOrigen: estado }
-    ),
+  respuestaNoOk: (estado, host, hostOriginal) => {
+    // Cuando hubo una redireccion a otro host, el consejo de "revisa el
+    // enlace" es equivocado: el enlace estaba bien, el que no contesta es el
+    // sitio al que TE MANDARON. Le pasa a los PDF del TSJ de CABA, que
+    // redirigen a www-test.tsjbaires.gov.ar y ese host le da 403 al servidor
+    // (desde un navegador comun baja sin problema).
+    const redirigido = hostOriginal && hostOriginal !== host;
+    const detalle = redirigido
+      ? `El enlace de "${hostOriginal}" redirige a "${host}", y ese sitio le respondió ${estado} a este servidor. No es tu enlace: desde tu navegador probablemente abra bien. Abrilo y subí el archivo acá.`
+      : `"${host}" respondió ${estado}. Si es 403 o 404, revisá que el enlace sea el del documento y no el del buscador.`;
+    return new ErrorApp('RESPUESTA_NO_OK', detalle, 502, { estadoOrigen: estado, host, redirigido: !!redirigido });
+  },
 
   demasiadoGrande: (max) =>
     new ErrorApp(
