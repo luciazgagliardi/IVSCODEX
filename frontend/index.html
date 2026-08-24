@@ -883,6 +883,9 @@ var FUENTES_INDICE=[
  {slug:"caba",cod:"CABA",clase:"prov",boton:"el TSJ de CABA",
   nombre:"Tribunal Superior de Justicia de la Ciudad de Buenos Aires",
   nota:"Cubre contencioso administrativo y tributario, penal/contravencional, laboral y asuntos originarios de la Ciudad — no el fuero civil general."},
+ {slug:"csjn",cod:"CSJN",clase:"nac",boton:"la Corte Suprema",
+  nombre:"Corte Suprema de Justicia de la Nación",
+  nota:"Los fallos de la Corte, con carátula, fecha y enlace al documento. Se consultan a través de SAIJ, que publica ese material de forma abierta: el buscador del sitio propio de la Corte exige resolver un captcha, así que no se puede consultar automáticamente."},
  {slug:"saij",cod:"SAIJ",clase:"nac",boton:"SAIJ, todo el país",
   nombre:"SAIJ · Ministerio de Justicia de la Nación",
   nota:"La base más grande de las tres: casi un millón de documentos de jurisprudencia de todo el país (Corte Suprema, tribunales nacionales y las provincias). Los sumarios traen la doctrina resumida, como los de Mendoza.",
@@ -1989,6 +1992,10 @@ var SAIJ_TIPOS={
   sumarios:"Total|Tipo de Documento/Jurisprudencia/Sumario",
   fallos:"Total|Tipo de Documento/Jurisprudencia/Fallo"
 };
+/* La Corte Suprema sale de SAIJ filtrando por su faceta de tribunal. Solo
+   los fallos traen ese campo, así que va siempre por fallos (ver la nota en
+   lib/indiceSaij.js del servidor). */
+var SAIJ_FACETA_CSJN="Total|Tipo de Documento/Jurisprudencia/Fallo|Tribunal/CORTE SUPREMA DE JUSTICIA DE LA NACION";
 
 function saijPlegar(s){
   try{ return String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase(); }
@@ -2059,8 +2066,8 @@ function saijARegistro(bruto){
 /* Revisa varias páginas antes de aflojar el filtro, igual que el servidor:
    como SAIJ ordena por relevancia pero busca con OR, la primera página puede
    ser toda de una sola de las palabras. */
-function buscarSaijNavegador(cuerpo){
-  var faceta=SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios;
+function buscarSaijNavegador(cuerpo,slug){
+  var faceta=slug==="csjn"?SAIJ_FACETA_CSJN:(SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios);
   var porPagina=20, porPedido=100, revisados=[], totalCrudo=0;
   function pedir(i){
     var p=new URLSearchParams({q:cuerpo.q,o:String(i*porPedido),p:String(porPedido),f:faceta});
@@ -2127,7 +2134,7 @@ function buscarEnFuente(slug){
       // los navegadores (ver el bloque de "SAIJ desde el navegador"). Si el
       // servidor no pudo, lo intenta tu computadora antes de darse por
       // vencida.
-      if(slug==="saij"&&(!d||!d.ok)) return buscarSaijNavegador(cuerpo);
+      if((slug==="saij"||slug==="csjn")&&(!d||!d.ok)) return buscarSaijNavegador(cuerpo,slug);
       return d;
     })
     .then(function(d){
@@ -2161,7 +2168,7 @@ function buscarEnFuente(slug){
     })["catch"](function(){
       if(imBusco.pedido!==pedido) return;
       imBusco.cargando=false; imBusco.busco=true;
-      imBusco.error=slug==="saij"
+      imBusco.error=(slug==="saij"||slug==="csjn")
         ?"No se pudo consultar SAIJ, ni desde el servidor ni desde acá. Probá de nuevo en un rato."
         :"Se cortó la comunicación con el servidor.";
       render();

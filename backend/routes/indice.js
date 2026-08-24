@@ -111,6 +111,10 @@ const FUENTES = [
   { slug: 'mendoza', buscar: (args) => buscarMza(args) },
   { slug: 'caba', buscar: (args) => buscarCaba(args) },
   { slug: 'saij', buscar: (args) => buscarSaij(args) },
+  // La Corte Suprema sale de SAIJ filtrando por su faceta de tribunal: el
+  // sitio propio de la CSJN protege todos sus buscadores con reCAPTCHA.
+  // Ver la nota en lib/indiceSaij.js.
+  { slug: 'csjn', buscar: (args) => buscarSaij({ ...args, soloCsjn: true }) },
 ];
 
 for (const { slug, buscar } of FUENTES) {
@@ -139,7 +143,7 @@ for (const { slug, buscar } of FUENTES) {
         // quien busca sin nada: probamos con lo que ya quedó guardado de
         // búsquedas anteriores. Es parcial y puede estar viejo, pero es
         // mejor que un error en pantalla, y el frontend avisa que es local.
-        resultados = await buscarEnIndice(slug, q);
+        resultados = await buscarEnIndice(slug, q, { modo, excluir });
         total = resultados.length;
         totalParcial = false;
         revisados = resultados.length;
