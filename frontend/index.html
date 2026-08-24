@@ -8,297 +8,373 @@
 <link rel="icon" type="image/png" href="./emblemaaa.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --tinta:#141b21;
-  --tinta2:#2b3740;
-  --papel:#e7e9e2;
-  --papel2:#dee1d8;
-  --ficha:#fbfaf6;
-  --lacre:#7c1d2b;
-  --lacre2:#a33546;
-  --acequia:#2b574b;
-  --humo:#5d6870;
-  --linea:#ccd0c7;
-  --oro:#8a6d2b;
+  --negro:#18140f;
+  --tinta:#f3efe5;
+  --tinta2:#a89b86;
+  --papel:#f3efe5;
+  --papel2:rgba(33,26,16,.5);
+  --ficha:rgba(30,23,16,.5);
+  --lacre:#e9c877;
+  --lacre2:#d1ab55;
+  --dorado:#d9a62a;
+  --acequia:#5fae90;
+  --humo:#8a7f6a;
+  --linea:#332918;
+  --oro:#e9c877;
   --serif:"Bodoni Moda",Georgia,serif;
   --sans:"IBM Plex Sans",Arial,sans-serif;
   --mono:"IBM Plex Sans",Arial,sans-serif;
+  --bokeh:
+    radial-gradient(circle at 8% 24%,rgba(255,255,255,.5) 0 3px,transparent 4px),
+    radial-gradient(circle at 18% 62%,rgba(255,255,255,.32) 0 5px,transparent 6px),
+    radial-gradient(circle at 29% 12%,rgba(255,255,255,.28) 0 2px,transparent 3px),
+    radial-gradient(circle at 41% 78%,rgba(255,255,255,.4) 0 3px,transparent 4px),
+    radial-gradient(circle at 54% 34%,rgba(255,255,255,.22) 0 6px,transparent 7px),
+    radial-gradient(circle at 63% 8%,rgba(255,255,255,.35) 0 2px,transparent 3px),
+    radial-gradient(circle at 71% 58%,rgba(255,255,255,.3) 0 4px,transparent 5px),
+    radial-gradient(circle at 83% 22%,rgba(255,255,255,.45) 0 3px,transparent 4px),
+    radial-gradient(circle at 91% 70%,rgba(255,255,255,.25) 0 5px,transparent 6px),
+    radial-gradient(circle at 12% 88%,rgba(255,255,255,.3) 0 3px,transparent 4px),
+    radial-gradient(circle at 48% 92%,rgba(255,255,255,.2) 0 4px,transparent 5px),
+    radial-gradient(circle at 96% 40%,rgba(255,255,255,.3) 0 2px,transparent 3px);
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
+html,body{margin:0;padding:0;overflow-x:hidden;max-width:100%}
+html{scrollbar-width:thin;scrollbar-color:var(--lacre) #150f08}
+*::-webkit-scrollbar{width:12px;height:12px}
+*::-webkit-scrollbar-track{background:#150f08}
+*::-webkit-scrollbar-thumb{background:var(--lacre);border-radius:6px}
+*::-webkit-scrollbar-thumb:hover{background:var(--dorado);box-shadow:0 0 10px 3px rgba(233,200,119,.6)}
 body{
-  background:var(--papel);
+  background:
+    radial-gradient(ellipse 55% 45% at 12% 10%, rgba(217,166,42,.18), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 15%, rgba(122,74,158,.16), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(95,174,144,.12), transparent 60%),
+    linear-gradient(120deg,#0d0904,#130d06,#080503,#100a04);
+  background-size:auto,auto,auto,300% 300%;
+  animation:fondo-deriva 18s ease-in-out infinite;
+  background-attachment:fixed,fixed,fixed,scroll;
   color:var(--tinta);
   font-family:var(--sans);
   font-size:17px;
   line-height:1.55;
   -webkit-text-size-adjust:100%;
 }
+@keyframes fondo-deriva{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 a{color:var(--lacre)}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--lacre2);outline-offset:2px}
+.panel,.blk,.rama,.doc,.meta,.pasaje{transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease}
+.panel,.blk,.rama,.doc,.meta,.meta-top,.pasaje,.aviso,.barra-doc,
+textarea,input[type=text],input[type=number],select{
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
+}
+.panel:hover,.blk:hover,.rama:hover,.pasaje:hover{
+  transform:translateY(-3px);border-color:rgba(233,200,119,.4);box-shadow:0 18px 34px -18px rgba(0,0,0,.6)
+}
 
 /* ---------- cabecera ---------- */
 .top{
   position:relative;
-  background:var(--tinta) url("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/David_-_The_Death_of_Socrates.jpg/1920px-David_-_The_Death_of_Socrates.jpg") center 38%/cover no-repeat;
-  color:#eceee8;isolation:isolate;padding-bottom:84px
+  background:transparent;
+  color:var(--papel);isolation:isolate;padding-bottom:40px
 }
-.top::before{content:"";position:absolute;inset:0;background:rgba(20,27,33,.48);z-index:0}
-.top::after{
-  content:"";position:absolute;left:0;right:0;bottom:0;height:84px;z-index:2;pointer-events:none;
-  background:linear-gradient(to bottom,
-    rgba(222,225,216,0) 0%,
-    rgba(222,225,216,.06) 20%,
-    rgba(222,225,216,.28) 45%,
-    rgba(222,225,216,.68) 72%,
-    var(--papel2) 100%)
+.top-in{
+  max-width:1560px;margin:0 auto;padding:0 16px;display:flex;justify-content:center;
+  gap:6px;align-items:baseline;flex-wrap:wrap;
+  max-height:0;opacity:0;overflow:hidden;transform:translateY(-10px);
+  transition:max-height .55s cubic-bezier(.4,0,.2,1),opacity .5s ease,
+    padding .55s cubic-bezier(.4,0,.2,1),transform .5s cubic-bezier(.4,0,.2,1);
+  transition-delay:0s
 }
-.top-in,.top .nav{position:relative;z-index:1}
-.top-in{max-width:1180px;margin:0 auto;padding:20px 20px 14px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.sello{
-  width:96px;height:96px;border-radius:50%;flex:0 0 96px;
-  background:transparent;border:0;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:#f3e3e5;text-align:center;line-height:1.15;transform:translateY(10px)
+.top:hover .top-in{
+  max-height:220px;opacity:1;padding:34px 16px 20px;transform:translateY(0);
+  transition-delay:1s
 }
-.sello img{width:100%;height:100%;display:block;object-fit:cover;object-position:center;clip-path:circle(48% at 50% 50%)}
-.marca{flex:1 1 300px;min-width:0}
+.marca{flex:0 1 auto;min-width:0;text-align:left}
+.marca .titulo-fila{display:flex;align-items:baseline;justify-content:flex-start;gap:14px;flex-wrap:wrap}
 .marca h1{
-  font-family:var(--serif);font-weight:400;font-size:clamp(26px,4.4vw,40px);
-  margin:0;letter-spacing:.055em;font-variant-caps:all-small-caps;color:#b8860b
+  font-family:var(--serif);font-weight:400;font-size:clamp(44px,7.5vw,78px);
+  margin:0;letter-spacing:.03em;word-spacing:.4em;color:var(--lacre)
 }
-.marca .lat{font-family:var(--serif);font-style:italic;color:#a8b0ae;font-size:13.5px;margin-top:1px}
-.marca .sub{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:#8f9a99;margin-top:7px}
-.marca .sub .dorado{color:#b8860b}
-.nav{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.marca .sub{font-family:var(--sans);font-size:15px;font-weight:300;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.72);margin-top:0;text-align:left}
+.marca .sub .dorado{color:var(--dorado);font-weight:300}
+.nav-wrap{
+  max-width:calc(100% - 32px);width:fit-content;margin:10px auto 0;
+  display:flex;align-items:center;gap:16px;padding:0 22px;
+  border:1px solid rgba(217,166,42,.55);border-radius:999px;
+  background:rgba(255,255,255,.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
+}
+.nav-logo{
+  width:56px;height:56px;flex:none;display:block;border-radius:50%;
+  border:1px solid var(--lacre);object-fit:contain;padding:5px;background:transparent
+}
+.nav{display:flex;gap:14px;flex:1 1 auto;min-width:0;padding:10px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .nav button{
-  background:none;border:0;border-bottom:3px solid transparent;
-  padding:9px 13px 8px;cursor:pointer;white-space:nowrap;
-  font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:#98a3a2
+  position:relative;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;
+  padding:11px 22px;cursor:pointer;white-space:nowrap;
+  transition:color .25s ease,border-color .25s ease,transform .25s ease,box-shadow .25s ease;
+  font-family:var(--sans);font-size:16px;font-weight:300;text-transform:uppercase;
+  letter-spacing:.03em;color:rgba(255,255,255,.68)
 }
-.nav button:hover{color:#eceee8}
-.nav button[aria-selected="true"]{color:#9f2638;border-bottom-color:transparent;font-weight:600;text-shadow:0 0 10px rgba(159,38,56,.22)}
+.nav button:hover{color:#fff;border-color:rgba(255,255,255,.45);transform:translateY(-2px)}
+.nav button[aria-selected="true"]{
+  color:var(--lacre);font-weight:300;border-color:var(--lacre);
+  box-shadow:0 0 8px rgba(217,166,42,.35),inset 0 0 6px rgba(217,166,42,.1)
+}
 
 /* ---------- cadena ---------- */
-.cadena{position:sticky;top:0;z-index:40;background:var(--papel2);border-bottom:1px solid var(--linea)}
-.cadena-in{max-width:1180px;margin:0 auto;padding:8px 20px;display:flex;gap:10px;align-items:center}
+.fila-q{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.fila-q input{flex:2 1 300px}
+.cadena{flex:0 1 auto;min-width:0}
+.cadena-in{
+  padding:8px 18px;
+  display:flex;gap:10px;align-items:center;
+  border:1px solid var(--lacre);border-radius:999px;
+  background:rgba(255,255,255,.05);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
+}
 .cadena code{
   font-family:var(--mono);font-size:12.5px;color:var(--tinta2);
-  flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+  flex:0 1 auto;max-width:min(50vw,560px);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 .cadena code b{color:var(--lacre);font-weight:600}
+.cadena .mini{border-color:transparent;color:var(--lacre)}
+.cadena .mini:hover{border-color:var(--dorado);color:var(--dorado)}
 .mini{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:2px;
-  padding:4px 9px;cursor:pointer;font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.06em;text-transform:uppercase;color:var(--tinta2);white-space:nowrap
+  background:var(--ficha);border:1px solid var(--linea);border-radius:999px;
+  padding:5px 12px;cursor:pointer;font-family:var(--sans);font-size:12px;color:var(--tinta2);white-space:nowrap
 }
-.mini:hover{background:#fff;border-color:var(--humo)}
+.mini:hover{border-color:rgba(255,255,255,.4);color:var(--tinta);transition:border-color .25s ease}
 a.mini{text-decoration:none;display:inline-block;color:var(--tinta2)}
 a.mini:hover{color:var(--lacre)}
 
 /* ---------- estructura ---------- */
-.wrap{max-width:1180px;margin:0 auto;padding:22px 20px 70px;display:grid;grid-template-columns:210px 1fr;gap:28px;align-items:start}
+.wrap{max-width:1560px;margin:0 auto;padding:22px 16px 70px;display:grid;grid-template-columns:210px 1fr;gap:28px;align-items:start}
 .wrap.sin-rail{grid-template-columns:1fr}
 .wrap.sin-rail .rail{display:none}
 .rail{position:sticky;top:56px}
-.rail h2,.blk h2{
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+.rail h2{
+  color:var(--lacre);font-family:var(--sans);font-size:16px;font-weight:300;
+  text-transform:uppercase;letter-spacing:.03em;margin:0 0 9px
+}
+.rail-buscador{
+  width:100%;padding:9px 14px;margin-bottom:10px;border:1px solid var(--linea);border-radius:999px;
+  background:var(--ficha);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  font-family:var(--sans);font-size:13.5px;color:var(--tinta);outline:none
+}
+.rail-buscador:focus{border-color:var(--lacre);outline:none}
+.blk h2{
+  font-family:var(--sans);font-size:11px;letter-spacing:.04em;
   color:var(--humo);margin:0 0 9px;font-weight:600
 }
+.voces-tit{
+  font-family:var(--serif);font-size:22px;
+  color:var(--tinta);margin:0 0 8px;font-weight:500
+}
+.voces-tit .punto{color:var(--lacre)}
+.voces-tit .rama-nom{color:var(--lacre);font-style:italic}
 .rail-list{display:flex;flex-direction:column;gap:1px;max-height:62vh;overflow:auto}
 .rail-list button{
-  text-align:left;background:none;border:0;border-left:2px solid transparent;
-  padding:4px 8px;cursor:pointer;font-size:13px;color:var(--tinta2);border-radius:0 2px 2px 0;text-transform:uppercase
+  text-align:left;background:none;border:0;border-radius:6px;
+  padding:6px 9px;cursor:pointer;font-size:13.5px;color:var(--tinta2);
+  font-family:var(--sans);font-weight:300
 }
 .rail-list button:hover{background:var(--papel2)}
-.rail-list button[aria-pressed="true"]{border:0;background:transparent;font-weight:400;color:#9f2638;text-shadow:none}
+.rail-list button[aria-pressed="true"]{background:transparent;color:var(--lacre);font-weight:300;
+  text-shadow:0 0 10px rgba(233,200,119,.55)}
 .col{min-width:0}
 
 /* ---------- formulario ---------- */
-.panel{background:var(--ficha);border:1px solid var(--linea);border-radius:3px;padding:16px 18px;margin-bottom:20px}
-.campo{display:block;margin-bottom:12px}
-.campo span{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--humo);margin-bottom:5px}
+.panel{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:22px 24px;margin-bottom:20px}
+.panel.vivo{border-color:var(--acequia)}
+.panel.inactivo{border-color:var(--linea)}
+.campo{display:block;margin-bottom:14px}
+.campo span{display:block;font-family:var(--sans);font-size:13px;color:var(--tinta2);margin-bottom:6px}
 input[type=text],input[type=number],select{
-  width:100%;padding:9px 11px;border:1px solid var(--linea);border-radius:2px;
-  background:#fff;font-family:var(--sans);font-size:15px;color:var(--tinta)
+  width:100%;padding:10px 12px;border:1px solid var(--linea);border-radius:6px;
+  background:var(--ficha);font-family:var(--sans);font-size:15px;color:var(--tinta)
 }
-#q{font-family:var(--serif);font-size:19px;padding:12px}
+input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--lacre);transition:border-color .25s ease}
+#q{font-family:var(--sans);font-size:16px;padding:13px 14px}
 .fila{display:flex;gap:12px;flex-wrap:wrap}
 .fila>*{flex:1 1 130px;min-width:0}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
 .chip{
-  background:#fff;border:1px solid var(--linea);border-radius:2px;padding:5px 11px;cursor:pointer;
-  font-size:12.5px;color:var(--tinta2);text-transform:uppercase
+  background:var(--ficha);border:1px solid var(--linea);border-radius:999px;padding:6px 13px;cursor:pointer;
+  font-size:13px;font-family:var(--sans);color:var(--tinta2)
 }
-.chip:hover{border-color:var(--humo)}
-.chip[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:#f2f2ee}
-.chip.amb[aria-pressed="true"]{background:var(--lacre);border-color:var(--lacre)}
-.acciones{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px dashed var(--linea)}
+.chip:hover{border-color:rgba(255,255,255,.4)}
+.chip[aria-pressed="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
+.chip.amb[aria-pressed="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
+.acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--linea)}
 .btn{
-  background:var(--lacre);color:#fdf6f6;border:1px solid var(--lacre);border-radius:2px;
-  padding:9px 16px;cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase
+  background:var(--lacre);color:#241a0c;border:1px solid var(--lacre);border-radius:999px;
+  padding:10px 20px;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:500;
+  transition:transform .25s ease,box-shadow .25s ease
 }
-.btn:hover{background:var(--lacre2)}
-.btn.sec{background:#fff;color:var(--tinta2);border-color:var(--linea)}
-.btn.sec:hover{background:var(--papel2);border-color:var(--humo)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 18px -6px rgba(233,200,119,.5)}
+.btn.sec{background:transparent;color:var(--tinta);border-color:rgba(255,255,255,.24);transition:transform .25s ease,border-color .25s ease}
+.btn.sec:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.5)}
 
 /* ---------- fuentes ---------- */
-.conteo{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--humo);margin:0 0 10px}
+.conteo{font-family:var(--sans);font-size:12px;color:var(--humo);margin:0 0 10px}
 .grupo{margin-bottom:26px}
 .grupo>h3{
-  font-family:var(--serif);font-size:20px;font-weight:400;margin:0 0 3px;
-  padding-bottom:5px;border-bottom:1px solid var(--linea);text-transform:uppercase
+  font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 3px;
+  padding-bottom:8px;border-bottom:1px solid var(--linea)
 }
 .grupo>p.desc{margin:0 0 12px;font-size:13px;color:var(--humo)}
-.fuente{border-bottom:1px dotted var(--linea);padding:11px 0}
+.fuente{border-bottom:1px solid var(--linea);padding:13px 0}
 .f-top{display:flex;gap:11px;align-items:baseline}
 .cod{
-  font-family:var(--mono);font-size:9px;letter-spacing:.05em;color:#fff;
-  padding:2px 5px;border-radius:2px;flex:0 0 auto;position:relative;top:-1px
+  font-family:var(--sans);font-size:10px;letter-spacing:.03em;color:#fff;
+  padding:2px 7px;border-radius:999px;flex:0 0 auto;position:relative;top:-1px
 }
-.cod.mza{background:var(--lacre)}.cod.nac{background:var(--tinta2)}
-.cod.prov{background:var(--humo)}.cod.int{background:var(--acequia)}.cod.doc{background:var(--oro)}
+.cod.mza{background:var(--lacre);color:#241a0c}.cod.nac{background:#3a3020}
+.cod.prov{background:#2c2415}.cod.int{background:var(--acequia);color:#0e2018}.cod.doc{background:#3a3020}
 .f-nom{font-family:var(--serif);font-size:17px;flex:0 1 auto}
 .leader{flex:1 1 auto;border-bottom:1px dotted var(--linea);min-width:14px;transform:translateY(-4px)}
-.f-org{font-size:12px;color:var(--humo);font-family:var(--mono);flex:0 0 auto}
+.f-org{font-size:12px;color:var(--humo);font-family:var(--sans);flex:0 0 auto}
 .f-nota{font-size:15px;color:var(--tinta2);margin:3px 0 7px}
 .f-acc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--humo);border:1px solid var(--linea);padding:2px 6px;border-radius:2px}
-.tag.paga{color:var(--oro);border-color:#d8c58e;background:#fdf8ec}
-.tag.libre{color:var(--acequia);border-color:#b6ccc2;background:#f0f6f2}
+.tag{font-family:var(--sans);font-size:11px;color:var(--humo);border:1px solid var(--linea);padding:3px 9px;border-radius:999px}
+.tag.paga{color:var(--lacre);border-color:rgba(233,200,119,.35);background:rgba(233,200,119,.1)}
+.tag.libre{color:var(--acequia);border-color:rgba(95,174,144,.35);background:rgba(95,174,144,.1)}
 .estrella{background:none;border:0;cursor:pointer;font-size:15px;color:var(--linea);padding:0 4px;line-height:1}
-.estrella[aria-pressed="true"]{color:var(--oro)}
+.estrella[aria-pressed="true"]{color:var(--dorado)}
 
 /* ---------- ramas ---------- */
-.rama{background:var(--ficha);border:1px solid var(--linea);border-left:3px solid var(--lacre);border-radius:2px;padding:14px 16px;margin-bottom:12px;font-family:"Montserrat",sans-serif}
-.rama h3{font-family:inherit;font-size:19px;font-weight:400;margin:0 0 3px;text-transform:uppercase}
-.rama p{margin:0 0 9px;font-size:15px;color:var(--tinta2)}
-.voces{display:flex;gap:5px;flex-wrap:wrap}
+.rama{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:18px 20px;margin-bottom:12px;font-family:var(--sans)}
+.rama h3{font-family:var(--serif);font-size:20px;font-weight:500;margin:0 0 5px}
+.rama p{margin:0 0 12px;font-size:15px;color:var(--tinta2)}
+.voces{display:flex;gap:6px;flex-wrap:wrap}
 .voz{
-  background:#fff;border:1px solid var(--linea);border-radius:2px;padding:3px 8px;cursor:pointer;
-  font-size:12px;color:var(--tinta2);font-family:inherit
+  background:var(--papel2);border:1px solid var(--linea);border-radius:999px;padding:4px 10px;cursor:pointer;
+  font-size:12.5px;color:var(--tinta2);font-family:var(--sans)
 }
-.voz:hover{background:var(--tinta);color:#fff;border-color:var(--tinta)}
-.rotulo{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--humo);margin:9px 0 4px}
+.voz:hover{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.28);transition:background .25s ease}
+.rotulo{
+  display:inline-block;font-family:var(--sans);font-size:12px;color:var(--tinta2);
+  background:var(--papel2);border-radius:999px;padding:5px 13px;margin:9px 0 8px
+}
 
 /* ---------- prosa ---------- */
-.blk{background:var(--ficha);border:1px solid var(--linea);border-radius:3px;padding:18px 20px;margin-bottom:16px}
-.blk h3{font-family:var(--serif);font-size:21px;font-weight:400;margin:0 0 8px}
+.blk{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;margin-bottom:16px}
+.blk h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 8px}
 .blk p{margin:0 0 10px;font-size:15px}
 .blk ol,.blk ul{margin:0 0 10px;padding-left:20px;font-size:14px}
 .blk li{margin-bottom:6px}
-.aviso{display:none !important;background:#fdf4f1;border:1px solid #e3c3bb;border-left:3px solid var(--lacre);border-radius:2px;padding:13px 16px;margin-bottom:18px;font-size:15px}
-.aviso strong{font-family:var(--serif);font-size:15px}
+.aviso{background:var(--ficha);color:var(--tinta2);border:1px solid var(--linea);border-radius:10px;padding:15px 18px;margin-bottom:18px;font-size:15px;transition:transform .35s ease,border-color .35s ease}
+.aviso:hover{transform:translateY(-2px);border-color:rgba(233,200,119,.35)}
+.aviso strong{color:var(--lacre)}
 .out{
-  font-family:var(--mono);font-size:13px;background:#fff;border:1px solid var(--linea);
-  border-radius:2px;padding:11px;white-space:pre-wrap;word-break:break-word;min-height:44px
+  font-family:var(--mono);font-size:13px;background:var(--papel2);border:1px solid var(--linea);
+  border-radius:8px;padding:12px 14px;white-space:pre-wrap;word-break:break-word;min-height:44px
 }
-.vacio{border:1px dashed var(--linea);border-radius:3px;padding:26px 20px;text-align:center;color:var(--humo);font-size:14px}
+.vacio{border:1px dashed var(--linea);border-radius:10px;padding:26px 20px;text-align:center;color:var(--humo);font-size:14px}
 
 /* ---------- lector ---------- */
 textarea{
-  width:100%;min-height:260px;padding:12px;border:1px solid var(--linea);border-radius:2px;
-  background:#fff;font-family:var(--mono);font-size:14px;line-height:1.5;color:var(--tinta);resize:vertical
+  width:100%;min-height:260px;padding:12px;border:1px solid var(--linea);border-radius:8px;
+  background:var(--ficha);font-family:var(--mono);font-size:14px;line-height:1.5;color:var(--tinta);resize:vertical
 }
 .barra-doc{
   display:flex;gap:8px;align-items:center;flex-wrap:wrap;
-  background:var(--tinta);color:#eceee8;border-radius:2px;padding:8px 12px;margin-bottom:12px
+  background:rgba(36,26,12,.55);color:var(--tinta);border:1px solid var(--linea);border-radius:10px;padding:9px 14px;margin-bottom:12px
 }
-.barra-doc .cnt{font-family:var(--mono);font-size:12px;letter-spacing:.04em;flex:1 1 auto;min-width:120px}
-.barra-doc .cnt b{color:#f0c9ce}
-.barra-doc .mini{background:#26313a;border-color:#3a4750;color:#dfe3e0}
-.barra-doc .mini:hover{background:#33404a;border-color:#5d6870;color:#fff}
+.barra-doc .cnt{font-family:var(--sans);font-size:12.5px;flex:1 1 auto;min-width:120px}
+.barra-doc .cnt b{color:var(--lacre)}
+.barra-doc .mini{background:#332818;border-color:#4a3c22;color:#e8dfc9}
+.barra-doc .mini:hover{background:#4a3c22;border-color:#6b5936;color:#fff}
 .doc{
-  background:#fff;border:1px solid var(--linea);border-radius:2px;padding:18px 20px;
+  background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;
   font-family:var(--serif);font-size:15.5px;line-height:1.72;white-space:pre-wrap;word-wrap:break-word;
   max-height:64vh;overflow:auto
 }
-mark{background:#f7dfa8;color:var(--tinta);padding:0 1px;border-radius:2px;box-decoration-break:clone}
-mark.actual{background:var(--lacre);color:#fff}
+mark{background:#f2dea0;color:#1a1408;padding:0 1px;border-radius:2px;box-decoration-break:clone}
+mark.actual{background:var(--lacre);color:#241a0c}
 .lector-grid{display:grid;grid-template-columns:262px minmax(0,1fr);gap:16px;align-items:start;margin-bottom:12px}
 .meta{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:2px;
-  padding:14px 15px;max-height:64vh;overflow:auto
+  background:var(--ficha);border:1px solid var(--linea);border-radius:10px;
+  padding:16px 17px;max-height:64vh;overflow:auto
 }
-.meta-top{background:var(--papel2);border:1px solid var(--linea);border-radius:3px;padding:10px 14px;margin-bottom:14px}
-.meta-car{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--tinta2);margin:0 0 7px;padding-bottom:7px;border-bottom:1px dotted var(--linea)}
+.meta-top{background:var(--papel2);border:1px solid var(--linea);border-radius:8px;padding:12px 15px;margin-bottom:14px}
+.meta-car{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--tinta2);margin:0 0 7px;padding-bottom:7px;border-bottom:1px solid var(--linea)}
 .meta-fila{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between}
 .meta-fila .izq{flex:1 1 auto;font-size:13.5px;color:var(--tinta2)}
-.meta-fila .izq b{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--humo);font-weight:600;margin-right:3px}
+.meta-fila .izq b{font-family:var(--sans);font-size:11px;color:var(--humo);font-weight:600;margin-right:3px}
 .meta-fila .izq .sep{color:var(--linea);margin:0 3px}
-.meta-fila .der{font-family:var(--mono);font-size:11px;color:var(--humo);white-space:nowrap;flex:0 0 auto}
+.meta-fila .der{font-family:var(--sans);font-size:11.5px;color:var(--humo);white-space:nowrap;flex:0 0 auto}
 .meta-cuerpo{display:flex;flex-direction:column;gap:16px;margin-bottom:14px}
 .meta-bloque h3{
-  font-family:var(--mono);font-weight:600;font-size:11px;margin:0 0 8px;
-  letter-spacing:.09em;text-transform:uppercase;color:#8f9a99
+  font-family:var(--sans);font-weight:600;font-size:12px;margin:0 0 8px;color:var(--tinta2)
 }
-.meta-bloque.cn h3{color:#b8860b}
+.meta-bloque.cn h3{color:var(--lacre)}
 .meta-cat{
-  font-family:var(--mono);font-weight:700;font-size:10.5px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--tinta2);margin:0;padding-top:10px;
-  border-top:1px dotted var(--linea)
+  font-family:var(--sans);font-weight:600;font-size:11.5px;
+  color:var(--tinta2);margin:0;padding-top:10px;
+  border-top:1px solid var(--linea)
 }
 .meta-cat:first-child{padding-top:0;border-top:0}
 .meta-tags{display:flex;flex-wrap:wrap;gap:6px}
 .meta-tag{
-  background:#fff;border:1px solid var(--linea);border-radius:999px;
-  padding:3px 11px;font-family:var(--mono);font-size:12px;color:var(--tinta2);white-space:nowrap
+  background:var(--papel2);border:1px solid var(--linea);border-radius:999px;
+  padding:3px 11px;font-family:var(--sans);font-size:12px;color:var(--tinta2);white-space:nowrap
 }
 .meta-bloque.pendiente h3{color:var(--humo);font-weight:400;font-style:italic}
 .meta-bloque.pendiente .meta-tag{background:transparent;border-style:dashed;color:var(--humo)}
 .meta-acc{display:flex;gap:8px;flex-wrap:wrap}
-.pasaje{background:var(--ficha);border:1px solid var(--linea);border-left:3px solid var(--oro);border-radius:2px;padding:11px 13px;margin-bottom:9px}
+.pasaje{background:var(--ficha);border:1px solid var(--dorado);border-radius:10px;padding:13px 15px;margin-bottom:9px}
 .pasaje .txt{font-family:var(--serif);font-size:15.5px;line-height:1.6;margin-bottom:8px}
 .pasaje .acc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.pasaje .pos{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--humo)}
-.pie{max-width:1180px;margin:0 auto;padding:0 20px 40px;font-size:12px;color:var(--humo);line-height:1.6}
+.pasaje .pos{font-family:var(--sans);font-size:11px;color:var(--humo)}
+.pie{max-width:1560px;margin:0 auto;padding:0 16px 40px;font-size:12px;color:var(--humo);line-height:1.6}
 .pie hr{border:0;border-top:1px solid var(--linea);margin:0 0 14px}
 
 /* ---------- avisos flotantes ---------- */
 #flash{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:90;display:none;
-  background:var(--tinta);color:#f2f2ee;padding:9px 16px;border-radius:2px;font-size:13px;
-  box-shadow:0 6px 18px rgba(20,27,33,.28);max-width:90vw}
+  background:#241a0c;color:var(--papel);padding:10px 18px;border-radius:999px;font-size:13px;
+  border:1px solid var(--linea);box-shadow:0 8px 22px rgba(0,0,0,.4);max-width:90vw}
 #panic{display:none;background:#7c1d2b;color:#fff;padding:10px 20px;font-size:13px}
-#panic button{background:#fff;color:#7c1d2b;border:0;border-radius:2px;padding:4px 10px;margin-left:10px;cursor:pointer}
+#panic button{background:#fff;color:#7c1d2b;border:0;border-radius:999px;padding:4px 10px;margin-left:10px;cursor:pointer}
 .entrada{
   position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
-  background:var(--tinta) url("https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/David_-_The_Death_of_Socrates.jpg/1920px-David_-_The_Death_of_Socrates.jpg") center/cover no-repeat;
-  color:#f4f2ec;text-align:center;isolation:isolate;cursor:pointer;
+  background:
+    radial-gradient(ellipse 60% 55% at 15% 15%, rgba(217,166,42,.28), transparent 60%),
+    radial-gradient(ellipse 55% 50% at 88% 20%, rgba(122,74,158,.22), transparent 60%),
+    radial-gradient(ellipse 65% 55% at 50% 100%, rgba(95,174,144,.16), transparent 60%),
+    linear-gradient(120deg,#1c140a,#241a0c,#150f08,#221609);
+  background-size:auto,auto,auto,300% 300%;
+  animation:fondo-deriva 18s ease-in-out infinite;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  color:#fff;text-align:center;isolation:isolate;cursor:pointer;
   opacity:1;transition:opacity .6s ease-out;
 }
-.entrada::before{content:"";position:absolute;inset:0;background:rgba(20,27,33,.52);z-index:-1}
 .entrada.saliendo{opacity:0;pointer-events:none}
 .entrada-contenido{padding:24px;display:flex;flex-direction:column;align-items:center;animation:aparece-entrada 1s ease-out both}
-.entrada .sello{
-  width:clamp(120px,16vw,190px);height:clamp(120px,16vw,190px);
-  margin:0 0 18px;display:flex;align-items:center;justify-content:center
-}
-.entrada .sello img{width:100%;height:100%;display:block;object-fit:contain;object-position:center}
-.entrada h1{margin:0;font-family:var(--serif);font-size:clamp(34px,7vw,74px);font-weight:400;letter-spacing:.08em;color:#b8860b}
-.entrada p{margin:12px 0 0;font-family:var(--serif);font-style:italic;font-size:clamp(16px,2.5vw,25px);color:#d7d8d1}
+.entrada .titulo-fila{display:flex;align-items:baseline;justify-content:center;gap:16px;flex-wrap:wrap}
+.entrada h1{margin:0;font-family:var(--serif);font-size:clamp(34px,7vw,74px);font-weight:400;letter-spacing:.02em;word-spacing:.4em;color:var(--lacre)}
 .entrada .sub{
-  margin-top:14px;font-family:var(--mono);font-size:clamp(11px,1.4vw,14px);letter-spacing:.09em;
-  text-transform:uppercase;color:#8f9a99
+  margin-top:10px;font-family:var(--sans);font-size:clamp(13px,1.6vw,15px);letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(255,255,255,.75)
 }
-.entrada .sub .dorado{color:#b8860b}
+.entrada .sub .dorado{color:var(--dorado);font-weight:600}
 .entrada .toque{
-  margin-top:22px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
-  text-transform:uppercase;color:#6d7877;animation:parpadeo-toque 1.8s ease-in-out infinite
+  margin-top:26px;font-family:var(--sans);font-size:12px;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(255,255,255,.6);animation:parpadeo-toque 1.8s ease-in-out infinite
 }
 @keyframes parpadeo-toque{0%,100%{opacity:.55}50%{opacity:1}}
 @keyframes aparece-entrada{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 @media (max-width:860px){
   .top-in{gap:6px}
-  .sello{width:72px;height:72px;flex-basis:72px}
   .wrap{grid-template-columns:1fr;gap:16px}
-  .rail{position:static}
+  .rail{position:static;max-height:none}
   .rail-list{flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:6px}
-  .rail-list button{border-left:0;border-bottom:2px solid transparent;white-space:nowrap;padding:5px 9px}
-  .rail-list button[aria-pressed="true"]{border:0;background:transparent;font-weight:400;color:#9f2638;text-shadow:none}
+  .rail-list button{white-space:nowrap;padding:6px 12px}
   .f-top{flex-wrap:wrap}
   .leader{display:none}
   .lector-grid{grid-template-columns:1fr}
@@ -312,33 +388,28 @@ mark.actual{background:var(--lacre);color:#fff}
 <div id="panic" role="alert"></div>
 <div class="entrada" id="entrada" role="button" tabindex="0" aria-label="Entrada de Iuris et de iure. Tocar para continuar">
   <div class="entrada-contenido">
-    <div class="sello"><img src="./emblemaaa.png" alt="Emblema de Iuris et de iure"></div>
-    <h1>IURIS ET DE IURE</h1>
-    <p>edición especial para mamá &lt;3</p>
-    <div class="sub"><span class="dorado">Jurisprudencia</span> · Provincial · Nacional · Internacional</div>
+    <div class="titulo-fila">
+      <h1>IURIS ET DE IURE</h1>
+    </div>
+    <div class="sub"><span class="dorado">Lectio et iurisprudentia</span></div>
     <div class="toque">Tocá para continuar</div>
   </div>
 </div>
 
 <header class="top">
   <div class="top-in">
-    <div class="sello"><img src="./emblemaaa.png" alt="Emblema de Iuris et de iure"></div>
     <div class="marca">
-      <h1>IURIS ET DE IURE</h1>
-      <div class="lat">edición especial para mamá &lt;3</div>
-      <div class="sub"><span class="dorado">Jurisprudencia</span> · Provincial · Nacional · Internacional</div>
+      <div class="titulo-fila">
+        <h1>IURIS ET DE IURE</h1>
+      </div>
+      <div class="sub"><span class="dorado">Lectio et iurisprudentia</span></div>
     </div>
   </div>
-  <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
-</header>
-
-<div class="cadena">
-  <div class="cadena-in">
-    <code id="cadena" aria-live="polite">Escribí lo que buscás para armar la consulta</code>
-    <button class="mini" data-act="copiar-cadena">Copiar</button>
-    <button class="mini" data-act="limpiar">Limpiar</button>
+  <div class="nav-wrap">
+    <img class="nav-logo" src="./logo-iu.png" alt="Emblema de Iuris et de iure">
+    <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
   </div>
-</div>
+</header>
 
 <main class="wrap" id="wrap">
   <aside class="rail" id="rail"></aside>
@@ -799,14 +870,65 @@ var AMB={
 };
 
 /* ============================================================
+   2.1 Índices propios — buscadores oficiales con robot detrás
+   ============================================================ */
+var FUENTES_INDICE=[
+ {slug:"mendoza",cod:"MZA",clase:"mza",boton:"el buscador de Mendoza",
+  nombre:"Poder Judicial de Mendoza",nota:"Elegí el tribunal antes de buscar: Corte, Cámaras Civiles o Cámaras del Trabajo.",
+  tribunales:[
+    {v:"SC",n:"Suprema Corte"},
+    {v:"CC",n:"Cámaras Civil, Comercial y Minas"},
+    {v:"CT",n:"Cámaras del Trabajo"}
+  ]},
+ {slug:"caba",cod:"CABA",clase:"prov",boton:"el TSJ de CABA",
+  nombre:"Tribunal Superior de Justicia de la Ciudad de Buenos Aires",
+  nota:"Cubre contencioso administrativo y tributario, penal/contravencional, laboral y asuntos originarios de la Ciudad — no el fuero civil general."},
+ {slug:"saij",cod:"SAIJ",clase:"nac",boton:"SAIJ, todo el país",
+  nombre:"SAIJ · Ministerio de Justicia de la Nación",
+  nota:"La base más grande de las tres: casi un millón de documentos de jurisprudencia de todo el país (Corte Suprema, tribunales nacionales y las provincias). Los sumarios traen la doctrina resumida, como los de Mendoza.",
+  tribunales:[
+    {v:"sumarios",n:"Sumarios (con doctrina)"},
+    {v:"fallos",n:"Fallos (ficha del expediente)"}
+  ]}
+];
+
+/* El sitio de CABA no filtra por secretaría en el pedido (ver nota en
+   lib/indiceCaba.js) — cada resultado ya trae la suya, así que acá se
+   filtra sobre lo ya traído, no se vuelve a consultar el sitio. */
+var SECRETARIAS_CABA={
+  SAOyRC:"Asuntos Originarios y Rel. de Consumo",
+  SACAyT:"Contencioso Administrativo y Tributario",
+  SAPPJCyF:"Penal, Penal Juvenil, Contravencional y Faltas",
+  SACyC:"Civil y Comercial",
+  SAL:"Laboral",
+  SAG:"Asuntos Generales",
+  TSN:"Superintendencia del Notariado"
+};
+
+/* ============================================================
    3. Estado
    ============================================================ */
+function nuevoIndices(){
+  var o={};
+  FUENTES_INDICE.forEach(function(f){
+    o[f.slug]={busco:false,cargando:false,error:null,resultados:[],total:0,guardados:0,local:false,avisoFalla:"",
+      tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",
+      // Pasajes que este buscador no manda con el resultado y hay que ir a
+      // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
+      fragmentos:{},fragCargando:false,parcial:false,revisados:0,aflojado:false};
+  });
+  return o;
+}
 function nuevoEstado(){
   return {tab:"buscar",q:"",modo:"exacta",excluir:"",desde:"",hasta:"",
-          rama:"",ambitos:{mza:true,nac:true,prov:false,int:true,doc:true},
+          rama:"",buscarRama:"",
+          ambitos:{mza:true,nac:true,prov:false,int:true,doc:true},
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
-          api:null,cargando:false,errorLink:null,infoDoc:null};
+          api:null,cargando:false,errorLink:null,infoDoc:null,fichaConocida:null,
+          token:null,usuario:null,authModo:"registro",authEmail:"",authError:null,authCargando:false,
+          sincronizando:false,sincronizadoEn:null,
+          indices:nuevoIndices()};
 }
 
 /* ---- Servidor de extracción (opcional) ----
@@ -827,18 +949,115 @@ function detectarServidor(){
   if(desplegado.indexOf("TU-BACKEND")===-1) candidatos.push(desplegado); // si nadie reemplazo el placeholder, ni lo intenta: ahorra el timeout de red a un dominio que sabemos que no existe
   var i=0;
   (function probar(){
-    if(i>=candidatos.length){ estado.api=false; if(estado.tab==="lector") render(); return; }
+    if(i>=candidatos.length){ estado.api=false; if(estado.tab==="lector"||estado.tab==="buscar") render(); return; }
     var base=candidatos[i++];
     var corte=setTimeout(function(){ probar(); },2500);
     try{
       fetch(base+"/salud").then(function(r){ return r.ok?r.json():null; })
       .then(function(d){
         clearTimeout(corte);
-        if(d&&d.ok){ estado.api=base; if(estado.tab==="lector") render(); }
+        if(d&&d.ok){ estado.api=base; intentarRestaurarSesion(); if(estado.tab==="lector"||estado.tab==="buscar") render(); }
         else probar();
       })["catch"](function(){ clearTimeout(corte); probar(); });
     }catch(e){ clearTimeout(corte); probar(); }
   })();
+}
+
+/* ============================================================
+   La cuenta guarda de verdad: fuentes marcadas e historial
+   ============================================================
+   Antes esto vivía solo en el localStorage de cada navegador, así que la
+   cuenta no servía para nada. Ahora, con sesión iniciada, lo guardado viaja
+   con el usuario: entrás desde otra computadora y está. Sin sesión sigue
+   funcionando igual que siempre, contra el navegador. */
+
+function cabeceraSesion(){
+  return estado.token?{authorization:"Bearer "+estado.token}:{};
+}
+
+/* Trae de la cuenta lo guardado y lo pinta. Al entrar por primera vez desde
+   un navegador que ya venía usándose sin cuenta, en vez de pisar lo local se
+   fusiona: nadie pierde lo que había marcado antes de registrarse. */
+function traerDatosDeCuenta(fusionar){
+  if(!estado.token||!estado.api) return;
+  var opciones=fusionar
+    ?{method:"POST",headers:Object.assign({"Content-Type":"application/json"},cabeceraSesion()),
+      body:JSON.stringify({fav:estado.fav,hist:estado.hist,pasajes:estado.pasajes})}
+    :{headers:cabeceraSesion()};
+  estado.sincronizando=true;
+  fetch(estado.api+"/mis-datos"+(fusionar?"/fusionar":""),opciones)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      estado.sincronizando=false;
+      if(!d||!d.ok) return;
+      estado.fav=d.fav||{};
+      estado.hist=d.hist||[];
+      estado.pasajes=d.pasajes||[];
+      estado.sincronizadoEn=d.actualizadoEn||null;
+      // También queda en el navegador: si mañana entrás sin conexión, está.
+      store.set("jedj:fav",estado.fav);
+      store.set("jedj:pasajes",estado.pasajes);
+      render();
+    })["catch"](function(){ estado.sincronizando=false; render(); });
+}
+
+/* Sube los cambios. Va con demora porque marcar tres fuentes seguidas no
+   tiene por qué ser tres viajes al servidor. */
+var _relojGuardado=null;
+function guardarEnCuenta(){
+  if(!estado.token||!estado.api) return;
+  clearTimeout(_relojGuardado);
+  _relojGuardado=setTimeout(function(){
+    fetch(estado.api+"/mis-datos",{
+      method:"PUT",
+      headers:Object.assign({"Content-Type":"application/json"},cabeceraSesion()),
+      body:JSON.stringify({fav:estado.fav,hist:estado.hist,pasajes:estado.pasajes})
+    }).then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d&&d.ok){ estado.sincronizadoEn=d.actualizadoEn||null; render(); }
+      })["catch"](function(){});
+  },800);
+}
+
+/* Si había una sesión guardada de una visita anterior, la recupera. Si el
+   token ya no vale (se cerró sesión, cambió la contraseña, etc.), lo tira. */
+function intentarRestaurarSesion(){
+  store.get("jedj:token",function(tok){
+    if(!tok||!estado.api) return;
+    estado.token=tok;
+    fetch(estado.api+"/auth/yo",{headers:{authorization:"Bearer "+tok}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d&&d.ok){ estado.usuario=d.usuario; traerDatosDeCuenta(false); }
+        else { estado.token=null; store.set("jedj:token",null); }
+        render();
+      })["catch"](function(){});
+  });
+}
+
+/* Registro y login pegan al mismo lugar, solo cambia la ruta. */
+function enviarAuth(ruta){
+  var email=(document.getElementById("auth-email")||{}).value||"";
+  var password=(document.getElementById("auth-password")||{}).value||"";
+  estado.authEmail=email;
+  if(!email||!password){ estado.authError="Completá correo y contraseña."; render(); return; }
+  estado.authCargando=true; estado.authError=null; render();
+  fetch(estado.api+"/auth/"+ruta,{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({email:email,password:password})
+  }).then(function(r){ return r.json(); })
+    .then(function(d){
+      estado.authCargando=false;
+      if(!d||!d.ok){ estado.authError=(d&&d.mensaje)||"El servidor no respondió."; render(); return; }
+      estado.token=d.token; estado.usuario=d.usuario; estado.authError=null;
+      store.set("jedj:token",d.token);
+      traerDatosDeCuenta(true); // suma lo que ya había en este navegador
+      render();
+    })["catch"](function(){
+      estado.authCargando=false;
+      estado.authError="Se cortó la comunicación con el servidor.";
+      render();
+    });
 }
 var estado=nuevoEstado();
 
@@ -851,15 +1070,18 @@ var store={
         return;
       }
     }catch(e){}
-    cb(null);
+    // Sin puente nativo (el caso normal en un navegador): localStorage de toda la vida.
+    try{ var v=localStorage.getItem(k); cb(v?JSON.parse(v):null); }catch(e){ cb(null); }
   },
   set:function(k,v){
     try{
       if(window.storage&&typeof window.storage.set==="function"){
         var p=window.storage.set(k,JSON.stringify(v));
         if(p&&p.catch)p.catch(function(){});
+        return;
       }
     }catch(e){}
+    try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){}
   }
 };
 
@@ -962,7 +1184,10 @@ function terminos(){
   var q=String(estado.q||"").trim();
   if(!q) return [];
   if(estado.modo==="exacta") return [q];
-  return palabras(q);
+  // Sin conectores: marcar cada "de" y cada "que" del fallo llenaba el
+  // lector de resaltados que no señalan nada (ver palabrasResaltables).
+  var utiles=palabrasResaltables(q);
+  return utiles.length?utiles:palabras(q);
 }
 var LETRA=/[a-z0-9]/;
 function coincidencias(texto){
@@ -1032,6 +1257,55 @@ function pasajesDe(texto,cs){
    como propuesta para confirmar, nunca como dato cerrado. */
 var MESES={enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,
            septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
+
+/* Los tribunales fechan la sentencia en letras ("a los quince días del mes
+   de julio del año dos mil veintiséis"), nunca en números: sin esto, la
+   fecha propia del fallo no se detecta y el analizador termina agarrando
+   la fecha de otro fallo citado más abajo en el texto. */
+function sinTildes(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,""); }
+
+var UNIDADES_0_9={cero:0,un:1,uno:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9};
+var ESPECIALES_10_29={
+  diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,
+  dieciocho:18,diecinueve:19,veinte:20,veintiun:21,veintiuno:21,veintidos:22,
+  veintitres:23,veinticuatro:24,veinticinco:25,veintiseis:26,veintisiete:27,
+  veintiocho:28,veintinueve:29
+};
+var DECENAS={treinta:30,cuarenta:40,cincuenta:50,sesenta:60,setenta:70,ochenta:80,noventa:90};
+
+/** "quince" -> 15, "treinta y uno" -> 31, "cuarenta y dos" -> 42. Nulo si no reconoce. */
+function numeroPalabras(frag){
+  var s=sinTildes(frag).replace(/\s+/g," ").trim();
+  var junto=s.replace(/\s/g,"");
+  if(ESPECIALES_10_29.hasOwnProperty(junto)) return ESPECIALES_10_29[junto];
+  if(UNIDADES_0_9.hasOwnProperty(s)) return UNIDADES_0_9[s];
+  if(DECENAS.hasOwnProperty(s)) return DECENAS[s];
+  var partes=s.split(" y ");
+  if(partes.length===2&&DECENAS.hasOwnProperty(partes[0])&&UNIDADES_0_9.hasOwnProperty(partes[1])){
+    return DECENAS[partes[0]]+UNIDADES_0_9[partes[1]];
+  }
+  return null;
+}
+/** "dos mil veintiséis" -> 2026, "mil novecientos noventa y ocho" -> 1998. */
+function anioPalabras(frag){
+  var s=sinTildes(frag).replace(/\s+/g," ").trim();
+  var m=s.match(/^(mil novecientos|dos mil)\s*(.*)$/);
+  if(!m) return null;
+  var base=m[1]==="dos mil"?2000:1900;
+  if(!m[2]) return base;
+  var resto=numeroPalabras(m[2]);
+  return resto===null?null:base+resto;
+}
+/** Busca la fórmula clásica de apertura ("a los N días del mes de MES de AÑO")
+    y devuelve la fecha ya armada, o null si no la encuentra. */
+function fechaDeFormulaApertura(ventana){
+  var re=/a\s+los?\s+([a-záéíóúñ]+)\s+d[ií]as?\s+(?:del?\s+mes\s+de\s+|de\s+)([a-záéíóúñ]+)\s+de(?:l)?\s+(?:año\s+)?([a-záéíóúñ\s]+?)(?:[,.;\n]|$)/i;
+  var m=ventana.match(re);
+  if(!m) return null;
+  var dia=numeroPalabras(m[1]),mes=MESES[sinTildes(m[2])],anio=anioPalabras(m[3]);
+  if(dia==null||!mes||anio==null) return null;
+  return ("0"+dia).slice(-2)+"/"+("0"+mes).slice(-2)+"/"+anio;
+}
 
 /* Jerarquía normativa: cada fuente detectada cae en una categoría fija,
    de mayor a menor jerarquía, para que el lector se lea de arriba abajo
@@ -1126,20 +1400,17 @@ var LEYES_BASE={
 function soloDigitos(s){ return String(s).replace(/\./g,"").replace(/^0+(?=\d)/,""); }
 function detectar(texto){
   var t=texto.slice(0,9000),d={},m;
-  m=t.match(/["“']?\s*([A-ZÁÉÍÓÚÑ][^"“”\n]{4,120}?\s+c\/\s+[^"“”\n]{2,120}?\s+(?:s\/|p\/)\s+[^"“”\n]{2,90}?)\s*["”']?(?:\n|\.|$)/);
+  // La identidad propia del fallo (caratula, fecha, tomo/pagina) vive casi
+  // siempre en el encabezado. Buscarla primero ahi evita el error mas comun:
+  // agarrar el dato de OTRO fallo citado mas abajo, en vez del que se esta
+  // analizando. Si no aparece cerca del encabezado, se busca en todo el
+  // texto como respaldo (salvo el tomo/pagina, ver mas abajo por que no).
+  var apertura=t.slice(0,900);
+
+  m=apertura.match(/["“']?\s*([A-ZÁÉÍÓÚÑ][^"“”\n]{4,120}?\s+c\/\s+[^"“”\n]{2,120}?\s+(?:s\/|p\/)\s+[^"“”\n]{2,90}?)\s*["”']?(?:\n|\.|$)/i)
+    ||t.match(/["“']?\s*([A-ZÁÉÍÓÚÑ][^"“”\n]{4,120}?\s+c\/\s+[^"“”\n]{2,120}?\s+(?:s\/|p\/)\s+[^"“”\n]{2,90}?)\s*["”']?(?:\n|\.|$)/i);
   if(m) d.car=m[1].replace(/\s+/g," ").trim();
-  m=t.match(/Fallos:?\s*(\d{2,3})\s*:\s*(\d{1,4})/i);
-  if(m){ d.tomo=m[1]; d.pag=m[2]; }
-  m=t.match(/(?:expte\.?|expediente|causa)\s*(?:n[°ºo.]?\s*)?[:\s]\s*([A-Z0-9][\w\-\/\.]{3,28})/i);
-  if(m) d.exp=m[1].replace(/[.,;]$/,"");
-  m=t.match(/(\d{1,2})\s+de\s+([a-záéíóú]+)\s+de\s+(\d{4})/i);
-  if(m&&MESES[m[2].toLowerCase().normalize?m[2].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""):m[2].toLowerCase()]){
-    var mes=MESES[m[2].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")];
-    d.fecha=("0"+m[1]).slice(-2)+"/"+("0"+mes).slice(-2)+"/"+m[3];
-  }else{
-    m=t.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\b/);
-    if(m) d.fecha=("0"+m[1]).slice(-2)+"/"+("0"+m[2]).slice(-2)+"/"+m[3];
-  }
+
   if(/corte\s+suprema\s+de\s+justicia\s+de\s+la\s+naci/i.test(t)){ d.trib="Corte Suprema de Justicia de la Nación"; d.tipo="csjn"; }
   else if(/suprema\s+corte\s+de\s+justicia.{0,40}mendoza|\bS\.?C\.?J\.?M\b/i.test(t)){ d.trib="Suprema Corte de Justicia de Mendoza"; d.tipo="scjm"; }
   else if(/corte\s+interamericana/i.test(t)){ d.trib="Corte Interamericana de Derechos Humanos"; d.tipo="cidh"; }
@@ -1147,6 +1418,34 @@ function detectar(texto){
   else{
     m=t.match(/((?:Excma\.?\s+)?(?:C[áa]mara|Juzgado|Tribunal)[^\n.;]{5,90})/i);
     if(m){ d.trib=m[1].replace(/\s+/g," ").trim(); d.tipo="cam"; }
+  }
+
+  // El "Fallos: tomo:pagina" es la forma en que la CSJN identifica sus
+  // propios fallos - ningun otro tribunal publica en esa coleccion. Si el
+  // documento no es de la CSJN, cualquier "Fallos: X:Y" que aparezca es casi
+  // seguro una cita a un fallo distinto citado como precedente: mejor no
+  // mostrar nada que mostrar el tomo de otra sentencia como si fuera esta.
+  if(d.tipo==="csjn"||!d.tipo){
+    m=apertura.match(/Fallos:?\s*(\d{2,3})\s*:\s*(\d{1,4})/i);
+    if(m){ d.tomo=m[1]; d.pag=m[2]; }
+  }
+
+  m=t.match(/(?:expte\.?|expediente|causa)\s*(?:n[°ºo.]?\s*)?[:\s]\s*([A-Z0-9][\w\-\/\.]{3,28})/i);
+  if(m) d.exp=m[1].replace(/[.,;]$/,"");
+
+  var fechaFormula=fechaDeFormulaApertura(apertura);
+  if(fechaFormula){
+    d.fecha=fechaFormula;
+  }else{
+    m=apertura.match(/(\d{1,2})\s+de\s+([a-záéíóú]+)\s+de\s+(\d{4})/i)
+      ||t.match(/(\d{1,2})\s+de\s+([a-záéíóú]+)\s+de\s+(\d{4})/i);
+    if(m&&MESES[sinTildes(m[2])]){
+      d.fecha=("0"+m[1]).slice(-2)+"/"+("0"+MESES[sinTildes(m[2])]).slice(-2)+"/"+m[3];
+    }else{
+      m=apertura.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\b/)
+        ||t.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\b/);
+      if(m) d.fecha=("0"+m[1]).slice(-2)+"/"+("0"+m[2]).slice(-2)+"/"+m[3];
+    }
   }
   m=t.match(/Sala\s+([IVXLC]+|\d+|[ÚU]nica|Primera|Segunda|Tercera|Cuarta)\b/i);
   if(m) d.sala="Sala "+m[1];
@@ -1282,20 +1581,52 @@ function detectar(texto){
     grupos[k].forEach(function(a){ if(grupos2[destino].indexOf(a)===-1) grupos2[destino].push(a); });
   });
   grupos=grupos2; ordenGrupos=ordenGrupos2; catDeGrupo=catDeGrupo2;
-  d.artsPorFuente=ordenGrupos.map(function(k){ return [k,grupos[k],catDeGrupo[k]]; });
-  d.arts=[].concat.apply([],ordenGrupos.map(function(k){ return grupos[k]; }));
+  /* Segunda pasada: toda ley nombrada en el texto, tenga o no un artículo
+     puntual cerca (esta regex no exige "art." al lado, solo "ley N"). Antes
+     las que no tenían artículo se listaban aparte, como una etiqueta suelta
+     al mismo nivel visual que un número de artículo — confuso, porque una
+     ley entera y un artículo puntual no son lo mismo. Ahora entran al mismo
+     agrupador que las demás: siempre título de ley + sus artículos (aunque
+     la lista de artículos quede vacía), nunca una etiqueta sin más. */
   var leyes={},reLey=/\bley(?:es)?\s*(?:provincial(?:es)?\s+|nacional(?:es)?\s+|federal(?:es)?\s+)?(?:n[°ºo.]?\s*)?((?:\d[\d\.]{2,7}(?:\s*(?:,|y|e)\s*(?:n[°ºo.]?\s*)?)?)+)/gi,mLey;
   while((mLey=reLey.exec(texto))){
+    var esProv=/provincial/i.test(mLey[0]);
     var numsLey=mLey[1].match(/\d[\d\.]{2,7}/g)||[];
-    numsLey.forEach(function(n){ leyes[etiquetaBase(n)||("Ley "+formatLeyNum(n))]=1; });
+    numsLey.forEach(function(n){
+      var etiqueta=etiquetaBase(n)||("Ley "+formatLeyNum(n));
+      if(!leyes.hasOwnProperty(etiqueta)){
+        var b=LEYES_BASE[soloDigitos(n)];
+        leyes[etiqueta]=b?b.cat:(esProv?"provincial":"leyes");
+      }
+    });
   }
-  /* Si esa ley ya tiene su propio contenedor con artículos puntuales,
-     no la repitamos como tag suelto: una sola aparición por norma. */
-  Object.keys(grupos).forEach(function(k){ delete leyes[k]; });
-  d.leyes=Object.keys(leyes);
+  Object.keys(leyes).forEach(function(k){
+    if(grupos[k]) return; // ya tiene su propio grupo con artículos detectados
+    grupos[k]=[]; ordenGrupos.push(k); catDeGrupo[k]=leyes[k];
+  });
+  d.artsPorFuente=ordenGrupos.map(function(k){ return [k,grupos[k],catDeGrupo[k]]; });
+  d.arts=[].concat.apply([],ordenGrupos.map(function(k){ return grupos[k]; }));
   var cit={},cs2=texto.match(/Fallos:?\s*\d{2,3}\s*:\s*\d{1,4}/gi)||[];
   cs2.forEach(function(a){ cit[a.replace(/\s+/g," ")]=1; });
   d.citados=Object.keys(cit);
+  return d;
+}
+/* Cuando el fallo llegó desde un buscador con robot propio (SCJM, CABA),
+   ya sabemos la carátula, el tribunal, el expediente y la fecha de la
+   fuente oficial: son mejores que cualquier adivinanza por regex sobre
+   el texto crudo, así que pisan lo que detectar() haya encontrado. Los
+   datos normativos (leyes citadas, artículos) siguen saliendo del texto
+   igual, porque de eso el índice no sabe nada. */
+function datosDoc(texto){
+  var d=detectar(texto);
+  var fc=estado.fichaConocida;
+  if(fc){
+    if(fc.tipo) d.tipo=fc.tipo;
+    if(fc.car) d.car=fc.car;
+    if(fc.trib){ d.trib=fc.trib; d.sala=""; }
+    if(fc.fecha) d.fecha=fc.fecha;
+    if(fc.exp) d.exp=fc.exp;
+  }
   return d;
 }
 function hoy(){
@@ -1321,6 +1652,7 @@ function nombreRama(id){
    ============================================================ */
 function pintarCadena(){
   var el=document.getElementById("cadena");
+  if(!el) return; // solo existe en el campo "Qué buscás" de la solapa Buscar
   var c=cadena();
   if(!c){ el.textContent="Escribí lo que buscás para armar la consulta"; return; }
   var partes=[esc(c)];
@@ -1336,7 +1668,7 @@ function pintarCadena(){
    6. Vistas
    ============================================================ */
 var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["fuentes","Fuentes"],
-          ["citas","Cómo citar"],["verificar","Verificar"],["guardados","Guardados"]];
+          ["citas","Cómo citar"],["verificar","Verificar"],["guardados","Guardados"],["cuenta","Cuenta"]];
 
 function pintarNav(){
   var n=document.getElementById("nav");
@@ -1345,17 +1677,30 @@ function pintarNav(){
   }).join("");
 }
 
+function ramasFiltradas(){
+  var q=(estado.buscarRama||"").trim().toLowerCase();
+  if(!q) return RAMAS;
+  return RAMAS.filter(function(x){ return x.n.toLowerCase().indexOf(q)!==-1; });
+}
+function listaRamasHTML(){
+  var fs=ramasFiltradas();
+  // El botón "Todas las ramas" solo tiene sentido como reset en la
+  // solapa Ramas; en Buscar sobra, ahí ya alcanza con vaciar el campo.
+  var todas=estado.tab==="buscar"?"":
+    '<button data-rama="" aria-pressed="'+(estado.rama===""?"true":"false")+'">Todas las ramas</button>';
+  return todas+(fs.length?fs.map(function(x){
+      return '<button data-rama="'+x.id+'" aria-pressed="'+(estado.rama===x.id?"true":"false")+'">'+esc(x.n)+'</button>';
+    }).join(""):'<span style="display:block;padding:6px 9px;font-size:12px;color:var(--humo);font-style:italic">Sin resultados</span>');
+}
 function pintarRail(){
   var r=document.getElementById("rail");
   var w=document.getElementById("wrap");
-  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector");
+  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta");
   if(w) w.classList.toggle("sin-rail",sinRail);
   if(sinRail){ r.innerHTML=""; return; }
-  r.innerHTML='<h2>Rama del derecho</h2><div class="rail-list">'+
-    '<button data-rama="" aria-pressed="'+(estado.rama===""?"true":"false")+'">Todas las ramas</button>'+
-    RAMAS.map(function(x){
-      return '<button data-rama="'+x.id+'" aria-pressed="'+(estado.rama===x.id?"true":"false")+'">'+esc(x.n)+'</button>';
-    }).join("")+'</div>';
+  r.innerHTML='<input type="text" id="buscarRama" class="rail-buscador" value="'+esc(estado.buscarRama)+
+    '" placeholder="Buscar rama…" autocomplete="off">'+
+    '<div class="rail-list" id="listaRamas">'+listaRamasHTML()+'</div>';
 }
 
 function fichaFuente(f){
@@ -1393,8 +1738,6 @@ function listaPorAmbito(fs){
 }
 
 function vistaBuscar(){
-  var fs=fuentesFiltradas();
-  var c=cadena();
   var ambChips=Object.keys(AMB).map(function(k){
     return '<button class="chip amb" data-act="amb" data-amb="'+k+'" aria-pressed="'+(estado.ambitos[k]?"true":"false")+'">'+esc(AMB[k].n)+'</button>';
   }).join("");
@@ -1405,7 +1748,7 @@ function vistaBuscar(){
   var sug="";
   if(estado.rama){
     var R=RAMAS.filter(function(x){return x.id===estado.rama;})[0];
-    if(R) sug='<div class="panel"><h2 style="margin-bottom:8px">Voces sugeridas · '+esc(R.n)+'</h2>'+
+    if(R) sug='<div class="panel"><h2 class="voces-tit">Voces sugeridas <span class="punto">·</span> <span class="rama-nom">'+esc(R.n)+'</span></h2>'+
       '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(v)+'</button>';}).join("")+'</div></div>';
   }
 
@@ -1415,8 +1758,15 @@ function vistaBuscar(){
     sug+
 
     '<div class="panel">'+
-      '<label class="campo"><span>Qué buscás</span>'+
-        '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off"></label>'+
+      '<div class="campo"><span>Qué buscás</span>'+
+        '<div class="fila-q">'+
+          '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off">'+
+          '<div class="cadena"><div class="cadena-in">'+
+            '<code id="cadena" aria-live="polite"></code>'+
+            '<button class="mini" data-act="copiar-cadena">Copiar</button>'+
+            '<button class="mini" data-act="limpiar">Limpiar</button>'+
+          '</div></div>'+
+        '</div></div>'+
       '<div class="campo"><span>Cómo combinar las palabras</span><div class="chips">'+modos+'</div></div>'+
       '<div class="fila">'+
         '<label class="campo"><span>Excluir palabras</span><input type="text" id="excluir" value="'+esc(estado.excluir)+'" placeholder="seguro laboral" autocomplete="off"></label>'+
@@ -1428,14 +1778,327 @@ function vistaBuscar(){
         '<button class="chip" data-act="tog-frag" aria-pressed="'+(estado.resaltarFuente?"true":"false")+'">'+
         'Resaltar la frase en la página que se abre</button></div></div>'+
       '<div class="acciones">'+
-        '<button class="btn" data-act="barrido">Buscar en todas a la vez</button>'+
+        (estado.api?FUENTES_INDICE.map(function(f){
+          return '<button class="btn" data-act="buscar-indice" data-fuente="'+f.slug+'">Buscar en '+esc(f.boton)+'</button>';
+        }).join(""):'')+
+        '<button class="btn'+(estado.api?" sec":"")+'" data-act="barrido">Buscar en todas a la vez</button>'+
         '<button class="btn sec" data-act="copiar-cadena">Copiar la consulta</button>'+
         '<button class="btn sec" data-act="limpiar">Empezar de nuevo</button>'+
       '</div>'+
     '</div>'+
-    '<p class="conteo">'+fs.length+' fuentes disponibles'+(estado.rama?" para "+esc(nombreRama(estado.rama)):"")+
-      (c?"":" · escribí algo arriba para activar la búsqueda directa")+'</p>'+
-    listaPorAmbito(fs);
+
+    (estado.api?FUENTES_INDICE.map(panelIndice).join(""):"");
+}
+
+/* Conectores que aparecen en cualquier texto jurídico. No se resaltan: en
+   "archivo de desidia" marcar cada "de" del fallo ensucia todo y no dice
+   nada. Misma lista que usa el servidor en lib/relevancia.js. */
+var VACIAS={de:1,del:1,la:1,las:1,el:1,los:1,un:1,una:1,unos:1,unas:1,
+  y:1,e:1,o:1,u:1,en:1,al:1,a:1,ante:1,con:1,sin:1,por:1,para:1,que:1,
+  se:1,su:1,sus:1,lo:1,le:1,les:1,es:1,son:1,como:1,mas:1,sobre:1,
+  entre:1,desde:1,hasta:1,segun:1,contra:1,ni:1,no:1};
+
+/* Las palabras de la consulta que vale la pena resaltar. */
+function palabrasResaltables(q){
+  return palabras(q).filter(function(w){
+    var limpia=w.replace(/["'()]/g,"");
+    if(limpia.length<3) return false;
+    try{ limpia=limpia.normalize("NFD").replace(/[̀-ͯ]/g,""); }catch(e){}
+    return !VACIAS[limpia.toLowerCase()];
+  });
+}
+
+function escRe(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g,"\\$&"); }
+
+/* ---- Resultados en vivo de los buscadores con robot propio ---- */
+function resaltarSimple(texto,q){
+  var t=esc(texto||"");
+  // Frase exacta: se marca la frase entera y nada más. Marcando palabra por
+  // palabra, "archivo desidia" resaltaba "archivo" por un lado y "desidia"
+  // por otro, como si hubieran coincidido separadas — que es justo lo que
+  // ese modo NO busca. Si la frase no está, no se resalta nada.
+  if(estado.modo==="exacta"){
+    var frase=String(q||"").replace(/["'()]/g," ").replace(/\s+/g," ").trim();
+    if(!frase) return t;
+    var reF=new RegExp("("+escRe(esc(frase)).replace(/\\?\s+/g,"\\s+")+")","ig");
+    return t.replace(reF,"<mark>$1</mark>");
+  }
+  palabrasResaltables(q).forEach(function(w){
+    var re=new RegExp("("+escRe(esc(w.replace(/["'()]/g,"")))+")","ig");
+    t=t.replace(re,"<mark>$1</mark>");
+  });
+  return t;
+}
+
+/* Cada fuente trae los campos que su buscador ofrece: Mendoza da voces y
+   sumario, CABA da carátula y secretaría pero no sumario. La ficha se
+   arma con lo que haya. */
+/* La fecha del índice viene como "27/07/2026 - Sentencia": nos quedamos
+   solo con la parte de fecha, que es la que entiende el formateador. */
+/* Mensajes de ayuda según el código de error que devuelve /api/extraer,
+   compartidos por todo lo que trae un documento al Lector. */
+var AYUDAS_ERROR_LINK={
+  DOMINIO_NO_PERMITIDO:"Agregá el dominio en server/config.js y reiniciá el servidor.",
+  PDF_ESCANEADO:"Ese PDF es una foto del papel. Pasalo por un OCR, o abrilo y copiá el texto a mano.",
+  HTML_SIN_TEXTO:"Pasa cuando el fallo está dentro de un frame o se arma con JavaScript. Abrí el enlace y pegá el texto a mano.",
+  RESPUESTA_NO_OK:"Fijate que el enlace sea el del documento y no el del buscador.",
+  TIEMPO_AGOTADO:"Los sitios judiciales se ponen lentos en horario de tribunales. Probá más tarde.",
+  RED_PRIVADA:"El servidor no descarga de direcciones internas. Está bien que pase."
+};
+
+/* Trae un documento por enlace y lo deja listo en el Lector. La usan el
+   campo "Traer el fallo", el botón "Traer texto completo" de cada resultado
+   de índice, y "Abrir en el Lector" desde un pasaje guardado — un solo
+   camino, para no repetir el manejo de error tres veces.
+   opciones.fichaConocida: metadata ya confirmada por el buscador oficial,
+     para no tener que adivinarla de nuevo con detectar() (ver datosDoc()).
+   opciones.qRestaurar / opciones.modoRestaurar: si el pasaje se guardó con
+     una búsqueda puesta, se restaura para que la cita vuelva a quedar
+     resaltada como estaba. */
+function traerDocEnLector(url,opciones){
+  opciones=opciones||{};
+  if(!url||!estado.api) return;
+  estado.cargando=true; estado.errorLink=null; estado.tab="lector";
+  if(opciones.qRestaurar!==undefined){ estado.q=opciones.qRestaurar; estado.marca=0; }
+  if(opciones.modoRestaurar) estado.modo=opciones.modoRestaurar;
+  render();
+  fetch(estado.api+"/extraer",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({url:url})
+  }).then(function(r){ return r.json(); })
+    .then(function(d){
+      estado.cargando=false;
+      if(!d||!d.ok){
+        estado.errorLink={mensaje:(d&&d.mensaje)||"El servidor no devolvió el documento.",
+                          ayuda:AYUDAS_ERROR_LINK[d&&d.codigo]||""};
+        render(); return;
+      }
+      estado.texto=d.texto; estado.fuenteDe=d.urlFinal||url; estado.infoDoc=d; estado.marca=0;
+      estado.fichaConocida=opciones.fichaConocida||null;
+      render(); window.scrollTo(0,0);
+      flash((d.desdeCache?"Traído del caché · ":"")+d.palabras.toLocaleString("es-AR")+" palabras");
+    })["catch"](function(){
+      estado.cargando=false;
+      estado.errorLink={mensaje:"Se cortó la comunicación con el servidor.",
+                        ayuda:"Fijate que la terminal siga diciendo «Interfaz http://localhost:3000»."};
+      render();
+    });
+}
+
+function fichaDesdeIndice(slug,r){
+  var fecha=r.fecha?(r.fecha.match(/\d{1,2}\/\d{1,2}\/\d{4}/)||[])[0]:"";
+  return {tipo:slug==="mendoza"?"scjm":"cam",car:r.caratula,trib:r.tribunal,
+          fecha:fecha||r.fecha,exp:r.expediente};
+}
+function fichaIndice(f,r){
+  var q=estado.q;
+  var im=estado.indices[f.slug];
+  var meta=[r.tribunal,r.secretaria,r.fecha,r.magistrados,r.expediente?"Expte. "+r.expediente:""]
+    .filter(Boolean).map(esc).join(" · ");
+  // El pasaje puede venir con el resultado (Mendoza manda el sumario) o
+  // haberse sacado del documento después (CABA — ver traerFragmentos).
+  var pasaje=r.sumario||(r.linkFallo?im.fragmentos[r.linkFallo]:"");
+  var esperando=!pasaje&&r.linkFallo&&im.fragCargando&&!im.fragmentos.hasOwnProperty(r.linkFallo);
+  return '<div class="fuente">'+
+    '<div class="f-top"><span class="cod '+f.clase+'">'+esc(f.cod)+'</span>'+
+      '<span class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</span></div>'+
+    (pasaje?'<p class="f-nota">'+resaltarSimple(pasaje,q)+'</p>':'')+
+    (esperando?'<p class="f-nota" style="opacity:.55;font-style:italic">Buscando el pasaje en el documento…</p>':'')+
+    (meta?'<p style="font-size:12px;color:var(--humo);margin:0 0 8px">'+meta+'</p>':'')+
+    (r.voces&&r.voces.length?'<div class="voces">'+r.voces.slice(0,6).map(function(v){
+      return '<span class="voz" style="cursor:default">'+esc(v)+'</span>';}).join("")+'</div>':"")+
+    '<div class="f-acc" style="margin-top:8px">'+
+      (r.linkFicha?'<a class="mini" href="'+esc(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
+      (r.linkFallo?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>':"")+
+      // Si el documento se puede traer, también se puede abrir donde vive:
+      // el enlace al sitio oficial es lo que hace citable al resultado.
+      (r.linkFallo?'<a class="mini" href="'+esc(r.linkFallo)+'" target="_blank" rel="noopener noreferrer">Abrir el original</a>':"")+
+    '</div></div>';
+}
+
+/* Va a buscar el pasaje de cada resultado que no lo traiga de fábrica.
+   Mendoza manda el sumario con cada ficha; CABA no manda nada, así que el
+   pasaje sale del documento en sí. El servidor los trae de a tandas y en
+   un solo pedido (ver routes/indice.js): pedir uno por documento quemaría
+   el límite de peticiones en una sola búsqueda. Se van pintando a medida
+   que llegan, sin bloquear la lista de resultados, que ya está en pantalla. */
+function traerFragmentos(slug,pedido){
+  var im=estado.indices[slug];
+  var qi=estado.q.trim();
+  if(!im||!qi||!estado.api) return;
+  // hasOwnProperty y no truthiness: un documento que no se pudo leer queda
+  // guardado como cadena vacía, y con truthiness volvía a entrar en la
+  // tanda siguiente para siempre — un bucle infinito contra el servidor.
+  var faltan=im.resultados.filter(function(r){
+    return r.linkFallo && !r.sumario && !im.fragmentos.hasOwnProperty(r.linkFallo);
+  }).map(function(r){ return r.linkFallo; });
+  if(!faltan.length){ im.fragCargando=false; render(); return; }
+
+  var tanda=faltan.slice(0,6);
+  im.fragCargando=true;
+  fetch(estado.api+"/indice/"+slug+"/fragmentos",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({q:qi,urls:tanda})
+  }).then(function(r){ return r.json(); })
+    .then(function(d){
+      // Si mientras tanto se disparó otra búsqueda, lo que llega es viejo.
+      if(im.pedido!==pedido) return;
+      (d&&d.fragmentos||[]).forEach(function(f){
+        im.fragmentos[f.url]=f.fragmento||"";
+      });
+      // Todo lo que se pidió queda marcado como intentado, haya vuelto o
+      // no: si el servidor frenó por límite de peticiones, la tanda
+      // siguiente pediría lo mismo y no terminaría nunca.
+      tanda.forEach(function(u){
+        if(!im.fragmentos.hasOwnProperty(u)) im.fragmentos[u]="";
+      });
+      if(d&&d.ok===false){ im.fragCargando=false; render(); return; }
+      render();
+      traerFragmentos(slug,pedido); // sigue con la tanda siguiente
+    })["catch"](function(){
+      if(im.pedido!==pedido) return;
+      tanda.forEach(function(u){
+        if(!im.fragmentos.hasOwnProperty(u)) im.fragmentos[u]="";
+      });
+      im.fragCargando=false; render();
+    });
+}
+
+/* Dispara (o repite) la búsqueda en vivo de una fuente con robot propio.
+   La usan tanto el botón "Buscar en…" como el cambio de tribunal, para que
+   tocar un chip de tribunal ya te traiga los resultados de ese tribunal en
+   vez de dejar en pantalla los de la búsqueda anterior. */
+function buscarEnFuente(slug){
+  var fCfg=FUENTES_INDICE.filter(function(x){return x.slug===slug;})[0];
+  var qi=estado.q.trim();
+  if(!fCfg) return;
+  if(!qi){ flash("Escribí algo en «Qué buscás» primero"); return; }
+  if(!estado.api){ flash("El servidor de extracción no está disponible ahora"); return; }
+  recordar(qi);
+  var imBusco=estado.indices[slug];
+  // Si esta fuente es lenta (CABA puede tardar 30s) y se dispara otra
+  // búsqueda antes de que vuelva la anterior, la respuesta vieja no debe
+  // pisar a la nueva. Un token por pedido: solo aplica si nadie más
+  // arrancó una búsqueda de esta misma fuente después.
+  var pedido=(imBusco.pedido||0)+1; imBusco.pedido=pedido;
+  imBusco.cargando=true; imBusco.error=null; render();
+  // El modo y las palabras a excluir viajan al servidor: antes se elegían
+  // acá y no cambiaban nada de la búsqueda real (ver lib/relevancia.js).
+  var cuerpo={q:qi,modo:estado.modo||"todas"};
+  if(estado.excluir.trim()) cuerpo.excluir=estado.excluir.trim();
+  if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
+  fetch(estado.api+"/indice/"+slug+"/buscar",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(cuerpo)
+  }).then(function(r){ return r.json(); })
+    .then(function(d){
+      if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
+      imBusco.cargando=false; imBusco.busco=true;
+      if(!d||!d.ok){
+        imBusco.error=(d&&d.mensaje)||"El servidor no devolvió resultados.";
+        render(); return;
+      }
+      imBusco.resultados=d.resultados||[];
+      imBusco.total=d.total||0;
+      imBusco.guardados=d.guardadosEnIndice||0;
+      imBusco.local=!!d.desdeIndiceLocal;
+      imBusco.avisoFalla=d.avisoFalla||"";
+      imBusco.parcial=!!d.totalParcial;
+      imBusco.revisados=d.revisados||0;
+      imBusco.aflojado=!!d.aflojado;
+      imBusco.fragmentos={};
+      render();
+      // Los resultados ya están en pantalla; los pasajes que esta fuente no
+      // manda se van completando atrás, sin hacer esperar a nadie.
+      if(imBusco.resultados.some(function(r){return r.linkFallo&&!r.sumario;})){
+        traerFragmentos(slug,pedido);
+      }
+      var nombreTrib=(fCfg.tribunales||[]).filter(function(t){return t.v===imBusco.tribunal;})[0];
+      var enDonde=fCfg.nombre+(nombreTrib?" · "+nombreTrib.n:"");
+      flash(imBusco.local
+        ?"El sitio oficial no respondió: mostrando "+d.resultados.length+" resultado(s) ya guardados"
+        :(d.total?d.total.toLocaleString("es-AR")+" coincidencias en "+enDonde:"Sin coincidencias en "+enDonde));
+    })["catch"](function(){
+      if(imBusco.pedido!==pedido) return;
+      imBusco.cargando=false; imBusco.busco=true;
+      imBusco.error="Se cortó la comunicación con el servidor.";
+      render();
+    });
+}
+
+function panelIndice(f){
+  var im=estado.indices[f.slug];
+  var local=im.busco&&im.local;
+  var nombreTrib=((f.tribunales||[]).filter(function(t){return t.v===im.tribunal;})[0]||{}).n;
+  var out='<div class="panel vivo"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
+    '<div class="rotulo" style="margin-top:0">'+esc(f.nombre)+(local?' · desde tu índice local':' · en vivo')+'</div>';
+
+  if(f.tribunales){
+    out+='<div class="chips" style="margin-bottom:10px">'+f.tribunales.map(function(t){
+      return '<button class="chip" data-act="indice-tribunal" data-fuente="'+f.slug+'" data-tribunal="'+t.v+
+        '" aria-pressed="'+(im.tribunal===t.v?"true":"false")+'">'+esc(t.n)+'</button>';
+    }).join("")+'</div>';
+  }
+  // CABA no filtra del lado del sitio (ver lib/indiceCaba.js): esto filtra
+  // sobre lo que ya se trajo, según la secretaría que cada resultado trae.
+  var secsPresentes=(f.slug==="caba"&&im.busco)
+    ? Array.from(new Set(im.resultados.map(function(r){return r.secretaria;}).filter(Boolean)))
+    : [];
+  if(secsPresentes.length>1){
+    out+='<div class="chips" style="margin-bottom:10px">'+secsPresentes.map(function(s){
+      return '<button class="chip" data-act="indice-secretaria" data-fuente="'+f.slug+'" data-sec="'+esc(s)+
+        '" aria-pressed="'+(im.secFiltro===s?"true":"false")+'">'+esc(SECRETARIAS_CABA[s]||s)+'</button>';
+    }).join("")+'</div>';
+  }
+
+  if(im.cargando){
+    out+='<p style="font-size:13px;color:var(--humo);margin:0">Consultando el buscador… puede tardar hasta 30 segundos: son sistemas oficiales viejos, no es que se haya colgado.</p></div>';
+    return out;
+  }
+  if(im.error){
+    out+='<div class="aviso" style="margin:0"><strong>No se pudo consultar.</strong> '+esc(im.error)+'</div></div>';
+    return out;
+  }
+  if(!im.busco){
+    out+='<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Además de armar la consulta para las bases oficiales, esta búsqueda puede traer resultados reales de '+esc(f.nombre)+', acá mismo, guardándolos de paso en tu índice local.'+
+      (f.nota?' <span style="color:var(--humo)">'+esc(f.nota)+'</span>':'')+'</p></div>';
+    return out;
+  }
+  var avisoLocal=local?'<div class="aviso" style="margin:0 0 10px"><strong>El buscador de '+esc(f.nombre)+' no respondió'+
+    (im.avisoFalla?' ('+esc(im.avisoFalla)+')':'')+'.</strong> Esto es lo que ya tenías guardado de búsquedas anteriores en tu índice local — puede estar incompleto o desactualizado. Probá de nuevo en un rato para la versión en vivo.</div>':'';
+  if(!im.resultados.length){
+    out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+
+      (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Probá con menos palabras.</p></div>';
+    return out;
+  }
+  var visibles=im.secFiltro?im.resultados.filter(function(r){return r.secretaria===im.secFiltro;}):im.resultados;
+  var nombreSec=SECRETARIAS_CABA[im.secFiltro];
+  if(!visibles.length){
+    out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Ninguno de los '+im.resultados.length+
+      ' resultados que trajo esta página es de '+esc(nombreSec||im.secFiltro)+'. Puede estar en otra página del sitio oficial.</p></div>';
+    return out;
+  }
+  out+=avisoLocal+'<p style="font-size:12.5px;color:var(--humo);margin:0 0 10px">'+
+    (nombreTrib?'<b style="color:var(--lacre)">'+esc(nombreTrib)+'</b> · ':'')+
+    (nombreSec?'<b style="color:var(--lacre)">'+esc(nombreSec)+'</b> · '+visibles.length+' de sus ':'')+
+    // Cuando el sitio de origen no sabe hacer el modo pedido, el filtro corre
+    // de nuestro lado y su contador ya no aplica: se dice cuántos se
+    // verificaron, no un número inventado. Ver lib/relevancia.js.
+    (local
+      ? im.total.toLocaleString("es-AR")+' resultado(s) guardados'
+      : (im.revisados
+          ? im.total.toLocaleString("es-AR")+' resultado(s) que coinciden de verdad'+
+            (im.parcial?' (revisamos los primeros '+im.revisados.toLocaleString("es-AR")+' del sitio; puede haber más)':'')
+          : im.total.toLocaleString("es-AR")+' coincidencias en total · mostrando las primeras '+im.resultados.length))+
+    (local?'':' · '+im.guardados.toLocaleString("es-AR")+' guardadas en tu índice local hasta ahora')+'</p>'+
+    (im.aflojado?'<div class="aviso" style="margin:0 0 10px">Ningún resultado tiene <b>todas</b> las palabras que buscaste. Estos coinciden solo con la más específica, así que revisalos con cuidado: puede que no sean del tema que buscabas.</div>':'')+
+    // El sitio de CABA no manda un resumen del fallo con cada resultado
+    // como hace Mendoza: los pasajes se sacan del documento en sí, de a
+    // tandas, mientras la lista ya está en pantalla (ver traerFragmentos).
+    (f.slug==="caba"&&im.fragCargando?'<p style="font-size:12.5px;color:var(--humo);margin:0 0 10px">Este buscador no manda un resumen con cada resultado, así que los pasajes se van sacando de cada documento — aparecen solos, de a poco.</p>':'')+
+    visibles.map(function(r){ return fichaIndice(f,r); }).join("")+
+    '</div>';
+  return out;
 }
 
 function vistaRamas(){
@@ -1471,7 +2134,7 @@ function vistaLector(){
   if(!estado.texto){
     var porLink="";
     if(estado.api){
-      porLink='<div class="panel" style="border-left:3px solid var(--acequia)">'+
+      porLink='<div class="panel vivo">'+
         '<div class="rotulo" style="margin-top:0">Opción 1 · Pegar el enlace y que lo traiga solo</div>'+
         '<label class="campo"><span>Enlace directo del fallo</span>'+
           '<input type="text" id="doc-url" placeholder="https://…  (el enlace del documento, no el del buscador)" autocomplete="off"></label>'+
@@ -1484,20 +2147,33 @@ function vistaLector(){
           ? '<div class="aviso" style="margin:12px 0 0"><strong>No se pudo traer.</strong> '+esc(estado.errorLink.mensaje)+
             (estado.errorLink.ayuda?'<br><span style="color:var(--humo);font-size:12.5px">'+esc(estado.errorLink.ayuda)+'</span>':'')+'</div>'
           : '')+
+        '</div>'+
+        // Subir el archivo desde la computadora: sirve para lo que no tiene
+        // enlace público (lo que te mandaron por mail, lo que bajaste antes).
+        '<div class="panel vivo">'+
+          '<div class="rotulo" style="margin-top:0">Opción 2 · Subir el archivo desde tu computadora</div>'+
+          '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Un PDF o un .doc que ya tengas guardado: el que te mandaron por mail, el que bajaste de una base oficial. '+
+          'Se lee en el momento y no queda guardado en ningún lado.</p>'+
+          '<div class="acciones" style="margin-top:4px">'+
+            '<button class="btn" data-act="elegir-archivo"'+(estado.cargando?" disabled":"")+'>'+
+              (estado.cargando?"Leyendo…":"Elegir archivo")+'</button>'+
+            '<span class="pos" style="align-self:center">PDF y .doc de Word</span>'+
+          '</div>'+
+          '<input type="file" id="doc-archivo" accept=".pdf,.doc,.htm,.html,.txt,application/pdf,application/msword" style="display:none">'+
         '</div>';
     }else if(estado.api===false){
-      porLink='<div class="panel" style="border-left:3px solid var(--linea)">'+
+      porLink='<div class="panel inactivo">'+
         '<div class="rotulo" style="margin-top:0">Traer por enlace · no disponible ahora</div>'+
         '<p style="font-size:13.5px;margin:0;color:var(--humo)">El servidor de extracción no está corriendo, así que la carga automática por enlace está apagada. '+
         'Todo lo demás funciona igual. Si querés activarla, levantá el servidor con <code>npm start</code> y recargá esta página.</p></div>';
     }
 
     return '<div class="aviso"><strong>Traé el fallo acá y vas a verlo con tu búsqueda marcada.</strong> '+
-      'Hay dos caminos y llegan al mismo lugar: pegar el enlace, o pegar el texto a mano. '+
+      'Hay tres caminos y llegan al mismo lugar: pegar el enlace, subir el archivo, o pegar el texto a mano. '+
       'El lector trabaja dentro de tu navegador y nunca inventa contenido: lo que leés es el documento.</div>'+
       porLink+
       '<div class="panel">'+
-        '<div class="rotulo" style="margin-top:0">'+(estado.api?"Opción 2 · Pegar el texto a mano":"Pegar el texto del fallo")+'</div>'+
+        '<div class="rotulo" style="margin-top:0">'+(estado.api?"Opción 3 · Pegar el texto a mano":"Pegar el texto del fallo")+'</div>'+
         '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Abrí la sentencia en la base oficial, seleccioná todo (Ctrl+A), copiá (Ctrl+C) y pegá acá. '+
         'Este camino funciona siempre, incluso cuando el enlace no se puede descargar.</p>'+
         '<label class="campo"><span>Texto de la sentencia o del sumario</span>'+
@@ -1558,7 +2234,6 @@ function ordenArt(a,b){
   var na=numDeCadena(a),nb=numDeCadena(b);
   return na!==nb?na-nb:a.localeCompare(b);
 }
-function ordenLey(a,b){ return numDeCadena(a)-numDeCadena(b); }
 var RANGO_FUENTE={
   "CCyC (vigente)":10,"Código Civil (derogado)":11,"Código de Comercio (derogado)":12,"Código Penal":13,
   "LCT":14,"LDC":15,"Ley de Seguros (LS)":16,
@@ -1570,7 +2245,7 @@ function rangoDeFuente(label){
 
 function pintarLector(){
   if(estado.tab!=="lector"||!estado.texto) return;
-  var texto=estado.texto,cs=coincidencias(texto),d=detectar(texto);
+  var texto=estado.texto,cs=coincidencias(texto),d=datosDoc(texto);
   if(estado.marca>=cs.length) estado.marca=0;
   conteoLector(cs);
 
@@ -1588,7 +2263,9 @@ function pintarLector(){
 
     var htmlTop=(top.length||d.car||infoDer)?(
       '<div class="meta-top">'+
-        (d.car?'<div class="meta-car">'+esc(d.car)+'</div>':"")+
+        (d.car?'<div class="meta-car">'+esc(d.car)+
+          (estado.fichaConocida?' <span style="font-size:11px;font-weight:600;color:var(--acequia)">· verificado en el buscador oficial</span>':"")+
+          '</div>':"")+
         (top.length||infoDer?'<div class="meta-fila">'+
           '<div class="izq">'+top.map(function(x){ return '<b>'+esc(x[0])+':</b> '+esc(x[1]); }).join(' <span class="sep">·</span> ')+'</div>'+
           (infoDer?'<div class="der">'+infoDer+'</div>':"")+
@@ -1636,10 +2313,9 @@ function pintarLector(){
       bloques+='<div class="meta-cat">Códigos de fondo</div>';
       porCat.fondo.forEach(function(g){ bloques+=bloqueNorma(g); });
     }
-    if(porCat.leyes.length||(d.leyes&&d.leyes.length)){
+    if(porCat.leyes.length){
       bloques+='<div class="meta-cat">Leyes nacionales</div>';
       porCat.leyes.forEach(function(g){ bloques+=bloqueNorma(g); });
-      if(d.leyes&&d.leyes.length) bloques+=bloqueTags(d.leyes.slice().sort(ordenLey));
     }
     if(porCat.provincial.length){
       bloques+='<div class="meta-cat">Leyes provinciales y códigos procesales</div>';
@@ -1715,7 +2391,7 @@ function formatoCita(tipo,c){
   return (c.trib||"[tribunal]")+", "+C+(c.exp?", expte. n.º "+c.exp:"")+(c.fecha?", sent. del "+c.fecha:"")+".";
 }
 function citaDelDoc(){
-  var d=detectar(estado.texto||"");
+  var d=datosDoc(estado.texto||"");
   var c={car:d.car,trib:d.tipo==="scjm"?(d.sala||""):(d.trib||""),fecha:d.fecha,tomo:d.tomo,pag:d.pag,exp:d.exp};
   return formatoCita(d.tipo||"cam",c);
 }
@@ -1797,9 +2473,18 @@ function vistaGuardados(){
     h+='<div class="acciones" style="margin:0 0 12px;padding:0;border:0">'+
        '<button class="btn" data-act="pasajes-copiar">Copiar los '+estado.pasajes.length+'</button>'+
        '<button class="btn sec" data-act="pasajes-borrar">Vaciar</button></div>'+
-       estado.pasajes.map(function(p){
+       estado.pasajes.map(function(p,i){
+         // El pasaje no es solo la cita: tiene que llevar de vuelta al
+         // fallo. Sin url (se pegó el texto a mano, sin enlace) no hay
+         // adónde volver, y se dice en vez de mostrar botones que no van a
+         // andar.
          return '<div class="pasaje"><div class="txt" style="white-space:pre-wrap">'+esc(p.t)+'</div>'+
-                '<div class="acc"><span class="pos">búsqueda: '+esc(p.r||"—")+'</span></div></div>';
+                '<div class="acc"><span class="pos">búsqueda: '+esc(p.r||"—")+'</span>'+
+                (p.url
+                  ?'<a class="mini" href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer">Ver el original</a>'+
+                   '<button class="mini" data-act="pasaje-a-lector" data-i="'+i+'">Abrir en el Lector</button>'
+                  :'<span class="pos" style="opacity:.6">pegado a mano · sin enlace de origen</span>')+
+                '</div></div>';
        }).join("");
   }
   h+='</div>';
@@ -1817,6 +2502,55 @@ function vistaGuardados(){
   return h;
 }
 
+function vistaCuenta(){
+  if(estado.usuario){
+    var nFav=Object.keys(estado.fav).filter(function(k){return estado.fav[k];}).length;
+    var cuando=estado.sincronizadoEn?new Date(estado.sincronizadoEn):null;
+    return '<div class="aviso"><strong>Tu cuenta guarda tu trabajo.</strong> Las fuentes que marcás y tus búsquedas recientes quedan acá, no en este navegador: '+
+        'entrás desde otra computadora con el mismo correo y están igual.</div>'+
+      '<div class="panel">'+
+        '<label class="campo"><span>Correo electrónico</span>'+
+          '<div style="font-family:var(--serif);font-size:17px">'+esc(estado.usuario.email)+'</div></label>'+
+        '<div class="chips" style="margin-bottom:16px">'+
+          '<span class="chip" style="cursor:default">'+nFav+' fuente'+(nFav===1?'':'s')+' guardada'+(nFav===1?'':'s')+'</span>'+
+          '<span class="chip" style="cursor:default">'+estado.hist.length+' búsqueda'+(estado.hist.length===1?'':'s')+' recordada'+(estado.hist.length===1?'':'s')+'</span>'+
+        '</div>'+
+        '<p style="font-size:12.5px;color:var(--humo);margin:0 0 16px">'+
+          (estado.sincronizando?'Sincronizando…'
+            :(cuando?'Guardado en tu cuenta a las '+cuando.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})+
+                     ' del '+cuando.toLocaleDateString("es-AR")+'.'
+                   :'Todavía no guardaste nada. Marcá una fuente en Buscar y va a aparecer acá.'))+'</p>'+
+        '<div class="acciones">'+
+          '<button class="btn sec" data-act="auth-logout"'+(estado.authCargando?" disabled":"")+'>'+
+            (estado.authCargando?"Un momento…":"Cerrar sesión")+'</button>'+
+        '</div>'+
+        '<p style="font-size:12px;color:var(--humo);margin:14px 0 0">Al cerrar sesión, lo guardado desaparece de esta pantalla pero queda en tu cuenta: '+
+        'volvés a entrar y está. Sirve para cuando usás una computadora prestada.</p>'+
+      '</div>';
+  }
+  var esRegistro=estado.authModo!=="login";
+  return '<div class="aviso"><strong>'+(esRegistro?"Creá tu cuenta.":"Iniciá sesión.")+
+      '</strong> Sirve para que las fuentes que marcás y tus búsquedas recientes dejen de vivir en este navegador y pasen a tu cuenta: '+
+      'las tenés igual desde el estudio, desde casa o desde el teléfono.'+
+      (esRegistro?' Lo que ya tengas guardado acá no se pierde: se suma.':'')+'</div>'+
+    '<div class="panel" style="max-width:420px">'+
+      '<div class="chips" style="margin-bottom:18px">'+
+        '<button class="chip" data-act="auth-modo" data-modo="registro" aria-pressed="'+(esRegistro?"true":"false")+'">Crear cuenta</button>'+
+        '<button class="chip" data-act="auth-modo" data-modo="login" aria-pressed="'+(!esRegistro?"true":"false")+'">Ya tengo cuenta</button>'+
+      '</div>'+
+      (estado.authError?'<div class="aviso" style="margin-bottom:14px"><strong>No se pudo.</strong> '+esc(estado.authError)+'</div>':'')+
+      '<label class="campo"><span>Correo electrónico</span>'+
+        '<input type="email" id="auth-email" value="'+esc(estado.authEmail)+'" autocomplete="username" placeholder="vos@ejemplo.com"></label>'+
+      '<label class="campo"><span>Contraseña</span>'+
+        '<input type="password" id="auth-password" autocomplete="'+(esRegistro?"new-password":"current-password")+
+        '" placeholder="'+(esRegistro?"Mínimo 8 caracteres":"Tu contraseña")+'"></label>'+
+      '<div class="acciones">'+
+        '<button class="btn" data-act="'+(esRegistro?"auth-registro":"auth-login")+'"'+(estado.authCargando?" disabled":"")+'>'+
+          (estado.authCargando?"Un momento…":(esRegistro?"Crear cuenta":"Iniciar sesión"))+'</button>'+
+      '</div>'+
+    '</div>';
+}
+
 /* ============================================================
    7. Render
    ============================================================ */
@@ -1826,7 +2560,8 @@ function render(){
     pintarRail();
     var v=document.getElementById("vista");
     var f={buscar:vistaBuscar,lector:vistaLector,ramas:vistaRamas,fuentes:vistaFuentes,
-           citas:vistaCitas,verificar:vistaVerificar,guardados:vistaGuardados}[estado.tab]||vistaBuscar;
+           citas:vistaCitas,verificar:vistaVerificar,guardados:vistaGuardados,
+           cuenta:vistaCuenta}[estado.tab]||vistaBuscar;
     v.innerHTML=f();
     if(estado.tab==="lector") pintarLector();
     pintarCadena();
@@ -1873,13 +2608,68 @@ document.addEventListener("click",function(ev){
     var id=b.getAttribute("data-id");
     estado.fav[id]=!estado.fav[id];
     store.set("jedj:fav",estado.fav);
+    guardarEnCuenta(); // con sesión iniciada, también queda en la cuenta
     render(); return;
+  }
+  if(act==="auth-modo"){ estado.authModo=b.getAttribute("data-modo"); estado.authError=null; render(); return; }
+  if(act==="auth-registro"||act==="auth-login"){
+    if(!estado.api){ flash("El servidor no está disponible ahora"); return; }
+    enviarAuth(act==="auth-registro"?"registro":"login");
+    return;
+  }
+  if(act==="auth-logout"){
+    var tok=estado.token;
+    estado.authCargando=true; render();
+    fetch(estado.api+"/auth/logout",{method:"POST",headers:{authorization:"Bearer "+tok}})
+      ["catch"](function(){})
+      .then(function(){
+        estado.authCargando=false; estado.token=null; estado.usuario=null;
+        store.set("jedj:token",null);
+        // Lo traído de la cuenta se va con la sesión: si esto es una
+        // computadora prestada, no queda a la vista de quien entre después.
+        estado.fav={}; estado.hist=[]; estado.pasajes=[]; estado.sincronizadoEn=null;
+        store.set("jedj:fav",{}); store.set("jedj:pasajes",[]);
+        render();
+      });
+    return;
   }
   if(act==="google"){
     var c=cadena();
     if(!c){ flash("Escribí algo en «Qué buscás» primero"); return; }
     recordar(c);
     window.open(urlGoogleSitio(b.getAttribute("data-dom")),"_blank","noopener");
+    return;
+  }
+  if(act==="indice-tribunal"){
+    var slugT=b.getAttribute("data-fuente");
+    estado.indices[slugT].tribunal=b.getAttribute("data-tribunal");
+    // Si ya habías buscado, cambiar de tribunal repite la búsqueda sola —
+    // si no, cambiar el chip no parece hacer nada hasta tocar "Buscar" de nuevo.
+    if(estado.indices[slugT].busco && estado.q.trim()) buscarEnFuente(slugT);
+    else render();
+    return;
+  }
+  if(act==="indice-secretaria"){
+    var slugS=b.getAttribute("data-fuente"), sec=b.getAttribute("data-sec");
+    var imS=estado.indices[slugS];
+    // Filtro sobre lo ya traído, no vuelve a pedirle nada al sitio — tocar
+    // la misma otra vez la saca (vuelve a mostrar todas las secretarías).
+    imS.secFiltro=(imS.secFiltro===sec)?"":sec;
+    render(); return;
+  }
+  if(act==="buscar-indice"){
+    buscarEnFuente(b.getAttribute("data-fuente"));
+    return;
+  }
+  if(act==="traer-indice-fallo"){
+    var linkIdx=b.getAttribute("data-url");
+    var slugIdx=b.getAttribute("data-fuente");
+    // La ficha ya vino con carátula, tribunal, expediente y fecha directo
+    // del buscador oficial: la guardamos para no tener que adivinarla de
+    // nuevo con detectar() sobre el texto crudo (ver datosDoc()).
+    var imIdx=estado.indices[slugIdx];
+    var fichaIdx=(imIdx&&imIdx.resultados||[]).filter(function(x){return x.linkFallo===linkIdx;})[0];
+    traerDocEnLector(linkIdx,{fichaConocida:fichaIdx?fichaDesdeIndice(slugIdx,fichaIdx):null});
     return;
   }
   if(act==="barrido"){
@@ -1912,38 +2702,12 @@ document.addEventListener("click",function(ev){
     var iu=document.getElementById("doc-url");
     var link=iu?iu.value.trim():"";
     if(!link){ flash("Pegá el enlace del fallo"); return; }
-    estado.cargando=true; estado.errorLink=null; render();
-    var AYUDAS={
-      DOMINIO_NO_PERMITIDO:"Agregá el dominio en server/config.js y reiniciá el servidor.",
-      PDF_ESCANEADO:"Ese PDF es una foto del papel. Pasalo por un OCR, o abrilo y copiá el texto con la opción 2.",
-      HTML_SIN_TEXTO:"Pasa cuando el fallo está dentro de un frame o se arma con JavaScript. Usá la opción 2: abrí el enlace y pegá el texto.",
-      RESPUESTA_NO_OK:"Fijate que el enlace sea el del documento y no el del buscador.",
-      TIEMPO_AGOTADO:"Los sitios judiciales se ponen lentos en horario de tribunales. Probá más tarde.",
-      RED_PRIVADA:"El servidor no descarga de direcciones internas. Está bien que pase."
-    };
-    fetch(estado.api+"/extraer",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({url:link})
-    }).then(function(r){ return r.json(); })
-      .then(function(d){
-        estado.cargando=false;
-        if(!d||!d.ok){
-          estado.errorLink={mensaje:(d&&d.mensaje)||"El servidor no devolvió el documento.",
-                            ayuda:AYUDAS[d&&d.codigo]||""};
-          render(); return;
-        }
-        estado.texto=d.texto;
-        estado.fuenteDe=d.urlFinal||link;
-        estado.infoDoc=d;
-        estado.marca=0;
-        render(); window.scrollTo(0,0);
-        flash((d.desdeCache?"Traído del caché · ":"")+d.palabras.toLocaleString("es-AR")+" palabras");
-      })["catch"](function(){
-        estado.cargando=false;
-        estado.errorLink={mensaje:"Se cortó la comunicación con el servidor.",
-                          ayuda:"Fijate que la terminal siga diciendo «Interfaz http://localhost:3000»."};
-        render();
-      });
+    traerDocEnLector(link);
+    return;
+  }
+  if(act==="elegir-archivo"){
+    var inpArch=document.getElementById("doc-archivo");
+    if(inpArch) inpArch.click();
     return;
   }
   if(act==="analizar"){
@@ -1951,10 +2715,10 @@ document.addEventListener("click",function(ev){
     var txt=ta?ta.value:"";
     if(!txt||txt.trim().length<40){ flash("Pegá el texto del fallo primero"); return; }
     if(txt.length>2000000){ txt=txt.slice(0,2000000); flash("El fallo era enorme: se cargaron los primeros 2 millones de caracteres"); }
-    estado.texto=txt; estado.fuenteDe=de?de.value.trim():""; estado.marca=0;
+    estado.texto=txt; estado.fuenteDe=de?de.value.trim():""; estado.marca=0; estado.fichaConocida=null;
     render(); window.scrollTo(0,0); return;
   }
-  if(act==="doc-otro"){ estado.texto=""; estado.fuenteDe=""; estado.marca=0; estado.infoDoc=null; estado.errorLink=null; render(); window.scrollTo(0,0); return; }
+  if(act==="doc-otro"){ estado.texto=""; estado.fuenteDe=""; estado.marca=0; estado.infoDoc=null; estado.fichaConocida=null; estado.errorLink=null; render(); window.scrollTo(0,0); return; }
   if(act==="marca-sig"||act==="marca-ant"){
     var cs2=coincidencias(estado.texto),total=Math.min(cs2.length,TOPE_MARCAS);
     if(!total){ flash("No hay coincidencias para recorrer"); return; }
@@ -1968,7 +2732,7 @@ document.addEventListener("click",function(ev){
             bp.textContent=estado.parcial?"Palabra parcial: sí":"Palabra parcial: no"; }
     return; }
   if(act==="meta-a-cita"){
-    var dd=detectar(estado.texto||"");
+    var dd=datosDoc(estado.texto||"");
     estado.tab="citas"; render();
     function pon(id,v){ var e=document.getElementById(id); if(e&&v) e.value=v; }
     pon("c-tipo",dd.tipo||"cam"); pon("c-car",dd.car); pon("c-trib",dd.sala||dd.trib);
@@ -1984,14 +2748,30 @@ document.addEventListener("click",function(ev){
     if(act==="pas-copiar"){ copiar(p.txt); return; }
     var bloque=citaDelDoc()+"\n«"+p.txt+"»\n(consultado el "+hoy()+(estado.fuenteDe?" en "+estado.fuenteDe:"")+")";
     if(act==="pas-cita"){ copiar(bloque); return; }
-    estado.pasajes=[{t:bloque,r:cadena()}].concat(estado.pasajes).slice(0,60);
+    // Guarda de dónde salió (para "Ver el original" y "Abrir en el Lector")
+    // y con qué búsqueda estaba resaltado (para que, al reabrirlo, la cita
+    // vuelva a marcarse igual). Un pasaje pegado a mano sin URL de origen
+    // guarda url:"" — no hay adónde volver, y la vista lo dice.
+    estado.pasajes=[{t:bloque,r:cadena(),url:estado.fuenteDe||"",q:estado.q,modo:estado.modo}]
+      .concat(estado.pasajes).slice(0,60);
+    store.set("jedj:pasajes",estado.pasajes);
+    guardarEnCuenta();
     flash("Pasaje guardado · "+estado.pasajes.length+" en total");
     return;
   }
   if(act==="pasajes-copiar"){
     copiar(estado.pasajes.map(function(x){return x.t;}).join("\n\n———\n\n")); return;
   }
-  if(act==="pasajes-borrar"){ estado.pasajes=[]; render(); return; }
+  if(act==="pasajes-borrar"){
+    estado.pasajes=[]; store.set("jedj:pasajes",[]); guardarEnCuenta(); render(); return;
+  }
+  if(act==="pasaje-a-lector"){
+    var pl=estado.pasajes[parseInt(b.getAttribute("data-i"),10)];
+    if(!pl){ flash("No pude recuperar ese pasaje"); return; }
+    if(!pl.url){ flash("Este pasaje se pegó a mano: no tiene un enlace de origen al que volver."); return; }
+    traerDocEnLector(pl.url,{qRestaurar:pl.q,modoRestaurar:pl.modo});
+    return;
+  }
   if(act==="tog-frag"){ estado.resaltarFuente=!estado.resaltarFuente; render(); return; }
 },false);
 
@@ -2005,9 +2785,56 @@ document.addEventListener("input",function(ev){
       else { clearTimeout(window._tl); window._tl=setTimeout(pintarLector,170); }
     }
   }
+  else if(id==="buscarRama"){
+    estado.buscarRama=ev.target.value;
+    var lr=document.getElementById("listaRamas");
+    if(lr) lr.innerHTML=listaRamasHTML();
+  }
+  else if(id==="auth-email"){estado.authEmail=ev.target.value;}
   else if(id==="excluir"){estado.excluir=ev.target.value;pintarCadena();}
   else if(id==="desde"){estado.desde=ev.target.value;pintarCadena();}
   else if(id==="hasta"){estado.hasta=ev.target.value;pintarCadena();}
+},false);
+
+/* Archivo elegido en el Lector: se manda tal cual al servidor, que decide
+   como leerlo por la firma de los bytes (PDF o .doc), no por la extensión.
+   El archivo no se guarda en ningún lado: se lee y vuelve como texto. */
+document.addEventListener("change",function(ev){
+  if(!ev.target||ev.target.id!=="doc-archivo") return;
+  var arch=ev.target.files&&ev.target.files[0];
+  if(!arch) return;
+  ev.target.value=""; // permite volver a elegir el mismo archivo
+  if(!estado.api){ flash("El servidor de extracción no está disponible ahora"); return; }
+
+  estado.cargando=true; estado.errorLink=null; render();
+  fetch(estado.api+"/extraer-archivo",{
+    method:"POST",
+    headers:{"Content-Type":arch.type||"application/octet-stream",
+             "X-Nombre-Archivo":arch.name.replace(/[^\x20-\x7E]/g,"")},
+    body:arch
+  }).then(function(r){ return r.json(); })
+    .then(function(d){
+      estado.cargando=false;
+      if(!d||!d.ok){
+        estado.errorLink={mensaje:(d&&d.mensaje)||"No se pudo leer el archivo.",
+          ayuda:(d&&d.codigo)==="PDF_ESCANEADO"
+            ?"Ese PDF es una foto del papel, no tiene texto adentro. Pasalo por un OCR, o copiá el texto a mano."
+            :"Se leen PDF y .doc de Word. Si es otro formato, abrilo y pegá el texto a mano."};
+        render(); return;
+      }
+      estado.texto=d.texto;
+      estado.fuenteDe=""; // no hay enlace: el origen es un archivo propio
+      estado.infoDoc=d;
+      estado.fichaConocida=null;
+      estado.marca=0;
+      render(); window.scrollTo(0,0);
+      flash(arch.name+" · "+d.palabras.toLocaleString("es-AR")+" palabras");
+    })["catch"](function(){
+      estado.cargando=false;
+      estado.errorLink={mensaje:"Se cortó la comunicación con el servidor.",
+                        ayuda:"Si el archivo es muy grande puede haberse pasado del límite."};
+      render();
+    });
 },false);
 
 /* Enter: en Buscar lanza el barrido, en el Lector salta a la coincidencia siguiente */
@@ -2027,6 +2854,7 @@ document.addEventListener("keydown",function(ev){
 function recordar(q){
   if(!q) return;
   estado.hist=[q].concat(estado.hist.filter(function(x){return x!==q;})).slice(0,20);
+  guardarEnCuenta();
 }
 
 function armarCita(){
@@ -2049,6 +2877,13 @@ store.get("jedj:fav",function(v){
   estado.fav=v;
   var activo=document.activeElement;
   if(activo&&["INPUT","SELECT","TEXTAREA"].indexOf(activo.tagName)!==-1) return;
+  render();
+});
+store.get("jedj:pasajes",function(v){
+  if(!Array.isArray(v)||!v.length) return;
+  estado.pasajes=v;
+  var activo2=document.activeElement;
+  if(activo2&&["INPUT","SELECT","TEXTAREA"].indexOf(activo2.tagName)!==-1) return;
   render();
 });
 

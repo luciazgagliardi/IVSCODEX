@@ -1,17 +1,17 @@
 /**
  * Rutas de la API.
  *
- *   POST   /api/extraer      { url, refrescar? }  -> texto del documento
- *   GET    /api/salud                             -> estado del servidor
- *   GET    /api/dominios                          -> lista blanca vigente
- *   DELETE /api/cache                             -> vacia el cache
+ *   POST   /api/extraer          { url, refrescar? }  -> texto del documento
+ *   POST   /api/extraer-archivo  bytes del archivo    -> texto del documento
+ *   GET    /api/salud                                 -> estado del servidor
+ *   GET    /api/dominios                              -> lista blanca vigente
+ *   DELETE /api/cache                                 -> vacia el cache
  */
 
 import express from 'express';
-import { descargar, aTexto, dominioHabilitado } from '../lib/descargador.js';
-import { extraerHtml } from '../lib/extraerHtml.js';
-import { extraerPdf } from '../lib/extraerPdf.js';
-import { leerCache, escribirCache, vaciarCache } from '../lib/cache.js';
+import { dominioHabilitado } from '../lib/descargador.js';
+import { obtenerDocumento, extraerDesdeBuffer } from '../lib/documento.js';
+import { vaciarCache } from '../lib/cache.js';
 import { errores, ErrorApp } from '../lib/errores.js';
 import {
   DOMINIOS_PERMITIDOS,
@@ -23,82 +23,74 @@ import {
 
 export const router = express.Router();
 
-/** Firma del contenido segun cabecera y bytes iniciales. */
-function detectarTipo(buffer, contentType) {
-  const ct = (contentType || '').toLowerCase();
-  const magia = buffer.subarray(0, 5).toString('latin1');
-
-  if (magia === '%PDF-') return 'pdf';           // la firma manda sobre la cabecera
-  if (ct.includes('application/pdf')) return 'pdf';
-  if (ct.includes('html') || ct.includes('xhtml')) return 'html';
-  if (ct.includes('text/plain')) return 'texto';
-  if (ct.includes('xml')) return 'html';
-
-  // Sin cabecera util: miramos si parece HTML.
-  const cabeza = buffer.subarray(0, 1024).toString('latin1').toLowerCase();
-  if (cabeza.includes('<html') || cabeza.includes('<!doctype html')) return 'html';
-  return null;
-}
-
 router.post('/extraer', async (req, res, next) => {
   try {
     const { url, refrescar } = req.body || {};
-    if (!url) throw errores.urlFaltante();
-
     const arranque = Date.now();
-
-    // 1. Cache
-    if (!refrescar) {
-      const guardado = await leerCache(url);
-      if (guardado) {
-        return res.json({ ...guardado, ok: true, desdeCache: true, ms: Date.now() - arranque });
-      }
-    }
-
-    // 2. Descarga (valida esquema, dominio, DNS y redirecciones)
-    const { buffer, contentType, urlFinal, saltos } = await descargar(url);
-
-    // 3. Extraccion segun tipo
-    const tipo = detectarTipo(buffer, contentType);
-    let resultado;
-
-    if (tipo === 'pdf') {
-      resultado = await extraerPdf(buffer);
-    } else if (tipo === 'html') {
-      resultado = extraerHtml(aTexto(buffer, contentType), urlFinal);
-    } else if (tipo === 'texto') {
-      const t = aTexto(buffer, contentType).trim();
-      if (t.length < 120) throw errores.htmlSinTexto();
-      resultado = { titulo: '', texto: t, metodo: 'texto-plano' };
-    } else {
-      throw errores.tipoNoSoportado(contentType);
-    }
-
-    const salida = {
-      ok: true,
-      url,
-      urlFinal,
-      redirecciones: saltos.length - 1,
-      tipo,
-      titulo: resultado.titulo || '',
-      texto: resultado.texto,
-      caracteres: resultado.texto.length,
-      palabras: resultado.texto.split(/\s+/).filter(Boolean).length,
-      paginas: resultado.paginas || null,
-      metodo: resultado.metodo,
-      bytesDescargados: buffer.length,
-      obtenidoEn: new Date().toISOString(),
-      desdeCache: false,
-    };
-
-    // 4. Cache (si falla, no le arruina la respuesta a nadie)
-    escribirCache(url, salida).catch(() => {});
-
+    const salida = await obtenerDocumento(url, { refrescar });
     res.json({ ...salida, ms: Date.now() - arranque });
   } catch (e) {
     next(e);
   }
 });
+
+/**
+ * Lee un archivo que la persona sube desde su computadora.
+ *
+ * Llega como bytes crudos en el cuerpo (express.raw, sin dependencias
+ * nuevas: no hace falta multipart para un unico archivo). El nombre viaja
+ * en la cabecera X-Nombre-Archivo solo para poder nombrarlo en la respuesta
+ * —para decidir como leerlo mandan los bytes, no la extension.
+ *
+ * No se cachea: el cache va por URL y aca no hay ninguna. Tampoco se
+ * guarda el archivo en el servidor; se lee en memoria y se devuelve el
+ * texto.
+ */
+router.post(
+  '/extraer-archivo',
+  express.raw({ type: () => true, limit: MAX_BYTES }),
+  async (req, res, next) => {
+    try {
+      const arranque = Date.now();
+      const crudo = req.body;
+      if (!Buffer.isBuffer(crudo) || !crudo.length) throw errores.archivoVacio();
+
+      const nombre = String(req.get('X-Nombre-Archivo') || '').slice(0, 200);
+
+      let resultado;
+      try {
+        resultado = await extraerDesdeBuffer(crudo, req.get('Content-Type') || '');
+      } catch (e) {
+        // "El servidor devolvió tal tipo" no tiene sentido cuando el archivo
+        // lo puso la persona: acá el problema es el archivo que eligió.
+        if (e?.codigo === 'TIPO_NO_SOPORTADO') throw errores.archivoNoSoportado(nombre);
+        throw e;
+      }
+
+      res.json({
+        ok: true,
+        url: '',
+        urlFinal: '',
+        origen: 'archivo',
+        nombreArchivo: nombre,
+        redirecciones: 0,
+        tipo: resultado.tipo,
+        titulo: resultado.titulo || '',
+        texto: resultado.texto,
+        caracteres: resultado.texto.length,
+        palabras: resultado.texto.split(/\s+/).filter(Boolean).length,
+        paginas: resultado.paginas || null,
+        metodo: resultado.metodo,
+        bytesDescargados: crudo.length,
+        obtenidoEn: new Date().toISOString(),
+        desdeCache: false,
+        ms: Date.now() - arranque,
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+);
 
 router.get('/salud', (_req, res) => {
   res.json({

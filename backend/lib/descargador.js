@@ -130,8 +130,12 @@ async function verificarDNS(host) {
 
 const ultimoPedido = new Map();
 
-/** Espera lo necesario para no golpear dos veces seguidas el mismo host. */
-async function esperarTurno(host) {
+/**
+ * Espera lo necesario para no golpear dos veces seguidas el mismo host.
+ * Se exporta para que otros clientes HTTP del backend (ej. lib/indiceMza.js)
+ * respeten la misma cortesía sin duplicar la lógica.
+ */
+export async function esperarTurno(host) {
   const previo = ultimoPedido.get(host) || 0;
   const falta = previo + ESPERA_POR_HOST_MS - Date.now();
   if (falta > 0) await new Promise((r) => setTimeout(r, falta));

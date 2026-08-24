@@ -127,10 +127,87 @@ export const errores = {
       422
     ),
 
+  archivoVacio: () =>
+    new ErrorApp(
+      'ARCHIVO_VACIO',
+      'No llegó ningún archivo. Elegí un PDF o un .doc y volvé a intentar.',
+      400
+    ),
+
+  archivoNoSoportado: (nombre) =>
+    new ErrorApp(
+      'ARCHIVO_NO_SOPORTADO',
+      `No puedo leer ${nombre ? `"${nombre}"` : 'ese archivo'}: se leen PDF y .doc de Word. Si es un .docx, abrilo y guardalo como PDF, o copiá el texto y pegalo a mano.`,
+      415
+    ),
+
+  docIlegible: (detalle) =>
+    new ErrorApp(
+      'DOC_ILEGIBLE',
+      `No pude leer el documento .doc${detalle ? ': ' + detalle : ''}. Puede estar dañado o vacío.`,
+      422
+    ),
+
   redInalcanzable: (host, detalle) =>
     new ErrorApp(
       'RED_INALCANZABLE',
       `No pude conectarme con "${host}"${detalle ? ' (' + detalle + ')' : ''}. Revisá tu conexión y que el sitio esté en línea.`,
       502
+    ),
+
+  consultaVacia: () =>
+    new ErrorApp(
+      'CONSULTA_VACIA',
+      'Escribí algo para buscar antes de consultar el índice.',
+      400
+    ),
+
+  indiceMzaFalla: (detalle) =>
+    new ErrorApp(
+      'INDICE_MZA_FALLA',
+      `El buscador de la SCJM no respondió como se esperaba${detalle ? ': ' + detalle : ''}. Puede estar caído o haber cambiado de formato; probá de nuevo en un rato.`,
+      502
+    ),
+
+  indiceFuenteFalla: (fuente, detalle) =>
+    new ErrorApp(
+      'INDICE_FUENTE_FALLA',
+      `El buscador de "${fuente}" no respondió como se esperaba${detalle ? ': ' + detalle : ''}. Puede estar caído, lento o haber cambiado de formato; probá de nuevo en un rato.`,
+      502,
+      { fuente }
+    ),
+
+  emailFaltante: () =>
+    new ErrorApp('EMAIL_FALTANTE', 'Falta el correo electrónico.', 400),
+
+  emailInvalido: () =>
+    new ErrorApp('EMAIL_INVALIDO', 'Ese correo electrónico no parece válido.', 400),
+
+  passwordDebil: () =>
+    new ErrorApp(
+      'PASSWORD_DEBIL',
+      'La contraseña tiene que tener al menos 8 caracteres.',
+      400
+    ),
+
+  emailYaRegistrado: () =>
+    new ErrorApp(
+      'EMAIL_YA_REGISTRADO',
+      'Ya existe una cuenta con ese correo. Iniciá sesión en vez de registrarte de nuevo.',
+      409
+    ),
+
+  credencialesInvalidas: () =>
+    new ErrorApp(
+      'CREDENCIALES_INVALIDAS',
+      'El correo o la contraseña no coinciden.',
+      401
+    ),
+
+  noAutenticado: () =>
+    new ErrorApp(
+      'NO_AUTENTICADO',
+      'Iniciá sesión para hacer esto.',
+      401
     ),
 };
