@@ -915,7 +915,7 @@ function nuevoIndices(){
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
-      fragmentos:{},fragCargando:false,parcial:false,revisados:0,aflojado:false};
+      fragmentos:{},fragCargando:false,parcial:false,revisados:0,aflojado:false,desdeNavegador:false};
   });
   return o;
 }
@@ -1968,6 +1968,137 @@ function traerFragmentos(slug,pedido){
    La usan tanto el botón "Buscar en…" como el cambio de tribunal, para que
    tocar un chip de tribunal ya te traiga los resultados de ese tribunal en
    vez de dejar en pantalla los de la búsqueda anterior. */
+/* ============================================================
+   SAIJ desde el navegador
+   ============================================================
+   El servidor donde está publicada la web (un datacenter de Azure en Brasil)
+   recibe 403 de SAIJ: el sitio no atiende pedidos desde ahí. Desde una
+   conexión común sí responde, y además manda "Access-Control-Allow-Origin: *",
+   o sea que habilita expresamente que un navegador le consulte desde
+   cualquier página. Así que cuando el servidor no llega, la consulta la hace
+   tu propia computadora, que es el destinatario natural de ese permiso.
+   Comprobado a mano: mismo pedido, 403 desde el servidor y 200 desde acá.
+
+   Esto obliga a repetir en el navegador el armado y el filtro que el
+   servidor hace en lib/indiceSaij.js y lib/relevancia.js. Es duplicación
+   real y molesta, pero la alternativa era dejar la fuente más grande de las
+   tres afuera de la versión publicada. */
+
+var SAIJ_URL="https://www.saij.gob.ar/busqueda";
+var SAIJ_TIPOS={
+  sumarios:"Total|Tipo de Documento/Jurisprudencia/Sumario",
+  fallos:"Total|Tipo de Documento/Jurisprudencia/Fallo"
+};
+
+function saijPlegar(s){
+  try{ return String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase(); }
+  catch(e){ return String(s||"").toLowerCase(); }
+}
+/* Las palabras que definen la búsqueda, de más específica a más genérica,
+   recortadas a la raíz. Mismo criterio que lib/relevancia.js del servidor. */
+function saijRaices(q){
+  return saijPlegar(q).split(/[^a-z0-9]+/)
+    .filter(function(p){ return p.length>=3 && !VACIAS[p]; })
+    .sort(function(a,b){ return b.length-a.length; })
+    .map(function(p){ return p.slice(0,6); });
+}
+function saijPajar(r){
+  return saijPlegar([r.caratula,r.sumario,(r.voces||[]).join(" ")].join(" ")).replace(/\s+/g," ");
+}
+function saijCuantas(pajar,raices){
+  var n=0; raices.forEach(function(x){ if(pajar.indexOf(x)!==-1) n++; }); return n;
+}
+/* SAIJ busca siempre con OR, así que el modo se aplica acá sobre lo traído. */
+function saijFiltrar(lista,q,modo,excluir){
+  var raices=saijRaices(q), fuera=saijRaices(excluir||"");
+  var vivos=fuera.length?lista.filter(function(r){ return saijCuantas(saijPajar(r),fuera)===0; }):lista.slice();
+  if(!raices.length) return {lista:vivos,aflojado:false};
+  if(modo==="alguna") return {lista:vivos.filter(function(r){ return saijCuantas(saijPajar(r),raices)>0; }),aflojado:false};
+  if(modo==="exacta"){
+    var frase=saijPlegar(q).replace(/\s+/g," ").trim();
+    if(!frase) return {lista:vivos,aflojado:false};
+    return {lista:vivos.filter(function(r){ return saijPajar(r).indexOf(frase)!==-1; }),aflojado:false};
+  }
+  var completos=vivos.filter(function(r){ return saijCuantas(saijPajar(r),raices)===raices.length; });
+  if(completos.length||raices.length===1) return {lista:completos,aflojado:false};
+  return {lista:vivos.filter(function(r){ return saijPajar(r).indexOf(raices[0])!==-1; }),aflojado:true};
+}
+
+function saijLimpiar(s){
+  return String(s||"").replace(/\[\[\/?p\]\]/g," ").replace(/\[\[[^\]]*\]\]/g," ").replace(/\s+/g," ").trim();
+}
+function saijFecha(iso){
+  var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso||""));
+  return m?(m[3]+"/"+m[2]+"/"+m[1]):String(iso||"");
+}
+/* Cada resultado viene con el documento como JSON dentro de un string. */
+function saijARegistro(bruto){
+  var doc;
+  try{ doc=JSON.parse(bruto.documentAbstract).document; }catch(e){ return null; }
+  var c=(doc&&doc.content)||{}, uuid=doc&&doc.metadata&&doc.metadata.uuid;
+  if(!uuid) return null;
+  var esSumario=doc.metadata["document-content-type"]==="sumario";
+  var partes=[c.actor,c.demandado].filter(Boolean).join(" c/ ")+(c.sobre?" s/ "+c.sobre:"");
+  var voces=[].concat((c.descriptores&&c.descriptores.descriptor)||[])
+    .map(function(d){ return d&&d.elegido&&d.elegido.termino; }).filter(Boolean);
+  return {
+    id:"saij_"+uuid,
+    expediente:c["numero-interno"]||c["id-infojus"]||"",
+    caratula:(esSumario?(c.titulo||saijLimpiar(c.sumario)):partes)||"(sin carátula)",
+    sumario:esSumario?saijLimpiar(c.texto):"",
+    voces:voces,
+    fecha:saijFecha(c.fecha),
+    tribunal:[c.tribunal,c.provincia,c.jurisdiccion&&c.jurisdiccion.descripcion]
+      .filter(Boolean).filter(function(v,i,a){ return a.indexOf(v)===i; }).join(" · "),
+    magistrados:c.magistrados||"",
+    linkFicha:"https://www.saij.gob.ar/"+uuid,
+    linkFallo:null
+  };
+}
+
+/* Revisa varias páginas antes de aflojar el filtro, igual que el servidor:
+   como SAIJ ordena por relevancia pero busca con OR, la primera página puede
+   ser toda de una sola de las palabras. */
+function buscarSaijNavegador(cuerpo){
+  var faceta=SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios;
+  var porPagina=20, porPedido=100, revisados=[], totalCrudo=0;
+  function pedir(i){
+    var p=new URLSearchParams({q:cuerpo.q,o:String(i*porPedido),p:String(porPedido),f:faceta});
+    return fetch(SAIJ_URL+"?"+p.toString(),{headers:{Accept:"application/json"}})
+      .then(function(r){
+        if(!r.ok) throw new Error("SAIJ respondió "+r.status);
+        return r.json();
+      })
+      .then(function(d){
+        var sr=(d&&d.searchResults)||{};
+        if(i===0){
+          var f=(sr.categoriesResultList||[]).filter(function(c){ return c.facetName==="Total"; })[0];
+          totalCrudo=(f&&f.facetChildren&&f.facetChildren[0]&&f.facetChildren[0].facetHits)||0;
+          if(!totalCrudo) return null;
+        }
+        var crudos=sr.documentResultList||[];
+        if(!crudos.length) return null;
+        crudos.map(saijARegistro).filter(Boolean).forEach(function(r){ revisados.push(r); });
+        var parcial=saijFiltrar(revisados,cuerpo.q,cuerpo.modo,cuerpo.excluir);
+        if(parcial.lista.length>=porPagina||revisados.length>=totalCrudo) return null;
+        return i<2?pedir(i+1):null;
+      });
+  }
+  return pedir(0).then(function(){
+    if(!totalCrudo) return {ok:true,total:0,resultados:[],revisados:0};
+    var res=saijFiltrar(revisados,cuerpo.q,cuerpo.modo,cuerpo.excluir);
+    return {
+      ok:true,
+      total:res.lista.length,
+      totalParcial:res.lista.length>=porPagina||revisados.length<totalCrudo,
+      revisados:revisados.length,
+      aflojado:res.aflojado,
+      resultados:res.lista.slice(0,porPagina),
+      desdeNavegador:true
+    };
+  });
+}
+
 function buscarEnFuente(slug){
   var fCfg=FUENTES_INDICE.filter(function(x){return x.slug===slug;})[0];
   var qi=estado.q.trim();
@@ -1992,12 +2123,21 @@ function buscarEnFuente(slug){
     body:JSON.stringify(cuerpo)
   }).then(function(r){ return r.json(); })
     .then(function(d){
+      // SAIJ no atiende al servidor donde está publicada la web, pero sí a
+      // los navegadores (ver el bloque de "SAIJ desde el navegador"). Si el
+      // servidor no pudo, lo intenta tu computadora antes de darse por
+      // vencida.
+      if(slug==="saij"&&(!d||!d.ok)) return buscarSaijNavegador(cuerpo);
+      return d;
+    })
+    .then(function(d){
       if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
       imBusco.cargando=false; imBusco.busco=true;
       if(!d||!d.ok){
         imBusco.error=(d&&d.mensaje)||"El servidor no devolvió resultados.";
         render(); return;
       }
+      imBusco.desdeNavegador=!!d.desdeNavegador;
       imBusco.resultados=d.resultados||[];
       imBusco.total=d.total||0;
       imBusco.guardados=d.guardadosEnIndice||0;
@@ -2021,7 +2161,9 @@ function buscarEnFuente(slug){
     })["catch"](function(){
       if(imBusco.pedido!==pedido) return;
       imBusco.cargando=false; imBusco.busco=true;
-      imBusco.error="Se cortó la comunicación con el servidor.";
+      imBusco.error=slug==="saij"
+        ?"No se pudo consultar SAIJ, ni desde el servidor ni desde acá. Probá de nuevo en un rato."
+        :"Se cortó la comunicación con el servidor.";
       render();
     });
 }
@@ -2091,6 +2233,7 @@ function panelIndice(f){
             (im.parcial?' (revisamos los primeros '+im.revisados.toLocaleString("es-AR")+' del sitio; puede haber más)':'')
           : im.total.toLocaleString("es-AR")+' coincidencias en total · mostrando las primeras '+im.resultados.length))+
     (local?'':' · '+im.guardados.toLocaleString("es-AR")+' guardadas en tu índice local hasta ahora')+'</p>'+
+    (im.desdeNavegador?'<div class="aviso" style="margin:0 0 10px">Esta búsqueda la hizo <b>tu computadora</b>, no el servidor: SAIJ no atiende pedidos desde donde está publicada la web, pero sí desde un navegador común. Por eso estos resultados no quedan guardados en el índice local.</div>':'')+
     (im.aflojado?'<div class="aviso" style="margin:0 0 10px">Ningún resultado tiene <b>todas</b> las palabras que buscaste. Estos coinciden solo con la más específica, así que revisalos con cuidado: puede que no sean del tema que buscabas.</div>':'')+
     // El sitio de CABA no manda un resumen del fallo con cada resultado
     // como hace Mendoza: los pasajes se sacan del documento en sí, de a
