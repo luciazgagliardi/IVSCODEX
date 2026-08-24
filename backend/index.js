@@ -58,7 +58,7 @@ app.use(
       }
       cb(new Error(`Origen no permitido por CORS: ${origen}`));
     },
-    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Nombre-Archivo'],
     maxAge: 86400,
   })
