@@ -25,8 +25,14 @@
 /** Sin tildes y en minusculas, para comparar sin sorpresas. */
 export function plegar(s) {
   const texto = String(s || '');
-  const reparado = /(?:Ã|Â|â)[\x80-\xBF]/.test(texto)
-    ? Buffer.from(texto, 'latin1').toString('utf8')
+  const bytes = [...texto].map((caracter) => {
+    const codigo = caracter.charCodeAt(0);
+    if (codigo === 0x2018) return String.fromCharCode(0x91);
+    if (codigo === 0x2019) return String.fromCharCode(0x92);
+    return caracter;
+  }).join('');
+  const reparado = /(?:Ã|Â|â)[\x80-\xBF]/.test(bytes)
+    ? Buffer.from(bytes, 'latin1').toString('utf8')
     : texto;
   return reparado
     .normalize('NFD')
