@@ -14,8 +14,17 @@ import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 
-import { PUERTO, CORS_ORIGENES, DIR_PUBLICO, PERMITIR_CUALQUIER_DOMINIO } from './config.js';
+import {
+  PUERTO,
+  CORS_ORIGENES,
+  DIR_PUBLICO,
+  PERMITIR_CUALQUIER_DOMINIO,
+  LIMITE_PETICIONES,
+  LIMITE_VENTANA_MS,
+} from './config.js';
 import { router, manejadorErrores } from './routes/extraer.js';
+import { router as routerIndice } from './routes/indice.js';
+import { router as routerAuth } from './routes/auth.js';
 
 const app = express();
 
@@ -50,7 +59,7 @@ app.use(
       cb(new Error(`Origen no permitido por CORS: ${origen}`));
     },
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Nombre-Archivo'],
     maxAge: 86400,
   })
 );
@@ -60,8 +69,8 @@ app.use(
  * ------------------------------------------------------------------ */
 
 const limite = rateLimit({
-  windowMs: 5 * 60 * 1000,
-  limit: 40,
+  windowMs: LIMITE_VENTANA_MS,
+  limit: LIMITE_PETICIONES,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: {
@@ -72,12 +81,30 @@ const limite = rateLimit({
 });
 app.use('/api/', limite);
 
+// Login y registro se limitan aparte y más estricto: son el blanco típico
+// de la fuerza bruta de contraseñas.
+const limiteAuth = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 12,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    codigo: 'DEMASIADAS_PETICIONES',
+    mensaje: 'Demasiados intentos. Esperá unos minutos y volvé a probar.',
+  },
+});
+app.use('/api/auth/login', limiteAuth);
+app.use('/api/auth/registro', limiteAuth);
+
 /* ------------------------------------------------------------------ *
  * Rutas
  * ------------------------------------------------------------------ */
 
 app.use('/api', router);
-app.use(express.static(DIR_PUBLICO, { extensions: ['html'], maxAge: '1h' }));
+app.use('/api', routerIndice);
+app.use('/api', routerAuth);
+app.use(express.static(DIR_PUBLICO, { extensions: ['html'], maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0 }));
 
 app.use((req, res) => {
   if (req.path.startsWith('/api')) {

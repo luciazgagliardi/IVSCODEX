@@ -7,6 +7,10 @@ node_modules/
 
 # Estado de runtime del backend (se recrea solo)
 cache/
+indice/
+
+# Cuentas de usuario: datos de personas reales, nunca al repo
+usuarios/
 
 # Secretos / config local
 .env

@@ -22,6 +22,20 @@ export const DIR_CACHE = process.env.DIR_CACHE
   ? path.resolve(process.env.DIR_CACHE)
   : path.join(aqui, 'cache');
 
+/**
+ * Carpeta donde vive el indice propio (la "copia guardada" de lo que se fue
+ * buscando en los indexadores, ej. lib/indiceMza.js). A diferencia de
+ * DIR_CACHE, esto no vence: es la base incremental del robot.
+ */
+export const DIR_INDICE = process.env.DIR_INDICE
+  ? path.resolve(process.env.DIR_INDICE)
+  : path.join(aqui, 'indice');
+
+/** Carpeta donde viven las cuentas de usuario y sus sesiones. Nunca al repo. */
+export const DIR_USUARIOS = process.env.DIR_USUARIOS
+  ? path.resolve(process.env.DIR_USUARIOS)
+  : path.join(aqui, 'usuarios');
+
 /** Puerto del servidor HTTP. */
 export const PUERTO = Number(process.env.PORT || 3000);
 
@@ -58,6 +72,18 @@ export const CACHE_HORAS = Number(process.env.CACHE_HORAS || 24);
 
 /** Milisegundos minimos entre dos pedidos al mismo host de origen. */
 export const ESPERA_POR_HOST_MS = Number(process.env.ESPERA_POR_HOST_MS || 1500);
+
+/**
+ * Cuantas peticiones acepta la API por navegador y cada cuanto se reinicia
+ * la cuenta. El limite existe para no castigar a los servidores oficiales.
+ *
+ * Es configurable porque el numero razonable depende del uso: una persona
+ * buscando a mano no llega ni cerca de 40, pero una pagina de resultados que
+ * completa los pasajes de a tandas gasta varias por busqueda, y una prueba
+ * automatica contra el servidor local necesita muchisimas mas.
+ */
+export const LIMITE_PETICIONES = Number(process.env.LIMITE_PETICIONES || 120);
+export const LIMITE_VENTANA_MS = Number(process.env.LIMITE_VENTANA_MS || 5 * 60 * 1000);
 
 /**
  * User-Agent con el que nos presentamos.
