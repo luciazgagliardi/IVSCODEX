@@ -2227,7 +2227,8 @@ function buscarSaijNavegador(cuerpo,slug){
     return {
       ok:true,
       total:res.lista.length,
-      totalParcial:res.lista.length>=porPagina||revisados.length<totalCrudo,
+      // "Parcial" es caducidad, no paginación: ver la nota en lib/indiceSaij.js.
+      totalParcial:res.lista.length<porPagina&&revisados.length<totalCrudo,
       revisados:revisados.length,
       aflojado:res.aflojado,
       resultados:res.lista.slice(0,porPagina),

@@ -213,7 +213,14 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
     // El sitio no sabe hacer este modo, así que su contador cuenta otra cosa:
     // se informa lo que de verdad quedó después de revisar, no una estimación.
     total: lista.length,
-    totalParcial: todos.length < total,
+    // "Parcial" es CADUCIDAD, no paginación: que haya más filas en la base de
+    // las que se trajeron acá (todos.length < total) es normal en cualquier
+    // búsqueda con más de una página y no es motivo de duda — layout tiene
+    // su propio "página 2, 3...". Lo único que de verdad no se pudo
+    // verificar es cuando ni siquiera se llegó a completar ESTA página
+    // (lista.length < porPagina) habiendo más filas sin revisar: ahí sí
+    // puede que hubiera más coincidencias entre las que no se llegó a mirar.
+    totalParcial: lista.length < porPagina && todos.length < total,
     revisados: todos.length,
     aflojado,
     pagina,
