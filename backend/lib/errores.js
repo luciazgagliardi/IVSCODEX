@@ -195,6 +195,24 @@ export const errores = {
       400
     ),
 
+  citaVacia: () =>
+    new ErrorApp(
+      'CITA_VACIA',
+      'Pegá el texto de la cita que querés verificar (por ejemplo: CSJN, "Halabi", Fallos: 332:111).',
+      400
+    ),
+
+  // Una cita entra en un renglón o dos. Si llega un escrito entero es que se
+  // pegó lo que no era: se corta acá y no en el parser, para no gastar
+  // expresiones regulares —y menos una búsqueda contra un sitio oficial— en
+  // procesar veinte páginas de texto.
+  citaDemasiadoLarga: (max) =>
+    new ErrorApp(
+      'CITA_DEMASIADO_LARGA',
+      `Eso supera los ${max} caracteres: es un escrito, no una cita. Pegá solo la cita que querés verificar, de a una por vez.`,
+      413
+    ),
+
   indiceMzaFalla: (detalle) =>
     new ErrorApp(
       'INDICE_MZA_FALLA',

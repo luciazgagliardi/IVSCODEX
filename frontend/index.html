@@ -261,6 +261,28 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
   background:var(--papel2);border-radius:999px;padding:5px 13px;margin:9px 0 8px
 }
 
+/* ---------- verificador de citas ---------- */
+.veredicto{
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:12px;font-weight:600;
+  letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:6px 14px;
+  border:1px solid var(--linea);background:var(--papel2);color:var(--tinta2)
+}
+.veredicto .bolita{width:8px;height:8px;border-radius:50%;background:currentColor;flex:0 0 auto}
+.veredicto.si{color:var(--acequia);border-color:rgba(95,174,144,.45);background:rgba(95,174,144,.12)}
+.veredicto.duda{color:var(--lacre);border-color:rgba(233,200,119,.4);background:rgba(233,200,119,.1)}
+.veredicto.no{color:#e0a3a3;border-color:rgba(224,163,163,.35);background:rgba(224,163,163,.09)}
+.campos-cita{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
+.campo-cita{
+  background:var(--papel2);border:1px solid var(--linea);border-radius:8px;padding:5px 11px;
+  font-family:var(--sans);font-size:12.5px;color:var(--tinta2)
+}
+.campo-cita b{color:var(--humo);font-weight:600;font-size:11px;margin-right:5px}
+.campo-cita.falta{border-style:dashed;color:var(--humo);opacity:.7}
+.candidato{border-top:1px solid var(--linea);padding:13px 0}
+.candidato:first-of-type{border-top:0;padding-top:4px}
+.candidato .porque{margin:6px 0 8px;padding-left:17px;font-size:12.5px;color:var(--tinta2)}
+.candidato .porque li{margin-bottom:2px}
+
 /* ---------- prosa ---------- */
 .blk{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;margin-bottom:16px}
 .blk h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 8px}
@@ -931,6 +953,9 @@ function nuevoEstado(){
           api:null,cargando:false,cargandoOcr:false,errorLink:null,infoDoc:null,fichaConocida:null,
           token:null,usuario:null,authModo:"registro",authEmail:"",authError:null,authCargando:false,
           sincronizando:false,sincronizadoEn:null,
+          // Verificador de citas (solapa Verificar): el texto pegado, si hay
+          // un pedido en vuelo y lo último que contestó el servidor.
+          cita:{texto:"",cargando:false,error:null,salida:null},
           indices:nuevoIndices()};
 }
 
@@ -952,14 +977,14 @@ function detectarServidor(){
   if(desplegado.indexOf("TU-BACKEND")===-1) candidatos.push(desplegado); // si nadie reemplazo el placeholder, ni lo intenta: ahorra el timeout de red a un dominio que sabemos que no existe
   var i=0;
   (function probar(){
-    if(i>=candidatos.length){ estado.api=false; if(estado.tab==="lector"||estado.tab==="buscar") render(); return; }
+    if(i>=candidatos.length){ estado.api=false; if(estado.tab==="lector"||estado.tab==="buscar"||estado.tab==="verificar") render(); return; }
     var base=candidatos[i++];
     var corte=setTimeout(function(){ probar(); },2500);
     try{
       fetch(base+"/salud").then(function(r){ return r.ok?r.json():null; })
       .then(function(d){
         clearTimeout(corte);
-        if(d&&d.ok){ estado.api=base; intentarRestaurarSesion(); if(estado.tab==="lector"||estado.tab==="buscar") render(); }
+        if(d&&d.ok){ estado.api=base; intentarRestaurarSesion(); if(estado.tab==="lector"||estado.tab==="buscar"||estado.tab==="verificar") render(); }
         else probar();
       })["catch"](function(){ clearTimeout(corte); probar(); });
     }catch(e){ clearTimeout(corte); probar(); }
@@ -2789,9 +2814,149 @@ function vistaCitas(){
     '</div>';
 }
 
+/* ============================================================
+   Verificador de citas
+   ============================================================
+   Pegás una cita, el servidor la lee (backend/lib/citas.js) y la busca en
+   los buscadores oficiales que sabe consultar (backend/lib/verificarCita.js).
+   Todo lo que se ve acá sale de esa respuesta: esta página no concluye nada
+   por su cuenta y, sobre todo, no convierte un "no lo encontré" en un "es
+   falsa". El alcance de la búsqueda queda escrito en pantalla siempre, haya
+   o no resultado, porque es la única forma de que el veredicto se lea con la
+   reserva que corresponde. */
+
+var VEREDICTOS={
+  verificada:{clase:"si",rotulo:"Coincidencia encontrada"},
+  no_encontrada:{clase:"no",rotulo:"No la encontramos"},
+  no_verificable:{clase:"duda",rotulo:"No se pudo verificar"}
+};
+
+function verificarCitaPegada(){
+  var ta=document.getElementById("cita-in");
+  var txt=(ta?ta.value:estado.cita.texto||"").trim();
+  estado.cita.texto=txt;
+  if(!txt){ flash("Pegá la cita que querés verificar"); return; }
+  if(!estado.api){ flash("Esta función necesita el servidor, y ahora no responde"); return; }
+  if(estado.cita.cargando) return; // ya hay uno en camino, no duplicar el pedido
+
+  estado.cita.cargando=true; estado.cita.error=null; estado.cita.salida=null; render();
+  fetch(estado.api+"/verificar-cita",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({texto:txt})
+  }).then(function(r){ return r.json(); })
+    .then(function(d){
+      estado.cita.cargando=false;
+      if(!d||!d.ok){
+        estado.cita.error=(d&&d.mensaje)||"El servidor no pudo verificar la cita.";
+        render(); return;
+      }
+      estado.cita.salida=d;
+      render();
+      var v=VEREDICTOS[d.veredicto];
+      flash(v?v.rotulo:"Listo");
+    })["catch"](function(){
+      estado.cita.cargando=false;
+      estado.cita.error="Se cortó la comunicación con el servidor.";
+      render();
+    });
+}
+
+/* Un dato leído de la cita. Los que no se detectaron se muestran igual, en
+   punteado: saber que la cita no trae expediente explica por qué la búsqueda
+   salió como salió. */
+function campoCita(rotulo,valor){
+  return '<span class="campo-cita'+(valor?'':' falta')+'"><b>'+esc(rotulo)+'</b>'+
+    esc(valor||"no detectado")+'</span>';
+}
+
+function camposDeLaCita(c){
+  if(!c) return '';
+  var car=c.caratula?c.caratula.texto:"";
+  return '<div class="campos-cita">'+
+    campoCita("Tribunal",c.tribunal?c.tribunal.nombre:"")+
+    campoCita("Carátula",car)+
+    campoCita("Expediente",c.expediente)+
+    campoCita("Fallos",c.fallos?c.fallos.texto:"")+
+    campoCita("Fecha",c.fecha?c.fecha.texto:"")+
+    '</div>';
+}
+
+var FUERZA_CITA={fuerte:"coincidencia fuerte",media:"coincidencia media",debil:"coincidencia débil"};
+
+function fichaCandidato(c){
+  var meta=[c.nombreFuente,c.tribunal,c.fecha,c.expediente?"Expte. "+c.expediente:""]
+    .filter(Boolean).map(esc).join(" · ");
+  return '<div class="candidato">'+
+    '<div class="f-top"><span class="f-nom">'+esc(c.caratula||"(sin carátula)")+'</span></div>'+
+    (meta?'<p style="font-size:12px;color:var(--humo);margin:3px 0 0">'+meta+'</p>':'')+
+    '<ul class="porque">'+(c.porQue||[]).map(function(p){
+      return '<li>'+esc(p)+'</li>';}).join("")+'</ul>'+
+    '<div class="f-acc">'+
+      '<span class="tag">'+esc(FUERZA_CITA[c.fuerza]||c.fuerza)+'</span>'+
+      (c.link?'<a class="mini" href="'+esc(c.link)+'" target="_blank" rel="noopener noreferrer">Abrir en la fuente oficial</a>':
+              '<span class="tag">sin enlace directo</span>')+
+    '</div></div>';
+}
+
+function resultadoCita(){
+  var d=estado.cita.salida;
+  if(!d) return '';
+  var v=VEREDICTOS[d.veredicto]||VEREDICTOS.no_verificable;
+  var fuentes=(d.fuentesConsultadas||[]).map(function(f){
+    return esc(f.nombre)+(f.ok?" · "+f.resultados+" resultado(s) revisados":" · no respondió: "+esc(f.error||"sin detalle"));
+  }).join("<br>");
+
+  return '<div class="panel vivo">'+
+    '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">'+
+      '<span class="veredicto '+v.clase+'"><span class="bolita"></span>'+esc(v.rotulo)+'</span>'+
+      '<span class="tag">confianza '+esc(d.confianza||"")+'</span>'+
+    '</div>'+
+    '<p style="font-size:15px;margin:0 0 4px">'+esc(d.explicacion||"")+'</p>'+
+    '<div class="rotulo">Lo que leí de la cita</div>'+
+    camposDeLaCita(d.campos)+
+    (d.consulta?'<p style="font-size:12.5px;color:var(--humo);margin:8px 0 0">Busqué <b>'+esc(d.consulta)+
+      '</b>'+(d.consultaArmadaCon?' (armada con '+esc(d.consultaArmadaCon)+')':'')+'.</p>':'')+
+    (fuentes?'<p style="font-size:12.5px;color:var(--humo);margin:6px 0 0">'+fuentes+'</p>':'')+
+    ((d.candidatos&&d.candidatos.length)
+      ?'<div class="rotulo">'+(d.veredicto==="verificada"?"Lo que encontré":"Parecidos, por si sirven de pista")+'</div>'+
+       d.candidatos.map(fichaCandidato).join("")
+      :'')+
+    '</div>';
+}
+
+function panelVerificadorCita(){
+  var sinServidor=(estado.api===false);
+  return '<div class="panel">'+
+    '<div class="rotulo" style="margin-top:0">Verificador de citas'+(sinServidor?' · necesita el servidor':' · en vivo')+'</div>'+
+    '<label class="campo"><span>Pegá la cita tal como la tenés</span>'+
+      '<textarea id="cita-in" style="min-height:92px" placeholder="CSJN, «Halabi, Ernesto c/ P.E.N. s/ amparo», Fallos: 332:111, 24/02/2009">'+
+      esc(estado.cita.texto)+'</textarea></label>'+
+    (sinServidor
+      ?'<p style="font-size:13px;color:var(--humo);margin:0">Esta función consulta los buscadores oficiales a través del servidor de extracción, y ahora mismo no responde. El resto de la página funciona igual: podés seguir el protocolo de acá abajo a mano.</p>'
+      :'')+
+    '<div class="acciones" style="margin-top:4px">'+
+      '<button class="btn" data-act="verificar-cita"'+((estado.cita.cargando||sinServidor)?" disabled":"")+'>'+
+        (estado.cita.cargando?"Buscando en las fuentes…":"Verificar la cita")+'</button>'+
+      '<button class="btn sec" data-act="limpiar-cita">Empezar de nuevo</button>'+
+    '</div>'+
+    (estado.cita.error?'<p style="font-size:13.5px;color:#e0a3a3;margin:12px 0 0">'+esc(estado.cita.error)+'</p>':'')+
+    '</div>';
+}
+
 function vistaVerificar(){
+  // El alcance va fijo y arriba, no escondido en el resultado: sin eso, un
+  // "no la encontramos" se lee como "no existe", que es exactamente lo que
+  // este verificador no puede afirmar.
+  var alcance=(estado.cita.salida&&estado.cita.salida.alcance)||
+    "Poder Judicial de Mendoza · TSJ de la Ciudad de Buenos Aires · SAIJ · Corte Suprema (vía SAIJ)";
   return '<div class="aviso"><strong>Una cita inventada te cuesta el caso.</strong> Ya hubo sanciones a abogados por citar fallos generados por inteligencia artificial que no existían. '+
-    'Este protocolo tarda dos minutos y lo evita.</div>'+
+    'Pegá la cita acá abajo y la busco en las fuentes oficiales; después, el protocolo completo tarda dos minutos.</div>'+
+    panelVerificadorCita()+
+    resultadoCita()+
+    '<div class="aviso" style="border-style:dashed"><strong>Hasta dónde llega esta verificación.</strong> Solo puedo buscar en los buscadores que este proyecto tiene integrados: '+
+      esc(alcance)+'. Ninguno publica todo lo que su tribunal dictó, y la jurisprudencia argentina vive repartida en decenas de sistemas más. '+
+      'Por eso <strong>no encontrar una cita acá no prueba que sea falsa</strong>: puede no estar indexada, estar cargada con otra carátula, o no ser real. '+
+      'Y al revés: que el fallo exista no significa que diga lo que la cita le atribuye — eso solo se comprueba leyendo el considerando.</div>'+
     '<div class="blk"><h3>Protocolo de verificación</h3><ol>'+
       '<li><strong>Buscá la carátula literal</strong> en la base oficial del tribunal que la dictó. Si no aparece, no existe hasta que se pruebe lo contrario.</li>'+
       '<li><strong>Cruzá tomo y página</strong> con la colección Fallos si es de la CSJN, o el número de expediente si es provincial.</li>'+
@@ -3055,6 +3220,11 @@ document.addEventListener("click",function(ev){
     estado.q="";estado.excluir="";estado.desde="";estado.hasta="";estado.rama="";estado.modo="exacta";
     render(); return;
   }
+  if(act==="verificar-cita"){ verificarCitaPegada(); return; }
+  if(act==="limpiar-cita"){
+    estado.cita={texto:"",cargando:false,error:null,salida:null};
+    render(); window.scrollTo(0,0); return;
+  }
   if(act==="armar-cita"){ armarCita(); return; }
   if(act==="copiar-cita"){
     var o=document.getElementById("cita-out");
@@ -3162,6 +3332,9 @@ document.addEventListener("input",function(ev){
     if(lr) lr.innerHTML=listaRamasHTML();
   }
   else if(id==="auth-email"){estado.authEmail=ev.target.value;}
+  // Se guarda sin repintar: un render() acá le sacaría el foco al textarea
+  // en mitad de la frase. El repintado llega solo cuando se toca "Verificar".
+  else if(id==="cita-in"){estado.cita.texto=ev.target.value;}
   else if(id==="excluir"){estado.excluir=ev.target.value;pintarCadena();}
   else if(id==="desde"){estado.desde=ev.target.value;pintarCadena();}
   else if(id==="hasta"){estado.hasta=ev.target.value;pintarCadena();}

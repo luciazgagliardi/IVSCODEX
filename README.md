@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-# IURIS ET DE IURE
-=======
 # Juris et de jure — extractor de sentencias
->>>>>>> 44bb01e (fix: permitir guardado de datos de usuario)
 
 Pegás el enlace de un fallo argentino (o internacional) de una base oficial, el servidor lo descarga,
 le saca el texto —sirve HTML y PDF— y te lo muestra en la página con tu búsqueda resaltada,
@@ -44,12 +40,17 @@ juris-et-de-jure/
 │   ├── config.js               Variables de entorno y lista blanca de dominios
 │   │
 │   ├── routes/
-│   │   └── extraer.js          POST /api/extraer y rutas auxiliares
+│   │   ├── extraer.js          POST /api/extraer y rutas auxiliares
+│   │   ├── indice.js           Búsquedas en vivo contra los buscadores oficiales
+│   │   └── citas.js            POST /api/verificar-cita y /api/leer-cita
 │   │
 │   ├── lib/
 │   │   ├── descargador.js      Descarga segura: SSRF, redirecciones, charset
 │   │   ├── extraerHtml.js      Readability + limpieza propia de respaldo
 │   │   ├── extraerPdf.js       pdf.js: líneas, párrafos, detección de escaneos
+│   │   ├── fuentes.js          Catálogo de los buscadores oficiales integrados
+│   │   ├── citas.js            Lee una cita pegada y saca sus campos
+│   │   ├── verificarCita.js    Busca esa cita en las fuentes y da un veredicto
 │   │   ├── cache.js            Caché en disco con vencimiento
 │   │   └── errores.js          Errores tipados con mensaje en castellano
 │   │
@@ -138,6 +139,8 @@ CORS del propio navegador, no algo que dependa de este código.
 | Método | Ruta | Qué hace |
 |---|---|---|
 | `POST` | `/api/extraer` | Cuerpo `{ "url": "...", "refrescar": false }`. Devuelve el texto. |
+| `POST` | `/api/verificar-cita` | Cuerpo `{ "texto": "CSJN, Fallos: 340:1084" }`. Busca esa cita en las fuentes y devuelve un veredicto (ver sección 9). |
+| `POST` | `/api/leer-cita` | Igual, pero solo parsea: no sale a la red. Sirve para ver qué entendió el lector de citas. |
 | `GET` | `/api/salud` | Estado del servidor. |
 | `GET` | `/api/dominios` | Lista blanca vigente. |
 | `GET` | `/api/verificar?url=` | Dice si un enlace es procesable, sin descargarlo. |
@@ -188,6 +191,8 @@ Todo se ajusta por variables de entorno en `backend/.env`. Lo más habitual:
 | `ESPERA_POR_HOST_MS` | `1500` | Pausa mínima entre pedidos al mismo sitio |
 | `PERMITIR_CUALQUIER_DOMINIO` | `false` | `true` acepta cualquier dominio público |
 | `PERMITIR_RED_PRIVADA` | `false` | Solo para los tests automáticos — nunca en producción |
+| `LIMITE_CITAS` | `30` | Verificaciones de cita por navegador y ventana (ver sección 9) |
+| `LIMITE_CITAS_VENTANA_MS` | `900000` (15 min) | Cada cuánto se reinicia esa cuenta |
 
 **Agregar una fuente:** abrí `backend/config.js`, sumá el dominio a `DOMINIOS_PERMITIDOS`
 y reiniciá. Acepta subdominios: poniendo `csjn.gov.ar` habilitás también `sjconsulta.csjn.gov.ar`.
@@ -317,6 +322,81 @@ entre en un escrito:
 Los datos que la interfaz detecta —carátula, tribunal, fecha, expediente— salen de
 patrones de texto, no de una base de datos. Están para ahorrarte tipeo, y hay que
 confirmarlos.
+
+### El verificador de citas
+
+El paso 1 de esa lista está automatizado. En la solapa **Verificar** hay un cuadro
+donde pegás la cita como la tengas —`CSJN, Fallos: 340:1084`, `TSJ CABA, Expte.
+12345/2020`, `Cám. Nac. Civ., Sala A, "Pérez c/ Gómez s/ daños y perjuicios",
+12/03/2019`— y el servidor intenta encontrarla en las fuentes oficiales que sabe
+consultar. Nació por el problema de las **citas alucinadas**: un modelo de lenguaje
+produce citas con la forma exacta de una verdadera —tribunal que existe, carátula
+creíble, tomo y página en el rango correcto— y no hay manera de distinguirlas
+leyéndolas. La única manera es ir a la fuente.
+
+Qué hace, en orden:
+
+1. **Lee la cita** (`lib/citas.js`): tribunal, número de expediente, tomo y página de
+   *Fallos*, carátula partida en actor / demandado / materia, fecha, y las palabras
+   que sirven para buscar. Es un montón de expresiones regulares y no un parser
+   formal, porque una cita argentina no tiene un formato: tiene el de cada tribunal,
+   el de cada revista y el que cada quien escribe de apuro. **Un campo que no se
+   reconoce vuelve vacío**: nunca se completa con lo que "seguramente quiso decir".
+2. **Elige a quién preguntarle** (`lib/fuentes.js`): si reconoció el tribunal, va a su
+   buscador y a ninguno más. Si no lo reconoció, tira una red ancha pero corta —SAIJ,
+   la única base con alcance nacional que hay integrada, más la faceta de la Corte—.
+   Nunca consulta más de dos fuentes por pedido: cada consulta es un pedido real al
+   servidor de un organismo (ver la sección 7).
+3. **Busca y puntúa**: cada resultado se compara con la cita. El expediente exacto y
+   el `tomo:página` exacto valen solos lo que todo el resto junto, porque son
+   identificadores: o coinciden o no. Los apellidos de las partes valen la mitad, se
+   comparan sin tildes ni mayúsculas (`lib/relevancia.js`) y no alcanzan por sí solos:
+   hay apellidos repetidos hasta el hartazgo.
+4. **Devuelve un veredicto**, con confianza (alta / media / baja), la explicación en
+   castellano de por qué llegó ahí, y los candidatos con su enlace a la fuente oficial.
+
+Los tres veredictos posibles, que están redactados con cuidado:
+
+| Veredicto | Qué significa |
+|---|---|
+| `verificada` | Apareció un fallo que coincide por un identificador exacto, o por la carátula entera. Igual pide abrir el documento: que el fallo exista no significa que diga lo que la cita le atribuye. |
+| `no_encontrada` | Se buscó y no apareció nada convincente. **Nunca dice que la cita sea falsa.** Puede no estar indexada, estar cargada con otra carátula, o no ser real — las tres siguen abiertas. |
+| `no_verificable` | No se pudo ni intentar: el texto no tiene forma de cita, el tribunal es uno que ninguna fuente integrada cubre (los internacionales), o los buscadores oficiales no respondieron. Ojo con este último caso: **una fuente caída nunca se informa como "no encontrada"**. |
+
+Prueba rápida desde la terminal:
+
+```bash
+curl -X POST http://localhost:3000/api/verificar-cita \
+  -H "Content-Type: application/json" \
+  -d '{"texto":"CSJN, \"Halabi, Ernesto c/ P.E.N. s/ amparo ley 16.986\", Fallos: 332:111, sentencia del 24 de febrero de 2009"}'
+```
+
+Los límites honestos, que son varios y conviene tenerlos a mano:
+
+- **No existe un índice de la colección *Fallos* por tomo y página.** Ninguna de las
+  cuatro fuentes integradas expone ese dato como campo buscable, y el buscador propio
+  de la Corte —el único que sí lo tiene— está detrás de un reCAPTCHA, o sea que pide
+  expresamente que del otro lado haya una persona (ver `lib/indiceSaij.js`). Un
+  `Fallos: 340:1084` se puede **confirmar** si el fallo aparece por carátula y el texto
+  trae ese número, pero **no se puede buscar por tomo y página**. Una cita que trae
+  solo eso termina casi siempre en `no_encontrada`, y por eso ese veredicto no afirma
+  nunca que algo no exista.
+- **El alcance es el catálogo de cuatro buscadores**, no "la jurisprudencia argentina".
+  Mendoza, TSJ CABA, SAIJ y la Corte vía SAIJ. La interfaz lo dice en pantalla, fijo,
+  arriba y abajo del resultado.
+- **Mendoza obliga a elegir el tribunal antes de buscar** y no tiene un "todos": se
+  elige uno leyendo la cita (Corte / Cámaras Civiles / Cámaras del Trabajo) y si se
+  eligió mal, no aparece.
+- **Se mira la primera página de resultados.** Un fallo real cuya carátula esté escrita
+  distinto —abreviada, con el segundo nombre, con la razón social completa— puede
+  quedar afuera.
+- `LIMITE_CITAS` (default 30 cada 15 minutos) es un límite aparte del general, igual
+  que el del OCR. No protege a este servidor —verificar una cita es barato acá—:
+  protege a los sitios oficiales, que son los que hacen el trabajo pesado.
+
+Las pruebas están en `test/citas.prueba.js` y corren sin salir a internet: la búsqueda
+se inyecta simulada. La última de todas es la que más importa — que un veredicto
+negativo nunca use la palabra "falsa".
 
 ---
 
