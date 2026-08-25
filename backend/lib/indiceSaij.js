@@ -243,9 +243,17 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
   return {
     // El total que informa SAIJ cuenta los del OR y sobra por dos órdenes de
     // magnitud (391.476 para "interdicto de recobrar"). No se reenvía: se
-    // informa lo que de verdad se verificó, y que puede haber más.
+    // informa lo que de verdad se verificó.
     total: filtrados.length,
-    totalParcial: filtrados.length >= porPagina || revisados.length < totalCrudo,
+    // "Parcial" es CADUCIDAD, no paginación. Que ya haya una página llena de
+    // coincidencias buenas (filtrados.length >= porPagina) no es una duda:
+    // es que hay más de una página, como en cualquier buscador — eso lo
+    // resuelve pedir la página siguiente, no un cartel de "no estamos
+    // seguros". La incertidumbre de verdad es al revés: cuando ni con todo
+    // lo revisado se llegó a llenar esta página Y todavía quedan filas
+    // crudas de SAIJ sin mirar (revisados.length < totalCrudo) — ahí sí
+    // puede que hubiera más coincidencias entre las que no se llegó a ver.
+    totalParcial: filtrados.length < porPagina && revisados.length < totalCrudo,
     revisados: revisados.length,
     aflojado,
     pagina,

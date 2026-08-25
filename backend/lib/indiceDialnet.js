@@ -156,6 +156,16 @@ function parsearItems(html) {
 }
 
 /**
+ * Cuántas páginas reales de Dialnet (20 documentos cada una) se revisan como
+ * mucho antes de darse por vencido filtrando "frase exacta" o "excluir".
+ * Mismo criterio que PAGINAS_A_REVISAR en lib/indiceSaij.js: una búsqueda de
+ * concepto puede traer miles de resultados de los que solo una fracción
+ * cumple la frase exacta, así que hace falta mirar de a varias páginas
+ * reales, no rendirse con la primera.
+ */
+const PAGINAS_A_REVISAR = 5;
+
+/**
  * Busca en Dialnet.
  *
  * A diferencia de los tres buscadores de tribunales, este no filtra por
@@ -168,26 +178,44 @@ export async function buscarDialnet({ q, modo = 'todas', excluir = '', pagina = 
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
-  const inicio = (Math.max(1, pagina) - 1) * POR_PAGINA_DIALNET + 1;
-  const html = await pedirBusqueda(termino, inicio);
-  const total = sacarTotal(html);
+  const arranque = (Math.max(1, pagina) - 1) * POR_PAGINA_DIALNET + 1;
+  const primerHtml = await pedirBusqueda(termino, arranque);
+  const total = sacarTotal(primerHtml);
   if (total === 0) return { total: 0, pagina, porPagina, resultados: [] };
 
-  const items = parsearItems(html);
+  const items = parsearItems(primerHtml);
 
   const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim();
   if (!hayQueFiltrar) return { total, pagina, porPagina: POR_PAGINA_DIALNET, resultados: items };
 
-  const { lista, aflojado } = filtrarPorModo(items, { q: termino, modo, excluir });
+  // "Frase exacta" o "excluir": Dialnet no los resuelve solo, así que hay
+  // que revisar de a páginas reales (20 documentos cada una) hasta juntar
+  // una página completa de coincidencias buenas o quedarnos sin más filas.
+  const revisados = [...items];
+  let { lista: filtrados, aflojado } = filtrarPorModo(revisados, { q: termino, modo, excluir });
+
+  for (let i = 1; i < PAGINAS_A_REVISAR && filtrados.length < porPagina && revisados.length < total; i++) {
+    const html = await pedirBusqueda(termino, arranque + i * POR_PAGINA_DIALNET);
+    const siguientes = parsearItems(html);
+    if (!siguientes.length) break;
+    revisados.push(...siguientes);
+    ({ lista: filtrados, aflojado } = filtrarPorModo(revisados, { q: termino, modo, excluir }));
+  }
+
   return {
-    // Igual que Mendoza: filtrando de este lado, el contador que vale es el
-    // de lo que de verdad quedó, no el total crudo que dio el sitio.
-    total: lista.length,
-    totalParcial: items.length < total,
-    revisados: items.length,
+    // Igual que Mendoza y SAIJ: filtrando de este lado, el contador que
+    // vale es el de lo que de verdad quedó, no el total crudo del sitio.
+    total: filtrados.length,
+    // "Parcial" es CADUCIDAD, no paginación: una página llena de
+    // coincidencias buenas no es una duda, es que hay más de una página.
+    // La incertidumbre de verdad es solo cuando ni revisando varias páginas
+    // se llegó a llenar esta Y todavía quedan documentos de Dialnet sin
+    // mirar — recién ahí puede que hubiera más entre los que no se vieron.
+    totalParcial: filtrados.length < porPagina && revisados.length < total,
+    revisados: revisados.length,
     aflojado,
     pagina,
     porPagina: POR_PAGINA_DIALNET,
-    resultados: lista,
+    resultados: filtrados.slice(0, porPagina),
   };
 }
