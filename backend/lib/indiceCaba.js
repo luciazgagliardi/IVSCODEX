@@ -266,3 +266,25 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
 
   return { total, pagina, porPagina, resultados };
 }
+
+/**
+ * SOLO DIAGNOSTICO TEMPORAL — sacar cuando se resuelva el problema del
+ * proxy dando 0 resultados falsos. Devuelve la respuesta cruda del sitio
+ * para poder mirarla a ojo en vez de seguir adivinando a ciegas.
+ */
+export async function debugBusqueda(q) {
+  const parametros = {
+    textoLibreTodas: String(q || ''),
+    hdnPaginaOrigen: 'busqueda.asp',
+    pag: '1',
+    cantRegPagina: '20',
+  };
+  const html = await pedirBusqueda(parametros);
+  return {
+    total: sacarTotal(html),
+    largo: html.length,
+    inicio: html.slice(0, 1500),
+    fin: html.slice(-1500),
+    conProxy: Boolean(dispatcherPara(HOST)),
+  };
+}
