@@ -39,7 +39,11 @@ let agente = null;
 function agenteProxy() {
   if (!SCRAPER_API_KEY) return null;
   if (!agente) {
-    agente = new ProxyAgent(`http://scraperapi:${SCRAPER_API_KEY}@proxy-server.scraperapi.com:8001`);
+    // country_code=ar: sin esto la IP de salida puede ser de cualquier
+    // parte, y el TSJ CABA le devuelve una respuesta válida pero con 0
+    // resultados a tráfico que no parece argentino (visto en vivo: la
+    // consulta "llega" y contesta bien formada, pero vacía).
+    agente = new ProxyAgent(`http://scraperapi.country_code=ar:${SCRAPER_API_KEY}@proxy-server.scraperapi.com:8001`);
   }
   return agente;
 }
