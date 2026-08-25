@@ -14,9 +14,7 @@
  */
 
 import express from 'express';
-import { buscarMza } from '../lib/indiceMza.js';
-import { buscarCaba } from '../lib/indiceCaba.js';
-import { buscarSaij } from '../lib/indiceSaij.js';
+import { FUENTES } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
 import { errores, ErrorApp } from '../lib/errores.js';
@@ -106,17 +104,8 @@ function recortarPasaje(texto, q) {
   return (desde > 0 ? '… ' : '') + limpio.slice(desde, hasta).trim() + (hasta < limpio.length ? ' …' : '');
 }
 
-/** Una entrada por fuente indexada. slug = nombre de archivo en backend/indice/. */
-const FUENTES = [
-  { slug: 'mendoza', buscar: (args) => buscarMza(args) },
-  { slug: 'caba', buscar: (args) => buscarCaba(args) },
-  { slug: 'saij', buscar: (args) => buscarSaij(args) },
-  // La Corte Suprema sale de SAIJ filtrando por su faceta de tribunal: el
-  // sitio propio de la CSJN protege todos sus buscadores con reCAPTCHA.
-  // Ver la nota en lib/indiceSaij.js.
-  { slug: 'csjn', buscar: (args) => buscarSaij({ ...args, soloCsjn: true }) },
-];
-
+// El catálogo de fuentes vive en lib/fuentes.js: lo comparten estas rutas y
+// el verificador de citas (lib/verificarCita.js).
 for (const { slug, buscar } of FUENTES) {
   router.post(`/indice/${slug}/buscar`, async (req, res, next) => {
     try {
