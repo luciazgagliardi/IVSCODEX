@@ -113,6 +113,7 @@ const limiteOcr = rateLimit({
   },
 });
 app.use('/api/ocr', limiteOcr);
+app.use('/api/ocr-archivo', limiteOcr);
 
 /* ------------------------------------------------------------------ *
  * Rutas
