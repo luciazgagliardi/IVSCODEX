@@ -105,6 +105,8 @@ input[type=text],input[type=url]{
 .chip:hover{border-color:var(--humo)}
 .chip[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:#f2f2ee}
 #chip-parcial[aria-pressed="true"]{background:var(--acequia);border-color:var(--acequia)}
+.mini[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:#f2f2ee;cursor:default}
+.paginador{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 .acciones{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px dashed var(--linea)}
 
 .aviso{
