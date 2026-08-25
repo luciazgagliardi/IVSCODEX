@@ -139,6 +139,13 @@ export const errores = {
       422
     ),
 
+  ocrTiempoAgotado: (ms) =>
+    new ErrorApp(
+      'OCR_TIEMPO_AGOTADO',
+      `El OCR no terminó en ${Math.round(ms / 1000)} segundos y se lo dio por perdido. Puede ser un documento muy largo o un servidor con poca CPU en este momento; probá con menos páginas o de nuevo más tarde.`,
+      504
+    ),
+
   pdfIlegible: (detalle) =>
     new ErrorApp(
       'PDF_ILEGIBLE',

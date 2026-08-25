@@ -272,9 +272,15 @@ Detalles técnicos, por si hace falta tocar `lib/ocr.js`:
   alternativa clásica) ni siquiera compila sin Cairo/Pango instalados en el sistema.
   PDFium es WASM puro: cero binarios nativos, cero dependencia del sistema operativo,
   portable a cualquier hosting sin instalar nada aparte.
-- `OCR_MAX_PAGINAS` (default 20) limita cuántas páginas se procesan por pedido: un
-  escaneo de una sentencia son pocas páginas; un expediente de cientos de hojas
-  tardaría minutos y no es el caso de uso de este botón.
+- `OCR_MAX_PAGINAS` (default 6) y `OCR_TIMEOUT_MS` (default 180000, 180s) limitan
+  cuánto puede tardar un pedido. El default es bajo a propósito: medido en vivo
+  contra el plan de Azure publicado, 6 páginas tardaron **170 segundos** (~28s por
+  página) — esa CPU compartida es unas 11 veces más lenta que una notebook común
+  para este trabajo. Con ese ritmo, 20 páginas tardarían ~9 minutos, bastante más de
+  lo que Azure App Service deja abierta una conexión inactiva (~230s): la plataforma
+  cortaría la conexión en silencio antes de que este código llegue a contestar. Si
+  tu hosting tiene más CPU (o corrés esto en tu máquina), subí `OCR_MAX_PAGINAS`
+  con confianza.
 - `OCR_HABILITADO=false` apaga la función entera sin tocar código, para un plan de
   hosting chico donde renderizar páginas y correr Tesseract sale caro en CPU/memoria.
 
