@@ -21,10 +21,13 @@ import {
   PERMITIR_CUALQUIER_DOMINIO,
   LIMITE_PETICIONES,
   LIMITE_VENTANA_MS,
+  LIMITE_CITAS,
+  LIMITE_CITAS_VENTANA_MS,
 } from './config.js';
 import { router, manejadorErrores } from './routes/extraer.js';
 import { router as routerIndice } from './routes/indice.js';
 import { router as routerAuth } from './routes/auth.js';
+import { router as routerCitas } from './routes/citas.js';
 
 const app = express();
 
@@ -115,6 +118,24 @@ const limiteOcr = rateLimit({
 app.use('/api/ocr', limiteOcr);
 app.use('/api/ocr-archivo', limiteOcr);
 
+// El verificador de citas es liviano para este servidor —parsear un renglón
+// de texto— pero cada pedido dispara hasta dos búsquedas de verdad contra
+// buscadores oficiales. El límite no protege esta máquina: protege a esos
+// sitios, igual que la espera entre pedidos de lib/descargador.js. Ver
+// LIMITE_CITAS en config.js para el porqué del número.
+const limiteCitas = rateLimit({
+  windowMs: LIMITE_CITAS_VENTANA_MS,
+  limit: LIMITE_CITAS,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    codigo: 'DEMASIADAS_PETICIONES',
+    mensaje: 'El verificador de citas tiene un límite aparte: cada consulta le pega a los buscadores oficiales de verdad. Esperá unos minutos y seguí.',
+  },
+});
+app.use('/api/verificar-cita', limiteCitas);
+
 /* ------------------------------------------------------------------ *
  * Rutas
  * ------------------------------------------------------------------ */
@@ -122,6 +143,7 @@ app.use('/api/ocr-archivo', limiteOcr);
 app.use('/api', router);
 app.use('/api', routerIndice);
 app.use('/api', routerAuth);
+app.use('/api', routerCitas);
 app.use(express.static(DIR_PUBLICO, { extensions: ['html'], maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0 }));
 
 app.use((req, res) => {
