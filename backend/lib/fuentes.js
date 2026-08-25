@@ -11,17 +11,24 @@
  * en lib/indice*.js), que es lo que permite montarlas en bucle en las rutas y
  * recorrerlas en bucle al verificar una cita, sin un caso especial por fuente.
  *
- * Ojo con lo que NO está: esto son los cuatro buscadores que se pueden
- * consultar programáticamente. El catálogo grande de organismos que muestra
- * el frontend (la solapa "Fuentes", unas cien bases) es otra cosa: son
- * enlaces para abrir a mano, sin API ni formulario reproducible. Por eso el
+ * Ojo con lo que NO está: esto son los buscadores que se pueden consultar
+ * programáticamente. El catálogo grande de organismos que muestra el
+ * frontend (la solapa "Fuentes", unas cien bases) es otra cosa: son enlaces
+ * para abrir a mano, sin API ni formulario reproducible. Por eso el
  * verificador dice siempre contra qué buscó: el alcance real es esta lista,
  * no aquella.
+ *
+ * De las cinco, Dialnet es la única que no es un tribunal (ver
+ * lib/indiceDialnet.js): es doctrina, no jurisprudencia. Por eso el
+ * verificador de citas (lib/verificarCita.js) nunca la elige — su lista de
+ * fuentes posibles está fijada a mano ahí adentro, no recorre este array
+ * entero — pero el Buscador general sí la ofrece como una fuente más.
  */
 
 import { buscarMza } from './indiceMza.js';
 import { buscarCaba } from './indiceCaba.js';
 import { buscarSaij } from './indiceSaij.js';
+import { buscarDialnet } from './indiceDialnet.js';
 
 /** Una entrada por fuente indexada. slug = nombre de archivo en backend/indice/. */
 export const FUENTES = [
@@ -57,6 +64,12 @@ export const FUENTES = [
     nombre: 'Corte Suprema de Justicia de la Nación (vía SAIJ)',
     tribunalPorDefecto: null,
     buscar: (args) => buscarSaij({ ...args, soloCsjn: true }),
+  },
+  {
+    slug: 'dialnet',
+    nombre: 'Dialnet · doctrina jurídica en español',
+    tribunalPorDefecto: null,
+    buscar: (args) => buscarDialnet(args),
   },
 ];
 

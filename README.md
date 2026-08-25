@@ -139,6 +139,7 @@ CORS del propio navegador, no algo que dependa de este código.
 | Método | Ruta | Qué hace |
 |---|---|---|
 | `POST` | `/api/extraer` | Cuerpo `{ "url": "...", "refrescar": false }`. Devuelve el texto. |
+| `POST` | `/api/indice/<fuente>/buscar` | Cuerpo `{ "q": "...", "modo": "todas", "pagina": 1 }`. Busca en vivo en el buscador oficial de `<fuente>` (uno de: `mendoza`, `caba`, `saij`, `csjn`, `dialnet` — ver la solapa "Buscar" y `backend/lib/fuentes.js`). |
 | `POST` | `/api/verificar-cita` | Cuerpo `{ "texto": "CSJN, Fallos: 340:1084" }`. Busca esa cita en las fuentes y devuelve un veredicto (ver sección 9). |
 | `POST` | `/api/leer-cita` | Igual, pero solo parsea: no sale a la red. Sirve para ver qué entendió el lector de citas. |
 | `GET` | `/api/salud` | Estado del servidor. |
@@ -173,6 +174,25 @@ Respuesta:
 Ante un error siempre llega JSON con `codigo` (estable, para el frontend) y `mensaje`
 (en castellano, para vos): `DOMINIO_NO_PERMITIDO`, `PDF_ESCANEADO`, `HTML_SIN_TEXTO`,
 `TIEMPO_AGOTADO`, `RESPUESTA_NO_OK`, `DEMASIADO_GRANDE`, `RED_PRIVADA`…
+
+**Las cinco fuentes con buscador propio** (solapa "Buscar", `backend/lib/fuentes.js`):
+
+| slug | Qué es |
+|---|---|
+| `mendoza` | Poder Judicial de Mendoza — Corte, Cámaras Civiles o del Trabajo (se elige antes de buscar). |
+| `caba` | TSJ de la Ciudad de Buenos Aires. |
+| `saij` | SAIJ, casi un millón de documentos de todo el país. |
+| `csjn` | Corte Suprema, vía la faceta correspondiente de SAIJ (su propio sitio pide CAPTCHA). |
+| `dialnet` | Dialnet (España) — doctrina en español, no jurisprudencia: artículos, libros y tesis, sin carátula ni expediente. Ver `backend/lib/indiceDialnet.js`. |
+
+Se sumaron después de probar a mano una lista más larga de sitios que en principio parecían
+candidatos: quedaron afuera los que exigen CAPTCHA (CSJN directo), los que están detrás de un
+challenge de bot (SciELO, "Bunny Shield") y los que, aun sin ninguna de esas dos cosas, no se
+pudieron terminar de scriptear con las herramientas de este entorno —sin navegador real, no hay
+forma de ver qué pedido exacto arma el JavaScript del sitio, y adivinarlo a ciegas contra un
+formulario ASP.NET con estado de sesión (SCBA/JUBA) o una aplicación Angular con su propia API
+(Poder Judicial de Jujuy) no dio resultado. Quedan como candidatos para retomar si en algún
+momento se puede capturar el pedido real desde un navegador.
 
 ---
 
