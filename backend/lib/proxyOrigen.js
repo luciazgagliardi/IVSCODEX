@@ -43,7 +43,12 @@ function agenteProxy() {
     // parte, y el TSJ CABA le devuelve una respuesta válida pero con 0
     // resultados a tráfico que no parece argentino (visto en vivo: la
     // consulta "llega" y contesta bien formada, pero vacía).
-    agente = new ProxyAgent(`http://scraperapi.country_code=ar:${SCRAPER_API_KEY}@proxy-server.scraperapi.com:8001`);
+    // premium=true: sin esto ScraperAPI a veces contesta directamente "esta
+    // fuente es un dominio protegido, agregá premium=true" en vez de
+    // conectar (visto en vivo, con el pool de proxies comunes).
+    agente = new ProxyAgent(
+      `http://scraperapi.country_code=ar.premium=true:${SCRAPER_API_KEY}@proxy-server.scraperapi.com:8001`
+    );
   }
   return agente;
 }
