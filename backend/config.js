@@ -264,6 +264,6 @@ export const DOMINIOS_PERMITIDOS = [
   'pensamientopenal.com.ar',
   'diariojudicial.com',
   'scielo.org.ar',
-  'dialnet.unirioja.es',
+  'dialnet.unirioja.es', // buscador propio, ver lib/indiceDialnet.js
   'sedici.unlp.edu.ar',
 ];
