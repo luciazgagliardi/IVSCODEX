@@ -173,6 +173,18 @@ router.get('/debug-bytes', async (req, res) => {
   }
 });
 
+// SOLO DIAGNOSTICO TEMPORAL — idem, para bajar el PDF tal cual llega y
+// compararlo a mano con el que baja directo.
+router.get('/debug-pdf', async (req, res) => {
+  try {
+    const { buffer } = await descargar(String(req.query.url || ''));
+    res.set('Content-Type', 'application/octet-stream');
+    res.send(buffer);
+  } catch (e) {
+    res.json({ ok: false, error: e?.message, codigo: e?.codigo });
+  }
+});
+
 /** Manejador de errores propio de la API: siempre responde JSON. */
 export function manejadorErrores(err, _req, res, _next) {
   if (err instanceof ErrorApp) {
