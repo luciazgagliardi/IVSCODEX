@@ -133,6 +133,23 @@ export const LIMITE_PETICIONES = Number(process.env.LIMITE_PETICIONES || 120);
 export const LIMITE_VENTANA_MS = Number(process.env.LIMITE_VENTANA_MS || 5 * 60 * 1000);
 
 /**
+ * Lo mismo, pero solo para el verificador de citas (POST /api/verificar-cita).
+ *
+ * Necesita un limite propio porque cada pedido no es una cuenta local: es
+ * hasta dos busquedas de verdad contra buscadores oficiales, con su espera
+ * de cortesia entre pedidos. Sin esto, alguien pegando citas en bucle le
+ * manda a esos sitios mucho mas trafico del que este proyecto se permite.
+ *
+ * El numero es mas alto que el del OCR (6) porque verificar una cita es
+ * barato para NUESTRO servidor —parsear texto y esperar una respuesta— y
+ * mas bajo que el general (120) porque el costo lo paga un tercero. Treinta
+ * cada quince minutos alcanza para revisar la jurisprudencia de un escrito
+ * entero de una sentada, que es el caso de uso real.
+ */
+export const LIMITE_CITAS = Number(process.env.LIMITE_CITAS || 30);
+export const LIMITE_CITAS_VENTANA_MS = Number(process.env.LIMITE_CITAS_VENTANA_MS || 15 * 60 * 1000);
+
+/**
  * User-Agent con el que nos presentamos.
  *
  * Identificarse es buena practica y buena educacion: si un organismo ve
