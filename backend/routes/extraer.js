@@ -164,6 +164,9 @@ router.get('/debug-bytes', async (req, res) => {
       bytes: buffer.length,
       sha256: crypto.createHash('sha256').update(buffer).digest('hex'),
       primerosBytes: buffer.subarray(0, 16).toString('hex'),
+      offsetPdf: buffer.toString('latin1').indexOf('%PDF-'),
+      offsetEof: buffer.toString('latin1').lastIndexOf('%%EOF'),
+      preambulo: buffer.subarray(0, 400).toString('latin1'),
     });
   } catch (e) {
     res.json({ ok: false, error: e?.message, codigo: e?.codigo });
