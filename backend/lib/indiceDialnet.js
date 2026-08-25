@@ -118,14 +118,23 @@ function parsearItem(li) {
   return {
     id: `dialnet_${li.id}`,
     caratula,
-    // No hay resumen en el listado (solo en la ficha propia, que no forma
-    // parte de esta búsqueda): el mejor sustituto es de dónde salió el
-    // documento, que es justo lo que un lector necesita para citarlo.
-    sumario: [autores.join(', '), localizacion].filter(Boolean).join(' — '),
+    // A propósito SIN sumario: Dialnet no manda un resumen en el listado (el
+    // suyo vive en un link aparte, "info=resumen", una página por
+    // documento — pedirle eso a los 20 resultados de una búsqueda tardaría
+    // 20 veces la espera de cortesía por host, varios minutos). Dejando
+    // esto vacío, el frontend hace exactamente lo mismo que ya hace con
+    // CABA (que tampoco manda sumario): va a buscar el pasaje real al
+    // documento y lo muestra con la palabra buscada resaltada, en vez de
+    // solo el dato bibliográfico. Ver traerFragmentos() en frontend/index.html.
+    // Esto solo funciona para los resultados con linkFallo (PDF alojado en
+    // el propio Dialnet, no todos lo tienen); mientras tanto, y siempre
+    // para los que no tienen PDF propio, el autor/revista/año en tribunal y
+    // magistrados es lo que da una idea del contenido.
+    sumario: '',
     voces: [],
     expediente: '',
     fecha: anioDe(localizacion),
-    tribunal: tipoLegible,
+    tribunal: localizacion ? `${tipoLegible} — ${localizacion}` : tipoLegible,
     magistrados: autores.length ? `Autor(es): ${autores.join(', ')}` : '',
     linkFallo,
     linkFicha,
