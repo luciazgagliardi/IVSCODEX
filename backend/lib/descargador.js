@@ -30,7 +30,7 @@ import {
   ESPERA_POR_HOST_MS,
 } from '../config.js';
 import { errores, ErrorApp } from './errores.js';
-import { urlParaPedir } from './proxyOrigen.js';
+import { urlParaPedir, sinClave } from './proxyOrigen.js';
 
 /* ------------------------------------------------------------------ *
  * 1. Validacion del dominio
@@ -287,7 +287,7 @@ export async function descargar(urlInicial) {
       clearTimeout(reloj);
       if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
       if (e instanceof ErrorApp) throw e;
-      throw errores.redInalcanzable(actual.hostname, e?.cause?.code || e?.code || e?.message);
+      throw errores.redInalcanzable(actual.hostname, sinClave(e?.cause?.code || e?.code || e?.message));
     } finally {
       clearTimeout(reloj);
     }
