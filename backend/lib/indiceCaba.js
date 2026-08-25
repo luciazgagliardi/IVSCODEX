@@ -97,7 +97,10 @@ async function pedirBusqueda(parametros) {
   } catch (e) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e; // ya es un ErrorApp
-    throw errores.indiceFuenteFalla('caba', e?.message);
+    // fetch() envuelve el error real en uno generico ("fetch failed"); el
+    // motivo de verdad (DNS, conexion rechazada, TLS, auth del proxy...)
+    // vive en .cause. Sin esto, cualquier falla de red se ve identica.
+    throw errores.indiceFuenteFalla('caba', e?.cause?.message || e?.cause?.code || e?.message);
   } finally {
     clearTimeout(reloj);
   }
