@@ -947,7 +947,7 @@ function nuevoIndices(){
       // Páginas de la búsqueda actual ya traídas (a mano o precargadas
       // solas): número de página -> la respuesta completa del servidor.
       // Se vacía cada vez que arranca una búsqueda nueva. Ver buscarEnFuente.
-      paginas:{},busquedaId:0};
+      paginas:{},busquedaId:0,cargandoProgreso:null};
   });
   return o;
 }
@@ -2246,16 +2246,24 @@ function buscarSaijNavegador(cuerpo,slug){
 var POR_PAGINA_INDICE=20;
 
 /**
- * Hasta cuántos resultados en total se precargan solos, de fondo, apenas
- * llega la página 1 — para que ir a la página siguiente sea instantáneo en
- * vez de esperar de nuevo al sitio oficial. Con más que esto (una búsqueda
- * de concepto en Dialnet puede dar 30 mil) no tiene sentido: nadie hojea
- * cientos de páginas, y precargarlas igual sería maltratar el sitio oficial
- * de gusto. Con menos, sí: 5 páginas de 20 es exactamente el caso de "una
- * búsqueda con 56 resultados", que se cargan enteros en el fondo y quedan
- * instantáneas al pasar de página.
+ * Hasta cuántos resultados en total se traen TODOS antes de mostrar nada,
+ * para que pasar de página después sea instantáneo de verdad. El primer
+ * intento de esto los traía de fondo mientras la página 1 ya estaba en
+ * pantalla — pero CABA puede tardar 10-15 segundos por página real: nadie
+ * espera eso mirando la página 1 antes de hacer clic en "siguiente", así
+ * que en la práctica el usuario le seguía ganando de mano a la precarga y
+ * terminaba esperando en vivo igual, sin ninguna mejora. La única forma de
+ * garantizar "ya está" es tenerlas TODAS antes de mostrar la primera.
+ *
+ * Por eso el techo es más chico que si esto corriera de fondo sin que nadie
+ * lo notara: 3 páginas de 20 (el tamaño exacto de una búsqueda con 56
+ * resultados) es cuanto parece razonable hacer esperar a alguien mirando
+ * una pantalla de "buscando…", no 5. Con más resultados que esto (una
+ * búsqueda de concepto en Dialnet puede dar 30 mil) no se intenta: además
+ * de la espera sería maltratar al sitio oficial de gusto, para páginas que
+ * nadie va a hojear.
  */
-var UMBRAL_PRECARGA_INDICE=5*POR_PAGINA_INDICE;
+var UMBRAL_PRECARGA_INDICE=3*POR_PAGINA_INDICE;
 
 /**
  * Vuelca la respuesta del servidor (fresca o de un caché de página) al
@@ -2264,6 +2272,8 @@ var UMBRAL_PRECARGA_INDICE=5*POR_PAGINA_INDICE;
  */
 function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   imBusco.pagina=pagina;
+  imBusco.cargando=false;
+  imBusco.cargandoProgreso=null;
   imBusco.desdeNavegador=!!d.desdeNavegador;
   imBusco.resultados=d.resultados||[];
   imBusco.total=d.total||0;
@@ -2288,35 +2298,42 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
 }
 
 /**
- * Trae de fondo las páginas 2, 3... de la búsqueda que se acaba de hacer,
- * sin spinner ni bloquear nada: si para cuando el usuario hace clic en
- * "página siguiente" ya llegó, buscarEnFuente la sirve del caché al toque.
- * Una a la vez y en orden, no todas juntas: son pedidos reales al sitio
+ * Trae, EN ORDEN Y ANTES DE MOSTRAR NADA, todas las páginas de una búsqueda
+ * que entra dentro de UMBRAL_PRECARGA_INDICE — la página 1 (que ya se pidió
+ * para saber el total) más las que falten. Recién cuando están todas
+ * guardadas se revela la página 1, con el resto ya listo para navegar sin
+ * esperar. Una a la vez y no todas juntas: son pedidos reales al sitio
  * oficial, con la misma espera de cortesía entre pedidos que ya respeta el
  * servidor (ver esperarTurno en lib/descargador.js) — pedirlas en paralelo
  * no las traería más rápido, solo se atropellarían.
+ *
+ * Si una página falla en el camino, no se traba todo: se muestra la
+ * página 1 igual (si se llegó a tener) con lo que se haya juntado hasta
+ * ahí, y las que falten se piden en vivo cuando el usuario las pida, como
+ * si no hubiera precarga.
  */
-function precargarPaginasIndice(slug,imBusco,busquedaId,cuerpoBase,total){
-  var totalPaginas=Math.min(Math.ceil(total/POR_PAGINA_INDICE),Math.ceil(UMBRAL_PRECARGA_INDICE/POR_PAGINA_INDICE));
+function traerTodoAntesDeMostrar(slug,fCfg,imBusco,busquedaId,cuerpoBase,primerRespuesta){
+  var totalPaginas=Math.min(Math.ceil(primerRespuesta.total/POR_PAGINA_INDICE),Math.ceil(UMBRAL_PRECARGA_INDICE/POR_PAGINA_INDICE));
+  imBusco.paginas[1]=primerRespuesta;
+
+  function terminar(){
+    if(imBusco.busquedaId!==busquedaId) return; // esta búsqueda ya quedó vieja
+    aplicarPaginaIndice(slug,fCfg,imBusco,imBusco.paginas[1],1,true);
+  }
   function siguiente(pagina){
-    if(pagina>totalPaginas) return;
-    // ¡Ojo! Se compara contra busquedaId (una búsqueda, con q/modo/tribunal
-    // fijos), NO contra imBusco.pedido: eso último cambia con cada clic en
-    // una página, y si esto revisara pedido, con solo pasar de página a
-    // mano mientras la precarga sigue en vuelo se cortaría entera pensando
-    // que la búsqueda había quedado vieja, cuando en realidad es la misma.
-    if(imBusco.busquedaId!==busquedaId) return;
-    if(imBusco.paginas[pagina]) return siguiente(pagina+1); // ya la tenía (poco probable, no hace daño)
+    if(imBusco.busquedaId!==busquedaId) return; // el usuario ya arrancó otra búsqueda
+    if(pagina>totalPaginas) return terminar();
+    imBusco.cargandoProgreso={actual:pagina,total:totalPaginas};
+    render();
     var cuerpo=Object.assign({},cuerpoBase,{pagina:pagina});
     fetch(estado.api+"/indice/"+slug+"/buscar",{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify(cuerpo)
     }).then(function(r){ return r.json(); })
       .then(function(d){
-        if(imBusco.busquedaId!==busquedaId) return;
         if(d&&d.ok&&!d.desdeIndiceLocal) imBusco.paginas[pagina]=d;
         siguiente(pagina+1);
-      })["catch"](function(){ /* si falla precargando, buscarEnFuente la pide de nuevo cuando haga falta */ });
+      })["catch"](function(){ terminar(); }); // una que falla no trapa a las que ya se tenían
   }
   siguiente(2);
 }
@@ -2377,25 +2394,30 @@ function buscarEnFuente(slug,pagina){
     })
     .then(function(d){
       if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
-      imBusco.cargando=false; imBusco.busco=true;
+      imBusco.busco=true;
       if(!d||!d.ok){
+        imBusco.cargando=false; imBusco.cargandoProgreso=null;
         imBusco.error=(d&&d.mensaje)||"El servidor no devolvió resultados.";
         render(); return;
       }
-      aplicarPaginaIndice(slug,fCfg,imBusco,d,paginaPedida,esNueva);
-      // Se haya pedido a mano o venga de la precarga de fondo, cualquier
-      // página que de verdad se trajo del sitio queda guardada: volver
-      // a pasar por ella (ida y vuelta entre páginas) también es
-      // instantáneo, no solo la que la precarga llegó a adelantar.
-      if(!d.desdeIndiceLocal) imBusco.paginas[paginaPedida]=d;
-      // Búsqueda nueva, con más de una página y no demasiado grande: se van
-      // trayendo las siguientes solas, de fondo (ver la nota de arriba).
+      // Búsqueda nueva, con más de una página y no demasiado grande: se
+      // traen TODAS antes de mostrar nada (ver la nota grande más arriba de
+      // por qué no alcanza con precargarlas mientras la página 1 ya está en
+      // pantalla). aplicarPaginaIndice recién se llama al final, adentro de
+      // traerTodoAntesDeMostrar — hasta entonces sigue el cartel de
+      // "buscando", con el progreso de página en página.
       if(esNueva&&!d.desdeIndiceLocal&&d.total>POR_PAGINA_INDICE&&d.total<=UMBRAL_PRECARGA_INDICE){
-        precargarPaginasIndice(slug,imBusco,busquedaId,cuerpo,d.total);
+        traerTodoAntesDeMostrar(slug,fCfg,imBusco,busquedaId,cuerpo,d);
+        return;
       }
+      aplicarPaginaIndice(slug,fCfg,imBusco,d,paginaPedida,esNueva);
+      // Se haya pedido a mano o venga de una búsqueda de una sola página,
+      // cualquier página que de verdad se trajo del sitio queda guardada:
+      // volver a pasar por ella (ida y vuelta) también es instantáneo.
+      if(!d.desdeIndiceLocal) imBusco.paginas[paginaPedida]=d;
     })["catch"](function(){
       if(imBusco.pedido!==pedido) return;
-      imBusco.cargando=false; imBusco.busco=true;
+      imBusco.cargando=false; imBusco.cargandoProgreso=null; imBusco.busco=true;
       imBusco.error=(slug==="saij"||slug==="csjn")
         ?"No se pudo consultar SAIJ, ni desde el servidor ni desde acá. Probá de nuevo en un rato."
         :"Se cortó la comunicación con el servidor.";
@@ -2473,7 +2495,16 @@ function panelIndice(f){
   }
 
   if(im.cargando){
-    out+='<p style="font-size:13px;color:var(--humo);margin:0">Consultando el buscador… puede tardar hasta 30 segundos: son sistemas oficiales viejos, no es que se haya colgado.</p></div>';
+    // Cuando hay progreso (ver traerTodoAntesDeMostrar) es porque se están
+    // trayendo de una varias páginas para que, al terminar, navegarlas
+    // quede instantáneo — vale la pena decirlo así de claro, porque la
+    // espera es más larga que la de una página sola.
+    out+='<p style="font-size:13px;color:var(--humo);margin:0">'+
+      (im.cargandoProgreso
+        ?"Trayendo los resultados enteros (página "+im.cargandoProgreso.actual+" de "+im.cargandoProgreso.total+
+          ") para que después puedas pasar de página sin esperar…"
+        :"Consultando el buscador…")+
+      ' Puede tardar hasta 30 segundos por página: son sistemas oficiales viejos, no es que se haya colgado.</p></div>';
     return out;
   }
   if(im.error){
