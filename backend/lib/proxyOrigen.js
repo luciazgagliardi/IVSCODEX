@@ -1,22 +1,32 @@
 /**
  * Algunos sitios judiciales viejos le niegan la conexión al datacenter donde
- * corre el backend publicado (visto con el TSJ CABA en Azure: 403 tanto en
- * su buscador como en la descarga de los PDF) pero le contestan bien a una
- * conexión hogareña. Para esos casos puntuales, el pedido pasa por
- * ScraperAPI en vez de ir directo.
+ * corre el backend publicado (visto con el TSJ CABA en Azure) pero le
+ * contestan bien a una conexión hogareña. Para esos casos puntuales, el
+ * pedido pasa por ScraperAPI en vez de ir directo.
  *
- * Se usa su API por URL (api.scraperapi.com/?url=...), no su "modo proxy"
- * (un relay de red de nivel TCP/HTTP): probado en vivo, el modo proxy no
- * reconoce los parámetros extra (country_code, premium) pasados por el
- * usuario del proxy —cualquier combinación probada tuvo exactamente el
- * mismo resultado que sin ellos—, así que no hay forma de pedirle el pool
- * "premium" (residencial) que este dominio en particular necesita: sin él,
- * ScraperAPI directamente contesta "dominio protegido, agregá
- * premium=true" en vez de conectar.
+ * IMPORTANTE — alcance reducido a propósito: jurisprudencia.tsjbaires.gob.ar
+ * (el buscador) quedó afuera. Probado en vivo, ScraperAPI lo tiene marcado
+ * como "dominio protegido" y exige el pool "premium" o "ultra_premium"
+ * (proxies residenciales) para conectar — ninguno de los dos está incluido
+ * en el plan actual, así que no hay parámetro que lo arregle: hace falta
+ * upgradear el plan de ScraperAPI, no un cambio de código. Mientras tanto,
+ * el buscador de CABA sigue yendo directo y cae al índice local guardado
+ * cuando el sitio no responde (ver routes/indice.js), igual que si esto no
+ * existiera.
+ *
+ * www.tsjbaires.gov.ar (donde viven los PDF de cada fallo) es un dominio
+ * distinto y todavía no se probó si también está en esa lista — por eso
+ * sigue intentando por acá.
+ *
+ * Se usa la API por URL de ScraperAPI (api.scraperapi.com/?url=...), no su
+ * "modo proxy" (un relay de red de nivel TCP/HTTP): probado en vivo, el modo
+ * proxy no reconoce parámetros extra pasados por el usuario del proxy
+ * (country_code, premium) —misma respuesta con o sin ellos—, así que solo
+ * la API por URL deja pedir algo puntual como el país de salida.
  *
  * La contra de la API por URL es que ella sigue las redirecciones por su
  * cuenta si se lo dejamos, y lib/descargador.js necesita revisar cada salto
- * a mano (ver el comentario grande ahi sobre SSRF). Por eso acá se envuelve
+ * a mano (ver el comentario grande ahí sobre SSRF). Por eso acá se envuelve
  * la URL de cada pedido, uno por uno —incluida cada redirección— en vez de
  * envolver una sola vez "la navegación completa": quien pide siempre sabe
  * qué URL real está pidiendo y a qué host efectivamente puede seguir.
@@ -29,7 +39,7 @@
 import { SCRAPER_API_KEY } from '../config.js';
 
 /** Dominios que se sabe que le niegan la conexión al datacenter publicado. */
-const SUFIJOS_VIA_PROXY = ['tsjbaires.gob.ar', 'tsjbaires.gov.ar'];
+const SUFIJOS_VIA_PROXY = ['tsjbaires.gov.ar'];
 
 /** True si el host es uno de esos dominios o un subdominio suyo. */
 export function dominioNecesitaProxy(host) {
@@ -43,8 +53,7 @@ function urlProxy(destino) {
     api_key: SCRAPER_API_KEY,
     url: destino,
     country_code: 'ar', // la IP de salida importa: ver la nota de mas arriba
-    premium: 'true', // este dominio puntual lo exige, ver la nota de mas arriba
-    render: 'false', // es HTML de servidor, no hace falta un navegador de verdad
+    render: 'false', // son PDF y HTML de servidor, no hace falta un navegador de verdad
   });
   return `https://api.scraperapi.com/?${p.toString()}`;
 }
