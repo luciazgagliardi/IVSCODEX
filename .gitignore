@@ -8,6 +8,7 @@ node_modules/
 # Estado de runtime del backend (se recrea solo)
 cache/
 indice/
+ocr-cache/
 
 # Cuentas de usuario: datos de personas reales, nunca al repo
 usuarios/

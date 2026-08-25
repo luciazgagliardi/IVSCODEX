@@ -12,8 +12,10 @@ import { descargar, aTexto } from './descargador.js';
 import { extraerHtml } from './extraerHtml.js';
 import { extraerPdf } from './extraerPdf.js';
 import { extraerDoc } from './extraerDoc.js';
+import { ocrPdf } from './ocr.js';
 import { leerCache, escribirCache } from './cache.js';
 import { errores } from './errores.js';
+import { OCR_HABILITADO } from '../config.js';
 
 /**
  * Algunos servidores judiciales viejos (visto en el TSJ de CABA) no sirven
@@ -119,6 +121,56 @@ export async function obtenerDocumento(url, { refrescar = false } = {}) {
 
   // Si el cache falla, no le arruina la respuesta a nadie.
   escribirCache(url, salida).catch(() => {});
+
+  return salida;
+}
+
+/**
+ * Descarga un PDF y le aplica OCR en vez de leer su capa de texto (que no
+ * tiene: es un escaneo, ver lib/extraerPdf.js). Mismo trato que
+ * obtenerDocumento en todo lo demas —cache en disco, deteccion de tipo por
+ * la firma de los bytes— pero bajo una clave de cache aparte: es la misma
+ * URL, pero el resultado (y lo que costó producirlo) es otra cosa.
+ *
+ * @param {string} url
+ * @param {{refrescar?: boolean}} [opciones]
+ */
+export async function ocrDocumento(url, { refrescar = false } = {}) {
+  if (!url) throw errores.urlFaltante();
+  if (!OCR_HABILITADO) throw errores.ocrDeshabilitado();
+
+  const claveCache = `ocr::${url}`;
+  if (!refrescar) {
+    const guardado = await leerCache(claveCache);
+    if (guardado) return { ...guardado, ok: true, desdeCache: true };
+  }
+
+  const { buffer: crudo, contentType, urlFinal, saltos } = await descargar(url);
+  const buffer = destaparPdf(crudo);
+  const tipo = detectarTipo(buffer, contentType);
+  if (tipo !== 'pdf') throw errores.ocrSoloPdf(tipo);
+
+  const resultado = await ocrPdf(buffer);
+
+  const salida = {
+    ok: true,
+    url,
+    urlFinal,
+    redirecciones: saltos.length - 1,
+    tipo: 'pdf',
+    titulo: '',
+    texto: resultado.texto,
+    caracteres: resultado.texto.length,
+    palabras: resultado.texto.split(/\s+/).filter(Boolean).length,
+    paginas: resultado.paginas,
+    paginasProcesadas: resultado.paginasProcesadas,
+    metodo: 'ocr',
+    bytesDescargados: crudo.length,
+    obtenidoEn: new Date().toISOString(),
+    desdeCache: false,
+  };
+
+  escribirCache(claveCache, salida).catch(() => {});
 
   return salida;
 }

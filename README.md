@@ -247,14 +247,39 @@ no lo puse porque para la mayoría de las fuentes no hace falta.
 
 **PDFs escaneados.** Mucha justicia provincial publica fotos de papel. No tienen capa de
 texto y `pdf.js` no puede inventarla. El sistema lo detecta y te avisa con `PDF_ESCANEADO`
-en vez de devolverte una página en blanco.
+en vez de devolverte una página en blanco — pero en este caso hay una salida integrada:
+seguí leyendo.
 
-Para los tres casos, el plan B es el mismo y funciona siempre: abrí el enlace en el
+Para los otros dos, el plan B es el mismo y funciona siempre: abrí el enlace en el
 navegador, copiá el texto y pegalo en el Lector del frontend (funciona sin backend).
 
-### PDFs escaneados: cómo resolverlos
+### PDFs escaneados: OCR
 
-La herramienta libre es `ocrmypdf`:
+Cuando el Lector avisa `PDF_ESCANEADO`, aparece un botón **"Aplicar OCR"** que hace todo
+esto por vos: descarga el PDF, renderiza cada página como imagen y le corre
+[Tesseract](https://github.com/naptha/tesseract.js) en español para reconocer el texto.
+Tarda bastante más que una descarga normal —varios segundos por página, no
+milisegundos— así que es un botón aparte y no algo automático. El resultado queda
+cacheado igual que cualquier otro documento (ver `lib/cache.js`), así que solo se paga
+el costo una vez por URL.
+
+Detalles técnicos, por si hace falta tocar `lib/ocr.js`:
+
+- El render de página a imagen usa [`@hyzyla/pdfium`](https://github.com/hyzyla/pdfium)
+  (el motor de PDF de Chrome, compilado a WebAssembly), no `pdf.js` + un canvas nativo.
+  Se probó `pdf.js` + `@napi-rs/canvas` primero y hace un **segfault real** —tira abajo
+  el proceso entero, no es un error atajable— con PDFs reales; `node-canvas` (la
+  alternativa clásica) ni siquiera compila sin Cairo/Pango instalados en el sistema.
+  PDFium es WASM puro: cero binarios nativos, cero dependencia del sistema operativo,
+  portable a cualquier hosting sin instalar nada aparte.
+- `OCR_MAX_PAGINAS` (default 20) limita cuántas páginas se procesan por pedido: un
+  escaneo de una sentencia son pocas páginas; un expediente de cientos de hojas
+  tardaría minutos y no es el caso de uso de este botón.
+- `OCR_HABILITADO=false` apaga la función entera sin tocar código, para un plan de
+  hosting chico donde renderizar páginas y correr Tesseract sale caro en CPU/memoria.
+
+Si preferís hacerlo vos mismo por fuera (mejor calidad, sin límite de páginas), la
+herramienta libre es `ocrmypdf`:
 
 ```bash
 # macOS

@@ -14,6 +14,7 @@
     "limpiar-cache": "node -e \"import('node:fs').then(fs=>{fs.rmSync('cache',{recursive:true,force:true});fs.mkdirSync('cache');console.log('cache vacia')})\""
   },
   "dependencies": {
+    "@hyzyla/pdfium": "^2.1.13",
     "@mozilla/readability": "^0.5.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
@@ -21,6 +22,8 @@
     "iconv-lite": "^0.6.3",
     "jsdom": "^24.1.1",
     "pdfjs-dist": "^4.5.136",
+    "pngjs": "^7.0.0",
+    "tesseract.js": "^7.0.0",
     "word-extractor": "^1.0.4"
   },
   "devDependencies": {
