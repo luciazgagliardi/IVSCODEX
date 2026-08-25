@@ -102,16 +102,37 @@ textarea,input[type=text],input[type=number],select{
 }
 .marca .sub{font-family:var(--sans);font-size:15px;font-weight:300;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.72);margin-top:0;text-align:left}
 .marca .sub .dorado{color:var(--dorado);font-weight:300}
+/* Fila que agrupa el nombre lateral (colapsado) y la barra de navegación,
+   centrada como conjunto: al abrirse el nombre, empuja la barra entera
+   hacia la derecha en vez de superponerse. Ver #btn-logo más abajo. */
+.nav-fila{
+  display:flex;align-items:center;justify-content:center;
+  max-width:calc(100% - 32px);margin:10px auto 0
+}
+.marca-lateral{
+  font-family:var(--serif);font-weight:400;color:var(--lacre);
+  font-size:clamp(20px,3.4vw,34px);letter-spacing:.04em;white-space:nowrap;
+  max-width:0;opacity:0;overflow:hidden;margin-right:0;
+  transition:max-width .6s cubic-bezier(.4,0,.2,1),opacity .45s ease,margin-right .6s cubic-bezier(.4,0,.2,1)
+}
+.nav-fila.mostrar-marca .marca-lateral{max-width:min(640px,55vw);opacity:1;margin-right:18px}
 .nav-wrap{
-  max-width:calc(100% - 32px);width:fit-content;margin:10px auto 0;
+  max-width:100%;width:fit-content;margin:0;
   display:flex;align-items:center;gap:16px;padding:0 22px;
   border:1px solid rgba(217,166,42,.55);border-radius:999px;
   background:rgba(255,255,255,.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
 }
+.nav-logo-btn{
+  flex:none;display:block;padding:0;margin:0;border:none;background:none;cursor:pointer;
+  border-radius:50%;
+}
+.nav-logo-btn:focus-visible{outline:2px solid var(--dorado);outline-offset:3px}
 .nav-logo{
   width:56px;height:56px;flex:none;display:block;border-radius:50%;
-  border:1px solid var(--lacre);object-fit:contain;padding:5px;background:transparent
+  border:1px solid var(--lacre);object-fit:contain;padding:5px;background:transparent;
+  transition:transform .3s ease
 }
+.nav-logo-btn:hover .nav-logo{transform:scale(1.06)}
 .nav{display:flex;gap:14px;flex:1 1 auto;min-width:0;padding:10px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .nav button{
   position:relative;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;
@@ -393,6 +414,7 @@ mark.actual{background:var(--lacre);color:#241a0c}
 
 @media (max-width:860px){
   .top-in{gap:6px}
+  .nav-fila.mostrar-marca .marca-lateral{max-width:44vw;margin-right:10px}
   .wrap{grid-template-columns:1fr;gap:16px}
   .rail{position:static;max-height:none}
   .rail-list{flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:6px}
@@ -427,9 +449,14 @@ mark.actual{background:var(--lacre);color:#241a0c}
       <div class="sub"><span class="dorado">Lectio et iurisprudentia</span></div>
     </div>
   </div>
-  <div class="nav-wrap">
-    <img class="nav-logo" src="./logo-iu.png" alt="Emblema de Iuris et de iure">
-    <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
+  <div class="nav-fila" id="nav-fila">
+    <span class="marca-lateral" id="marca-lateral" aria-hidden="true">Iuris et de Iure</span>
+    <div class="nav-wrap">
+      <button class="nav-logo-btn" id="btn-logo" type="button" aria-expanded="false" aria-controls="marca-lateral" aria-label="Mostrar el nombre completo">
+        <img class="nav-logo" src="./logo-iu.png" alt="Emblema de Iuris et de iure">
+      </button>
+      <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
+    </div>
   </div>
 </header>
 
@@ -479,6 +506,21 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
     entrada.addEventListener("click",cerrar);
     entrada.addEventListener("keydown",function(e){
       if(e.key==="Enter"||e.key===" "||e.key==="Spacebar"){ e.preventDefault(); cerrar(); }
+    });
+  }catch(e){}
+})();
+
+/* ============================================================
+   0.2. Logo del header — tocarlo corre la barra y muestra el nombre
+   ============================================================ */
+(function(){
+  try{
+    var fila=document.getElementById("nav-fila");
+    var boton=document.getElementById("btn-logo");
+    if(!fila||!boton) return;
+    boton.addEventListener("click",function(){
+      var mostrando=fila.classList.toggle("mostrar-marca");
+      boton.setAttribute("aria-expanded",mostrando?"true":"false");
     });
   }catch(e){}
 })();
