@@ -58,3 +58,14 @@ export function urlParaPedir(destino, host) {
   if (!SCRAPER_API_KEY || !dominioNecesitaProxy(host)) return destino;
   return urlProxy(destino);
 }
+
+/**
+ * Por las dudas: tapa la key si aparece en un texto antes de que llegue a
+ * un mensaje de error (esos sí pueden terminar mostrados en pantalla, ver
+ * routes/indice.js). fetch() a veces mete la URL pedida en el mensaje de
+ * sus propios errores de red, y esa URL trae la key puesta.
+ */
+export function sinClave(texto) {
+  const t = String(texto ?? '');
+  return SCRAPER_API_KEY ? t.split(SCRAPER_API_KEY).join('[clave-oculta]') : t;
+}

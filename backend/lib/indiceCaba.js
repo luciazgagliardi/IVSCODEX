@@ -36,7 +36,7 @@ import { JSDOM, VirtualConsole } from 'jsdom';
 import iconv from 'iconv-lite';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
-import { urlParaPedir } from './proxyOrigen.js';
+import { urlParaPedir, sinClave } from './proxyOrigen.js';
 import { errores } from './errores.js';
 
 const HOST = 'jurisprudencia.tsjbaires.gob.ar';
@@ -109,7 +109,7 @@ async function pedirBusqueda(parametros) {
     // fetch() envuelve el error real en uno generico ("fetch failed"); el
     // motivo de verdad (DNS, conexion rechazada, TLS, auth del proxy...)
     // vive en .cause. Sin esto, cualquier falla de red se ve identica.
-    throw errores.indiceFuenteFalla('caba', e?.cause?.message || e?.cause?.code || e?.message);
+    throw errores.indiceFuenteFalla('caba', sinClave(e?.cause?.message || e?.cause?.code || e?.message));
   } finally {
     clearTimeout(reloj);
   }
@@ -261,46 +261,4 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
   }
 
   return { total, pagina, porPagina, resultados };
-}
-
-/**
- * SOLO DIAGNOSTICO TEMPORAL — sacar cuando se resuelva el problema del
- * proxy dando 0 resultados falsos. Devuelve la respuesta cruda del sitio
- * para poder mirarla a ojo en vez de seguir adivinando a ciegas.
- */
-export async function debugBusqueda(q) {
-  await esperarTurno(HOST);
-  const url = urlParaPedir(URL_BUSQUEDA, HOST);
-  const porProxy = url !== URL_BUSQUEDA;
-  const parametros = {
-    textoLibreTodas: String(q || ''),
-    hdnPaginaOrigen: 'busqueda.asp',
-    pag: '1',
-    cantRegPagina: '20',
-  };
-  const resp = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'User-Agent': USER_AGENT,
-      'Content-Type': porProxy
-        ? 'application/x-www-form-urlencoded'
-        : 'application/x-www-form-urlencoded; charset=windows-1252',
-      Accept: 'text/html, */*;q=0.8',
-    },
-    body: cuerpoWin1252(parametros),
-  });
-  const html = porProxy
-    ? await resp.text()
-    : iconv.decode(Buffer.from(await resp.arrayBuffer()), 'win1252');
-  return {
-    status: resp.status,
-    redirected: resp.redirected,
-    urlFinal: resp.url,
-    total: sacarTotal(html),
-    largo: html.length,
-    esFormulario: html.includes('name="textoLibreTodas"') || html.includes("name='textoLibreTodas'"),
-    tieneDescargaPdf: html.includes('downloadPDF'),
-    inicio: html.slice(0, 800),
-    conProxy: porProxy,
-  };
 }

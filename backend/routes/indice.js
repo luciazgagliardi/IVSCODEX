@@ -15,7 +15,7 @@
 
 import express from 'express';
 import { buscarMza } from '../lib/indiceMza.js';
-import { buscarCaba, debugBusqueda } from '../lib/indiceCaba.js';
+import { buscarCaba } from '../lib/indiceCaba.js';
 import { buscarSaij } from '../lib/indiceSaij.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
@@ -274,13 +274,4 @@ router.get('/fuentes/estado', async (_req, res) => {
     })
   );
   res.json({ ok: true, fuentes });
-});
-
-// SOLO DIAGNOSTICO TEMPORAL — sacar en cuanto se resuelva lo del proxy.
-router.get('/fuentes/caba-debug', async (req, res) => {
-  try {
-    res.json({ ok: true, ...(await debugBusqueda(req.query.q || 'daño')) });
-  } catch (e) {
-    res.json({ ok: false, error: e?.message, codigo: e?.codigo });
-  }
 });
