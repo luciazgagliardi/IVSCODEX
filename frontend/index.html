@@ -914,7 +914,7 @@ var SECRETARIAS_CABA={
 function nuevoIndices(){
   var o={};
   FUENTES_INDICE.forEach(function(f){
-    o[f.slug]={busco:false,cargando:false,cargandoMas:false,error:null,resultados:[],total:0,guardados:0,local:false,avisoFalla:"",
+    o[f.slug]={busco:false,cargando:false,error:null,resultados:[],total:0,guardados:0,local:false,avisoFalla:"",
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
@@ -2128,7 +2128,17 @@ function buscarSaijNavegador(cuerpo,slug){
   });
 }
 
-function buscarEnFuente(slug,siguiente){
+/** Cuántos resultados pide cada página. Tiene que ser el mismo número que
+ * usan por default lib/indiceMza.js, lib/indiceCaba.js y lib/indiceSaij.js. */
+var POR_PAGINA_INDICE=20;
+
+/**
+ * @param slug fuente a consultar.
+ * @param pagina si se omite es una búsqueda nueva (arranca en la página 1);
+ *   si se pasa un número, es "ir a esa página" de una búsqueda ya hecha —
+ *   reemplaza la lista, no la suma a la anterior.
+ */
+function buscarEnFuente(slug,pagina){
   var fCfg=FUENTES_INDICE.filter(function(x){return x.slug===slug;})[0];
   var qi=estado.q.trim();
   if(!fCfg) return;
@@ -2136,18 +2146,14 @@ function buscarEnFuente(slug,siguiente){
   if(!estado.api){ flash("El servidor de extracción no está disponible ahora"); return; }
   recordar(qi);
   var imBusco=estado.indices[slug];
-  // "Ver más resultados" mientras ya hay un pedido de esta fuente en vuelo:
-  // no dispara uno nuevo, total el que está en camino va a traer la página.
-  if(siguiente&&(imBusco.cargando||imBusco.cargandoMas)) return;
+  var esNueva=!(pagina>=1);
   // Si esta fuente es lenta (CABA puede tardar 30s) y se dispara otra
   // búsqueda antes de que vuelva la anterior, la respuesta vieja no debe
   // pisar a la nueva. Un token por pedido: solo aplica si nadie más
   // arrancó una búsqueda de esta misma fuente después.
   var pedido=(imBusco.pedido||0)+1; imBusco.pedido=pedido;
-  // Una búsqueda nueva arranca de página 1; "ver más" pide la siguiente.
-  imBusco.pagina=siguiente?(imBusco.pagina||1)+1:1;
-  if(siguiente){ imBusco.cargandoMas=true; } else { imBusco.cargando=true; imBusco.error=null; }
-  render();
+  imBusco.pagina=esNueva?1:pagina;
+  imBusco.cargando=true; imBusco.error=null; render();
   // El modo y las palabras a excluir viajan al servidor: antes se elegían
   // acá y no cambiaban nada de la búsqueda real (ver lib/relevancia.js).
   var cuerpo={q:qi,modo:estado.modo||"todas",pagina:imBusco.pagina};
@@ -2167,29 +2173,13 @@ function buscarEnFuente(slug,siguiente){
     })
     .then(function(d){
       if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
-      imBusco.cargando=false; imBusco.cargandoMas=false; imBusco.busco=true;
+      imBusco.cargando=false; imBusco.busco=true;
       if(!d||!d.ok){
-        if(siguiente){
-          imBusco.pagina--; // esta página no llegó: que "ver más" la reintente
-          flash("No se pudo traer más resultados de "+fCfg.nombre+".");
-          render(); return;
-        }
         imBusco.error=(d&&d.mensaje)||"El servidor no devolvió resultados.";
         render(); return;
       }
       imBusco.desdeNavegador=!!d.desdeNavegador;
-      if(siguiente){
-        // Se suma a lo que ya había, sin duplicar si una página se solapa
-        // con la anterior (pasa en las fuentes que se filtran de este lado).
-        var vistos={};
-        imBusco.resultados.forEach(function(r){ if(r.id) vistos[r.id]=true; });
-        (d.resultados||[]).forEach(function(r){
-          if(!r.id||!vistos[r.id]){ imBusco.resultados.push(r); if(r.id) vistos[r.id]=true; }
-        });
-      } else {
-        imBusco.resultados=d.resultados||[];
-        imBusco.fragmentos={};
-      }
+      imBusco.resultados=d.resultados||[];
       imBusco.total=d.total||0;
       imBusco.guardados=d.guardadosEnIndice||0;
       imBusco.local=!!d.desdeIndiceLocal;
@@ -2197,6 +2187,7 @@ function buscarEnFuente(slug,siguiente){
       imBusco.parcial=!!d.totalParcial;
       imBusco.revisados=d.revisados||0;
       imBusco.aflojado=!!d.aflojado;
+      imBusco.fragmentos={};
       render();
       // Los resultados ya están en pantalla; los pasajes que esta fuente no
       // manda se van completando atrás, sin hacer esperar a nadie.
@@ -2205,22 +2196,61 @@ function buscarEnFuente(slug,siguiente){
       }
       var nombreTrib=(fCfg.tribunales||[]).filter(function(t){return t.v===imBusco.tribunal;})[0];
       var enDonde=fCfg.nombre+(nombreTrib?" · "+nombreTrib.n:"");
-      if(!siguiente) flash(imBusco.local
+      if(esNueva) flash(imBusco.local
         ?"El sitio oficial no respondió: mostrando "+d.resultados.length+" resultado(s) ya guardados"
         :(d.total?d.total.toLocaleString("es-AR")+" coincidencias en "+enDonde:"Sin coincidencias en "+enDonde));
     })["catch"](function(){
       if(imBusco.pedido!==pedido) return;
-      imBusco.cargando=false; imBusco.cargandoMas=false; imBusco.busco=true;
-      if(siguiente){
-        imBusco.pagina--;
-        flash("Se cortó la comunicación al traer más resultados.");
-        render(); return;
-      }
+      imBusco.cargando=false; imBusco.busco=true;
       imBusco.error=(slug==="saij"||slug==="csjn")
         ?"No se pudo consultar SAIJ, ni desde el servidor ni desde acá. Probá de nuevo en un rato."
         :"Se cortó la comunicación con el servidor.";
       render();
     });
+}
+
+/**
+ * Números de página, tipo "‹ 1 2 3 … 12 ›", para navegar los resultados de
+ * una fuente en vivo sin acumular todo en una sola lista larguísima.
+ *
+ * El respaldo local (im.local) ya trae todo lo que hay guardado en una sola
+ * tanda, así que ahí no hay "página siguiente" que ofrecer.
+ */
+function paginadorIndice(f,im){
+  if(im.local) return '';
+  var porPagina=POR_PAGINA_INDICE;
+  var actual=Math.max(1,im.pagina||1);
+  var total=im.total||0;
+  var totalPaginas=Math.max(actual,Math.ceil(total/porPagina));
+  var desde=(actual-1)*porPagina+1;
+  var hasta=desde+im.resultados.length-1;
+
+  var out='<p style="font-size:12.5px;color:var(--humo);margin:0 0 8px">Mostrando '+
+    desde.toLocaleString("es-AR")+'–'+hasta.toLocaleString("es-AR")+' de '+total.toLocaleString("es-AR")+
+    ' resultado(s)'+(im.parcial?' verificados hasta ahora — puede haber más':'')+'</p>';
+  if(totalPaginas<=1) return out;
+
+  // Ventana de números alrededor de la página actual; el principio y el
+  // final quedan siempre a la vista aunque estén lejos de esa ventana.
+  var desdeN=Math.max(1,actual-2), hastaN=Math.min(totalPaginas,actual+2);
+  var nums=[];
+  if(desdeN>1){ nums.push(1); if(desdeN>2) nums.push(null); }
+  for(var i=desdeN;i<=hastaN;i++) nums.push(i);
+  if(hastaN<totalPaginas){ if(hastaN<totalPaginas-1) nums.push(null); nums.push(totalPaginas); }
+
+  var botones=nums.map(function(p){
+    if(p===null) return '<span style="padding:0 3px;color:var(--humo)">…</span>';
+    return '<button class="mini" data-act="indice-pagina" data-fuente="'+f.slug+'" data-pagina="'+p+'"'+
+      (p===actual?' aria-pressed="true" disabled':'')+'>'+p+'</button>';
+  }).join("");
+
+  return out+'<div class="paginador" style="margin:0 0 12px">'+
+    '<button class="mini" data-act="indice-pagina" data-fuente="'+f.slug+'" data-pagina="'+(actual-1)+'"'+
+      (actual<=1?' disabled':'')+'>‹ Anterior</button>'+
+    botones+
+    '<button class="mini" data-act="indice-pagina" data-fuente="'+f.slug+'" data-pagina="'+(actual+1)+'"'+
+      (actual>=totalPaginas?' disabled':'')+'>Siguiente ›</button>'+
+    '</div>';
 }
 
 function panelIndice(f){
@@ -2275,7 +2305,7 @@ function panelIndice(f){
       ' resultados que trajo esta página es de '+esc(nombreSec||im.secFiltro)+'. Puede estar en otra página del sitio oficial.</p></div>';
     return out;
   }
-  out+=avisoLocal+'<p style="font-size:12.5px;color:var(--humo);margin:0 0 10px">'+
+  out+=avisoLocal+'<p style="font-size:12.5px;color:var(--humo);margin:0 0 4px">'+
     (nombreTrib?'<b style="color:var(--lacre)">'+esc(nombreTrib)+'</b> · ':'')+
     (nombreSec?'<b style="color:var(--lacre)">'+esc(nombreSec)+'</b> · '+visibles.length+' de sus ':'')+
     // Cuando el sitio de origen no sabe hacer el modo pedido, el filtro corre
@@ -2286,8 +2316,12 @@ function panelIndice(f){
       : (im.revisados
           ? im.total.toLocaleString("es-AR")+' resultado(s) que coinciden de verdad'+
             (im.parcial?' (revisamos los primeros '+im.revisados.toLocaleString("es-AR")+' del sitio; puede haber más)':'')
-          : im.total.toLocaleString("es-AR")+' coincidencias en total · mostrando las primeras '+im.resultados.length))+
+          : im.total.toLocaleString("es-AR")+' coincidencias en total'))+
     (local?'':' · '+im.guardados.toLocaleString("es-AR")+' guardadas en tu índice local hasta ahora')+'</p>'+
+    // Números de página arriba de la lista: antes esto era un botón "ver más"
+    // que iba sumando de a 20 sin fin; ahora se ve de entrada cuánto hay y
+    // se puede saltar directo a cualquier página, como en cualquier buscador.
+    paginadorIndice(f,im)+
     (im.desdeNavegador?'<div class="aviso" style="margin:0 0 10px">Esta búsqueda la hizo <b>tu computadora</b>, no el servidor: SAIJ no atiende pedidos desde donde está publicada la web, pero sí desde un navegador común. Por eso estos resultados no quedan guardados en el índice local.</div>':'')+
     (im.aflojado?'<div class="aviso" style="margin:0 0 10px">Ningún resultado tiene <b>todas</b> las palabras que buscaste. Estos coinciden solo con la más específica, así que revisalos con cuidado: puede que no sean del tema que buscabas.</div>':'')+
     // El sitio de CABA no manda un resumen del fallo con cada resultado
@@ -2295,15 +2329,6 @@ function panelIndice(f){
     // tandas, mientras la lista ya está en pantalla (ver traerFragmentos).
     (f.slug==="caba"&&im.fragCargando?'<p style="font-size:12.5px;color:var(--humo);margin:0 0 10px">Este buscador no manda un resumen con cada resultado, así que los pasajes se van sacando de cada documento — aparecen solos, de a poco.</p>':'')+
     visibles.map(function(r){ return fichaIndice(f,r); }).join("")+
-    // El respaldo local ya devuelve todo lo que hay guardado de una: no hay
-    // "página siguiente" que pedirle. En vivo, en cambio, esto es sólo la
-    // primera tanda — mientras el total declarado sea mayor a lo que se
-    // trajo, falta más por pedir.
-    (!local&&im.resultados.length<im.total
-      ?'<button class="mini" data-act="indice-mas" data-fuente="'+f.slug+'" style="margin-top:4px"'+(im.cargandoMas?' disabled':'')+'>'+
-        (im.cargandoMas?'Trayendo más…':'Ver más resultados ('+(im.total-im.resultados.length).toLocaleString("es-AR")+' más)')+
-       '</button>'
-      :'')+
     '</div>';
   return out;
 }
@@ -2876,8 +2901,10 @@ document.addEventListener("click",function(ev){
     buscarEnFuente(b.getAttribute("data-fuente"));
     return;
   }
-  if(act==="indice-mas"){
-    buscarEnFuente(b.getAttribute("data-fuente"),true);
+  if(act==="indice-pagina"){
+    var slugP=b.getAttribute("data-fuente");
+    var paginaP=Number(b.getAttribute("data-pagina"));
+    if(paginaP>=1) buscarEnFuente(slugP,paginaP);
     return;
   }
   if(act==="traer-indice-fallo"){
