@@ -387,6 +387,15 @@ Los límites honestos, que son varios y conviene tenerlos a mano:
 - **Mendoza obliga a elegir el tribunal antes de buscar** y no tiene un "todos": se
   elige uno leyendo la cita (Corte / Cámaras Civiles / Cámaras del Trabajo) y si se
   eligió mal, no aparece.
+- **El buscador de Mendoza tiene dos campos de texto que no son intercambiables**,
+  descubierto probando en vivo: su campo de texto libre no encuentra nada apenas le
+  pedís dos palabras a la vez —ni "Ariana Lucia", dos nombres pegados uno al lado del
+  otro en un fallo real que sabíamos que existía—, mientras que el campo dedicado a
+  nombres de partes sí arma la búsqueda correcta (cada palabra exigida por separado en
+  actor/demandado). `lib/indiceMza.js` ya usa el campo correcto cuando el verificador
+  busca por carátula; el Buscador general sigue mandando texto libre como siempre,
+  porque ahí un campo de conceptos ("responsabilidad del estado") sí es lo que
+  corresponde.
 - **Se mira la primera página de resultados.** Un fallo real cuya carátula esté escrita
   distinto —abreviada, con el segundo nombre, con la razón social completa— puede
   quedar afuera.
