@@ -22,9 +22,37 @@
  * un fallo donde la frase aparezca solo en el cuerpo. Se avisa en pantalla.
  */
 
-/** Sin tildes y en minusculas, para comparar sin sorpresas. */
+/**
+ * Sin tildes y en minusculas, para comparar sin sorpresas.
+ *
+ * Ademas repara mojibake: texto guardado en el indice local de antes de que
+ * lib/indiceCaba.js mandara y recibiera en windows-1252 como corresponde,
+ * donde un caracter como "ñ" quedo grabado como "Ã±" (cada byte UTF-8
+ * reinterpretado como si fuera un caracter Latin-1 aparte). Sin esto, una
+ * consulta con acentos no encuentra esos registros viejos aunque la palabra
+ * este ahi —"con esta palabra sí busca bien y con esta no", que es
+ * exactamente lo que parece un bug al azar pero es siempre el mismo texto
+ * corrupto.
+ */
 export function plegar(s) {
-  return String(s || '')
+  const texto = String(s || '');
+  // Las comillas tipograficas de windows-1252 (0x91/0x92) a veces llegan ya
+  // como su codepoint Unicode correspondiente en vez de como el byte crudo;
+  // sin este paso, reinterpretarlas como Latin-1 mas abajo tomaria solo el
+  // byte bajo del codepoint y corromperia la cadena en vez de repararla.
+  const bytes = [...texto].map((caracter) => {
+    const codigo = caracter.charCodeAt(0);
+    if (codigo === 0x2018) return String.fromCharCode(0x91);
+    if (codigo === 0x2019) return String.fromCharCode(0x92);
+    return caracter;
+  }).join('');
+  // "Ã" o "Â" seguido de un byte de continuacion es la firma de UTF-8
+  // reinterpretado como Latin-1: recuperar los bytes originales y volver a
+  // decodificarlos como UTF-8 reconstruye el caracter de verdad.
+  const reparado = /(?:Ã|Â|â)[\x80-\xBF]/.test(bytes)
+    ? Buffer.from(bytes, 'latin1').toString('utf8')
+    : texto;
+  return reparado
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .toLowerCase();

@@ -153,6 +153,22 @@ for (const { slug, buscar } of FUENTES) {
         if (!resultados.length) throw e instanceof ErrorApp ? e : errores.indiceFuenteFalla(slug, e?.message);
       }
 
+      // CABA no siempre avisa con un error cuando algo salió mal: a veces
+      // devuelve directamente "0 resultados" para una consulta que sí tiene
+      // (visto con acentos que el sitio no matchea, ver lib/indiceCaba.js).
+      // Antes de creerle el cero, se revisa si el índice local tiene algo.
+      if (slug === 'caba' && total === 0) {
+        const locales = await buscarEnIndice(slug, q, { modo, excluir });
+        if (locales.length) {
+          resultados = locales;
+          total = locales.length;
+          totalParcial = true;
+          revisados = locales.length;
+          desdeIndiceLocal = true;
+          avisoFalla = 'La fuente CABA no devolvió coincidencias; muestro resultados guardados localmente, que pueden estar desactualizados.';
+        }
+      }
+
       const guardados = desdeIndiceLocal
         ? (await estadoIndice(slug)).guardados
         : await upsertRegistros(slug, resultados);
