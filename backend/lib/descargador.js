@@ -18,11 +18,6 @@
 import dns from 'node:dns/promises';
 import net from 'node:net';
 import iconv from 'iconv-lite';
-// Igual que en lib/indiceCaba.js: el dispatcher (ProxyAgent) viene de este
-// paquete, y tiene que ser este fetch el que lo use — el global de Node trae
-// su propio undici interno, de otra version, y no entienden el mismo
-// protocolo de dispatcher.
-import { fetch } from 'undici';
 
 import {
   DOMINIOS_PERMITIDOS,
@@ -35,7 +30,7 @@ import {
   ESPERA_POR_HOST_MS,
 } from '../config.js';
 import { errores, ErrorApp } from './errores.js';
-import { dispatcherPara } from './proxyOrigen.js';
+import { urlParaPedir } from './proxyOrigen.js';
 
 /* ------------------------------------------------------------------ *
  * 1. Validacion del dominio
@@ -274,13 +269,12 @@ export async function descargar(urlInicial) {
 
     let respuesta;
     try {
-      respuesta = await fetch(actual.toString(), {
+      // Algunos hosts le niegan la conexión al datacenter publicado (ver
+      // lib/proxyOrigen.js); se recalcula en cada salto porque una
+      // redirección puede cambiar de host (ej. a un subdominio "-test").
+      respuesta = await fetch(urlParaPedir(actual.toString(), actual.hostname), {
         redirect: 'manual', // las seguimos nosotros para poder revalidar
         signal: control.signal,
-        // Algunos hosts le niegan la conexión al datacenter publicado (ver
-        // lib/proxyOrigen.js); se recalcula en cada salto porque una
-        // redirección puede cambiar de host (ej. a un subdominio "-test").
-        dispatcher: dispatcherPara(actual.hostname),
         headers: {
           'User-Agent': USER_AGENT,
           Accept:

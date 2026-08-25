@@ -34,15 +34,9 @@
 
 import { JSDOM, VirtualConsole } from 'jsdom';
 import iconv from 'iconv-lite';
-// El fetch global de Node usa su propio undici interno, con una version que
-// no tiene por que coincidir con la de este paquete: pasarle un dispatcher
-// (el ProxyAgent) hecho con una version distinta tira "invalid onRequestStart
-// method" en vez de conectar. Usando el fetch del propio paquete undici, los
-// dos hablan la misma version del protocolo interno.
-import { fetch } from 'undici';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
-import { dispatcherPara } from './proxyOrigen.js';
+import { urlParaPedir } from './proxyOrigen.js';
 import { errores } from './errores.js';
 
 const HOST = 'jurisprudencia.tsjbaires.gob.ar';
@@ -76,24 +70,25 @@ function cuerpoWin1252(parametros) {
 async function pedirBusqueda(parametros) {
   await esperarTurno(HOST);
 
-  // Si este host le niega la conexión al datacenter publicado, sale por el
-  // proxy en vez de ir directo (ver lib/proxyOrigen.js). Sin key configurada
-  // esto no hace nada y va directo, como siempre.
-  const dispatcher = dispatcherPara(HOST);
+  // Si este host le niega la conexión al datacenter publicado, el pedido se
+  // envuelve para pasar por ScraperAPI en vez de ir directo (ver
+  // lib/proxyOrigen.js). Sin key configurada esto no hace nada y va
+  // directo, como siempre.
+  const url = urlParaPedir(URL_BUSQUEDA, HOST);
+  const porProxy = url !== URL_BUSQUEDA;
   const control = new AbortController();
   const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const resp = await fetch(URL_BUSQUEDA, {
+    const resp = await fetch(url, {
       method: 'POST',
       signal: control.signal,
-      dispatcher,
       headers: {
         'User-Agent': USER_AGENT,
-        // El proxy devuelve 415 si el Content-Type trae un "charset" que no
-        // reconoce; el sitio de destino no lo necesita para nada (decide la
-        // codificación por los bytes que le llegan, no por este header), así
-        // que yendo por proxy se manda sin ese parámetro.
-        'Content-Type': dispatcher
+        // ScraperAPI devuelve 415 si el Content-Type trae un "charset" que
+        // no reconoce; el sitio de destino no lo necesita para nada (decide
+        // la codificación por los bytes que le llegan, no por este header),
+        // así que yendo por ahí se manda sin ese parámetro.
+        'Content-Type': porProxy
           ? 'application/x-www-form-urlencoded'
           : 'application/x-www-form-urlencoded; charset=windows-1252',
         Accept: 'text/html, */*;q=0.8',
@@ -101,10 +96,11 @@ async function pedirBusqueda(parametros) {
       body: cuerpoWin1252(parametros),
     });
     if (!resp.ok) throw errores.indiceFuenteFalla('caba', `respuesta ${resp.status}`);
-    // La respuesta también viene en windows-1252: decodificarla como UTF-8
-    // (lo que hace resp.text() a ciegas) es lo que dejaba "ACCIÓN" como
-    // "ACCI�N" en las carátulas. El proxy es un relay de red, no re-codifica
-    // nada, así que esto vale yendo directo o por proxy.
+    // Yendo directo la respuesta viene en windows-1252 —decodificarla como
+    // UTF-8 (lo que hace resp.text() a ciegas) es lo que dejaba "ACCIÓN"
+    // como "ACCI�N" en las carátulas—. Por ScraperAPI, en cambio, ya llega
+    // en UTF-8: normaliza la codificación de este lado.
+    if (porProxy) return await resp.text();
     const buffer = Buffer.from(await resp.arrayBuffer());
     return iconv.decode(buffer, 'win1252');
   } catch (e) {
@@ -274,27 +270,28 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
  */
 export async function debugBusqueda(q) {
   await esperarTurno(HOST);
-  const dispatcher = dispatcherPara(HOST);
+  const url = urlParaPedir(URL_BUSQUEDA, HOST);
+  const porProxy = url !== URL_BUSQUEDA;
   const parametros = {
     textoLibreTodas: String(q || ''),
     hdnPaginaOrigen: 'busqueda.asp',
     pag: '1',
     cantRegPagina: '20',
   };
-  const resp = await fetch(URL_BUSQUEDA, {
+  const resp = await fetch(url, {
     method: 'POST',
-    dispatcher,
     headers: {
       'User-Agent': USER_AGENT,
-      'Content-Type': dispatcher
+      'Content-Type': porProxy
         ? 'application/x-www-form-urlencoded'
         : 'application/x-www-form-urlencoded; charset=windows-1252',
       Accept: 'text/html, */*;q=0.8',
     },
     body: cuerpoWin1252(parametros),
   });
-  const buffer = Buffer.from(await resp.arrayBuffer());
-  const html = iconv.decode(buffer, 'win1252');
+  const html = porProxy
+    ? await resp.text()
+    : iconv.decode(Buffer.from(await resp.arrayBuffer()), 'win1252');
   return {
     status: resp.status,
     redirected: resp.redirected,
@@ -304,6 +301,6 @@ export async function debugBusqueda(q) {
     esFormulario: html.includes('name="textoLibreTodas"') || html.includes("name='textoLibreTodas'"),
     tieneDescargaPdf: html.includes('downloadPDF'),
     inicio: html.slice(0, 800),
-    conProxy: Boolean(dispatcher),
+    conProxy: porProxy,
   };
 }
