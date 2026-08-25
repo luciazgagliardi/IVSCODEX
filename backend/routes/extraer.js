@@ -4,6 +4,7 @@
  *   POST   /api/extraer          { url, refrescar? }  -> texto del documento
  *   POST   /api/ocr              { url, refrescar? }  -> texto vía OCR (PDF escaneado)
  *   POST   /api/extraer-archivo  bytes del archivo    -> texto del documento
+ *   POST   /api/ocr-archivo      bytes del archivo    -> texto vía OCR (PDF escaneado)
  *   GET    /api/salud                                 -> estado del servidor
  *   GET    /api/dominios                              -> lista blanca vigente
  *   DELETE /api/cache                                 -> vacia el cache
@@ -11,7 +12,14 @@
 
 import express from 'express';
 import { dominioHabilitado } from '../lib/descargador.js';
-import { obtenerDocumento, ocrDocumento, extraerDesdeBuffer } from '../lib/documento.js';
+import {
+  obtenerDocumento,
+  ocrDocumento,
+  extraerDesdeBuffer,
+  destaparPdf,
+  detectarTipo,
+} from '../lib/documento.js';
+import { ocrPdf } from '../lib/ocr.js';
 import { vaciarCache } from '../lib/cache.js';
 import { errores, ErrorApp } from '../lib/errores.js';
 import {
@@ -100,6 +108,56 @@ router.post(
         palabras: resultado.texto.split(/\s+/).filter(Boolean).length,
         paginas: resultado.paginas || null,
         metodo: resultado.metodo,
+        bytesDescargados: crudo.length,
+        obtenidoEn: new Date().toISOString(),
+        desdeCache: false,
+        ms: Date.now() - arranque,
+      });
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+/**
+ * Igual que /api/ocr pero para un archivo subido en vez de un enlace: sirve
+ * para lo que no se puede bajar solo (por ejemplo, un sitio que le niega la
+ * conexión al datacenter publicado) — se abre a mano en el navegador, se
+ * guarda, y se sube acá para que el OCR corra sin salir de la página.
+ */
+router.post(
+  '/ocr-archivo',
+  express.raw({ type: () => true, limit: MAX_BYTES }),
+  async (req, res, next) => {
+    try {
+      if (!OCR_HABILITADO) throw errores.ocrDeshabilitado();
+
+      const arranque = Date.now();
+      const crudo = req.body;
+      if (!Buffer.isBuffer(crudo) || !crudo.length) throw errores.archivoVacio();
+
+      const nombre = String(req.get('X-Nombre-Archivo') || '').slice(0, 200);
+      const buffer = destaparPdf(crudo);
+      const tipo = detectarTipo(buffer, req.get('Content-Type') || '');
+      if (tipo !== 'pdf') throw errores.ocrSoloPdf(tipo);
+
+      const resultado = await ocrPdf(buffer);
+
+      res.json({
+        ok: true,
+        url: '',
+        urlFinal: '',
+        origen: 'archivo',
+        nombreArchivo: nombre,
+        redirecciones: 0,
+        tipo: 'pdf',
+        titulo: '',
+        texto: resultado.texto,
+        caracteres: resultado.texto.length,
+        palabras: resultado.texto.split(/\s+/).filter(Boolean).length,
+        paginas: resultado.paginas,
+        paginasProcesadas: resultado.paginasProcesadas,
+        metodo: 'ocr',
         bytesDescargados: crudo.length,
         obtenidoEn: new Date().toISOString(),
         desdeCache: false,
