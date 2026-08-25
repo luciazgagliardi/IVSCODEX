@@ -2542,7 +2542,13 @@ function panelIndice(f){
           ? im.total.toLocaleString("es-AR")+' resultado(s) que coinciden de verdad'+
             (im.parcial?' (revisamos los primeros '+im.revisados.toLocaleString("es-AR")+' del sitio; puede haber más)':'')
           : im.total.toLocaleString("es-AR")+' coincidencias en total'))+
-    (local?'':' · '+im.guardados.toLocaleString("es-AR")+' guardadas en tu índice local hasta ahora')+'</p>'+
+    // Antes acá también decía "· N guardadas en tu índice local hasta
+    // ahora": un detalle interno (cuántos documentos se acumularon con el
+    // tiempo en la copia de respaldo, ver lib/indice.js) que no ayuda a
+    // nadie a leer cuántos resultados dio ESTA búsqueda, y encima se
+    // mezclaba en la misma frase. Sacado a pedido de un usuario que no le
+    // encontraba sentido — con razón.
+    '</p>'+
     // Números de página arriba de la lista: antes esto era un botón "ver más"
     // que iba sumando de a 20 sin fin; ahora se ve de entrada cuánto hay y
     // se puede saltar directo a cualquier página, como en cualquier buscador.
