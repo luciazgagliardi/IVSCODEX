@@ -30,6 +30,7 @@ import {
   ESPERA_POR_HOST_MS,
 } from '../config.js';
 import { errores, ErrorApp } from './errores.js';
+import { dispatcherPara } from './proxyOrigen.js';
 
 /* ------------------------------------------------------------------ *
  * 1. Validacion del dominio
@@ -271,6 +272,10 @@ export async function descargar(urlInicial) {
       respuesta = await fetch(actual.toString(), {
         redirect: 'manual', // las seguimos nosotros para poder revalidar
         signal: control.signal,
+        // Algunos hosts le niegan la conexión al datacenter publicado (ver
+        // lib/proxyOrigen.js); se recalcula en cada salto porque una
+        // redirección puede cambiar de host (ej. a un subdominio "-test").
+        dispatcher: dispatcherPara(actual.hostname),
         headers: {
           'User-Agent': USER_AGENT,
           Accept:
