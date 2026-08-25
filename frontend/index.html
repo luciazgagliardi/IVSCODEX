@@ -2362,6 +2362,31 @@ function vistaFuentes(){
     listaPorAmbito(todas);
 }
 
+/**
+ * El aviso de "no se pudo traer", en un solo lugar para poder mostrarlo
+ * tanto si el Lector estaba vacío como si ya tenía un fallo abierto.
+ *
+ * Antes esto sólo se pintaba cuando el Lector estaba vacío: si ya había un
+ * documento cargado y "Traer texto completo" fallaba para uno nuevo (algo
+ * frecuente con los PDF del TSJ de CABA, que muchas veces no le contestan
+ * al servidor publicado en Azure), el pedido fallaba en silencio y quedaba
+ * en pantalla el fallo anterior, como si fuera el que se acababa de pedir.
+ */
+function avisoErrorLector(){
+  if(!estado.errorLink) return '';
+  return '<div class="aviso" style="margin:0 0 14px"><strong>No se pudo traer este documento.</strong> '+
+    esc(estado.errorLink.mensaje)+
+    (estado.errorLink.ayuda?'<br><span style="color:var(--humo);font-size:12.5px">'+esc(estado.errorLink.ayuda)+'</span>':'')+
+    (estado.texto?'<br><span style="color:var(--humo);font-size:12.5px">Se sigue mostrando el fallo que ya tenías abierto, no el que acabás de pedir.</span>':'')+
+    (estado.errorLink.url
+      ?'<div class="f-acc" style="margin-top:10px">'+
+         '<a class="mini" href="'+esc(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">1 · Abrir el original y guardarlo</a>'+
+         '<button class="mini" data-act="elegir-archivo">2 · Subirlo acá</button>'+
+       '</div>'
+      :'')+
+    '</div>';
+}
+
 function vistaLector(){
   if(!estado.texto){
     var porLink="";
@@ -2375,18 +2400,7 @@ function vistaLector(){
             (estado.cargando?"Descargando…":"Traer el fallo")+'</button>'+
           '<span class="pos" style="align-self:center">Sirve HTML y PDF</span>'+
         '</div>'+
-        (estado.errorLink
-          ? '<div class="aviso" style="margin:12px 0 0"><strong>No se pudo traer.</strong> '+esc(estado.errorLink.mensaje)+
-            (estado.errorLink.ayuda?'<br><span style="color:var(--humo);font-size:12.5px">'+esc(estado.errorLink.ayuda)+'</span>':'')+
-            // El documento sigue estando: tu navegador sí puede abrirlo
-            // aunque el servidor no. Los dos pasos, acá mismo.
-            (estado.errorLink.url
-              ?'<div class="f-acc" style="margin-top:10px">'+
-                 '<a class="mini" href="'+esc(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">1 · Abrir el original y guardarlo</a>'+
-                 '<button class="mini" data-act="elegir-archivo">2 · Subirlo acá</button>'+
-               '</div>'
-              :'')+'</div>'
-          : '')+
+        (estado.errorLink?'<div style="margin-top:12px">'+avisoErrorLector()+'</div>':'')+
         '</div>'+
         // Subir el archivo desde la computadora: sirve para lo que no tiene
         // enlace público (lo que te mandaron por mail, lo que bajaste antes).
@@ -2429,7 +2443,9 @@ function vistaLector(){
         '<li>Los artículos, leyes y fallos que la sentencia cita, para seguir tirando del hilo.</li>'+
       '</ul></div>';
   }
-  return '<div class="barra-doc">'+
+  return avisoErrorLector()+
+    (estado.cargando?'<div class="aviso" style="margin:0 0 14px">Trayendo el documento nuevo… esto puede tardar unos segundos. Mientras tanto se sigue viendo el fallo anterior.</div>':'')+
+    '<div class="barra-doc">'+
       '<span class="cnt" id="doc-cnt">Analizando…</span>'+
       '<button class="mini" data-act="marca-ant">‹ Anterior</button>'+
       '<button class="mini" data-act="marca-sig">Siguiente ›</button>'+
