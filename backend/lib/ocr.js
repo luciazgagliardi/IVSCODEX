@@ -29,7 +29,7 @@ import { PDFiumLibrary } from '@hyzyla/pdfium';
 import { PNG } from 'pngjs';
 import { createWorker } from 'tesseract.js';
 import { errores } from './errores.js';
-import { OCR_MAX_PAGINAS, DIR_OCR_CACHE } from '../config.js';
+import { OCR_MAX_PAGINAS, OCR_TIMEOUT_MS, DIR_OCR_CACHE } from '../config.js';
 
 /**
  * Escala del render. PDFium trabaja en múltiplos de 72dpi (escala 1 = 72dpi);
@@ -77,6 +77,26 @@ function aPng({ data, width, height }) {
  * @returns {Promise<{texto: string, paginas: number, paginasProcesadas: number, metodo: string}>}
  */
 export async function ocrPdf(buffer) {
+  // El trabajo en si (renderizar + reconocer, pagina por pagina) puede
+  // tardar mucho mas en un plan de hosting con poca CPU que en desarrollo:
+  // sin este limite, un pedido lento se queda esperando mas alla incluso
+  // del timeout de la propia plataforma (Azure corta las conexiones
+  // inactivas cerca de los 230s) y quien lo pidio nunca recibe respuesta.
+  let vencido = false;
+  const reloj = setTimeout(() => { vencido = true; }, OCR_TIMEOUT_MS);
+  try {
+    return await Promise.race([
+      ocrPdfSinLimite(buffer, () => vencido),
+      new Promise((_, reject) => {
+        setTimeout(() => reject(errores.ocrTiempoAgotado(OCR_TIMEOUT_MS)), OCR_TIMEOUT_MS);
+      }),
+    ]);
+  } finally {
+    clearTimeout(reloj);
+  }
+}
+
+async function ocrPdfSinLimite(buffer, estaVencido) {
   const lib = await pdfium();
   let documento;
   try {
@@ -96,6 +116,11 @@ export async function ocrPdf(buffer) {
     const tesseract = await workerEspanol();
 
     for (const pagina of aProcesar) {
+      // El Promise.race de ocrPdf() ya le da por perdido el pedido a quien
+      // lo llamó una vez pasado OCR_TIMEOUT_MS, pero esta funcion seguiria
+      // corriendo sola de fondo si no se corta acá: en un worker compartido
+      // entre pedidos (ver workerEspanol), eso demoraría al próximo.
+      if (estaVencido()) break;
       const imagen = await pagina.render({ scale: ESCALA, render: aPng });
       const { data } = await tesseract.recognize(Buffer.from(imagen.data));
       const texto = (data?.text || '').trim();

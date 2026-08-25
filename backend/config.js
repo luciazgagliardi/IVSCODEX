@@ -83,11 +83,30 @@ export const OCR_HABILITADO =
   String(process.env.OCR_HABILITADO ?? 'true').toLowerCase() !== 'false';
 
 /**
- * Cuantas paginas como mucho se procesan con OCR en un mismo pedido. Un
- * escaneo de una sentencia puntual son pocas paginas; un expediente entero
- * de cientos de hojas tardaria minutos y no es el caso de uso de este boton.
+ * Cuantas paginas como mucho se procesan con OCR en un mismo pedido.
+ *
+ * El default es bajo a proposito, medido en vivo contra el plan de Azure
+ * publicado: 6 paginas tardaron 170 segundos (~28s/pagina) — esta CPU
+ * compartida es aproximadamente 11 veces mas lenta que una notebook comun
+ * para este trabajo. Un expediente de 20 paginas con ese ritmo tardaria
+ * unos 9 minutos y la plataforma cortaria la conexion sola bastante antes
+ * de terminar (ver OCR_TIMEOUT_MS). Un escaneo de una sentencia puntual
+ * son pocas paginas, asi que no debería hacer falta subir esto salvo en
+ * un hosting con mas CPU.
  */
-export const OCR_MAX_PAGINAS = Number(process.env.OCR_MAX_PAGINAS || 20);
+export const OCR_MAX_PAGINAS = Number(process.env.OCR_MAX_PAGINAS || 6);
+
+/**
+ * Milisegundos maximos que se espera al OCR completo (todas las paginas)
+ * antes de abandonar con un error prolijo. Aparte de TIMEOUT_MS —que es
+ * solo para la descarga— porque el OCR en si mismo puede tardar mucho mas
+ * que cualquier otro pedido de esta API, sobre todo en un plan de hosting
+ * con poca CPU (ver la nota de OCR_MAX_PAGINAS). Puesto bien por debajo de
+ * donde Azure App Service corta las conexiones inactivas (unos 230s) para
+ * que sea este codigo el que responda con un error claro, y no la
+ * plataforma cortando la conexion en silencio.
+ */
+export const OCR_TIMEOUT_MS = Number(process.env.OCR_TIMEOUT_MS || 180000);
 
 /** Tamano maximo de descarga en bytes. Por defecto 25 MB. */
 export const MAX_BYTES = Number(process.env.MAX_BYTES || 25 * 1024 * 1024);

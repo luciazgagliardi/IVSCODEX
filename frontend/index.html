@@ -2456,8 +2456,9 @@ function avisoErrorLector(){
   if(!estado.errorLink&&!estado.cargandoOcr) return '';
   if(estado.cargandoOcr){
     return '<div class="aviso" style="margin:0 0 14px">'+
-      '<strong>Aplicando OCR…</strong> esto tarda bastante más que una descarga normal —varios segundos por página—, '+
-      'así que puede llevar un rato largo en documentos de muchas páginas.'+
+      '<strong>Aplicando OCR…</strong> puede tardar varios minutos —no son milisegundos como el resto de esta app—, '+
+      'sobre todo si el servidor anda con poca CPU en este momento. No hace falta que recargues ni vuelvas a tocar el botón: '+
+      'dejalo trabajando.'+
       (estado.texto?'<br><span style="color:var(--humo);font-size:12.5px">Mientras tanto se sigue viendo el fallo anterior.</span>':'')+
       '</div>';
   }
@@ -2477,7 +2478,7 @@ function avisoErrorLector(){
          // ahí el enlace es al PDF sin texto, y lo que sirve es pedirle al
          // servidor que le aplique OCR, no abrirlo a mano.
          (puedeOcr
-           ?'<button class="mini" data-act="aplicar-ocr"'+(estado.errorLink.url?' data-url="'+esc(estado.errorLink.url)+'"':'')+'>Aplicar OCR (tarda bastante)</button>'
+           ?'<button class="mini" data-act="aplicar-ocr"'+(estado.errorLink.url?' data-url="'+esc(estado.errorLink.url)+'"':'')+'>Aplicar OCR (tarda varios minutos)</button>'
            :'')+
          (estado.errorLink.url
            ?'<a class="mini" href="'+esc(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">'+(esEscaneo?"Abrir el original":"1 · Abrir el original y guardarlo")+'</a>'
