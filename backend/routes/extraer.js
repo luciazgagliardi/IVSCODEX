@@ -2,6 +2,7 @@
  * Rutas de la API.
  *
  *   POST   /api/extraer          { url, refrescar? }  -> texto del documento
+ *   POST   /api/ocr              { url, refrescar? }  -> texto vía OCR (PDF escaneado)
  *   POST   /api/extraer-archivo  bytes del archivo    -> texto del documento
  *   GET    /api/salud                                 -> estado del servidor
  *   GET    /api/dominios                              -> lista blanca vigente
@@ -10,7 +11,7 @@
 
 import express from 'express';
 import { dominioHabilitado } from '../lib/descargador.js';
-import { obtenerDocumento, extraerDesdeBuffer } from '../lib/documento.js';
+import { obtenerDocumento, ocrDocumento, extraerDesdeBuffer } from '../lib/documento.js';
 import { vaciarCache } from '../lib/cache.js';
 import { errores, ErrorApp } from '../lib/errores.js';
 import {
@@ -19,6 +20,7 @@ import {
   CACHE_HORAS,
   MAX_BYTES,
   TIMEOUT_MS,
+  OCR_HABILITADO,
 } from '../config.js';
 
 export const router = express.Router();
@@ -28,6 +30,23 @@ router.post('/extraer', async (req, res, next) => {
     const { url, refrescar } = req.body || {};
     const arranque = Date.now();
     const salida = await obtenerDocumento(url, { refrescar });
+    res.json({ ...salida, ms: Date.now() - arranque });
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * El OCR es mucho más lento y pesado que la extracción normal (segundos por
+ * página, contra milisegundos), así que es un botón aparte que la persona
+ * pide a propósito cuando /api/extraer le avisó PDF_ESCANEADO — no algo que
+ * se intenta solo. Ver lib/ocr.js y limiteOcr en index.js.
+ */
+router.post('/ocr', async (req, res, next) => {
+  try {
+    const { url, refrescar } = req.body || {};
+    const arranque = Date.now();
+    const salida = await ocrDocumento(url, { refrescar });
     res.json({ ...salida, ms: Date.now() - arranque });
   } catch (e) {
     next(e);
@@ -103,6 +122,7 @@ router.get('/salud', (_req, res) => {
     timeoutSeg: Math.round(TIMEOUT_MS / 1000),
     modoAbierto: PERMITIR_CUALQUIER_DOMINIO,
     dominiosPermitidos: DOMINIOS_PERMITIDOS.length,
+    ocrHabilitado: OCR_HABILITADO,
   });
 });
 

@@ -31,6 +31,16 @@ export const DIR_INDICE = process.env.DIR_INDICE
   ? path.resolve(process.env.DIR_INDICE)
   : path.join(aqui, 'indice');
 
+/**
+ * Carpeta donde Tesseract guarda el modelo del idioma que descarga la
+ * primera vez que se usa el OCR (unos 3-4 MB). Sin esto, la libreria lo
+ * tira suelto en el directorio desde donde se arranca el proceso — ni
+ * organizado ni obviamente en un lugar escribible en todos los hostings.
+ */
+export const DIR_OCR_CACHE = process.env.DIR_OCR_CACHE
+  ? path.resolve(process.env.DIR_OCR_CACHE)
+  : path.join(aqui, 'ocr-cache');
+
 /** Carpeta donde viven las cuentas de usuario y sus sesiones. Nunca al repo. */
 export const DIR_USUARIOS = process.env.DIR_USUARIOS
   ? path.resolve(process.env.DIR_USUARIOS)
@@ -63,6 +73,21 @@ export const TIMEOUT_MS = Number(process.env.TIMEOUT_MS || 25000);
 
 /** API key del proxy usado por el buscador del TSJ CABA. */
 export const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY || '';
+
+/**
+ * Si es false, apaga el OCR de PDFs escaneados (ver lib/ocr.js) sin tocar
+ * código: sirve para un plan de hosting chico donde renderizar páginas y
+ * correr Tesseract sale muy caro en CPU/memoria.
+ */
+export const OCR_HABILITADO =
+  String(process.env.OCR_HABILITADO ?? 'true').toLowerCase() !== 'false';
+
+/**
+ * Cuantas paginas como mucho se procesan con OCR en un mismo pedido. Un
+ * escaneo de una sentencia puntual son pocas paginas; un expediente entero
+ * de cientos de hojas tardaria minutos y no es el caso de uso de este boton.
+ */
+export const OCR_MAX_PAGINAS = Number(process.env.OCR_MAX_PAGINAS || 20);
 
 /** Tamano maximo de descarga en bytes. Por defecto 25 MB. */
 export const MAX_BYTES = Number(process.env.MAX_BYTES || 25 * 1024 * 1024);

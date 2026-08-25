@@ -97,6 +97,23 @@ const limiteAuth = rateLimit({
 app.use('/api/auth/login', limiteAuth);
 app.use('/api/auth/registro', limiteAuth);
 
+// El OCR es carísimo comparado con todo lo demás de esta API (renderiza
+// páginas y corre un reconocimiento de imagen a texto, segundos por
+// página): un límite aparte y bien chico evita que alguien tumbe el
+// servidor mandando PDFs de 20 páginas en bucle.
+const limiteOcr = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 6,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    codigo: 'DEMASIADAS_PETICIONES',
+    mensaje: 'El OCR tiene un límite aparte, más bajo, porque es lo más pesado de esta API. Esperá unos minutos.',
+  },
+});
+app.use('/api/ocr', limiteOcr);
+
 /* ------------------------------------------------------------------ *
  * Rutas
  * ------------------------------------------------------------------ */

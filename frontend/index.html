@@ -928,7 +928,7 @@ function nuevoEstado(){
           ambitos:{mza:true,nac:true,prov:false,int:true,doc:true},
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
-          api:null,cargando:false,errorLink:null,infoDoc:null,fichaConocida:null,
+          api:null,cargando:false,cargandoOcr:false,errorLink:null,infoDoc:null,fichaConocida:null,
           token:null,usuario:null,authModo:"registro",authEmail:"",authError:null,authCargando:false,
           sincronizando:false,sincronizadoEn:null,
           indices:nuevoIndices()};
@@ -1856,7 +1856,7 @@ function resaltarSimple(texto,q){
    compartidos por todo lo que trae un documento al Lector. */
 var AYUDAS_ERROR_LINK={
   DOMINIO_NO_PERMITIDO:"Agregá el dominio en server/config.js y reiniciá el servidor.",
-  PDF_ESCANEADO:"Ese PDF es una foto del papel. Pasalo por un OCR, o abrilo y copiá el texto a mano.",
+  PDF_ESCANEADO:"Es una foto del papel, sin texto adentro. Tocá «Aplicar OCR» acá abajo — tarda, pero funciona sin salir de la página.",
   HTML_SIN_TEXTO:"Pasa cuando el fallo está dentro de un frame o se arma con JavaScript. Abrí el enlace y pegá el texto a mano.",
   RESPUESTA_NO_OK:"Fijate que el enlace sea el del documento y no el del buscador.",
   TIEMPO_AGOTADO:"Los sitios judiciales se ponen lentos en horario de tribunales. Probá más tarde.",
@@ -1889,10 +1889,13 @@ function traerDocEnLector(url,opciones){
         // El servidor no pudo, pero el documento sigue estando a un clic:
         // se guarda el enlace para ofrecer abrirlo y subirlo a mano, que es
         // el camino que sí funciona cuando el sitio de origen no le contesta
-        // al servidor (le pasa a los PDF del TSJ de CABA desde Azure).
+        // al servidor (le pasa a los PDF del TSJ de CABA desde Azure). Si es
+        // un escaneo (PDF_ESCANEADO) también se ofrece aplicar OCR acá
+        // mismo — por eso se guardan código y opciones, para poder
+        // reintentar sin perder la ficha ni la búsqueda que traía.
         estado.errorLink={mensaje:(d&&d.mensaje)||"El servidor no devolvió el documento.",
                           ayuda:AYUDAS_ERROR_LINK[d&&d.codigo]||"",
-                          url:url};
+                          codigo:d&&d.codigo,url:url,opciones:opciones};
         render(); return;
       }
       estado.texto=d.texto; estado.fuenteDe=d.urlFinal||url; estado.infoDoc=d; estado.marca=0;
@@ -1903,6 +1906,44 @@ function traerDocEnLector(url,opciones){
       estado.cargando=false;
       estado.errorLink={mensaje:"Se cortó la comunicación con el servidor.",
                         ayuda:"Fijate que la terminal siga diciendo «Interfaz http://localhost:3000»."};
+      render();
+    });
+}
+
+/**
+ * El OCR es la respuesta a PDF_ESCANEADO: cuando el PDF no tiene capa de
+ * texto (es la foto de una hoja de papel), el servidor puede reconocer las
+ * letras a partir de la imagen en vez de leerlas del archivo. Es una
+ * acción aparte y no algo automático porque tarda muchísimo más —varios
+ * segundos por página, no milisegundos— así que hay que pedirlo a
+ * propósito sabiendo eso.
+ */
+function traerOcrEnLector(url,opciones){
+  opciones=opciones||{};
+  if(!url||!estado.api) return;
+  estado.cargandoOcr=true; estado.errorLink=null; render();
+  fetch(estado.api+"/ocr",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({url:url})
+  }).then(function(r){ return r.json(); })
+    .then(function(d){
+      estado.cargandoOcr=false;
+      if(!d||!d.ok){
+        estado.errorLink={mensaje:(d&&d.mensaje)||"El OCR no pudo leer el documento.",
+                          ayuda:AYUDAS_ERROR_LINK[d&&d.codigo]||"",
+                          codigo:d&&d.codigo,url:url,opciones:opciones};
+        render(); return;
+      }
+      estado.texto=d.texto; estado.fuenteDe=d.urlFinal||url; estado.infoDoc=d; estado.marca=0;
+      estado.fichaConocida=opciones.fichaConocida||null;
+      render(); window.scrollTo(0,0);
+      flash("OCR listo · "+d.paginasProcesadas+" de "+d.paginas+" página(s) · "+d.palabras.toLocaleString("es-AR")+
+        " palabras — revisalo con cuidado, un OCR puede confundir letras parecidas");
+    })["catch"](function(){
+      estado.cargandoOcr=false;
+      estado.errorLink={mensaje:"Se cortó la comunicación con el servidor durante el OCR.",
+                        ayuda:"El OCR tarda bastante; con una conexión lenta puede cortarse antes de terminar. Probá de nuevo.",
+                        codigo:"OCR_CORTADO",url:url,opciones:opciones};
       render();
     });
 }
@@ -2373,15 +2414,29 @@ function vistaFuentes(){
  * en pantalla el fallo anterior, como si fuera el que se acababa de pedir.
  */
 function avisoErrorLector(){
-  if(!estado.errorLink) return '';
+  if(!estado.errorLink&&!estado.cargandoOcr) return '';
+  if(estado.cargandoOcr){
+    return '<div class="aviso" style="margin:0 0 14px">'+
+      '<strong>Aplicando OCR…</strong> esto tarda bastante más que una descarga normal —varios segundos por página—, '+
+      'así que puede llevar un rato largo en documentos de muchas páginas.'+
+      (estado.texto?'<br><span style="color:var(--humo);font-size:12.5px">Mientras tanto se sigue viendo el fallo anterior.</span>':'')+
+      '</div>';
+  }
+  var esEscaneo=estado.errorLink.codigo==="PDF_ESCANEADO";
   return '<div class="aviso" style="margin:0 0 14px"><strong>No se pudo traer este documento.</strong> '+
     esc(estado.errorLink.mensaje)+
     (estado.errorLink.ayuda?'<br><span style="color:var(--humo);font-size:12.5px">'+esc(estado.errorLink.ayuda)+'</span>':'')+
     (estado.texto?'<br><span style="color:var(--humo);font-size:12.5px">Se sigue mostrando el fallo que ya tenías abierto, no el que acabás de pedir.</span>':'')+
     (estado.errorLink.url
       ?'<div class="f-acc" style="margin-top:10px">'+
-         '<a class="mini" href="'+esc(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">1 · Abrir el original y guardarlo</a>'+
-         '<button class="mini" data-act="elegir-archivo">2 · Subirlo acá</button>'+
+         // El escaneo no tiene "el original y guardarlo" como primer paso:
+         // ahí el enlace es al PDF sin texto, y lo que sirve es pedirle al
+         // servidor que le aplique OCR, no abrirlo a mano.
+         (esEscaneo
+           ?'<button class="mini" data-act="aplicar-ocr" data-url="'+esc(estado.errorLink.url)+'">Aplicar OCR (tarda bastante)</button>'
+           :'')+
+         '<a class="mini" href="'+esc(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">'+(esEscaneo?"Abrir el original":"1 · Abrir el original y guardarlo")+'</a>'+
+         (esEscaneo?'':'<button class="mini" data-act="elegir-archivo">2 · Subirlo acá</button>')+
        '</div>'
       :'')+
     '</div>';
@@ -2396,11 +2451,11 @@ function vistaLector(){
         '<label class="campo"><span>Enlace directo del fallo</span>'+
           '<input type="text" id="doc-url" placeholder="https://…  (el enlace del documento, no el del buscador)" autocomplete="off"></label>'+
         '<div class="acciones" style="margin-top:4px">'+
-          '<button class="btn" data-act="traer-link"'+(estado.cargando?" disabled":"")+'>'+
+          '<button class="btn" data-act="traer-link"'+((estado.cargando||estado.cargandoOcr)?" disabled":"")+'>'+
             (estado.cargando?"Descargando…":"Traer el fallo")+'</button>'+
           '<span class="pos" style="align-self:center">Sirve HTML y PDF</span>'+
         '</div>'+
-        (estado.errorLink?'<div style="margin-top:12px">'+avisoErrorLector()+'</div>':'')+
+        ((estado.errorLink||estado.cargandoOcr)?'<div style="margin-top:12px">'+avisoErrorLector()+'</div>':'')+
         '</div>'+
         // Subir el archivo desde la computadora: sirve para lo que no tiene
         // enlace público (lo que te mandaron por mail, lo que bajaste antes).
@@ -2409,7 +2464,7 @@ function vistaLector(){
           '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Un PDF o un .doc que ya tengas guardado: el que te mandaron por mail, el que bajaste de una base oficial. '+
           'Se lee en el momento y no queda guardado en ningún lado.</p>'+
           '<div class="acciones" style="margin-top:4px">'+
-            '<button class="btn" data-act="elegir-archivo"'+(estado.cargando?" disabled":"")+'>'+
+            '<button class="btn" data-act="elegir-archivo"'+((estado.cargando||estado.cargandoOcr)?" disabled":"")+'>'+
               (estado.cargando?"Leyendo…":"Elegir archivo")+'</button>'+
             '<span class="pos" style="align-self:center">PDF y .doc de Word</span>'+
           '</div>'+
@@ -2965,6 +3020,11 @@ document.addEventListener("click",function(ev){
     var link=iu?iu.value.trim():"";
     if(!link){ flash("Pegá el enlace del fallo"); return; }
     traerDocEnLector(link);
+    return;
+  }
+  if(act==="aplicar-ocr"){
+    if(estado.cargandoOcr) return; // ya hay uno en camino, no duplicar el pedido
+    traerOcrEnLector(b.getAttribute("data-url"),estado.errorLink&&estado.errorLink.opciones);
     return;
   }
   if(act==="elegir-archivo"){

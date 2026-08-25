@@ -113,9 +113,30 @@ export const errores = {
   pdfEscaneado: (paginas) =>
     new ErrorApp(
       'PDF_ESCANEADO',
-      `El PDF tiene ${paginas} página(s) pero no contiene texto: es un escaneo, una imagen. Para leerlo hace falta OCR (mirá la sección "PDFs escaneados" del README).`,
+      `El PDF tiene ${paginas} página(s) pero no contiene texto: es un escaneo, una imagen. Se le puede aplicar OCR (ver POST /api/ocr, o el botón "Aplicar OCR" en el Lector) para reconocer el texto a partir de la imagen.`,
       422,
       { paginas }
+    ),
+
+  ocrDeshabilitado: () =>
+    new ErrorApp(
+      'OCR_DESHABILITADO',
+      'El OCR está apagado en este servidor. Pasá el PDF por ocrmypdf a mano (ver el README) o pegá el texto en el Lector.',
+      503
+    ),
+
+  ocrSoloPdf: (tipo) =>
+    new ErrorApp(
+      'OCR_SOLO_PDF',
+      `El OCR solo sabe leer PDF; esto era "${tipo || 'de otro tipo'}".`,
+      415
+    ),
+
+  ocrSinTexto: () =>
+    new ErrorApp(
+      'OCR_SIN_TEXTO',
+      'El OCR no pudo reconocer texto en ninguna página. Puede ser una foto de muy mala calidad, estar en blanco, o tener una orientación o rotación rara.',
+      422
     ),
 
   pdfIlegible: (detalle) =>
