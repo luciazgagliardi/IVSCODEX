@@ -61,6 +61,9 @@ export const CORS_ORIGENES = (
 /** Milisegundos maximos que esperamos a que el sitio de origen responda. */
 export const TIMEOUT_MS = Number(process.env.TIMEOUT_MS || 25000);
 
+/** API key del proxy usado por el buscador del TSJ CABA. */
+export const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY || '';
+
 /** Tamano maximo de descarga en bytes. Por defecto 25 MB. */
 export const MAX_BYTES = Number(process.env.MAX_BYTES || 25 * 1024 * 1024);
 
