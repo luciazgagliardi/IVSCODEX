@@ -76,19 +76,26 @@ function cuerpoWin1252(parametros) {
 async function pedirBusqueda(parametros) {
   await esperarTurno(HOST);
 
+  // Si este host le niega la conexión al datacenter publicado, sale por el
+  // proxy en vez de ir directo (ver lib/proxyOrigen.js). Sin key configurada
+  // esto no hace nada y va directo, como siempre.
+  const dispatcher = dispatcherPara(HOST);
   const control = new AbortController();
   const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
     const resp = await fetch(URL_BUSQUEDA, {
       method: 'POST',
       signal: control.signal,
-      // Si este host le niega la conexión al datacenter publicado, sale por
-      // el proxy en vez de ir directo (ver lib/proxyOrigen.js). Sin key
-      // configurada esto no hace nada y va directo, como siempre.
-      dispatcher: dispatcherPara(HOST),
+      dispatcher,
       headers: {
         'User-Agent': USER_AGENT,
-        'Content-Type': 'application/x-www-form-urlencoded; charset=windows-1252',
+        // El proxy devuelve 415 si el Content-Type trae un "charset" que no
+        // reconoce; el sitio de destino no lo necesita para nada (decide la
+        // codificación por los bytes que le llegan, no por este header), así
+        // que yendo por proxy se manda sin ese parámetro.
+        'Content-Type': dispatcher
+          ? 'application/x-www-form-urlencoded'
+          : 'application/x-www-form-urlencoded; charset=windows-1252',
         Accept: 'text/html, */*;q=0.8',
       },
       body: cuerpoWin1252(parametros),
