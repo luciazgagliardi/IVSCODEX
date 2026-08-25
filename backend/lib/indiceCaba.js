@@ -34,32 +34,14 @@
 
 import { JSDOM, VirtualConsole } from 'jsdom';
 import iconv from 'iconv-lite';
-import { SCRAPER_API_KEY, USER_AGENT, TIMEOUT_MS } from '../config.js';
+import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
+import { dispatcherPara } from './proxyOrigen.js';
 import { errores } from './errores.js';
 
 const HOST = 'jurisprudencia.tsjbaires.gob.ar';
 // Este servidor no habla HTTPS (IIS 6, año ~2003): es a propósito que sea http.
 const URL_BUSQUEDA = `http://${HOST}/jurisprudencia/resultadoBusqueda.asp`;
-
-/**
- * Este servidor viejo a veces le niega la conexión al datacenter donde corre
- * el backend publicado (mismo problema que con los PDF sueltos, ver
- * traerDocEnLector en el frontend) pero sí le contesta a ScraperAPI. Con la
- * key configurada la búsqueda pasa por ahí; sin ella (desarrollo local,
- * típicamente) sigue yendo directo, que es lo que anduvo siempre en una
- * conexión hogareña.
- *
- * Confirmado a mano contra el sitio real: yendo por ScraperAPI, el cuerpo
- * del POST sigue necesitando windows-1252 (si no, "daño" da 0 en silencio,
- * igual que yendo directo), pero la respuesta ya viene en UTF-8 —ScraperAPI
- * la normaliza de este lado— así que ahí NO hay que decodificarla como
- * windows-1252: hacerlo la mojibakeaba en vez de arreglarla.
- */
-function urlDePedido() {
-  if (!SCRAPER_API_KEY) return URL_BUSQUEDA;
-  return `https://api.scraperapi.com/?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(URL_BUSQUEDA)}&country_code=ar&render=false`;
-}
 
 /**
  * Este sitio habla windows-1252, no UTF-8 — ni para lo que le mandamos ni
@@ -88,28 +70,28 @@ function cuerpoWin1252(parametros) {
 async function pedirBusqueda(parametros) {
   await esperarTurno(HOST);
 
-  const porProxy = Boolean(SCRAPER_API_KEY);
   const control = new AbortController();
   const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const resp = await fetch(urlDePedido(), {
+    const resp = await fetch(URL_BUSQUEDA, {
       method: 'POST',
       signal: control.signal,
+      // Si este host le niega la conexión al datacenter publicado, sale por
+      // el proxy en vez de ir directo (ver lib/proxyOrigen.js). Sin key
+      // configurada esto no hace nada y va directo, como siempre.
+      dispatcher: dispatcherPara(HOST),
       headers: {
         'User-Agent': USER_AGENT,
-        'Content-Type': porProxy
-          ? 'application/x-www-form-urlencoded'
-          : 'application/x-www-form-urlencoded; charset=windows-1252',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=windows-1252',
         Accept: 'text/html, */*;q=0.8',
       },
       body: cuerpoWin1252(parametros),
     });
     if (!resp.ok) throw errores.indiceFuenteFalla('caba', `respuesta ${resp.status}`);
-    // Yendo directo la respuesta viene en windows-1252 —decodificarla como
-    // UTF-8 (lo que hace resp.text() a ciegas) es lo que dejaba "ACCIÓN"
-    // como "ACCI�N" en las carátulas—. Por ScraperAPI, en cambio, ya llega
-    // en UTF-8: ver la nota de urlDePedido().
-    if (porProxy) return await resp.text();
+    // La respuesta también viene en windows-1252: decodificarla como UTF-8
+    // (lo que hace resp.text() a ciegas) es lo que dejaba "ACCIÓN" como
+    // "ACCI�N" en las carátulas. El proxy es un relay de red, no re-codifica
+    // nada, así que esto vale yendo directo o por proxy.
     const buffer = Buffer.from(await resp.arrayBuffer());
     return iconv.decode(buffer, 'win1252');
   } catch (e) {
