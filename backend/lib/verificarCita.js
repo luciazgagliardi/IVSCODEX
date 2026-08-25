@@ -328,11 +328,15 @@ function enlaceDe(registro) {
 }
 
 /** Búsqueda real contra una fuente del catálogo. Se puede reemplazar en las pruebas. */
-async function buscarEnFuenteReal(slug, { q, tribunal }) {
+async function buscarEnFuenteReal(slug, { q, partes, tribunal }) {
   const fuente = fuentePorSlug(slug);
   if (!fuente) throw new Error(`fuente desconocida: ${slug}`);
   return fuente.buscar({
     q,
+    // Solo lo usa lib/indiceMza.js (ver la nota de "libre" vs "partes" ahí):
+    // las otras tres fuentes reciben esto de más y lo ignoran, porque
+    // destructuran del objeto solo lo que conocen.
+    partes,
     // "todas las palabras": con dos apellidos, exigirlos a los dos es lo que
     // separa el fallo buscado de los cientos que comparten un apellido. Ver
     // lib/relevancia.js.
@@ -348,9 +352,9 @@ async function buscarEnFuenteReal(slug, { q, tribunal }) {
  *
  * @param {string} texto  la cita pegada tal cual
  * @param {{buscar?: Function}} [opciones]
- *   buscar: (slug, {q, tribunal}) => Promise<{resultados: object[]}>. Se
- *   inyecta en las pruebas para no salir a la red; por defecto consulta las
- *   fuentes de verdad.
+ *   buscar: (slug, {q, partes, tribunal}) => Promise<{resultados: object[]}>.
+ *   Se inyecta en las pruebas para no salir a la red; por defecto consulta
+ *   las fuentes de verdad.
  * @returns {Promise<object>} campos detectados, veredicto, confianza,
  *   explicación, candidatos y qué fuentes se consultaron.
  */
@@ -406,7 +410,15 @@ export async function verificarCita(texto, { buscar = buscarEnFuenteReal } = {})
   for (const objetivo of objetivos.slice(0, MAX_FUENTES)) {
     const registro = { slug: objetivo.slug, nombre: nombreDeFuente(objetivo.slug), ok: false, resultados: 0, error: null };
     try {
-      const salida = await buscar(objetivo.slug, { q: consulta.q, tribunal: objetivo.tribunal });
+      // Mendoza tiene un campo de búsqueda propio para nombres de partes,
+      // con otra SQL atrás que sí exige cada palabra en actor/demandado (ver
+      // la nota grande al principio de lib/indiceMza.js): si la consulta se
+      // armó con la carátula, se la mandamos por ahí y no por "q" a secas.
+      const salida = await buscar(objetivo.slug, {
+        q: consulta.q,
+        partes: consulta.de === 'carátula' ? consulta.q : undefined,
+        tribunal: objetivo.tribunal,
+      });
       const resultados = (salida && salida.resultados) || [];
       registro.ok = true;
       registro.resultados = resultados.length;
@@ -518,18 +530,21 @@ function terminar(base, veredicto, confianza, explicacion, arranque) {
  *   4. Que un fallo exista no valida lo que la cita le atribuye. Eso solo se
  *      comprueba leyendo el considerando, y por eso todos los mensajes de
  *      "verificada" terminan pidiendo que se abra el documento.
- *   5. Probado en vivo: el campo de texto libre del buscador de Mendoza
- *      (lib/indiceMza.js, parámetro "libre") no parece hacer ni Y ni O entre
- *      palabras sueltas. "Municipalidad" sola trae 674 resultados y "Gomez"
- *      sola trae 128, pero "Gomez Municipalidad" —o "Ariana Lucia", dos
- *      nombres de pila que están uno al lado del otro en un fallo real que
- *      sabemos que existe— traen 0. armarConsulta() no lo sabe: arma la
- *      misma consulta de varias palabras que le sirve a las otras tres
- *      fuentes, así que hoy una cita de Mendoza con carátula (no con
- *      expediente, que sí compara bien) puede volver "no_encontrada" siendo
- *      real. Esto es un límite del CLIENTE de Mendoza compartido con el
- *      Buscador general de la aplicación, no algo nuevo de este archivo, y
- *      no se intentó arreglar acá: hace falta entender primero qué espera
- *      de verdad ese parámetro (¿frase exacta? ¿un solo término?) antes de
- *      tocar un cliente que también usa la búsqueda de uso diario.
+ *   5. (Arreglado, dejado acá como historia porque casi no se nota desde
+ *      afuera.) El campo de texto libre del buscador de Mendoza
+ *      (lib/indiceMza.js, parámetro "libre") no hace ni Y ni O entre
+ *      palabras sueltas: probado en vivo, "Municipalidad" sola trae 674
+ *      resultados y "Gomez" sola trae 128, pero "Gomez Municipalidad" —o
+ *      "Ariana Lucia", dos nombres de pila que están uno al lado del otro en
+ *      un fallo real que sabíamos que existía— traían 0. El sitio tiene un
+ *      segundo campo, "partes", con otra SQL atrás que sí exige cada palabra
+ *      por separado en las columnas de actor/demandado (ver la nota grande
+ *      al principio de lib/indiceMza.js). armarConsulta() no cambió: sigue
+ *      armando la misma consulta de varias palabras para las cuatro
+ *      fuentes; lo que cambió es que, cuando esa consulta se armó con la
+ *      carátula, ahora viaja al campo "partes" de Mendoza en vez de al
+ *      "libre" (ver buscarEnFuenteReal). El Buscador general de la
+ *      aplicación sigue usando "libre" como siempre: ahí el texto puede ser
+ *      un concepto, no un nombre de partes, y ese campo es el que
+ *      corresponde para eso.
  */

@@ -329,6 +329,20 @@ test('verificación de citas contra las fuentes (con la búsqueda simulada)', as
   espia = [];
   await verificarCita('SCJM, Cámara del Trabajo, "Pérez c/ Gómez p/ despido"', { buscar: buscadorFalso([], espia) });
   chk('a Mendoza se le manda además el fuero, que su buscador exige', espia[0]?.slug === 'mendoza' && espia[0]?.tribunal === 'CT', JSON.stringify(espia));
+  // Encontrado probando contra Mendoza en vivo: su campo de texto libre no
+  // encuentra nombres de partes ni con una sola palabra más (ver la nota en
+  // lib/indiceMza.js), así que una carátula tiene que viajar por su campo
+  // "partes" —que arma otra SQL, por columna de actor/demandado— y no por
+  // "q" a secas.
+  chk('y la carátula viaja por el campo "partes" de Mendoza, no por "q" a secas', typeof espia[0]?.partes === 'string' && espia[0].partes.length > 0, JSON.stringify(espia));
+
+  espia = [];
+  await verificarCita('CSJN, Fallos: 340:1084', { buscar: buscadorFalso([], espia) });
+  chk(
+    'una consulta que NO viene de la carátula (tomo y página) no manda "partes"',
+    espia[0]?.partes === undefined,
+    JSON.stringify(espia)
+  );
 
   espia = [];
   await verificarCita('"Pérez c/ Gómez s/ daños", 12/03/2019', { buscar: buscadorFalso([], espia) });

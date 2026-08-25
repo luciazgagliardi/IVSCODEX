@@ -14,6 +14,27 @@
  * Respeta la misma cortesia que el resto del backend: mismo User-Agent
  * identificable y la misma espera minima entre pedidos al mismo host
  * (esperarTurno, compartida con descargador.js).
+ *
+ * "libre" vs "partes": el formulario tiene dos campos de texto distintos, y
+ * NO son intercambiables. Probado a mano contra el sitio real: pedir
+ * "Gomez Municipalidad" por "libre" da 0 resultados —incluso "Ariana Lucia",
+ * dos nombres que están uno al lado del otro en un fallo real que sabemos
+ * que existe—, aunque cada palabra suelta por separado sí encuentre cosas.
+ * "partes" arma otra SQL bien distinta:
+ *
+ *   (actor LIKE '%Gomez%' OR demandado LIKE '%Gomez%' OR objeto LIKE '%Gomez%')
+ *   AND (actor LIKE '%Municipalidad%' OR demandado LIKE '%Municipalidad%' OR objeto LIKE '%Municipalidad%')
+ *
+ * —cada palabra buscada por separado en las columnas de las partes, todas
+ * las palabras exigidas a la vez. Es justo lo que hace falta para buscar por
+ * carátula, y encuentra el fallo real sin problema. "libre" en cambio
+ * parece buscar sobre otro conjunto de columnas (sumario, voces, tesauro) y
+ * ahí SÍ como frase: sirve para buscar un concepto ("responsabilidad del
+ * estado"), no un nombre de partes. Por eso buscarMza() manda una cosa u
+ * otra según lo que reciba, nunca las dos juntas: mandar "libre" con el
+ * mismo texto de una carátula que "partes" ya está confirmando en columnas
+ * distintas puede terminar exigiendo (con AND) una coincidencia que no va a
+ * pasar por el campo equivocado, y devolver 0 igual.
  */
 
 import { JSDOM, VirtualConsole } from 'jsdom';
@@ -54,7 +75,7 @@ async function pedirConsulta(parametros) {
 }
 
 /** Paso 1: arma el SQL de respaldo y devuelve cuantas coincidencias hay. */
-async function armarSql({ libre, tribunal }) {
+async function armarSql({ libre, partes = '', tribunal }) {
   const p = new URLSearchParams({
     funcion: 'armarSql',
     mostrar: '20',
@@ -63,7 +84,7 @@ async function armarSql({ libre, tribunal }) {
     materia: '0',
     tribunal,
     expediente: '',
-    partes: '',
+    partes,
     preopinante: '',
     cota: '0',
     fecha: '',
@@ -157,16 +178,24 @@ function parsearFichas(html) {
  * devolvió siempre 0 resultados en las pruebas — puede que ese fuero no esté
  * cargado en esta base, o que necesite un parámetro más que no mandamos
  * todavía. Primera instancia queda afuera: el sitio no la expone acá.
+ *
+ * @param {object} args
+ * @param {string} [args.q] texto libre: conceptos, no nombres de partes (ver
+ *   la nota de "libre" vs "partes" al principio del archivo).
+ * @param {string} [args.partes] nombres de actor/demandado. Si viene esto, se
+ *   usa en vez de "q" — son dos campos del sitio con SQL distinta atrás, no
+ *   tiene sentido mandar los dos a la vez con el mismo texto.
  */
-export async function buscarMza({ q, modo = 'todas', excluir = '', tribunal = 'SC', pagina = 1, porPagina = 20 }) {
-  const libre = String(q || '').trim();
-  if (!libre) throw errores.consultaVacia();
+export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir = '', tribunal = 'SC', pagina = 1, porPagina = 20 }) {
+  const partes = String(partesForm || '').trim();
+  const libre = partes ? '' : String(q || '').trim();
+  if (!libre && !partes) throw errores.consultaVacia();
 
   // Este buscador SOLO sabe "todas las palabras" (ver lib/relevancia.js: las
   // comillas rompen la consulta en vez de hacer frase, y el OR lo ignora),
   // así que siempre se le manda el texto pelado y los otros modos se
   // resuelven acá con lo que devolvió.
-  const { total, sql } = await armarSql({ libre, tribunal });
+  const { total, sql } = await armarSql({ libre, partes, tribunal });
   if (total <= 0) return { total: 0, pagina, porPagina, resultados: [] };
 
   const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim();
@@ -178,7 +207,7 @@ export async function buscarMza({ q, modo = 'todas', excluir = '', tribunal = 'S
   const todos = parsearFichas(html);
   if (!hayQueFiltrar) return { total, pagina, porPagina, resultados: todos };
 
-  const { lista, aflojado } = filtrarPorModo(todos, { q: libre, modo, excluir });
+  const { lista, aflojado } = filtrarPorModo(todos, { q: partes || libre, modo, excluir });
 
   return {
     // El sitio no sabe hacer este modo, así que su contador cuenta otra cosa:
