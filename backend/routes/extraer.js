@@ -10,7 +10,8 @@
  */
 
 import express from 'express';
-import { dominioHabilitado } from '../lib/descargador.js';
+import crypto from 'node:crypto';
+import { dominioHabilitado, descargar } from '../lib/descargador.js';
 import { obtenerDocumento, ocrDocumento, extraerDesdeBuffer } from '../lib/documento.js';
 import { vaciarCache } from '../lib/cache.js';
 import { errores, ErrorApp } from '../lib/errores.js';
@@ -149,6 +150,23 @@ router.delete('/cache', async (_req, res, next) => {
     res.json({ ok: true, borradas: n });
   } catch (e) {
     next(e);
+  }
+});
+
+// SOLO DIAGNOSTICO TEMPORAL — sacar en cuanto se resuelva por que el OCR no
+// encuentra texto en produccion. No expone nada sensible: bytes y hash de
+// un documento publico, nada de claves ni contenido.
+router.get('/debug-bytes', async (req, res) => {
+  try {
+    const { buffer } = await descargar(String(req.query.url || ''));
+    res.json({
+      ok: true,
+      bytes: buffer.length,
+      sha256: crypto.createHash('sha256').update(buffer).digest('hex'),
+      primerosBytes: buffer.subarray(0, 16).toString('hex'),
+    });
+  } catch (e) {
+    res.json({ ok: false, error: e?.message, codigo: e?.codigo });
   }
 });
 
