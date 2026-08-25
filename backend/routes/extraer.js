@@ -10,8 +10,7 @@
  */
 
 import express from 'express';
-import crypto from 'node:crypto';
-import { dominioHabilitado, descargar } from '../lib/descargador.js';
+import { dominioHabilitado } from '../lib/descargador.js';
 import { obtenerDocumento, ocrDocumento, extraerDesdeBuffer } from '../lib/documento.js';
 import { vaciarCache } from '../lib/cache.js';
 import { errores, ErrorApp } from '../lib/errores.js';
@@ -150,38 +149,6 @@ router.delete('/cache', async (_req, res, next) => {
     res.json({ ok: true, borradas: n });
   } catch (e) {
     next(e);
-  }
-});
-
-// SOLO DIAGNOSTICO TEMPORAL — sacar en cuanto se resuelva por que el OCR no
-// encuentra texto en produccion. No expone nada sensible: bytes y hash de
-// un documento publico, nada de claves ni contenido.
-router.get('/debug-bytes', async (req, res) => {
-  try {
-    const { buffer } = await descargar(String(req.query.url || ''));
-    res.json({
-      ok: true,
-      bytes: buffer.length,
-      sha256: crypto.createHash('sha256').update(buffer).digest('hex'),
-      primerosBytes: buffer.subarray(0, 16).toString('hex'),
-      offsetPdf: buffer.toString('latin1').indexOf('%PDF-'),
-      offsetEof: buffer.toString('latin1').lastIndexOf('%%EOF'),
-      preambulo: buffer.subarray(0, 400).toString('latin1'),
-    });
-  } catch (e) {
-    res.json({ ok: false, error: e?.message, codigo: e?.codigo });
-  }
-});
-
-// SOLO DIAGNOSTICO TEMPORAL — idem, para bajar el PDF tal cual llega y
-// compararlo a mano con el que baja directo.
-router.get('/debug-pdf', async (req, res) => {
-  try {
-    const { buffer } = await descargar(String(req.query.url || ''));
-    res.set('Content-Type', 'application/octet-stream');
-    res.send(buffer);
-  } catch (e) {
-    res.json({ ok: false, error: e?.message, codigo: e?.codigo });
   }
 });
 

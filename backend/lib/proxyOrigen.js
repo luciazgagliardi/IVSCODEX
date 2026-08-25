@@ -1,22 +1,36 @@
 /**
  * Algunos sitios judiciales viejos le niegan la conexión al datacenter donde
  * corre el backend publicado (visto con el TSJ CABA en Azure) pero le
- * contestan bien a una conexión hogareña. Para esos casos puntuales, el
- * pedido pasa por ScraperAPI en vez de ir directo.
+ * contestan bien a una conexión hogareña. La idea era que esos pedidos
+ * puntuales pasaran por ScraperAPI en vez de ir directo.
  *
- * IMPORTANTE — alcance reducido a propósito: jurisprudencia.tsjbaires.gob.ar
- * (el buscador) quedó afuera. Probado en vivo, ScraperAPI lo tiene marcado
- * como "dominio protegido" y exige el pool "premium" o "ultra_premium"
- * (proxies residenciales) para conectar — ninguno de los dos está incluido
- * en el plan actual, así que no hay parámetro que lo arregle: hace falta
- * upgradear el plan de ScraperAPI, no un cambio de código. Mientras tanto,
- * el buscador de CABA sigue yendo directo y cae al índice local guardado
- * cuando el sitio no responde (ver routes/indice.js), igual que si esto no
- * existiera.
+ * DESACTIVADO A PROPÓSITO — SUFIJOS_VIA_PROXY vacío. Los dos dominios de
+ * CABA se probaron en vivo y ninguno funciona con el plan actual de
+ * ScraperAPI, cada uno fallando distinto:
  *
- * www.tsjbaires.gov.ar (donde viven los PDF de cada fallo) es un dominio
- * distinto y todavía no se probó si también está en esa lista — por eso
- * sigue intentando por acá.
+ *   - jurisprudencia.tsjbaires.gob.ar (el buscador): ScraperAPI lo tiene
+ *     marcado como "dominio protegido" y exige el pool "premium" o
+ *     "ultra_premium" (proxies residenciales) para conectar — ninguno de
+ *     los dos está incluido en el plan. Contesta un 500 explícito.
+ *   - www.tsjbaires.gov.ar (los PDF de cada fallo): esta síno da error —
+ *     conecta, descarga "un" PDF con la cantidad correcta de páginas— pero
+ *     el contenido de cada página viene en blanco. Probado a mano: se
+ *     renderizó la página 1 con el mismo motor que usa lib/ocr.js y es una
+ *     hoja blanca, mientras que yendo directo (sin proxy) la misma URL trae
+ *     el escaneo real y legible. O sea, sin el pool premium el sitio
+ *     contesta con una versión vacía en vez de rechazar la conexión —peor
+ *     que un error, porque parece haber funcionado.
+ *
+ * Con ese diagnóstico, mantener el proxy prendido para el segundo dominio
+ * sería peor que no tenerlo: cambiaría un 403 honesto (que ya tiene su
+ * propio camino: abrir el original y subirlo a mano, ver
+ * lib/descargador.js) por un "documento en blanco" silencioso. Mejor ir
+ * directo en los dos casos y aceptar el 403 cuando pase.
+ *
+ * Si en algún momento se actualiza el plan de ScraperAPI a uno con acceso a
+ * "premium" o "ultra_premium", volver a poner los dominios en
+ * SUFIJOS_VIA_PROXY y agregar `premium: 'true'` (o `ultra_premium: 'true'`)
+ * a los parámetros en urlProxy() de vuelta.
  *
  * Se usa la API por URL de ScraperAPI (api.scraperapi.com/?url=...), no su
  * "modo proxy" (un relay de red de nivel TCP/HTTP): probado en vivo, el modo
@@ -39,7 +53,7 @@
 import { SCRAPER_API_KEY } from '../config.js';
 
 /** Dominios que se sabe que le niegan la conexión al datacenter publicado. */
-const SUFIJOS_VIA_PROXY = ['tsjbaires.gov.ar'];
+const SUFIJOS_VIA_PROXY = [];
 
 /** True si el host es uno de esos dominios o un subdominio suyo. */
 export function dominioNecesitaProxy(host) {
