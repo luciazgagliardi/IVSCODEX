@@ -34,6 +34,12 @@
 
 import { JSDOM, VirtualConsole } from 'jsdom';
 import iconv from 'iconv-lite';
+// El fetch global de Node usa su propio undici interno, con una version que
+// no tiene por que coincidir con la de este paquete: pasarle un dispatcher
+// (el ProxyAgent) hecho con una version distinta tira "invalid onRequestStart
+// method" en vez de conectar. Usando el fetch del propio paquete undici, los
+// dos hablan la misma version del protocolo interno.
+import { fetch } from 'undici';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { dispatcherPara } from './proxyOrigen.js';
