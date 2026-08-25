@@ -943,7 +943,11 @@ function nuevoIndices(){
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
-      fragmentos:{},fragCargando:false,parcial:false,revisados:0,aflojado:false,desdeNavegador:false};
+      fragmentos:{},fragCargando:false,parcial:false,revisados:0,aflojado:false,desdeNavegador:false,
+      // Páginas de la búsqueda actual ya traídas (a mano o precargadas
+      // solas): número de página -> la respuesta completa del servidor.
+      // Se vacía cada vez que arranca una búsqueda nueva. Ver buscarEnFuente.
+      paginas:{},busquedaId:0};
   });
   return o;
 }
@@ -2242,6 +2246,82 @@ function buscarSaijNavegador(cuerpo,slug){
 var POR_PAGINA_INDICE=20;
 
 /**
+ * Hasta cuántos resultados en total se precargan solos, de fondo, apenas
+ * llega la página 1 — para que ir a la página siguiente sea instantáneo en
+ * vez de esperar de nuevo al sitio oficial. Con más que esto (una búsqueda
+ * de concepto en Dialnet puede dar 30 mil) no tiene sentido: nadie hojea
+ * cientos de páginas, y precargarlas igual sería maltratar el sitio oficial
+ * de gusto. Con menos, sí: 5 páginas de 20 es exactamente el caso de "una
+ * búsqueda con 56 resultados", que se cargan enteros en el fondo y quedan
+ * instantáneas al pasar de página.
+ */
+var UMBRAL_PRECARGA_INDICE=5*POR_PAGINA_INDICE;
+
+/**
+ * Vuelca la respuesta del servidor (fresca o de un caché de página) al
+ * estado de esa fuente y renderiza. Compartido entre "pedir de verdad" y
+ * "ya la tenía precargada" para no repetir la misma docena de líneas.
+ */
+function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
+  imBusco.pagina=pagina;
+  imBusco.desdeNavegador=!!d.desdeNavegador;
+  imBusco.resultados=d.resultados||[];
+  imBusco.total=d.total||0;
+  imBusco.guardados=d.guardadosEnIndice||0;
+  imBusco.local=!!d.desdeIndiceLocal;
+  imBusco.avisoFalla=d.avisoFalla||"";
+  imBusco.parcial=!!d.totalParcial;
+  imBusco.revisados=d.revisados||0;
+  imBusco.aflojado=!!d.aflojado;
+  imBusco.fragmentos={};
+  render();
+  // Los resultados ya están en pantalla; los pasajes que esta fuente no
+  // manda se van completando atrás, sin hacer esperar a nadie.
+  if(imBusco.resultados.some(function(r){return r.linkFallo&&!r.sumario;})){
+    traerFragmentos(slug,imBusco.pedido);
+  }
+  var nombreTrib=(fCfg.tribunales||[]).filter(function(t){return t.v===imBusco.tribunal;})[0];
+  var enDonde=fCfg.nombre+(nombreTrib?" · "+nombreTrib.n:"");
+  if(esNueva) flash(imBusco.local
+    ?"El sitio oficial no respondió: mostrando "+d.resultados.length+" resultado(s) ya guardados"
+    :(d.total?d.total.toLocaleString("es-AR")+" coincidencias en "+enDonde:"Sin coincidencias en "+enDonde));
+}
+
+/**
+ * Trae de fondo las páginas 2, 3... de la búsqueda que se acaba de hacer,
+ * sin spinner ni bloquear nada: si para cuando el usuario hace clic en
+ * "página siguiente" ya llegó, buscarEnFuente la sirve del caché al toque.
+ * Una a la vez y en orden, no todas juntas: son pedidos reales al sitio
+ * oficial, con la misma espera de cortesía entre pedidos que ya respeta el
+ * servidor (ver esperarTurno en lib/descargador.js) — pedirlas en paralelo
+ * no las traería más rápido, solo se atropellarían.
+ */
+function precargarPaginasIndice(slug,imBusco,busquedaId,cuerpoBase,total){
+  var totalPaginas=Math.min(Math.ceil(total/POR_PAGINA_INDICE),Math.ceil(UMBRAL_PRECARGA_INDICE/POR_PAGINA_INDICE));
+  function siguiente(pagina){
+    if(pagina>totalPaginas) return;
+    // ¡Ojo! Se compara contra busquedaId (una búsqueda, con q/modo/tribunal
+    // fijos), NO contra imBusco.pedido: eso último cambia con cada clic en
+    // una página, y si esto revisara pedido, con solo pasar de página a
+    // mano mientras la precarga sigue en vuelo se cortaría entera pensando
+    // que la búsqueda había quedado vieja, cuando en realidad es la misma.
+    if(imBusco.busquedaId!==busquedaId) return;
+    if(imBusco.paginas[pagina]) return siguiente(pagina+1); // ya la tenía (poco probable, no hace daño)
+    var cuerpo=Object.assign({},cuerpoBase,{pagina:pagina});
+    fetch(estado.api+"/indice/"+slug+"/buscar",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(cuerpo)
+    }).then(function(r){ return r.json(); })
+      .then(function(d){
+        if(imBusco.busquedaId!==busquedaId) return;
+        if(d&&d.ok&&!d.desdeIndiceLocal) imBusco.paginas[pagina]=d;
+        siguiente(pagina+1);
+      })["catch"](function(){ /* si falla precargando, buscarEnFuente la pide de nuevo cuando haga falta */ });
+  }
+  siguiente(2);
+}
+
+/**
  * @param slug fuente a consultar.
  * @param pagina si se omite es una búsqueda nueva (arranca en la página 1);
  *   si se pasa un número, es "ir a esa página" de una búsqueda ya hecha —
@@ -2256,16 +2336,31 @@ function buscarEnFuente(slug,pagina){
   recordar(qi);
   var imBusco=estado.indices[slug];
   var esNueva=!(pagina>=1);
+  var paginaPedida=esNueva?1:pagina;
+
+  // Si esta página ya está precargada (de fondo o de haberla visitado antes
+  // en esta misma búsqueda), servirla de ahí: no hace falta esperar de
+  // nuevo al sitio oficial para algo que ya se trajo.
+  if(!esNueva&&imBusco.paginas[paginaPedida]){
+    aplicarPaginaIndice(slug,fCfg,imBusco,imBusco.paginas[paginaPedida],paginaPedida,false);
+    return;
+  }
+
   // Si esta fuente es lenta (CABA puede tardar 30s) y se dispara otra
   // búsqueda antes de que vuelva la anterior, la respuesta vieja no debe
   // pisar a la nueva. Un token por pedido: solo aplica si nadie más
   // arrancó una búsqueda de esta misma fuente después.
   var pedido=(imBusco.pedido||0)+1; imBusco.pedido=pedido;
-  imBusco.pagina=esNueva?1:pagina;
+  // Distinto de "pedido": esto identifica la búsqueda (q/modo/tribunal),
+  // no cada clic. Cambia solo con una búsqueda nueva, así que ir pasando
+  // de página a mano no corta la precarga de fondo de esta misma búsqueda
+  // (ver precargarPaginasIndice).
+  if(esNueva){ imBusco.busquedaId=(imBusco.busquedaId||0)+1; imBusco.paginas={}; }
+  var busquedaId=imBusco.busquedaId;
   imBusco.cargando=true; imBusco.error=null; render();
   // El modo y las palabras a excluir viajan al servidor: antes se elegían
   // acá y no cambiaban nada de la búsqueda real (ver lib/relevancia.js).
-  var cuerpo={q:qi,modo:estado.modo||"todas",pagina:imBusco.pagina};
+  var cuerpo={q:qi,modo:estado.modo||"todas",pagina:paginaPedida};
   if(estado.excluir.trim()) cuerpo.excluir=estado.excluir.trim();
   if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
   fetch(estado.api+"/indice/"+slug+"/buscar",{
@@ -2287,27 +2382,17 @@ function buscarEnFuente(slug,pagina){
         imBusco.error=(d&&d.mensaje)||"El servidor no devolvió resultados.";
         render(); return;
       }
-      imBusco.desdeNavegador=!!d.desdeNavegador;
-      imBusco.resultados=d.resultados||[];
-      imBusco.total=d.total||0;
-      imBusco.guardados=d.guardadosEnIndice||0;
-      imBusco.local=!!d.desdeIndiceLocal;
-      imBusco.avisoFalla=d.avisoFalla||"";
-      imBusco.parcial=!!d.totalParcial;
-      imBusco.revisados=d.revisados||0;
-      imBusco.aflojado=!!d.aflojado;
-      imBusco.fragmentos={};
-      render();
-      // Los resultados ya están en pantalla; los pasajes que esta fuente no
-      // manda se van completando atrás, sin hacer esperar a nadie.
-      if(imBusco.resultados.some(function(r){return r.linkFallo&&!r.sumario;})){
-        traerFragmentos(slug,pedido);
+      aplicarPaginaIndice(slug,fCfg,imBusco,d,paginaPedida,esNueva);
+      // Se haya pedido a mano o venga de la precarga de fondo, cualquier
+      // página que de verdad se trajo del sitio queda guardada: volver
+      // a pasar por ella (ida y vuelta entre páginas) también es
+      // instantáneo, no solo la que la precarga llegó a adelantar.
+      if(!d.desdeIndiceLocal) imBusco.paginas[paginaPedida]=d;
+      // Búsqueda nueva, con más de una página y no demasiado grande: se van
+      // trayendo las siguientes solas, de fondo (ver la nota de arriba).
+      if(esNueva&&!d.desdeIndiceLocal&&d.total>POR_PAGINA_INDICE&&d.total<=UMBRAL_PRECARGA_INDICE){
+        precargarPaginasIndice(slug,imBusco,busquedaId,cuerpo,d.total);
       }
-      var nombreTrib=(fCfg.tribunales||[]).filter(function(t){return t.v===imBusco.tribunal;})[0];
-      var enDonde=fCfg.nombre+(nombreTrib?" · "+nombreTrib.n:"");
-      if(esNueva) flash(imBusco.local
-        ?"El sitio oficial no respondió: mostrando "+d.resultados.length+" resultado(s) ya guardados"
-        :(d.total?d.total.toLocaleString("es-AR")+" coincidencias en "+enDonde:"Sin coincidencias en "+enDonde));
     })["catch"](function(){
       if(imBusco.pedido!==pedido) return;
       imBusco.cargando=false; imBusco.busco=true;
