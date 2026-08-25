@@ -18,6 +18,11 @@
 import dns from 'node:dns/promises';
 import net from 'node:net';
 import iconv from 'iconv-lite';
+// Igual que en lib/indiceCaba.js: el dispatcher (ProxyAgent) viene de este
+// paquete, y tiene que ser este fetch el que lo use — el global de Node trae
+// su propio undici interno, de otra version, y no entienden el mismo
+// protocolo de dispatcher.
+import { fetch } from 'undici';
 
 import {
   DOMINIOS_PERMITIDOS,
