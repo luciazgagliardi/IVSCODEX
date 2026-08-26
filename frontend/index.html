@@ -90,12 +90,7 @@ textarea,input[type=text],input[type=number],select{
 }
 .marca{flex:0 1 auto;min-width:0;text-align:left}
 .marca .titulo-fila{display:flex;align-items:baseline;justify-content:flex-start;gap:14px;flex-wrap:wrap}
-.marca h1{
-  font-family:var(--serif);font-weight:400;font-size:clamp(44px,7.5vw,78px);
-  margin:0;letter-spacing:.03em;word-spacing:.4em;color:var(--lacre)
-}
-.marca .sub{font-family:var(--sans);font-size:15px;font-weight:300;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.72);margin-top:0;text-align:left}
-.marca .sub .dorado{color:var(--dorado);font-weight:300}
+.marca .wordmark{width:clamp(320px,58vw,980px);height:auto;display:block}
 .nav-wrap{
   max-width:calc(100% - 32px);width:fit-content;margin:10px auto 0;
   display:flex;align-items:center;gap:16px;padding:0 22px;
@@ -371,13 +366,8 @@ mark.actual{background:var(--lacre);color:#241a0c}
 }
 .entrada.saliendo{opacity:0;pointer-events:none}
 .entrada-contenido{padding:24px;display:flex;flex-direction:column;align-items:center;animation:aparece-entrada 1s ease-out both}
-.entrada .titulo-fila{display:flex;align-items:baseline;justify-content:center;gap:16px;flex-wrap:wrap}
-.entrada h1{margin:0;font-family:var(--serif);font-size:clamp(34px,7vw,74px);font-weight:400;letter-spacing:.02em;word-spacing:.4em;color:var(--lacre)}
-.entrada .sub{
-  margin-top:10px;font-family:var(--sans);font-size:clamp(13px,1.6vw,15px);letter-spacing:.06em;
-  text-transform:uppercase;color:rgba(255,255,255,.75)
-}
-.entrada .sub .dorado{color:var(--dorado);font-weight:600}
+.entrada .titulo-fila{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.entrada .wordmark{width:clamp(360px,74vw,1180px);height:auto;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
 .entrada .toque{
   margin-top:26px;font-family:var(--sans);font-size:12px;letter-spacing:.06em;
   text-transform:uppercase;color:rgba(255,255,255,.6);animation:parpadeo-toque 1.8s ease-in-out infinite
@@ -405,9 +395,8 @@ mark.actual{background:var(--lacre);color:#241a0c}
 <div class="entrada" id="entrada" role="button" tabindex="0" aria-label="Entrada de Iuris et de iure. Tocar para continuar">
   <div class="entrada-contenido">
     <div class="titulo-fila">
-      <h1>IURIS ET DE IURE</h1>
+      <img class="wordmark" src="./marca-oficial.png" alt="IURIS ET DE IURE">
     </div>
-    <div class="sub"><span class="dorado">Lectio et iurisprudentia</span></div>
     <div class="toque">Tocá para continuar</div>
   </div>
 </div>
@@ -416,9 +405,8 @@ mark.actual{background:var(--lacre);color:#241a0c}
   <div class="top-in">
     <div class="marca">
       <div class="titulo-fila">
-        <h1>IURIS ET DE IURE</h1>
+        <img class="wordmark" src="./marca-oficial.png" alt="IURIS ET DE IURE">
       </div>
-      <div class="sub"><span class="dorado">Lectio et iurisprudentia</span></div>
     </div>
   </div>
   <div class="nav-wrap">
