@@ -3369,26 +3369,54 @@ function render(){
 
 /**
  * Estira el listado de ramas de la izquierda (.rail-list, "Buscar rama...")
- * para que termine justo a la altura del panel de la derecha, en vez de un
+ * para que termine justo a la altura de lo que hay al lado, en vez de un
  * porcentaje fijo de la pantalla (62vh) que no tiene ninguna relación con
- * ese panel: según la ventana, el listado quedaba cortado bastante antes de
- * la línea de abajo del panel, o se pasaba de largo — un desalineado que se
- * notaba apenas se miraba la barra de scroll dorada al lado del recuadro.
+ * ese contenido: según la ventana, el listado quedaba cortado bastante antes
+ * de la línea de abajo del panel, o se pasaba de largo — un desalineado que
+ * se notaba apenas se miraba la barra de scroll dorada al lado del recuadro.
  *
  * Se mide en JS y no con CSS porque son dos cajas SIN relación de padres e
  * hijos (una está en #rail, la otra en #vista): CSS Grid puede igualar la
  * altura de las dos COLUMNAS enteras, pero no la de un elemento cualquiera
- * de una columna contra un elemento cualquiera de la otra. Y solo tiene
- * sentido en la solapa Buscar —es la única con ese panel— y en el layout de
- * dos columnas: pasados los 860px de ancho (media query de acá arriba) el
- * listado de ramas se acuesta en una fila horizontal arriba del panel, sin
- * "línea de abajo" con la que alinearse.
+ * de una columna contra un elemento cualquiera de la otra.
+ *
+ * Solo dos solapas, no las cuatro que muestran este listado (ver sinRail
+ * más arriba):
+ *
+ *   - Buscar: se mide contra #panel-buscar-form, el único panel de la
+ *     solapa.
+ *   - Guardados: se mide contra el último ".blk" de #vista (son siempre
+ *     tres, en el mismo orden — pasajes, fuentes, historial —, así que "el
+ *     último" es siempre "Búsquedas de esta sesión"). Mismo problema que en
+ *     Buscar: con poco guardado, el listado de ramas se pasaba de largo por
+ *     debajo de esas tres cajas.
+ *   - Ramas y Fuentes quedan AFUERA a propósito, no por descuido: ahí no hay
+ *     un panel acotado con el que alinearse, es una lista larga de verdad
+ *     (28 ramas, 106 fuentes) que va a seguir siendo más alta que la
+ *     pantalla sea cual sea su ancho. Estirar el listado para que "llegue
+ *     hasta el final" ahí lo volvería una columna gigantesca y le sacaría
+ *     la gracia a que quede fijo arriba mientras se recorre la lista larga:
+ *     el 62vh en esas dos no es el mismo error, es lo que mantiene el
+ *     filtro usable.
+ *
+ * Y solo tiene sentido en el layout de dos columnas: pasados los 860px de
+ * ancho (media query de acá arriba) el listado de ramas se acuesta en una
+ * fila horizontal arriba del contenido, sin "línea de abajo" con la que
+ * alinearse.
  */
 function ajustarAlturaRail(){
   var lista=document.getElementById("listaRamas");
   if(!lista) return;
-  var objetivo=document.getElementById("panel-buscar-form");
-  if(estado.tab!=="buscar"||!objetivo||window.innerWidth<=860){
+
+  var objetivo=null;
+  if(estado.tab==="buscar"){
+    objetivo=document.getElementById("panel-buscar-form");
+  }else if(estado.tab==="guardados"){
+    var bloques=document.querySelectorAll("#vista > .blk");
+    objetivo=bloques[bloques.length-1]||null;
+  }
+
+  if(!objetivo||window.innerWidth<=860){
     lista.style.maxHeight=""; // vuelve al 62vh fijo de la hoja de estilos
     return;
   }
