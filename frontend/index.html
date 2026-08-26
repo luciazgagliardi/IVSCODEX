@@ -571,6 +571,71 @@ var RAMAS=[
 ];
 
 /* ============================================================
+   1.1 REQUISITOS — atajos para el trámite, no la rama.
+   ============================================================
+   Ramas (arriba) organiza por TEMA del derecho; esto organiza por TRÁMITE
+   concreto —lo que un abogado escribe en Google cuando necesita saber qué
+   pide un juzgado para admitir tal cosa—. Nace de un pedido puntual: "los
+   abogados buscan mucho requisitos para tal o cual acción".
+
+   Cada entrada es un ATAJO, no una respuesta: arma una consulta (con
+   "requisitos" siempre exigido, más un par de palabras propias del
+   trámite) y la manda a la solapa Buscar, igual que hace una voz de Ramas.
+   Esta web no dice cuáles son los requisitos de nada por su cuenta —eso
+   sería exactamente lo que en el resto del sitio se evita, escribir sobre
+   el derecho en vez de llevar a la fuente— así que lo que cada tarjeta
+   ofrece es la BÚSQueda ya armada, no el listado.
+
+   Iban con "frase exacta" (como las voces de Ramas) hasta que se probó
+   contra el propio buscador: "requisitos amparo" como frase textual no
+   aparece casi nunca así, tal cual, en un sumario real —el tribunal escribe
+   "los requisitos de procedencia del amparo son...", no esas dos palabras
+   pegadas—. "Todas las palabras" (ver lib/relevancia.js) es el modo que de
+   verdad encuentra algo: exige "requisitos" Y los términos propios del
+   trámite, en cualquier orden y en cualquier parte del sumario.
+
+   g = grupo, una clave de GRUPOS_REQUISITOS más abajo. q = las palabras
+   propias del trámite; "requisitos" se antepone solo, al armar el botón,
+   así no se repite en cada línea.
+*/
+var GRUPOS_REQUISITOS={
+  fam:"Familia",
+  civ:"Civil, daños y derechos reales",
+  suc:"Sucesiones",
+  proc:"Procesal y constitucional",
+  com:"Comercial y concursal",
+  lab:"Laboral",
+  pen:"Penal",
+  adm:"Administrativo"
+};
+var REQUISITOS=[
+ {id:"divorcio",g:"fam",n:"Divorcio",d:"Vincular, por presentación conjunta o unilateral.",q:"divorcio vincular"},
+ {id:"union-convivencial",g:"fam",n:"Unión convivencial",d:"Registración y efectos patrimoniales de la convivencia.",q:"unión convivencial"},
+ {id:"adopcion",g:"fam",n:"Adopción",d:"Guarda con fines de adopción y juicio de adopción.",q:"adopción guarda"},
+ {id:"alimentos",g:"fam",n:"Cuota alimentaria",d:"Fijación, aumento o cese de alimentos.",q:"cuota alimentaria"},
+ {id:"regimen-comunicacion",g:"fam",n:"Régimen de comunicación",d:"Contacto con hijos, nietos u otros parientes.",q:"régimen de comunicación"},
+ {id:"usucapion",g:"civ",n:"Usucapión",d:"Prescripción adquisitiva de dominio.",q:"usucapión prescripción adquisitiva"},
+ {id:"desalojo",g:"civ",n:"Desalojo",d:"Recupero de la tenencia de un inmueble.",q:"desalojo"},
+ {id:"dano-moral",g:"civ",n:"Daño moral",d:"Procedencia y prueba del daño extrapatrimonial.",q:"daño moral procedencia"},
+ {id:"beneficio-litigar",g:"civ",n:"Beneficio de litigar sin gastos",d:"Eximición de costas y tasas por falta de recursos.",q:"beneficio de litigar sin gastos"},
+ {id:"escrituracion",g:"civ",n:"Escrituración",d:"Obligación de escriturar un boleto de compraventa.",q:"escrituración boleto de compraventa"},
+ {id:"sucesion-abintestato",g:"suc",n:"Sucesión ab intestato",d:"Apertura y declaratoria de herederos sin testamento.",q:"declaratoria de herederos"},
+ {id:"sucesion-testamentaria",g:"suc",n:"Sucesión testamentaria",d:"Apertura del proceso sucesorio con testamento válido.",q:"sucesión testamentaria"},
+ {id:"amparo",g:"proc",n:"Acción de amparo",d:"Vía rápida contra un acto u omisión con arbitrariedad manifiesta.",q:"amparo procedencia"},
+ {id:"medida-cautelar",g:"proc",n:"Medida cautelar",d:"Verosimilitud del derecho y peligro en la demora.",q:"medida cautelar"},
+ {id:"rec-extraordinario-federal",g:"proc",n:"Recurso extraordinario federal",d:"Vía de acceso a la Corte Suprema de la Nación.",q:"recurso extraordinario federal admisibilidad"},
+ {id:"rec-extraordinario-provincial",g:"proc",n:"Recurso extraordinario provincial (Mendoza)",d:"Vía de acceso a la Suprema Corte de Mendoza.",q:"recurso extraordinario provincial"},
+ {id:"habeas-corpus",g:"proc",n:"Hábeas corpus",d:"Contra una privación o agravamiento ilegítimo de la libertad.",q:"hábeas corpus"},
+ {id:"habeas-data",g:"proc",n:"Hábeas data",d:"Acceso, rectificación o supresión de datos personales propios.",q:"hábeas data"},
+ {id:"concurso-preventivo",g:"com",n:"Concurso preventivo",d:"Apertura del concurso para reestructurar deudas.",q:"concurso preventivo apertura"},
+ {id:"quiebra",g:"com",n:"Quiebra a pedido de acreedor",d:"Declaración de quiebra a instancia de un acreedor.",q:"pedido de quiebra"},
+ {id:"despido-justa-causa",g:"lab",n:"Despido con justa causa",d:"Injuria que impide la continuidad del vínculo laboral.",q:"despido justa causa injuria"},
+ {id:"probation",g:"pen",n:"Suspensión del juicio a prueba",d:"Probation: extinción de la acción penal a prueba.",q:"suspensión del juicio a prueba"},
+ {id:"excarcelacion",g:"pen",n:"Excarcelación",d:"Libertad durante el proceso, cese de la prisión preventiva.",q:"excarcelación cese prisión preventiva"},
+ {id:"silencio-administracion",g:"adm",n:"Silencio de la administración",d:"Cuándo se considera denegado un reclamo no resuelto.",q:"silencio de la administración"}
+];
+
+/* ============================================================
    2. FUENTES — todas reales y públicas.
       dom = dominio para la búsqueda de respaldo por Google.
       tmpl = enlace directo verificado (cuando existe).
@@ -1738,7 +1803,7 @@ function pintarCadena(){
 /* ============================================================
    6. Vistas
    ============================================================ */
-var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["fuentes","Fuentes"],
+var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos","Requisitos"],["fuentes","Fuentes"],
           ["citas","Citar"],["verificar","Verificar"],["guardados","Guardados"],["cuenta","Cuenta"]];
 
 function pintarNav(){
@@ -1766,7 +1831,9 @@ function listaRamasHTML(){
 function pintarRail(){
   var r=document.getElementById("rail");
   var w=document.getElementById("wrap");
-  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta");
+  // "requisitos" también queda sin riel: el filtro de ahí es por RAMA, y acá
+  // el listado es por TRÁMITE — mostrarlo daría un control que no filtra nada.
+  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos");
   if(w) w.classList.toggle("sin-rail",sinRail);
   if(sinRail){ r.innerHTML=""; return; }
   r.innerHTML='<input type="text" id="buscarRama" class="rail-buscador" value="'+esc(estado.buscarRama)+
@@ -2730,6 +2797,25 @@ function vistaRamas(){
   return html;
 }
 
+function vistaRequisitos(){
+  var html='<div class="aviso"><strong>Atajos, no respuestas.</strong> Esta web no dice cuáles son los requisitos de nada por su cuenta —haría exactamente lo que en el resto del sitio se evita: escribir sobre el derecho en vez de llevar a la fuente—. '+
+    'Elegí un trámite y arma la consulta con "requisitos" más las palabras propias de ese trámite, y te manda a <strong>Buscar</strong> para que la corras contra las bases oficiales. Ahí se puede editar como cualquier otra búsqueda.</div>';
+  var porGrupo={};
+  REQUISITOS.forEach(function(x){ (porGrupo[x.g]=porGrupo[x.g]||[]).push(x); });
+  html+=Object.keys(GRUPOS_REQUISITOS).map(function(g){
+    var items=porGrupo[g]||[];
+    if(!items.length) return '';
+    return '<div class="grupo"><h3>'+esc(GRUPOS_REQUISITOS[g])+'</h3>'+
+      items.map(function(x){
+        return '<div class="rama"><h3>'+esc(x.n)+'</h3><p>'+esc(x.d)+'</p>'+
+          '<button class="mini" data-act="tramite" data-v="requisitos '+esc(x.q)+'">Buscar los requisitos</button>'+
+          '</div>';
+      }).join("")+
+      '</div>';
+  }).join("");
+  return html;
+}
+
 function vistaFuentes(){
   var todas=F.slice();
   var porAmb=Object.keys(AMB).map(function(k){
@@ -3356,7 +3442,7 @@ function render(){
     pintarNav();
     pintarRail();
     var v=document.getElementById("vista");
-    var f={buscar:vistaBuscar,lector:vistaLector,ramas:vistaRamas,fuentes:vistaFuentes,
+    var f={buscar:vistaBuscar,lector:vistaLector,ramas:vistaRamas,requisitos:vistaRequisitos,fuentes:vistaFuentes,
            citas:vistaCitas,verificar:vistaVerificar,guardados:vistaGuardados,
            cuenta:vistaCuenta}[estado.tab]||vistaBuscar;
     v.innerHTML=f();
@@ -3487,6 +3573,19 @@ document.addEventListener("click",function(ev){
     estado.q=b.getAttribute("data-v")||""; estado.modo="exacta"; estado.tab="buscar";
     render(); window.scrollTo(0,0);
     var i=document.getElementById("q"); if(i) i.focus();
+    return;
+  }
+  // Igual que "voz", pero en modo "todas las palabras" y no "frase exacta":
+  // una voz de Ramas es un término armado para buscarse tal cual ("pacto
+  // comisorio"), pero "requisitos amparo" casi nunca aparece así, pegado,
+  // en un sumario real — el tribunal escribe "los requisitos de procedencia
+  // del amparo son...". "Todas las palabras" exige las mismas palabras en
+  // cualquier orden y en cualquier parte, que es lo que de verdad encuentra
+  // algo acá. Ver la nota grande arriba de REQUISITOS.
+  if(act==="tramite"){
+    estado.q=b.getAttribute("data-v")||""; estado.modo="todas"; estado.tab="buscar";
+    render(); window.scrollTo(0,0);
+    var iq=document.getElementById("q"); if(iq) iq.focus();
     return;
   }
   if(act==="fav"){
