@@ -108,18 +108,22 @@ textarea,input[type=text],input[type=number],select{
   border:1px solid rgba(217,166,42,.55);border-radius:999px;
   background:rgba(255,255,255,.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
 }
-/* Nombre completo, adentro de la misma barra, último elemento (a la
-   derecha): colapsado no ocupa nada, y al tocar el logo (#btn-logo) se
-   despliega ahí mismo, estirando la barra hacia la derecha en vez de
-   agregar un elemento aparte. El margen negativo cancela el "gap" del
-   flex del padre mientras está colapsado, para no dejar un huequito. */
+/* Nombre completo, en el mismo bloque del logo (entre el logo y las
+   solapas): colapsado no ocupa nada, y al tocar el logo (#btn-logo) se
+   despliega ahí mismo, empujando a Buscar/Lector/Ramas/etc hacia la
+   derecha dentro de la misma barra. Chico a propósito: tiene que
+   entrar completo, no cortarse — no es el título grande de la
+   portada, es un detalle de la barra de navegación. Los márgenes
+   negativos cancelan el "gap" del flex del padre A LOS DOS LADOS
+   mientras está colapsado (queda entre otros dos elementos, no al
+   final), para no dejar un huequito de más. */
 .marca-lateral{
-  font-family:var(--serif);font-weight:400;color:var(--lacre);text-transform:uppercase;
-  font-size:clamp(28px,6vw,70px);letter-spacing:.03em;word-spacing:.4em;white-space:nowrap;
-  max-width:0;opacity:0;overflow:hidden;margin-left:-16px;
-  transition:max-width .6s cubic-bezier(.4,0,.2,1),opacity .45s ease,margin-left .6s cubic-bezier(.4,0,.2,1)
+  font-family:var(--serif);font-weight:400;color:var(--lacre);
+  font-size:clamp(15px,1.8vw,20px);letter-spacing:.04em;white-space:nowrap;
+  max-width:0;opacity:0;overflow:hidden;margin:0 -16px;
+  transition:max-width .6s cubic-bezier(.4,0,.2,1),opacity .45s ease,margin .6s cubic-bezier(.4,0,.2,1)
 }
-.nav-wrap.mostrar-marca .marca-lateral{max-width:min(900px,72vw);opacity:1;margin-left:20px}
+.nav-wrap.mostrar-marca .marca-lateral{max-width:280px;opacity:1;margin:0 16px}
 .nav-logo-btn{
   flex:none;display:block;padding:0;margin:0;border:none;background:none;cursor:pointer;
   border-radius:50%;
@@ -412,7 +416,7 @@ mark.actual{background:var(--lacre);color:#241a0c}
 
 @media (max-width:860px){
   .top-in{gap:6px}
-  .nav-wrap.mostrar-marca .marca-lateral{max-width:82vw;margin-left:10px;font-size:clamp(20px,7vw,38px)}
+  .nav-wrap.mostrar-marca .marca-lateral{max-width:min(220px,55vw);margin:0 10px}
   .wrap{grid-template-columns:1fr;gap:16px}
   .rail{position:static;max-height:none}
   .rail-list{flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:6px}
@@ -451,8 +455,8 @@ mark.actual{background:var(--lacre);color:#241a0c}
     <button class="nav-logo-btn" id="btn-logo" type="button" aria-expanded="false" aria-controls="marca-lateral" aria-label="Mostrar el nombre completo">
       <img class="nav-logo" src="./logo-iu.png" alt="Emblema de Iuris et de iure">
     </button>
-    <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
     <span class="marca-lateral" id="marca-lateral" aria-hidden="true">Iuris et de Iure</span>
+    <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
   </div>
 </header>
 
