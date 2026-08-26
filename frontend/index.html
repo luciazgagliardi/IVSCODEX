@@ -1825,7 +1825,10 @@ function vistaBuscar(){
 
     sug+
 
-    '<div class="panel">'+
+    // El id es el ancla de ajustarAlturaRail(): ese panel es "el rectángulo"
+    // contra el que se mide el listado de ramas de la izquierda, para que
+    // su scroll llegue justo hasta la misma línea. Ver esa función.
+    '<div class="panel" id="panel-buscar-form">'+
       '<div class="campo"><span>Qué buscás</span>'+
         '<div class="fila-q">'+
           '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off">'+
@@ -3356,12 +3359,46 @@ function render(){
     v.innerHTML=f();
     if(estado.tab==="lector") pintarLector();
     pintarCadena();
+    ajustarAlturaRail();
     document.getElementById("pie-txt").innerHTML=
       "<strong>Iuris et de iure</strong> — catálogo de "+F.length+" bases oficiales y "+RAMAS.length+
       " ramas del derecho. Funciona sin conexión: los enlaces se abren en el sitio del organismo. "+
       "No almacena fallos ni genera contenido jurídico. Verificá siempre en la fuente antes de citar.";
   }catch(e){ panic(e&&e.message?e.message:"error de render"); }
 }
+
+/**
+ * Estira el listado de ramas de la izquierda (.rail-list, "Buscar rama...")
+ * para que termine justo a la altura del panel de la derecha, en vez de un
+ * porcentaje fijo de la pantalla (62vh) que no tiene ninguna relación con
+ * ese panel: según la ventana, el listado quedaba cortado bastante antes de
+ * la línea de abajo del panel, o se pasaba de largo — un desalineado que se
+ * notaba apenas se miraba la barra de scroll dorada al lado del recuadro.
+ *
+ * Se mide en JS y no con CSS porque son dos cajas SIN relación de padres e
+ * hijos (una está en #rail, la otra en #vista): CSS Grid puede igualar la
+ * altura de las dos COLUMNAS enteras, pero no la de un elemento cualquiera
+ * de una columna contra un elemento cualquiera de la otra. Y solo tiene
+ * sentido en la solapa Buscar —es la única con ese panel— y en el layout de
+ * dos columnas: pasados los 860px de ancho (media query de acá arriba) el
+ * listado de ramas se acuesta en una fila horizontal arriba del panel, sin
+ * "línea de abajo" con la que alinearse.
+ */
+function ajustarAlturaRail(){
+  var lista=document.getElementById("listaRamas");
+  if(!lista) return;
+  var objetivo=document.getElementById("panel-buscar-form");
+  if(estado.tab!=="buscar"||!objetivo||window.innerWidth<=860){
+    lista.style.maxHeight=""; // vuelve al 62vh fijo de la hoja de estilos
+    return;
+  }
+  var alto=objetivo.getBoundingClientRect().bottom-lista.getBoundingClientRect().top;
+  lista.style.maxHeight=Math.max(120,Math.round(alto))+"px";
+}
+// La ventana se puede ensanchar o angostar sin que nada más cambie de
+// estado (ni una búsqueda, ni una pestaña) — nada de lo que ya dispara
+// render() se entera de eso, así que hace falta un oyente propio.
+window.addEventListener("resize",ajustarAlturaRail);
 
 /* ============================================================
    8. Eventos (delegación única)
