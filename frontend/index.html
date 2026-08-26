@@ -211,7 +211,16 @@ input[type=text],input[type=number],select{
   width:100%;padding:10px 12px;border:1px solid var(--linea);border-radius:6px;
   background:var(--ficha);font-family:var(--sans);font-size:15px;color:var(--tinta)
 }
-input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--lacre);transition:border-color .25s ease}
+/* outline:none a propósito: sin esto, enfocar cualquiera de estos campos
+   ("Qué buscás", "Excluir palabras", "Año desde/hasta" en Buscar; "Enlace
+   directo del fallo", "De dónde lo sacaste" en Lector; los siete de Citar)
+   dibujaba DOS anillos dorados a la vez — el borde propio, que ya cambia a
+   --lacre acá abajo, más el contorno de foco genérico de más arriba
+   (:focus-visible, pensado para elementos sin su propio indicador, como
+   botones y links). El campo ya avisa que tiene el foco cambiando de color;
+   agregarle un segundo anillo encima no sumaba accesibilidad, sumaba un
+   defecto visual. Mismo criterio que .rail-buscador, que ya lo hacía. */
+input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--lacre);outline:none;transition:border-color .25s ease}
 #q{font-family:var(--sans);font-size:16px;padding:13px 14px}
 .fila{display:flex;gap:12px;flex-wrap:wrap}
 .fila>*{flex:1 1 130px;min-width:0}
