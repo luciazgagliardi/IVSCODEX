@@ -24,6 +24,20 @@
   --humo:#8a7f6a;
   --linea:#332918;
   --oro:#e9c877;
+  /* Un tono por buscador. El borde del panel dice de dónde salió cada
+     resultado sin tener que leer el título — con seis fuentes abiertas a la
+     vez, todas con el mismo borde verde, había que leer el encabezado para
+     saber qué se estaba mirando.
+
+     Mendoza y Mendoza Legal comparten familia de color a propósito: las dos
+     son de la provincia y van una debajo de la otra, así que el parecido
+     agrupa. Las otras cuatro se separan por tono bien distinto. */
+  --f-mendoza:#d9a62a;
+  --f-mendozalegal:#c98f4f;
+  --f-caba:#6fa8d4;
+  --f-csjn:#c9707a;
+  --f-saij:#5fae90;
+  --f-dialnet:#9b8ac4;
   --serif:"Bodoni Moda",Georgia,serif;
   --sans:"IBM Plex Sans",Arial,sans-serif;
   --mono:"IBM Plex Sans",Arial,sans-serif;
@@ -98,8 +112,13 @@ textarea,input[type=text],input[type=number],select{
   background:rgba(255,255,255,.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
 }
 .nav-logo{
+  /* Sin borde a propósito. Tenía uno dorado igual al del óvalo de la barra
+     (.nav-wrap), y como el logo va pegado al extremo izquierdo quedaban dos
+     anillos dorados a cuatro píxeles uno del otro: se leía como un error de
+     dibujo, no como decoración. El óvalo ya encierra al logo; alcanza con
+     ese. */
   width:56px;height:56px;flex:none;display:block;border-radius:50%;
-  border:1px solid var(--lacre);object-fit:contain;padding:5px;background:transparent
+  object-fit:contain;padding:5px;background:transparent
 }
 .nav{display:flex;gap:14px;flex:1 1 auto;min-width:0;padding:10px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .nav button{
@@ -179,6 +198,12 @@ a.mini:hover{color:var(--lacre)}
 /* ---------- formulario ---------- */
 .panel{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:22px 24px;margin-bottom:20px}
 .panel.vivo{border-color:var(--acequia)}
+.panel.f-mendoza{border-color:var(--f-mendoza)}
+.panel.f-mendozalegal{border-color:var(--f-mendozalegal)}
+.panel.f-caba{border-color:var(--f-caba)}
+.panel.f-csjn{border-color:var(--f-csjn)}
+.panel.f-saij{border-color:var(--f-saij)}
+.panel.f-dialnet{border-color:var(--f-dialnet)}
 .panel.inactivo{border-color:var(--linea)}
 .campo{display:block;margin-bottom:14px}
 .campo span{display:block;font-family:var(--sans);font-size:13px;color:var(--tinta2);margin-bottom:6px}
@@ -884,6 +909,9 @@ var FUENTES_INDICE=[
     {v:"CC",n:"Cámaras Civil, Comercial y Minas"},
     {v:"CT",n:"Cámaras del Trabajo"}
   ]},
+ {slug:"mendozalegal",cod:"MZA LEGAL",clase:"mza",boton:"Mendoza Legal",
+  nombre:"Mendoza Legal · jurisprudencia seleccionada",
+  nota:"Tampoco es un tribunal: es la revista del Colegio de Abogados de Mendoza, que publica fallos elegidos uno por uno —provinciales, nacionales e interamericanos— con un resumen escrito por una persona y el enlace al texto completo. Es chiquita a propósito: sirve para ver qué se destacó de un tema, no para barrer todo lo que dictó un tribunal. Que algo no aparezca acá no dice nada sobre si existe."},
  {slug:"caba",cod:"CABA",clase:"prov",boton:"el TSJ de CABA",
   nombre:"Tribunal Superior de Justicia de la Ciudad de Buenos Aires",
   nota:"Cubre contencioso administrativo y tributario, penal/contravencional, laboral y asuntos originarios de la Ciudad — no el fuero civil general."},
@@ -899,10 +927,7 @@ var FUENTES_INDICE=[
   ]},
  {slug:"dialnet",cod:"DIALNET",clase:"doc",boton:"Dialnet",
   nombre:"Dialnet · doctrina jurídica en español",
-  nota:"No es un tribunal: es artículos, libros y tesis de doctrina en español (Universidad de La Rioja, España), con muchísimo contenido de autores argentinos. Sirve para encontrar qué se escribió sobre un tema, no para verificar una sentencia puntual."},
- {slug:"mendozalegal",cod:"MZA LEGAL",clase:"mza",boton:"Mendoza Legal",
-  nombre:"Mendoza Legal · jurisprudencia seleccionada",
-  nota:"Tampoco es un tribunal: es la revista del Colegio de Abogados de Mendoza, que publica fallos elegidos uno por uno —provinciales, nacionales e interamericanos— con un resumen escrito por una persona y el enlace al texto completo. Es chiquita a propósito: sirve para ver qué se destacó de un tema, no para barrer todo lo que dictó un tribunal. Que algo no aparezca acá no dice nada sobre si existe."}
+  nota:"No es un tribunal: es artículos, libros y tesis de doctrina en español (Universidad de La Rioja, España), con muchísimo contenido de autores argentinos. Sirve para encontrar qué se escribió sobre un tema, no para verificar una sentencia puntual."}
 ];
 
 /* El sitio de CABA no filtra por secretaría en el pedido (ver nota en
@@ -2585,7 +2610,11 @@ function panelIndice(f){
   var im=estado.indices[f.slug];
   var local=im.busco&&im.local;
   var nombreTrib=((f.tribunales||[]).filter(function(t){return t.v===im.tribunal;})[0]||{}).n;
-  var out='<div class="panel vivo"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
+  // La clase por slug pinta el borde con el tono de esa fuente (ver :root).
+  // El borde izquierdo dorado del caso "local" se mantiene: no es decoración
+  // sino un aviso —estos resultados salieron de la copia guardada, no del
+  // sitio— y sigue siendo UN borde, con un lado marcado.
+  var out='<div class="panel vivo f-'+f.slug+'"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
     '<div class="rotulo" style="margin-top:0">'+esc(f.nombre)+(local?' · desde tu índice local':' · en vivo')+'</div>';
 
   if(f.tribunales){
