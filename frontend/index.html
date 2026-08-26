@@ -94,6 +94,15 @@ textarea,input[type=text],input[type=number],select{
   max-height:220px;opacity:1;padding:34px 16px 20px;transform:translateY(0);
   transition-delay:1s
 }
+/* Mismo despliegue, pero al tocar el logo de la barra en vez de pasar el
+   mouse (#btn-logo agrega/saca esta clase de .top — ver el bloque de JS
+   "Logo del header" más abajo): así funciona igual en el celular, donde
+   no hay hover posible. Sin el segundo de espera del hover: un toque ya
+   es una acción a propósito, no hace falta filtrar pasadas sin querer. */
+.top.mostrar-marca .top-in{
+  max-height:220px;opacity:1;padding:34px 16px 20px;transform:translateY(0);
+  transition-delay:0s
+}
 .marca{flex:0 1 auto;min-width:0;text-align:left}
 .marca .titulo-fila{display:flex;align-items:baseline;justify-content:flex-start;gap:14px;flex-wrap:wrap}
 .marca h1{
@@ -108,22 +117,6 @@ textarea,input[type=text],input[type=number],select{
   border:1px solid rgba(217,166,42,.55);border-radius:999px;
   background:rgba(255,255,255,.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
 }
-/* Nombre completo, en el mismo bloque del logo (entre el logo y las
-   solapas): colapsado no ocupa nada, y al tocar el logo (#btn-logo) se
-   despliega ahí mismo, empujando a Buscar/Lector/Ramas/etc hacia la
-   derecha dentro de la misma barra. Chico a propósito: tiene que
-   entrar completo, no cortarse — no es el título grande de la
-   portada, es un detalle de la barra de navegación. Los márgenes
-   negativos cancelan el "gap" del flex del padre A LOS DOS LADOS
-   mientras está colapsado (queda entre otros dos elementos, no al
-   final), para no dejar un huequito de más. */
-.marca-lateral{
-  font-family:var(--serif);font-weight:400;color:var(--lacre);
-  font-size:clamp(15px,1.8vw,20px);letter-spacing:.04em;white-space:nowrap;
-  max-width:0;opacity:0;overflow:hidden;margin:0 -16px;
-  transition:max-width .6s cubic-bezier(.4,0,.2,1),opacity .45s ease,margin .6s cubic-bezier(.4,0,.2,1)
-}
-.nav-wrap.mostrar-marca .marca-lateral{max-width:280px;opacity:1;margin:0 16px}
 .nav-logo-btn{
   flex:none;display:block;padding:0;margin:0;border:none;background:none;cursor:pointer;
   border-radius:50%;
@@ -416,7 +409,6 @@ mark.actual{background:var(--lacre);color:#241a0c}
 
 @media (max-width:860px){
   .top-in{gap:6px}
-  .nav-wrap.mostrar-marca .marca-lateral{max-width:min(220px,55vw);margin:0 10px}
   .wrap{grid-template-columns:1fr;gap:16px}
   .rail{position:static;max-height:none}
   .rail-list{flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:6px}
@@ -442,8 +434,8 @@ mark.actual{background:var(--lacre);color:#241a0c}
   </div>
 </div>
 
-<header class="top">
-  <div class="top-in">
+<header class="top" id="top">
+  <div class="top-in" id="top-in">
     <div class="marca">
       <div class="titulo-fila">
         <h1>IURIS ET DE IURE</h1>
@@ -451,11 +443,10 @@ mark.actual{background:var(--lacre);color:#241a0c}
       <div class="sub"><span class="dorado">Lectio et iurisprudentia</span></div>
     </div>
   </div>
-  <div class="nav-wrap" id="nav-wrap">
-    <button class="nav-logo-btn" id="btn-logo" type="button" aria-expanded="false" aria-controls="marca-lateral" aria-label="Mostrar el nombre completo">
+  <div class="nav-wrap">
+    <button class="nav-logo-btn" id="btn-logo" type="button" aria-expanded="false" aria-controls="top-in" aria-label="Mostrar el nombre completo">
       <img class="nav-logo" src="./logo-iu.png" alt="Emblema de Iuris et de iure">
     </button>
-    <span class="marca-lateral" id="marca-lateral" aria-hidden="true">Iuris et de Iure</span>
     <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
   </div>
 </header>
@@ -511,15 +502,17 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
 })();
 
 /* ============================================================
-   0.2. Logo del header — tocarlo corre la barra y muestra el nombre
+   0.2. Logo del header — tocarlo despliega el nombre grande de arriba
+   (lo mismo que ya pasaba solo con el mouse encima, ver .top:hover
+   .top-in) — así funciona también en el celular, tocando.
    ============================================================ */
 (function(){
   try{
-    var barra=document.getElementById("nav-wrap");
+    var top=document.getElementById("top");
     var boton=document.getElementById("btn-logo");
-    if(!barra||!boton) return;
+    if(!top||!boton) return;
     boton.addEventListener("click",function(){
-      var mostrando=barra.classList.toggle("mostrar-marca");
+      var mostrando=top.classList.toggle("mostrar-marca");
       boton.setAttribute("aria-expanded",mostrando?"true":"false");
     });
   }catch(e){}
