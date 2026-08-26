@@ -114,12 +114,12 @@ textarea,input[type=text],input[type=number],select{
    agregar un elemento aparte. El margen negativo cancela el "gap" del
    flex del padre mientras está colapsado, para no dejar un huequito. */
 .marca-lateral{
-  font-family:var(--serif);font-weight:400;color:var(--lacre);
-  font-size:clamp(17px,2.4vw,26px);letter-spacing:.04em;white-space:nowrap;
+  font-family:var(--serif);font-weight:400;color:var(--lacre);text-transform:uppercase;
+  font-size:clamp(28px,6vw,70px);letter-spacing:.03em;word-spacing:.4em;white-space:nowrap;
   max-width:0;opacity:0;overflow:hidden;margin-left:-16px;
   transition:max-width .6s cubic-bezier(.4,0,.2,1),opacity .45s ease,margin-left .6s cubic-bezier(.4,0,.2,1)
 }
-.nav-wrap.mostrar-marca .marca-lateral{max-width:min(420px,50vw);opacity:1;margin-left:2px}
+.nav-wrap.mostrar-marca .marca-lateral{max-width:min(900px,72vw);opacity:1;margin-left:20px}
 .nav-logo-btn{
   flex:none;display:block;padding:0;margin:0;border:none;background:none;cursor:pointer;
   border-radius:50%;
@@ -412,7 +412,7 @@ mark.actual{background:var(--lacre);color:#241a0c}
 
 @media (max-width:860px){
   .top-in{gap:6px}
-  .nav-wrap.mostrar-marca .marca-lateral{max-width:40vw;margin-left:2px}
+  .nav-wrap.mostrar-marca .marca-lateral{max-width:82vw;margin-left:10px;font-size:clamp(20px,7vw,38px)}
   .wrap{grid-template-columns:1fr;gap:16px}
   .rail{position:static;max-height:none}
   .rail-list{flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:6px}
