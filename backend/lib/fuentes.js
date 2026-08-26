@@ -18,17 +18,22 @@
  * verificador dice siempre contra qué buscó: el alcance real es esta lista,
  * no aquella.
  *
- * De las cinco, Dialnet es la única que no es un tribunal (ver
- * lib/indiceDialnet.js): es doctrina, no jurisprudencia. Por eso el
- * verificador de citas (lib/verificarCita.js) nunca la elige — su lista de
- * fuentes posibles está fijada a mano ahí adentro, no recorre este array
- * entero — pero el Buscador general sí la ofrece como una fuente más.
+ * De las seis, dos no son tribunales: Dialnet (lib/indiceDialnet.js) es
+ * doctrina, no jurisprudencia, y Mendoza Legal (lib/indiceMendozaLegal.js)
+ * es una revista que publica fallos elegidos a mano, con el resumen escrito
+ * por una persona. Por eso el verificador de citas (lib/verificarCita.js) no
+ * elige a ninguna de las dos — su lista de fuentes posibles está fijada a
+ * mano ahí adentro, no recorre este array entero — pero el Buscador general
+ * sí las ofrece como una fuente más. Ninguna de las dos sirve para confirmar
+ * que un expediente existe: una no indexa sentencias y la otra indexa una
+ * selección, así que no encontrar algo ahí no dice absolutamente nada.
  */
 
 import { buscarMza } from './indiceMza.js';
 import { buscarCaba } from './indiceCaba.js';
 import { buscarSaij } from './indiceSaij.js';
 import { buscarDialnet } from './indiceDialnet.js';
+import { buscarMendozaLegal } from './indiceMendozaLegal.js';
 
 /** Una entrada por fuente indexada. slug = nombre de archivo en backend/indice/. */
 export const FUENTES = [
@@ -70,6 +75,15 @@ export const FUENTES = [
     nombre: 'Dialnet · doctrina jurídica en español',
     tribunalPorDefecto: null,
     buscar: (args) => buscarDialnet(args),
+  },
+  // Jurisprudencia comentada, no una base de sentencias: son los fallos que
+  // la revista del Colegio de Abogados de Mendoza eligió publicar, con
+  // resumen propio. Ver lib/indiceMendozaLegal.js.
+  {
+    slug: 'mendozalegal',
+    nombre: 'Mendoza Legal · jurisprudencia seleccionada',
+    tribunalPorDefecto: null,
+    buscar: (args) => buscarMendozaLegal(args),
   },
 ];
 

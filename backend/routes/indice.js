@@ -109,17 +109,22 @@ function recortarPasaje(texto, q) {
 for (const { slug, buscar } of FUENTES) {
   router.post(`/indice/${slug}/buscar`, async (req, res, next) => {
     try {
-      const { q, pagina, tribunal, modo, excluir } = req.body || {};
+      const { q, pagina, desde, tribunal, modo, excluir } = req.body || {};
       if (!q) throw errores.consultaVacia();
 
       const arranque = Date.now();
-      let total, resultados, desdeIndiceLocal = false, avisoFalla = null;
+      let total, totalFuente, siguienteDesde = null, resultados, desdeIndiceLocal = false, avisoFalla = null;
       let totalParcial = false, revisados = 0, aflojado = false;
 
       try {
-        ({ total, resultados, totalParcial = false, revisados = 0, aflojado = false } = await buscar({
+        ({ total, totalFuente = null, siguienteDesde = null, resultados, totalParcial = false, revisados = 0, aflojado = false } = await buscar({
           q,
           pagina: Number(pagina) > 0 ? Number(pagina) : 1,
+          // El cursor: la fila del sitio donde sigue esta página. Lo devuelve
+          // el pedido anterior como "siguienteDesde" y el frontend lo manda
+          // de vuelta tal cual. Numerar las páginas no alcanza cuando el
+          // filtro corre de este lado — ver lib/paginarFiltrado.js.
+          ...(Number.isFinite(Number(desde)) && Number(desde) >= 0 ? { desde: Number(desde) } : {}),
           // El modo lo entiende cada fuente a su manera: CABA lo resuelve en
           // el propio sitio, Mendoza y SAIJ lo filtran despues. Ver
           // lib/relevancia.js.
@@ -134,6 +139,12 @@ for (const { slug, buscar } of FUENTES) {
         // mejor que un error en pantalla, y el frontend avisa que es local.
         resultados = await buscarEnIndice(slug, q, { modo, excluir });
         total = resultados.length;
+        // El respaldo local no tiene "cuántos hay en el sitio": lo guardado
+        // es todo lo que hay. Va null y no un número para que el frontend no
+        // muestre un total de origen inventado.
+        totalFuente = null;
+        // Lo guardado se sirve de una sola vez: no hay página siguiente.
+        siguienteDesde = null;
         totalParcial = false;
         revisados = resultados.length;
         aflojado = false;
@@ -151,6 +162,8 @@ for (const { slug, buscar } of FUENTES) {
         if (locales.length) {
           resultados = locales;
           total = locales.length;
+          totalFuente = null;
+          siguienteDesde = null;
           totalParcial = true;
           revisados = locales.length;
           desdeIndiceLocal = true;
@@ -168,6 +181,14 @@ for (const { slug, buscar } of FUENTES) {
         // Cuando el sitio de origen no sabe hacer el modo pedido, el filtro
         // corre de este lado: "total" es entonces lo verificado, no lo que
         // dice su contador. Ver lib/relevancia.js.
+        //
+        // "totalFuente" es el contador del propio sitio para esas palabras.
+        // Los dos números juntos son lo único que se puede afirmar sin
+        // mentir: "N verificados entre los primeros M que se miraron, sobre
+        // los totalFuente que dice tener el sitio". Con uno solo, el de
+        // arriba se leía como el total y no lo es.
+        totalFuente,
+        siguienteDesde,
         totalParcial,
         revisados,
         aflojado,

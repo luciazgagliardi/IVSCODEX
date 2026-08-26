@@ -21,8 +21,8 @@
  * no porque un par de palabras se parezcan.
  */
 
-import { parsearCita, normalizarExpediente } from './citas.js';
-import { fuentePorSlug, nombreDeFuente, FUENTES } from './fuentes.js';
+import { parsearCita, normalizarExpediente, TRIBUNALES } from './citas.js';
+import { fuentePorSlug, nombreDeFuente } from './fuentes.js';
 import { plegar, VACIAS } from './relevancia.js';
 
 /**
@@ -64,9 +64,37 @@ const PESOS = {
 const CAUTELA =
   'No encontrarla acá no prueba que no exista: este verificador solo puede consultar los buscadores oficiales que el proyecto tiene integrados, y ninguno de ellos publica el total de lo que dictó su tribunal. Puede no estar indexada, estar cargada con otra carátula, o no ser real. Confirmalo en la fuente antes de citarla.';
 
+/**
+ * Las fuentes que este verificador puede llegar a consultar.
+ *
+ * NO son todas las de lib/fuentes.js, y la diferencia importa: el Buscador
+ * general ofrece además Dialnet (doctrina, no sentencias) y Mendoza Legal
+ * (una selección de fallos comentados por una revista). Ninguna de las dos
+ * puede confirmar ni desmentir que un expediente exista, así que
+ * fuentesAConsultar() no las elige nunca.
+ *
+ * Se calcula en vez de escribirse a mano para que no se despegue de las dos
+ * listas de las que depende de verdad: los tribunales que sabe reconocer
+ * lib/citas.js con su fuente, y las dos fuentes con las que se tira la red
+ * ancha cuando el tribunal no se reconoce. Antes esto recorría el catálogo
+ * entero y la pantalla del verificador prometía haber mirado Dialnet, que no
+ * se consulta nunca — justo el tipo de exageración que este archivo existe
+ * para no cometer.
+ */
+const RED_ANCHA = [
+  { slug: 'saij', tribunal: 'fallos' },
+  { slug: 'csjn', tribunal: null },
+];
+const FUENTES_DEL_VERIFICADOR = [
+  ...new Set([
+    ...TRIBUNALES.map((t) => t.fuente).filter(Boolean),
+    ...RED_ANCHA.map((f) => f.slug),
+  ]),
+];
+
 /** Qué se pudo mirar, dicho en una línea, para que el alcance quede a la vista. */
 export function alcanceDeVerificacion() {
-  return FUENTES.map((f) => f.nombre).join(' · ');
+  return FUENTES_DEL_VERIFICADOR.map(nombreDeFuente).join(' · ');
 }
 
 /**
@@ -91,10 +119,7 @@ function fuentesAConsultar(campos) {
   if (t && t.fuente) return [{ slug: t.fuente, tribunal: t.tribunalEnFuente }];
   if (t && !t.fuente) return [];
   if (campos.fallos) return [{ slug: 'csjn', tribunal: null }];
-  return [
-    { slug: 'saij', tribunal: 'fallos' },
-    { slug: 'csjn', tribunal: null },
-  ].slice(0, MAX_FUENTES);
+  return RED_ANCHA.slice(0, MAX_FUENTES);
 }
 
 /**
