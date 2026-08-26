@@ -3434,6 +3434,32 @@ window.addEventListener("resize",ajustarAlturaRail);
 /* ============================================================
    8. Eventos (delegación única)
    ============================================================ */
+
+/**
+ * Evita que tocar el TEXTO de una etiqueta ("Excluir palabras", "Tipo de
+ * cita", "De dónde lo sacaste (opcional, va en la cita)"...) le mande el
+ * cursor al campo de al lado, como si se hubiera tocado el recuadro.
+ *
+ * Cada <label class="campo"> envuelve junto el texto descriptivo y su
+ * input/select —así el lector de pantalla asocia uno con otro, y clickear
+ * el input funciona como siempre—, pero eso es justo lo que hace que el
+ * navegador reenvíe un click en CUALQUIER otra parte del label —el texto de
+ * arriba, el espacio entre el texto y el campo— como si hubiera sido un
+ * click directo en el input: aparece el cursor titilando ahí, sin haber
+ * tocado el recuadro. Con una etiqueta larga como la de "De dónde lo
+ * sacaste" ese "cualquier otra parte" es casi toda el área visible del
+ * campo — de ahí que pasara con cualquier texto que se tocara.
+ *
+ * preventDefault() en el click, cuando lo que se tocó es el <span> del
+ * texto (no el propio input/select), corta ESE reenvío puntual sin romper
+ * la asociación: el campo se sigue enfocando al clickearlo directamente, y
+ * un lector de pantalla lo sigue anunciando con su nombre.
+ */
+document.addEventListener("click",function(ev){
+  var etiqueta=ev.target.closest&&ev.target.closest(".campo>span");
+  if(etiqueta) ev.preventDefault();
+});
+
 document.addEventListener("click",function(ev){
   var t=ev.target;
   var b=t.closest?t.closest("[data-act],[data-tab],[data-rama]"):null;
