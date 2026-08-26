@@ -283,6 +283,15 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 
 /* ---------- ramas ---------- */
 .rama{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:18px 20px;margin-bottom:12px;font-family:var(--sans)}
+/* Requisitos: la lista de la norma y su cita al pie. */
+.req-lista{margin:6px 0 0;padding-left:22px;font-size:14.5px;color:var(--tinta2);line-height:1.55}
+.req-lista li{margin-bottom:7px}
+.req-aviso{font-size:14px;color:var(--humo);font-style:italic;margin:10px 0 0}
+.req-norma{
+  margin-top:12px;padding-top:10px;border-top:1px solid var(--linea);
+  font-size:12.5px;color:var(--humo)
+}
+.req-norma a{color:var(--lacre)}
 .rama h3{font-family:var(--serif);font-size:20px;font-weight:500;margin:0 0 5px}
 .rama p{margin:0 0 12px;font-size:15px;color:var(--tinta2)}
 .voces{display:flex;gap:6px;flex-wrap:wrap}
@@ -608,31 +617,94 @@ var GRUPOS_REQUISITOS={
   pen:"Penal",
   adm:"Administrativo"
 };
+/* Enlaces al texto oficial. InfoLeg es el repositorio del Ministerio de
+   Justicia: es la fuente que hace fe, y es adonde apunta cada ficha para
+   que nadie tenga que creerle a esta web. */
+var TEXTO_OFICIAL={
+  ccyc:"https://servicios.infoleg.gob.ar/infolegInternet/anexos/235000-239999/235975/texact.htm",
+  lcq:"https://servicios.infoleg.gob.ar/infolegInternet/anexos/25000-29999/25379/texact.htm",
+  amparo:"https://servicios.infoleg.gob.ar/infolegInternet/anexos/45000-49999/46871/norma.htm",
+  lpa:"https://servicios.infoleg.gob.ar/infolegInternet/anexos/20000-24999/22363/texact.htm"
+};
+
 var REQUISITOS=[
- {id:"divorcio",g:"fam",n:"Divorcio",d:"Vincular, por presentación conjunta o unilateral.",q:"divorcio vincular"},
- {id:"union-convivencial",g:"fam",n:"Unión convivencial",d:"Registración y efectos patrimoniales de la convivencia.",q:"unión convivencial"},
+ {id:"divorcio",g:"fam",n:"Divorcio",d:"Vincular, por presentación conjunta o unilateral.",q:"divorcio vincular",
+  norma:"CCyCN arts. 437 y 438",url:TEXTO_OFICIAL.ccyc,
+  req:["Petición de ambos cónyuges o de uno solo — no hace falta invocar causa ni acuerdo del otro (art. 437).",
+       "Acompañar una propuesta que regule los efectos del divorcio. Omitirla impide dar trámite a la petición.",
+       "Acompañar los elementos en que se funda esa propuesta. El juez puede pedir que se incorporen otros.",
+       "Si lo pide uno solo, el otro puede ofrecer una propuesta reguladora distinta.",
+       "El juez evalúa las propuestas y convoca a los cónyuges a una audiencia.",
+       "El desacuerdo sobre el convenio NO suspende el dictado de la sentencia de divorcio: las cuestiones pendientes se resuelven por el procedimiento de la ley local."]},
+ {id:"union-convivencial",g:"fam",n:"Unión convivencial",d:"Registración y efectos patrimoniales de la convivencia.",q:"unión convivencial",
+  norma:"CCyCN art. 510",url:TEXTO_OFICIAL.ccyc,
+  req:["Que los dos integrantes sean mayores de edad.",
+       "Que no estén unidos por parentesco en línea recta en todos los grados, ni colateral hasta el segundo grado.",
+       "Que no estén unidos por parentesco por afinidad en línea recta.",
+       "Que no tengan impedimento de ligamen ni otra convivencia registrada de manera simultánea.",
+       "Que mantengan la convivencia durante un período no inferior a dos años."]},
  {id:"adopcion",g:"fam",n:"Adopción",d:"Guarda con fines de adopción y juicio de adopción.",q:"adopción guarda"},
  {id:"alimentos",g:"fam",n:"Cuota alimentaria",d:"Fijación, aumento o cese de alimentos.",q:"cuota alimentaria"},
  {id:"regimen-comunicacion",g:"fam",n:"Régimen de comunicación",d:"Contacto con hijos, nietos u otros parientes.",q:"régimen de comunicación"},
- {id:"usucapion",g:"civ",n:"Usucapión",d:"Prescripción adquisitiva de dominio.",q:"usucapión prescripción adquisitiva"},
+ {id:"usucapion",g:"civ",n:"Usucapión",d:"Prescripción adquisitiva de dominio.",q:"usucapión prescripción adquisitiva",
+  norma:"CCyCN arts. 1897 a 1905",url:TEXTO_OFICIAL.ccyc,
+  req:["Posesión de la cosa — es el modo de adquirir el derecho real poseyendo durante el plazo que fija la ley (art. 1897).",
+       "La posesión debe ser ostensible y continua (art. 1900).",
+       "Larga: veinte años, cuando no hay justo título ni buena fe (art. 1899).",
+       "Breve: diez años sobre inmuebles, con justo título y buena fe (art. 1898). El justo título es el que tiene por fin transmitir un derecho real, con las formas válidas, cuando el otorgante no era capaz o no estaba legitimado (art. 1902).",
+       "El proceso debe ser contencioso: la sentencia fija la fecha en que, cumplido el plazo, se produjo la adquisición (art. 1905)."]},
  {id:"desalojo",g:"civ",n:"Desalojo",d:"Recupero de la tenencia de un inmueble.",q:"desalojo"},
- {id:"dano-moral",g:"civ",n:"Daño moral",d:"Procedencia y prueba del daño extrapatrimonial.",q:"daño moral procedencia"},
+ {id:"dano-moral",g:"civ",n:"Daño moral",d:"Legitimación y cuantificación de las consecuencias no patrimoniales.",q:"daño moral procedencia",
+  norma:"CCyCN art. 1741",url:TEXTO_OFICIAL.ccyc,
+  req:["Está legitimado para reclamarlo el damnificado directo.",
+       "Si del hecho resulta la muerte del damnificado o éste sufre gran discapacidad, también tienen legitimación a título personal, según las circunstancias, los ascendientes, los descendientes, el cónyuge y quienes convivían con él recibiendo trato familiar ostensible.",
+       "La acción sólo se transmite a los sucesores universales del legitimado si fue interpuesta por éste en vida.",
+       "El monto se fija ponderando las satisfacciones sustitutivas y compensatorias que pueden procurar las sumas reconocidas."]},
  {id:"beneficio-litigar",g:"civ",n:"Beneficio de litigar sin gastos",d:"Eximición de costas y tasas por falta de recursos.",q:"beneficio de litigar sin gastos"},
  {id:"escrituracion",g:"civ",n:"Escrituración",d:"Obligación de escriturar un boleto de compraventa.",q:"escrituración boleto de compraventa"},
  {id:"sucesion-abintestato",g:"suc",n:"Sucesión ab intestato",d:"Apertura y declaratoria de herederos sin testamento.",q:"declaratoria de herederos"},
  {id:"sucesion-testamentaria",g:"suc",n:"Sucesión testamentaria",d:"Apertura del proceso sucesorio con testamento válido.",q:"sucesión testamentaria"},
- {id:"amparo",g:"proc",n:"Acción de amparo",d:"Vía rápida contra un acto u omisión con arbitrariedad manifiesta.",q:"amparo procedencia"},
+ {id:"amparo",g:"proc",n:"Acción de amparo",d:"Vía rápida contra un acto u omisión con arbitrariedad manifiesta.",q:"amparo procedencia",
+  norma:"Ley 16.986, arts. 1 y 2 · CN art. 43",url:TEXTO_OFICIAL.amparo,
+  req:["Un acto u omisión de autoridad pública, actual o inminente.",
+       "Que lesione, restrinja, altere o amenace derechos o garantías reconocidos por la Constitución.",
+       "Con arbitrariedad o ilegalidad MANIFIESTA — no basta una ilegalidad opinable.",
+       "Queda afuera la libertad individual: eso va por hábeas corpus.",
+       "NO es admisible si existen recursos o remedios judiciales o administrativos que permitan obtener la misma protección (art. 2 inc. a).",
+       "NO es admisible contra actos del Poder Judicial, ni cuando la intervención comprometiera la regularidad o continuidad de un servicio público o actividad estatal esencial (art. 2 incs. b y c)."]},
  {id:"medida-cautelar",g:"proc",n:"Medida cautelar",d:"Verosimilitud del derecho y peligro en la demora.",q:"medida cautelar"},
  {id:"rec-extraordinario-federal",g:"proc",n:"Recurso extraordinario federal",d:"Vía de acceso a la Corte Suprema de la Nación.",q:"recurso extraordinario federal admisibilidad"},
  {id:"rec-extraordinario-provincial",g:"proc",n:"Recurso extraordinario provincial (Mendoza)",d:"Vía de acceso a la Suprema Corte de Mendoza.",q:"recurso extraordinario provincial"},
  {id:"habeas-corpus",g:"proc",n:"Hábeas corpus",d:"Contra una privación o agravamiento ilegítimo de la libertad.",q:"hábeas corpus"},
  {id:"habeas-data",g:"proc",n:"Hábeas data",d:"Acceso, rectificación o supresión de datos personales propios.",q:"hábeas data"},
- {id:"concurso-preventivo",g:"com",n:"Concurso preventivo",d:"Apertura del concurso para reestructurar deudas.",q:"concurso preventivo apertura"},
+ {id:"concurso-preventivo",g:"com",n:"Concurso preventivo",d:"Recaudos formales del pedido de apertura.",q:"concurso preventivo apertura",
+  norma:"Ley 24.522, art. 11",url:TEXTO_OFICIAL.lcq,
+  req:["Acreditar la inscripción en los registros respectivos (deudores matriculados y personas jurídicas regularmente constituidas), con el instrumento constitutivo y sus modificaciones.",
+       "Explicar las causas concretas de la situación patrimonial, la época de la cesación de pagos y los hechos por los que se manifestó.",
+       "Estado detallado y valorado del activo y pasivo actualizado, con dictamen de contador público nacional.",
+       "Copia de los balances o estados contables de los TRES últimos ejercicios, con memorias e informes del órgano fiscalizador.",
+       "Nómina de acreedores con domicilios, montos, causas, vencimientos, codeudores y privilegios, más un legajo por acreedor con dictamen de contador.",
+       "Detalle de los procesos judiciales o administrativos de carácter patrimonial en trámite o con condena no cumplida.",
+       "Enumerar los libros de comercio y de otra naturaleza, con el último folio utilizado, y ponerlos a disposición del juez.",
+       "Denunciar la existencia de un concurso anterior y justificar que no está dentro del período de inhibición del art. 59."]},
  {id:"quiebra",g:"com",n:"Quiebra a pedido de acreedor",d:"Declaración de quiebra a instancia de un acreedor.",q:"pedido de quiebra"},
- {id:"despido-justa-causa",g:"lab",n:"Despido con justa causa",d:"Injuria que impide la continuidad del vínculo laboral.",q:"despido justa causa injuria"},
+ {id:"despido-justa-causa",g:"lab",n:"Despido con justa causa",d:"Injuria que impide la continuidad del vínculo laboral.",q:"despido justa causa injuria",
+  norma:"LCT arts. 242 y 243",
+  // Sin lista cargada A PROPÓSITO: al verificar el texto en InfoLeg apareció
+  // que el art. 242 fue sustituido por el DNU 70/2023 y que la Ley 27.742
+  // (2024) volvió a tocar el régimen indemnizatorio. Escribir acá una lista
+  // que puede haber cambiado la semana pasada sería justo lo que este
+  // proyecto combate. Queda con el botón de búsqueda, que lleva a los fallos
+  // recientes — que son los que están resolviendo cómo quedó todo esto.
+  aviso:"El art. 242 fue sustituido por el DNU 70/2023 y la Ley 27.742 (2024) modificó el régimen indemnizatorio. Por eso acá no va una lista fija: buscá los fallos recientes, que son los que están fijando el alcance."},
  {id:"probation",g:"pen",n:"Suspensión del juicio a prueba",d:"Probation: extinción de la acción penal a prueba.",q:"suspensión del juicio a prueba"},
  {id:"excarcelacion",g:"pen",n:"Excarcelación",d:"Libertad durante el proceso, cese de la prisión preventiva.",q:"excarcelación cese prisión preventiva"},
- {id:"silencio-administracion",g:"adm",n:"Silencio de la administración",d:"Cuándo se considera denegado un reclamo no resuelto.",q:"silencio de la administración"}
+ {id:"silencio-administracion",g:"adm",n:"Silencio de la administración",d:"Cuándo se considera denegado un reclamo no resuelto.",q:"silencio de la administración",
+  norma:"Ley 19.549, art. 10",url:TEXTO_OFICIAL.lpa,
+  req:["El silencio o la ambigüedad de la Administración frente a pretensiones que requieran un pronunciamiento concreto se interpretan como NEGATIVA.",
+       "Sólo mediando disposición expresa puede darse al silencio un sentido positivo.",
+       "Si las normas especiales no fijan plazo para resolver, éste no puede exceder de SESENTA (60) días.",
+       "Vencido ese plazo, el interesado requiere pronto despacho; si pasan otros treinta días sin resolución, se considera denegación tácita."]}
 ];
 
 /* ============================================================
@@ -2798,22 +2870,43 @@ function vistaRamas(){
 }
 
 function vistaRequisitos(){
-  var html='<div class="aviso"><strong>Atajos, no respuestas.</strong> Esta web no dice cuáles son los requisitos de nada por su cuenta —haría exactamente lo que en el resto del sitio se evita: escribir sobre el derecho en vez de llevar a la fuente—. '+
-    'Elegí un trámite y arma la consulta con "requisitos" más las palabras propias de ese trámite, y te manda a <strong>Buscar</strong> para que la corras contra las bases oficiales. Ahí se puede editar como cualquier otra búsqueda.</div>';
+  var conLista=REQUISITOS.filter(function(x){return x.req&&x.req.length;}).length;
+  var html='<div class="aviso"><strong>Los requisitos, con la norma al lado.</strong> Cada ficha sale del texto oficial del código o la ley que la rige —no de un resumen de esta web— y trae el artículo citado y el enlace a InfoLeg para leerlo completo. '+
+    'Están cargadas '+conLista+' de '+REQUISITOS.length+' fichas; el resto tiene por ahora el botón de búsqueda.</div>'+
+    '<div class="aviso" style="border-style:dashed"><strong>Esto es una guía de trabajo, no la ley.</strong> Un requisito puede haber cambiado después de la última revisión, y lo procesal varía según la jurisdicción: '+
+    'lo que pide un juzgado de Mendoza (ley 9001) no es lo mismo que pide uno nacional. <strong>Verificá siempre en el texto oficial antes de presentar</strong> — el enlace está en cada ficha.</div>';
   var porGrupo={};
   REQUISITOS.forEach(function(x){ (porGrupo[x.g]=porGrupo[x.g]||[]).push(x); });
   html+=Object.keys(GRUPOS_REQUISITOS).map(function(g){
     var items=porGrupo[g]||[];
     if(!items.length) return '';
     return '<div class="grupo"><h3>'+esc(GRUPOS_REQUISITOS[g])+'</h3>'+
-      items.map(function(x){
-        return '<div class="rama"><h3>'+esc(x.n)+'</h3><p>'+esc(x.d)+'</p>'+
-          '<button class="mini" data-act="tramite" data-v="requisitos '+esc(x.q)+'">Buscar los requisitos</button>'+
-          '</div>';
-      }).join("")+
+      items.map(fichaRequisito).join("")+
       '</div>';
   }).join("");
   return html;
+}
+
+function fichaRequisito(x){
+  var cuerpo='';
+  if(x.req&&x.req.length){
+    cuerpo+='<div class="rotulo" style="margin-top:12px">Qué exige la norma</div>'+
+      '<ol class="req-lista">'+x.req.map(function(r){return '<li>'+esc(r)+'</li>';}).join("")+'</ol>';
+  }else if(x.aviso){
+    cuerpo+='<p class="req-aviso">'+esc(x.aviso)+'</p>';
+  }else{
+    cuerpo+='<p class="req-aviso">Todavía sin la lista cargada — se van sumando de a una, verificando cada artículo contra el texto oficial. Mientras tanto, la búsqueda te lleva a los fallos.</p>';
+  }
+  var fuente=x.norma
+    ? '<div class="req-norma">'+esc(x.norma)+
+      (x.url?' · <a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">ver el texto oficial</a>':'')+
+      '</div>'
+    : '';
+  return '<div class="rama"><h3>'+esc(x.n)+'</h3><p>'+esc(x.d)+'</p>'+
+    cuerpo+fuente+
+    '<div class="f-acc" style="margin-top:12px">'+
+      '<button class="mini" data-act="tramite" data-v="requisitos '+esc(x.q)+'">Buscar fallos sobre esto</button>'+
+    '</div></div>';
 }
 
 function vistaFuentes(){
