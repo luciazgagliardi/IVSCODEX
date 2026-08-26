@@ -34,7 +34,7 @@
 
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
-import { filtrarPorModo } from './relevancia.js';
+import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
 
 const HOST = 'www.saij.gob.ar';
@@ -193,71 +193,90 @@ function aRegistro(bruto) {
 const PAGINAS_A_REVISAR = 3;
 const POR_PEDIDO = 100;
 
-export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false }) {
+export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false, desde = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
   const faceta = soloCsjn ? FACETA_CSJN : (TIPOS[tribunal] || TIPOS.sumarios);
-  const arranque = (Math.max(1, pagina) - 1) * porPagina;
+  // SAIJ toma un offset de fila directo ("o"), así que el cursor viaja tal
+  // cual. El cálculo por número de página queda solo para quien todavía
+  // llame sin cursor (lib/verificarCita.js pide siempre la primera).
+  const arranque = desde === null ? (Math.max(1, pagina) - 1) * POR_PEDIDO : Math.max(0, desde);
 
-  // Como SAIJ ordena por relevancia pero busca con OR, los primeros
-  // resultados pueden ser todos de una sola de las palabras: en "daño
-  // punitivo" la primera pagina entera eran causas penales que solo tenian
-  // "punitivo". Por eso se revisan varias paginas antes de aflojar el
-  // filtro, en vez de rendirse con la primera.
-  const revisados = [];
+  // SAIJ SIEMPRE filtra de este lado, en los tres modos: su buscador es un
+  // OR y no sabe hacer ni "todas las palabras" ni frase. Por eso no hay acá
+  // un camino "el sitio ya lo resolvió" como en Mendoza o CABA.
   let totalCrudo = 0;
-  let filtrados = [];
-  let aflojado = false;
 
-  for (let i = 0; i < PAGINAS_A_REVISAR; i++) {
+  /**
+   * Una tanda de cien documentos desde la fila `offset`.
+   *
+   * Como SAIJ ordena por relevancia pero busca con OR, los primeros
+   * resultados pueden ser todos de una sola de las palabras: en "daño
+   * punitivo" la primera página entera eran causas penales que solo tenían
+   * "punitivo". Por eso paginarFiltrado sigue pidiendo tandas hasta llenar
+   * la página, en vez de rendirse con la primera.
+   */
+  const traer = async (offset) => {
     const parametros = new URLSearchParams({
       q: termino,
-      o: String(arranque + i * POR_PEDIDO),
+      o: String(offset),
       p: String(POR_PEDIDO),
       f: faceta,
     });
-
     const datos = await pedirBusqueda(parametros.toString());
-    if (i === 0) {
-      totalCrudo = sacarTotal(datos);
-      if (!totalCrudo) return { total: 0, revisados: 0, pagina, porPagina, resultados: [] };
-    }
-
+    if (!totalCrudo) totalCrudo = sacarTotal(datos);
     const crudos = datos?.searchResults?.documentResultList || [];
-    if (!crudos.length) break;
-    revisados.push(...crudos.map(aRegistro).filter(Boolean));
+    // Sin filtrar los null: cada documento que mandó SAIJ ocupa su posición
+    // aunque no se haya podido leer, porque el cursor cuenta filas del
+    // sitio. Ver la nota de traer() en lib/paginarFiltrado.js.
+    return crudos.map(aRegistro);
+  };
 
-    // Sin aflojar: si con todas las palabras ya alcanza, no hace falta
-    // seguir pidiendo paginas ni bajar el listón.
-    ({ lista: filtrados } = filtrarPorModo(revisados, { q: termino, modo, excluir, aflojar: false }));
-    if (filtrados.length >= porPagina) break;
-    if (revisados.length >= totalCrudo) break;
-  }
+  const { resultados, revisados, siguienteDesde, aflojado } = await paginarFiltrado({
+    traer,
+    desde: arranque,
+    // El total llega recién adentro de la primera respuesta, así que se pasa
+    // como función: paginarFiltrado la consulta después de cada tanda.
+    total: () => totalCrudo,
+    porPagina,
+    q: termino,
+    modo,
+    excluir,
+    maxTandas: PAGINAS_A_REVISAR,
+  });
 
-  // Recién ahora, agotadas las páginas, se permite aflojar.
-  if (!filtrados.length) {
-    ({ lista: filtrados, aflojado } = filtrarPorModo(revisados, { q: termino, modo, excluir }));
-  }
+  if (!totalCrudo) return { total: 0, totalFuente: 0, siguienteDesde: null, revisados: 0, pagina, porPagina, resultados: [] };
 
   return {
     // El total que informa SAIJ cuenta los del OR y sobra por dos órdenes de
-    // magnitud (391.476 para "interdicto de recobrar"). No se reenvía: se
-    // informa lo que de verdad se verificó.
-    total: filtrados.length,
-    // "Parcial" es CADUCIDAD, no paginación. Que ya haya una página llena de
-    // coincidencias buenas (filtrados.length >= porPagina) no es una duda:
-    // es que hay más de una página, como en cualquier buscador — eso lo
-    // resuelve pedir la página siguiente, no un cartel de "no estamos
-    // seguros". La incertidumbre de verdad es al revés: cuando ni con todo
-    // lo revisado se llegó a llenar esta página Y todavía quedan filas
-    // crudas de SAIJ sin mirar (revisados.length < totalCrudo) — ahí sí
-    // puede que hubiera más coincidencias entre las que no se llegó a ver.
-    totalParcial: filtrados.length < porPagina && revisados.length < totalCrudo,
-    revisados: revisados.length,
+    // magnitud (391.476 para "interdicto de recobrar"). No se reenvía como
+    // "total": se informa lo que de verdad se verificó.
+    total: resultados.length,
+    // Pero sí viaja aparte, porque es el único dato que dice cuánto queda
+    // sin mirar. Ojo con cómo se lee: es el conteo del OR de SAIJ, un techo
+    // grosero, no "la cantidad de fallos sobre el tema". El frontend lo
+    // presenta como lo que es.
+    totalFuente: totalCrudo,
+    // La fila exacta donde sigue la página siguiente. Antes esto se calculaba
+    // como (pagina-1)*porPagina, o sea que la página 2 arrancaba en la fila
+    // 20 cuando la página 1 ya había revisado hasta la 300: se pisaban 280
+    // filas y el usuario veía casi lo mismo dos veces. Ver
+    // lib/paginarFiltrado.js.
+    siguienteDesde,
+    // "Parcial" quiere decir que el número de arriba es un PISO, no un
+    // total: se calculó sobre las filas que se alcanzaron a revisar. Antes
+    // exigía además no haber llenado la página, con el argumento de que una
+    // página llena es paginación y no duda. Confundía dos cosas: que haya
+    // más PÁGINAS de coincidencias buenas es normal, pero que el CONTADOR
+    // salga de una muestra hay que decirlo igual. Con el tope de tres
+    // páginas, la app mostraba "100 resultados que coinciden de verdad" sin
+    // ninguna advertencia, y eran 100 de los primeros 100 que miró.
+    totalParcial: siguienteDesde !== null,
+    revisados,
     aflojado,
     pagina,
     porPagina,
-    resultados: filtrados.slice(0, porPagina),
+    resultados,
   };
 }

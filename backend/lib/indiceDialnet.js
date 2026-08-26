@@ -25,7 +25,7 @@
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
-import { filtrarPorModo } from './relevancia.js';
+import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
 
 const HOST = 'dialnet.unirioja.es';
@@ -152,7 +152,9 @@ function parsearItems(html) {
     throw errores.indiceFuenteFalla('dialnet', 'no pude leer el HTML de resultados');
   }
   const items = Array.from(dom.window.document.querySelectorAll('#resultadosDeBusqueda li[id]'));
-  return items.map(parsearItem).filter(Boolean);
+  // Una posición por documento del listado, con null donde no se pudo leer:
+  // el cursor cuenta filas del SITIO. Ver lib/paginarFiltrado.js.
+  return items.map(parsearItem);
 }
 
 /**
@@ -174,48 +176,74 @@ const PAGINAS_A_REVISAR = 5;
  * Solo "exacta" (frase textual) y "excluir" se resuelven acá, igual que en
  * Mendoza, porque esos dos si hace falta garantizarlos.
  */
-export async function buscarDialnet({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = POR_PAGINA_DIALNET }) {
+export async function buscarDialnet({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = POR_PAGINA_DIALNET, desde = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
-  const arranque = (Math.max(1, pagina) - 1) * POR_PAGINA_DIALNET + 1;
-  const primerHtml = await pedirBusqueda(termino, arranque);
-  const total = sacarTotal(primerHtml);
-  if (total === 0) return { total: 0, pagina, porPagina, resultados: [] };
+  // Dialnet toma la fila de arranque directo ("inicio", 1-based), así que el
+  // cursor viaja tal cual. El cálculo por número de página queda para quien
+  // llame sin cursor.
+  const arranque = desde === null ? (Math.max(1, pagina) - 1) * POR_PAGINA_DIALNET : Math.max(0, desde);
 
-  const items = parsearItems(primerHtml);
+  let total = 0;
+  const traer = async (offset) => {
+    const html = await pedirBusqueda(termino, offset + 1);
+    if (!total) total = sacarTotal(html);
+    return parsearItems(html);
+  };
+
+  // La primera tanda hace falta sí o sí, aunque no haya que filtrar: es la
+  // que trae el total y los documentos de esta página.
+  const primera = await traer(arranque);
+  if (!total) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
   const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim();
-  if (!hayQueFiltrar) return { total, pagina, porPagina: POR_PAGINA_DIALNET, resultados: items };
+  if (!hayQueFiltrar) {
+    const hasta = arranque + primera.length;
+    return {
+      total,
+      totalFuente: total,
+      siguienteDesde: hasta < total ? hasta : null,
+      pagina,
+      porPagina: POR_PAGINA_DIALNET,
+      resultados: primera.filter(Boolean),
+    };
+  }
 
   // "Frase exacta" o "excluir": Dialnet no los resuelve solo, así que hay
   // que revisar de a páginas reales (20 documentos cada una) hasta juntar
   // una página completa de coincidencias buenas o quedarnos sin más filas.
-  const revisados = [...items];
-  let { lista: filtrados, aflojado } = filtrarPorModo(revisados, { q: termino, modo, excluir });
-
-  for (let i = 1; i < PAGINAS_A_REVISAR && filtrados.length < porPagina && revisados.length < total; i++) {
-    const html = await pedirBusqueda(termino, arranque + i * POR_PAGINA_DIALNET);
-    const siguientes = parsearItems(html);
-    if (!siguientes.length) break;
-    revisados.push(...siguientes);
-    ({ lista: filtrados, aflojado } = filtrarPorModo(revisados, { q: termino, modo, excluir }));
-  }
+  // La primera tanda ya está pedida: se reusa en vez de volver a pedirla.
+  let primeraServida = false;
+  const { resultados, revisados, siguienteDesde, aflojado } = await paginarFiltrado({
+    traer: async (offset) => {
+      if (!primeraServida && offset === arranque) { primeraServida = true; return primera; }
+      return traer(offset);
+    },
+    desde: arranque, total: () => total, porPagina, q: termino, modo, excluir,
+    maxTandas: PAGINAS_A_REVISAR,
+  });
 
   return {
     // Igual que Mendoza y SAIJ: filtrando de este lado, el contador que
     // vale es el de lo que de verdad quedó, no el total crudo del sitio.
-    total: filtrados.length,
-    // "Parcial" es CADUCIDAD, no paginación: una página llena de
-    // coincidencias buenas no es una duda, es que hay más de una página.
-    // La incertidumbre de verdad es solo cuando ni revisando varias páginas
-    // se llegó a llenar esta Y todavía quedan documentos de Dialnet sin
-    // mirar — recién ahí puede que hubiera más entre los que no se vieron.
-    totalParcial: filtrados.length < porPagina && revisados.length < total,
-    revisados: revisados.length,
+    total: resultados.length,
+    // El total crudo igual viaja, porque es lo único que dice cuánto quedó
+    // sin mirar. Acá la diferencia es enorme: "daño moral" da 38 verificados
+    // de los primeros 40, sobre 3.228 documentos que dice tener Dialnet.
+    totalFuente: total,
+    // La fila exacta donde sigue la página siguiente. Antes la página 2
+    // arrancaba en la fila 21 cuando la página 1 ya había revisado hasta la
+    // 100: se pisaban. Ver lib/paginarFiltrado.js.
+    siguienteDesde,
+    // "Parcial" quiere decir que el número de arriba es un PISO: salió de
+    // una muestra. Antes exigía además no haber llenado la página, lo que
+    // dejaba sin aviso justo los casos con muchos resultados.
+    totalParcial: siguienteDesde !== null,
+    revisados,
     aflojado,
     pagina,
     porPagina: POR_PAGINA_DIALNET,
-    resultados: filtrados.slice(0, porPagina),
+    resultados,
   };
 }

@@ -40,7 +40,7 @@
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
-import { filtrarPorModo } from './relevancia.js';
+import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
 
 const HOST = 'wwwjuri.jus.mendoza.gov.ar';
@@ -127,7 +127,14 @@ function sinEtiqueta(texto) {
   return String(texto || '').replace(/^[^:]+:\s*/, '').trim();
 }
 
-/** Convierte el HTML de resultados en una lista de registros estructurados. */
+/**
+ * Convierte el HTML de resultados en registros estructurados.
+ *
+ * Devuelve una posición por ficha del listado, con null donde la ficha no
+ * era aprovechable (sin id). No se compacta la lista porque el cursor de
+ * paginación cuenta FILAS DEL SITIO: una ficha descartada ocupó su lugar
+ * igual. Ver la nota de traer() en lib/paginarFiltrado.js.
+ */
 function parsearFichas(html) {
   const consolaMuda = new VirtualConsole();
   consolaMuda.on('jsdomError', () => {});
@@ -165,7 +172,8 @@ function parsearFichas(html) {
   });
 
   dom.window.close();
-  return registros.filter((r) => r.id); // una ficha sin id no es aprovechable
+  // Una ficha sin id no es aprovechable, pero ocupó un lugar en el listado.
+  return registros.map((r) => (r.id ? r : null));
 }
 
 /**
@@ -186,7 +194,18 @@ function parsearFichas(html) {
  *   usa en vez de "q" — son dos campos del sitio con SQL distinta atrás, no
  *   tiene sentido mandar los dos a la vez con el mismo texto.
  */
-export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir = '', tribunal = 'SC', pagina = 1, porPagina = 20 }) {
+/**
+ * Cuántas fichas se piden de una: es el tamaño de página que se le manda al
+ * sitio cuando hay que filtrar de este lado. Sesenta y no veinte porque el
+ * filtro descarta, y traer de a veinte obligaría a tres pedidos para llenar
+ * una página de resultados.
+ */
+const FICHAS_POR_TANDA = 60;
+
+/** Cuántas tandas como mucho en un mismo pedido. Ver lib/paginarFiltrado.js. */
+const MAX_TANDAS = 3;
+
+export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir = '', tribunal = 'SC', pagina = 1, porPagina = 20, desde = null }) {
   const partes = String(partesForm || '').trim();
   const libre = partes ? '' : String(q || '').trim();
   if (!libre && !partes) throw errores.consultaVacia();
@@ -196,35 +215,78 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
   // así que siempre se le manda el texto pelado y los otros modos se
   // resuelven acá con lo que devolvió.
   const { total, sql } = await armarSql({ libre, partes, tribunal });
-  if (total <= 0) return { total: 0, pagina, porPagina, resultados: [] };
+  if (total <= 0) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
   const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim();
-  // Si vamos a descartar resultados, conviene traer de más para no quedarnos
-  // con media página.
-  const traer = hayQueFiltrar ? Math.min(60, porPagina * 3) : porPagina;
+  const arranque = desde === null ? (Math.max(1, pagina) - 1) * (hayQueFiltrar ? FICHAS_POR_TANDA : porPagina) : Math.max(0, desde);
 
-  const html = await traerFichas({ sql, pagina, porPagina: traer, total });
-  const todos = parsearFichas(html);
-  if (!hayQueFiltrar) return { total, pagina, porPagina, resultados: todos };
+  if (!hayQueFiltrar) {
+    // El sitio hace el trabajo: su paginación ya es la de los resultados.
+    const html = await traerFichas({ sql, pagina: Math.floor(arranque / porPagina) + 1, porPagina, total });
+    const filas = parsearFichas(html);
+    const todos = filas.filter(Boolean);
+    const hasta = arranque + filas.length;
+    return {
+      total,
+      totalFuente: total,
+      siguienteDesde: hasta < total ? hasta : null,
+      pagina,
+      porPagina,
+      resultados: todos,
+    };
+  }
 
-  const { lista, aflojado } = filtrarPorModo(todos, { q: partes || libre, modo, excluir });
+  /**
+   * Una tanda de fichas que empiece en la fila `offset`.
+   *
+   * Acá está la parte fea de este sitio: su formulario no toma un offset,
+   * toma número de página (next_p) y tamaño (mostrar), y la fila de arranque
+   * es (next_p-1)*mostrar. O sea que solo sabe arrancar en múltiplos del
+   * tamaño de página. Como el cursor de paginarFiltrado apunta a una fila
+   * cualquiera —la siguiente a la última mostrada, que rara vez cae justa—,
+   * se pide la página que la contiene y se descartan las fichas de más que
+   * vienen antes. Un poco de trabajo al pedo para el sitio, que es el precio
+   * de no perder ni repetir resultados.
+   */
+  const traer = async (offset) => {
+    const paginaSitio = Math.floor(offset / FICHAS_POR_TANDA) + 1;
+    const sobran = offset % FICHAS_POR_TANDA;
+    const html = await traerFichas({ sql, pagina: paginaSitio, porPagina: FICHAS_POR_TANDA, total });
+    // Se descartan las fichas anteriores al offset pedido: el sitio solo
+    // sabe arrancar en múltiplos del tamaño de página.
+    return parsearFichas(html).slice(sobran);
+  };
+
+  const { resultados, revisados, siguienteDesde, aflojado } = await paginarFiltrado({
+    traer, desde: arranque, total, porPagina, q: partes || libre, modo, excluir, maxTandas: MAX_TANDAS,
+  });
 
   return {
     // El sitio no sabe hacer este modo, así que su contador cuenta otra cosa:
     // se informa lo que de verdad quedó después de revisar, no una estimación.
-    total: lista.length,
-    // "Parcial" es CADUCIDAD, no paginación: que haya más filas en la base de
-    // las que se trajeron acá (todos.length < total) es normal en cualquier
-    // búsqueda con más de una página y no es motivo de duda — layout tiene
-    // su propio "página 2, 3...". Lo único que de verdad no se pudo
-    // verificar es cuando ni siquiera se llegó a completar ESTA página
-    // (lista.length < porPagina) habiendo más filas sin revisar: ahí sí
-    // puede que hubiera más coincidencias entre las que no se llegó a mirar.
-    totalParcial: lista.length < porPagina && todos.length < total,
-    revisados: todos.length,
+    total: resultados.length,
+    // Cuántas encontró el SITIO con esas palabras. Viaja aparte porque
+    // "total" de arriba es otra cosa —las que pasaron el filtro entre las
+    // que se alcanzó a mirar— y sin este número la pantalla daba a entender
+    // que eso era todo lo que existe: 52 donde el sitio tiene 319.
+    totalFuente: total,
+    // La fila exacta donde sigue la página siguiente. Ver lib/paginarFiltrado.js.
+    siguienteDesde,
+    // "Parcial" quiere decir que el número de arriba es un PISO, no un
+    // total, y eso pasa siempre que quede material sin mirar.
+    //
+    // Antes esto exigía además que ni se hubiera llenado la página, con el
+    // argumento de que una página llena no es una duda sino paginación. El
+    // argumento confundía dos cosas: que existan más PÁGINAS de
+    // coincidencias buenas es normal, pero que el CONTADOR salga de una
+    // muestra hay que decirlo igual. Con 60 filas revisadas de 319, la app
+    // mostraba "52 resultados que coinciden de verdad", sin ninguna
+    // advertencia, y esos 52 se leían como el total.
+    totalParcial: siguienteDesde !== null,
+    revisados,
     aflojado,
     pagina,
     porPagina,
-    resultados: lista.slice(0, porPagina),
+    resultados,
   };
 }

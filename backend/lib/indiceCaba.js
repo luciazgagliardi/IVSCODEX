@@ -223,9 +223,17 @@ function errorDelSitio(html) {
   return null;
 }
 
-export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20 }) {
+export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
+
+  // CABA es la única que resuelve los tres modos y la exclusión en su propio
+  // formulario, así que acá no se filtra nada y su paginación YA es la de los
+  // resultados: la fila del cursor y el número de página son el mismo dato
+  // visto de dos maneras. Se acepta el cursor igual para que las seis fuentes
+  // hablen el mismo idioma (ver lib/paginarFiltrado.js).
+  const arranque = desde === null ? (Math.max(1, pagina) - 1) * porPagina : Math.max(0, desde);
+  const paginaSitio = Math.floor(arranque / porPagina) + 1;
 
   const campo = CAMPO_POR_MODO[modo] || CAMPO_POR_MODO.todas;
   const parametros = {
@@ -234,7 +242,7 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
     // filtrar después: se le pasa tal cual lo que se escribió en "Excluir".
     ...(String(excluir || '').trim() ? { textoLibreExcluyendo: String(excluir).trim() } : {}),
     hdnPaginaOrigen: 'busqueda.asp',
-    pag: String(pagina),
+    pag: String(paginaSitio),
     cantRegPagina: String(porPagina),
   };
 
@@ -251,7 +259,7 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
   }
 
   if (total === null) throw errores.indiceFuenteFalla('caba', 'no encontré el contador de resultados');
-  if (total === 0) return { total: 0, pagina, porPagina, resultados: [] };
+  if (total === 0) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
   // Dice que hay resultados pero no vino ninguno: pasa cuando su servidor
   // corta la respuesta o se le cae la base. Mejor avisar qué pasó que
@@ -260,5 +268,14 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
     throw errores.indiceFuenteFalla('caba', errorDelSitio(html) || 'cortó la respuesta antes de listar los resultados, probá de nuevo');
   }
 
-  return { total, pagina, porPagina, resultados };
+  // Su contador ES el total: totalFuente y total coinciden siempre.
+  const hasta = arranque + resultados.length;
+  return {
+    total,
+    totalFuente: total,
+    siguienteDesde: hasta < total ? hasta : null,
+    pagina,
+    porPagina,
+    resultados,
+  };
 }

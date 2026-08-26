@@ -899,7 +899,10 @@ var FUENTES_INDICE=[
   ]},
  {slug:"dialnet",cod:"DIALNET",clase:"doc",boton:"Dialnet",
   nombre:"Dialnet · doctrina jurídica en español",
-  nota:"No es un tribunal: es artículos, libros y tesis de doctrina en español (Universidad de La Rioja, España), con muchísimo contenido de autores argentinos. Sirve para encontrar qué se escribió sobre un tema, no para verificar una sentencia puntual."}
+  nota:"No es un tribunal: es artículos, libros y tesis de doctrina en español (Universidad de La Rioja, España), con muchísimo contenido de autores argentinos. Sirve para encontrar qué se escribió sobre un tema, no para verificar una sentencia puntual."},
+ {slug:"mendozalegal",cod:"MZA LEGAL",clase:"mza",boton:"Mendoza Legal",
+  nombre:"Mendoza Legal · jurisprudencia seleccionada",
+  nota:"Tampoco es un tribunal: es la revista del Colegio de Abogados de Mendoza, que publica fallos elegidos uno por uno —provinciales, nacionales e interamericanos— con un resumen escrito por una persona y el enlace al texto completo. Es chiquita a propósito: sirve para ver qué se destacó de un tema, no para barrer todo lo que dictó un tribunal. Que algo no aparezca acá no dice nada sobre si existe."}
 ];
 
 /* El sitio de CABA no filtra por secretaría en el pedido (ver nota en
@@ -925,7 +928,15 @@ function nuevoIndices(){
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
-      fragmentos:{},fragCargando:false,parcial:false,revisados:0,aflojado:false,desdeNavegador:false,
+      fragmentos:{},fragCargando:false,parcial:false,revisados:0,totalFuente:null,aflojado:false,desdeNavegador:false,
+      // Dónde arranca cada página, en filas del SITIO: {1:0, 2:22, 3:43...}.
+      // Numerar no alcanza cuando el filtro corre del lado del servidor —la
+      // página 2 de resultados no es la fila 20 del sitio— así que cada
+      // respuesta dice dónde sigue la siguiente y acá se anota. Solo se
+      // puede ir a una página cuyo arranque ya se conozca: por eso los
+      // botones numerados aparecen a medida que se avanza.
+      // Ver backend/lib/paginarFiltrado.js.
+      cursores:{1:0},
       // Páginas de la búsqueda actual ya traídas (a mano o precargadas
       // solas): número de página -> la respuesta completa del servidor.
       // Se vacía cada vez que arranca una búsqueda nueva. Ver buscarEnFuente.
@@ -1816,7 +1827,9 @@ function vistaBuscar(){
 function avisoServidor(){
   var local=/localhost|127\.0\.0\.1/.test(String(estado.api||""))||String(estado.api||"").charAt(0)==="/";
   if(local) return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el tuyo</b> · todo disponible, incluido el texto completo de los fallos de CABA.</p>';
-  return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el publicado</b> · las cuatro búsquedas andan. '+
+  // Sin número acá adentro: decía "las cuatro búsquedas andan" y ya iban
+  // seis. El conteo sale de FUENTES_INDICE, que es donde se agregan.
+  return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el publicado</b> · las '+FUENTES_INDICE.length+' búsquedas andan. '+
     'Para el <b>texto completo</b> de un fallo de CABA hace falta abrirlo y subirlo (el TSJ no le entrega los PDF a este servidor). '+
     'Si tenés el servidor propio corriendo, esta página lo usa sola y eso deja de pasar.</p>';
 }
@@ -2181,12 +2194,21 @@ function saijARegistro(bruto){
    ser toda de una sola de las palabras. */
 function buscarSaijNavegador(cuerpo,slug){
   var faceta=slug==="csjn"?SAIJ_FACETA_CSJN:(SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios);
-  var porPagina=20, porPedido=100, revisados=[], totalCrudo=0;
-  // Mismo cálculo que lib/indiceSaij.js: "página 2" no es volver a pedir
-  // desde el principio, es arrancar donde termina la página anterior.
-  var arranque=(Math.max(1,cuerpo.pagina||1)-1)*porPagina;
+  var porPagina=20, porPedido=100;
+  // Espejo de backend/lib/paginarFiltrado.js, y tiene que seguir siéndolo:
+  // este camino se usa justo donde MÁS importa, el servidor publicado, al
+  // que SAIJ le responde 403. Si acá quedara el cálculo viejo por número de
+  // página, la paginación se pisaría en Azure y andaría bien solo en una
+  // máquina local — el peor tipo de bug, el que no se ve donde se prueba.
+  var revisados=[];   // los registros que se pudieron leer
+  var filaDe=[];      // en qué fila del sitio estaba cada uno
+  var totalCrudo=0, agotado=false;
+  var arranque=(typeof cuerpo.desde==="number")?Math.max(0,cuerpo.desde)
+                                               :(Math.max(1,cuerpo.pagina||1)-1)*porPedido;
+  var cursor=arranque;
+
   function pedir(i){
-    var p=new URLSearchParams({q:cuerpo.q,o:String(arranque+i*porPedido),p:String(porPedido),f:faceta});
+    var p=new URLSearchParams({q:cuerpo.q,o:String(cursor),p:String(porPedido),f:faceta});
     return fetch(SAIJ_URL+"?"+p.toString(),{headers:{Accept:"application/json"}})
       .then(function(r){
         if(!r.ok) throw new Error("SAIJ respondió "+r.status);
@@ -2194,30 +2216,51 @@ function buscarSaijNavegador(cuerpo,slug){
       })
       .then(function(d){
         var sr=(d&&d.searchResults)||{};
-        if(i===0){
+        if(!totalCrudo){
           var f=(sr.categoriesResultList||[]).filter(function(c){ return c.facetName==="Total"; })[0];
           totalCrudo=(f&&f.facetChildren&&f.facetChildren[0]&&f.facetChildren[0].facetHits)||0;
-          if(!totalCrudo) return null;
+          if(!totalCrudo){ agotado=true; return null; }
         }
         var crudos=sr.documentResultList||[];
-        if(!crudos.length) return null;
-        crudos.map(saijARegistro).filter(Boolean).forEach(function(r){ revisados.push(r); });
+        if(!crudos.length){ agotado=true; return null; }
+        // Sin compactar: un documento ilegible ocupa su lugar igual, porque
+        // el cursor cuenta filas del sitio (ver lib/paginarFiltrado.js).
+        for(var k=0;k<crudos.length;k++){
+          var reg=saijARegistro(crudos[k]);
+          if(!reg) continue;
+          filaDe.push(cursor+k);
+          revisados.push(reg);
+        }
+        cursor+=crudos.length;
         var parcial=saijFiltrar(revisados,cuerpo.q,cuerpo.modo,cuerpo.excluir);
-        if(parcial.lista.length>=porPagina||revisados.length>=totalCrudo) return null;
+        if(parcial.lista.length>=porPagina) return null;
+        if(cursor>=totalCrudo){ agotado=true; return null; }
         return i<2?pedir(i+1):null;
       });
   }
+
   return pedir(0).then(function(){
-    if(!totalCrudo) return {ok:true,total:0,resultados:[],revisados:0};
+    if(!totalCrudo) return {ok:true,total:0,totalFuente:0,siguienteDesde:null,resultados:[],revisados:0,desdeNavegador:true};
     var res=saijFiltrar(revisados,cuerpo.q,cuerpo.modo,cuerpo.excluir);
+    var resultados=res.lista.slice(0,porPagina);
+    var siguienteDesde;
+    if(resultados.length>=porPagina){
+      siguienteDesde=filaDe[revisados.indexOf(resultados[resultados.length-1])]+1;
+    }else{
+      siguienteDesde=agotado?null:cursor;
+    }
     return {
       ok:true,
-      total:res.lista.length,
-      // "Parcial" es caducidad, no paginación: ver la nota en lib/indiceSaij.js.
-      totalParcial:res.lista.length<porPagina&&revisados.length<totalCrudo,
-      revisados:revisados.length,
+      total:resultados.length,
+      // El conteo del OR de SAIJ: no es "cuántos hay sobre el tema", es
+      // cuántas filas devuelve. La pantalla lo dice así (ver conteoIndice).
+      totalFuente:totalCrudo,
+      siguienteDesde:siguienteDesde,
+      // "Parcial" es que el número de arriba salió de una muestra.
+      totalParcial:siguienteDesde!==null,
+      revisados:cursor-arranque,
       aflojado:res.aflojado,
-      resultados:res.lista.slice(0,porPagina),
+      resultados:resultados,
       desdeNavegador:true
     };
   });
@@ -2264,12 +2307,20 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   imBusco.desdeNavegador=!!d.desdeNavegador;
   imBusco.resultados=d.resultados||[];
   imBusco.total=d.total||0;
+  // Cuántos dice tener el SITIO con esas palabras. Es otra cosa que
+  // "total": ese es cuántos pasaron el filtro entre los que se alcanzaron a
+  // revisar. Puede venir null (respaldo local: no hay sitio que preguntar).
+  imBusco.totalFuente=(typeof d.totalFuente==="number")?d.totalFuente:null;
   imBusco.guardados=d.guardadosEnIndice||0;
   imBusco.local=!!d.desdeIndiceLocal;
   imBusco.avisoFalla=d.avisoFalla||"";
   imBusco.parcial=!!d.totalParcial;
   imBusco.revisados=d.revisados||0;
   imBusco.aflojado=!!d.aflojado;
+  // Dónde sigue la próxima. Si vino null, esta era la última: se borra el
+  // cursor para que el paginador no ofrezca un "Siguiente" que no existe.
+  if(typeof d.siguienteDesde==="number") imBusco.cursores[pagina+1]=d.siguienteDesde;
+  else delete imBusco.cursores[pagina+1];
   imBusco.fragmentos={};
   render();
   // Los resultados ya están en pantalla; los pasajes que esta fuente no
@@ -2295,25 +2346,40 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
  * servidor (ver esperarTurno en lib/descargador.js) — pedirlas en paralelo
  * no las traería más rápido, solo se atropellarían.
  */
-function precargarPaginasIndice(slug,imBusco,busquedaId,cuerpoBase,total){
-  var totalPaginas=Math.min(Math.ceil(total/POR_PAGINA_INDICE),Math.ceil(UMBRAL_PRECARGA_INDICE/POR_PAGINA_INDICE));
+function precargarPaginasIndice(slug,imBusco,busquedaId,cuerpoBase){
+  var maxPaginas=Math.ceil(UMBRAL_PRECARGA_INDICE/POR_PAGINA_INDICE);
+  // De a una y en orden, no porque sea prolijo sino porque es obligatorio:
+  // el arranque de la página N+1 lo dice la respuesta de la N. Sin esa
+  // respuesta no hay a dónde ir, así que no se pueden pedir en paralelo
+  // aunque se quisiera. Y de paso respeta la espera de cortesía entre
+  // pedidos al sitio oficial (esperarTurno, en lib/descargador.js).
   function siguiente(pagina){
-    if(pagina>totalPaginas) return;
+    if(pagina>maxPaginas) return;
     // Se compara contra busquedaId (una búsqueda, con q/modo/tribunal
     // fijos), NO contra imBusco.pedido: eso último cambia con cada clic en
     // una página, y si esto revisara pedido, con solo pasar de página a
     // mano mientras la precarga sigue en vuelo se cortaría entera pensando
     // que la búsqueda había quedado vieja, cuando en realidad es la misma.
     if(imBusco.busquedaId!==busquedaId) return;
-    if(imBusco.paginas[pagina]) return siguiente(pagina+1); // ya la tenía (poco probable, no hace daño)
-    var cuerpo=Object.assign({},cuerpoBase,{pagina:pagina});
+    var cursor=imBusco.cursores[pagina];
+    if(typeof cursor!=="number") return;              // se acabaron las páginas
+    if(imBusco.paginas[pagina]) return siguiente(pagina+1); // ya la tenía
+    var cuerpo=Object.assign({},cuerpoBase,{pagina:pagina,desde:cursor});
     fetch(estado.api+"/indice/"+slug+"/buscar",{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify(cuerpo)
     }).then(function(r){ return r.json(); })
       .then(function(d){
         if(imBusco.busquedaId!==busquedaId) return;
-        if(d&&d.ok&&!d.desdeIndiceLocal) imBusco.paginas[pagina]=d;
+        if(d&&d.ok&&!d.desdeIndiceLocal){
+          imBusco.paginas[pagina]=d;
+          // Anotar el arranque de la que sigue, que es lo que permite
+          // encadenar. Si no vino, se llegó al final y la cadena termina.
+          if(typeof d.siguienteDesde==="number") imBusco.cursores[pagina+1]=d.siguienteDesde;
+          // Los botones numerados salen de imBusco.cursores, así que cada
+          // página precargada agrega uno: hay que repintar para que se vea.
+          render();
+        }
         siguiente(pagina+1);
       })["catch"](function(){ /* si falla precargando, buscarEnFuente la pide de nuevo cuando haga falta */ });
   }
@@ -2354,12 +2420,15 @@ function buscarEnFuente(slug,pagina){
   // no cada clic. Cambia solo con una búsqueda nueva, así que ir pasando
   // de página a mano no corta la precarga de fondo de esta misma búsqueda
   // (ver precargarPaginasIndice).
-  if(esNueva){ imBusco.busquedaId=(imBusco.busquedaId||0)+1; imBusco.paginas={}; }
+  if(esNueva){ imBusco.busquedaId=(imBusco.busquedaId||0)+1; imBusco.paginas={}; imBusco.cursores={1:0}; }
   var busquedaId=imBusco.busquedaId;
   imBusco.cargando=true; imBusco.error=null; render();
   // El modo y las palabras a excluir viajan al servidor: antes se elegían
   // acá y no cambiaban nada de la búsqueda real (ver lib/relevancia.js).
   var cuerpo={q:qi,modo:estado.modo||"todas",pagina:paginaPedida};
+  // El cursor de esa página, si se conoce. Sin esto el servidor cae al
+  // cálculo por número de página, que es justo lo que se pisaba.
+  if(typeof imBusco.cursores[paginaPedida]==="number") cuerpo.desde=imBusco.cursores[paginaPedida];
   if(estado.excluir.trim()) cuerpo.excluir=estado.excluir.trim();
   if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
   fetch(estado.api+"/indice/"+slug+"/buscar",{
@@ -2390,8 +2459,14 @@ function buscarEnFuente(slug,pagina){
       // Búsqueda nueva, con más de una página y no demasiado grande: se van
       // trayendo las siguientes solas, de fondo, sin hacer esperar a nadie
       // (ver la nota grande de arriba de precargarPaginasIndice).
-      if(esNueva&&!d.desdeIndiceLocal&&d.total>POR_PAGINA_INDICE&&d.total<=UMBRAL_PRECARGA_INDICE){
-        precargarPaginasIndice(slug,imBusco,busquedaId,cuerpo,d.total);
+      // Búsqueda nueva y hay una página siguiente: se van trayendo solas,
+      // de fondo (ver la nota grande de arriba de precargarPaginasIndice).
+      // Antes esto se salteaba cuando d.total era grande, para no maltratar
+      // al sitio con páginas que nadie iba a hojear; ahora el tope es
+      // directamente cuántas se precargan (maxPaginas), que es el mismo
+      // cuidado dicho donde de verdad se aplica.
+      if(esNueva&&!d.desdeIndiceLocal&&typeof d.siguienteDesde==="number"){
+        precargarPaginasIndice(slug,imBusco,busquedaId,cuerpo);
       }
     })["catch"](function(){
       if(imBusco.pedido!==pedido) return;
@@ -2414,28 +2489,48 @@ function paginadorIndice(f,im){
   if(im.local) return '';
   var porPagina=POR_PAGINA_INDICE;
   var actual=Math.max(1,im.pagina||1);
-  var total=im.total||0;
-  var totalPaginas=Math.max(actual,Math.ceil(total/porPagina));
+
+  // Las páginas alcanzables son aquellas cuyo arranque ya se conoce. Se van
+  // sumando a medida que se avanza: cada respuesta trae el cursor de la
+  // siguiente y ninguna otra. No se puede saltar de la 1 a la 12 porque
+  // nadie sabe todavía en qué fila del sitio empieza la 12 — depende de
+  // cuántas descarte el filtro en el medio, que solo se sabe mirándolas.
+  var ultima=actual;
+  while(typeof im.cursores[ultima+1]==="number") ultima++;
+
+  // La numeración de RESULTADOS sí es corrida: cada página muestra
+  // exactamente porPagina (salvo la última) y la siguiente arranca justo
+  // después de la última mostrada, así que la página N empieza en el
+  // resultado (N-1)*porPagina+1 sin trampa.
   var desde=(actual-1)*porPagina+1;
   var hasta=desde+im.resultados.length-1;
 
-  var out='<p style="font-size:12.5px;color:var(--humo);margin:0 0 8px">Mostrando '+
-    desde.toLocaleString("es-AR")+'–'+hasta.toLocaleString("es-AR")+' de '+total.toLocaleString("es-AR")+
-    ' resultado(s)'+(im.parcial?' verificados hasta ahora — puede haber más':'')+'</p>';
-  if(totalPaginas<=1) return out;
+  // Qué filas del sitio se miraron para armar ESTA página. Es el dato que
+  // convierte "20 resultados" en algo interpretable: veinte de entre
+  // sesenta filas revisadas no es lo mismo que veinte de entre veinte.
+  var filaA=(im.cursores[actual]||0)+1;
+  var filaB=(im.cursores[actual]||0)+(im.revisados||0);
 
-  // Ventana de números alrededor de la página actual; el principio y el
-  // final quedan siempre a la vista aunque estén lejos de esa ventana.
-  var desdeN=Math.max(1,actual-2), hastaN=Math.min(totalPaginas,actual+2);
+  var out='<p style="font-size:12.5px;color:var(--humo);margin:0 0 8px">Mostrando '+
+    desde.toLocaleString("es-AR")+'–'+hasta.toLocaleString("es-AR")+
+    (im.revisados
+      ? ' · revisadas las filas '+filaA.toLocaleString("es-AR")+'–'+filaB.toLocaleString("es-AR")+' del sitio'
+      : '')+
+    (typeof im.cursores[actual+1]!=="number"&&actual>1?' · es la última página':'')+
+    '</p>';
+  if(ultima<=1&&actual<=1) return out;
+
+  // Ventana de números alrededor de la actual; el principio queda siempre a
+  // la vista. No hay "última página" acá: no se sabe cuál es hasta llegar.
+  var desdeN=Math.max(1,actual-2), hastaN=Math.min(ultima,actual+2);
   var nums=[];
   if(desdeN>1){ nums.push(1); if(desdeN>2) nums.push(null); }
   for(var i=desdeN;i<=hastaN;i++) nums.push(i);
-  if(hastaN<totalPaginas){ if(hastaN<totalPaginas-1) nums.push(null); nums.push(totalPaginas); }
 
-  var botones=nums.map(function(p){
-    if(p===null) return '<span style="padding:0 3px;color:var(--humo)">…</span>';
-    return '<button class="mini" data-act="indice-pagina" data-fuente="'+f.slug+'" data-pagina="'+p+'"'+
-      (p===actual?' aria-pressed="true" disabled':'')+'>'+p+'</button>';
+  var botones=nums.map(function(pag){
+    if(pag===null) return '<span style="padding:0 3px;color:var(--humo)">…</span>';
+    return '<button class="mini" data-act="indice-pagina" data-fuente="'+f.slug+'" data-pagina="'+pag+'"'+
+      (pag===actual?' aria-pressed="true" disabled':'')+'>'+pag+'</button>';
   }).join("");
 
   return out+'<div class="paginador" style="margin:0 0 12px">'+
@@ -2443,8 +2538,47 @@ function paginadorIndice(f,im){
       (actual<=1?' disabled':'')+'>‹ Anterior</button>'+
     botones+
     '<button class="mini" data-act="indice-pagina" data-fuente="'+f.slug+'" data-pagina="'+(actual+1)+'"'+
-      (actual>=totalPaginas?' disabled':'')+'>Siguiente ›</button>'+
+      (typeof im.cursores[actual+1]==="number"?'':' disabled')+'>Siguiente ›</button>'+
     '</div>';
+}
+
+/**
+ * La línea de arriba de todo: de qué tamaño es lo que hay para revisar.
+ *
+ * Es más delicada de lo que parece, porque "cuántos resultados hay" no
+ * siempre se puede contestar. Hay dos situaciones distintas:
+ *
+ *   - El sitio resolvió el modo pedido (CABA siempre; las demás en "todas"
+ *     las palabras o "alguna"). Ahí su contador ES el total y se dice.
+ *   - El filtro corrió de nuestro lado (frase exacta, excluir). Ahí NADIE
+ *     sabe el total sin revisar las filas una por una: el sitio no puede
+ *     contarlo porque no sabe hacer ese modo, y nosotros contaríamos solo
+ *     lo revisado hasta ahora. Se dice entonces el tamaño del material —
+ *     cuántas filas devuelve el sitio— que es lo que sí se puede afirmar.
+ *
+ * Antes se mostraba el conteo de la muestra rotulado "N resultado(s) que
+ * coinciden de verdad", y eso se leía como el total. No lo era: "daño moral"
+ * en Mendoza decía 52 cuando el sitio devuelve 319 filas, y en Dialnet decía
+ * 38 sobre 3.228. Un abogado que lee 52 y cierra la página se pierde el
+ * resto.
+ *
+ * Ojo con cómo se redacta el segundo número. Cada sitio cuenta a su manera y
+ * el de SAIJ cuenta con OR: para "daño moral" informa 44.220, que son los
+ * que tienen "daño" O "moral", no los que tratan de daño moral. Por eso la
+ * frase NO dice "hay 44.220 sobre el tema" —sería cambiar una exageración
+ * por otra— sino que el sitio DEVUELVE esas filas. Eso es cierto para los
+ * seis buscadores, cuenten como cuenten.
+ */
+function conteoIndice(im,local){
+  var n=function(x){ return '<b>'+(x||0).toLocaleString("es-AR")+'</b>'; };
+  if(local) return n(im.total)+' resultado(s) guardados';
+  // Sin revisados, el filtro lo hizo el propio sitio: su contador es el total.
+  if(!im.revisados) return n(im.total)+' coincidencia(s) en total';
+  if(im.totalFuente===null) return 'coincidencias entre lo revisado hasta acá';
+  return 'el sitio devuelve '+n(im.totalFuente)+' filas para esta consulta'+
+    (im.parcial
+      ? ', y se van revisando de a tandas: pasá de página para seguir'
+      : ', ya revisadas todas');
 }
 
 function panelIndice(f){
@@ -2503,14 +2637,9 @@ function panelIndice(f){
     (nombreTrib?'<b style="color:var(--lacre)">'+esc(nombreTrib)+'</b> · ':'')+
     (nombreSec?'<b style="color:var(--lacre)">'+esc(nombreSec)+'</b> · '+visibles.length+' de sus ':'')+
     // Cuando el sitio de origen no sabe hacer el modo pedido, el filtro corre
-    // de nuestro lado y su contador ya no aplica: se dice cuántos se
-    // verificaron, no un número inventado. Ver lib/relevancia.js.
-    (local
-      ? im.total.toLocaleString("es-AR")+' resultado(s) guardados'
-      : (im.revisados
-          ? im.total.toLocaleString("es-AR")+' resultado(s) que coinciden de verdad'+
-            (im.parcial?' (revisamos los primeros '+im.revisados.toLocaleString("es-AR")+' del sitio; puede haber más)':'')
-          : im.total.toLocaleString("es-AR")+' coincidencias en total'))+
+    // de nuestro lado y su contador ya no aplica al modo pedido: se dice
+    // cuántos se verificaron. Ver lib/relevancia.js.
+    conteoIndice(im,local)+
     // Antes acá también decía "· N guardadas en tu índice local hasta
     // ahora": un detalle interno (cuántos documentos se acumularon con el
     // tiempo en la copia de respaldo, ver lib/indice.js) que no ayuda a

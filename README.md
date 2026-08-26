@@ -175,7 +175,7 @@ Ante un error siempre llega JSON con `codigo` (estable, para el frontend) y `men
 (en castellano, para vos): `DOMINIO_NO_PERMITIDO`, `PDF_ESCANEADO`, `HTML_SIN_TEXTO`,
 `TIEMPO_AGOTADO`, `RESPUESTA_NO_OK`, `DEMASIADO_GRANDE`, `RED_PRIVADA`…
 
-**Las cinco fuentes con buscador propio** (solapa "Buscar", `backend/lib/fuentes.js`):
+**Las seis fuentes con buscador propio** (solapa "Buscar", `backend/lib/fuentes.js`):
 
 | slug | Qué es |
 |---|---|
@@ -184,6 +184,7 @@ Ante un error siempre llega JSON con `codigo` (estable, para el frontend) y `men
 | `saij` | SAIJ, casi un millón de documentos de todo el país. |
 | `csjn` | Corte Suprema, vía la faceta correspondiente de SAIJ (su propio sitio pide CAPTCHA). |
 | `dialnet` | Dialnet (España) — doctrina en español, no jurisprudencia: artículos, libros y tesis, sin carátula ni expediente. Ver `backend/lib/indiceDialnet.js`. |
+| `mendozalegal` | Mendoza Legal — la revista del Colegio de Abogados de Mendoza: fallos elegidos a mano, con resumen escrito por una persona y enlace al texto completo. Es una selección chica (unos 180 artículos), no una base: no encontrar algo ahí no significa nada. Se consulta por la API REST de WordPress del sitio. Ver `backend/lib/indiceMendozaLegal.js`. |
 
 Se sumaron después de probar a mano una lista más larga de sitios que en principio parecían
 candidatos: quedaron afuera los que exigen CAPTCHA (CSJN directo), los que están detrás de un
