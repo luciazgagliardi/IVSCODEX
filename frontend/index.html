@@ -126,7 +126,17 @@ textarea,input[type=text],input[type=number],select{
   width:56px;height:56px;flex:none;display:block;border-radius:50%;
   object-fit:contain;padding:5px;background:transparent
 }
-.nav{display:flex;gap:14px;flex:1 1 auto;min-width:0;padding:10px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav{
+  display:flex;gap:14px;flex:1 1 auto;min-width:0;padding:10px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none /* Firefox: sin esto, la línea de abajo alcanza */
+}
+/* El deslizamiento sigue andando igual —hace falta con ventana angosta,
+   para llegar a "Cuenta" sin que las solapas se achiquen ni se corten—:
+   solo se esconde la barra, con la misma barra dorada gruesa (12px, ver
+   *::-webkit-scrollbar más arriba) que en cualquier otro overflow del
+   sitio pegada justo debajo de un óvalo, se veía como un segundo borde
+   grueso y desprolijo en vez de una pista de scroll. */
+.nav::-webkit-scrollbar{display:none}
 .nav button{
   position:relative;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;
   padding:11px 22px;cursor:pointer;white-space:nowrap;
