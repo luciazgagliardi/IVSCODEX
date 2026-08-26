@@ -100,31 +100,27 @@ textarea,input[type=text],input[type=number],select{
 .top{
   position:relative;
   background:transparent;
-  color:var(--papel);isolation:isolate;padding-bottom:40px
+  color:var(--papel);isolation:isolate;padding:28px 0 40px
 }
-/* Título fijo, siempre visible arriba de la barra — nada de esconderlo
-   hasta pasar el mouse o tocar el logo. */
-.top-in{
-  max-width:1560px;margin:0 auto;padding:34px 16px 20px;display:flex;justify-content:center;
-  gap:6px;align-items:baseline;flex-wrap:wrap
-}
-.marca{flex:0 1 auto;min-width:0;text-align:left}
-.marca .titulo-fila{display:flex;align-items:baseline;justify-content:flex-start;gap:14px;flex-wrap:wrap}
-.marca .wordmark{width:clamp(320px,58vw,980px);height:auto;display:block}
+/* Sin .top-in/.marca: el título grande vivía acá arriba, repetido en cada
+   solapa, y se sacó (ver el comentario en el HTML). padding-top de .top
+   es el único que le da aire a la barra ahora que no tiene nada encima. */
 .nav-wrap{
-  max-width:calc(100% - 32px);width:fit-content;margin:10px auto 0;
+  max-width:calc(100% - 32px);width:fit-content;margin:0 auto;
   display:flex;align-items:center;gap:16px;padding:0 22px;
   border:1px solid rgba(217,166,42,.55);border-radius:999px;
   background:rgba(255,255,255,.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
 }
 .nav-logo{
-  /* Sin borde a propósito. Tenía uno dorado igual al del óvalo de la barra
-     (.nav-wrap), y como el logo va pegado al extremo izquierdo quedaban dos
-     anillos dorados a cuatro píxeles uno del otro: se leía como un error de
-     dibujo, no como decoración. El óvalo ya encierra al logo; alcanza con
-     ese. */
+  /* Con borde, a pedido: encierra el emblema en su propio círculo dorado.
+     Antes esto compartía la barra con el título grande de arriba, y ese
+     anillo quedaba a centímetros de otro dorado más (el del propio óvalo
+     de la barra) apenas quitado el título — un roce que no se notaba
+     cuando había mucho más alrededor. Sacado el título, el logo pasó a
+     ser el ancla visual de la cabecera, y ahí el marco propio suma en vez
+     de competir. */
   width:56px;height:56px;flex:none;display:block;border-radius:50%;
-  object-fit:contain;padding:5px;background:transparent
+  border:1px solid var(--lacre);object-fit:contain;padding:5px;background:transparent
 }
 .nav{
   display:flex;gap:14px;flex:1 1 auto;min-width:0;padding:10px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;
@@ -426,7 +422,6 @@ mark.actual{background:var(--lacre);color:#241a0c}
 @keyframes aparece-entrada{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 @media (max-width:860px){
-  .top-in{gap:6px}
   .wrap{grid-template-columns:1fr;gap:16px}
   .rail{position:static;max-height:none}
   .rail-list{flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:6px}
@@ -452,13 +447,11 @@ mark.actual{background:var(--lacre);color:#241a0c}
 </div>
 
 <header class="top">
-  <div class="top-in">
-    <div class="marca">
-      <div class="titulo-fila">
-        <img class="wordmark" src="./marca-oficial.png" alt="IURIS ET DE IURE">
-      </div>
-    </div>
-  </div>
+  <!-- El título grande ("IURIS ET DE IURE") ya se ve una vez, al tocar la
+       pantalla de entrada (#entrada, más abajo): repetirlo acá arriba, en
+       cada una de las ocho solapas, era la misma marca dos veces seguidas.
+       Se sacó a pedido; el emblema circular de la barra alcanza como firma
+       del sitio en el uso normal. -->
   <div class="nav-wrap">
     <img class="nav-logo" src="./logo-iu.png" alt="Emblema de Iuris et de iure">
     <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
