@@ -1136,6 +1136,8 @@ function nuevoEstado(){
           // Verificador de citas (solapa Verificar): el texto pegado, si hay
           // un pedido en vuelo y lo último que contestó el servidor.
           cita:{texto:"",cargando:false,error:null,salida:null},
+          // Consulta de un artículo del código o de una ley (solapa Norma).
+          norma:{clave:"ccyc",art:"",cargando:false,error:null,salida:null},
           indices:nuevoIndices()};
 }
 
@@ -1858,6 +1860,60 @@ function nombreRama(id){
 /* ============================================================
    5. Barra de cadena
    ============================================================ */
+/* ============================================================
+   Estado en la URL — para poder compartir una búsqueda
+   ============================================================
+   Hasta ahora la dirección nunca cambiaba: daba igual lo que hubieras
+   escrito, la URL seguía siendo la raíz. Eso significaba que no se podía
+   mandar una búsqueda a un colega, ni guardarla en favoritos, ni volver a
+   ella con el botón "atrás" del navegador.
+
+   Van sólo los campos que definen QUÉ se busca (consulta, modo, excluir,
+   años, rama, solapa). NO van los resultados: son de los sitios oficiales,
+   cambian solos y meterlos en la URL sería congelar algo que no nos
+   pertenece. Quien abre el link corre la búsqueda de nuevo y ve lo que hay
+   hoy, que es lo correcto para jurisprudencia.
+
+   Tampoco va nada de la cuenta ni del historial: una URL se pega en un mail
+   o en un chat, y lo que viaje ahí deja de ser privado. */
+
+var CLAVES_URL=[["q","q"],["modo","m"],["excluir","x"],["desde","d"],["hasta","h"],["rama","r"],["tab","t"]];
+
+/** Vuelca el estado actual a la barra de direcciones, sin ensuciar el historial. */
+function guardarEnURL(){
+  try{
+    var p=new URLSearchParams();
+    CLAVES_URL.forEach(function(par){
+      var v=estado[par[0]];
+      if(v===undefined||v===null||v==="") return;
+      if(par[0]==="tab"&&v==="buscar") return;   // la solapa por defecto no hace falta
+      if(par[0]==="modo"&&v==="exacta") return;  // el modo por defecto tampoco
+      p.set(par[1],String(v));
+    });
+    var qs=p.toString();
+    // replaceState y no pushState: escribir en el campo de búsqueda no debe
+    // dejar una entrada en el historial por cada tecla.
+    history.replaceState(null,"",qs?("?"+qs):location.pathname);
+  }catch(e){ /* si el navegador no deja tocar el historial, la app sigue igual */ }
+}
+
+/** Lee la URL al abrir y deja el estado listo antes del primer render. */
+function leerDeURL(){
+  try{
+    var p=new URLSearchParams(location.search);
+    if(!p.toString()) return;
+    CLAVES_URL.forEach(function(par){
+      if(!p.has(par[1])) return;
+      var v=p.get(par[1]);
+      if(par[0]==="tab"){ if(TABS.some(function(t){return t[0]===v;})) estado.tab=v; return; }
+      if(par[0]==="modo"){ if(["exacta","todas","alguna"].indexOf(v)!==-1) estado.modo=v; return; }
+      if(par[0]==="rama"){ if(RAMAS.some(function(x){return x.id===v;})) estado.rama=v; return; }
+      if(par[0]==="desde"||par[0]==="hasta"){ if(/^\d{4}$/.test(v)) estado[par[0]]=v; return; }
+      estado[par[0]]=String(v).slice(0,300);
+    });
+  }catch(e){ /* URL rara: se ignora y se abre como siempre */ }
+}
+
 /** El rango de años que hay puesto ahora, tal como viaja al servidor. */
 function rangoAnios(){
   return {
@@ -1895,7 +1951,7 @@ function pintarCadena(){
 /* ============================================================
    6. Vistas
    ============================================================ */
-var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos","Requisitos"],["fuentes","Fuentes"],
+var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos","Requisitos"],["norma","Norma"],["fuentes","Fuentes"],
           ["citas","Citar"],["verificar","Verificar"],["guardados","Guardados"],["cuenta","Cuenta"]];
 
 function pintarNav(){
@@ -1925,7 +1981,7 @@ function pintarRail(){
   var w=document.getElementById("wrap");
   // "requisitos" también queda sin riel: el filtro de ahí es por RAMA, y acá
   // el listado es por TRÁMITE — mostrarlo daría un control que no filtra nada.
-  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos");
+  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos"||estado.tab==="norma");
   if(w) w.classList.toggle("sin-rail",sinRail);
   if(sinRail){ r.innerHTML=""; return; }
   r.innerHTML='<input type="text" id="buscarRama" class="rail-buscador" value="'+esc(estado.buscarRama)+
@@ -2016,6 +2072,7 @@ function vistaBuscar(){
         }).join(""):'')+
         '<button class="btn'+(estado.api?" sec":"")+'" data-act="barrido">Buscar en todas a la vez</button>'+
         '<button class="btn sec" data-act="copiar-cadena">Copiar la consulta</button>'+
+        '<button class="btn sec" data-act="copiar-link">Copiar link de esta búsqueda</button>'+
         '<button class="btn sec" data-act="limpiar">Empezar de nuevo</button>'+
       '</div>'+
     '</div>'+
@@ -2945,6 +3002,61 @@ function fichaRequisito(x){
     '</div></div>';
 }
 
+var NORMAS_UI=[
+ ["ccyc","Código Civil y Comercial"],
+ ["cn","Constitución Nacional"],
+ ["lct","Ley de Contrato de Trabajo (20.744)"],
+ ["lcq","Ley de Concursos y Quiebras (24.522)"],
+ ["lpa","Procedimientos Administrativos (19.549)"],
+ ["amparo","Ley de Amparo (16.986)"]
+];
+
+/**
+ * Solapa Norma: el texto oficial de un artículo, más los fallos que lo citan.
+ *
+ * Cierra el círculo que le faltaba a la app. Todo lo demás mira
+ * JURISPRUDENCIA —qué dijeron los tribunales—, pero un fallo se lee citando
+ * artículos, y hasta ahora había que salir a otra pestaña a buscar el texto.
+ * El texto no lo escribe esta web: lo trae de InfoLeg, que es el repositorio
+ * del Ministerio de Justicia, en su versión "texto actualizado".
+ */
+function vistaNorma(){
+  var n=estado.norma;
+  var opciones=NORMAS_UI.map(function(x){
+    return '<option value="'+x[0]+'"'+(n.clave===x[0]?" selected":"")+'>'+esc(x[1])+'</option>';
+  }).join("");
+
+  var salida="";
+  if(n.cargando){
+    salida='<p style="font-size:13px;color:var(--humo)">Buscando el texto en InfoLeg…</p>';
+  }else if(n.error){
+    salida='<div class="aviso" style="margin:0"><strong>No se pudo traer.</strong> '+esc(n.error)+'</div>';
+  }else if(n.salida){
+    var d=n.salida;
+    salida='<div class="pasaje" style="margin-top:4px">'+
+      '<div class="txt" style="white-space:pre-wrap;font-size:15px;line-height:1.6">'+esc(d.texto)+'</div>'+
+      (d.truncado?'<p class="req-aviso">El artículo sigue: se muestra el principio. Abrilo en InfoLeg para leerlo completo.</p>':"")+
+      (d.aviso?'<p class="req-aviso">'+esc(d.aviso)+'</p>':"")+
+      '<div class="req-norma">'+esc(d.norma)+' · art. '+esc(d.articulo)+
+        ' · <a href="'+esc(d.url)+'" target="_blank" rel="noopener noreferrer">ver en InfoLeg</a></div>'+
+      '<div class="f-acc" style="margin-top:12px">'+
+        '<button class="mini" data-act="fallos-del-articulo">Buscar fallos que lo citan</button>'+
+      '</div></div>';
+  }
+
+  return '<div class="aviso"><strong>El texto, de la fuente.</strong> Esta web no transcribe el código: pide el artículo a <strong>InfoLeg</strong> (Ministerio de Justicia) en su versión de texto actualizado, con las reformas ya incorporadas. '+
+      'Después podés saltar a los fallos que lo interpretan.</div>'+
+    '<div class="panel">'+
+      '<div class="fila">'+
+        '<label class="campo"><span>Norma</span><select id="norma-clave">'+opciones+'</select></label>'+
+        '<label class="campo"><span>Artículo</span><input type="text" id="norma-art" value="'+esc(n.art)+'" placeholder="1741" autocomplete="off"></label>'+
+      '</div>'+
+      '<div class="acciones" style="margin:0;padding:0;border:0"><button class="btn" data-act="ver-articulo">Ver el artículo</button></div>'+
+      salida+
+    '</div>'+
+    '<div class="aviso" style="border-style:dashed">Sólo derecho de fondo <strong>nacional</strong>. Los códigos procesales provinciales (Mendoza, ley 9001) no están en InfoLeg y cada provincia los publica a su manera — para eso, la solapa <strong>Fuentes</strong> tiene los enlaces oficiales.</div>';
+}
+
 function vistaFuentes(){
   var todas=F.slice();
   var porAmb=Object.keys(AMB).map(function(k){
@@ -3571,13 +3683,14 @@ function render(){
     pintarNav();
     pintarRail();
     var v=document.getElementById("vista");
-    var f={buscar:vistaBuscar,lector:vistaLector,ramas:vistaRamas,requisitos:vistaRequisitos,fuentes:vistaFuentes,
+    var f={buscar:vistaBuscar,lector:vistaLector,ramas:vistaRamas,requisitos:vistaRequisitos,norma:vistaNorma,fuentes:vistaFuentes,
            citas:vistaCitas,verificar:vistaVerificar,guardados:vistaGuardados,
            cuenta:vistaCuenta}[estado.tab]||vistaBuscar;
     v.innerHTML=f();
     if(estado.tab==="lector") pintarLector();
     pintarCadena();
     ajustarAlturaRail();
+    guardarEnURL();
     document.getElementById("pie-txt").innerHTML=
       "<strong>Iuris et de iure</strong> — catálogo de "+F.length+" bases oficiales y "+RAMAS.length+
       " ramas del derecho. Funciona sin conexión: los enlaces se abren en el sitio del organismo. "+
@@ -3697,6 +3810,49 @@ document.addEventListener("click",function(ev){
       estado.ambitos[k]=true; flash("Dejá al menos un ámbito activo");
     }
     render(); return;
+  }
+  if(act==="ver-articulo"){
+    var sel=document.getElementById("norma-clave"), inp=document.getElementById("norma-art");
+    if(sel) estado.norma.clave=sel.value;
+    if(inp) estado.norma.art=inp.value.trim();
+    if(!estado.norma.art){ flash("Escribí el número de artículo"); return; }
+    if(!estado.api){ flash("Para traer el texto oficial hace falta el servidor"); return; }
+    estado.norma.cargando=true; estado.norma.error=null; estado.norma.salida=null; render();
+    fetch(estado.api+"/legislacion/"+encodeURIComponent(estado.norma.clave)+"/"+encodeURIComponent(estado.norma.art))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        estado.norma.cargando=false;
+        if(d&&d.ok){ estado.norma.salida=d; }
+        else{ estado.norma.error=(d&&d.mensaje)||"El servidor no devolvió el artículo."; }
+        render();
+      })["catch"](function(){
+        estado.norma.cargando=false;
+        estado.norma.error="Se cortó la comunicación con el servidor.";
+        render();
+      });
+    return;
+  }
+  if(act==="fallos-del-articulo"){
+    // Los tribunales citan de muchas formas ("art. 1741", "artículo 1741",
+    // "art. 1741 CCyC"): se busca por el número con la palabra "art", en modo
+    // "todas las palabras", que es el que tolera el orden y lo del medio.
+    var d=estado.norma.salida; if(!d) return;
+    estado.q="art "+d.articulo+" "+d.sigla;
+    estado.modo="todas"; estado.tab="buscar";
+    render(); window.scrollTo(0,0);
+    flash("Buscá en las fuentes de abajo los fallos que citan ese artículo");
+    return;
+  }
+  if(act==="copiar-link"){
+    // La URL ya está al día: guardarEnURL() corre al final de cada render.
+    var link=location.href;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(link).then(function(){ flash("Link copiado — se abre con esta misma búsqueda"); })
+        ["catch"](function(){ flash("No pude copiar; la dirección de arriba ya es el link"); });
+    }else{
+      flash("Copiá la dirección de arriba: ya es el link de esta búsqueda");
+    }
+    return;
   }
   if(act==="voz"||act==="rehacer"){
     estado.q=b.getAttribute("data-v")||""; estado.modo="exacta"; estado.tab="buscar";
@@ -3934,6 +4090,7 @@ document.addEventListener("input",function(ev){
    como leerlo por la firma de los bytes (PDF o .doc), no por la extensión.
    El archivo no se guarda en ningún lado: se lee y vuelve como texto. */
 document.addEventListener("change",function(ev){
+  if(ev.target&&ev.target.id==="norma-clave"){ estado.norma.clave=ev.target.value; return; }
   if(!ev.target||ev.target.id!=="doc-archivo") return;
   var arch=ev.target.files&&ev.target.files[0];
   if(!arch) return;
@@ -4008,6 +4165,7 @@ function armarCita(){
 /* ============================================================
    9. Arranque
    ============================================================ */
+leerDeURL();
 render();
 detectarServidor();
 store.get("jedj:fav",function(v){

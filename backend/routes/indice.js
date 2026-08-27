@@ -18,6 +18,7 @@ import { FUENTES } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
 import { errores, ErrorApp } from '../lib/errores.js';
+import { NORMAS, articuloDe } from '../lib/legislacion.js';
 
 export const router = express.Router();
 
@@ -266,6 +267,25 @@ for (const { slug, buscar } of FUENTES) {
     }
   });
 }
+
+/** Qué normas se pueden consultar por artículo (ver lib/legislacion.js). */
+router.get('/legislacion/normas', (_req, res) => {
+  res.json({ ok: true, normas: NORMAS.map((n) => ({ clave: n.clave, nombre: n.nombre, sigla: n.sigla, aviso: n.aviso || null })) });
+});
+
+/**
+ * El texto oficial de un artículo: GET /api/legislacion/<norma>/<articulo>
+ *
+ * Es lo que faltaba para cerrar el círculo — un fallo se lee citando
+ * artículos, y hasta ahora había que salir a otra pestaña a buscar el texto.
+ */
+router.get('/legislacion/:norma/:articulo', async (req, res, next) => {
+  try {
+    res.json({ ok: true, ...(await articuloDe(req.params.norma, req.params.articulo)) });
+  } catch (e) {
+    next(e instanceof ErrorApp ? e : errores.indiceFuenteFalla('infoleg', e?.message));
+  }
+});
 
 /**
  * Si cada buscador oficial le contesta a ESTE servidor, y cuánto tarda.

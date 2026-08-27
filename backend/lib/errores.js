@@ -228,6 +228,27 @@ export const errores = {
       { fuente }
     ),
 
+  normaDesconocida: (clave) =>
+    new ErrorApp(
+      'NORMA_DESCONOCIDA',
+      `No tengo cargada la norma "${clave}". Por ahora se pueden consultar el Código Civil y Comercial, la Constitución, la LCT, la Ley de Concursos, la de Procedimientos Administrativos y la de Amparo.`,
+      400
+    ),
+
+  articuloInvalido: (num) =>
+    new ErrorApp(
+      'ARTICULO_INVALIDO',
+      `"${num}" no parece un número de artículo. Escribí sólo el número (por ejemplo 1741, o "76 bis").`,
+      400
+    ),
+
+  articuloNoEncontrado: (num, norma) =>
+    new ErrorApp(
+      'ARTICULO_NO_ENCONTRADO',
+      `No encontré el artículo ${num} en ${norma}. Puede que no exista, que esté derogado, o que ese número corresponda a otra norma.`,
+      404
+    ),
+
   emailFaltante: () =>
     new ErrorApp('EMAIL_FALTANTE', 'Falta el correo electrónico.', 400),
 
