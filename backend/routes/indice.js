@@ -14,7 +14,7 @@
  */
 
 import express from 'express';
-import { FUENTES } from '../lib/fuentes.js';
+import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
 import { errores, ErrorApp } from '../lib/errores.js';
@@ -116,8 +116,14 @@ function recortarPasaje(texto, q) {
 for (const { slug, buscar } of FUENTES) {
   router.post(`/indice/${slug}/buscar`, async (req, res, next) => {
     try {
-      const { q, pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta } = req.body || {};
-      if (!q) throw errores.consultaVacia();
+      const { q, pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo } = req.body || {};
+      // "articulo" pisa la consulta con la forma que ESTE buscador entiende:
+      // a Mendoza hay que decirle "art 1741" y a la Corte "artículo 1741", y
+      // la diferencia es de 84 resultados contra 0. Ver lib/fuentes.js.
+      const consulta = /^\d{1,4}(\s*(bis|ter|quater))?$/i.test(String(articulo || '').trim())
+        ? consultaDeArticulo(slug, String(articulo).trim())
+        : q;
+      if (!consulta) throw errores.consultaVacia();
 
       const arranque = Date.now();
       let total, totalFuente, siguienteDesde = null, resultados, desdeIndiceLocal = false, avisoFalla = null;
@@ -125,7 +131,7 @@ for (const { slug, buscar } of FUENTES) {
 
       try {
         ({ total, totalFuente = null, siguienteDesde = null, resultados, totalParcial = false, revisados = 0, aflojado = false } = await buscar({
-          q,
+          q: consulta,
           pagina: Number(pagina) > 0 ? Number(pagina) : 1,
           // El cursor: la fila del sitio donde sigue esta página. Lo devuelve
           // el pedido anterior como "siguienteDesde" y el frontend lo manda
@@ -150,7 +156,7 @@ for (const { slug, buscar } of FUENTES) {
         // quien busca sin nada: probamos con lo que ya quedó guardado de
         // búsquedas anteriores. Es parcial y puede estar viejo, pero es
         // mejor que un error en pantalla, y el frontend avisa que es local.
-        resultados = await buscarEnIndice(slug, q, { modo, excluir });
+        resultados = await buscarEnIndice(slug, consulta, { modo, excluir });
         total = resultados.length;
         // El respaldo local no tiene "cuántos hay en el sitio": lo guardado
         // es todo lo que hay. Va null y no un número para que el frontend no
@@ -171,7 +177,7 @@ for (const { slug, buscar } of FUENTES) {
       // (visto con acentos que el sitio no matchea, ver lib/indiceCaba.js).
       // Antes de creerle el cero, se revisa si el índice local tiene algo.
       if (slug === 'caba' && total === 0) {
-        const locales = await buscarEnIndice(slug, q, { modo, excluir });
+        const locales = await buscarEnIndice(slug, consulta, { modo, excluir });
         if (locales.length) {
           resultados = locales;
           total = locales.length;
