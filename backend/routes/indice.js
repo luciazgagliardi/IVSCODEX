@@ -18,7 +18,7 @@ import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
 import { errores, ErrorApp } from '../lib/errores.js';
-import { NORMAS, articuloDe } from '../lib/legislacion.js';
+import { NORMAS, articuloDe, rubricaDe } from '../lib/legislacion.js';
 
 export const router = express.Router();
 
@@ -111,18 +111,126 @@ function recortarPasaje(texto, q) {
   return (desde > 0 ? '… ' : '') + limpio.slice(desde, hasta).trim() + (hasta < limpio.length ? ' …' : '');
 }
 
+/**
+ * Buscar los fallos que aplican un artículo. Es otra cosa que buscar texto.
+ *
+ * Una sola consulta no alcanza, y está medido contra los sitios reales:
+ *
+ *  - Cada motor quiere la cita escrita distinto. Los de tipo SAIJ (SAIJ,
+ *    CSJN, Dialnet) buscan con OR y rinden con la palabra entera
+ *    ("artículo 1741"); los formularios que hacen LIKE (Mendoza, CABA)
+ *    rinden con la abreviatura ("art 1741"). Ver COMO_SE_CITA en fuentes.js.
+ *
+ *  - Y hay fuentes donde el número NO ESTÁ EN NINGÚN LADO. Mendoza indexa
+ *    el sumario y las voces del tesauro, que describen el TEMA: buscar
+ *    "art 1710" ahí da CERO, y no por estar mal escrito — probado también
+ *    "artículo 1710" y "1710" pelado, los tres cero. Pero "prevención del
+ *    daño", que es la rúbrica de ese artículo, da CINCUENTA. También se
+ *    probó el campo "articulo" del propio formulario de Mendoza: lo ignora,
+ *    devuelve el total sin filtrar (34.283 con y sin él).
+ *
+ * Por eso se corren VARIAS formas y se unen los resultados, sin repetir:
+ * el número como lo escribe cada motor, el número pelado, y la rúbrica del
+ * artículo sacada del texto oficial de InfoLeg. Un fallo puede aparecer por
+ * cualquiera de las tres.
+ *
+ * En este modo no hay paginación: se devuelve la unión de la primera vuelta
+ * de cada forma. Paginar sobre tres streams que se solapan daría saltos y
+ * repeticiones, y para "¿quién aplicó este artículo?" lo que importa es la
+ * cobertura, no llegar al resultado número doscientos.
+ */
+async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anioDesde, anioHasta, tribunal }) {
+  const formas = [];
+  const agregar = (t) => { const v = String(t || '').trim(); if (v && !formas.includes(v)) formas.push(v); };
+
+  agregar(consultaDeArticulo(slug, art));   // la que este motor entiende
+  agregar(art);                              // el número pelado
+  const formasPorNumero = formas.length;     // hasta acá, todo cita el número
+
+  let rubrica = null;
+  if (norma) {
+    try {
+      const ficha = await articuloDe(norma, art);   // cacheado en disco
+      rubrica = rubricaDe(ficha.texto);
+      agregar(rubrica);
+    } catch { /* sin rúbrica se busca igual, sólo por número */ }
+  }
+
+  const porId = new Map();
+  const usadas = [];
+  for (const forma of formas) {
+    try {
+      const r = await buscar({
+        q: forma,
+        pagina: 1,
+        // Siempre "todas las palabras": con "exacta" un fallo que dice
+        // "artículo 1741" no matchearía la forma "art 1741", que es
+        // justamente lo que hay que evitar acá.
+        modo: 'todas',
+        ...(excluir ? { excluir: String(excluir) } : {}),
+        ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}),
+        ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}),
+        ...(tribunal ? { tribunal } : {}),
+      });
+      const porNumero = formas.indexOf(forma) < formasPorNumero;
+      let nuevos = 0;
+      for (const x of (r.resultados || [])) {
+        if (!x || !x.id) continue;
+        if (porId.has(x.id)) {
+          // Si ya estaba por el tema y ahora aparece por el número, gana el
+          // número: es la coincidencia fuerte.
+          if (porNumero) porId.get(x.id).citaElNumero = true;
+          continue;
+        }
+        // Marca de cómo apareció. Los que entran sólo por la rúbrica tratan
+        // el TEMA del artículo, que no es lo mismo que citarlo: la pantalla
+        // lo dice, porque alguien podría citarlos creyendo que lo aplican.
+        porId.set(x.id, { ...x, citaElNumero: porNumero });
+        nuevos++;
+      }
+      usadas.push({ forma, encontrados: (r.resultados || []).length, nuevos });
+    } catch (e) {
+      usadas.push({ forma, error: (e && e.message) || 'falló' });
+    }
+  }
+
+  const resultados = [...porId.values()];
+  return {
+    total: resultados.length,
+    totalFuente: null,
+    siguienteDesde: null,
+    // Es un piso: se unió la primera vuelta de cada forma, no todo lo que hay.
+    totalParcial: true,
+    revisados: 0,
+    aflojado: false,
+    pagina: 1,
+    porPagina: resultados.length,
+    resultados,
+    // Con qué se preguntó y qué aportó cada forma. Va a la respuesta para que
+    // la pantalla pueda decirlo: si aparecieron por la rúbrica y no por el
+    // número, el abogado tiene que saberlo antes de citarlos.
+    porArticulo: { articulo: art, rubrica, formas: usadas },
+  };
+}
+
 // El catálogo de fuentes vive en lib/fuentes.js: lo comparten estas rutas y
 // el verificador de citas (lib/verificarCita.js).
 for (const { slug, buscar } of FUENTES) {
   router.post(`/indice/${slug}/buscar`, async (req, res, next) => {
     try {
-      const { q, pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo } = req.body || {};
-      // "articulo" pisa la consulta con la forma que ESTE buscador entiende:
-      // a Mendoza hay que decirle "art 1741" y a la Corte "artículo 1741", y
-      // la diferencia es de 84 resultados contra 0. Ver lib/fuentes.js.
-      const consulta = /^\d{1,4}(\s*(bis|ter|quater))?$/i.test(String(articulo || '').trim())
-        ? consultaDeArticulo(slug, String(articulo).trim())
-        : q;
+      const { q, pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo, norma } = req.body || {};
+      const art = String(articulo || '').trim();
+      const esPorArticulo = /^\d{1,4}(\s*(bis|ter|quater))?$/i.test(art);
+
+      // Buscar por artículo es un caso aparte y por eso sale por otra puerta:
+      // NO alcanza con una consulta. Ver buscarPorArticulo().
+      if (esPorArticulo) {
+        const salida = await buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anioDesde, anioHasta, tribunal });
+        const guardadas = await upsertRegistros(slug, salida.resultados);
+        return res.json({ ok: true, ...salida, guardadosEnIndice: guardadas, fuente: slug });
+      }
+
+      const consulta = q;
       if (!consulta) throw errores.consultaVacia();
 
       const arranque = Date.now();

@@ -1165,7 +1165,7 @@ function nuevoEstado(){
           // Comparador: la misma consulta corrida en las seis fuentes a la vez.
           comparar:{corriendo:false,hecho:false,q:"",porFuente:{}},
           // Número de artículo cuando la búsqueda vino de la solapa Norma.
-          articulo:"",
+          articulo:"", articuloNorma:"",
           // Si el menú de Compartir está desplegado.
           compartirAbierto:false,
           indices:nuevoIndices()};
@@ -1967,6 +1967,44 @@ function botonCompartir(){
     '</div></div>';
 }
 
+/**
+ * Compartir una cosa concreta —un fallo, un pasaje— y no la búsqueda entera.
+ *
+ * Usa el menú nativo del sistema (navigator.share) cuando existe: en el
+ * teléfono eso abre WhatsApp, Telegram, mail y lo que la persona tenga, sin
+ * que esta web tenga que conocer ninguna de esas apps. Donde no existe
+ * —escritorio, casi siempre— cae a copiar al portapapeles, que es lo que
+ * después se pega donde sea.
+ */
+function abrirCompartir(texto, url){
+  var payload={ title:"Iuris et de iure", text:texto, url:url };
+  if(navigator.share){
+    navigator.share(payload)["catch"](function(){ /* si lo cancela, no pasa nada */ });
+    return;
+  }
+  var todo=texto+"\n"+url;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(todo).then(function(){ flash("Copiado — pegalo donde quieras"); })
+      ["catch"](function(){ flash("No pude copiar automáticamente"); });
+  }else{
+    flash("Copiá el enlace de la barra de direcciones");
+  }
+}
+
+/** Un fallo en texto plano, listo para pegar en un chat o un mail. */
+function textoDeFallo(r,slug){
+  var f=FUENTES_INDICE.filter(function(x){return x.slug===slug;})[0];
+  return [
+    r.caratula||r.expediente||"Fallo",
+    [r.tribunal,r.fecha,r.expediente?"Expte. "+r.expediente:""].filter(Boolean).join(" · "),
+    f?("Fuente: "+f.nombre):""
+  ].filter(Boolean).join("\n");
+}
+
+function fichaLegible(fc){
+  return [fc.caratula,fc.tribunal,fc.fecha].filter(Boolean).join(" · ");
+}
+
 /** El texto que acompaña al link cuando se comparte. */
 function textoCompartir(){
   var q=estado.q.trim();
@@ -2345,6 +2383,13 @@ function fichaIndice(f,r){
   var im=estado.indices[f.slug];
   var meta=[r.tribunal,r.secretaria,r.fecha,r.magistrados,r.expediente?"Expte. "+r.expediente:""]
     .filter(Boolean).map(esc).join(" · ");
+  // Cuando la búsqueda fue por artículo, se distingue quién CITA el número de
+  // quién apareció por el tema del artículo (su rúbrica). No es un detalle:
+  // citar como "aplica el art. 1710" un fallo que sólo habla de prevención
+  // del daño sería poner en boca del tribunal algo que no dijo.
+  var marcaTema=(r.citaElNumero===false)
+    ? '<span class="tag" style="border-color:var(--lacre2);color:var(--lacre2)">por el tema, no cita el número</span>'
+    : '';
   // El pasaje puede venir con el resultado (Mendoza manda el sumario) o
   // haberse sacado del documento después (CABA — ver traerFragmentos).
   var pasaje=r.sumario||(r.linkFallo?im.fragmentos[r.linkFallo]:"");
@@ -2359,10 +2404,12 @@ function fichaIndice(f,r){
       return '<span class="voz" style="cursor:default">'+esc(v)+'</span>';}).join("")+'</div>':"")+
     '<div class="f-acc" style="margin-top:8px">'+
       (r.linkFicha?'<a class="mini" href="'+esc(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
+      marcaTema+
       (r.linkFallo?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>':"")+
       // Si el documento se puede traer, también se puede abrir donde vive:
       // el enlace al sitio oficial es lo que hace citable al resultado.
       (r.linkFallo?'<a class="mini" href="'+esc(r.linkFallo)+'" target="_blank" rel="noopener noreferrer">Abrir el original</a>':"")+
+      '<button class="mini" data-act="compartir-fallo" data-fuente="'+esc(f.slug)+'" data-id="'+esc(r.id||"")+'">Compartir</button>'+
     '</div></div>';
 }
 
@@ -2760,7 +2807,7 @@ function buscarEnFuente(slug,pagina){
   // fallos de cualquier año. Una promesa rota en la interfaz.
   // Si esto viene de la solapa Norma, va el número de artículo: el servidor
   // le arma a cada buscador la consulta que ESE buscador entiende.
-  if(estado.articulo) cuerpo.articulo=estado.articulo;
+  if(estado.articulo){ cuerpo.articulo=estado.articulo; if(estado.articuloNorma) cuerpo.norma=estado.articuloNorma; }
   if(/^\d{4}$/.test(estado.desde)) cuerpo.anioDesde=Number(estado.desde);
   if(/^\d{4}$/.test(estado.hasta)) cuerpo.anioHasta=Number(estado.hasta);
   if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
@@ -3417,6 +3464,10 @@ function vistaLector(){
       '<button class="mini" data-act="tog-parcial" aria-pressed="'+(estado.parcial?"true":"false")+'">'+
         (estado.parcial?"Palabra parcial: sí":"Palabra parcial: no")+'</button>'+
       '<button class="mini" data-act="doc-otro">Pegar otro fallo</button>'+
+      // Comparte lo que esté seleccionado en el texto; sin selección, la
+      // ficha del fallo. Es el gesto natural leyendo: marcar el párrafo que
+      // sirve y mandarlo.
+      '<button class="mini" data-act="compartir-lector">Compartir selección</button>'+
     '</div>'+
     '<div class="panel" style="padding:12px 14px;margin-bottom:14px">'+
       '<label class="campo" style="margin:0"><span>Qué buscar dentro del fallo</span>'+
@@ -3845,6 +3896,7 @@ function vistaGuardados(){
                   ?'<a class="mini" href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer">Ver el original</a>'+
                    '<button class="mini" data-act="pasaje-a-lector" data-i="'+i+'">Abrir en el Lector</button>'
                   :'<span class="pos" style="opacity:.6">pegado a mano · sin enlace de origen</span>')+
+                '<button class="mini" data-act="compartir-pasaje" data-i="'+i+'">Compartir</button>'+
                 '</div></div>';
        }).join("");
   }
@@ -4091,10 +4143,28 @@ document.addEventListener("click",function(ev){
     // COMO_SE_CITA en backend/lib/fuentes.js.
     var d=estado.norma.salida; if(!d) return;
     estado.q="art. "+d.articulo+" "+d.sigla;
-    estado.articulo=d.articulo;
+    estado.articulo=d.articulo; estado.articuloNorma=estado.norma.clave;
     estado.modo="todas"; estado.tab="buscar";
     render(); window.scrollTo(0,0);
     flash("Tocá una fuente abajo: a cada una se le pregunta como ella entiende");
+    return;
+  }
+  if(act==="compartir-fallo"){
+    var fSlug=b.getAttribute("data-fuente"), rid=b.getAttribute("data-id");
+    var im2=estado.indices[fSlug];
+    var reg=(im2&&im2.resultados||[]).filter(function(x){return String(x.id)===rid;})[0];
+    if(reg) abrirCompartir(textoDeFallo(reg,fSlug), reg.linkFicha||reg.linkFallo||location.href);
+    return;
+  }
+  if(act==="compartir-pasaje"){
+    var pp=estado.pasajes[Number(b.getAttribute("data-i"))];
+    if(pp) abrirCompartir('"'+String(pp.t).slice(0,600)+'"'+(pp.r?"\n\n(búsqueda: "+pp.r+")":""), pp.url||location.href);
+    return;
+  }
+  if(act==="compartir-lector"){
+    var sel=(window.getSelection&&String(window.getSelection()))||"";
+    var cuerpoL=sel.trim()?('"'+sel.trim().slice(0,600)+'"'):(estado.fichaConocida?fichaLegible(estado.fichaConocida):"Fallo abierto en el Lector");
+    abrirCompartir(cuerpoL, estado.fuenteDe||location.href);
     return;
   }
   if(act==="compartir"){ estado.compartirAbierto=!estado.compartirAbierto; render(); return; }
@@ -4336,7 +4406,7 @@ document.addEventListener("input",function(ev){
     // Escribir a mano en el campo deja de ser "los fallos que citan el
     // artículo N" y pasa a ser una búsqueda común: lo que se ve es lo que se
     // busca, sin una traducción por fuente actuando por detrás.
-    estado.q=ev.target.value; estado.articulo=""; estado.marca=0; pintarCadena();
+    estado.q=ev.target.value; estado.articulo=""; estado.articuloNorma=""; estado.marca=0; pintarCadena();
     if(estado.tab==="lector"){
       if(estado.texto.length<150000){ pintarLector(); }
       else { clearTimeout(window._tl); window._tl=setTimeout(pintarLector,170); }
