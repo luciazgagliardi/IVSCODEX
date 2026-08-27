@@ -283,6 +283,17 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 
 /* ---------- ramas ---------- */
 .rama{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:18px 20px;margin-bottom:12px;font-family:var(--sans)}
+/* Comparador: una tarjeta por buscador, en columnas que se acomodan solas. */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:18px}
+.comp-card{background:var(--ficha);border:1px solid var(--linea);border-left-width:4px;border-radius:10px;padding:14px 16px;font-family:var(--sans)}
+.comp-card h4{margin:0 0 2px;font-family:var(--serif);font-size:16px;font-weight:400;color:var(--tinta)}
+.comp-cifra{font-size:13px;color:var(--humo);margin:0 0 10px}
+.comp-cifra b{color:var(--lacre);font-size:15px}
+.comp-item{border-top:1px solid var(--linea);padding:8px 0 0;margin-top:8px;font-size:13px;line-height:1.45}
+.comp-item a{color:var(--tinta2);text-decoration:none}
+.comp-item a:hover{color:var(--lacre)}
+.comp-fecha{color:var(--humo);font-size:11.5px;display:block;margin-top:2px}
+.comp-vacio{font-size:13px;color:var(--humo);font-style:italic}
 /* Requisitos: la lista de la norma y su cita al pie. */
 .req-lista{margin:6px 0 0;padding-left:22px;font-size:14.5px;color:var(--tinta2);line-height:1.55}
 .req-lista li{margin-bottom:7px}
@@ -1138,6 +1149,8 @@ function nuevoEstado(){
           cita:{texto:"",cargando:false,error:null,salida:null},
           // Consulta de un artículo del código o de una ley (solapa Norma).
           norma:{clave:"ccyc",art:"",cargando:false,error:null,salida:null},
+          // Comparador: la misma consulta corrida en las seis fuentes a la vez.
+          comparar:{corriendo:false,hecho:false,q:"",porFuente:{}},
           indices:nuevoIndices()};
 }
 
@@ -1951,7 +1964,7 @@ function pintarCadena(){
 /* ============================================================
    6. Vistas
    ============================================================ */
-var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos","Requisitos"],["norma","Norma"],["fuentes","Fuentes"],
+var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos","Requisitos"],["comparar","Comparar"],["norma","Norma"],["fuentes","Fuentes"],
           ["citas","Citar"],["verificar","Verificar"],["guardados","Guardados"],["cuenta","Cuenta"]];
 
 function pintarNav(){
@@ -1981,7 +1994,7 @@ function pintarRail(){
   var w=document.getElementById("wrap");
   // "requisitos" también queda sin riel: el filtro de ahí es por RAMA, y acá
   // el listado es por TRÁMITE — mostrarlo daría un control que no filtra nada.
-  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos"||estado.tab==="norma");
+  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos"||estado.tab==="norma"||estado.tab==="comparar");
   if(w) w.classList.toggle("sin-rail",sinRail);
   if(sinRail){ r.innerHTML=""; return; }
   r.innerHTML='<input type="text" id="buscarRama" class="rail-buscador" value="'+esc(estado.buscarRama)+
@@ -3020,6 +3033,147 @@ var NORMAS_UI=[
  * El texto no lo escribe esta web: lo trae de InfoLeg, que es el repositorio
  * del Ministerio de Justicia, en su versión "texto actualizado".
  */
+/* Cómo se agrupan las seis fuentes al compararlas. Es la pregunta real que
+   se hace un abogado —"¿qué dice Mendoza, qué dice Nación, qué dice CABA?"—
+   y no coincide con el orden de la lista de buscadores: Mendoza son dos
+   fuentes (el Poder Judicial y la revista) y Nación otras dos (la Corte y
+   SAIJ). Dialnet va aparte porque no es jurisprudencia. */
+var GRUPOS_COMPARAR=[
+  ["Mendoza",  ["mendoza","mendozalegal"]],
+  ["Nación",   ["csjn","saij"]],
+  ["CABA",     ["caba"]],
+  ["Doctrina", ["dialnet"]]
+];
+
+/**
+ * Corre la MISMA consulta en las seis fuentes a la vez.
+ *
+ * En paralelo y no una tras otra: son seis servidores distintos, así que la
+ * espera de cortesía del backend (esperarTurno, por host) no se pisa entre
+ * ellos. Secuencial tardaría unos cuarenta segundos —CABA sola tarda
+ * catorce—; así tarda lo que la más lenta.
+ *
+ * Cada fuente se pinta apenas contesta, sin esperar a las demás: con una
+ * lenta en el grupo, quedarse mirando una pantalla vacía sería peor.
+ */
+function compararFuentes(){
+  var qi=estado.q.trim();
+  if(!qi){ flash("Escribí algo en «Qué buscás» primero"); return; }
+  if(!estado.api){ flash("El comparador necesita el servidor de extracción"); return; }
+  recordar(qi);
+  estado.comparar={corriendo:true,hecho:false,q:qi,porFuente:{}};
+  render();
+
+  var pendientes=FUENTES_INDICE.length;
+  FUENTES_INDICE.forEach(function(f){
+    var cuerpo={q:qi,modo:estado.modo||"todas"};
+    if(estado.excluir.trim()) cuerpo.excluir=estado.excluir.trim();
+    if(/^\d{4}$/.test(estado.desde)) cuerpo.anioDesde=Number(estado.desde);
+    if(/^\d{4}$/.test(estado.hasta)) cuerpo.anioHasta=Number(estado.hasta);
+    var trib=estado.indices[f.slug]&&estado.indices[f.slug].tribunal;
+    if(trib) cuerpo.tribunal=trib;
+
+    fetch(estado.api+"/indice/"+f.slug+"/buscar",{
+      method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cuerpo)
+    }).then(function(r){ return r.json(); })
+      .then(function(d){
+        // Mismo respaldo que en el buscador normal: a SAIJ el servidor
+        // publicado no llega (403), pero el navegador sí.
+        if((f.slug==="saij"||f.slug==="csjn")&&(!d||!d.ok)) return buscarSaijNavegador(cuerpo,f.slug);
+        return d;
+      })
+      .then(function(d){
+        estado.comparar.porFuente[f.slug]=(d&&d.ok)
+          ?{ok:true,total:d.total||0,totalFuente:(typeof d.totalFuente==="number"?d.totalFuente:null),
+            parcial:!!d.totalParcial,local:!!d.desdeIndiceLocal,resultados:d.resultados||[]}
+          :{ok:false,error:(d&&d.mensaje)||"no respondió"};
+      })
+      ["catch"](function(){
+        estado.comparar.porFuente[f.slug]={ok:false,error:"se cortó la comunicación"};
+      })
+      .then(function(){
+        if(--pendientes<=0){ estado.comparar.corriendo=false; estado.comparar.hecho=true; }
+        render();
+      });
+  });
+}
+
+function tarjetaComparar(f){
+  var r=estado.comparar.porFuente[f.slug];
+  var cab='<h4><span class="cod '+f.clase+'" style="margin-right:7px">'+esc(f.cod)+'</span>'+esc(f.nombre)+'</h4>';
+  var borde=' style="border-left-color:var(--f-'+f.slug+')"';
+
+  if(!r) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Consultando…</p></div>';
+  if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">No respondió: '+esc(r.error)+'</p></div>';
+  if(!r.resultados.length) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Sin coincidencias.</p></div>';
+
+  // Ojo con qué número se muestra. "total" NO significa lo mismo en las seis:
+  // donde el sitio resuelve el modo por su cuenta es su contador entero (CABA
+  // devolvió 356 con 20 filas en la mano), y donde filtramos nosotros es lo
+  // que quedó de la muestra revisada. Mezclarlos en una tarjeta de
+  // comparación sería el peor lugar para hacerlo, porque el sentido de esta
+  // pantalla es justamente comparar magnitudes entre jurisdicciones.
+  // Se muestra el tamaño del material (totalFuente, lo que el sitio devuelve)
+  // y aparte cuántos se están viendo.
+  var grande=(r.totalFuente!==null?r.totalFuente:r.total);
+  var cifra='<p class="comp-cifra"><b>'+grande.toLocaleString("es-AR")+'</b> filas para esta consulta'+
+    ' · se muestran '+Math.min(3,r.resultados.length)+
+    (r.local?' · de tu índice local':'')+
+    (r.parcial?' · revisión parcial':'')+'</p>';
+
+  var items=r.resultados.slice(0,3).map(function(x){
+    var enlace=x.linkFicha||x.linkFallo;
+    var titulo=esc((x.caratula||x.expediente||"(sin carátula)").slice(0,150));
+    return '<div class="comp-item">'+
+      (enlace?'<a href="'+esc(enlace)+'" target="_blank" rel="noopener noreferrer">'+titulo+'</a>':titulo)+
+      (x.fecha?'<span class="comp-fecha">'+esc(x.fecha)+'</span>':'')+
+      '</div>';
+  }).join("");
+
+  return '<div class="comp-card"'+borde+'>'+cab+cifra+items+
+    '<div class="f-acc" style="margin-top:10px">'+
+      '<button class="mini" data-act="ir-a-fuente" data-fuente="'+esc(f.slug)+'">Ver todos en Buscar</button>'+
+    '</div></div>';
+}
+
+/**
+ * Solapa Comparar: la misma pregunta contestada por cada jurisdicción.
+ *
+ * Antes esto existía como "Buscar en todas a la vez", pero no buscaba en
+ * ningún lado: armaba una consulta de Google con site: y abría otra pestaña.
+ * Ahora corre de verdad contra los seis buscadores integrados y muestra las
+ * respuestas juntas, que es la pregunta que un abogado se hace todo el
+ * tiempo: si Mendoza resuelve distinto que la Corte, quiero verlo de un
+ * vistazo, no abriendo seis solapas.
+ */
+function vistaComparar(){
+  var c=estado.comparar;
+  var html='<div class="aviso"><strong>La misma consulta, en las seis fuentes.</strong> Para ver de un vistazo si Mendoza, la Nación y CABA resuelven igual o distinto. '+
+    'Usa lo que tengas puesto en <strong>Buscar</strong>: la consulta, el modo, las exclusiones y el rango de años.</div>'+
+    '<div class="aviso" style="border-style:dashed"><strong>Las cifras no son comparables entre sí sin leer la letra chica.</strong> Cada buscador cuenta a su manera: '+
+    'SAIJ informa los documentos que tienen <em>alguna</em> de las palabras (por eso da decenas de miles), mientras Mendoza y CABA exigen todas. '+
+    'El número sirve para ver si un tema está muy o poco tratado en cada lado — no para decir que una jurisdicción tiene más fallos que otra.</div>';
+
+  html+='<div class="panel"><div class="campo"><span>Qué buscás</span>'+
+    '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></div>'+
+    '<div class="acciones" style="margin:0;padding:0;border:0">'+
+      '<button class="btn" data-act="comparar"'+(c.corriendo?" disabled":"")+'>'+
+        (c.corriendo?"Consultando las seis…":"Comparar las seis fuentes")+'</button>'+
+    '</div></div>';
+
+  if(!c.corriendo&&!c.hecho) return html;
+
+  html+='<p class="conteo">'+(c.corriendo?'Consultando… cada fuente aparece apenas contesta':'Resultados para «'+esc(c.q)+'»')+'</p>';
+
+  GRUPOS_COMPARAR.forEach(function(g){
+    var fs=FUENTES_INDICE.filter(function(f){ return g[1].indexOf(f.slug)!==-1; });
+    if(!fs.length) return;
+    html+='<div class="grupo"><h3>'+esc(g[0])+'</h3>'+
+      '<div class="comp-grid">'+fs.map(tarjetaComparar).join("")+'</div></div>';
+  });
+  return html;
+}
+
 function vistaNorma(){
   var n=estado.norma;
   var opciones=NORMAS_UI.map(function(x){
@@ -3683,7 +3837,7 @@ function render(){
     pintarNav();
     pintarRail();
     var v=document.getElementById("vista");
-    var f={buscar:vistaBuscar,lector:vistaLector,ramas:vistaRamas,requisitos:vistaRequisitos,norma:vistaNorma,fuentes:vistaFuentes,
+    var f={buscar:vistaBuscar,lector:vistaLector,ramas:vistaRamas,requisitos:vistaRequisitos,comparar:vistaComparar,norma:vistaNorma,fuentes:vistaFuentes,
            citas:vistaCitas,verificar:vistaVerificar,guardados:vistaGuardados,
            cuenta:vistaCuenta}[estado.tab]||vistaBuscar;
     v.innerHTML=f();
@@ -3810,6 +3964,15 @@ document.addEventListener("click",function(ev){
       estado.ambitos[k]=true; flash("Dejá al menos un ámbito activo");
     }
     render(); return;
+  }
+  if(act==="comparar"){ compararFuentes(); return; }
+  if(act==="ir-a-fuente"){
+    // Del comparador al buscador normal, con esa fuente ya buscada: es el
+    // paso natural cuando una de las seis tiene lo que se estaba buscando.
+    var slugIr=b.getAttribute("data-fuente");
+    estado.tab="buscar"; render(); window.scrollTo(0,0);
+    buscarEnFuente(slugIr);
+    return;
   }
   if(act==="ver-articulo"){
     var sel=document.getElementById("norma-clave"), inp=document.getElementById("norma-art");
