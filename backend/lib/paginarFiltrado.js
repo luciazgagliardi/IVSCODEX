@@ -68,6 +68,7 @@ import { filtrarPorModo } from './relevancia.js';
  */
 export async function paginarFiltrado({
   traer, desde = 0, total = 0, porPagina = 20, q, modo = 'todas', excluir = '', maxTandas = 5,
+  anioDesde = null, anioHasta = null,
 }) {
   const cuantasHay = () => (typeof total === 'function' ? Number(total()) || 0 : Number(total) || 0);
   const arranque = Math.max(0, Number(desde) || 0);
@@ -98,15 +99,15 @@ export async function paginarFiltrado({
     // Sin aflojar mientras se recorre: si con todas las palabras ya alcanza
     // para llenar la página, no hace falta pedir otra tanda ni bajar el
     // listón. Aflojar es el último recurso y se decide recién al final.
-    const { lista } = filtrarPorModo(revisados, { q, modo, excluir, aflojar: false });
+    const { lista } = filtrarPorModo(revisados, { q, modo, excluir, anioDesde, anioHasta, aflojar: false });
     if (lista.length >= porPagina) break;
     if (cuantasHay() && cursor >= cuantasHay()) { agotado = true; break; }
   }
 
-  let { lista, aflojado } = filtrarPorModo(revisados, { q, modo, excluir, aflojar: false });
+  let { lista, aflojado } = filtrarPorModo(revisados, { q, modo, excluir, anioDesde, anioHasta, aflojar: false });
   // Recién ahora, agotadas las tandas, se permite aflojar: devolver algo
   // parecido avisando que se aflojó es mejor que devolver cero.
-  if (!lista.length) ({ lista, aflojado } = filtrarPorModo(revisados, { q, modo, excluir }));
+  if (!lista.length) ({ lista, aflojado } = filtrarPorModo(revisados, { q, modo, excluir, anioDesde, anioHasta }));
 
   const resultados = lista.slice(0, porPagina);
 

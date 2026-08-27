@@ -38,6 +38,7 @@ import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { urlParaPedir, sinClave } from './proxyOrigen.js';
 import { errores } from './errores.js';
+import { paginarFiltrado } from './paginarFiltrado.js';
 
 const HOST = 'jurisprudencia.tsjbaires.gob.ar';
 // Este servidor no habla HTTPS (IIS 6, año ~2003): es a propósito que sea http.
@@ -223,57 +224,112 @@ function errorDelSitio(html) {
   return null;
 }
 
-export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null }) {
+export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
-  // CABA es la única que resuelve los tres modos y la exclusión en su propio
-  // formulario, así que acá no se filtra nada y su paginación YA es la de los
-  // resultados: la fila del cursor y el número de página son el mismo dato
-  // visto de dos maneras. Se acepta el cursor igual para que las seis fuentes
-  // hablen el mismo idioma (ver lib/paginarFiltrado.js).
+  // CABA resuelve los tres modos y la exclusión en su propio formulario, así
+  // que mientras no haya rango de años acá no se filtra nada y su paginación
+  // YA es la de los resultados: la fila del cursor y el número de página son
+  // el mismo dato visto de dos maneras. Se acepta el cursor igual para que
+  // las seis fuentes hablen el mismo idioma (ver lib/paginarFiltrado.js).
   const arranque = desde === null ? (Math.max(1, pagina) - 1) * porPagina : Math.max(0, desde);
-  const paginaSitio = Math.floor(arranque / porPagina) + 1;
 
   const campo = CAMPO_POR_MODO[modo] || CAMPO_POR_MODO.todas;
-  const parametros = {
+  const base = {
     [campo]: termino,
     // El sitio también sabe excluir por su cuenta, así que no hace falta
     // filtrar después: se le pasa tal cual lo que se escribió en "Excluir".
     ...(String(excluir || '').trim() ? { textoLibreExcluyendo: String(excluir).trim() } : {}),
     hdnPaginaOrigen: 'busqueda.asp',
-    pag: String(paginaSitio),
     cantRegPagina: String(porPagina),
   };
 
-  // Es un servidor viejo que trunca la respuesta cada tanto sin motivo. Un
-  // reintento cubre ese caso; si vuelve a fallar es que está caído de verdad,
-  // y ahí no se insiste más: esperarTurno ya deja una pausa entre los dos.
-  let html = await pedirBusqueda(parametros);
-  let total = sacarTotal(html);
-  let resultados = total ? parsearFilas(html) : [];
-  if (total && !resultados.length) {
-    html = await pedirBusqueda(parametros);
-    total = sacarTotal(html);
-    resultados = total ? parsearFilas(html) : [];
+  /**
+   * Una tanda de filas que empiece en `offset`.
+   *
+   * Su formulario pagina por número de página con tamaño fijo, así que el
+   * offset se traduce a página y se recortan las filas sobrantes de adelante
+   * — igual que en lib/indiceMza.js. Devuelve también el total del sitio, que
+   * viene en el mismo HTML.
+   */
+  let totalSitio = null;
+  const traerDesde = async (offset) => {
+    const parametros = { ...base, pag: String(Math.floor(offset / porPagina) + 1) };
+    const sobran = offset % porPagina;
+
+    // Es un servidor viejo que trunca la respuesta cada tanto sin motivo. Un
+    // reintento cubre ese caso; si vuelve a fallar es que está caído de verdad,
+    // y ahí no se insiste más: esperarTurno ya deja una pausa entre los dos.
+    let html = await pedirBusqueda(parametros);
+    let total = sacarTotal(html);
+    let filas = total ? parsearFilas(html) : [];
+    if (total && !filas.length) {
+      html = await pedirBusqueda(parametros);
+      total = sacarTotal(html);
+      filas = total ? parsearFilas(html) : [];
+    }
+    if (total === null) throw errores.indiceFuenteFalla('caba', 'no encontré el contador de resultados');
+    if (total && !filas.length) {
+      // Dice que hay resultados pero no vino ninguno: pasa cuando su servidor
+      // corta la respuesta o se le cae la base. Mejor avisar qué pasó que
+      // devolver una lista vacía como si la búsqueda no hubiera encontrado nada.
+      throw errores.indiceFuenteFalla('caba', errorDelSitio(html) || 'cortó la respuesta antes de listar los resultados, probá de nuevo');
+    }
+    if (totalSitio === null) totalSitio = total;
+    return filas.slice(sobran);
+  };
+
+  // Con rango de años el sitio ya no alcanza —su formulario no lo acepta— y
+  // CABA pasa a comportarse como las otras cinco: se recorren filas y se
+  // filtra acá, con el mismo cursor que evita pisar resultados entre páginas.
+  if (anioDesde || anioHasta) {
+    const salida = await paginarFiltrado({
+      traer: traerDesde,
+      desde: arranque,
+      total: () => totalSitio || 0,
+      porPagina,
+      q: termino,
+      // El modo ya lo aplicó el sitio al elegir el campo del formulario:
+      // volver a exigirlo acá descartaría de más. Lo único que se filtra de
+      // este lado es el año.
+      modo: 'alguna',
+      excluir: '',
+      anioDesde,
+      anioHasta,
+      // Cinco tandas de veinte = cien filas por página de resultados. Es
+      // poco para un rango de años angosto, y se nota: este sitio ordena por
+      // fecha descendente, así que pedir "2020 a 2022" sobre una consulta con
+      // cientos de resultados recientes puede devolver cero en la primera
+      // página y obligar a pasar varias. Sube mal: probado contra el sitio,
+      // cantRegPagina=100 y 200 lo hacen expirar (25s sin responder), así
+      // que veinte por pedido es su techo real. La app no lo esconde —
+      // devuelve totalParcial y el panel dice cuántas filas se revisaron.
+      maxTandas: 5,
+    });
+    if (!totalSitio) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
+    return {
+      total: salida.resultados.length,
+      totalFuente: totalSitio,
+      siguienteDesde: salida.siguienteDesde,
+      totalParcial: salida.siguienteDesde !== null,
+      revisados: salida.revisados,
+      aflojado: salida.aflojado,
+      pagina,
+      porPagina,
+      resultados: salida.resultados,
+    };
   }
 
-  if (total === null) throw errores.indiceFuenteFalla('caba', 'no encontré el contador de resultados');
-  if (total === 0) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
-
-  // Dice que hay resultados pero no vino ninguno: pasa cuando su servidor
-  // corta la respuesta o se le cae la base. Mejor avisar qué pasó que
-  // devolver una lista vacía como si la búsqueda no hubiera encontrado nada.
-  if (!resultados.length) {
-    throw errores.indiceFuenteFalla('caba', errorDelSitio(html) || 'cortó la respuesta antes de listar los resultados, probá de nuevo');
-  }
+  const resultados = await traerDesde(arranque);
+  if (!totalSitio) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
   // Su contador ES el total: totalFuente y total coinciden siempre.
   const hasta = arranque + resultados.length;
   return {
-    total,
-    totalFuente: total,
-    siguienteDesde: hasta < total ? hasta : null,
+    total: totalSitio,
+    totalFuente: totalSitio,
+    siguienteDesde: hasta < totalSitio ? hasta : null,
     pagina,
     porPagina,
     resultados,

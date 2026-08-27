@@ -1858,6 +1858,26 @@ function nombreRama(id){
 /* ============================================================
    5. Barra de cadena
    ============================================================ */
+/** El rango de años que hay puesto ahora, tal como viaja al servidor. */
+function rangoAnios(){
+  return {
+    a: /^\d{4}$/.test(estado.desde) ? Number(estado.desde) : null,
+    b: /^\d{4}$/.test(estado.hasta) ? Number(estado.hasta) : null
+  };
+}
+function mismoRango(x,y){ return !!x && !!y && x.a===y.a && x.b===y.b; }
+
+/**
+ * Cambiar el rango de años con resultados en pantalla deja esos resultados
+ * viejos: se trajeron con OTRO filtro.
+ *
+ * No se re-lanzan las seis búsquedas solas —serían seis pedidos a organismos
+ * oficiales por cada tecla que se toca en el campo del año— y tampoco se
+ * borra lo que ya está, que sería perder trabajo hecho. Se marca, y el panel
+ * de cada fuente lo dice con un botón para rehacerla. Ver panelIndice.
+ */
+function invalidarBusquedas(){ render(); }
+
 function pintarCadena(){
   var el=document.getElementById("cadena");
   if(!el) return; // solo existe en el campo "Qué buscás" de la solapa Buscar
@@ -2601,6 +2621,9 @@ function buscarEnFuente(slug,pagina){
   // pisar a la nueva. Un token por pedido: solo aplica si nadie más
   // arrancó una búsqueda de esta misma fuente después.
   var pedido=(imBusco.pedido||0)+1; imBusco.pedido=pedido;
+  // Con qué rango de años se está pidiendo esto, para poder avisar después
+  // si el usuario lo cambia y lo que quedó en pantalla ya no corresponde.
+  imBusco.filtro=rangoAnios();
   // Distinto de "pedido": esto identifica la búsqueda (q/modo/tribunal),
   // no cada clic. Cambia solo con una búsqueda nueva, así que ir pasando
   // de página a mano no corta la precarga de fondo de esta misma búsqueda
@@ -2615,6 +2638,12 @@ function buscarEnFuente(slug,pagina){
   // cálculo por número de página, que es justo lo que se pisaba.
   if(typeof imBusco.cursores[paginaPedida]==="number") cuerpo.desde=imBusco.cursores[paginaPedida];
   if(estado.excluir.trim()) cuerpo.excluir=estado.excluir.trim();
+  // El rango de años. Antes estos dos campos existían en pantalla pero NO
+  // viajaban: sólo se usaban para la búsqueda de respaldo por Google
+  // (rangoFechas), así que poner "2015–2026" y buscar en Mendoza devolvía
+  // fallos de cualquier año. Una promesa rota en la interfaz.
+  if(/^\d{4}$/.test(estado.desde)) cuerpo.anioDesde=Number(estado.desde);
+  if(/^\d{4}$/.test(estado.hasta)) cuerpo.anioHasta=Number(estado.hasta);
   if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
   fetch(estado.api+"/indice/"+slug+"/buscar",{
     method:"POST",headers:{"Content-Type":"application/json"},
@@ -2808,8 +2837,15 @@ function panelIndice(f){
       (f.nota?' <span style="color:var(--humo)">'+esc(f.nota)+'</span>':'')+'</p></div>';
     return out;
   }
-  var avisoLocal=local?'<div class="aviso" style="margin:0 0 10px"><strong>El buscador de '+esc(f.nombre)+' no respondió'+
-    (im.avisoFalla?' ('+esc(im.avisoFalla)+')':'')+'.</strong> Esto es lo que ya tenías guardado de búsquedas anteriores en tu índice local — puede estar incompleto o desactualizado. Probá de nuevo en un rato para la versión en vivo.</div>':'';
+  // Los resultados en pantalla se trajeron con el rango de años que había en
+  // ese momento; si desde entonces se tocó, hay que decirlo en vez de dejar
+  // una lista que ya no corresponde al filtro puesto (ver invalidarBusquedas).
+  var avisoRango=(im.busco&&!mismoRango(im.filtro,rangoAnios()))
+    ? '<div class="aviso" style="margin:0 0 10px"><strong>Cambiaste el rango de años.</strong> Estos resultados son de la búsqueda anterior y no respetan el rango que tenés puesto ahora. '+
+      '<button class="mini" data-act="buscar-indice" data-fuente="'+esc(f.slug)+'" style="margin-left:6px">Rehacer la búsqueda</button></div>'
+    : '';
+  var avisoLocal=avisoRango+(local?'<div class="aviso" style="margin:0 0 10px"><strong>El buscador de '+esc(f.nombre)+' no respondió'+
+    (im.avisoFalla?' ('+esc(im.avisoFalla)+')':'')+'.</strong> Esto es lo que ya tenías guardado de búsquedas anteriores en tu índice local — puede estar incompleto o desactualizado. Probá de nuevo en un rato para la versión en vivo.</div>':'');
   if(!im.resultados.length){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+
       (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Probá con menos palabras.</p></div>';
@@ -3890,8 +3926,8 @@ document.addEventListener("input",function(ev){
   // en mitad de la frase. El repintado llega solo cuando se toca "Verificar".
   else if(id==="cita-in"){estado.cita.texto=ev.target.value;}
   else if(id==="excluir"){estado.excluir=ev.target.value;pintarCadena();}
-  else if(id==="desde"){estado.desde=ev.target.value;pintarCadena();}
-  else if(id==="hasta"){estado.hasta=ev.target.value;pintarCadena();}
+  else if(id==="desde"){estado.desde=ev.target.value;pintarCadena();invalidarBusquedas();}
+  else if(id==="hasta"){estado.hasta=ev.target.value;pintarCadena();invalidarBusquedas();}
 },false);
 
 /* Archivo elegido en el Lector: se manda tal cual al servidor, que decide
