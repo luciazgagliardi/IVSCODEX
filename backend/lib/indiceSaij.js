@@ -193,7 +193,7 @@ function aRegistro(bruto) {
 const PAGINAS_A_REVISAR = 3;
 const POR_PEDIDO = 100;
 
-export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false, desde = null }) {
+export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false, desde = null, anioDesde = null, anioHasta = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
@@ -243,6 +243,8 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
     q: termino,
     modo,
     excluir,
+    anioDesde,
+    anioHasta,
     maxTandas: PAGINAS_A_REVISAR,
   });
 

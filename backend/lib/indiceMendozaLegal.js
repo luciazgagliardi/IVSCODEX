@@ -315,7 +315,7 @@ function parsearItems(posts) {
  * @param {string} [args.modo] "exacta" | "todas" | "alguna". "todas" lo hace
  *   el sitio; los otros dos se resuelven acá (ver lib/relevancia.js).
  */
-export async function buscarMendozaLegal({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null }) {
+export async function buscarMendozaLegal({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
@@ -332,7 +332,7 @@ export async function buscarMendozaLegal({ q, modo = 'todas', excluir = '', pagi
   const primera = await traer(arranque);
   if (!total) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
-  const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim();
+  const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim() || anioDesde || anioHasta;
   if (!hayQueFiltrar) {
     // Sin filtro, la tanda es más grande que la página: se muestra lo que
     // entra y el cursor avanza solo por lo mostrado.
@@ -354,7 +354,7 @@ export async function buscarMendozaLegal({ q, modo = 'todas', excluir = '', pagi
       if (!primeraServida && offset === arranque) { primeraServida = true; return primera; }
       return traer(offset);
     },
-    desde: arranque, total: () => total, porPagina, q: termino, modo, excluir,
+    desde: arranque, total: () => total, porPagina, q: termino, modo, excluir, anioDesde, anioHasta,
     maxTandas: MAX_TANDAS,
   });
 

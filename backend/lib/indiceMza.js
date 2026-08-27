@@ -205,7 +205,7 @@ const FICHAS_POR_TANDA = 60;
 /** Cuántas tandas como mucho en un mismo pedido. Ver lib/paginarFiltrado.js. */
 const MAX_TANDAS = 3;
 
-export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir = '', tribunal = 'SC', pagina = 1, porPagina = 20, desde = null }) {
+export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir = '', tribunal = 'SC', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
   const partes = String(partesForm || '').trim();
   const libre = partes ? '' : String(q || '').trim();
   if (!libre && !partes) throw errores.consultaVacia();
@@ -217,7 +217,7 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
   const { total, sql } = await armarSql({ libre, partes, tribunal });
   if (total <= 0) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
-  const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim();
+  const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim() || anioDesde || anioHasta;
   const arranque = desde === null ? (Math.max(1, pagina) - 1) * (hayQueFiltrar ? FICHAS_POR_TANDA : porPagina) : Math.max(0, desde);
 
   if (!hayQueFiltrar) {
@@ -258,7 +258,7 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
   };
 
   const { resultados, revisados, siguienteDesde, aflojado } = await paginarFiltrado({
-    traer, desde: arranque, total, porPagina, q: partes || libre, modo, excluir, maxTandas: MAX_TANDAS,
+    traer, desde: arranque, total, porPagina, q: partes || libre, modo, excluir, anioDesde, anioHasta, maxTandas: MAX_TANDAS,
   });
 
   return {

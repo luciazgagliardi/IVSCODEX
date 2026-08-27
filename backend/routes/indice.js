@@ -21,6 +21,12 @@ import { errores, ErrorApp } from '../lib/errores.js';
 
 export const router = express.Router();
 
+/** Un año utilizable: cuatro cifras dentro de un rango con sentido judicial. */
+function anioValido(v) {
+  const n = Number(v);
+  return Number.isInteger(n) && n >= 1800 && n <= 2200;
+}
+
 /** Los modos de búsqueda que entiende la API. Cualquier otro se ignora. */
 const MODOS = new Set(['exacta', 'todas', 'alguna']);
 
@@ -109,7 +115,7 @@ function recortarPasaje(texto, q) {
 for (const { slug, buscar } of FUENTES) {
   router.post(`/indice/${slug}/buscar`, async (req, res, next) => {
     try {
-      const { q, pagina, desde, tribunal, modo, excluir } = req.body || {};
+      const { q, pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta } = req.body || {};
       if (!q) throw errores.consultaVacia();
 
       const arranque = Date.now();
@@ -125,6 +131,12 @@ for (const { slug, buscar } of FUENTES) {
           // de vuelta tal cual. Numerar las páginas no alcanza cuando el
           // filtro corre de este lado — ver lib/paginarFiltrado.js.
           ...(Number.isFinite(Number(desde)) && Number(desde) >= 0 ? { desde: Number(desde) } : {}),
+          // Rango de años. Ojo con el nombre: "desde" de arriba es el CURSOR
+          // (una fila del sitio) y esto es un AÑO — dos cosas distintas que
+          // se llaman parecido, de ahí "anioDesde". Se filtra en
+          // lib/relevancia.js, igual para las seis fuentes.
+          ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}),
+          ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}),
           // El modo lo entiende cada fuente a su manera: CABA lo resuelve en
           // el propio sitio, Mendoza y SAIJ lo filtran despues. Ver
           // lib/relevancia.js.

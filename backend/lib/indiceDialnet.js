@@ -176,7 +176,7 @@ const PAGINAS_A_REVISAR = 5;
  * Solo "exacta" (frase textual) y "excluir" se resuelven acá, igual que en
  * Mendoza, porque esos dos si hace falta garantizarlos.
  */
-export async function buscarDialnet({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = POR_PAGINA_DIALNET, desde = null }) {
+export async function buscarDialnet({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = POR_PAGINA_DIALNET, desde = null, anioDesde = null, anioHasta = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
@@ -197,7 +197,7 @@ export async function buscarDialnet({ q, modo = 'todas', excluir = '', pagina = 
   const primera = await traer(arranque);
   if (!total) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
-  const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim();
+  const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim() || anioDesde || anioHasta;
   if (!hayQueFiltrar) {
     const hasta = arranque + primera.length;
     return {
@@ -220,7 +220,7 @@ export async function buscarDialnet({ q, modo = 'todas', excluir = '', pagina = 
       if (!primeraServida && offset === arranque) { primeraServida = true; return primera; }
       return traer(offset);
     },
-    desde: arranque, total: () => total, porPagina, q: termino, modo, excluir,
+    desde: arranque, total: () => total, porPagina, q: termino, modo, excluir, anioDesde, anioHasta,
     maxTandas: PAGINAS_A_REVISAR,
   });
 

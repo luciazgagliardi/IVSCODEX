@@ -108,6 +108,50 @@ function cuantas(pajar, raices) {
 }
 
 /**
+ * El año de una fecha, venga en el formato que venga.
+ *
+ * Hace falta porque las seis fuentes la escriben distinto, medido sobre lo
+ * ya guardado en backend/indice/:
+ *
+ *   CABA          "29/4/2026"                 (dia y mes sin cero adelante)
+ *   CSJN / SAIJ   "04/04/1995"
+ *   Mendoza       "03/08/2026 - Sentencia"    (con el tipo de fallo pegado)
+ *   Mendoza Legal "11/06/2026", a veces "06/2026", a veces vacia
+ *   Dialnet       "2008"                      (solo el año: es doctrina)
+ *
+ * Se busca el primer numero de cuatro cifras que empiece con 19 o 20. Los
+ * separadores hacen de frontera, asi que en "19/03/2020" no se confunde el
+ * dia con el año: para que "19" matcheara harian falta dos digitos mas
+ * pegados, y lo que sigue es una barra.
+ *
+ * Devuelve null cuando no hay nada reconocible — el registro no dice cuando
+ * fue, no es que sea del año cero.
+ */
+export function anioDe(texto) {
+  const m = /\b(?:19|20)\d{2}\b/.exec(String(texto || ''));
+  return m ? parseInt(m[0], 10) : null;
+}
+
+/**
+ * ¿Este registro cae dentro del rango de años pedido?
+ *
+ * Un registro SIN fecha reconocible queda AFUERA cuando hay rango puesto.
+ * Es una decision con costo y conviene tenerla a la vista: se pierde algo
+ * que quiza servia. Pero al reves es peor — quien filtra "de 2015 en
+ * adelante" esta diciendo que lo viejo no le sirve, y colar registros de
+ * fecha desconocida en esa lista es exactamente el ruido que el filtro
+ * venia a sacar. Sin rango puesto no se descarta nada, claro.
+ */
+function entraEnRango(registro, desde, hasta) {
+  if (!desde && !hasta) return true;
+  const anio = anioDe(registro && registro.fecha);
+  if (anio === null) return false;
+  if (desde && anio < desde) return false;
+  if (hasta && anio > hasta) return false;
+  return true;
+}
+
+/**
  * Filtra una lista de resultados segun el modo pedido.
  *
  * Devuelve { lista, aflojado }. "aflojado" avisa que no hubo ningun resultado
@@ -116,19 +160,32 @@ function cuantas(pajar, raices) {
  * coincidencia completa.
  *
  * @param {object[]} registros
- * @param {{q: string, modo?: string, excluir?: string, aflojar?: boolean}} consulta
+ * @param {{q: string, modo?: string, excluir?: string, aflojar?: boolean,
+ *          anioDesde?: number, anioHasta?: number}} consulta
  *   modo: "exacta" | "todas" | "alguna" (por defecto "todas")
  *   aflojar: si false, "todas" exige todas las palabras y no cede (lo usa
  *   quien va a seguir buscando en la pagina siguiente antes de rendirse).
+ *   anioDesde/anioHasta: rango de años. Se filtra ACA y no en cada sitio
+ *   porque de las seis fuentes ninguna acepta un rango de años de forma
+ *   confiable por su formulario, y hacerlo en un solo lugar garantiza que
+ *   "de 2015 a 2020" signifique lo mismo en las seis.
  */
-export function filtrarPorModo(registros, { q, modo = 'todas', excluir = '', aflojar = true }) {
+export function filtrarPorModo(registros, { q, modo = 'todas', excluir = '', aflojar = true, anioDesde = null, anioHasta = null }) {
   const raices = raicesDe(q);
   const raicesFuera = raicesDe(excluir);
 
+  // El rango de años es una condicion dura: se aplica antes que nada y no
+  // se afloja nunca, ni siquiera cuando abajo se baja el liston de las
+  // palabras. Pedir "desde 2015" y recibir un fallo de 1998 porque no habia
+  // otra cosa seria peor que no recibir nada.
+  const enFecha = (anioDesde || anioHasta)
+    ? registros.filter((r) => entraEnRango(r, anioDesde, anioHasta))
+    : registros;
+
   // Lo excluido se saca siempre, cualquiera sea el modo.
   const vivos = raicesFuera.length
-    ? registros.filter((r) => cuantas(pajarDe(r), raicesFuera) === 0)
-    : registros.slice();
+    ? enFecha.filter((r) => cuantas(pajarDe(r), raicesFuera) === 0)
+    : enFecha.slice();
 
   if (!raices.length) return { lista: vivos, aflojado: false };
 
