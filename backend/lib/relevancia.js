@@ -76,7 +76,13 @@ export const VACIAS = new Set([
 export function palabrasUtiles(q) {
   return plegar(q)
     .split(/[^a-z0-9ñ]+/)
-    .filter((p) => p.length >= 3 && !VACIAS.has(p));
+    // Los NÚMEROS entran siempre, midan lo que midan. El corte de tres
+    // letras existe para descartar ruido ("de", "el", "un"), pero aplicado a
+    // cifras rompía la búsqueda por artículo justo en los más citados: "art
+    // 13" perdía el 13 y quedaba pidiendo sólo "art", y "13" a secas se
+    // quedaba sin ninguna raíz, con lo cual el filtro dejaba pasar TODO.
+    // Igual con "art 14 bis", "art 19 CN", "art 3 CCyC".
+    .filter((p) => (/^\d+$/.test(p) || p.length >= 3) && !VACIAS.has(p));
 }
 
 /**
@@ -89,7 +95,16 @@ export function palabrasUtiles(q) {
  */
 export function raicesDe(q) {
   return palabrasUtiles(q)
-    .sort((a, b) => b.length - a.length)
+    // Los números primero: son lo más específico que puede traer una
+    // consulta. Importa porque cuando no hay coincidencia completa se
+    // afloja quedándose con la PRIMERA raíz, y ordenando sólo por largo
+    // ganaba "art" (3 letras) sobre "13" (2), o sea que buscar el artículo
+    // 13 terminaba devolviendo cualquier fallo que dijera "artículo".
+    .sort((a, b) => {
+      const na = /^\d+$/.test(a), nb = /^\d+$/.test(b);
+      if (na !== nb) return na ? -1 : 1;
+      return b.length - a.length;
+    })
     .map((p) => p.slice(0, 6));
 }
 
@@ -102,9 +117,25 @@ function pajarDe(registro) {
   );
 }
 
+/**
+ * ¿Aparece esta raíz en el texto?
+ *
+ * Las palabras se buscan como subcadena, que es lo que hace tolerable la
+ * flexión del castellano ("recobr" encuentra "recobrar" y "recobro").
+ *
+ * Los NÚMEROS no: tienen que aparecer enteros. Buscando el artículo 13, un
+ * "2013" o un "130" no son coincidencias — y con subcadena lo serían, en un
+ * texto judicial lleno de años, montos y números de expediente. Con dos
+ * cifras eso es casi todos los fallos.
+ */
+function apareceRaiz(pajar, raiz) {
+  if (!/^\d+$/.test(raiz)) return pajar.includes(raiz);
+  return new RegExp(`(?<![0-9])${raiz}(?![0-9])`).test(pajar);
+}
+
 /** Cuantas de las raices aparecen en el resultado. */
 function cuantas(pajar, raices) {
-  return raices.filter((r) => pajar.includes(r)).length;
+  return raices.filter((r) => apareceRaiz(pajar, r)).length;
 }
 
 /**

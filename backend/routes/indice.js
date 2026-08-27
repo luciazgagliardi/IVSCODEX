@@ -167,6 +167,10 @@ async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anio
         // "artículo 1741" no matchearía la forma "art 1741", que es
         // justamente lo que hay que evitar acá.
         modo: 'todas',
+        // Sin aflojar: si ningún fallo trae el número, la respuesta correcta
+        // es cero. Bajar el listón acá devolvería fallos que sólo dicen
+        // "artículo", presentados como si citaran el que se buscó.
+        aflojar: false,
         ...(excluir ? { excluir: String(excluir) } : {}),
         ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}),
         ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}),

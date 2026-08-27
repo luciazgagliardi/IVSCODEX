@@ -68,7 +68,7 @@ import { filtrarPorModo } from './relevancia.js';
  */
 export async function paginarFiltrado({
   traer, desde = 0, total = 0, porPagina = 20, q, modo = 'todas', excluir = '', maxTandas = 5,
-  anioDesde = null, anioHasta = null,
+  anioDesde = null, anioHasta = null, aflojar = true,
 }) {
   const cuantasHay = () => (typeof total === 'function' ? Number(total()) || 0 : Number(total) || 0);
   const arranque = Math.max(0, Number(desde) || 0);
@@ -105,9 +105,11 @@ export async function paginarFiltrado({
   }
 
   let { lista, aflojado } = filtrarPorModo(revisados, { q, modo, excluir, anioDesde, anioHasta, aflojar: false });
-  // Recién ahora, agotadas las tandas, se permite aflojar: devolver algo
-  // parecido avisando que se aflojó es mejor que devolver cero.
-  if (!lista.length) ({ lista, aflojado } = filtrarPorModo(revisados, { q, modo, excluir, anioDesde, anioHasta }));
+  // Recién ahora, agotadas las tandas, se permite aflojar. Es el último recurso: devolver algo parecido avisando que se
+  // aflojó, en vez de nada. Pero hay búsquedas donde bajar el listón hace
+  // daño — buscar quién cita el art. 13 y recibir cualquier fallo que diga
+  // "artículo" es peor que un cero honesto. Por eso se puede desactivar.
+  if (!lista.length && aflojar) ({ lista, aflojado } = filtrarPorModo(revisados, { q, modo, excluir, anioDesde, anioHasta }));
 
   const resultados = lista.slice(0, porPagina);
 
