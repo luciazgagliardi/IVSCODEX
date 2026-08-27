@@ -194,6 +194,16 @@ async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anio
     }
   }
 
+  // Si TODAS las formas fallaron, esto no es "no hay resultados": es que la
+  // fuente no contestó, y hay que decirlo con un error para que el frontend
+  // pueda recurrir a su respaldo. Sin esto, SAIJ —que le niega la conexión al
+  // servidor publicado— devolvía cero como si el artículo no estuviera en
+  // ningún fallo, y el navegador nunca tomaba el relevo.
+  const fallaron = usadas.filter((u) => u.error);
+  if (fallaron.length === usadas.length && usadas.length) {
+    throw errores.indiceFuenteFalla(slug, fallaron[0].error);
+  }
+
   const resultados = [...porId.values()];
   return {
     total: resultados.length,

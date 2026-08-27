@@ -1165,7 +1165,7 @@ function nuevoEstado(){
           // Comparador: la misma consulta corrida en las seis fuentes a la vez.
           comparar:{corriendo:false,hecho:false,q:"",porFuente:{}},
           // Número de artículo cuando la búsqueda vino de la solapa Norma.
-          articulo:"", articuloNorma:"",
+          articulo:"", articuloNorma:"", articuloTema:"",
           // Si el menú de Compartir está desplegado.
           compartirAbierto:false,
           indices:nuevoIndices()};
@@ -2560,7 +2560,48 @@ function saijARegistro(bruto){
 /* Revisa varias páginas antes de aflojar el filtro, igual que el servidor:
    como SAIJ ordena por relevancia pero busca con OR, la primera página puede
    ser toda de una sola de las palabras. */
+/**
+ * Igual que el servidor: si esto es una búsqueda por artículo, se corren
+ * varias formas y se unen los resultados.
+ *
+ * Tiene que estar duplicado acá y no alcanza con que lo haga el servidor,
+ * porque SAIJ le niega la conexión al servidor publicado y estas dos fuentes
+ * las termina buscando el navegador. Sin esto, pedir "los fallos que citan el
+ * art. 1710" daba cero en la Corte desde el sitio real — que es exactamente
+ * el caso que había que arreglar. Ver buscarPorArticulo() en
+ * backend/routes/indice.js.
+ */
+function formasDeArticulo(cuerpo){
+  var n=String(cuerpo.articulo||"").trim();
+  if(!n) return null;
+  var f=["artículo "+n, n];              // los motores tipo SAIJ rinden con la palabra entera
+  if(cuerpo.tema) f.push(cuerpo.tema);   // la rúbrica: encuentra a los que aplican sin citar
+  return f;
+}
+
 function buscarSaijNavegador(cuerpo,slug){
+  var formas=formasDeArticulo(cuerpo);
+  if(formas){
+    var porId={}, orden=[], pendientes=formas.length, resolver;
+    var listo=new Promise(function(res){ resolver=res; });
+    formas.forEach(function(forma,idx){
+      buscarSaijNavegador(Object.assign({},cuerpo,{q:forma,articulo:""}),slug)
+        .then(function(d){
+          (d&&d.resultados||[]).forEach(function(x){
+            if(!x||!x.id) return;
+            if(porId[x.id]){ if(idx<2) porId[x.id].citaElNumero=true; return; }
+            x.citaElNumero=(idx<2);   // las dos primeras formas llevan el número
+            porId[x.id]=x; orden.push(x);
+          });
+        })["catch"](function(){})
+        .then(function(){ if(--pendientes<=0) resolver(); });
+    });
+    return listo.then(function(){
+      return { ok:true, total:orden.length, totalFuente:null, siguienteDesde:null,
+               totalParcial:true, revisados:0, resultados:orden, desdeNavegador:true };
+    });
+  }
+
   var faceta=slug==="csjn"?SAIJ_FACETA_CSJN:(SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios);
   var porPagina=20, porPedido=100;
   // Espejo de backend/lib/paginarFiltrado.js, y tiene que seguir siéndolo:
@@ -2807,7 +2848,11 @@ function buscarEnFuente(slug,pagina){
   // fallos de cualquier año. Una promesa rota en la interfaz.
   // Si esto viene de la solapa Norma, va el número de artículo: el servidor
   // le arma a cada buscador la consulta que ESE buscador entiende.
-  if(estado.articulo){ cuerpo.articulo=estado.articulo; if(estado.articuloNorma) cuerpo.norma=estado.articuloNorma; }
+  if(estado.articulo){
+    cuerpo.articulo=estado.articulo;
+    if(estado.articuloNorma) cuerpo.norma=estado.articuloNorma;
+    if(estado.articuloTema) cuerpo.tema=estado.articuloTema;
+  }
   if(/^\d{4}$/.test(estado.desde)) cuerpo.anioDesde=Number(estado.desde);
   if(/^\d{4}$/.test(estado.hasta)) cuerpo.anioHasta=Number(estado.hasta);
   if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
@@ -4144,6 +4189,7 @@ document.addEventListener("click",function(ev){
     var d=estado.norma.salida; if(!d) return;
     estado.q="art. "+d.articulo+" "+d.sigla;
     estado.articulo=d.articulo; estado.articuloNorma=estado.norma.clave;
+    estado.articuloTema=d.rubrica||"";
     estado.modo="todas"; estado.tab="buscar";
     render(); window.scrollTo(0,0);
     flash("Tocá una fuente abajo: a cada una se le pregunta como ella entiende");
@@ -4406,7 +4452,7 @@ document.addEventListener("input",function(ev){
     // Escribir a mano en el campo deja de ser "los fallos que citan el
     // artículo N" y pasa a ser una búsqueda común: lo que se ve es lo que se
     // busca, sin una traducción por fuente actuando por detrás.
-    estado.q=ev.target.value; estado.articulo=""; estado.articuloNorma=""; estado.marca=0; pintarCadena();
+    estado.q=ev.target.value; estado.articulo=""; estado.articuloNorma=""; estado.articuloTema=""; estado.marca=0; pintarCadena();
     if(estado.tab==="lector"){
       if(estado.texto.length<150000){ pintarLector(); }
       else { clearTimeout(window._tl); window._tl=setTimeout(pintarLector,170); }

@@ -151,11 +151,15 @@ export async function articuloDe(clave, numero) {
   let truncado = false;
   if (cuerpo.length > MAX_ARTICULO) { cuerpo = cuerpo.slice(0, MAX_ARTICULO); truncado = true; }
 
+  const limpio = cuerpo.trim();
   return {
     norma: norma.nombre,
     sigla: norma.sigla,
     articulo: num,
-    texto: cuerpo.trim(),
+    texto: limpio,
+    // La rúbrica viaja al frontend: la necesita el respaldo por navegador
+    // para armar las mismas formas de búsqueda que arma el servidor.
+    rubrica: rubricaDe(limpio),
     truncado,
     aviso: norma.aviso || null,
     url: norma.url,
