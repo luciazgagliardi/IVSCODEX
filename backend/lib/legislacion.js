@@ -161,3 +161,32 @@ export async function articuloDe(clave, numero) {
     url: norma.url,
   };
 }
+
+/**
+ * La rúbrica de un artículo: el título que va después del número.
+ *
+ * "ARTICULO 1710.- Deber de prevención del daño. Toda persona tiene..."
+ *                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ *
+ * Hace falta para buscar los fallos que APLICAN el artículo, no sólo los que
+ * escriben su número. Medido contra Mendoza: "art 1710" da CERO resultados
+ * —sus sumarios describen el tema con descriptores del tesauro, no citan el
+ * articulado— mientras que "prevención del daño" da cincuenta. Sin la
+ * rúbrica, buscar por artículo en esa fuente no sirve para nada.
+ *
+ * Devuelve null cuando el artículo no tiene título (pasa en la Constitución
+ * y en las leyes viejas, que numeran sin rubricar).
+ */
+export function rubricaDe(textoArticulo) {
+  const t = String(textoArticulo || '');
+  // Después del "N.-" viene la rúbrica, y termina en el primer punto. Se
+  // exige que arranque en mayúscula y que sea corta: si lo que sigue es la
+  // oración del articulado ("Toda persona tiene el deber..."), no es rúbrica.
+  const m = /^\s*(?:ART[IÍ]CULO|Art[íi]culo|Art\.?)\s*[\dbisterquax\s]+\s*[\.\-–—°º]+\s*([A-ZÁÉÍÓÚÑ][^.]{3,70})\./.exec(t);
+  if (!m) return null;
+  const r = m[1].trim();
+  // Una rúbrica es un rótulo, no una oración: si trae verbo conjugado común
+  // ("tiene", "debe", "es") probablemente ya es el texto del artículo.
+  if (/\b(tiene|debe|puede|es|son|se)\b/i.test(r)) return null;
+  return r;
+}
