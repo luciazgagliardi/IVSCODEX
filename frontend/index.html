@@ -283,6 +283,19 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 
 /* ---------- ramas ---------- */
 .rama{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:18px 20px;margin-bottom:12px;font-family:var(--sans)}
+/* Compartir: el botón y su menú de destinos. */
+.compartir{position:relative;display:inline-block}
+.compartir-menu{
+  position:absolute;z-index:30;right:0;top:calc(100% + 6px);min-width:210px;
+  background:var(--negro);border:1px solid var(--lacre);border-radius:10px;
+  padding:6px;box-shadow:0 12px 28px rgba(0,0,0,.55)
+}
+.compartir-menu button,.compartir-menu a{
+  display:block;width:100%;text-align:left;background:none;border:0;
+  padding:9px 12px;border-radius:7px;cursor:pointer;
+  font-family:var(--sans);font-size:14px;color:var(--tinta2);text-decoration:none
+}
+.compartir-menu button:hover,.compartir-menu a:hover{background:var(--papel2);color:var(--lacre)}
 /* Comparador: una tarjeta por buscador, en columnas que se acomodan solas. */
 .comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:18px}
 .comp-card{background:var(--ficha);border:1px solid var(--linea);border-left-width:4px;border-radius:10px;padding:14px 16px;font-family:var(--sans)}
@@ -1151,6 +1164,10 @@ function nuevoEstado(){
           norma:{clave:"ccyc",art:"",cargando:false,error:null,salida:null},
           // Comparador: la misma consulta corrida en las seis fuentes a la vez.
           comparar:{corriendo:false,hecho:false,q:"",porFuente:{}},
+          // Número de artículo cuando la búsqueda vino de la solapa Norma.
+          articulo:"",
+          // Si el menú de Compartir está desplegado.
+          compartirAbierto:false,
           indices:nuevoIndices()};
 }
 
@@ -1927,6 +1944,35 @@ function leerDeURL(){
   }catch(e){ /* URL rara: se ignora y se abre como siempre */ }
 }
 
+/**
+ * Botón "Compartir" con sus destinos.
+ *
+ * El link es el de la búsqueda actual (ver guardarEnURL): quien lo abre ve
+ * la misma consulta, con el mismo modo, exclusiones y rango de años, y la
+ * corre contra los sitios oficiales en ese momento.
+ *
+ * WhatsApp y el correo se abren con enlaces estándar (wa.me y mailto:), que
+ * funcionan igual en la computadora y en el teléfono y no necesitan que esta
+ * web hable con ningún servicio: es el navegador el que abre la aplicación
+ * que la persona ya tiene. Nada de lo que se comparte pasa por acá.
+ */
+function botonCompartir(){
+  if(!estado.compartirAbierto)
+    return '<div class="compartir"><button class="btn sec" data-act="compartir">Compartir ▾</button></div>';
+  return '<div class="compartir"><button class="btn sec" data-act="compartir">Compartir ▴</button>'+
+    '<div class="compartir-menu">'+
+      '<button data-act="compartir-copiar">Copiar el enlace</button>'+
+      '<button data-act="compartir-whatsapp">Enviar por WhatsApp</button>'+
+      '<button data-act="compartir-mail">Enviar por correo</button>'+
+    '</div></div>';
+}
+
+/** El texto que acompaña al link cuando se comparte. */
+function textoCompartir(){
+  var q=estado.q.trim();
+  return q ? ('Búsqueda de jurisprudencia en Iuris et de iure: "'+q+'"') : 'Iuris et de iure — buscador de jurisprudencia';
+}
+
 /** El rango de años que hay puesto ahora, tal como viaja al servidor. */
 function rangoAnios(){
   return {
@@ -2085,7 +2131,7 @@ function vistaBuscar(){
         }).join(""):'')+
         '<button class="btn'+(estado.api?" sec":"")+'" data-act="barrido">Buscar en todas a la vez</button>'+
         '<button class="btn sec" data-act="copiar-cadena">Copiar la consulta</button>'+
-        '<button class="btn sec" data-act="copiar-link">Copiar link de esta búsqueda</button>'+
+        botonCompartir()+
         '<button class="btn sec" data-act="limpiar">Empezar de nuevo</button>'+
       '</div>'+
     '</div>'+
@@ -2712,6 +2758,9 @@ function buscarEnFuente(slug,pagina){
   // viajaban: sólo se usaban para la búsqueda de respaldo por Google
   // (rangoFechas), así que poner "2015–2026" y buscar en Mendoza devolvía
   // fallos de cualquier año. Una promesa rota en la interfaz.
+  // Si esto viene de la solapa Norma, va el número de artículo: el servidor
+  // le arma a cada buscador la consulta que ESE buscador entiende.
+  if(estado.articulo) cuerpo.articulo=estado.articulo;
   if(/^\d{4}$/.test(estado.desde)) cuerpo.anioDesde=Number(estado.desde);
   if(/^\d{4}$/.test(estado.hasta)) cuerpo.anioHasta=Number(estado.hasta);
   if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
@@ -3015,6 +3064,37 @@ function fichaRequisito(x){
     '</div></div>';
 }
 
+/**
+ * Entiende una referencia escrita como la escribe un abogado.
+ *
+ * Nadie tipea "norma: código civil / artículo: 1741" en dos campos separados:
+ * escribe "art 1741 CCyC", "artículo 70 del código civil y comercial",
+ * "1741 CCCN" o "LCT 245". Esto saca de ahí el número y, si se nombró la
+ * norma, también cuál es — así el desplegable se acomoda solo.
+ *
+ * Devuelve {art, clave} con clave en null si no se nombró ninguna norma
+ * (entonces se respeta la que ya estaba elegida).
+ */
+function parsearReferencia(texto){
+  var t=(" "+String(texto||"")+" ").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"");   // sin tildes
+  var clave=null;
+  // Se prueba de la pista más específica a la más genérica: "civil y
+  // comercial" antes que "civil" suelto, que también aparece en otras.
+  if(/civil y comercial|ccyc|cccn|ccyn|c\.c\.c/.test(t)) clave="ccyc";
+  else if(/constitucion|const\.|\bcn\b|carta magna/.test(t)) clave="cn";
+  else if(/contrato de trabajo|\blct\b|20\.?744|ley de trabajo/.test(t)) clave="lct";
+  else if(/concurso|quiebra|\blcq\b|24\.?522/.test(t)) clave="lcq";
+  else if(/procedimiento administrativo|administrativ|\blpa\b|19\.?549/.test(t)) clave="lpa";
+  else if(/amparo|16\.?986/.test(t)) clave="amparo";
+
+  // El número del artículo: se ignoran los números que son parte del nombre
+  // de la ley (20.744, 24.522...) para no confundirlos con el articulado.
+  var limpio=t.replace(/\b\d{2}\.?\d{3}\b/g," ");
+  var m=/\b(\d{1,4})\s*(bis|ter|quater)?\b/.exec(limpio);
+  return { art: m?(m[1]+(m[2]?" "+m[2]:"")):"", clave: clave };
+}
+
 var NORMAS_UI=[
  ["ccyc","Código Civil y Comercial"],
  ["cn","Constitución Nacional"],
@@ -3107,19 +3187,21 @@ function tarjetaComparar(f){
   if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">No respondió: '+esc(r.error)+'</p></div>';
   if(!r.resultados.length) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Sin coincidencias.</p></div>';
 
-  // Ojo con qué número se muestra. "total" NO significa lo mismo en las seis:
-  // donde el sitio resuelve el modo por su cuenta es su contador entero (CABA
-  // devolvió 356 con 20 filas en la mano), y donde filtramos nosotros es lo
-  // que quedó de la muestra revisada. Mezclarlos en una tarjeta de
-  // comparación sería el peor lugar para hacerlo, porque el sentido de esta
-  // pantalla es justamente comparar magnitudes entre jurisdicciones.
-  // Se muestra el tamaño del material (totalFuente, lo que el sitio devuelve)
-  // y aparte cuántos se están viendo.
-  var grande=(r.totalFuente!==null?r.totalFuente:r.total);
-  var cifra='<p class="comp-cifra"><b>'+grande.toLocaleString("es-AR")+'</b> filas para esta consulta'+
-    ' · se muestran '+Math.min(3,r.resultados.length)+
-    (r.local?' · de tu índice local':'')+
-    (r.parcial?' · revisión parcial':'')+'</p>';
+  // NO se muestra el contador crudo del sitio, aunque lo tengamos.
+  //
+  // Poner "44.222" en la tarjeta de SAIJ al lado de "319" en la de Mendoza
+  // era una comparación falsa: SAIJ cuenta los documentos que tienen ALGUNA
+  // de las palabras y Mendoza los que tienen TODAS, así que esos dos números
+  // no miden lo mismo y la pantalla invitaba justamente a compararlos. Un
+  // aviso al pie no alcanzaba — el número grande es lo que se lee.
+  //
+  // Lo que se muestra es lo único que significa lo mismo en las seis: cuántos
+  // resultados de verdad trajo esta consulta acá. Es un piso, no un censo, y
+  // se dice así.
+  var cifra='<p class="comp-cifra"><b>'+r.resultados.length.toLocaleString("es-AR")+'</b> resultado'+
+    (r.resultados.length===1?'':'s')+' encontrados'+
+    (r.parcial?' (hay más para revisar)':'')+
+    (r.local?' · de tu índice local':'')+'</p>';
 
   var items=r.resultados.slice(0,3).map(function(x){
     var enlace=x.linkFicha||x.linkFallo;
@@ -3150,9 +3232,9 @@ function vistaComparar(){
   var c=estado.comparar;
   var html='<div class="aviso"><strong>La misma consulta, en las seis fuentes.</strong> Para ver de un vistazo si Mendoza, la Nación y CABA resuelven igual o distinto. '+
     'Usa lo que tengas puesto en <strong>Buscar</strong>: la consulta, el modo, las exclusiones y el rango de años.</div>'+
-    '<div class="aviso" style="border-style:dashed"><strong>Las cifras no son comparables entre sí sin leer la letra chica.</strong> Cada buscador cuenta a su manera: '+
-    'SAIJ informa los documentos que tienen <em>alguna</em> de las palabras (por eso da decenas de miles), mientras Mendoza y CABA exigen todas. '+
-    'El número sirve para ver si un tema está muy o poco tratado en cada lado — no para decir que una jurisdicción tiene más fallos que otra.</div>';
+    '<div class="aviso" style="border-style:dashed"><strong>Lo que se cuenta es lo que se trajo.</strong> Cada tarjeta dice cuántos resultados devolvió esa fuente para esta consulta, no cuántos tiene en total: '+
+    'los contadores propios de cada sitio miden cosas distintas y no se pueden poner uno al lado del otro. '+
+    'Sirve para ver dónde hay material sobre el tema y saltar a leerlo, no como estadística.</div>';
 
   html+='<div class="panel"><div class="campo"><span>Qué buscás</span>'+
     '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></div>'+
@@ -3201,9 +3283,10 @@ function vistaNorma(){
   return '<div class="aviso"><strong>El texto, de la fuente.</strong> Esta web no transcribe el código: pide el artículo a <strong>InfoLeg</strong> (Ministerio de Justicia) en su versión de texto actualizado, con las reformas ya incorporadas. '+
       'Después podés saltar a los fallos que lo interpretan.</div>'+
     '<div class="panel">'+
+      '<div class="campo"><span>Qué artículo</span>'+
+        '<input type="text" id="norma-art" value="'+esc(n.art)+'" placeholder="art 1741 CCyC · artículo 70 del código civil y comercial · LCT 245" autocomplete="off"></div>'+
       '<div class="fila">'+
-        '<label class="campo"><span>Norma</span><select id="norma-clave">'+opciones+'</select></label>'+
-        '<label class="campo"><span>Artículo</span><input type="text" id="norma-art" value="'+esc(n.art)+'" placeholder="1741" autocomplete="off"></label>'+
+        '<label class="campo"><span>Norma (se acomoda sola si la nombrás arriba)</span><select id="norma-clave">'+opciones+'</select></label>'+
       '</div>'+
       '<div class="acciones" style="margin:0;padding:0;border:0"><button class="btn" data-act="ver-articulo">Ver el artículo</button></div>'+
       salida+
@@ -3978,10 +4061,16 @@ document.addEventListener("click",function(ev){
     var sel=document.getElementById("norma-clave"), inp=document.getElementById("norma-art");
     if(sel) estado.norma.clave=sel.value;
     if(inp) estado.norma.art=inp.value.trim();
-    if(!estado.norma.art){ flash("Escribí el número de artículo"); return; }
+    // Se acepta escrito como se escribe de verdad ("art 1741 CCyC", "artículo
+    // 70 del código civil y comercial", "LCT 245"): el parser saca el número
+    // y, si se nombró la norma, la elige sola. Ver parsearReferencia.
+    var ref=parsearReferencia(estado.norma.art);
+    if(ref.clave) estado.norma.clave=ref.clave;
+    if(!ref.art){ flash("No encontré un número de artículo en lo que escribiste"); return; }
+    estado.norma.num=ref.art;
     if(!estado.api){ flash("Para traer el texto oficial hace falta el servidor"); return; }
     estado.norma.cargando=true; estado.norma.error=null; estado.norma.salida=null; render();
-    fetch(estado.api+"/legislacion/"+encodeURIComponent(estado.norma.clave)+"/"+encodeURIComponent(estado.norma.art))
+    fetch(estado.api+"/legislacion/"+encodeURIComponent(estado.norma.clave)+"/"+encodeURIComponent(ref.art))
       .then(function(r){ return r.json(); })
       .then(function(d){
         estado.norma.cargando=false;
@@ -3996,17 +4085,32 @@ document.addEventListener("click",function(ev){
     return;
   }
   if(act==="fallos-del-articulo"){
-    // Los tribunales citan de muchas formas ("art. 1741", "artículo 1741",
-    // "art. 1741 CCyC"): se busca por el número con la palabra "art", en modo
-    // "todas las palabras", que es el que tolera el orden y lo del medio.
+    // No se arma una consulta acá: se guarda el NÚMERO y cada buscador recibe
+    // la forma que él entiende ("art 1741" a Mendoza, "artículo 1741" a la
+    // Corte). La diferencia medida es de 84 resultados contra 0 — ver
+    // COMO_SE_CITA en backend/lib/fuentes.js.
     var d=estado.norma.salida; if(!d) return;
-    estado.q="art "+d.articulo+" "+d.sigla;
+    estado.q="art. "+d.articulo+" "+d.sigla;
+    estado.articulo=d.articulo;
     estado.modo="todas"; estado.tab="buscar";
     render(); window.scrollTo(0,0);
-    flash("Buscá en las fuentes de abajo los fallos que citan ese artículo");
+    flash("Tocá una fuente abajo: a cada una se le pregunta como ella entiende");
     return;
   }
-  if(act==="copiar-link"){
+  if(act==="compartir"){ estado.compartirAbierto=!estado.compartirAbierto; render(); return; }
+  if(act==="compartir-whatsapp"){
+    estado.compartirAbierto=false; render();
+    window.open("https://wa.me/?text="+encodeURIComponent(textoCompartir()+"\n"+location.href),"_blank","noopener");
+    return;
+  }
+  if(act==="compartir-mail"){
+    estado.compartirAbierto=false; render();
+    location.href="mailto:?subject="+encodeURIComponent(textoCompartir())+
+      "&body="+encodeURIComponent(textoCompartir()+"\n\n"+location.href);
+    return;
+  }
+  if(act==="compartir-copiar"){ estado.compartirAbierto=false; render(); }
+  if(act==="copiar-link"||act==="compartir-copiar"){
     // La URL ya está al día: guardarEnURL() corre al final de cada render.
     var link=location.href;
     if(navigator.clipboard&&navigator.clipboard.writeText){
@@ -4229,7 +4333,10 @@ document.addEventListener("click",function(ev){
 document.addEventListener("input",function(ev){
   var id=ev.target.id;
   if(id==="q"){
-    estado.q=ev.target.value; estado.marca=0; pintarCadena();
+    // Escribir a mano en el campo deja de ser "los fallos que citan el
+    // artículo N" y pasa a ser una búsqueda común: lo que se ve es lo que se
+    // busca, sin una traducción por fuente actuando por detrás.
+    estado.q=ev.target.value; estado.articulo=""; estado.marca=0; pintarCadena();
     if(estado.tab==="lector"){
       if(estado.texto.length<150000){ pintarLector(); }
       else { clearTimeout(window._tl); window._tl=setTimeout(pintarLector,170); }

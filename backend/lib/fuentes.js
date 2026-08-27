@@ -35,6 +35,46 @@ import { buscarSaij } from './indiceSaij.js';
 import { buscarDialnet } from './indiceDialnet.js';
 import { buscarMendozaLegal } from './indiceMendozaLegal.js';
 
+/**
+ * Cómo pedirle a cada buscador los fallos que citan un artículo.
+ *
+ * Hay que preguntarle distinto a cada uno y no es un capricho: está medido
+ * contra los seis sitios reales, buscando el art. 1741 del CCyC.
+ *
+ *              "art 1741 CCyCN"   "art 1741"   "artículo 1741"
+ *   Mendoza           1               84              2
+ *   SAIJ              4                2             20+
+ *   CSJN              0                0             20+
+ *   CABA              2               10              9
+ *   Dialnet           0                7             42
+ *
+ * Dos familias con gustos opuestos. Los motores tipo SAIJ (SAIJ, CSJN, y
+ * Dialnet, que es Solr) buscan con OR y ordenan por relevancia: mandarles la
+ * palabra entera "artículo" les ensancha el conjunto de candidatos y después
+ * el filtro de este lado se queda con los que además traen el número. Los
+ * formularios que hacen LIKE sobre columnas (Mendoza, CABA) hacen lo
+ * contrario: cuanto más texto se les manda, menos encuentran — por eso
+ * "art" abreviado les rinde el cuádruple.
+ *
+ * Agregar la sigla del código ("CCyCN") arruina las seis: ningún tribunal la
+ * escribe así en el sumario. Era lo que hacía la primera versión del botón
+ * "buscar fallos que lo citan", y por eso casi siempre daba cero.
+ */
+const COMO_SE_CITA = {
+  mendoza: (n) => `art ${n}`,
+  mendozalegal: (n) => `art ${n}`,
+  caba: (n) => `art ${n}`,
+  saij: (n) => `artículo ${n}`,
+  csjn: (n) => `artículo ${n}`,
+  dialnet: (n) => `artículo ${n}`,
+};
+
+/** La consulta con la que ESTE buscador encuentra citas de un artículo. */
+export function consultaDeArticulo(slug, numero) {
+  const arma = COMO_SE_CITA[slug];
+  return arma ? arma(String(numero).trim()) : `art ${numero}`;
+}
+
 /** Una entrada por fuente indexada. slug = nombre de archivo en backend/indice/. */
 export const FUENTES = [
   {
