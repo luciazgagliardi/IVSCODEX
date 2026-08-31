@@ -177,6 +177,19 @@ function parsearFilas(html) {
       fecha: texto(4),
       linkFallo: urlPdf(origen, expediente, incidente, movimiento, anio),
       linkFicha: null, // acá el documento y la ficha son la misma cosa: el PDF
+      // Este endpoint manda "Content-Disposition: attachment" (verificado en
+      // vivo contra los dos, expedientes_download.php y
+      // expedientes_download_EJE.php — el primero a veces sirve un .doc en
+      // vez de un PDF, pero con la misma cabecera): el navegador SIEMPRE lo
+      // descarga,
+      // nunca lo muestra en la pestaña. Se lo dice al frontend para que
+      // ofrezca el atajo "Descargar y abrir en el Lector" — que abre
+      // directo el selector de archivo, listo para elegir lo que se acaba
+      // de bajar — en vez del link genérico "Abrir el original", que en las
+      // otras fuentes navega a la página del fallo pero acá no navegaría a
+      // nada visible: el archivo cae solo a Descargas sin abrir pestaña, y
+      // sin este aviso parecía que el botón no hacía nada.
+      descarga: true,
     });
   });
 
