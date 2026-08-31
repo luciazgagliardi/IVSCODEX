@@ -2408,7 +2408,20 @@ function fichaIndice(f,r){
       (r.linkFallo?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>':"")+
       // Si el documento se puede traer, también se puede abrir donde vive:
       // el enlace al sitio oficial es lo que hace citable al resultado.
-      (r.linkFallo?'<a class="mini" href="'+esc(r.linkFallo)+'" target="_blank" rel="noopener noreferrer">Abrir el original</a>':"")+
+      //
+      // CABA es distinta de las otras cinco y se lo dice el propio sitio: su
+      // link no muestra el fallo en una página, lo DESCARGA —manda
+      // "Content-Disposition: attachment", verificado contra los dos
+      // dominios que usa (uno a veces sirve un .doc, no un PDF, pero con la
+      // misma cabecera)—. Un link común ahí no "abre" nada visible: el
+      // archivo cae solo a la carpeta de Descargas y quien lo clickea se
+      // queda mirando la pantalla preguntándose si pasó algo. Por eso ahí va
+      // un atajo aparte que hace lo mismo que ya hacía el link (bajar el
+      // archivo) pero de paso te deja en el Lector con el selector abierto,
+      // listo para elegir lo que se acaba de bajar.
+      (r.linkFallo&&r.descarga
+        ?'<button class="mini" data-act="descargar-y-lector" data-url="'+esc(r.linkFallo)+'">Descargar y abrir en el Lector</button>'
+        :(r.linkFallo?'<a class="mini" href="'+esc(r.linkFallo)+'" target="_blank" rel="noopener noreferrer">Abrir el original</a>':""))+
       '<button class="mini" data-act="compartir-fallo" data-fuente="'+esc(f.slug)+'" data-id="'+esc(r.id||"")+'">Compartir</button>'+
     '</div></div>';
 }
@@ -4373,6 +4386,31 @@ document.addEventListener("click",function(ev){
     var urlOcr=b.getAttribute("data-url");
     if(urlOcr) traerOcrEnLector(urlOcr,estado.errorLink&&estado.errorLink.opciones);
     else if(estado.errorLink&&estado.errorLink.archivo) traerOcrDeArchivo(estado.errorLink.archivo);
+    return;
+  }
+  if(act==="descargar-y-lector"){
+    var urlBajar=b.getAttribute("data-url");
+    if(!urlBajar) return;
+    // El mismo click que ya hacía el link viejo, hecho a mano: un <a> real,
+    // agregado al documento y clickeado. El servidor de CABA manda
+    // "Content-Disposition: attachment" (ver la nota en fichaIndice), así
+    // que esto dispara la descarga sola — no hace falta el atributo
+    // "download" ni que este sitio toque el archivo para nada.
+    var enlace=document.createElement("a");
+    enlace.href=urlBajar; enlace.target="_blank"; enlace.rel="noopener noreferrer";
+    document.body.appendChild(enlace); enlace.click(); enlace.remove();
+
+    // Un solo click de la persona, dos pasos para la app: primero la
+    // descarga (arriba) y ahora saltar al Lector con el selector YA abierto.
+    // El picker de archivo pedir un click propio no es un capricho de este
+    // sitio: es el navegador protegiendo el disco de la persona, y ningún
+    // sitio puede leer un archivo que se acaba de bajar sin que alguien lo
+    // elija a mano. Esto acerca lo más posible: cuando se cierra el diálogo
+    // "Guardar", el archivo casi siempre queda arriba de todo en Descargas.
+    estado.tab="lector"; render();
+    var inpDesc=document.getElementById("doc-archivo");
+    if(inpDesc) inpDesc.click();
+    flash("El fallo se está descargando — elegilo en el selector para verlo acá con tu búsqueda marcada");
     return;
   }
   if(act==="elegir-archivo"){
