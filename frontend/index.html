@@ -2461,10 +2461,24 @@ function traerFragmentos(slug,pedido){
 
   var tanda=faltan.slice(0,6);
   im.fragCargando=true;
-  fetch(estado.api+"/indice/"+slug+"/fragmentos",{
+  var promesaFrag=fetch(estado.api+"/indice/"+slug+"/fragmentos",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({q:qi,urls:tanda})
-  }).then(function(r){ return r.json(); })
+  }).then(function(r){ return r.json(); });
+  // Mismo tope que buscarEnFuente y por la misma razón (ver el comentario
+  // grande ahí): sin esto, un pedido cortado a mitad de camino en el
+  // celular dejaba "Buscando el pasaje…" clavado en cada resultado para
+  // siempre, y de paso frenaba la cadena entera —esta función se llama a
+  // sí misma para la tanda siguiente, así que una tanda colgada se llevaba
+  // puestas todas las que faltaban.
+  var idTopeFrag,
+      seVencioFrag=new Promise(function(_,reject){
+        idTopeFrag=setTimeout(function(){
+          reject(new Error("tope de espera del lado del navegador"));
+        },40000);
+      });
+  Promise.race([promesaFrag,seVencioFrag]).then(function(d){ clearTimeout(idTopeFrag); return d; },
+    function(err){ clearTimeout(idTopeFrag); throw err; })
     .then(function(d){
       // Si mientras tanto se disparó otra búsqueda, lo que llega es viejo.
       if(im.pedido!==pedido) return;
@@ -2884,7 +2898,7 @@ function buscarEnFuente(slug,pagina){
   if(/^\d{4}$/.test(estado.desde)) cuerpo.anioDesde=Number(estado.desde);
   if(/^\d{4}$/.test(estado.hasta)) cuerpo.anioHasta=Number(estado.hasta);
   if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
-  fetch(estado.api+"/indice/"+slug+"/buscar",{
+  var promesaBusco=fetch(estado.api+"/indice/"+slug+"/buscar",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(cuerpo)
   }).then(function(r){ return r.json(); })
@@ -2895,7 +2909,25 @@ function buscarEnFuente(slug,pagina){
       // vencida.
       if((slug==="saij"||slug==="csjn")&&(!d||!d.ok)) return buscarSaijNavegador(cuerpo,slug);
       return d;
-    })
+    });
+  // Sin esto, un pedido que se corta a mitad de camino —típico en el celular:
+  // se apaga la pantalla, cambia de wifi a datos, la pestaña pasa a segundo
+  // plano un rato— podía quedar esperando una respuesta que ya no iba a
+  // llegar nunca, con "Consultando el buscador…" clavado en pantalla para
+  // siempre y sin ningún botón para salir de ahí (reportado en vivo: se
+  // quedaba tildado en el celular, no en la computadora). El servidor ya
+  // tiene su propio tope por pedido (25s, ver config.js); acá se le da un
+  // poco más de margen —la ida y vuelta real, no solo lo que tarda el
+  // origen— y, si ni así contesta, se fuerza el error para poder reintentar
+  // en vez de quedar esperando de por vida.
+  var idTope,
+      seVencio=new Promise(function(_,reject){
+        idTope=setTimeout(function(){
+          reject(Object.assign(new Error("tope de espera del lado del navegador"),{tope:true}));
+        },40000);
+      });
+  Promise.race([promesaBusco,seVencio]).then(function(d){ clearTimeout(idTope); return d; },
+    function(err){ clearTimeout(idTope); throw err; })
     .then(function(d){
       if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
       imBusco.busco=true;
@@ -2921,12 +2953,14 @@ function buscarEnFuente(slug,pagina){
       if(esNueva&&!d.desdeIndiceLocal&&typeof d.siguienteDesde==="number"){
         precargarPaginasIndice(slug,imBusco,busquedaId,cuerpo);
       }
-    })["catch"](function(){
+    })["catch"](function(err){
       if(imBusco.pedido!==pedido) return;
       imBusco.cargando=false; imBusco.busco=true;
-      imBusco.error=(slug==="saij"||slug==="csjn")
-        ?"No se pudo consultar SAIJ, ni desde el servidor ni desde acá. Probá de nuevo en un rato."
-        :"Se cortó la comunicación con el servidor.";
+      imBusco.error=(err&&err.tope)
+        ?"Tardó demasiado y no llegó respuesta — puede haberse cortado la conexión a mitad de camino. Probá de nuevo."
+        :(slug==="saij"||slug==="csjn")
+          ?"No se pudo consultar SAIJ, ni desde el servidor ni desde acá. Probá de nuevo en un rato."
+          :"Se cortó la comunicación con el servidor.";
       render();
     });
 }
