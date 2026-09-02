@@ -452,18 +452,36 @@ mark.actual{background:var(--lacre);color:#241a0c}
   opacity:1;transition:opacity .6s ease-out;
 }
 .entrada.saliendo{opacity:0;pointer-events:none}
-.entrada-contenido{padding:24px;display:flex;flex-direction:column;align-items:center;animation:aparece-entrada 1s ease-out both}
+.entrada-contenido{
+  padding:24px;display:flex;flex-direction:column;align-items:center;animation:aparece-entrada 1s ease-out both;
+  /* El ancho real del logo, en una variable para que .toque (más abajo)
+     pueda usar el mismo valor y descontarle el margen transparente del
+     archivo. Ver el comentario grande en .toque. */
+  --ancho-marca:clamp(200px,82vw,1180px);
+}
 .entrada .titulo-fila{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
-/* El piso de 360px (antes del 82vw) se pensó para pantallas de escritorio
-   angostas, pero un celular es más angosto que eso: medido en vivo, a
-   390px de ancho el 74vw da 288.6px, MENOR que el piso de 360px, así que
-   el piso ganaba y el logo se recortaba contra los dos bordes de la
-   pantalla —no hay overflow-x visible que avise, porque html,body lo
-   esconden (ver arriba)—. 82vw en vez de 74vw compensa el piso más bajo:
-   en desktop (>1440px) sigue topando en 1180px igual que antes. */
-.entrada .wordmark{width:clamp(200px,82vw,1180px);height:auto;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
+/* El piso de 200px (antes 360px, antes de eso el 74vw) se pensó para
+   pantallas de escritorio angostas, pero un celular es más angosto que
+   eso: medido en vivo, a 390px de ancho el 74vw da 288.6px, MENOR que un
+   piso de 360px, así que el piso ganaba y el logo se recortaba contra los
+   dos bordes de la pantalla —no hay overflow-x visible que avise, porque
+   html,body lo esconden (ver arriba)—. 82vw compensa el piso más bajo: en
+   desktop (>1440px) sigue topando en 1180px igual que antes. */
+.entrada .wordmark{width:var(--ancho-marca);height:auto;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
 .entrada .toque{
-  margin-top:26px;font-family:var(--sans);font-size:12px;letter-spacing:.06em;
+  /* IURIS LOGPAGE.png (el archivo del logo) trae mucho margen transparente
+     de fábrica: medido en el archivo, las letras ocupan sólo el 12.9% del
+     alto del PNG, centradas, con ~43% de aire vacío arriba Y abajo. Con
+     height:auto ese aire escala junto con el ancho, así que a cualquier
+     tamaño de pantalla quedaba un hueco enorme entre la letra visible y
+     este texto —el "más arriba" pedido—. Se descuenta acá ese mismo
+     porcentaje del ancho (0.4318 de alto × 0.562 de relación alto/ancho
+     del archivo = 0.2427 del ancho) para que el espacio que se VE, desde
+     la letra hasta este texto —no desde el borde invisible del archivo—,
+     quede en unos 26px, como cuando el logo era una tira angosta sin este
+     margen. */
+  margin-top:calc(26px - var(--ancho-marca) * 0.2427);
+  font-family:var(--sans);font-size:12px;letter-spacing:.06em;
   text-transform:uppercase;color:rgba(255,255,255,.6);animation:parpadeo-toque 1.8s ease-in-out infinite
 }
 @keyframes parpadeo-toque{0%,100%{opacity:.55}50%{opacity:1}}
