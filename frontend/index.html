@@ -175,7 +175,15 @@ a.mini:hover{color:var(--lacre)}
 .wrap{max-width:1560px;margin:0 auto;padding:22px 16px 70px;display:grid;grid-template-columns:210px 1fr;gap:28px;align-items:start}
 .wrap.sin-rail{grid-template-columns:1fr}
 .wrap.sin-rail .rail{display:none}
-.rail{position:sticky;top:56px}
+/* min-width:0 a propósito: sin esto, en la columna única del celular (ver
+   @media abajo) esta aside y .col comparten la misma pista de la grilla, y
+   la pista se dimensiona por el contenido más ancho de las DOS juntas en
+   vez de por el ancho real de pantalla —medido en vivo: 4016px de pista
+   para una ventana de 390px—, así que todo el panel de búsqueda quedaba
+   cortado fuera de la vista sin scroll posible (html,body tienen
+   overflow-x:hidden). .col ya tenía este mismo min-width:0; a esta le
+   faltaba. */
+.rail{position:sticky;top:56px;min-width:0}
 .rail h2{
   color:var(--lacre);font-family:var(--sans);font-size:16px;font-weight:300;
   text-transform:uppercase;letter-spacing:.03em;margin:0 0 9px
@@ -446,7 +454,14 @@ mark.actual{background:var(--lacre);color:#241a0c}
 .entrada.saliendo{opacity:0;pointer-events:none}
 .entrada-contenido{padding:24px;display:flex;flex-direction:column;align-items:center;animation:aparece-entrada 1s ease-out both}
 .entrada .titulo-fila{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
-.entrada .wordmark{width:clamp(360px,74vw,1180px);height:auto;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
+/* El piso de 360px (antes del 82vw) se pensó para pantallas de escritorio
+   angostas, pero un celular es más angosto que eso: medido en vivo, a
+   390px de ancho el 74vw da 288.6px, MENOR que el piso de 360px, así que
+   el piso ganaba y el logo se recortaba contra los dos bordes de la
+   pantalla —no hay overflow-x visible que avise, porque html,body lo
+   esconden (ver arriba)—. 82vw en vez de 74vw compensa el piso más bajo:
+   en desktop (>1440px) sigue topando en 1180px igual que antes. */
+.entrada .wordmark{width:clamp(200px,82vw,1180px);height:auto;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45))}
 .entrada .toque{
   margin-top:26px;font-family:var(--sans);font-size:12px;letter-spacing:.06em;
   text-transform:uppercase;color:rgba(255,255,255,.6);animation:parpadeo-toque 1.8s ease-in-out infinite
