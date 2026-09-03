@@ -374,6 +374,21 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .candidato .porque{margin:6px 0 8px;padding-left:17px;font-size:12.5px;color:var(--tinta2)}
 .candidato .porque li{margin-bottom:2px}
 
+/* Cada paso de las guías de Verificar es su propia tarjeta dentro de la
+   tarjeta grande, sin número ni viñeta: se toca como cualquier otra cosa
+   tocable del sitio, con el mismo levantarse del resto de las fichas. */
+.fichas{display:flex;flex-direction:column;gap:8px}
+.ficha-paso{
+  display:block;width:100%;text-align:left;
+  background:var(--papel2);border:1px solid var(--linea);border-radius:8px;
+  padding:13px 15px;cursor:pointer;
+  font-family:var(--sans);font-size:14.5px;line-height:1.5;color:var(--tinta2);
+  transition:transform .25s ease,border-color .25s ease,background .25s ease
+}
+.ficha-paso:hover{transform:translateY(-2px);border-color:rgba(233,200,119,.45);background:var(--ficha);color:var(--tinta)}
+.ficha-paso:active{transform:translateY(0)}
+.ficha-paso em{color:inherit}
+
 /* ---------- prosa ---------- */
 .blk{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;margin-bottom:16px}
 .blk h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 8px}
@@ -3526,7 +3541,7 @@ function panelIndice(f){
 }
 
 function vistaRamas(){
-  var html='<div class="aviso"><strong>Las voces optimizan la búsqueda.</strong><br>'+
+  var html='<div class="aviso"><strong>Las voces optimizan la búsqueda.</strong> '+
     'Los buscadores judiciales argentinos indexan mediante descriptores técnicos y no por lenguaje natural. '+
     'Al seleccionar una voz, el sistema la añadirá automáticamente a la consulta de forma exacta.</div>';
   var lista=estado.rama?RAMAS.filter(function(x){return x.id===estado.rama;}):RAMAS;
@@ -3550,8 +3565,7 @@ function vistaRequisitos(){
     'Cada ficha proviene del texto oficial de la ley, e incluye la cita del artículo y el enlace directo a InfoLeg. '+
     'Actualmente se encuentran disponibles <strong>'+conLista+' de las '+REQUISITOS.length+' fichas</strong> proyectadas; '+
     'las restantes disponen temporalmente del botón de búsqueda.</div>'+
-    '<div class="aviso" style="border-style:dashed"><strong>Este módulo constituye una guía de orientación.</strong> Los requisitos pueden haber variado tras la última revisión '+
-    'y la normativa procesal difiere según la jurisdicción (v. gr., los presupuestos de la Ley N.° 9001 de Mendoza frente al fuero nacional).<br>'+
+    '<div class="aviso" style="border-style:dashed"><strong>Este módulo constituye una guía de orientación.</strong> '+
     '<em>Verifique siempre la fuente oficial antes de realizar presentaciones, el enlace directo está disponible en cada ficha.</em></div>';
   var porGrupo={};
   REQUISITOS.forEach(function(x){ (porGrupo[x.g]=porGrupo[x.g]||[]).push(x); });
@@ -3823,7 +3837,7 @@ function vistaFuentes(){
   var porAmb=Object.keys(AMB).map(function(k){
     return AMB[k].n+": "+F.filter(function(f){return f.a===k;}).length;
   }).join(" · ");
-  return '<div class="aviso"><strong>Catálogo completo de fuentes.</strong><br>'+
+  return '<div class="aviso"><strong>Catálogo completo de fuentes.</strong> '+
     'Acceso a '+F.length+' bases de datos y buscadores públicos, verificados e identificados individualmente. '+
     '<em>Los filtros del panel lateral y la selección de ámbitos se mantendrán activos al retornar a la pestaña «Buscar».</em></div>'+
     '<p class="conteo">'+todas.length+' fuentes en el catálogo</p>'+
@@ -4328,21 +4342,21 @@ function vistaVerificar(){
       'La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; '+
       '<em>asimismo, la confirmación de existencia del expediente no garantiza la v</em>eracidad del criterio atribuido, '+
       'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</div>'+
-    '<div class="blk"><h3>Guía de verificación</h3><ol>'+
-      '<li>Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</li>'+
-      '<li>Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</li>'+
-      '<li>Analice el texto íntegro y el considerando específico a citar, evitando fundarse en sumarios donde el criterio principal (<em>holding</em>) pueda diferir.</li>'+
-      '<li>Identifique la distribución de votos para evitar citar una disidencia como postura mayoritaria.</li>'+
-      '<li>Confirme la vigencia del precedente frente a revocaciones posteriores, modificaciones en la composición del tribunal o reformas legislativas.</li>'+
-      '<li>Descargue y conserve el archivo PDF con la fecha de consulta como respaldo ante eventuales caídas del enlace original.</li>'+
-    '</ol></div>'+
-    '<div class="blk"><h3>Guía de prevención</h3><ol>'+
-      '<li>Desconfíe de carátulas con redactados atípicos que se amolden perfectamente al caso analizado.</li>'+
-      '<li>Invalide referencias que figuren únicamente en resúmenes o modelos lingüísticos y no consten en registros oficiales.</li>'+
-      '<li>Verifique la coherencia temporal entre el tomo de <em>Fallos</em> y el año de dictado de la sentencia.</li>'+
-      '<li>Asegúrese de que el tribunal citado contara con competencia en la materia a la fecha del fallo.</li>'+
-      '<li>Descarte citas que no registren menciones en doctrina, jurisprudencia posterior ni en el buscador del propio organismo.</li>'+
-    '</ol></div>';
+    '<div class="blk"><h3>Guía de verificación</h3><div class="fichas">'+
+      '<button type="button" class="ficha-paso">Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</button>'+
+      '<button type="button" class="ficha-paso">Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</button>'+
+      '<button type="button" class="ficha-paso">Analice el texto íntegro y el considerando específico a citar, evitando fundarse en sumarios donde el criterio principal (<em>holding</em>) pueda diferir.</button>'+
+      '<button type="button" class="ficha-paso">Identifique la distribución de votos para evitar citar una disidencia como postura mayoritaria.</button>'+
+      '<button type="button" class="ficha-paso">Confirme la vigencia del precedente frente a revocaciones posteriores, modificaciones en la composición del tribunal o reformas legislativas.</button>'+
+      '<button type="button" class="ficha-paso">Descargue y conserve el archivo PDF con la fecha de consulta como respaldo ante eventuales caídas del enlace original.</button>'+
+    '</div></div>'+
+    '<div class="blk"><h3>Guía de prevención</h3><div class="fichas">'+
+      '<button type="button" class="ficha-paso">Desconfíe de carátulas con redactados atípicos que se amolden perfectamente al caso analizado.</button>'+
+      '<button type="button" class="ficha-paso">Invalide referencias que figuren únicamente en resúmenes o modelos lingüísticos y no consten en registros oficiales.</button>'+
+      '<button type="button" class="ficha-paso">Verifique la coherencia temporal entre el tomo de <em>Fallos</em> y el año de dictado de la sentencia.</button>'+
+      '<button type="button" class="ficha-paso">Asegúrese de que el tribunal citado contara con competencia en la materia a la fecha del fallo.</button>'+
+      '<button type="button" class="ficha-paso">Descarte citas que no registren menciones en doctrina, jurisprudencia posterior ni en el buscador del propio organismo.</button>'+
+    '</div></div>';
 
 }
 
