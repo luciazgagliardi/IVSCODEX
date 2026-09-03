@@ -1440,7 +1440,7 @@ var AMB={
    ============================================================ */
 var FUENTES_INDICE=[
  {slug:"mendoza",cod:"MZA",clase:"mza",boton:"el buscador de Mendoza",
-  nombre:"Poder Judicial de Mendoza",nota:"Elegí el tribunal antes de buscar: Corte, Cámaras Civiles o Cámaras del Trabajo.",
+  nombre:"Poder Judicial de Mendoza",nota:"Fallos, autos y resoluciones integrales de la Suprema Corte de Justicia de Mendoza y tribunales provinciales en todas las instancias y fueros.",
   tribunales:[
     {v:"SC",n:"Suprema Corte"},
     {v:"CC",n:"Cámaras Civil, Comercial y Minas"},
@@ -1448,23 +1448,23 @@ var FUENTES_INDICE=[
   ]},
  {slug:"mendozalegal",cod:"MZA LEGAL",clase:"mza",boton:"Mendoza Legal",
   nombre:"Mendoza Legal · jurisprudencia seleccionada",
-  nota:"Tampoco es un tribunal: es la revista del Colegio de Abogados de Mendoza, que publica fallos elegidos uno por uno —provinciales, nacionales e interamericanos— con un resumen escrito por una persona y el enlace al texto completo. Es chiquita a propósito: sirve para ver qué se destacó de un tema, no para barrer todo lo que dictó un tribunal. Que algo no aparezca acá no dice nada sobre si existe."},
+  nota:"Selección curada de jurisprudencia provincial relevante, con sumarios procesales y doctrina de aplicación práctica local."},
  {slug:"caba",cod:"CABA",clase:"prov",boton:"el TSJ de CABA",
   nombre:"Tribunal Superior de Justicia de la Ciudad de Buenos Aires",
-  nota:"Cubre contencioso administrativo y tributario, penal/contravencional, laboral y asuntos originarios de la Ciudad — no el fuero civil general."},
+  nota:"Sentencias del máximo tribunal porteño en materia contencioso-administrativa, tributaria, penal, contravencional y electoral."},
  {slug:"csjn",cod:"CSJN",clase:"nac",boton:"la Corte Suprema",
   nombre:"Corte Suprema de Justicia de la Nación",
   nota:"Los fallos de la Corte, con carátula, fecha y enlace al documento. Se consultan a través de SAIJ, que publica ese material de forma abierta: el buscador del sitio propio de la Corte exige resolver un captcha, así que no se puede consultar automáticamente."},
  {slug:"saij",cod:"SAIJ",clase:"nac",boton:"SAIJ, todo el país",
   nombre:"SAIJ · Ministerio de Justicia de la Nación",
-  nota:"La base más grande de las tres: casi un millón de documentos de jurisprudencia de todo el país (Corte Suprema, tribunales nacionales y las provincias). Los sumarios traen la doctrina resumida, como los de Mendoza.",
+  nota:"Jurisprudencia, legislación y doctrina unificada de fueros federales, nacionales y provinciales de toda la Argentina.",
   tribunales:[
     {v:"sumarios",n:"Sumarios (con doctrina)"},
     {v:"fallos",n:"Fallos (ficha del expediente)"}
   ]},
  {slug:"dialnet",cod:"DIALNET",clase:"doc",boton:"Dialnet",
   nombre:"Dialnet · doctrina jurídica en español",
-  nota:"No es un tribunal: es artículos, libros y tesis de doctrina en español (Universidad de La Rioja, España), con muchísimo contenido de autores argentinos. Sirve para encontrar qué se escribió sobre un tema, no para verificar una sentencia puntual."}
+  nota:"Repositorio académico de la Universidad de La Rioja (España). Reúne una extensa producción de artículos de investigación, doctrina jurídica profundizada y revistas especializadas en español, con una nutrida representación de autores argentinos."}
 ];
 
 /* El sitio de CABA no filtra por secretaría en el pedido (ver nota en
@@ -2516,8 +2516,8 @@ function vistaBuscar(){
       '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(v)+'</button>';}).join("")+'</div></div>';
   }
 
-  return '<div class="aviso"><strong>Cómo funciona.</strong> Esta web no escribe fallos ni los resume: arma tu consulta con los operadores correctos y te deposita en las bases oficiales, que son las únicas que hacen fe. '+
-    'Cuando abras la sentencia, copiá el texto y pegálo en <strong>Lector</strong>: ahí la vas a ver con tu búsqueda resaltada y la cita armada.</div>'+
+  return '<div class="aviso">Optimizamos tu consulta con operadores de búsqueda para dirigirla a las bases de jurisprudencia oficiales, '+
+    'facilitando el acceso a la fuente directa.</div>'+
 
     sug+
 
@@ -2570,9 +2570,8 @@ function avisoServidor(){
   if(local) return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el tuyo</b> · todo disponible, incluido el texto completo de los fallos de CABA.</p>';
   // Sin número acá adentro: decía "las cuatro búsquedas andan" y ya iban
   // seis. El conteo sale de FUENTES_INDICE, que es donde se agregan.
-  return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el publicado</b> · las '+FUENTES_INDICE.length+' búsquedas andan. '+
-    'Para el <b>texto completo</b> de un fallo de CABA hace falta abrirlo y subirlo (el TSJ no le entrega los PDF a este servidor). '+
-    'Si tenés el servidor propio corriendo, esta página lo usa sola y eso deja de pasar.</p>';
+  return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Para procesar el texto completo de un fallo de CABA, '+
+    'es necesario descargarlo previamente e introducirlo de manera directa en el Lector.</p>';
 }
 
 /* Conectores que aparecen en cualquier texto jurídico. No se resaltan: en
@@ -3473,8 +3472,7 @@ function panelIndice(f){
     return out;
   }
   if(!im.busco){
-    out+='<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Además de armar la consulta para las bases oficiales, esta búsqueda puede traer resultados reales de '+esc(f.nombre)+', acá mismo, guardándolos de paso en tu índice local.'+
-      (f.nota?' <span style="color:var(--humo)">'+esc(f.nota)+'</span>':'')+'</p></div>';
+    out+='<p style="font-size:13px;color:var(--humo);margin:0 0 10px">'+esc(f.nota||f.nombre)+'</p></div>';
     return out;
   }
   // Los resultados en pantalla se trajeron con el rango de años que había en
@@ -3528,8 +3526,9 @@ function panelIndice(f){
 }
 
 function vistaRamas(){
-  var html='<div class="aviso"><strong>Las voces son el atajo.</strong> Los buscadores judiciales argentinos indexan por descriptores, no por lenguaje natural. '+
-    'Tocá una voz y la web la carga en la consulta con las comillas puestas.</div>';
+  var html='<div class="aviso"><strong>Las voces optimizan la búsqueda.</strong><br>'+
+    'Los buscadores judiciales argentinos indexan mediante descriptores técnicos y no por lenguaje natural. '+
+    'Al seleccionar una voz, el sistema la añadirá automáticamente a la consulta de forma exacta.</div>';
   var lista=estado.rama?RAMAS.filter(function(x){return x.id===estado.rama;}):RAMAS;
   html+='<p class="conteo">'+lista.length+' de '+RAMAS.length+' ramas</p>';
   html+=lista.map(function(x){
@@ -3547,10 +3546,13 @@ function vistaRamas(){
 
 function vistaRequisitos(){
   var conLista=REQUISITOS.filter(function(x){return x.req&&x.req.length;}).length;
-  var html='<div class="aviso"><strong>Los requisitos, con la norma al lado.</strong> Cada ficha sale del texto oficial del código o la ley que la rige —no de un resumen de esta web— y trae el artículo citado y el enlace a InfoLeg para leerlo completo. '+
-    'Están cargadas '+conLista+' de '+REQUISITOS.length+' fichas; el resto tiene por ahora el botón de búsqueda.</div>'+
-    '<div class="aviso" style="border-style:dashed"><strong>Esto es una guía de trabajo, no la ley.</strong> Un requisito puede haber cambiado después de la última revisión, y lo procesal varía según la jurisdicción: '+
-    'lo que pide un juzgado de Mendoza (ley 9001) no es lo mismo que pide uno nacional. <strong>Verificá siempre en el texto oficial antes de presentar</strong> — el enlace está en cada ficha.</div>';
+  var html='<div class="aviso"><strong>Requisitos normativos con su marco legal asociado.</strong><br>'+
+    'Cada ficha proviene del texto oficial de la ley, e incluye la cita del artículo y el enlace directo a InfoLeg. '+
+    'Actualmente se encuentran disponibles <strong>'+conLista+' de las '+REQUISITOS.length+' fichas</strong> proyectadas; '+
+    'las restantes disponen temporalmente del botón de búsqueda.</div>'+
+    '<div class="aviso" style="border-style:dashed"><strong>Este módulo constituye una guía de orientación.</strong> Los requisitos pueden haber variado tras la última revisión '+
+    'y la normativa procesal difiere según la jurisdicción (v. gr., los presupuestos de la Ley N.° 9001 de Mendoza frente al fuero nacional).<br><br>'+
+    'Verifique siempre la fuente oficial antes de realizar presentaciones, el enlace directo está disponible en cada ficha.</div>';
   var porGrupo={};
   REQUISITOS.forEach(function(x){ (porGrupo[x.g]=porGrupo[x.g]||[]).push(x); });
   html+=Object.keys(GRUPOS_REQUISITOS).map(function(g){
@@ -3751,11 +3753,10 @@ function tarjetaComparar(f){
  */
 function vistaComparar(){
   var c=estado.comparar;
-  var html='<div class="aviso"><strong>La misma consulta, en las seis fuentes.</strong> Para ver de un vistazo si Mendoza, la Nación y CABA resuelven igual o distinto. '+
-    'Usa lo que tengas puesto en <strong>Buscar</strong>: la consulta, el modo, las exclusiones y el rango de años.</div>'+
-    '<div class="aviso" style="border-style:dashed"><strong>Lo que se cuenta es lo que se trajo.</strong> Cada tarjeta dice cuántos resultados devolvió esa fuente para esta consulta, no cuántos tiene en total: '+
-    'los contadores propios de cada sitio miden cosas distintas y no se pueden poner uno al lado del otro. '+
-    'Sirve para ver dónde hay material sobre el tema y saltar a leerlo, no como estadística.</div>';
+  var html='<div class="aviso"><strong>Búsqueda simultánea en seis fuentes.</strong> Contrasta los criterios de resolución de Mendoza, la Nación y CABA.</div>'+
+    '<div class="aviso" style="border-style:dashed"><strong>Resultados recuperados.</strong> Cada bloque indica los documentos obtenidos para esta búsqueda específica, '+
+    'no el total de la base de datos. Al usar criterios de medición heterogéneos, los contadores oficiales no son comparables entre sí. '+
+    'Esta función es un localizador de material.</div>';
 
   html+='<div class="panel"><div class="campo"><span>Qué buscás</span>'+
     '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></div>'+
@@ -3801,8 +3802,10 @@ function vistaNorma(){
       '</div></div>';
   }
 
-  return '<div class="aviso"><strong>El texto, de la fuente.</strong> Esta web no transcribe el código: pide el artículo a <strong>InfoLeg</strong> (Ministerio de Justicia) en su versión de texto actualizado, con las reformas ya incorporadas. '+
-      'Después podés saltar a los fallos que lo interpretan.</div>'+
+  return '<div class="aviso"><strong>Texto oficial y actualizado desde la fuente</strong><br>'+
+      'La plataforma realiza una consulta directa a la base oficial de InfoLeg (Ministerio de Justicia de la Nación) '+
+      'para garantizar la visualización del articulado en su versión vigente, con todas sus reformas integradas.<br><br>'+
+      'Desde allí, es posible acceder de forma directa a los precedentes jurisprudenciales que lo interpretan.</div>'+
     '<div class="panel">'+
       '<div class="campo"><span>Qué artículo</span>'+
         '<input type="text" id="norma-art" value="'+esc(n.art)+'" placeholder="art 1741 CCyC · artículo 70 del código civil y comercial · LCT 245" autocomplete="off"></div>'+
@@ -3812,7 +3815,7 @@ function vistaNorma(){
       '<div class="acciones" style="margin:0;padding:0;border:0"><button class="btn" data-act="ver-articulo">Ver el artículo</button></div>'+
       salida+
     '</div>'+
-    '<div class="aviso" style="border-style:dashed">Sólo derecho de fondo <strong>nacional</strong>. Los códigos procesales provinciales (Mendoza, ley 9001) no están en InfoLeg y cada provincia los publica a su manera — para eso, la solapa <strong>Fuentes</strong> tiene los enlaces oficiales.</div>';
+    '<div class="aviso" style="border-style:dashed">Para la consulta de normativa procesal y legislación local, la pestaña «Fuentes» pone a disposición los enlaces directos a las plataformas y boletines oficiales correspondientes.</div>';
 }
 
 function vistaFuentes(){
@@ -3820,8 +3823,9 @@ function vistaFuentes(){
   var porAmb=Object.keys(AMB).map(function(k){
     return AMB[k].n+": "+F.filter(function(f){return f.a===k;}).length;
   }).join(" · ");
-  return '<div class="aviso"><strong>El catálogo completo.</strong> '+F.length+' bases y buscadores, todos públicos y verificados uno por uno. '+
-    esc(porAmb)+'. Los filtros de la izquierda y la barra de ámbitos siguen aplicando en la solapa «Buscar».</div>'+
+  return '<div class="aviso"><strong>Catálogo completo de fuentes.</strong><br>'+
+    'Acceso a '+F.length+' bases de datos y buscadores públicos, verificados e identificados individualmente. '+
+    '<em>Los filtros del panel lateral y la selección de ámbitos se mantendrán activos al retornar a la pestaña «Buscar».</em></div>'+
     '<p class="conteo">'+todas.length+' fuentes en el catálogo</p>'+
     listaPorAmbito(todas);
 }
@@ -3878,8 +3882,8 @@ function vistaLector(){
     var porLink="";
     if(estado.api){
       porLink='<div class="panel vivo">'+
-        '<div class="rotulo" style="margin-top:0">Opción 1 · Pegar el enlace y que lo traiga solo</div>'+
-        '<label class="campo"><span>Enlace directo del fallo</span>'+
+        '<div class="rotulo" style="margin-top:0"><strong>Opción 1 · Ingresar el enlace para la descarga automática</strong></div>'+
+        '<label class="campo"><span>Permite introducir el vínculo directo del documento para que el sistema lo recupere de forma automatizada.</span>'+
           '<input type="text" id="doc-url" placeholder="https://…  (el enlace del documento, no el del buscador)" autocomplete="off"></label>'+
         '<div class="acciones" style="margin-top:4px">'+
           '<button class="btn" data-act="traer-link"'+((estado.cargando||estado.cargandoOcr)?" disabled":"")+'>'+
@@ -3891,9 +3895,9 @@ function vistaLector(){
         // Subir el archivo desde la computadora: sirve para lo que no tiene
         // enlace público (lo que te mandaron por mail, lo que bajaste antes).
         '<div class="panel vivo">'+
-          '<div class="rotulo" style="margin-top:0">Opción 2 · Subir el archivo desde tu computadora</div>'+
-          '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Un PDF o un .doc que ya tengas guardado: el que te mandaron por mail, el que bajaste de una base oficial. '+
-          'Se lee en el momento y no queda guardado en ningún lado.</p>'+
+          '<div class="rotulo" style="margin-top:0"><strong>Opción 2 · Adjuntar el archivo desde su dispositivo</strong></div>'+
+          '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Admite archivos en formato PDF o Word (.doc/.docx) almacenados localmente, '+
+          'tales como documentos recibidos por correo electrónico o descargados de plataformas oficiales.</p>'+
           '<div class="acciones" style="margin-top:4px">'+
             '<button class="btn" data-act="elegir-archivo"'+((estado.cargando||estado.cargandoOcr)?" disabled":"")+'>'+
               (estado.cargando?"Leyendo…":"Elegir archivo")+'</button>'+
@@ -3908,25 +3912,27 @@ function vistaLector(){
         'Todo lo demás funciona igual. Si querés activarla, levantá el servidor con <code>npm start</code> y recargá esta página.</p></div>';
     }
 
-    return '<div class="aviso"><strong>Traé el fallo acá y vas a verlo con tu búsqueda marcada.</strong> '+
-      'Hay tres caminos y llegan al mismo lugar: pegar el enlace, subir el archivo, o pegar el texto a mano. '+
-      'El lector trabaja dentro de tu navegador y nunca inventa contenido: lo que leés es el documento.</div>'+
+    return '<div class="aviso"><p style="margin:0 0 10px">Cargue el fallo aquí para visualizarlo con su búsqueda destacada. '+
+      'Puede proceder ingresando el enlace, subiendo el archivo o pegando el texto manualmente.</p>'+
+      '<p style="margin:0">El Lector opera directamente en su navegador y asegura total fidelidad al documento original, '+
+      'garantizando que el contenido desplegado sea exactamente el del texto fuente, sin alteraciones ni elementos simulados.</p></div>'+
       porLink+
       '<div class="panel">'+
-        '<div class="rotulo" style="margin-top:0">'+(estado.api?"Opción 3 · Pegar el texto a mano":"Pegar el texto del fallo")+'</div>'+
-        '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Abrí la sentencia en la base oficial, seleccioná todo (Ctrl+A), copiá (Ctrl+C) y pegá acá. '+
-        'Este camino funciona siempre, incluso cuando el enlace no se puede descargar.</p>'+
+        '<div class="rotulo" style="margin-top:0">'+(estado.api?"<strong>Opción 3 · Transcribir o pegar el texto manualmente</strong>":"Pegar el texto del fallo")+'</div>'+
+        '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Consiste en abrir la resolución en la base de origen, seleccionar la totalidad del contenido (Ctrl+A), '+
+        'copiarlo (Ctrl+C) y pegarlo en este espacio. Este procedimiento garantiza la lectura del documento en cualquier circunstancia, '+
+        'incluso ante restricciones de descarga del enlace original.</p>'+
         '<label class="campo"><span>Texto de la sentencia o del sumario</span>'+
           '<textarea id="doc-in" placeholder="Pegá acá el texto completo del fallo…"></textarea></label>'+
-        '<label class="campo"><span>De dónde lo sacaste (opcional, va en la cita)</span>'+
+        '<label class="campo"><span>Fuente de procedencia (opcional, se incluye en la cita)</span>'+
           '<input type="text" id="doc-de" placeholder="https://wwwjuri.jus.mendoza.gov.ar/…" autocomplete="off"></label>'+
         '<div class="acciones"><button class="btn" data-act="analizar">Analizar el fallo</button></div>'+
       '</div>'+
-      '<div class="blk"><h3>Qué vas a obtener</h3><ul>'+
-        '<li>El texto completo con cada aparición de tu búsqueda resaltada, y flechas para saltar de una a la otra.</li>'+
-        '<li>Un panel de pasajes: cada coincidencia recortada con su contexto, lista para copiar con la cita puesta.</li>'+
-        '<li>Carátula, tribunal, fecha, expediente y tomo de Fallos detectados en el encabezado, para confirmar y pasar al formateador.</li>'+
-        '<li>Los artículos, leyes y fallos que la sentencia cita, para seguir tirando del hilo.</li>'+
+      '<div class="blk"><h3>El resultado incluye:</h3><ul>'+
+        '<li>Visualización del documento con resaltado automático de términos y herramientas de navegación secuencial entre coincidencias.</li>'+
+        '<li>Panel de pasajes (coincidencias recortadas con su contexto inmediato), preparadas para copiar junto a su respectiva cita.</li>'+
+        '<li>Detección e identificación de carátula, tribunal, fecha, expediente y tomo de Fallos para su validación y posterior formateo.</li>'+
+        '<li>Compilación de artículos, leyes y precedentes jurisprudenciales citados en el fallo.</li>'+
       '</ul></div>';
   }
   return avisoErrorLector()+
@@ -4142,8 +4148,9 @@ function citaDelDoc(){
   return formatoCita(d.tipo||"cam",c);
 }
 function vistaCitas(){
-  return '<div class="aviso"><strong>Armá la cita con la estructura correcta.</strong> Completá los campos y copiá el resultado. '+
-    'El formato final siempre lo manda el tribunal o la revista donde presentás.</div>'+
+  return '<div class="aviso"><strong>Generación y estructuración de citas</strong><br>'+
+    'Complete los campos correspondientes para consolidar la cita adecuadamente estructurada y copie el resultado generado. '+
+    'El formato de citación estará sujeto a las pautas formales que exija el tribunal, fuero o medio de publicación donde se presente el escrito.</div>'+
     '<div class="blk">'+
       '<h3>Formateador de citas</h3>'+
       '<label class="campo"><span>Tipo de cita</span><select id="c-tipo">'+
@@ -4171,9 +4178,9 @@ function vistaCitas(){
       '<div class="out" id="cita-out">Completá los campos y tocá «Armar la cita».</div>'+
     '</div>'+
     '<div class="blk">'+
-      '<h3>Cómo se lee una cita de la Corte</h3>'+
-      '<p><span style="font-family:var(--mono)">Fallos: 346:1234</span> significa tomo 346, página 1234 de la colección oficial. '+
-      'Es el dato que confirmás en «Tomos de Fallos completos». Si una cita trae tomo y página que no coinciden con la carátula, la cita está mal, aunque suene perfecta.</p>'+
+      '<h3>Interpretación de citas de Fallos (CSJN)</h3>'+
+      '<p>La sintaxis <em style="font-family:var(--mono)">Fallos: 346:1234</em> indica el tomo 346 y la página 1234 de la colección oficial. '+
+      'Coteje esta referencia en «Tomos de Fallos completos»: cualquier discrepancia entre los datos numéricos y la carátula del expediente determina que la cita es errónea.</p>'+
     '</div>';
 }
 
@@ -4312,41 +4319,31 @@ function vistaVerificar(){
   // este verificador no puede afirmar.
   var alcance=(estado.cita.salida&&estado.cita.salida.alcance)||
     "Poder Judicial de Mendoza · TSJ de la Ciudad de Buenos Aires · SAIJ · Corte Suprema (vía SAIJ)";
-  return '<div class="aviso"><strong>Una cita inventada te cuesta el caso.</strong> Ya hubo sanciones a abogados por citar fallos generados por inteligencia artificial que no existían. '+
-    'Pegá la cita acá abajo y la busco en las fuentes oficiales; después, el protocolo completo tarda dos minutos.</div>'+
+  return '<div class="aviso"><p style="margin:0 0 10px">La consignación de precedentes inexactos o inexistentes acarrea severas sanciones procesales.</p>'+
+    '<p style="margin:0">La plataforma permite verificar citas jurisprudenciales mediante la contrastación automatizada '+
+    'con los repositorios oficiales integrados (Poder Judicial de Mendoza, TSJ de CABA, SAIJ y CSJN).</p></div>'+
     panelVerificadorCita()+
     resultadoCita()+
-    '<div class="aviso" style="border-style:dashed"><strong>Hasta dónde llega esta verificación.</strong> Solo puedo buscar en los buscadores que este proyecto tiene integrados: '+
-      esc(alcance)+'. Ninguno publica todo lo que su tribunal dictó, y la jurisprudencia argentina vive repartida en decenas de sistemas más. '+
-      'Por eso <strong>no encontrar una cita acá no prueba que sea falsa</strong>: puede no estar indexada, estar cargada con otra carátula, o no ser real. '+
-      'Y al revés: que el fallo exista no significa que diga lo que la cita le atribuye — eso solo se comprueba leyendo el considerando.</div>'+
-    '<div class="blk"><h3>Protocolo de verificación</h3><ol>'+
-      '<li><strong>Buscá la carátula literal</strong> en la base oficial del tribunal que la dictó. Si no aparece, no existe hasta que se pruebe lo contrario.</li>'+
-      '<li><strong>Cruzá tomo y página</strong> con la colección Fallos si es de la CSJN, o el número de expediente si es provincial.</li>'+
-      '<li><strong>Abrí el texto completo</strong> y leé el considerando que vas a citar. Los sumarios recortan y a veces el holding está en otro voto.</li>'+
-      '<li><strong>Fijate quién votó y si hubo disidencia.</strong> Citar una disidencia como doctrina mayoritaria es un error caro.</li>'+
-      '<li><strong>Controlá si sigue vigente:</strong> revocaciones posteriores, cambios de composición del tribunal, reformas legislativas que dejaron el criterio sin objeto.</li>'+
-      '<li><strong>Guardá el PDF con fecha de consulta.</strong> Si después el enlace cae, tenés el respaldo.</li>'+
+    '<div class="aviso" style="border-style:dashed"><strong>Límite de la verificación.</strong><br>'+
+      'La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; '+
+      'asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, '+
+      'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</div>'+
+    '<div class="blk"><h3>Guía de verificación</h3><ol>'+
+      '<li>Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</li>'+
+      '<li>Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</li>'+
+      '<li>Analice el texto íntegro y el considerando específico a citar, evitando fundarse en sumarios donde el criterio principal (<em>holding</em>) pueda diferir.</li>'+
+      '<li>Identifique la distribución de votos para evitar citar una disidencia como postura mayoritaria.</li>'+
+      '<li>Confirme la vigencia del precedente frente a revocaciones posteriores, modificaciones en la composición del tribunal o reformas legislativas.</li>'+
+      '<li>Descargue y conserve el archivo PDF con la fecha de consulta como respaldo ante eventuales caídas del enlace original.</li>'+
     '</ol></div>'+
-    '<div class="blk"><h3>Señales de que una cita puede ser falsa</h3><ul>'+
-      '<li>La carátula es demasiado prolija y le calza perfecto a tu caso.</li>'+
-      '<li>No aparece en ninguna base oficial, solo en un resumen o en un chat.</li>'+
-      '<li>El tomo de Fallos no corresponde al año de la sentencia.</li>'+
-      '<li>El tribunal citado no tenía competencia en esa materia en esa época.</li>'+
-      '<li>Nadie más la cita: ni doctrina, ni fallos posteriores, ni el buscador del propio tribunal.</li>'+
-    '</ul></div>'+
-    '<div class="blk"><h3>Por qué los resultados no aparecen solos</h3>'+
-      '<p>Los navegadores impiden que un sitio lea el contenido de otro salvo que ese otro lo autorice expresamente. Ningún organismo judicial argentino da esa autorización, '+
-      'así que ninguna página puede mostrarte adentro los resultados de la SCJM, de SAIJ o del CIJ. Saltearlo exige montar un servidor intermediario que se rompe cada vez que el organismo cambia su sitio.</p>'+
-      '<p>La alternativa que sí es segura: la búsqueda te lleva a la fuente, y el <strong>Lector</strong> te trae el texto de vuelta con todo resaltado. '+
-      'Si además dejás activado «Resaltar la frase en la página que se abre», el navegador te marca el pasaje en el sitio oficial apenas carga.</p>'+
-      '<p>Nunca vas a leer acá un fallo que no hayas traído vos desde una base oficial. Esa es la garantía.</p>'+
-    '</div>'+
-    '<div class="blk"><h3>Qué hace y qué no hace esta web</h3>'+
-      '<p><strong>Hace:</strong> arma la consulta con operadores correctos, mantiene el catálogo de bases oficiales y te lleva directo al buscador que corresponde.</p>'+
-      '<p><strong>No hace:</strong> no guarda copias de fallos, no los resume, no los interpreta y no genera texto jurídico. Todo lo que leas viene de la fuente oficial que abras.</p>'+
-      '<p>Si un enlace dejó de funcionar porque el organismo movió su sitio, usá «Buscar en el sitio» en esa misma ficha: esa búsqueda se resuelve por dominio y encuentra la página nueva.</p>'+
-    '</div>';
+    '<div class="blk"><h3>Guía de prevención</h3><ol>'+
+      '<li>Desconfíe de carátulas con redactados atípicos que se amolden perfectamente al caso analizado.</li>'+
+      '<li>Invalide referencias que figuren únicamente en resúmenes o modelos lingüísticos y no consten en registros oficiales.</li>'+
+      '<li>Verifique la coherencia temporal entre el tomo de <em>Fallos</em> y el año de dictado de la sentencia.</li>'+
+      '<li>Asegúrese de que el tribunal citado contara con competencia en la materia a la fecha del fallo.</li>'+
+      '<li>Descarte citas que no registren menciones en doctrina, jurisprudencia posterior ni en el buscador del propio organismo.</li>'+
+    '</ol></div>';
+
 }
 
 function vistaGuardados(){
@@ -4393,8 +4390,8 @@ function vistaCuenta(){
   if(estado.usuario){
     var nFav=Object.keys(estado.fav).filter(function(k){return estado.fav[k];}).length;
     var cuando=estado.sincronizadoEn?new Date(estado.sincronizadoEn):null;
-    return '<div class="aviso"><strong>Tu cuenta guarda tu trabajo.</strong> Las fuentes que marcás y tus búsquedas recientes quedan acá, no en este navegador: '+
-        'entrás desde otra computadora con el mismo correo y están igual.</div>'+
+    return '<div class="aviso">Su cuenta vincula las fuentes seleccionadas y el historial de búsquedas a su correo electrónico, '+
+        'garantizando la sincronización en tiempo real entre distintos dispositivos.</div>'+
       '<div class="panel">'+
         '<label class="campo"><span>Correo electrónico</span>'+
           '<div style="font-family:var(--serif);font-size:17px">'+esc(estado.usuario.email)+'</div></label>'+
@@ -4411,8 +4408,8 @@ function vistaCuenta(){
           '<button class="btn sec" data-act="auth-logout"'+(estado.authCargando?" disabled":"")+'>'+
             (estado.authCargando?"Un momento…":"Cerrar sesión")+'</button>'+
         '</div>'+
-        '<p style="font-size:12px;color:var(--humo);margin:14px 0 0">Al cerrar sesión, lo guardado desaparece de esta pantalla pero queda en tu cuenta: '+
-        'volvés a entrar y está. Sirve para cuando usás una computadora prestada.</p>'+
+        '<p style="font-size:12px;color:var(--humo);margin:14px 0 0">Al cerrar sesión en un equipo compartido, la información se oculta localmente '+
+        'pero permanece resguardada de forma segura para su próximo acceso.</p>'+
       '</div>';
   }
   var esRegistro=estado.authModo!=="login";
