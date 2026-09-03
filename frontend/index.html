@@ -337,6 +337,21 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
   background:var(--papel2);border-radius:999px;padding:5px 13px;margin:9px 0 8px
 }
 
+/* Voces sugeridas por el intérprete (ver tiraSugerencias). Se separa del
+   resto del formulario con un filete dorado a la izquierda: es lo único de
+   esta pantalla que la web propone en vez de recibir. */
+.sugeridas{
+  margin:0 0 14px;padding:12px 14px;border-left:2px solid var(--lacre);
+  background:var(--papel2);border-radius:0 8px 8px 0
+}
+.sug-nota{margin:0 0 9px;font-size:12.5px;color:var(--humo);line-height:1.5;max-width:62ch}
+.sug-nota b{color:var(--tinta2);font-weight:600}
+.chip.voz-sug{border-color:rgba(233,200,119,.4);color:var(--lacre)}
+.chip.voz-sug:hover{border-color:var(--lacre);background:rgba(233,200,119,.1)}
+.chip.voz-sug[aria-pressed="true"]{background:var(--lacre);border-color:var(--lacre);color:#241a0c;font-weight:500}
+.chip.sug-cerrar{border-color:transparent;color:var(--humo);padding:6px 10px}
+.chip.sug-cerrar:hover{border-color:var(--linea);color:var(--tinta2)}
+
 /* ---------- verificador de citas ---------- */
 .veredicto{
   display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:12px;font-weight:600;
@@ -653,6 +668,298 @@ var RAMAS=[
  {id:"elec",n:"Electoral y partidos",d:"Candidaturas, listas, financiamiento, competencia de la justicia electoral.",
   v:["oficialización de listas","paridad de género en listas","financiamiento de campañas","reconocimiento de partido político","competencia electoral","boleta única","impugnación de candidatura"]}
 ];
+
+/* ============================================================
+   5.bis Intérprete de consulta — lo que dice el abogado, traducido
+         a los descriptores que los buscadores sí indexan
+   ============================================================
+
+   El problema que resuelve: los seis buscadores no entienden lenguaje
+   natural y no lo van a entender. SAIJ es un Solr que busca por OR;
+   Mendoza y CABA son formularios que hacen LIKE sobre campos indexados
+   por VOCES (descriptores del fuero). Escribirles "me chocaron y la
+   aseguradora no me quiere pagar el daño moral" devuelve ruido o cero,
+   no porque falte inteligencia sino porque esa oración no se parece a
+   nada de lo que tienen indexado.
+
+   Así que esto traduce la consulta, no los fallos. Toma el texto libre
+   y propone las voces del fuero que le corresponden.
+
+   REGLA DURA, y es la que hace que esto sea confiable: toda voz que se
+   sugiere TIENE QUE EXISTIR YA en RAMAS. Esa lista la escribió una
+   abogada; es la autoridad terminológica y acá no se inventa ni una
+   palabra jurídica nueva. Los PUENTES de abajo sólo mapean lo coloquial
+   ("me echaron") a lo que ya está escrito ahí ("indemnización art. 245").
+   Si alguien escribe mal una voz en el lado derecho, el puente queda
+   muerto en silencio — por eso hay una prueba que verifica los 100 y
+   pico contra RAMAS y falla si alguno no existe.
+
+   Lo que NO hace: no decide por el usuario. Sugiere, muestra lo que
+   sugiere, y el abogado toca lo que quiere. Reescribir la consulta a
+   sus espaldas sería justo el tipo de magia opaca que no sirve para
+   trabajar. */
+
+/* Coloquial → voz que YA existe en RAMAS. Cuando ninguna voz puntual
+   corresponde, el puente apunta a la rama entera (campo `rama`), que es
+   más honesto que forzar un descriptor que no es. */
+var PUENTES = [
+  /* --- daños y tránsito --- */
+  { dice: ["me chocaron", "choque", "choqué", "me atropellaron", "accidente de transito", "accidente de tránsito", "siniestro vial", "colision", "colisión", "accidente con el auto"], voz: "accidente de tránsito" },
+  { dice: ["daño moral", "dano moral", "sufrimiento", "angustia", "padecimiento", "afectacion espiritual"], voz: "daño moral" },
+  { dice: ["me quedaron secuelas", "quede incapacitado", "quedé incapacitado", "incapacidad", "perdi movilidad"], voz: "incapacidad sobreviniente" },
+  { dice: ["mala praxis", "el medico se equivoco", "el médico se equivocó", "negligencia medica", "error medico"], voz: "mala praxis médica" },
+  { dice: ["perdi la chance", "perdí la chance", "perdida de chance", "pérdida de chance", "oportunidad perdida"], voz: "pérdida de chance" },
+  { dice: ["se cayo un arbol", "se me cayo encima", "cosa riesgosa", "riesgo de la cosa"], voz: "riesgo de la cosa" },
+  { dice: ["murio en el accidente", "murió en el accidente", "valor vida", "muerte de un familiar"], voz: "valor vida" },
+  { dice: ["la culpa fue de la victima", "cruzo mal", "se tiro adelante"], voz: "culpa de la víctima" },
+
+  /* --- seguros --- */
+  { dice: ["la aseguradora no me quiere pagar", "el seguro no cubre", "el seguro no me cubre", "rechazo la cobertura", "rechazó la cobertura", "declinó cobertura"], voz: "exclusión de cobertura" },
+  { dice: ["citar en garantia", "citar en garantía", "traer a la aseguradora"], voz: "citación en garantía" },
+  { dice: ["franquicia del colectivo", "franquicia de la linea", "me choco un colectivo"], voz: "franquicia transporte público" },
+  { dice: ["no declaré", "no declare bien", "oculté", "reticencia"], voz: "reticencia" },
+  { dice: ["la aseguradora no se pronuncio", "no contesto el siniestro", "silencio de la aseguradora"], voz: "pronunciamiento del asegurador" },
+
+  /* --- laboral --- */
+  { dice: ["me echaron", "me despidieron", "me rajaron", "me dejaron sin trabajo", "despido sin causa", "despido injustificado", "indemnizacion por despido"], voz: "indemnización art. 245" },
+  { dice: ["me di por despedido", "me tuve que ir", "mande telegrama y me fui", "mandé telegrama", "despido indirecto"], voz: "despido indirecto" },
+  { dice: ["en negro", "no me registraron", "sin recibo de sueldo", "trabajo no registrado", "no me hacian aportes", "sin aportes"], voz: "trabajo no registrado" },
+  { dice: ["horas extras", "me hacian trabajar de mas", "jornada extensa"], voz: "jornada extraordinaria" },
+  { dice: ["me facturaba como monotributista", "monotributista", "era monotributista pero trabajaba"], voz: "monotributista dependencia encubierta" },
+  { dice: ["me discriminaron", "me echaron por", "despido discriminatorio", "represalia"], voz: "despido discriminatorio" },
+  { dice: ["trabajaba para una empresa tercerizada", "tercerizacion", "tercerización", "empresa contratista", "solidaridad"], voz: "solidaridad art. 30" },
+  { dice: ["era empleado del estado", "empleo publico", "contratado por el estado", "planta transitoria"], voz: "empleo público de hecho" },
+
+  /* --- riesgos del trabajo --- */
+  { dice: ["yendo al trabajo", "volviendo del trabajo", "camino al trabajo", "in itinere", "me accidenté yendo"], voz: "accidente in itinere" },
+  { dice: ["me enferme por el trabajo", "me enfermé por el trabajo", "enfermedad laboral", "enfermedad profesional", "hernia por el trabajo"], voz: "enfermedad profesional" },
+  { dice: ["la art no me reconocio", "la art", "comision medica", "comisión médica"], voz: "comisión médica" },
+  { dice: ["quiero demandar por la civil", "accion civil contra la art", "reparacion integral laboral"], voz: "acción civil contra ART" },
+  { dice: ["se me agravo", "reagravacion", "empeoré"], voz: "reagravación" },
+
+  /* --- consumidor --- */
+  { dice: ["garantia", "garantía", "producto defectuoso", "no me lo cambian", "no me la cambian"], junto: ["fallad"], voz: "garantía legal" },
+  { dice: ["soy consumidor", "relacion de consumo", "relación de consumo", "le compré a una empresa"], voz: "relación de consumo" },
+  { dice: ["daño punitivo", "multa civil", "que los castiguen", "sancion ejemplar"], voz: "daño punitivo" },
+  { dice: ["letra chica", "clausula abusiva", "cláusula abusiva", "clausulas abusivas", "condiciones abusivas"], voz: "cláusulas abusivas" },
+  { dice: ["me trataron mal", "trato indigno", "trato digno", "me hicieron esperar horas"], voz: "trato digno" },
+  { dice: ["la prepaga", "la obra social no me cubre", "no me autorizan", "medicina prepaga", "osde", "swiss medical"], voz: "medicina prepaga cobertura" },
+  { dice: ["plan de ahorro", "plan rombo", "cuota del plan"], voz: "plan de ahorro previo" },
+  { dice: ["me publicitaron", "publicidad engañosa", "publicidad enganosa", "prometieron y no cumplieron"], voz: "publicidad engañosa" },
+  { dice: ["no me informaron", "deber de informacion", "no me explicaron"], voz: "deber de información" },
+
+  /* --- contratos --- */
+  { dice: ["no me cumplieron", "incumplieron el contrato", "incumplimiento", "no cumplio lo pactado"], voz: "incumplimiento contractual" },
+  { dice: ["quiero que se caiga el contrato", "resolver el contrato", "dejar sin efecto el contrato"], voz: "resolución contractual" },
+  { dice: ["la seña", "seña", "entregue la seña"], voz: "seña" },
+  { dice: ["boleto de compraventa", "firmé un boleto", "compré con boleto"], voz: "boleto de compraventa" },
+  { dice: ["alquiler", "alquilo", "locacion", "locación", "contrato de alquiler", "inquilino"], voz: "locación de inmueble" },
+  { dice: ["no paga el alquiler", "quiero desalojar", "desalojo por falta de pago", "no me paga hace meses"], voz: "desalojo falta de pago" },
+  { dice: ["intereses", "actualizacion de la deuda", "que se actualice", "intereses moratorios"], voz: "intereses moratorios" },
+  { dice: ["se disparo el precio", "imprevision", "imprevisión", "cambio la economia", "excesiva onerosidad"], voz: "teoría de la imprevisión" },
+
+  /* --- derechos reales --- */
+  { dice: ["usucapion", "usucapión", "prescripcion adquisitiva", "sin titulo", "sin escritura", "sin papeles"], junto: ["hace", "anio"], voz: "prescripción adquisitiva" },
+  { dice: ["expensas", "no paga las expensas", "consorcio"], voz: "expensas comunes" },
+  { dice: ["propiedad horizontal", "departamento", "reglamento de copropiedad"], voz: "propiedad horizontal" },
+  { dice: ["me usurparon", "entraron a mi terreno", "intrusos", "ocuparon"], voz: "desalojo por intrusión" },
+  { dice: ["paso por el terreno del vecino", "servidumbre", "derecho de paso"], voz: "servidumbre de paso" },
+  { dice: ["pared medianera", "medianera", "medianeria"], voz: "medianería" },
+
+  /* --- familia --- */
+  { dice: ["compensacion economica", "compensación económica", "me quedé sin nada después del divorcio", "desequilibrio economico"], voz: "compensación económica" },
+  { dice: ["cuota alimentaria", "alimentos", "no me pasa la plata", "no pasa plata para los chicos", "no paga la cuota"], voz: "cuota alimentaria" },
+  { dice: ["no me deja ver a mi hijo", "no me deja ver a mis hijos", "me impide el contacto", "no me lo deja ver"], voz: "impedimento de contacto" },
+  { dice: ["regimen de visitas", "régimen de visitas", "régimen de comunicación", "quiero ver a mi hijo"], voz: "régimen de comunicación" },
+  { dice: ["tenencia", "cuidado personal", "con quien vive el chico", "custodia"], voz: "cuidado personal compartido" },
+  { dice: ["convivimos sin casarnos", "union convivencial", "unión convivencial", "concubinato", "pareja de hecho"], voz: "unión convivencial" },
+  { dice: ["quien se queda con la casa", "atribucion del hogar", "atribución del hogar"], voz: "atribución del hogar" },
+  { dice: ["dividir los bienes", "liquidar la sociedad conyugal", "liquidacion de la comunidad", "bienes gananciales"], voz: "liquidación de la comunidad" },
+  { dice: ["adopcion", "adopción", "quiero adoptar"], voz: "adopción plena" },
+  { dice: ["divorcio", "me quiero divorciar", "separarme", "me separé"], rama: "fam" },
+
+  /* --- sucesiones --- */
+  { dice: ["murio mi papa", "murió mi papá", "murio mi mama", "falleció", "fallecio", "herencia", "sucesion", "sucesión"], voz: "declaratoria de herederos" },
+  { dice: ["testamento", "dejó un testamento", "testó"], voz: "testamento ológrafo" },
+  { dice: ["me dejaron afuera de la herencia", "legitima", "legítima", "me corresponde una parte"], voz: "legítima hereditaria" },
+  { dice: ["le dio todo en vida a uno", "colacion", "colación", "donacion en vida"], voz: "colación" },
+  { dice: ["repartir la herencia", "particion", "partición"], voz: "partición de herencia" },
+
+  /* --- amparo, salud y constitucional --- */
+  { dice: ["amparo", "accion de amparo", "acción de amparo"], voz: "acción de amparo" },
+  { dice: ["derecho a la salud", "necesito un tratamiento", "no me dan la medicacion", "no me dan el medicamento", "discapacidad cobertura"], voz: "derecho a la salud amparo" },
+  { dice: ["cautelar", "medida cautelar", "necesito algo urgente"], voz: "medida cautelar innovativa" },
+  { dice: ["la sentencia es arbitraria", "arbitrariedad", "sentencia arbitraria"], voz: "arbitrariedad de sentencia" },
+  { dice: ["recurso extraordinario federal", "ir a la corte", "queja ante la corte"], voz: "recurso extraordinario federal" },
+  { dice: ["inconstitucional", "control de constitucionalidad", "es inconstitucional"], voz: "control de constitucionalidad de oficio" },
+
+  /* --- administrativo --- */
+  { dice: ["el estado me tiene que responder", "responsabilidad del estado", "demandar al estado", "me dano el estado"], voz: "responsabilidad del Estado" },
+  { dice: ["me echaron del municipio", "empleo publico estabilidad", "cesantia", "cesantía", "me dejaron cesante"], voz: "empleo público estabilidad" },
+  { dice: ["no me contestan el expediente", "silencio de la administracion", "silencio administrativo", "no responden"], voz: "silencio de la administración" },
+  { dice: ["agotar la via", "agotamiento de la via", "reclamo previo"], voz: "agotamiento de la vía administrativa" },
+  { dice: ["me anularon el acto", "nulidad del acto", "acto administrativo nulo"], voz: "nulidad del acto administrativo" },
+
+  /* --- previsional --- */
+  { dice: ["jubilacion", "jubilación", "me jubile", "cobro poco de jubilacion", "reajuste", "haber jubilatorio"], voz: "reajuste de haberes" },
+  { dice: ["movilidad jubilatoria", "no me actualizan la jubilacion"], voz: "movilidad jubilatoria" },
+  { dice: ["pension por fallecimiento", "pensión", "murio mi marido y quiero la pension"], voz: "pensión derivada" },
+  { dice: ["retiro por invalidez", "no puedo trabajar mas", "invalidez"], voz: "incapacidad y retiro por invalidez" },
+
+  /* --- género y violencia --- */
+  { dice: ["violencia de genero", "violencia de género", "me pega", "me golpea", "denuncie violencia", "denuncié violencia"], voz: "ley 26.485" },
+  { dice: ["necesito una medida de proteccion", "exclusion del hogar", "boton antipanico", "perimetral"], voz: "medidas de protección urgentes" },
+  { dice: ["no me deja trabajar", "me controla la plata", "violencia economica", "violencia económica"], voz: "violencia económica" },
+  { dice: ["femicidio", "la mataron"], voz: "femicidio" },
+  { dice: ["perspectiva de genero", "perspectiva de género"], voz: "perspectiva de género" },
+
+  /* --- penal --- */
+  { dice: ["prision preventiva", "prisión preventiva", "no le dan la excarcelacion", "excarcelacion"], junto: ["preso", "condena"], voz: "prisión preventiva peligro de fuga" },
+  { dice: ["entraron sin orden", "allanamiento", "nulidad del allanamiento"], voz: "nulidad del allanamiento" },
+  { dice: ["probation", "suspension del juicio a prueba", "suspensión del juicio a prueba"], voz: "suspensión del juicio a prueba" },
+  { dice: ["libertad condicional", "quiere salir", "salidas transitorias"], voz: "libertad condicional" },
+  { dice: ["prision domiciliaria", "prisión domiciliaria", "que cumpla en la casa"], voz: "prisión domiciliaria" },
+  { dice: ["legitima defensa", "legítima defensa", "se defendio"], voz: "legítima defensa" },
+  { dice: ["la carcel esta en malas condiciones", "habeas corpus", "condiciones de detencion"], voz: "hábeas corpus correctivo" },
+  { dice: ["duda", "in dubio pro reo", "no hay pruebas suficientes"], voz: "in dubio pro reo" },
+  { dice: ["un solo testigo", "testigo unico", "testigo único"], voz: "testigo único" },
+
+  /* --- comercial, concursal, tributario --- */
+  { dice: ["cheque rechazado", "cheque sin fondos", "ejecutar un cheque"], voz: "ejecución de cheque" },
+  { dice: ["pagare", "pagaré", "firmé un pagaré"], voz: "pagaré de consumo" },
+  { dice: ["quiebra", "se fundio", "concurso preventivo", "concurso"], voz: "verificación de créditos" },
+  { dice: ["me deben sueldos y quebro", "pronto pago"], voz: "pronto pago laboral" },
+  { dice: ["ingresos brutos", "convenio multilateral"], voz: "ingresos brutos convenio multilateral" },
+  { dice: ["ejecucion fiscal", "ejecución fiscal", "me ejecuta afip", "me ejecuta rentas"], voz: "ejecución fiscal excepciones" },
+  { dice: ["pagué de mas", "pagué de más", "repeticion de impuestos", "quiero que me devuelvan el impuesto"], voz: "repetición de impuestos" },
+  { dice: ["tasa municipal", "la municipalidad me cobra"], voz: "tasa municipal servicio efectivo" },
+  { dice: ["esconde los bienes en una sociedad", "corrimiento del velo", "inoponibilidad de la personalidad juridica"], voz: "inoponibilidad de la personalidad jurídica" },
+
+  /* --- ambiental, agua, datos --- */
+  { dice: ["contaminacion", "contaminación", "dano ambiental", "daño ambiental", "contaminaron"], voz: "daño ambiental de incidencia colectiva" },
+  { dice: ["principio precautorio", "por las dudas no", "riesgo ambiental incierto"], voz: "principio precautorio" },
+  { dice: ["derecho de riego", "agua para regar", "irrigacion", "irrigación"], voz: "derecho de riego" },
+  { dice: ["mineria", "minería", "actividad minera"], voz: "actividad minera metalífera" },
+  { dice: ["me copiaron la marca", "marca parecida", "confusion marcaria", "registro de marca"], voz: "confusión marcaria" },
+  { dice: ["quiero que borren mis datos", "habeas data", "aparezco en google", "derecho al olvido"], voz: "habeas data" },
+  { dice: ["me pusieron en el veraz", "veraz", "informe crediticio"], voz: "protección de datos personales" },
+
+  /* --- procesal --- */
+  { dice: ["honorarios", "regulacion de honorarios", "me regularon mal"], voz: "honorarios regulación" },
+  { dice: ["no tengo plata para litigar", "beneficio de litigar sin gastos", "carta de pobreza"], voz: "beneficio de litigar sin gastos" },
+  { dice: ["caducidad de instancia", "se me venció el plazo", "quedo paralizado el expediente"], voz: "caducidad de instancia" },
+  { dice: ["las costas", "quien paga las costas", "costas por su orden"], voz: "costas por su orden" },
+  { dice: ["recurso extraordinario provincial", "rep", "ir a la suprema corte de mendoza"], voz: "recurso extraordinario provincial" },
+  { dice: ["quien tiene que probar", "carga de la prueba", "carga dinamica"], voz: "carga dinámica de la prueba" },
+];
+
+/* ---------- motor ---------- */
+
+var _VACIAS = {
+  el:1, la:1, los:1, las:1, un:1, una:1, unos:1, unas:1, de:1, del:1, y:1, e:1,
+  o:1, u:1, en:1, al:1, a:1, con:1, sin:1, por:1, para:1, que:1, se:1, su:1,
+  sus:1, lo:1, le:1, les:1, es:1, son:1, como:1, mas:1, sobre:1, entre:1,
+  desde:1, hasta:1, contra:1, ni:1, no:1, me:1, mi:1, te:1, yo:1, mas:1,
+  quiero:1, busco:1, necesito:1, tengo:1, hay:1, fallo:1, fallos:1,
+  jurisprudencia:1, caso:1, casos:1, cliente:1, tema:1,
+};
+
+/* Raíz de 6 letras — mismo criterio que backend/lib/relevancia.js, para que
+   el frontend y el servidor no discrepen sobre qué es "la misma palabra". */
+function _raiz(p) { return p.slice(0, 6); }
+
+function _palabrasUtiles(texto) {
+  return sinTildes(texto).split(/[^a-z0-9ñ]+/)
+    .filter(function (p) { return (/^\d+$/.test(p) || p.length >= 3) && !_VACIAS[p]; });
+}
+
+/**
+ * Traduce texto libre a voces del fuero.
+ * Usa RAMAS y sinTildes(), ya definidos más arriba en este archivo.
+ * @returns {{voces:Array<{voz:string,rama:string,via:string}>, ramas:string[]}}
+ */
+function interpretarConsulta(texto) {
+  var t = " " + sinTildes(texto) + " ";
+  if (!t.trim()) return { voces: [], ramas: [] };
+
+  var vistas = {}, salida = [], ramasVistas = {};
+
+  function dondeVive(voz) {
+    for (var i = 0; i < RAMAS.length; i++) {
+      if (RAMAS[i].v.indexOf(voz) !== -1) return RAMAS[i].id;
+    }
+    return null;
+  }
+  function sumar(voz, via) {
+    if (!voz || vistas[voz]) return;
+    var rama = dondeVive(voz);
+    if (!rama) return;   // no existe en RAMAS: el puente está roto, se ignora
+    vistas[voz] = 1;
+    ramasVistas[rama] = 1;
+    salida.push({ voz: voz, rama: rama, via: via });
+  }
+
+  /* 1. Puentes: lo coloquial. Se prueban las formas largas primero, para
+        que "no paga el alquiler" gane sobre "alquiler" a secas. */
+  var puentes = PUENTES.slice();
+  for (var i = 0; i < puentes.length; i++) {
+    var p = puentes[i];
+
+    /* `junto`: todas estas raíces tienen que aparecer, en cualquier orden y
+       con lo que sea en el medio. Es lo que salva los casos que una frase
+       exacta pierde por una palabra intercalada — "está preso HACE DOS AÑOS
+       sin condena" — o por flexión — "fallada" contra "fallado". */
+    if (p.junto) {
+      var todasJuntas = true;
+      for (var k = 0; k < p.junto.length; k++) {
+        if (t.indexOf(sinTildes(p.junto[k])) === -1) { todasJuntas = false; break; }
+      }
+      if (todasJuntas) {
+        if (p.voz) sumar(p.voz, "puente");
+        else if (p.rama) ramasVistas[p.rama] = 1;
+        continue;
+      }
+    }
+    if (!p.dice) continue;
+
+    var formas = p.dice.slice().sort(function (a, b) { return b.length - a.length; });
+    for (var j = 0; j < formas.length; j++) {
+      var f = sinTildes(formas[j]);
+      var pega = f.indexOf(" ") !== -1
+        ? t.indexOf(f) !== -1                       // frase: subcadena
+        : new RegExp("[^a-z0-9ñ]" + f + "[a-z]{0,4}[^a-z0-9ñ]").test(t); // palabra + flexión
+      if (pega) {
+        if (p.voz) sumar(p.voz, "puente");
+        else if (p.rama) ramasVistas[p.rama] = 1;
+        break;
+      }
+    }
+  }
+
+  /* 2. Coincidencia directa: el usuario ya escribió (parte de) una voz. */
+  var raices = _palabrasUtiles(texto).map(_raiz);
+  if (raices.length) {
+    for (var r = 0; r < RAMAS.length; r++) {
+      for (var v = 0; v < RAMAS[r].v.length; v++) {
+        var voz = RAMAS[r].v[v];
+        var suyas = _palabrasUtiles(voz).map(_raiz);
+        if (!suyas.length) continue;
+        var todas = suyas.every(function (x) { return raices.indexOf(x) !== -1; });
+        if (todas) sumar(voz, "directa");
+      }
+    }
+  }
+
+  /* Las coincidencias directas valen más: el abogado ya usó el término
+     exacto del fuero, no hay nada que interpretar. */
+  salida.sort(function (a, b) {
+    if (a.via !== b.via) return a.via === "directa" ? -1 : 1;
+    return 0;
+  });
+
+  return { voces: salida.slice(0, 8), ramas: Object.keys(ramasVistas) };
+}
+
 
 /* ============================================================
    1.1 REQUISITOS — atajos para el trámite, no la rama.
@@ -1202,6 +1509,10 @@ function nuevoIndices(){
 function nuevoEstado(){
   return {tab:"buscar",q:"",modo:"exacta",excluir:"",desde:"",hasta:"",
           rama:"",buscarRama:"",
+          // Voces que el intérprete propuso para lo último que se escribió
+          // en lenguaje natural. Se guardan aparte de q para que tocar una
+          // no borre las otras (ver tiraSugerencias).
+          sugeridas:[],
           ambitos:{mza:true,nac:true,prov:false,int:true,doc:true},
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
@@ -2171,6 +2482,25 @@ function listaPorAmbito(fs){
   return html;
 }
 
+/* La tira de voces sugeridas, debajo de "Qué buscás".
+   Deliberadamente NO reescribe la consulta sola: muestra lo que entendió y
+   deja que el abogado toque. Que un buscador jurídico cambie la búsqueda a
+   tus espaldas es justo lo que no se puede auditar después. */
+function tiraSugerencias(){
+  if(estado.tab!=="buscar"||!estado.sugeridas.length) return "";
+  var chips=estado.sugeridas.map(function(s){
+    var puesta=sinTildes(estado.q).trim()===sinTildes(s.voz).trim();
+    return '<button class="chip voz-sug" data-act="usar-voz" data-voz="'+esc(s.voz)+'"'+
+           ' aria-pressed="'+(puesta?"true":"false")+'">'+esc(s.voz)+'</button>';
+  }).join("");
+  return '<div class="sugeridas">'+
+    '<p class="sug-nota"><b>Los buscadores del fuero indexan por voces</b>, no por lenguaje natural: '+
+    'la frase entera casi siempre da cero. Para lo que escribiste, las voces son estas.</p>'+
+    '<div class="chips">'+chips+
+      '<button class="chip sug-cerrar" data-act="cerrar-sugeridas" title="Ocultar">✕</button>'+
+    '</div></div>';
+}
+
 function vistaBuscar(){
   var ambChips=Object.keys(AMB).map(function(k){
     return '<button class="chip amb" data-act="amb" data-amb="'+k+'" aria-pressed="'+(estado.ambitos[k]?"true":"false")+'">'+esc(AMB[k].n)+'</button>';
@@ -2204,6 +2534,7 @@ function vistaBuscar(){
             '<button class="mini" data-act="limpiar">Limpiar</button>'+
           '</div></div>'+
         '</div></div>'+
+      tiraSugerencias()+
       '<div class="campo"><span>Cómo combinar las palabras</span><div class="chips">'+modos+'</div></div>'+
       '<div class="fila">'+
         '<label class="campo"><span>Excluir palabras</span><input type="text" id="excluir" value="'+esc(estado.excluir)+'" placeholder="seguro laboral" autocomplete="off"></label>'+
@@ -4442,6 +4773,19 @@ document.addEventListener("click",function(ev){
     flash("Buscando en "+doms.length+" sitios a la vez");
     return;
   }
+  if(act==="usar-voz"){
+    var vz=b.getAttribute("data-voz")||"";
+    if(!vz) return;
+    // Modo exacta a propósito: una voz es un descriptor, y es como frase
+    // entera que los seis motores la encuentran. Suelta en "todas las
+    // palabras" trae cualquier fallo que diga "daño" o "moral" por separado.
+    estado.q=vz; estado.modo="exacta"; estado.articulo=""; estado.marca=0;
+    invalidarBusquedas();
+    render();
+    flash("Consulta cambiada a la voz «"+vz+"» — así la tiene indexada el fuero");
+    return;
+  }
+  if(act==="cerrar-sugeridas"){ estado.sugeridas=[]; render(); return; }
   if(act==="copiar-cadena"){ copiar(cadena()); return; }
   if(act==="limpiar"){
     estado.q="";estado.excluir="";estado.desde="";estado.hasta="";estado.rama="";estado.modo="exacta";
@@ -4576,6 +4920,15 @@ document.addEventListener("input",function(ev){
     // artículo N" y pasa a ser una búsqueda común: lo que se ve es lo que se
     // busca, sin una traducción por fuente actuando por detrás.
     estado.q=ev.target.value; estado.articulo=""; estado.articuloNorma=""; estado.articuloTema=""; estado.marca=0; pintarCadena();
+    // Sólo se interpreta lo que parece una frase: con una o dos palabras
+    // el abogado ya está escribiendo el descriptor, no contando un caso.
+    if(estado.tab==="buscar"){
+      var _pal=String(estado.q||"").trim().split(/\s+/).length;
+      if(_pal>=3){
+        var _r=interpretarConsulta(estado.q);
+        if(_r.voces.length){ estado.sugeridas=_r.voces; render(); }
+      }else if(!estado.q.trim()&&estado.sugeridas.length){ estado.sugeridas=[]; render(); }
+    }
     if(estado.tab==="lector"){
       if(estado.texto.length<150000){ pintarLector(); }
       else { clearTimeout(window._tl); window._tl=setTimeout(pintarLector,170); }
