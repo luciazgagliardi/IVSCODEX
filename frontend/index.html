@@ -398,6 +398,20 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 }
 .nota-suelta strong{color:var(--lacre)}
 
+/* Tipografía de los avisos, tal como está marcada en el documento de
+   corrección. Tres tratamientos distintos y a propósito:
+   .av-tit    la bajada de casi todos los avisos: serif itálica dorada.
+   .av-serif  las dos frases que van enteras en serif dorada, derecha
+              (Buscar y Cuenta): son avisos de una sola oración, sin
+              bajada que separar.
+   .av-alerta la advertencia por citar precedentes inexistentes: es la
+              única en rojo del sitio, y es deliberado — no comparte el
+              dorado con el resto porque no es una explicación sino la
+              consecuencia más grave que la página advierte. */
+.av-tit{font-family:var(--serif);font-style:italic;font-weight:500;color:var(--lacre)}
+.av-serif{font-family:var(--serif);color:var(--lacre)}
+.av-alerta{color:#e2564a}
+
 /* ---------- prosa ---------- */
 .blk{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;margin-bottom:16px}
 .blk h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 8px}
@@ -2540,7 +2554,7 @@ function vistaBuscar(){
       '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(v)+'</button>';}).join("")+'</div></div>';
   }
 
-  return '<div class="aviso"><span style="color:var(--lacre)">Optimizamos tu consulta con operadores de búsqueda para dirigirla a las bases de jurisprudencia oficiales, '+
+  return '<div class="aviso"><span class="av-serif">Optimizamos tu consulta con operadores de búsqueda para dirigirla a las bases de jurisprudencia oficiales, '+
     'facilitando el acceso a la fuente directa.</span></div>'+
 
     sug+
@@ -3550,7 +3564,7 @@ function panelIndice(f){
 }
 
 function vistaRamas(){
-  var html='<div class="aviso"><strong>Las voces optimizan la búsqueda.</strong> '+
+  var html='<div class="aviso"><span class="av-tit">Las voces optimizan la búsqueda.</span> '+
     'Los buscadores judiciales argentinos indexan mediante descriptores técnicos y no por lenguaje natural. '+
     'Al seleccionar una voz, el sistema la añadirá automáticamente a la consulta de forma exacta.</div>';
   var lista=estado.rama?RAMAS.filter(function(x){return x.id===estado.rama;}):RAMAS;
@@ -3570,9 +3584,9 @@ function vistaRamas(){
 
 function vistaRequisitos(){
   var conLista=REQUISITOS.filter(function(x){return x.req&&x.req.length;}).length;
-  var html='<div class="aviso"><strong>Requisitos normativos con su marco legal asociado.</strong> '+
+  var html='<div class="aviso"><span class="av-tit">Requisitos normativos con su marco legal asociado.</span> '+
     'Cada ficha proviene del texto oficial de la ley, e incluye la cita del artículo y el enlace directo a InfoLeg. '+
-    'Actualmente se encuentran disponibles <strong>'+conLista+' de las '+REQUISITOS.length+' fichas</strong> proyectadas; '+
+    'Actualmente se encuentran disponibles <span class="av-tit">'+conLista+' de las '+REQUISITOS.length+' fichas</span> proyectadas; '+
     'las restantes disponen temporalmente del botón de búsqueda.</div>'+
     // Sin tarjeta y en letra más chica, a pedido: cuelga del aviso de
     // arriba en vez de competir con él como un segundo cartel.
@@ -3827,7 +3841,7 @@ function vistaNorma(){
       '</div></div>';
   }
 
-  return '<div class="aviso"><strong>Texto oficial y actualizado desde la fuente.</strong> '+
+  return '<div class="aviso"><span class="av-tit">Texto oficial y actualizado desde la fuente.</span> '+
       'La plataforma realiza una consulta directa a la base oficial de InfoLeg (Ministerio de Justicia de la Nación) '+
       'para garantizar la visualización del articulado en su versión vigente, con todas sus reformas integradas. '+
       '<em>Desde allí, es posible acceder de forma directa a los precedentes jurisprudenciales que lo interpretan.</em></div>'+
@@ -3848,7 +3862,7 @@ function vistaFuentes(){
   var porAmb=Object.keys(AMB).map(function(k){
     return AMB[k].n+": "+F.filter(function(f){return f.a===k;}).length;
   }).join(" · ");
-  return '<div class="aviso"><strong>Catálogo completo de fuentes.</strong> '+
+  return '<div class="aviso"><span class="av-tit">Catálogo completo de fuentes.</span> '+
     'Acceso a '+F.length+' bases de datos y buscadores públicos, verificados e identificados individualmente. '+
     '<em>Los filtros del panel lateral y la selección de ámbitos se mantendrán activos al retornar a la pestaña «Buscar».</em></div>'+
     '<p class="conteo">'+todas.length+' fuentes en el catálogo</p>'+
@@ -3937,7 +3951,7 @@ function vistaLector(){
         'Todo lo demás funciona igual. Si querés activarla, levantá el servidor con <code>npm start</code> y recargá esta página.</p></div>';
     }
 
-    return '<div class="aviso"><strong>Cargue el fallo aquí para visualizarlo con su búsqueda destacada.</strong> '+
+    return '<div class="aviso"><span class="av-tit">Cargue el fallo aquí para visualizarlo con su búsqueda destacada.</span> '+
       'Puede proceder ingresando el enlace, subiendo el archivo o pegando el texto manualmente. '+
       '<em>El Lector opera directamente en su navegador y asegura total fidelidad al documento original, '+
       'garantizando que el contenido desplegado sea exactamente el del texto fuente, sin alteraciones ni elementos simulados.</em></div>'+
@@ -4173,7 +4187,7 @@ function citaDelDoc(){
   return formatoCita(d.tipo||"cam",c);
 }
 function vistaCitas(){
-  return '<div class="aviso"><strong>Generación y estructuración de citas.</strong> '+
+  return '<div class="aviso"><span class="av-tit">Generación y estructuración de citas.</span> '+
     'Complete los campos correspondientes para consolidar la cita adecuadamente estructurada y copie el resultado generado. '+
     '<em>El formato de citación estará sujeto a las pautas formales que exija el tribunal, fuero o medio de publicación donde se presente el escrito.</em></div>'+
     '<div class="blk">'+
@@ -4344,12 +4358,12 @@ function vistaVerificar(){
   // este verificador no puede afirmar.
   var alcance=(estado.cita.salida&&estado.cita.salida.alcance)||
     "Poder Judicial de Mendoza · TSJ de la Ciudad de Buenos Aires · SAIJ · Corte Suprema (vía SAIJ)";
-  return '<div class="aviso"><strong>La consignación de precedentes inexactos o inexistentes acarrea severas sanciones procesales.</strong> '+
+  return '<div class="aviso"><span class="av-alerta">La consignación de precedentes inexactos o inexistentes acarrea severas sanciones procesales.</span> '+
     'La plataforma permite verificar citas jurisprudenciales mediante la contrastación automatizada '+
     'con los repositorios oficiales integrados (Poder Judicial de Mendoza, TSJ de CABA, SAIJ y CSJN).</div>'+
     panelVerificadorCita()+
     resultadoCita()+
-    '<div class="aviso" style="border-style:dashed"><strong>Límite de la verificación.</strong> '+
+    '<div class="aviso" style="border-style:dashed"><span class="av-tit">Límite de la verificación.</span> '+
       'La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; '+
       '<em>asimismo, la confirmación de existencia del expediente no garantiza la v</em>eracidad del criterio atribuido, '+
       'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</div>'+
@@ -4415,7 +4429,7 @@ function vistaCuenta(){
   if(estado.usuario){
     var nFav=Object.keys(estado.fav).filter(function(k){return estado.fav[k];}).length;
     var cuando=estado.sincronizadoEn?new Date(estado.sincronizadoEn):null;
-    return '<div class="aviso"><span style="color:var(--lacre)">Su cuenta vincula las fuentes seleccionadas y el historial de búsquedas a su correo electrónico, '+
+    return '<div class="aviso"><span class="av-serif">Su cuenta vincula las fuentes seleccionadas y el historial de búsquedas a su correo electrónico, '+
         'garantizando la sincronización en tiempo real entre distintos dispositivos.</span></div>'+
       '<div class="panel">'+
         '<label class="campo"><span>Correo electrónico</span>'+
