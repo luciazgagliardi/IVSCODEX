@@ -837,7 +837,12 @@ var PUENTES = [
   { dice: ["se disparo el precio", "imprevision", "imprevisión", "cambio la economia", "excesiva onerosidad"], voz: "teoría de la imprevisión" },
 
   /* --- derechos reales --- */
-  { dice: ["usucapion", "usucapión", "prescripcion adquisitiva", "sin titulo", "sin escritura", "sin papeles"], junto: ["hace", "anio"], voz: "prescripción adquisitiva" },
+  { dice: ["usucapion", "usucapión", "prescripcion adquisitiva", "sin titulo", "sin escritura", "sin papeles"], voz: "prescripción adquisitiva" },
+  // "hace X años" sólo cuenta si además hay algo de posesión: con "hace" y
+  // "año" a secas saltaba en "hace años que está el proceso", que no tiene
+  // nada que ver con usucapir.
+  { junto: ["vivo", "anio"], voz: "prescripción adquisitiva" },
+  { junto: ["poseo"], voz: "prescripción adquisitiva" },
   { dice: ["expensas", "no paga las expensas", "consorcio"], voz: "expensas comunes" },
   { dice: ["propiedad horizontal", "departamento", "reglamento de copropiedad"], voz: "propiedad horizontal" },
   { dice: ["me usurparon", "entraron a mi terreno", "intrusos", "ocuparon"], voz: "desalojo por intrusión" },
@@ -895,7 +900,8 @@ var PUENTES = [
   { dice: ["prision preventiva", "prisión preventiva", "no le dan la excarcelacion", "excarcelacion"], junto: ["preso", "condena"], voz: "prisión preventiva peligro de fuga" },
   { dice: ["entraron sin orden", "allanamiento", "nulidad del allanamiento"], voz: "nulidad del allanamiento" },
   { dice: ["probation", "suspension del juicio a prueba", "suspensión del juicio a prueba"], voz: "suspensión del juicio a prueba" },
-  { dice: ["libertad condicional", "quiere salir", "salidas transitorias"], voz: "libertad condicional" },
+  { dice: ["libertad condicional", "quiere salir"], voz: "libertad condicional" },
+  { dice: ["salidas transitorias", "salir los fines de semana"], voz: "salidas transitorias" },
   { dice: ["prision domiciliaria", "prisión domiciliaria", "que cumpla en la casa"], voz: "prisión domiciliaria" },
   { dice: ["legitima defensa", "legítima defensa", "se defendio"], voz: "legítima defensa" },
   { dice: ["la carcel esta en malas condiciones", "habeas corpus", "condiciones de detencion"], voz: "hábeas corpus correctivo" },
@@ -977,6 +983,213 @@ var PUENTES = [
   { dice: ["financiamiento de campana", "financiamiento de campaña", "aportes de campana"], voz: "financiamiento de campañas" },
   { dice: ["reconocimiento del partido", "personeria del partido", "personería del partido"], voz: "reconocimiento de partido político" },
   { dice: ["boleta unica", "boleta única"], voz: "boleta única" },
+  /* --- obligaciones y contratos --- */
+  { dice: ["pacto comisorio"], voz: "pacto comisorio" },
+  { dice: ["mora automatica", "mora automática", "cayo en mora solo", "sin necesidad de intimar"], voz: "mora automática" },
+  { dice: ["tasa activa"], voz: "tasa activa" },
+  { dice: ["deuda de valor", "obligacion de valor", "obligación de valor"], voz: "obligación de valor" },
+  { dice: ["novacion", "novación", "cambiaron la deuda por otra"], voz: "novación" },
+  { dice: ["cesion de creditos", "cesión de créditos", "me cedieron el credito"], voz: "cesión de créditos" },
+  { dice: ["buena fe contractual", "actuo de mala fe", "actuó de mala fe"], voz: "buena fe contractual" },
+
+  /* --- daños --- */
+  { dice: ["consecuencias no patrimoniales"], voz: "consecuencias no patrimoniales" },
+  { dice: ["formula acciarri", "fórmula Acciarri", "acciarri", "como se calcula la indemnizacion"], voz: "fórmula Acciarri" },
+  { dice: ["relacion de causalidad", "relación de causalidad", "nexo causal"], voz: "relación de causalidad" },
+  { dice: ["eximentes", "caso fortuito", "hecho de un tercero", "fuerza mayor"], voz: "eximentes de responsabilidad" },
+  { dice: ["tratamiento futuro", "va a necesitar cirugia", "gastos futuros"], voz: "gastos de tratamiento futuro" },
+  { dice: ["quien puede reclamar el dano moral", "legitimacion activa dano moral"], voz: "legitimación activa daño moral" },
+
+  /* --- derechos reales --- */
+  { dice: ["usucapion veinteanal", "usucapión veinteañal", "veinte anios de posesion"], voz: "usucapión veinteañal" },
+  { dice: ["reivindicar", "accion reivindicatoria", "acción reivindicatoria", "recuperar el inmueble"], voz: "acción reivindicatoria" },
+  { dice: ["me sacaron la posesion", "interdicto de recobrar", "recuperar la posesion"], voz: "interdicto de recobrar" },
+  { dice: ["posesion y tenencia", "posesión y tenencia", "es poseedor o tenedor"], voz: "posesión y tenencia" },
+  { dice: ["boleto y oponibilidad", "tengo boleto y me lo quieren sacar"], voz: "boleto y oponibilidad" },
+  { dice: ["barrio cerrado", "country", "conjunto inmobiliario"], voz: "conjunto inmobiliario" },
+  { dice: ["tiempo compartido"], voz: "tiempo compartido" },
+
+  /* --- familia --- */
+  { dice: ["alimentos provisorios", "necesito alimentos ya"], voz: "alimentos provisorios" },
+  { dice: ["fertilizacion asistida", "fertilización asistida", "trha", "voluntad procreacional"], voz: "filiación por TRHA" },
+  { dice: ["medidas por violencia familiar"], voz: "violencia familiar medidas" },
+
+  /* --- sucesiones --- */
+  { dice: ["accion de reduccion", "acción de reducción", "afectaron la legitima"], voz: "acción de reducción" },
+  { dice: ["indignidad", "es indigno de heredar"], voz: "indignidad" },
+  { dice: ["ceder los derechos hereditarios", "cesion de derechos hereditarios"], voz: "cesión de derechos hereditarios" },
+  { dice: ["administrador de la sucesion", "administrador de la sucesión"], voz: "administrador de la sucesión" },
+  { dice: ["sin testamento", "ab intestato", "murio sin testamento"], voz: "sucesión ab intestato" },
+
+  /* --- consumidor --- */
+  { dice: ["telefonia", "telefonía", "la empresa de telefono", "el servicio de internet"], voz: "servicio de telefonía" },
+  { dice: ["tarjeta de credito", "tarjeta de crédito", "resumen de la tarjeta"], voz: "tarjeta de crédito" },
+  { dice: ["sobreendeudamiento"], voz: "sobreendeudamiento del consumidor" },
+  { dice: ["in dubio pro consumidor", "la duda favorece al consumidor"], voz: "in dubio pro consumidor" },
+
+  /* --- comercial y societario --- */
+  { dice: ["responsabilidad de los directores", "accion social de responsabilidad"], voz: "acción social de responsabilidad" },
+  { dice: ["impugnar la asamblea", "impugnacion de asamblea", "impugnación de asamblea"], voz: "impugnación de asamblea" },
+  { dice: ["echar a un socio", "exclusion de socio", "exclusión de socio"], voz: "exclusión de socio" },
+  { dice: ["sociedad de hecho", "seccion iv", "sección IV", "sociedad irregular"], voz: "sociedad de la sección IV" },
+  { dice: ["fideicomiso"], voz: "fideicomiso de garantía" },
+  { dice: ["contrato de franquicia", "franquiciado"], voz: "contrato de franquicia" },
+  { dice: ["cuenta corriente bancaria", "el banco me cerro la cuenta"], voz: "cuenta corriente bancaria" },
+  { dice: ["abuso de mayoria", "abuso de mayoría", "la mayoria hace lo que quiere"], voz: "abuso de mayoría" },
+
+  /* --- concursos y quiebras --- */
+  { dice: ["periodo de sospecha", "período de sospecha"], voz: "período de sospecha" },
+  { dice: ["accion revocatoria", "acción revocatoria", "revocatoria concursal"], voz: "acción revocatoria concursal" },
+  { dice: ["cramdown"], voz: "cramdown" },
+  { dice: ["salvataje"], voz: "salvataje" },
+  { dice: ["extension de quiebra", "extensión de quiebra", "extender la quiebra"], voz: "extensión de quiebra" },
+  { dice: ["privilegio concursal", "tengo privilegio", "cobro con privilegio"], voz: "privilegio concursal" },
+  { dice: ["incidente de revision", "incidente de revisión"], voz: "incidente de revisión" },
+  { dice: ["acuerdo preventivo extrajudicial", "ape"], voz: "acuerdo preventivo extrajudicial" },
+  { dice: ["fuero de atraccion", "fuero de atracción", "atrae el juicio"], voz: "fuero de atracción" },
+
+  /* --- seguros --- */
+  { dice: ["declaracion del riesgo", "declaración del riesgo"], voz: "declaración del riesgo" },
+  { dice: ["seguro de vida"], voz: "seguro de vida colectivo" },
+  { dice: ["carga del asegurado", "no denuncie a tiempo el siniestro"], voz: "carga del asegurado" },
+  { dice: ["oponibilidad de la franquicia"], voz: "oponibilidad de la franquicia" },
+  { dice: ["seguro de responsabilidad civil"], voz: "seguro de responsabilidad civil" },
+
+  /* --- laboral --- */
+  { dice: ["injuria laboral", "injuria grave"], voz: "injuria laboral" },
+  { dice: ["relacion de dependencia", "relación de dependencia", "era empleado o no"], voz: "relación de dependencia" },
+  { dice: ["multa registral", "multas de la 24013", "multa del articulo 8"], voz: "multa registral" },
+  { dice: ["intereses tasa activa laboral"], voz: "intereses tasa activa laboral" },
+  { dice: ["irrenunciabilidad", "renuncio a derechos"], voz: "principio de irrenunciabilidad" },
+  { dice: ["ultraactividad", "convenio vencido"], voz: "ultraactividad del convenio" },
+
+  /* --- riesgos del trabajo --- */
+  { dice: ["incapacidad laboral permanente", "porcentaje de incapacidad"], voz: "incapacidad laboral permanente" },
+  { dice: ["ley 27348", "27.348", "constitucionalidad de la 27348"], voz: "ley 27.348 constitucionalidad" },
+  { dice: ["baremo"], voz: "baremo" },
+  { dice: ["prestaciones dinerarias"], voz: "prestaciones dinerarias" },
+  { dice: ["ripte", "actualizacion ripte"], voz: "actualización RIPTE" },
+
+  /* --- previsional --- */
+  { dice: ["caso badaro", "badaro"], voz: "caso Badaro" },
+  { dice: ["haber minimo", "haber mínimo"], voz: "haber mínimo" },
+  { dice: ["reconocimiento de servicios", "que me reconozcan los anios"], voz: "reconocimiento de servicios" },
+  { dice: ["tareas penosas", "trabajo insalubre", "regimen diferencial"], voz: "tareas penosas" },
+  { dice: ["computo de aportes", "cómputo de aportes", "me faltan aportes"], voz: "cómputo de aportes" },
+  { dice: ["retroactivo de la jubilacion", "retroactividad previsional"], voz: "retroactividad previsional" },
+
+  /* --- penal --- */
+  { dice: ["dolo eventual"], voz: "dolo eventual" },
+  { dice: ["estado de necesidad"], voz: "estado de necesidad" },
+  { dice: ["tentativa inidonea", "tentativa inidónea", "delito imposible"], voz: "tentativa inidónea" },
+  { dice: ["autoria mediata", "autoría mediata"], voz: "autoría mediata" },
+  { dice: ["concurso de delitos", "concurso real", "concurso ideal"], voz: "concurso real e ideal" },
+  { dice: ["determinacion de la pena", "cuanto le pueden dar", "monto de la pena"], voz: "determinación de la pena" },
+  { dice: ["reincidencia", "es reincidente"], voz: "reincidencia" },
+  { dice: ["mato a su pareja", "homicidio agravado por el vinculo"], voz: "homicidio agravado por el vínculo" },
+  { dice: ["estafa procesal"], voz: "estafa procesal" },
+  { dice: ["abuso sexual", "violacion", "violación"], voz: "abuso sexual con acceso carnal" },
+  { dice: ["tenencia de droga", "narcotrafico", "estupefacientes", "venta de droga"], voz: "tenencia de estupefacientes con fines de comercialización" },
+  { dice: ["la mato por ser mujer", "violencia de genero femicidio"], voz: "violencia de género femicidio" },
+  { dice: ["lesiones culposas", "lo lesiono sin querer"], voz: "lesiones culposas" },
+
+  /* --- procesal penal --- */
+  { dice: ["cadena de custodia"], voz: "cadena de custodia" },
+  { dice: ["plazo razonable", "hace anios que esta el proceso"], voz: "plazo razonable del proceso" },
+  { dice: ["doble conforme"], voz: "doble conforme" },
+  { dice: ["juicio abreviado"], voz: "juicio abreviado" },
+  { dice: ["juicio por jurados"], voz: "juicio por jurados" },
+  { dice: ["prueba indiciaria", "indicios"], voz: "valoración de la prueba indiciaria" },
+  { dice: ["prueba ilegal", "exclusion probatoria", "regla de exclusion"], voz: "exclusión probatoria" },
+
+  /* --- ejecución penal --- */
+  { dice: ["libertad asistida"], voz: "libertad asistida" },
+  { dice: ["regimen de progresividad", "régimen de progresividad", "progresividad de la pena"], voz: "régimen de progresividad" },
+  { dice: ["condiciones de detencion", "condiciones de detención", "esta mal alojado"], voz: "condiciones de detención" },
+  { dice: ["computo de pena", "cómputo de pena", "dos por uno"], voz: "cómputo de pena" },
+  { dice: ["sancion en la carcel", "sanciones disciplinarias del penal"], voz: "sanciones disciplinarias" },
+
+  /* --- administrativo --- */
+  { dice: ["contrato administrativo", "licitacion", "licitación"], voz: "contrato administrativo" },
+  { dice: ["sumario administrativo", "me sancionaron en el estado"], voz: "sanción disciplinaria" },
+  { dice: ["habilitacion de instancia", "habilitación de instancia"], voz: "habilitación de instancia" },
+  { dice: ["cautelar contra el estado"], voz: "medida cautelar contra el Estado" },
+  { dice: ["accion procesal administrativa", "acción procesal administrativa"], voz: "acción procesal administrativa" },
+
+  /* --- tributario --- */
+  { dice: ["determinacion de oficio", "determinación de oficio", "afip me determino"], voz: "determinación de oficio" },
+  { dice: ["prescripcion tributaria", "prescripción tributaria", "prescribio el impuesto"], voz: "prescripción tributaria" },
+  { dice: ["defraudacion fiscal", "multa por defraudacion"], voz: "multa por defraudación fiscal" },
+  { dice: ["impuesto de sellos", "sellos"], voz: "impuesto de sellos" },
+  { dice: ["confiscatoriedad", "el impuesto es confiscatorio"], voz: "confiscatoriedad" },
+  { dice: ["solve et repete", "pagar para discutir"], voz: "solve et repete" },
+
+  /* --- constitucional --- */
+  { dice: ["amparo colectivo"], voz: "amparo colectivo" },
+  { dice: ["cuestion politica", "cuestión política no justiciable"], voz: "cuestión política no justiciable" },
+  { dice: ["legitimacion colectiva", "legitimación colectiva"], voz: "legitimación colectiva" },
+  { dice: ["gravedad institucional"], voz: "gravedad institucional" },
+  { dice: ["per saltum"], voz: "per saltum" },
+
+  /* --- derechos humanos --- */
+  { dice: ["garantias judiciales", "articulo 8 de la convencion"], voz: "garantías judiciales art. 8 CADH" },
+  { dice: ["proteccion judicial", "articulo 25 de la convencion"], voz: "protección judicial art. 25 CADH" },
+  { dice: ["medidas provisionales"], voz: "medidas provisionales" },
+
+  /* --- ambiental --- */
+  { dice: ["impacto ambiental", "estudio de impacto"], voz: "evaluación de impacto ambiental" },
+  { dice: ["recomponer el ambiente", "recomposicion del ambiente"], voz: "recomposición del ambiente" },
+  { dice: ["quien puede demandar por ambiente", "legitimacion amplia"], voz: "legitimación amplia ambiental" },
+  { dice: ["audiencia publica", "audiencia pública"], voz: "audiencia pública ambiental" },
+  { dice: ["presupuestos minimos", "presupuestos mínimos"], voz: "presupuestos mínimos" },
+  { dice: ["in dubio pro natura"], voz: "in dubio pro natura" },
+  { dice: ["glaciares"], voz: "glaciares" },
+  { dice: ["residuos", "basura", "gestion de residuos"], voz: "gestión de residuos" },
+
+  /* --- aguas, minería y territorio --- */
+  { dice: ["concesion de agua", "concesión de uso de agua"], voz: "concesión de uso de agua" },
+  { dice: ["departamento general de irrigacion", "dgi"], voz: "Departamento General de Irrigación" },
+  { dice: ["canon de riego"], voz: "canon de riego" },
+  { dice: ["recurso hidrico", "recurso hídrico"], voz: "recurso hídrico" },
+  { dice: ["licencia ambiental minera"], voz: "licencia ambiental minera" },
+  { dice: ["uso del suelo rural", "zonificacion rural"], voz: "uso del suelo rural" },
+  { dice: ["acueducto", "servidumbre de acueducto"], voz: "servidumbre administrativa de acueducto" },
+  { dice: ["cuenca hidrica", "cuenca hídrica"], voz: "cuenca hídrica" },
+
+  /* --- procesal civil (Mendoza) --- */
+  { dice: ["ley 9001", "codigo procesal de mendoza", "código procesal de Mendoza"], voz: "ley 9001 Mendoza" },
+  { dice: ["audiencia inicial"], voz: "audiencia inicial" },
+  { dice: ["audiencia final"], voz: "audiencia final" },
+  { dice: ["recurso de inconstitucionalidad"], voz: "recurso de inconstitucionalidad" },
+  { dice: ["recurso de casacion", "recurso de casación", "casacion"], voz: "recurso de casación" },
+  { dice: ["medida cautelar generica", "medida cautelar genérica"], voz: "medida cautelar genérica" },
+
+  /* --- internacional privado --- */
+  { dice: ["foro de necesidad"], voz: "foro de necesidad" },
+  { dice: ["cooperacion juridica internacional", "exhorto"], voz: "cooperación jurídica internacional" },
+
+  /* --- propiedad intelectual y datos --- */
+  { dice: ["oposicion al registro de marca", "me opusieron la marca"], voz: "oposición al registro de marca" },
+  { dice: ["plagio", "me copiaron la obra", "derecho de autor"], voz: "derecho de autor plagio" },
+  { dice: ["derecho al olvido", "que me borren de google"], voz: "derecho al olvido" },
+  { dice: ["responsabilidad de google", "responsabilidad de buscadores"], voz: "responsabilidad de buscadores" },
+  { dice: ["nombre de dominio", "dominio web"], voz: "nombre de dominio" },
+  { dice: ["competencia desleal"], voz: "competencia desleal" },
+  { dice: ["obra por encargo", "software"], voz: "software y obra por encargo" },
+
+  /* --- género y violencia --- */
+  { dice: ["denuncia por violencia familiar"], voz: "denuncia por violencia familiar" },
+  { dice: ["revictimizacion", "revictimización", "la hicieron declarar mil veces"], voz: "revictimización" },
+  { dice: ["testimonio unico", "solo esta su palabra"], voz: "testimonio único de la víctima" },
+  { dice: ["reparacion con enfoque de genero"], voz: "reparación con enfoque de género" },
+  { dice: ["violencia digital", "difundieron fotos intimas"], voz: "violencia digital" },
+
+  /* --- niñez --- */
+  { dice: ["autonomia progresiva", "autonomía progresiva"], voz: "autonomía progresiva" },
+  { dice: ["designar tutor", "tutela del menor"], voz: "tutela" },
+
+  /* --- electoral --- */
+  { dice: ["competencia electoral"], voz: "competencia electoral" },
 ];
 
 /* ---------- motor ---------- */
