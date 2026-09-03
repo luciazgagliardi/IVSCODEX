@@ -4326,8 +4326,8 @@ function vistaVerificar(){
     resultadoCita()+
     '<div class="aviso" style="border-style:dashed"><strong>Límite de la verificación.</strong> '+
       'La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; '+
-      '<em>asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, '+
-      'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</em></div>'+
+      '<em>asimismo, la confirmación de existencia del expediente no garantiza la v</em>eracidad del criterio atribuido, '+
+      'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</div>'+
     '<div class="blk"><h3>Guía de verificación</h3><ol>'+
       '<li>Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</li>'+
       '<li>Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</li>'+
@@ -4390,8 +4390,8 @@ function vistaCuenta(){
   if(estado.usuario){
     var nFav=Object.keys(estado.fav).filter(function(k){return estado.fav[k];}).length;
     var cuando=estado.sincronizadoEn?new Date(estado.sincronizadoEn):null;
-    return '<div class="aviso"><strong>Su cuenta vincula las fuentes seleccionadas y el historial de búsquedas a su correo electrónico, '+
-        'garantizando la sincronización en tiempo real entre distintos dispositivos.</strong></div>'+
+    return '<div class="aviso"><span style="color:var(--lacre)">Su cuenta vincula las fuentes seleccionadas y el historial de búsquedas a su correo electrónico, '+
+        'garantizando la sincronización en tiempo real entre distintos dispositivos.</span></div>'+
       '<div class="panel">'+
         '<label class="campo"><span>Correo electrónico</span>'+
           '<div style="font-family:var(--serif);font-size:17px">'+esc(estado.usuario.email)+'</div></label>'+
