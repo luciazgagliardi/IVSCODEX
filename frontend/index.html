@@ -929,6 +929,54 @@ var PUENTES = [
   { dice: ["las costas", "quien paga las costas", "costas por su orden"], voz: "costas por su orden" },
   { dice: ["recurso extraordinario provincial", "rep", "ir a la suprema corte de mendoza"], voz: "recurso extraordinario provincial" },
   { dice: ["quien tiene que probar", "carga de la prueba", "carga dinamica"], voz: "carga dinámica de la prueba" },
+  /* --- colectivo del trabajo --- */
+  { dice: ["echaron al delegado", "es delegado", "delegado gremial", "delegado del sindicato", "delegado de personal"], voz: "delegado de personal" },
+  { dice: ["tutela sindical", "fuero gremial", "proteccion gremial", "protección gremial"], voz: "tutela sindical" },
+  { dice: ["sacarle la tutela", "excluir la tutela", "exclusion de tutela", "exclusión de tutela"], voz: "exclusión de tutela" },
+  { dice: ["huelga", "paro", "medida de fuerza"], voz: "derecho de huelga" },
+  { dice: ["convenio colectivo", "que convenio se aplica", "qué convenio se aplica", "cct"], voz: "convenio colectivo aplicable" },
+  { dice: ["paritaria", "paritarias", "aumento por paritaria"], voz: "paritarias" },
+  { dice: ["que sindicato corresponde", "qué sindicato corresponde", "encuadramiento sindical", "encuadre gremial"], voz: "encuadramiento sindical" },
+  { dice: ["practica desleal", "práctica desleal"], voz: "práctica desleal" },
+
+  /* --- derechos humanos --- */
+  { dice: ["desaparicion forzada", "desaparición forzada", "desaparecido", "durante la dictadura"], voz: "desaparición forzada" },
+  { dice: ["lesa humanidad", "no prescribe el delito", "crimenes de la dictadura", "imprescriptibilidad"], voz: "lesa humanidad imprescriptibilidad" },
+  { dice: ["control de convencionalidad", "pacto de san jose", "pacto de san josé", "corte interamericana", "cidh"], voz: "control de convencionalidad" },
+  { dice: ["derecho a la verdad"], voz: "derecho a la verdad" },
+  { dice: ["reparacion integral", "reparación integral"], voz: "reparación integral" },
+  { dice: ["pro persona", "principio pro persona", "la norma mas favorable"], voz: "principio pro persona" },
+  { dice: ["debida diligencia", "el estado no investigo"], voz: "debida diligencia reforzada" },
+
+  /* --- internacional privado --- */
+  { dice: ["se llevo a los chicos al exterior", "se llevó a los chicos", "restitucion internacional", "restitución internacional", "sustraccion internacional", "se los llevo a otro pais"], voz: "restitución internacional de menores" },
+  { dice: ["convenio de la haya", "la haya"], voz: "Convenio de La Haya 1980" },
+  { dice: ["sentencia extranjera", "sentencia de otro pais", "sentencia dictada en", "hacer valer una sentencia de afuera"], voz: "reconocimiento de sentencia extranjera" },
+  { dice: ["exequatur", "exequátur"], voz: "exequátur" },
+  { dice: ["que juez es competente", "jurisdiccion internacional", "jurisdicción internacional", "demandar en otro pais"], voz: "jurisdicción internacional" },
+  { dice: ["que ley se aplica al contrato", "ley aplicable al contrato", "contrato con una empresa extranjera"], voz: "ley aplicable al contrato" },
+  { dice: ["arbitraje internacional"], voz: "arbitraje internacional" },
+  { dice: ["orden publico internacional", "orden público internacional"], voz: "orden público internacional" },
+
+  /* --- niñez y adolescencia --- */
+  { dice: ["que lo escuchen", "derecho a ser oido", "derecho a ser oído", "quiere opinar"], junto: ["nene", "declar"], voz: "derecho a ser oído" },
+  { junto: ["chico", "declar"], voz: "derecho a ser oído" },
+  { junto: ["hijo", "declar"], voz: "derecho a ser oído" },
+  { dice: ["interes superior del nino", "interés superior del niño", "lo mejor para el chico"], voz: "interés superior del niño" },
+  { dice: ["abogado del nino", "abogado del niño"], voz: "abogado del niño" },
+  { dice: ["penal juvenil", "es menor y lo imputaron"], junto: ["menor", "delito"], voz: "penal juvenil" },
+  { dice: ["medida de proteccion excepcional", "medida de protección excepcional"], voz: "medida de protección excepcional" },
+  { dice: ["declaracion de adoptabilidad", "adoptabilidad"], voz: "adoptabilidad" },
+  { dice: ["alimentos para mi hijo", "alimentos del hijo"], voz: "alimentos a favor del hijo" },
+  { dice: ["situacion de calle", "situación de calle", "chicos en la calle"], voz: "situación de calle" },
+
+  /* --- electoral --- */
+  { dice: ["impugnaron la lista", "impugnar un candidato", "impugnacion de candidatura", "impugnación de candidatura"], voz: "impugnación de candidatura" },
+  { dice: ["oficializar la lista", "oficializacion de listas", "oficialización de listas"], voz: "oficialización de listas" },
+  { dice: ["paridad de genero", "paridad de género", "cupo femenino"], voz: "paridad de género en listas" },
+  { dice: ["financiamiento de campana", "financiamiento de campaña", "aportes de campana"], voz: "financiamiento de campañas" },
+  { dice: ["reconocimiento del partido", "personeria del partido", "personería del partido"], voz: "reconocimiento de partido político" },
+  { dice: ["boleta unica", "boleta única"], voz: "boleta única" },
 ];
 
 /* ---------- motor ---------- */
@@ -1590,7 +1638,7 @@ function nuevoEstado(){
           // Voces que el intérprete propuso para lo último que se escribió
           // en lenguaje natural. Se guardan aparte de q para que tocar una
           // no borre las otras (ver tiraSugerencias).
-          sugeridas:[],buscarReq:"",
+          sugeridas:[],sugeridaRama:"",buscarReq:"",
           ambitos:{mza:true,nac:true,prov:false,int:true,doc:true},
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
@@ -2616,8 +2664,44 @@ function listaPorAmbito(fs){
    Deliberadamente NO reescribe la consulta sola: muestra lo que entendió y
    deja que el abogado toque. Que un buscador jurídico cambie la búsqueda a
    tus espaldas es justo lo que no se puede auditar después. */
+/* Cuándo se muestran voces y cuándo se borran.
+   Antes esto sólo pisaba la lista si la consulta nueva daba algo, así que
+   escribir un caso que el diccionario no conoce dejaba en pantalla las
+   voces del caso anterior: se escribía "mi ex se llevó a los chicos a
+   España" y seguía ofreciendo "desaparición forzada". Es peor que no
+   sugerir nada, porque parece que entendió.
+   La única lista que sí se conserva es la de recién: al tocar una voz la
+   consulta pasa a ser esa voz, y ahí las hermanas tienen que seguir a
+   mano para poder cambiar de una a otra sin reescribir el caso. */
+function recalcularSugeridas(){
+  var q=sinTildes(estado.q).trim();
+  if(estado.sugeridas.some(function(s){ return sinTildes(s.voz)===q; })) return;
+  var antes=estado.sugeridas.length, antesR=estado.sugeridaRama;
+  var leido=interpretarConsulta(estado.q);
+  // Una voz idéntica a lo ya escrito no se ofrece: no agrega nada y
+  // ensucia — es el caso de quien ya puso el descriptor exacto.
+  estado.sugeridas=leido.voces.filter(function(s){ return sinTildes(s.voz)!==q; });
+  // Hay consultas que se reconocen sólo hasta la rama: "divorcio" no cae
+  // en ninguna voz puntual, pero sí en Familia. Ofrecer la rama es mejor
+  // que no mostrar nada, y forzar un descriptor que no corresponde sería
+  // peor que las dos cosas. Se ofrece sólo cuando no hubo voces: con
+  // voces, la rama ya va implícita en ellas.
+  estado.sugeridaRama=(!estado.sugeridas.length&&leido.ramas.length&&estado.rama!==leido.ramas[0])
+    ?leido.ramas[0]:"";
+  if(antes||estado.sugeridas.length||antesR||estado.sugeridaRama) render();
+}
+
 function tiraSugerencias(){
-  if(estado.tab!=="buscar"||!estado.sugeridas.length) return "";
+  if(estado.tab!=="buscar") return "";
+  if(!estado.sugeridas.length&&estado.sugeridaRama){
+    return '<div class="sugeridas">'+
+      '<p class="sug-nota">No encontré una voz puntual para lo que escribiste, '+
+      'pero el tema cae en una rama. Abrirla muestra sus voces.</p>'+
+      '<div class="chips"><button class="chip voz-sug" data-act="usar-rama" data-rama="'+esc(estado.sugeridaRama)+'">'+
+      esc(comoTitulo(nombreRama(estado.sugeridaRama)))+'</button>'+
+      '<button class="chip sug-cerrar" data-act="cerrar-sugeridas" title="Ocultar">✕</button></div></div>';
+  }
+  if(!estado.sugeridas.length) return "";
   var chips=estado.sugeridas.map(function(s){
     var puesta=sinTildes(estado.q).trim()===sinTildes(s.voz).trim();
     return '<button class="chip voz-sug" data-act="usar-voz" data-voz="'+esc(s.voz)+'"'+
@@ -4923,7 +5007,13 @@ document.addEventListener("click",function(ev){
     flash("Consulta cambiada a la voz «"+vz+"» — así la tiene indexada el fuero");
     return;
   }
-  if(act==="cerrar-sugeridas"){ estado.sugeridas=[]; render(); return; }
+  if(act==="usar-rama"){
+    estado.rama=b.getAttribute("data-rama")||""; estado.sugeridaRama="";
+    render();
+    flash("Rama puesta: "+comoTitulo(nombreRama(estado.rama))+" — mirá sus voces acá abajo");
+    return;
+  }
+  if(act==="cerrar-sugeridas"){ estado.sugeridas=[]; estado.sugeridaRama=""; render(); return; }
   if(act==="copiar-cadena"){ copiar(cadena()); return; }
   if(act==="limpiar"){
     estado.q="";estado.excluir="";estado.desde="";estado.hasta="";estado.rama="";estado.modo="exacta";
@@ -5065,15 +5155,7 @@ document.addEventListener("input",function(ev){
     // artículo N" y pasa a ser una búsqueda común: lo que se ve es lo que se
     // busca, sin una traducción por fuente actuando por detrás.
     estado.q=ev.target.value; estado.articulo=""; estado.articuloNorma=""; estado.articuloTema=""; estado.marca=0; pintarCadena();
-    // Sólo se interpreta lo que parece una frase: con una o dos palabras
-    // el abogado ya está escribiendo el descriptor, no contando un caso.
-    if(estado.tab==="buscar"){
-      var _pal=String(estado.q||"").trim().split(/\s+/).length;
-      if(_pal>=3){
-        var _r=interpretarConsulta(estado.q);
-        if(_r.voces.length){ estado.sugeridas=_r.voces; render(); }
-      }else if(!estado.q.trim()&&estado.sugeridas.length){ estado.sugeridas=[]; render(); }
-    }
+    if(estado.tab==="buscar") recalcularSugeridas();
     if(estado.tab==="lector"){
       if(estado.texto.length<150000){ pintarLector(); }
       else { clearTimeout(window._tl); window._tl=setTimeout(pintarLector,170); }
