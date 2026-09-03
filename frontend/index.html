@@ -428,6 +428,11 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .btn{font-weight:400}
 strong,b{font-weight:500}
 
+/* "El resultado incluye": tarjeta sin ítems, a pedido. Cada línea suelta,
+   sin viñeta ni número, separadas por su propio aire. */
+.sin-items{display:flex;flex-direction:column;gap:9px}
+.sin-items p{margin:0;font-size:14.5px;line-height:1.55;color:var(--tinta2)}
+
 /* ---------- prosa ---------- */
 .blk{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;margin-bottom:16px}
 .blk h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 8px}
@@ -1566,7 +1571,7 @@ function nuevoEstado(){
           // Voces que el intérprete propuso para lo último que se escribió
           // en lenguaje natural. Se guardan aparte de q para que tocar una
           // no borre las otras (ver tiraSugerencias).
-          sugeridas:[],
+          sugeridas:[],buscarReq:"",
           ambitos:{mza:true,nac:true,prov:false,int:true,doc:true},
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
@@ -2298,6 +2303,23 @@ function fuentesFiltradas(){
     return true;
   });
 }
+/* Ramas y voces se muestran como título ("Obligaciones y Contratos"), a
+   pedido. Se hace ACÁ, al dibujar, y nunca sobre RAMAS: los 115 puentes
+   del intérprete apuntan a cada voz por su texto exacto, así que cambiarle
+   una mayúscula al dato los rompería en silencio (ver
+   backend/test/interprete.prueba.js). Por lo mismo, el valor que viaja en
+   data-v sigue siendo el original — lo que cambia es sólo lo que se lee. */
+var SIGUE_EN_MINUSCULA={y:1,e:1,o:1,u:1,de:1,del:1,la:1,las:1,el:1,los:1,
+  en:1,a:1,al:1,por:1,para:1,con:1,sin:1,un:1,una:1,se:1,su:1,sus:1,que:1};
+function comoTitulo(t){
+  return String(t||"").split(" ").map(function(p,i){
+    var bajo=p.toLowerCase();
+    if(i>0&&SIGUE_EN_MINUSCULA[bajo]) return bajo;
+    // slice(1) y no toLowerCase: así "CADH", "TRHA" o "IV" quedan enteras.
+    return p.charAt(0).toUpperCase()+p.slice(1);
+  }).join(" ");
+}
+
 function nombreRama(id){
   for(var i=0;i<RAMAS.length;i++) if(RAMAS[i].id===id) return RAMAS[i].n;
   return "";
@@ -2451,9 +2473,9 @@ function pintarCadena(){
   var el=document.getElementById("cadena");
   if(!el) return; // solo existe en el campo "Qué buscás" de la solapa Buscar
   var c=cadena();
-  if(!c){ el.textContent="Escribí lo que buscás para armar la consulta"; return; }
+  if(!c){ el.textContent="Introduzca los términos de su búsqueda para generar la consulta."; return; }
   var partes=[esc(c)];
-  if(estado.rama) partes.push(esc(nombreRama(estado.rama)));
+  if(estado.rama) partes.push(esc(comoTitulo(nombreRama(estado.rama))));
   if(estado.desde||estado.hasta) partes.push(esc((estado.desde||"…")+"–"+(estado.hasta||"…")));
   var ambs=Object.keys(estado.ambitos).filter(function(k){return estado.ambitos[k];})
             .map(function(k){return k.toUpperCase();});
@@ -2486,7 +2508,7 @@ function listaRamasHTML(){
   var todas=estado.tab==="buscar"?"":
     '<button data-rama="" aria-pressed="'+(estado.rama===""?"true":"false")+'">Todas las ramas</button>';
   return todas+(fs.length?fs.map(function(x){
-      return '<button data-rama="'+x.id+'" aria-pressed="'+(estado.rama===x.id?"true":"false")+'">'+esc(x.n)+'</button>';
+      return '<button data-rama="'+x.id+'" aria-pressed="'+(estado.rama===x.id?"true":"false")+'">'+esc(comoTitulo(x.n))+'</button>';
     }).join(""):'<span style="display:block;padding:6px 9px;font-size:12px;color:var(--humo);font-style:italic">Sin resultados</span>');
 }
 function pintarRail(){
@@ -2545,7 +2567,7 @@ function tiraSugerencias(){
   var chips=estado.sugeridas.map(function(s){
     var puesta=sinTildes(estado.q).trim()===sinTildes(s.voz).trim();
     return '<button class="chip voz-sug" data-act="usar-voz" data-voz="'+esc(s.voz)+'"'+
-           ' aria-pressed="'+(puesta?"true":"false")+'">'+esc(s.voz)+'</button>';
+           ' aria-pressed="'+(puesta?"true":"false")+'">'+esc(comoTitulo(s.voz))+'</button>';
   }).join("");
   return '<div class="sugeridas">'+
     '<p class="sug-nota"><b>Los buscadores del fuero indexan por voces</b>, no por lenguaje natural: '+
@@ -2566,8 +2588,8 @@ function vistaBuscar(){
   var sug="";
   if(estado.rama){
     var R=RAMAS.filter(function(x){return x.id===estado.rama;})[0];
-    if(R) sug='<div class="panel"><h2 class="voces-tit">Voces sugeridas <span class="punto">·</span> <span class="rama-nom">'+esc(R.n)+'</span></h2>'+
-      '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(v)+'</button>';}).join("")+'</div></div>';
+    if(R) sug='<div class="panel"><h2 class="voces-tit">Voces sugeridas <span class="punto">·</span> <span class="rama-nom">'+esc(comoTitulo(R.n))+'</span></h2>'+
+      '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(comoTitulo(v))+'</button>';}).join("")+'</div></div>';
   }
 
   return '<div class="aviso"><span class="av-oro">Optimizamos tu consulta con operadores de búsqueda para dirigirla a las bases de jurisprudencia oficiales, '+
@@ -2579,7 +2601,7 @@ function vistaBuscar(){
     // contra el que se mide el listado de ramas de la izquierda, para que
     // su scroll llegue justo hasta la misma línea. Ver esa función.
     '<div class="panel" id="panel-buscar-form">'+
-      '<div class="campo"><span>Qué buscás</span>'+
+      '<div class="campo"><span>¿Qué desea consultar?</span>'+
         '<div class="fila-q">'+
           '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off">'+
           '<div class="cadena"><div class="cadena-in">'+
@@ -3267,7 +3289,7 @@ function buscarEnFuente(slug,pagina){
   var fCfg=FUENTES_INDICE.filter(function(x){return x.slug===slug;})[0];
   var qi=estado.q.trim();
   if(!fCfg) return;
-  if(!qi){ flash("Escribí algo en «Qué buscás» primero"); return; }
+  if(!qi){ flash("Escribí algo en «¿Qué desea consultar?» primero"); return; }
   if(!estado.api){ flash("El servidor de extracción no está disponible ahora"); return; }
   recordar(qi);
   var imBusco=estado.indices[slug];
@@ -3584,13 +3606,18 @@ function vistaRamas(){
     'Los buscadores judiciales argentinos indexan mediante descriptores técnicos y no por lenguaje natural. '+
     'Al seleccionar una voz, el sistema la añadirá automáticamente a la consulta de forma exacta.</div>';
   var lista=estado.rama?RAMAS.filter(function(x){return x.id===estado.rama;}):RAMAS;
-  html+='<p class="conteo">'+lista.length+' de '+RAMAS.length+' ramas</p>';
+  // El contador decía cuántas ramas se están viendo, así que con una
+  // elegida marcaba "1 de 28" fuera cual fuera — no se movía al pasar de
+  // una a otra. Ahora dice EN CUÁL estás: la quinta rama marca "5 de 28".
+  // Sin ninguna elegida sigue diciendo "28 de 28", que ya estaba bien.
+  var cuales=RAMAS.map(function(x){return x.id;}).indexOf(estado.rama);
+  html+='<p class="conteo">'+(cuales>=0?cuales+1:RAMAS.length)+' de '+RAMAS.length+' ramas</p>';
   html+=lista.map(function(x){
     var n=F.filter(function(f){return f.r==="*"||f.r.split(",").indexOf(x.id)!==-1;}).length;
-    return '<div class="rama"><h3>'+esc(x.n)+'</h3><p>'+esc(x.d)+'</p>'+
+    return '<div class="rama"><h3>'+esc(comoTitulo(x.n))+'</h3><p>'+esc(x.d)+'</p>'+
       '<div class="rotulo">Voces para buscar</div>'+
       '<div class="voces">'+x.v.map(function(v){
-        return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(v)+'</button>';}).join("")+'</div>'+
+        return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(comoTitulo(v))+'</button>';}).join("")+'</div>'+
       '<div class="rotulo" style="margin-top:10px">'+n+' fuentes cubren esta rama</div>'+
       '<button class="mini" data-act="ir-rama" data-rama="'+esc(x.id)+'">Ver esas fuentes</button>'+
       '</div>';
@@ -3608,8 +3635,22 @@ function vistaRequisitos(){
     'las restantes disponen temporalmente del botón de búsqueda.</p>'+
     '<p class="nota-suelta">Este módulo constituye una guía de orientación, verifique siempre la fuente oficial '+
     'antes de realizar presentaciones, el enlace directo está disponible en cada ficha.</p>';
+  // Buscador propio, a pedido: 24 fichas repartidas en grupos son muchas
+  // para ir a ojo. Filtra por el nombre del trámite, por lo que describe y
+  // por la norma que cita, que son las tres formas en que uno se acuerda
+  // de una ficha.
+  html+='<input type="text" id="buscarReq" class="rail-buscador" style="max-width:420px;margin:0 0 16px" '+
+    'placeholder="Buscar un trámite…" value="'+esc(estado.buscarReq)+'" autocomplete="off">';
+
+  var filtro=sinTildes(estado.buscarReq).trim();
+  var visibles=!filtro?REQUISITOS:REQUISITOS.filter(function(x){
+    return sinTildes([x.n,x.d,x.norma||"",x.q||""].join(" ")).indexOf(filtro)!==-1;
+  });
+  if(filtro) html+='<p class="conteo">'+visibles.length+' de '+REQUISITOS.length+' fichas</p>';
+  if(!visibles.length) html+='<div class="vacio">Ningún trámite coincide con «'+esc(estado.buscarReq)+'».</div>';
+
   var porGrupo={};
-  REQUISITOS.forEach(function(x){ (porGrupo[x.g]=porGrupo[x.g]||[]).push(x); });
+  visibles.forEach(function(x){ (porGrupo[x.g]=porGrupo[x.g]||[]).push(x); });
   html+=Object.keys(GRUPOS_REQUISITOS).map(function(g){
     var items=porGrupo[g]||[];
     if(!items.length) return '';
@@ -3716,7 +3757,7 @@ var GRUPOS_COMPARAR=[
  */
 function compararFuentes(){
   var qi=estado.q.trim();
-  if(!qi){ flash("Escribí algo en «Qué buscás» primero"); return; }
+  if(!qi){ flash("Escribí algo en «¿Qué desea consultar?» primero"); return; }
   if(!estado.api){ flash("El comparador necesita el servidor de extracción"); return; }
   recordar(qi);
   estado.comparar={corriendo:true,hecho:false,q:qi,porFuente:{}};
@@ -3808,12 +3849,12 @@ function tarjetaComparar(f){
  */
 function vistaComparar(){
   var c=estado.comparar;
-  var html='<div class="aviso"><strong>Búsqueda simultánea en seis fuentes.</strong> Contrasta los criterios de resolución de Mendoza, la Nación y CABA.</div>'+
-    '<div class="aviso" style="border-style:dashed"><strong>Resultados recuperados.</strong> Cada bloque indica los documentos obtenidos para esta búsqueda específica, '+
-    'no el total de la base de datos. Al usar criterios de medición heterogéneos, los contadores oficiales no son comparables entre sí. '+
+  var html='<div class="aviso"><span class="av-tit">Esta función permite contrastar los criterios de resolución de la SCJM, el TSJ y la CSJN.</span>'+
+    'Cada bloque indica los documentos obtenidos para esta búsqueda específica, no el total de la base de datos. '+
+    'Al usar criterios de medición heterogéneos, los contadores oficiales no son comparables entre sí. '+
     'Esta función es un localizador de material.</div>';
 
-  html+='<div class="panel"><div class="campo"><span>Qué buscás</span>'+
+  html+='<div class="panel"><div class="campo"><span>¿Qué desea consultar?</span>'+
     '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></div>'+
     '<div class="acciones" style="margin:0;padding:0;border:0">'+
       '<button class="btn" data-act="comparar"'+(c.corriendo?" disabled":"")+'>'+
@@ -3865,7 +3906,7 @@ function vistaNorma(){
       '<div class="campo"><span>Qué artículo</span>'+
         '<input type="text" id="norma-art" value="'+esc(n.art)+'" placeholder="art 1741 CCyC · artículo 70 del código civil y comercial · LCT 245" autocomplete="off"></div>'+
       '<div class="fila">'+
-        '<label class="campo"><span>Norma (se acomoda sola si la nombrás arriba)</span><select id="norma-clave">'+opciones+'</select></label>'+
+        '<label class="campo"><span>Norma</span><select id="norma-clave">'+opciones+'</select></label>'+
       '</div>'+
       '<div class="acciones" style="margin:0;padding:0;border:0"><button class="btn" data-act="ver-articulo">Ver el artículo</button></div>'+
       salida+
@@ -3978,17 +4019,18 @@ function vistaLector(){
         'copiarlo (Ctrl+C) y pegarlo en este espacio. Este procedimiento garantiza la lectura del documento en cualquier circunstancia, '+
         'incluso ante restricciones de descarga del enlace original.</p>'+
         '<label class="campo"><span>Texto de la sentencia o del sumario</span>'+
-          '<textarea id="doc-in" placeholder="Pegá acá el texto completo del fallo…"></textarea></label>'+
+          '<textarea id="doc-in" placeholder="Introduzca el texto completo del fallo…"></textarea></label>'+
         '<label class="campo"><span>Fuente de procedencia (opcional, se incluye en la cita)</span>'+
           '<input type="text" id="doc-de" placeholder="https://wwwjuri.jus.mendoza.gov.ar/…" autocomplete="off"></label>'+
         '<div class="acciones"><button class="btn" data-act="analizar">Analizar el fallo</button></div>'+
       '</div>'+
-      '<div class="blk"><h3>El resultado incluye:</h3><ul>'+
-        '<li>Visualización del documento con resaltado automático de términos y herramientas de navegación secuencial entre coincidencias.</li>'+
-        '<li>Panel de pasajes (coincidencias recortadas con su contexto inmediato), preparadas para copiar junto a su respectiva cita.</li>'+
-        '<li>Detección e identificación de carátula, tribunal, fecha, expediente y tomo de Fallos para su validación y posterior formateo.</li>'+
-        '<li>Compilación de artículos, leyes y precedentes jurisprudenciales citados en el fallo.</li>'+
-      '</ul></div>';
+      // Tarjeta sin ítems, a pedido: cada línea suelta, sin viñeta ni número.
+      '<div class="blk"><h3>El resultado incluye…</h3><div class="sin-items">'+
+        '<p>Visualización del documento con resaltado automático de términos y herramientas de navegación secuencial entre coincidencias.</p>'+
+        '<p>Panel de pasajes (coincidencias recortadas con su contexto inmediato), preparadas para copiar junto a su respectiva cita.</p>'+
+        '<p>Detección e identificación de carátula, tribunal, fecha, expediente y tomo de Fallos para su validación y posterior formateo.</p>'+
+        '<p>Compilación de artículos, leyes y precedentes jurisprudenciales citados en el fallo.</p>'+
+      '</div></div>';
   }
   return avisoErrorLector()+
     (estado.cargando?'<div class="aviso" style="margin:0 0 14px">Trayendo el documento nuevo… esto puede tardar unos segundos. Mientras tanto se sigue viendo el fallo anterior.</div>':'')+
@@ -4769,7 +4811,7 @@ document.addEventListener("click",function(ev){
   }
   if(act==="google"){
     var c=cadena();
-    if(!c){ flash("Escribí algo en «Qué buscás» primero"); return; }
+    if(!c){ flash("Escribí algo en «¿Qué desea consultar?» primero"); return; }
     recordar(c);
     window.open(urlGoogleSitio(b.getAttribute("data-dom")),"_blank","noopener");
     return;
@@ -4814,7 +4856,7 @@ document.addEventListener("click",function(ev){
   }
   if(act==="barrido"){
     var q=cadena();
-    if(!q){ flash("Escribí algo en «Qué buscás» primero"); return; }
+    if(!q){ flash("Escribí algo en «¿Qué desea consultar?» primero"); return; }
     var doms=[],vistos={};
     fuentesFiltradas().forEach(function(f){
       if(!vistos[f.dom]&&doms.length<12){vistos[f.dom]=1;doms.push(f.dom);}
@@ -4986,6 +5028,11 @@ document.addEventListener("input",function(ev){
       if(estado.texto.length<150000){ pintarLector(); }
       else { clearTimeout(window._tl); window._tl=setTimeout(pintarLector,170); }
     }
+  }
+  else if(id==="buscarReq"){
+    estado.buscarReq=ev.target.value; render();
+    var cr=document.getElementById("buscarReq");
+    if(cr){ cr.focus(); cr.setSelectionRange(cr.value.length,cr.value.length); }
   }
   else if(id==="buscarRama"){
     estado.buscarRama=ev.target.value;
