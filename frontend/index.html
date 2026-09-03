@@ -389,6 +389,15 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .ficha-paso:active{transform:translateY(0)}
 .ficha-paso em{color:inherit}
 
+/* Nota al pie de un aviso: cuelga del cartel de arriba —sin caja propia y
+   en cuerpo menor— para que se lea como su letra chica y no como un
+   segundo aviso del mismo peso. */
+.nota-suelta{
+  margin:-8px 0 18px;padding:0 2px;
+  font-size:13px;line-height:1.55;color:var(--humo);max-width:78ch
+}
+.nota-suelta strong{color:var(--lacre)}
+
 /* ---------- prosa ---------- */
 .blk{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;margin-bottom:16px}
 .blk h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 8px}
@@ -2531,8 +2540,8 @@ function vistaBuscar(){
       '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(v)+'</button>';}).join("")+'</div></div>';
   }
 
-  return '<div class="aviso">Optimizamos tu consulta con operadores de búsqueda para dirigirla a las bases de jurisprudencia oficiales, '+
-    'facilitando el acceso a la fuente directa.</div>'+
+  return '<div class="aviso"><span style="color:var(--lacre)">Optimizamos tu consulta con operadores de búsqueda para dirigirla a las bases de jurisprudencia oficiales, '+
+    'facilitando el acceso a la fuente directa.</span></div>'+
 
     sug+
 
@@ -3561,12 +3570,14 @@ function vistaRamas(){
 
 function vistaRequisitos(){
   var conLista=REQUISITOS.filter(function(x){return x.req&&x.req.length;}).length;
-  var html='<div class="aviso"><strong>Requisitos normativos con su marco legal asociado.</strong><br>'+
+  var html='<div class="aviso"><strong>Requisitos normativos con su marco legal asociado.</strong> '+
     'Cada ficha proviene del texto oficial de la ley, e incluye la cita del artículo y el enlace directo a InfoLeg. '+
     'Actualmente se encuentran disponibles <strong>'+conLista+' de las '+REQUISITOS.length+' fichas</strong> proyectadas; '+
     'las restantes disponen temporalmente del botón de búsqueda.</div>'+
-    '<div class="aviso" style="border-style:dashed"><strong>Este módulo constituye una guía de orientación.</strong> '+
-    '<em>Verifique siempre la fuente oficial antes de realizar presentaciones, el enlace directo está disponible en cada ficha.</em></div>';
+    // Sin tarjeta y en letra más chica, a pedido: cuelga del aviso de
+    // arriba en vez de competir con él como un segundo cartel.
+    '<p class="nota-suelta"><strong>Este módulo constituye una guía de orientación.</strong> '+
+    '<em>Verifique siempre la fuente oficial antes de realizar presentaciones, el enlace directo está disponible en cada ficha.</em></p>';
   var porGrupo={};
   REQUISITOS.forEach(function(x){ (porGrupo[x.g]=porGrupo[x.g]||[]).push(x); });
   html+=Object.keys(GRUPOS_REQUISITOS).map(function(g){
@@ -4333,7 +4344,7 @@ function vistaVerificar(){
   // este verificador no puede afirmar.
   var alcance=(estado.cita.salida&&estado.cita.salida.alcance)||
     "Poder Judicial de Mendoza · TSJ de la Ciudad de Buenos Aires · SAIJ · Corte Suprema (vía SAIJ)";
-  return '<div class="aviso"><strong>La consignación de precedentes inexactos o inexistentes acarrea severas sanciones procesales.</strong><br>'+
+  return '<div class="aviso"><strong>La consignación de precedentes inexactos o inexistentes acarrea severas sanciones procesales.</strong> '+
     'La plataforma permite verificar citas jurisprudenciales mediante la contrastación automatizada '+
     'con los repositorios oficiales integrados (Poder Judicial de Mendoza, TSJ de CABA, SAIJ y CSJN).</div>'+
     panelVerificadorCita()+
