@@ -3628,11 +3628,11 @@ function vistaRamas(){
 function vistaRequisitos(){
   var conLista=REQUISITOS.filter(function(x){return x.req&&x.req.length;}).length;
   var html='<div class="aviso"><span class="av-tit">Requisitos normativos con su marco legal asociado</span>'+
-    'Cada ficha proviene del texto oficial de la ley, e incluye la cita del artículo y el enlace directo a InfoLeg.</div>'+
-    // Sin tarjeta y en letra más chica, a pedido: cuelgan del aviso de
-    // arriba en vez de competir con él como un segundo cartel.
-    '<p class="nota-suelta">Actualmente se encuentran disponibles '+conLista+' de las '+REQUISITOS.length+' fichas proyectadas; '+
-    'las restantes disponen temporalmente del botón de búsqueda.</p>'+
+    'Cada ficha proviene del texto oficial de la ley, e incluye la cita del artículo y el enlace directo a InfoLeg. '+
+    'Actualmente se encuentran disponibles '+conLista+' de las '+REQUISITOS.length+' fichas proyectadas; '+
+    'las restantes disponen temporalmente del botón de búsqueda.</div>'+
+    // Lo único que queda fuera de la tarjeta, en letra más chica: cuelga
+    // del aviso de arriba en vez de competir con él como un segundo cartel.
     '<p class="nota-suelta">Este módulo constituye una guía de orientación, verifique siempre la fuente oficial '+
     'antes de realizar presentaciones, el enlace directo está disponible en cada ficha.</p>';
   // Buscador propio, a pedido: 24 fichas repartidas en grupos son muchas
@@ -3676,7 +3676,7 @@ function fichaRequisito(x){
       (x.url?' · <a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">ver el texto oficial</a>':'')+
       '</div>'
     : '';
-  return '<div class="rama"><h3>'+esc(x.n)+'</h3><p>'+esc(x.d)+'</p>'+
+  return '<div class="rama"><h3>'+esc(comoTitulo(x.n))+'</h3><p>'+esc(x.d)+'</p>'+
     cuerpo+fuente+
     '<div class="f-acc" style="margin-top:12px">'+
       '<button class="mini" data-act="tramite" data-v="requisitos '+esc(x.q)+'">Buscar fallos sobre esto</button>'+
@@ -3849,7 +3849,7 @@ function tarjetaComparar(f){
  */
 function vistaComparar(){
   var c=estado.comparar;
-  var html='<div class="aviso"><span class="av-tit">Esta función permite contrastar los criterios de resolución de la SCJM, el TSJ y la CSJN.</span>'+
+  var html='<div class="aviso"><span class="av-tit">Esta función permite contrastar los criterios de resolución de la SCJM, el TSJ y la CSJN</span>'+
     'Cada bloque indica los documentos obtenidos para esta búsqueda específica, no el total de la base de datos. '+
     'Al usar criterios de medición heterogéneos, los contadores oficiales no son comparables entre sí. '+
     'Esta función es un localizador de material.</div>';
@@ -3903,7 +3903,7 @@ function vistaNorma(){
       'para garantizar la visualización del articulado en su versión vigente, con todas sus reformas integradas. '+
       'Desde allí, es posible acceder de forma directa a los precedentes jurisprudenciales que lo interpretan.</div>'+
     '<div class="panel">'+
-      '<div class="campo"><span>Qué artículo</span>'+
+      '<div class="campo"><span>Artículo</span>'+
         '<input type="text" id="norma-art" value="'+esc(n.art)+'" placeholder="art 1741 CCyC · artículo 70 del código civil y comercial · LCT 245" autocomplete="off"></div>'+
       '<div class="fila">'+
         '<label class="campo"><span>Norma</span><select id="norma-clave">'+opciones+'</select></label>'+
