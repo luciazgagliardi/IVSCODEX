@@ -302,6 +302,11 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .rama{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:18px 20px;margin-bottom:12px;font-family:var(--sans)}
 /* Compartir: el botón y su menú de destinos. */
 .compartir{position:relative;display:inline-block}
+/* Colgado del body y en posición fija: así ningún panel lo tapa. Los
+   paneles llevan backdrop-filter, que arma su propio contexto de apilado,
+   y por eso un menú de adentro no podía subir por encima del panel
+   siguiente por más z-index que tuviera. */
+.compartir-menu.flotante{position:fixed;z-index:200;right:auto;top:auto}
 .compartir-menu{
   position:absolute;z-index:30;right:0;top:calc(100% + 6px);min-width:210px;
   background:var(--negro);border:1px solid var(--lacre);border-radius:10px;
@@ -403,7 +408,7 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
    segundo aviso del mismo peso. */
 .nota-suelta{
   margin:-8px 0 14px;padding:0 2px;
-  font-size:13px;line-height:1.55;color:var(--humo);max-width:78ch
+  font-size:13px;line-height:1.55;color:var(--humo)
 }
 .nota-suelta+.nota-suelta{margin-top:-8px}
 
@@ -430,8 +435,22 @@ strong,b{font-weight:500}
 
 /* "El resultado incluye": tarjeta sin ítems, a pedido. Cada línea suelta,
    sin viñeta ni número, separadas por su propio aire. */
-.sin-items{display:flex;flex-direction:column;gap:9px}
-.sin-items p{margin:0;font-size:14.5px;line-height:1.55;color:var(--humo)}
+.sin-items{display:flex;flex-direction:column;gap:2px}
+/* .blk .sin-items en vez de .sin-items a secas: si no, la regla general
+   .blk p —que viene después en la hoja y tiene la misma especificidad—
+   le devuelve los 10px de margen y las líneas quedan separadas igual. */
+.blk .sin-items p{
+  margin:0;padding:5px 8px;border-radius:7px;
+  font-size:14.5px;line-height:1.5;color:var(--humo);
+  transition:transform .25s ease,color .25s ease,text-shadow .25s ease,background .25s ease
+}
+/* Al pasar por encima, la línea se enciende y sube. El resplandor acá sí
+   es el fuerte —el mismo que usa lo seleccionado— porque es respuesta a
+   un gesto, no el brillo de fondo que lleva toda la letra. */
+.blk .sin-items p:hover{
+  transform:translateY(-2px);color:var(--lacre);
+  text-shadow:0 0 10px rgba(233,200,119,.55);background:var(--papel2)
+}
 
 /* ---------- prosa ---------- */
 .blk{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;margin-bottom:16px}
@@ -1588,7 +1607,6 @@ function nuevoEstado(){
           // Número de artículo cuando la búsqueda vino de la solapa Norma.
           articulo:"", articuloNorma:"", articuloTema:"",
           // Si el menú de Compartir está desplegado.
-          compartirAbierto:false,
           indices:nuevoIndices()};
 }
 
@@ -2395,39 +2413,75 @@ function leerDeURL(){
  * que la persona ya tiene. Nada de lo que se comparte pasa por acá.
  */
 function botonCompartir(){
-  if(!estado.compartirAbierto)
-    return '<div class="compartir"><button class="btn sec" data-act="compartir">Compartir ▾</button></div>';
-  return '<div class="compartir"><button class="btn sec" data-act="compartir">Compartir ▴</button>'+
-    '<div class="compartir-menu">'+
-      '<button data-act="compartir-copiar">Copiar el enlace</button>'+
-      '<button data-act="compartir-whatsapp">Enviar por WhatsApp</button>'+
-      '<button data-act="compartir-mail">Enviar por correo</button>'+
-    '</div></div>';
+  return '<button class="btn sec" data-act="compartir">Compartir</button>';
 }
 
 /**
- * Compartir una cosa concreta —un fallo, un pasaje— y no la búsqueda entera.
+ * Menú de compartir, al lado del botón que lo abrió.
  *
- * Usa el menú nativo del sistema (navigator.share) cuando existe: en el
- * teléfono eso abre WhatsApp, Telegram, mail y lo que la persona tenga, sin
- * que esta web tenga que conocer ninguna de esas apps. Donde no existe
- * —escritorio, casi siempre— cae a copiar al portapapeles, que es lo que
- * después se pega donde sea.
+ * Reemplaza dos cosas que no servían. Una: el menú del sistema
+ * (navigator.share), que en la Mac ofrece AirDrop, Mensajes, Notas —nada
+ * de lo que se usa para pasarle un fallo a alguien—. Otra: el desplegable
+ * de Buscar, que quedaba tapado por la tarjeta de la fuente de abajo,
+ * porque los paneles llevan backdrop-filter y eso arma su propio contexto
+ * de apilado: ningún z-index de adentro puede subir por encima del panel
+ * siguiente.
+ *
+ * Por eso el menú se cuelga del body en posición fija, calculada contra el
+ * botón: así no hay panel que lo tape, y sirve igual en los pasajes del
+ * Lector, que se pintan por su cuenta y no por render().
  */
-function abrirCompartir(texto, url){
-  var payload={ title:"Iuris et de iure", text:texto, url:url };
-  if(navigator.share){
-    navigator.share(payload)["catch"](function(){ /* si lo cancela, no pasa nada */ });
-    return;
-  }
-  var todo=texto+"\n"+url;
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(todo).then(function(){ flash("Copiado — pegalo donde quieras"); })
-      ["catch"](function(){ flash("No pude copiar automáticamente"); });
-  }else{
-    flash("Copiá el enlace de la barra de direcciones");
-  }
+function cerrarMenuCompartir(){
+  var v=document.getElementById("menu-compartir");
+  if(v) v.remove();
 }
+function menuCompartir(boton,texto,url){
+  var abierto=document.getElementById("menu-compartir");
+  var mismo=abierto&&abierto._de===boton;
+  cerrarMenuCompartir();
+  if(mismo) return;   // volver a tocar el mismo botón lo cierra
+
+  var m=document.createElement("div");
+  m.id="menu-compartir"; m.className="compartir-menu flotante"; m._de=boton;
+  m.innerHTML='<button type="button" data-comp="copiar">Copiar</button>'+
+    '<button type="button" data-comp="whatsapp">Enviar por WhatsApp</button>'+
+    '<button type="button" data-comp="mail">Enviar por correo</button>';
+  document.body.appendChild(m);
+
+  var r=boton.getBoundingClientRect(), alto=m.offsetHeight, ancho=m.offsetWidth;
+  // Se abre para abajo salvo que no entre; ahí sube. Y no se pasa del
+  // borde derecho de la ventana.
+  var arriba=(r.bottom+alto+8>innerHeight)&&(r.top-alto-8>0);
+  m.style.top=(arriba?r.top-alto-6:r.bottom+6)+"px";
+  m.style.left=Math.max(8,Math.min(r.left,innerWidth-ancho-8))+"px";
+
+  m.addEventListener("click",function(ev){
+    var q=ev.target.closest&&ev.target.closest("[data-comp]");
+    if(!q) return;
+    var que=q.getAttribute("data-comp"), todo=texto+"\n"+url;
+    cerrarMenuCompartir();
+    if(que==="whatsapp"){ window.open("https://wa.me/?text="+encodeURIComponent(todo),"_blank","noopener"); return; }
+    if(que==="mail"){ location.href="mailto:?subject="+encodeURIComponent(String(texto).split("\n")[0].slice(0,120))+
+      "&body="+encodeURIComponent(todo); return; }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(todo).then(function(){ flash("Copiado — pegalo donde quieras"); })
+        ["catch"](function(){ flash("No pude copiar automáticamente"); });
+    }else flash("No pude copiar automáticamente");
+  });
+}
+/* Se cierra solo: tocando afuera, con Escape, o si la página se mueve
+   debajo (queda posicionado contra la ventana, no contra el documento). */
+document.addEventListener("click",function(ev){
+  var m=document.getElementById("menu-compartir");
+  if(!m) return;
+  if(m.contains(ev.target)||m._de===ev.target||(ev.target.closest&&ev.target.closest("[data-act^=compartir]"))) return;
+  cerrarMenuCompartir();
+},true);
+document.addEventListener("keydown",function(ev){ if(ev.key==="Escape") cerrarMenuCompartir(); });
+addEventListener("scroll",cerrarMenuCompartir,true);
+addEventListener("resize",cerrarMenuCompartir);
+
+function abrirCompartir(boton,texto,url){ menuCompartir(boton,texto,url); }
 
 /** Un fallo en texto plano, listo para pegar en un chat o un mail. */
 function textoDeFallo(r,slug){
@@ -4211,6 +4265,7 @@ function pintarLector(){
           '<button class="mini" data-act="pas-cita" data-i="'+i+'">Copiar con la cita</button>'+
           '<button class="mini" data-act="pas-copiar" data-i="'+i+'">Copiar el pasaje</button>'+
           '<button class="mini" data-act="pas-guardar" data-i="'+i+'">Guardar</button>'+
+          '<button class="mini" data-act="pas-compartir" data-i="'+i+'">Compartir</button>'+
           '<span class="pos">carácter '+p.ini+'</span></div></div>';
       }).join("");
       cont._ps=ps;
@@ -4723,34 +4778,22 @@ document.addEventListener("click",function(ev){
     var fSlug=b.getAttribute("data-fuente"), rid=b.getAttribute("data-id");
     var im2=estado.indices[fSlug];
     var reg=(im2&&im2.resultados||[]).filter(function(x){return String(x.id)===rid;})[0];
-    if(reg) abrirCompartir(textoDeFallo(reg,fSlug), reg.linkFicha||reg.linkFallo||location.href);
+    if(reg) abrirCompartir(b, textoDeFallo(reg,fSlug), reg.linkFicha||reg.linkFallo||location.href);
     return;
   }
   if(act==="compartir-pasaje"){
     var pp=estado.pasajes[Number(b.getAttribute("data-i"))];
-    if(pp) abrirCompartir('"'+String(pp.t).slice(0,600)+'"'+(pp.r?"\n\n(búsqueda: "+pp.r+")":""), pp.url||location.href);
+    if(pp) abrirCompartir(b, '"'+String(pp.t).slice(0,600)+'"'+(pp.r?"\n\n(búsqueda: "+pp.r+")":""), pp.url||location.href);
     return;
   }
   if(act==="compartir-lector"){
     var sel=(window.getSelection&&String(window.getSelection()))||"";
     var cuerpoL=sel.trim()?('"'+sel.trim().slice(0,600)+'"'):(estado.fichaConocida?fichaLegible(estado.fichaConocida):"Fallo abierto en el Lector");
-    abrirCompartir(cuerpoL, estado.fuenteDe||location.href);
+    abrirCompartir(b, cuerpoL, estado.fuenteDe||location.href);
     return;
   }
-  if(act==="compartir"){ estado.compartirAbierto=!estado.compartirAbierto; render(); return; }
-  if(act==="compartir-whatsapp"){
-    estado.compartirAbierto=false; render();
-    window.open("https://wa.me/?text="+encodeURIComponent(textoCompartir()+"\n"+location.href),"_blank","noopener");
-    return;
-  }
-  if(act==="compartir-mail"){
-    estado.compartirAbierto=false; render();
-    location.href="mailto:?subject="+encodeURIComponent(textoCompartir())+
-      "&body="+encodeURIComponent(textoCompartir()+"\n\n"+location.href);
-    return;
-  }
-  if(act==="compartir-copiar"){ estado.compartirAbierto=false; render(); }
-  if(act==="copiar-link"||act==="compartir-copiar"){
+  if(act==="compartir"){ menuCompartir(b,textoCompartir(),location.href); return; }
+  if(act==="copiar-link"){
     // La URL ya está al día: guardarEnURL() corre al final de cada render.
     var link=location.href;
     if(navigator.clipboard&&navigator.clipboard.writeText){
@@ -4972,6 +5015,13 @@ document.addEventListener("click",function(ev){
     armarCita(); window.scrollTo(0,0); return;
   }
   if(act==="copiar-doc-cita"){ copiar(citaDelDoc()); return; }
+  if(act==="pas-compartir"){
+    var contC=document.getElementById("pasajes");
+    var pc=(contC&&contC._ps?contC._ps:[])[parseInt(b.getAttribute("data-i"),10)];
+    if(!pc){ flash("No pude recuperar ese pasaje"); return; }
+    abrirCompartir(b,'«'+pc.txt+'»\n'+citaDelDoc(),estado.fuenteDe||location.href);
+    return;
+  }
   if(act==="pas-copiar"||act==="pas-cita"||act==="pas-guardar"){
     var cont=document.getElementById("pasajes");
     var ps=cont&&cont._ps?cont._ps:[];
