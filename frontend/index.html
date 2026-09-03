@@ -3551,7 +3551,7 @@ function vistaRequisitos(){
     'Actualmente se encuentran disponibles <strong>'+conLista+' de las '+REQUISITOS.length+' fichas</strong> proyectadas; '+
     'las restantes disponen temporalmente del botón de búsqueda.</div>'+
     '<div class="aviso" style="border-style:dashed"><strong>Este módulo constituye una guía de orientación.</strong> Los requisitos pueden haber variado tras la última revisión '+
-    'y la normativa procesal difiere según la jurisdicción (v. gr., los presupuestos de la Ley N.° 9001 de Mendoza frente al fuero nacional).<br><br>'+
+    'y la normativa procesal difiere según la jurisdicción (v. gr., los presupuestos de la Ley N.° 9001 de Mendoza frente al fuero nacional).<br>'+
     '<em>Verifique siempre la fuente oficial antes de realizar presentaciones, el enlace directo está disponible en cada ficha.</em></div>';
   var porGrupo={};
   REQUISITOS.forEach(function(x){ (porGrupo[x.g]=porGrupo[x.g]||[]).push(x); });
@@ -4319,9 +4319,9 @@ function vistaVerificar(){
   // este verificador no puede afirmar.
   var alcance=(estado.cita.salida&&estado.cita.salida.alcance)||
     "Poder Judicial de Mendoza · TSJ de la Ciudad de Buenos Aires · SAIJ · Corte Suprema (vía SAIJ)";
-  return '<div class="aviso"><p style="margin:0 0 10px"><strong>La consignación de precedentes inexactos o inexistentes acarrea severas sanciones procesales.</strong></p>'+
-    '<p style="margin:0">La plataforma permite verificar citas jurisprudenciales mediante la contrastación automatizada '+
-    'con los repositorios oficiales integrados (Poder Judicial de Mendoza, TSJ de CABA, SAIJ y CSJN).</p></div>'+
+  return '<div class="aviso"><strong>La consignación de precedentes inexactos o inexistentes acarrea severas sanciones procesales.</strong><br>'+
+    'La plataforma permite verificar citas jurisprudenciales mediante la contrastación automatizada '+
+    'con los repositorios oficiales integrados (Poder Judicial de Mendoza, TSJ de CABA, SAIJ y CSJN).</div>'+
     panelVerificadorCita()+
     resultadoCita()+
     '<div class="aviso" style="border-style:dashed"><strong>Límite de la verificación.</strong> '+
