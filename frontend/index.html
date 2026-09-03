@@ -3552,7 +3552,7 @@ function vistaRequisitos(){
     'las restantes disponen temporalmente del botón de búsqueda.</div>'+
     '<div class="aviso" style="border-style:dashed"><strong>Este módulo constituye una guía de orientación.</strong> Los requisitos pueden haber variado tras la última revisión '+
     'y la normativa procesal difiere según la jurisdicción (v. gr., los presupuestos de la Ley N.° 9001 de Mendoza frente al fuero nacional).<br><br>'+
-    'Verifique siempre la fuente oficial antes de realizar presentaciones, el enlace directo está disponible en cada ficha.</div>';
+    '<em>Verifique siempre la fuente oficial antes de realizar presentaciones, el enlace directo está disponible en cada ficha.</em></div>';
   var porGrupo={};
   REQUISITOS.forEach(function(x){ (porGrupo[x.g]=porGrupo[x.g]||[]).push(x); });
   html+=Object.keys(GRUPOS_REQUISITOS).map(function(g){
@@ -3802,10 +3802,10 @@ function vistaNorma(){
       '</div></div>';
   }
 
-  return '<div class="aviso"><strong>Texto oficial y actualizado desde la fuente</strong><br>'+
+  return '<div class="aviso"><strong>Texto oficial y actualizado desde la fuente.</strong> '+
       'La plataforma realiza una consulta directa a la base oficial de InfoLeg (Ministerio de Justicia de la Nación) '+
-      'para garantizar la visualización del articulado en su versión vigente, con todas sus reformas integradas.<br><br>'+
-      'Desde allí, es posible acceder de forma directa a los precedentes jurisprudenciales que lo interpretan.</div>'+
+      'para garantizar la visualización del articulado en su versión vigente, con todas sus reformas integradas. '+
+      '<em>Desde allí, es posible acceder de forma directa a los precedentes jurisprudenciales que lo interpretan.</em></div>'+
     '<div class="panel">'+
       '<div class="campo"><span>Qué artículo</span>'+
         '<input type="text" id="norma-art" value="'+esc(n.art)+'" placeholder="art 1741 CCyC · artículo 70 del código civil y comercial · LCT 245" autocomplete="off"></div>'+
@@ -3912,10 +3912,10 @@ function vistaLector(){
         'Todo lo demás funciona igual. Si querés activarla, levantá el servidor con <code>npm start</code> y recargá esta página.</p></div>';
     }
 
-    return '<div class="aviso"><p style="margin:0 0 10px">Cargue el fallo aquí para visualizarlo con su búsqueda destacada. '+
-      'Puede proceder ingresando el enlace, subiendo el archivo o pegando el texto manualmente.</p>'+
-      '<p style="margin:0">El Lector opera directamente en su navegador y asegura total fidelidad al documento original, '+
-      'garantizando que el contenido desplegado sea exactamente el del texto fuente, sin alteraciones ni elementos simulados.</p></div>'+
+    return '<div class="aviso"><strong>Cargue el fallo aquí para visualizarlo con su búsqueda destacada.</strong> '+
+      'Puede proceder ingresando el enlace, subiendo el archivo o pegando el texto manualmente. '+
+      '<em>El Lector opera directamente en su navegador y asegura total fidelidad al documento original, '+
+      'garantizando que el contenido desplegado sea exactamente el del texto fuente, sin alteraciones ni elementos simulados.</em></div>'+
       porLink+
       '<div class="panel">'+
         '<div class="rotulo" style="margin-top:0">'+(estado.api?"<strong>Opción 3 · Transcribir o pegar el texto manualmente</strong>":"Pegar el texto del fallo")+'</div>'+
@@ -4148,9 +4148,9 @@ function citaDelDoc(){
   return formatoCita(d.tipo||"cam",c);
 }
 function vistaCitas(){
-  return '<div class="aviso"><strong>Generación y estructuración de citas</strong><br>'+
+  return '<div class="aviso"><strong>Generación y estructuración de citas.</strong> '+
     'Complete los campos correspondientes para consolidar la cita adecuadamente estructurada y copie el resultado generado. '+
-    'El formato de citación estará sujeto a las pautas formales que exija el tribunal, fuero o medio de publicación donde se presente el escrito.</div>'+
+    '<em>El formato de citación estará sujeto a las pautas formales que exija el tribunal, fuero o medio de publicación donde se presente el escrito.</em></div>'+
     '<div class="blk">'+
       '<h3>Formateador de citas</h3>'+
       '<label class="campo"><span>Tipo de cita</span><select id="c-tipo">'+
@@ -4319,15 +4319,15 @@ function vistaVerificar(){
   // este verificador no puede afirmar.
   var alcance=(estado.cita.salida&&estado.cita.salida.alcance)||
     "Poder Judicial de Mendoza · TSJ de la Ciudad de Buenos Aires · SAIJ · Corte Suprema (vía SAIJ)";
-  return '<div class="aviso"><p style="margin:0 0 10px">La consignación de precedentes inexactos o inexistentes acarrea severas sanciones procesales.</p>'+
+  return '<div class="aviso"><p style="margin:0 0 10px"><strong>La consignación de precedentes inexactos o inexistentes acarrea severas sanciones procesales.</strong></p>'+
     '<p style="margin:0">La plataforma permite verificar citas jurisprudenciales mediante la contrastación automatizada '+
     'con los repositorios oficiales integrados (Poder Judicial de Mendoza, TSJ de CABA, SAIJ y CSJN).</p></div>'+
     panelVerificadorCita()+
     resultadoCita()+
-    '<div class="aviso" style="border-style:dashed"><strong>Límite de la verificación.</strong><br>'+
+    '<div class="aviso" style="border-style:dashed"><strong>Límite de la verificación.</strong> '+
       'La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; '+
-      'asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, '+
-      'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</div>'+
+      '<em>asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, '+
+      'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</em></div>'+
     '<div class="blk"><h3>Guía de verificación</h3><ol>'+
       '<li>Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</li>'+
       '<li>Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</li>'+
@@ -4390,8 +4390,8 @@ function vistaCuenta(){
   if(estado.usuario){
     var nFav=Object.keys(estado.fav).filter(function(k){return estado.fav[k];}).length;
     var cuando=estado.sincronizadoEn?new Date(estado.sincronizadoEn):null;
-    return '<div class="aviso">Su cuenta vincula las fuentes seleccionadas y el historial de búsquedas a su correo electrónico, '+
-        'garantizando la sincronización en tiempo real entre distintos dispositivos.</div>'+
+    return '<div class="aviso"><strong>Su cuenta vincula las fuentes seleccionadas y el historial de búsquedas a su correo electrónico, '+
+        'garantizando la sincronización en tiempo real entre distintos dispositivos.</strong></div>'+
       '<div class="panel">'+
         '<label class="campo"><span>Correo electrónico</span>'+
           '<div style="font-family:var(--serif);font-size:17px">'+esc(estado.usuario.email)+'</div></label>'+
