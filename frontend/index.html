@@ -430,8 +430,12 @@ strong,b{font-weight:500}
 
 /* "El resultado incluye": tarjeta sin ítems, a pedido. Cada línea suelta,
    sin viñeta ni número, separadas por su propio aire. */
+/* El único título de tarjeta que va en dorado y en la misma letra del
+   resto, no en la serif crema de los demás encabezados: el documento lo
+   marca así, igual que los títulos de los avisos. */
+.blk h3.tit-oro{font-family:var(--sans);font-size:16px;font-weight:300;color:var(--lacre)}
 .sin-items{display:flex;flex-direction:column;gap:9px}
-.sin-items p{margin:0;font-size:14.5px;line-height:1.55;color:var(--tinta2)}
+.sin-items p{margin:0;font-size:14.5px;line-height:1.55;color:var(--humo)}
 
 /* ---------- prosa ---------- */
 .blk{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;margin-bottom:16px}
@@ -4010,7 +4014,7 @@ function vistaLector(){
 
     return '<div class="aviso"><span class="av-tit">Cargue el fallo aquí para visualizarlo con su búsqueda destacada</span>'+
       'Puede proceder ingresando el enlace, subiendo el archivo o pegando el texto manualmente. '+
-      '<em>El Lector opera directamente en</em> su navegador y asegura total fidelidad al documento original, '+
+      'El Lector opera directamente en su navegador y asegura total fidelidad al documento original, '+
       'garantizando que el contenido desplegado sea exactamente el del texto fuente, sin alteraciones ni elementos simulados.</div>'+
       porLink+
       '<div class="panel">'+
@@ -4025,7 +4029,7 @@ function vistaLector(){
         '<div class="acciones"><button class="btn" data-act="analizar">Analizar el fallo</button></div>'+
       '</div>'+
       // Tarjeta sin ítems, a pedido: cada línea suelta, sin viñeta ni número.
-      '<div class="blk"><h3>El resultado incluye…</h3><div class="sin-items">'+
+      '<div class="blk"><span class="av-tit" style="margin-bottom:10px">El resultado incluye</span><div class="sin-items">'+
         '<p>Visualización del documento con resaltado automático de términos y herramientas de navegación secuencial entre coincidencias.</p>'+
         '<p>Panel de pasajes (coincidencias recortadas con su contexto inmediato), preparadas para copiar junto a su respectiva cita.</p>'+
         '<p>Detección e identificación de carátula, tribunal, fecha, expediente y tomo de Fallos para su validación y posterior formateo.</p>'+
