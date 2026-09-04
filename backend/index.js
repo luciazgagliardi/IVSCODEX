@@ -22,8 +22,7 @@ import {
   LIMITE_PETICIONES,
   LIMITE_VENTANA_MS,
   LIMITE_CITAS,
-  LIMITE_CITAS_VENTANA_MS,
-} from './config.js';
+  LIMITE_CITAS_VENTANA_MS, DIR_DATOS, DATOS_PERSISTEN } from './config.js';
 import { router, manejadorErrores } from './routes/extraer.js';
 import { router as routerIndice } from './routes/indice.js';
 import { router as routerAuth } from './routes/auth.js';
@@ -163,6 +162,12 @@ app.use(manejadorErrores);
  * Arranque
  * ------------------------------------------------------------------ */
 
+import { mudarDatosSiHaceFalta } from './lib/mudarDatos.js';
+
+// Antes de atender a nadie: rescatar lo que haya quedado en el lugar viejo.
+// Es de una sola vez y no pisa nada; si falla, se avisa y se sigue.
+const mudanza = await mudarDatosSiHaceFalta().catch((e) => ({ mudo: false, detalle: [e.message] }));
+
 const servidor = app.listen(PUERTO, () => {
   console.log('');
   console.log('  Juris et de jure — servidor de extracción');
@@ -171,6 +176,11 @@ const servidor = app.listen(PUERTO, () => {
   console.log(`  API        http://localhost:${PUERTO}/api/salud`);
   console.log(`  Dominios   ${PERMITIR_CUALQUIER_DOMINIO ? 'MODO ABIERTO (cualquier dominio público)' : 'solo la lista blanca de config.js'}`);
   console.log(`  CORS       ${CORS_ORIGENES.join(', ')}`);
+  // Que quede escrito en el log dónde viven las cuentas: si algún día vuelven
+  // a guardarse junto al código, un despliegue se las lleva y hay que verlo
+  // acá antes de que pase, no después.
+  console.log(`  Datos      ${DIR_DATOS}${DATOS_PERSISTEN ? ' (sobreviven a los despliegues)' : ' (junto al código)'}`);
+  if (mudanza.mudo) console.log(`  Mudanza    ${mudanza.detalle.join(' · ')}`);
   console.log('');
   console.log('  Ctrl+C para cortar.');
   console.log('');
