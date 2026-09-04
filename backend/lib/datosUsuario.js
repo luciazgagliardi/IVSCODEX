@@ -1,6 +1,7 @@
 /**
  * Lo que cada persona guarda en su cuenta: fuentes marcadas, busquedas
- * recientes y pasajes guardados del Lector.
+ * recientes, pasajes guardados del Lector y sus propios anillos del
+ * tesauro de sinonimia.
  *
  * Hasta ahora esto vivia solo en el localStorage del navegador, asi que la
  * cuenta no servia para nada: te registrabas y tus guardados seguian atados
@@ -23,6 +24,9 @@ const CARPETA = path.join(DIR_USUARIOS, 'datos');
 const MAX_FAVORITOS = 500;
 const MAX_HISTORIAL = 50;
 const MAX_PASAJES = 60; // mismo tope que ya usa el frontend en memoria
+const MAX_ANILLOS = 300; // anillos propios del tesauro; 300 es mas del decuplo del catalogo que viene de fabrica
+const MAX_TERMINOS = 12; // por lado (equivalentes / relacionados) dentro de un anillo
+const LARGO_MAX_TERMINO = 120;
 const LARGO_MAX_ID = 120;
 const LARGO_MAX_TEXTO = 8000; // cita + pasaje citado; un fallo entero no entra, y no hace falta
 const LARGO_MAX_CORTO = 300; // búsqueda, url
@@ -52,10 +56,11 @@ export async function leerDatos(usuarioId) {
       fav: dato && typeof dato.fav === 'object' && dato.fav ? dato.fav : {},
       hist: Array.isArray(dato?.hist) ? dato.hist : [],
       pasajes: Array.isArray(dato?.pasajes) ? dato.pasajes : [],
+      anillos: Array.isArray(dato?.anillos) ? dato.anillos : [],
       actualizadoEn: dato?.actualizadoEn || null,
     };
   } catch {
-    return { fav: {}, hist: [], pasajes: [] }; // todavia no guardo nada
+    return { fav: {}, hist: [], pasajes: [], anillos: [] }; // todavia no guardo nada
   }
 }
 
@@ -83,10 +88,59 @@ function saneaPasaje(p) {
 }
 
 /**
+ * Un anillo del tesauro cargado por la propia usuaria.
+ *
+ * La regla que sostiene el tesauro se aplica tambien aca, y no solo del
+ * lado de la pantalla: equivalentes y relacionados no pueden compartir un
+ * termino. Si llega uno repetido en los dos lados, se queda en equivalentes
+ * —que es lo que la persona marco como "lo mismo"— y se saca del otro. Sin
+ * esto, un anillo guardado podria decir a la vez que dos figuras son
+ * identicas y que no lo son.
+ */
+function saneaAnillo(a) {
+  const termino = (x) => String(x || '').trim().slice(0, LARGO_MAX_TERMINO);
+  const lista = (xs) => {
+    const vistos = new Set();
+    const out = [];
+    for (const x of Array.isArray(xs) ? xs : []) {
+      const t = termino(x);
+      const clave = t.toLowerCase();
+      if (!t || vistos.has(clave)) continue;
+      vistos.add(clave);
+      out.push(t);
+      if (out.length >= MAX_TERMINOS) break;
+    }
+    return out;
+  };
+
+  const canonico = termino(a?.canonico);
+  if (!canonico) return null;
+
+  const equivalentes = lista(a?.equivalentes).filter((t) => t.toLowerCase() !== canonico.toLowerCase());
+  if (!equivalentes.length) return null; // un anillo sin equivalentes no expande nada
+
+  const enEq = new Set(equivalentes.map((t) => t.toLowerCase()));
+  enEq.add(canonico.toLowerCase());
+  const relacionados = lista(a?.relacionados).filter((t) => !enEq.has(t.toLowerCase()));
+
+  const desde = Number.isInteger(a?.desde) && a.desde > 1800 && a.desde < 2200 ? a.desde : null;
+
+  return {
+    canonico,
+    equivalentes,
+    relacionados,
+    rama: String(a?.rama || '').slice(0, 40) || null,
+    desde,
+    nota: String(a?.nota || '').trim().slice(0, 400) || null,
+    creadoEn: String(a?.creadoEn || '').slice(0, 40) || new Date().toISOString().slice(0, 10),
+  };
+}
+
+/**
  * Deja los datos en una forma sana antes de escribirlos: solo las marcas
  * encendidas, sin ids ni textos absurdamente largos, y con tope de cantidad.
  */
-function sanear({ fav, hist, pasajes }) {
+function sanear({ fav, hist, pasajes, anillos }) {
   const favLimpio = {};
   if (fav && typeof fav === 'object') {
     for (const clave of Object.keys(fav)) {
@@ -114,7 +168,20 @@ function sanear({ fav, hist, pasajes }) {
     if (pasajesLimpio.length >= MAX_PASAJES) break;
   }
 
-  return { fav: favLimpio, hist: histLimpio, pasajes: pasajesLimpio };
+  // Un canonico repetido haria ambigua la expansion: gana el primero.
+  const anillosLimpio = [];
+  const canonicosVistos = new Set();
+  for (const a of Array.isArray(anillos) ? anillos : []) {
+    const limpio = saneaAnillo(a);
+    if (!limpio) continue;
+    const clave = limpio.canonico.toLowerCase();
+    if (canonicosVistos.has(clave)) continue;
+    canonicosVistos.add(clave);
+    anillosLimpio.push(limpio);
+    if (anillosLimpio.length >= MAX_ANILLOS) break;
+  }
+
+  return { fav: favLimpio, hist: histLimpio, pasajes: pasajesLimpio, anillos: anillosLimpio };
 }
 
 export async function guardarDatos(usuarioId, entrada) {

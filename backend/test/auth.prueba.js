@@ -134,7 +134,47 @@ chk('pone un tope a los pasajes', r.cuerpo.pasajes.length<=60, String(r.cuerpo.p
 r = await misDatos(token2, 'PUT', { fav:{}, hist:[], pasajes:[{ t:'   ', r:'', url:'', q:'', modo:'todas' }] });
 chk('un pasaje sin texto no se guarda', r.cuerpo.pasajes.length===0, JSON.stringify(r.cuerpo.pasajes));
 
+console.log('\n--- anillos propios del tesauro ---');
+{
+  const guardar = (anillos) => misDatos(token2, 'PUT', { fav:{}, hist:[], pasajes:[], anillos });
+
+  // La regla que sostiene el tesauro, aplicada tambien del lado del servidor:
+  // un termino no puede ser a la vez "lo mismo" y "parecido pero distinto".
+  let g = await guardar([{
+    canonico: 'lucro cesante',
+    equivalentes: ['ganancias dejadas de percibir', 'lucro cesante'],
+    relacionados: ['ganancias dejadas de percibir', 'daño emergente'],
+  }]);
+  const a = (g.cuerpo.anillos || [])[0] || {};
+  chk('el canonico no se repite entre los equivalentes',
+    JSON.stringify(a.equivalentes)===JSON.stringify(['ganancias dejadas de percibir']), JSON.stringify(a.equivalentes));
+  chk('un termino no queda como equivalente y como cercano a la vez',
+    JSON.stringify(a.relacionados)===JSON.stringify(['daño emergente']), JSON.stringify(a.relacionados));
+
+  g = await guardar([{ canonico:'algo', equivalentes:[] }]);
+  chk('un anillo sin equivalentes no se guarda: no expandiria nada',
+    (g.cuerpo.anillos||[]).length===0);
+
+  g = await guardar([
+    { canonico:'usucapión', equivalentes:['prescripción adquisitiva'] },
+    { canonico:'Usucapión', equivalentes:['otra cosa'] },
+  ]);
+  chk('un canonico repetido no entra dos veces: la expansion seria ambigua',
+    g.cuerpo.anillos.length===1, String(g.cuerpo.anillos.length));
+
+  g = await guardar([{ canonico:'x', equivalentes:['y'], desde:3000 }]);
+  chk('un año imposible se descarta', g.cuerpo.anillos[0].desde===null, String(g.cuerpo.anillos[0].desde));
+
+  g = await guardar(Array.from({length:400},(_,k)=>({ canonico:'c'+k, equivalentes:['e'+k] })));
+  chk('hay tope de cuantos anillos se guardan', g.cuerpo.anillos.length===300, String(g.cuerpo.anillos.length));
+
+  await guardar([]); // se deja limpio para no ensuciar las pruebas de abajo
+}
+
 console.log(`\nOK ${OK.length} · fallas ${MAL.length}`);
-if(MAL.length) console.log('Fallaron:', MAL.join(' | '));
+if(MAL.length) 
+
+
+console.log('Fallaron:', MAL.join(' | '));
 await fs.rm(DIR_TMP, { recursive:true, force:true });
 process.exit(MAL.length?1:0);
