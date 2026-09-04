@@ -193,5 +193,15 @@ export async function proponerAnillo(termino, { ramas = [], yaEnTesauro = [], cl
   const crudo = leerJSON(texto);
   if (!crudo) throw errores.modeloRespuestaIlegible();
 
-  return normalizar(crudo, t, ramas);
+  // El consumo viaja con la propuesta: es plata de la duena del proyecto y
+  // tiene que poder verse, no estimarse. La salida incluye el razonamiento
+  // del modelo, que se factura igual aunque no se muestre.
+  const uso = respuesta.usage || {};
+  return {
+    ...normalizar(crudo, t, ramas),
+    uso: {
+      entrada: uso.input_tokens ?? null,
+      salida: uso.output_tokens ?? null,
+    },
+  };
 }
