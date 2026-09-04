@@ -116,8 +116,8 @@ router.get('/mis-datos', requiereSesion, async (req, res, next) => {
 
 router.put('/mis-datos', requiereSesion, async (req, res, next) => {
   try {
-    const { fav, hist, pasajes } = req.body || {};
-    res.json({ ok: true, ...(await guardarDatos(req.usuarioId, { fav, hist, pasajes })) });
+    const { fav, hist, pasajes, anillos } = req.body || {};
+    res.json({ ok: true, ...(await guardarDatos(req.usuarioId, { fav, hist, pasajes, anillos })) });
   } catch (e) {
     next(e);
   }
@@ -129,7 +129,7 @@ router.put('/mis-datos', requiereSesion, async (req, res, next) => {
  */
 router.post('/mis-datos/fusionar', requiereSesion, async (req, res, next) => {
   try {
-    const { fav, hist, pasajes } = req.body || {};
+    const { fav, hist, pasajes, anillos } = req.body || {};
     res.json({ ok: true, ...(await fusionarDatos(req.usuarioId, { fav, hist, pasajes })) });
   } catch (e) {
     next(e);

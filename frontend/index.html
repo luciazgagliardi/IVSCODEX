@@ -1869,6 +1869,10 @@ function nuevoEstado(){
           // tiene clave; false significa que la función no se ofrece.
           modeloTesauro:null,
           propuesta:{para:"",cargando:false,error:null,salida:null},firmaTiras:"",
+          // Anillos del tesauro cargados por la propia usuaria. Van a la
+          // cuenta como los pasajes: se escriben una vez y sirven desde
+          // cualquier computadora.
+          anillos:[],nuevoAnillo:{canonico:"",equivalentes:"",relacionados:"",nota:""},
           ambitos:{mza:true,nac:true,prov:false,int:true,doc:true},
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
@@ -1939,7 +1943,7 @@ function traerDatosDeCuenta(fusionar){
   if(!estado.token||!estado.api) return;
   var opciones=fusionar
     ?{method:"POST",headers:Object.assign({"Content-Type":"application/json"},cabeceraSesion()),
-      body:JSON.stringify({fav:estado.fav,hist:estado.hist,pasajes:estado.pasajes})}
+      body:JSON.stringify({fav:estado.fav,hist:estado.hist,pasajes:estado.pasajes,anillos:estado.anillos})}
     :{headers:cabeceraSesion()};
   estado.sincronizando=true;
   fetch(estado.api+"/mis-datos"+(fusionar?"/fusionar":""),opciones)
@@ -1950,10 +1954,12 @@ function traerDatosDeCuenta(fusionar){
       estado.fav=d.fav||{};
       estado.hist=d.hist||[];
       estado.pasajes=d.pasajes||[];
+      estado.anillos=d.anillos||[];
       estado.sincronizadoEn=d.actualizadoEn||null;
       // También queda en el navegador: si mañana entrás sin conexión, está.
       store.set("jedj:fav",estado.fav);
       store.set("jedj:pasajes",estado.pasajes);
+      store.set("jedj:anillos",estado.anillos);
       render();
     })["catch"](function(){ estado.sincronizando=false; render(); });
 }
@@ -1968,7 +1974,7 @@ function guardarEnCuenta(){
     fetch(estado.api+"/mis-datos",{
       method:"PUT",
       headers:Object.assign({"Content-Type":"application/json"},cabeceraSesion()),
-      body:JSON.stringify({fav:estado.fav,hist:estado.hist,pasajes:estado.pasajes})
+      body:JSON.stringify({fav:estado.fav,hist:estado.hist,pasajes:estado.pasajes,anillos:estado.anillos})
     }).then(function(r){ return r.json(); })
       .then(function(d){
         if(d&&d.ok){ estado.sincronizadoEn=d.actualizadoEn||null; render(); }
@@ -2969,14 +2975,24 @@ function formasDe(anillo){
 function anilloDe(termino){
   var t=sinTildes(termino).trim();
   if(!t) return null;
-  for(var i=0;i<TESAURO.length;i++){
-    var a=TESAURO[i];
+  // Los anillos propios se miran PRIMERO: si la dueña del proyecto escribió
+  // uno para un término que también trae el catálogo de fábrica, manda el
+  // suyo — es la que sabe de derecho.
+  var todos=(estado.anillos||[]).concat(TESAURO);
+  for(var i=0;i<todos.length;i++){
+    var a=todos[i];
     var candidatos=[a.canonico].concat(a.equivalentes||[]);
     for(var j=0;j<candidatos.length;j++){
       if(sinTildes(candidatos[j])===t) return a;
     }
   }
   return null;
+}
+
+/* ¿Este anillo lo cargó la usuaria o vino de fábrica? Se muestra distinto:
+   uno se puede borrar y el otro no. */
+function esAnilloPropio(a){
+  return (estado.anillos||[]).indexOf(a)!==-1;
 }
 
 /* Las otras formas de decir lo mismo, sin repetir la que ya está escrita. */
@@ -5082,6 +5098,54 @@ function vistaVerificar(){
 
 }
 
+/* La sección para cargar anillos propios, dentro de Guardados.
+   Es el lugar donde la abogada aporta lo que sabe: un término, cómo se
+   escribe igual, y qué se le parece sin serlo. Lo que carga acá pesa más
+   que el catálogo de fábrica (ver anilloDe) y viaja con la cuenta. */
+function seccionAnillos(){
+  var n=estado.nuevoAnillo;
+  var propios=(estado.anillos||[]).map(function(a,i){
+    return '<div class="rama" style="margin-bottom:10px">'+
+      '<h3 style="font-size:17px">'+esc(comoTitulo(a.canonico))+'</h3>'+
+      '<div class="rotulo" style="margin-top:0">Es lo mismo que</div>'+
+      '<div class="voces">'+(a.equivalentes||[]).map(function(t){
+        return '<span class="voz" style="cursor:default">'+esc(comoTitulo(t))+'</span>';}).join("")+'</div>'+
+      ((a.relacionados||[]).length
+        ?'<div class="rotulo" style="margin-top:10px">Cercanos, pero no lo mismo</div>'+
+         '<div class="voces">'+a.relacionados.map(function(t){
+            return '<span class="voz" style="cursor:default">'+esc(comoTitulo(t))+'</span>';}).join("")+'</div>'
+        :'')+
+      (a.nota?'<p style="font-size:13px;color:var(--humo);margin:10px 0 0;font-style:italic">'+esc(a.nota)+'</p>':'')+
+      '<div class="f-acc" style="margin-top:12px">'+
+        '<button class="mini" data-act="anillo-probar" data-i="'+i+'">Buscar con este anillo</button>'+
+        '<button class="mini" data-act="anillo-borrar" data-i="'+i+'">Borrar</button>'+
+      '</div></div>';
+  }).join("");
+
+  return '<div class="blk"><h3>Mis términos equivalentes</h3>'+
+    '<p style="font-size:13.5px;color:var(--humo);margin:0 0 14px;max-width:70ch">'+
+      'Cuando dos formas distintas nombran la misma figura, cargalas acá y la búsqueda va a ofrecer las dos. '+
+      'Lo que escribas pesa más que el catálogo que viene de fábrica.</p>'+
+
+    '<label class="campo"><span>El término, como lo escribirías vos</span>'+
+      '<input type="text" id="an-canonico" value="'+esc(n.canonico)+'" placeholder="lucro cesante" autocomplete="off"></label>'+
+    '<label class="campo"><span>Formas que significan lo mismo — separadas por coma</span>'+
+      '<input type="text" id="an-equivalentes" value="'+esc(n.equivalentes)+'" placeholder="ganancias dejadas de percibir, pérdida de ganancias" autocomplete="off"></label>'+
+    '<label class="campo"><span>Cercanas pero distintas (opcional) — separadas por coma</span>'+
+      '<input type="text" id="an-relacionados" value="'+esc(n.relacionados)+'" placeholder="daño emergente, pérdida de chance" autocomplete="off"></label>'+
+    '<label class="campo"><span>Por qué conviven las dos formas (opcional)</span>'+
+      '<input type="text" id="an-nota" value="'+esc(n.nota)+'" placeholder="El CCyC de 2015 la renombró" autocomplete="off"></label>'+
+    '<div class="acciones">'+
+      '<button class="btn" data-act="anillo-guardar">Agregar al tesauro</button>'+
+      (estado.token?'':'<span class="pos" style="align-self:center">Sin cuenta queda sólo en este navegador</span>')+
+    '</div>'+
+
+    (propios?'<div style="margin-top:18px"><div class="rotulo">'+estado.anillos.length+
+      (estado.anillos.length===1?' anillo cargado por vos':' anillos cargados por vos')+'</div>'+propios+'</div>'
+      :'<div class="vacio" style="margin-top:16px">Todavía no cargaste ninguno. El catálogo de fábrica tiene '+TESAURO.length+'.</div>')+
+    '</div>';
+}
+
 function vistaGuardados(){
   var ids=Object.keys(estado.fav).filter(function(k){return estado.fav[k];});
   var favs=F.filter(function(f){return ids.indexOf(f.id)!==-1;});
@@ -5119,6 +5183,7 @@ function vistaGuardados(){
       return '<button class="voz" data-act="rehacer" data-v="'+esc(q)+'">'+esc(q)+'</button>';}).join("")+'</div>';
   }
   h+='</div>';
+  h+=seccionAnillos();
   return h;
 }
 
@@ -5429,7 +5494,7 @@ document.addEventListener("click",function(ev){
         store.set("jedj:token",null);
         // Lo traído de la cuenta se va con la sesión: si esto es una
         // computadora prestada, no queda a la vista de quien entre después.
-        estado.fav={}; estado.hist=[]; estado.pasajes=[]; estado.sincronizadoEn=null;
+        estado.fav={}; estado.hist=[]; estado.pasajes=[]; estado.anillos=[]; estado.sincronizadoEn=null;
         store.set("jedj:fav",{}); store.set("jedj:pasajes",[]);
         render();
       });
@@ -5510,6 +5575,45 @@ document.addEventListener("click",function(ev){
     estado.rama=b.getAttribute("data-rama")||""; estado.sugeridaRama="";
     render();
     flash("Rama puesta: "+comoTitulo(nombreRama(estado.rama))+" — mirá sus voces acá abajo");
+    return;
+  }
+  if(act==="anillo-guardar"){
+    var na=estado.nuevoAnillo;
+    var partir=function(t){ return String(t||"").split(",").map(function(x){return x.trim();}).filter(Boolean); };
+    var can=String(na.canonico||"").trim();
+    var eq=partir(na.equivalentes);
+    if(!can||!eq.length){ flash("Faltan el término y al menos una forma equivalente"); return; }
+    // La misma regla del tesauro, también acá: nada puede ser equivalente y
+    // cercano a la vez. El servidor lo vuelve a verificar igual.
+    var enEq={}; enEq[sinTildes(can)]=1; eq.forEach(function(t){ enEq[sinTildes(t)]=1; });
+    var rel=partir(na.relacionados).filter(function(t){ return !enEq[sinTildes(t)]; });
+    estado.anillos=[{canonico:can,equivalentes:eq,relacionados:rel,
+      nota:String(na.nota||"").trim()||null,rama:null,desde:null,
+      creadoEn:new Date().toISOString().slice(0,10)}].concat(
+      estado.anillos.filter(function(a){ return sinTildes(a.canonico)!==sinTildes(can); }));
+    estado.nuevoAnillo={canonico:"",equivalentes:"",relacionados:"",nota:""};
+    store.set("jedj:anillos",estado.anillos);
+    guardarEnCuenta();
+    render();
+    flash("«"+can+"» agregado — la búsqueda ya ofrece sus equivalentes");
+    return;
+  }
+  if(act==="anillo-borrar"){
+    var ib=Number(b.getAttribute("data-i"));
+    if(!(ib>=0)||!estado.anillos[ib]) return;
+    var borrado=estado.anillos[ib].canonico;
+    estado.anillos=estado.anillos.filter(function(_,k){ return k!==ib; });
+    store.set("jedj:anillos",estado.anillos);
+    guardarEnCuenta(); render();
+    flash("«"+borrado+"» borrado de tus términos");
+    return;
+  }
+  if(act==="anillo-probar"){
+    var ip=Number(b.getAttribute("data-i"));
+    var ap=estado.anillos[ip];
+    if(!ap) return;
+    estado.q=ap.canonico; estado.modo="exacta"; estado.tab="buscar"; estado.marca=0;
+    invalidarBusquedas(); render();
     return;
   }
   if(act==="pedir-propuesta"){
@@ -5704,6 +5808,12 @@ document.addEventListener("input",function(ev){
       else { clearTimeout(window._tl); window._tl=setTimeout(pintarLector,170); }
     }
   }
+  else if(id.indexOf("an-")===0){
+    var campo=id.slice(3);
+    if(campo==="canonico"||campo==="equivalentes"||campo==="relacionados"||campo==="nota"){
+      estado.nuevoAnillo[campo]=ev.target.value;  // sin repintar: le sacaría el foco
+    }
+  }
   else if(id==="buscarReq"){
     estado.buscarReq=ev.target.value; render();
     var cr=document.getElementById("buscarReq");
@@ -5810,6 +5920,13 @@ store.get("jedj:fav",function(v){
   estado.fav=v;
   var activo=document.activeElement;
   if(activo&&["INPUT","SELECT","TEXTAREA"].indexOf(activo.tagName)!==-1) return;
+  render();
+});
+store.get("jedj:anillos",function(v){
+  if(!Array.isArray(v)||!v.length) return;
+  estado.anillos=v;
+  var activoA=document.activeElement;
+  if(activoA&&["INPUT","SELECT","TEXTAREA"].indexOf(activoA.tagName)!==-1) return;
   render();
 });
 store.get("jedj:pasajes",function(v){
