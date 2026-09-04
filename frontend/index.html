@@ -2799,6 +2799,181 @@ function pintarCadena(){
 }
 
 /* ============================================================
+   5.ter Tesauro de sinonimia jurídica
+   ============================================================
+
+   El problema, medido en vivo contra el buscador de la Suprema Corte de
+   Mendoza el 3/9/2026 y no supuesto: "usucapión" devuelve 47 filas y
+   "prescripción adquisitiva" 135, son la MISMA institución, y las
+   carátulas de la primera página no se repiten ni una vez. Lo mismo con
+   "arbitrariedad de sentencia" (734) contra "sentencia arbitraria" (893):
+   ninguno de los veinte primeros resultados de uno aparece en el otro.
+
+   O sea: el abogado que escribe una de las dos formas trabaja con la mitad
+   del material y no tiene cómo enterarse. No lo arregla ordenar mejor lo
+   que vuelve — el fallo que falta nunca entró en la lista.
+
+   Parte del desfasaje tiene fecha: el Código Civil y Comercial de 2015
+   rebautizó varias figuras (daño moral → consecuencias no patrimoniales,
+   régimen de visitas → régimen de comunicación, tenencia → cuidado
+   personal), así que un mismo tema aparece con un nombre antes de esa
+   reforma y con otro después. Por eso los anillos llevan `desde`.
+
+   REGLA QUE HACE CORRECTO ESTO: `equivalentes` y `relacionados` no son lo
+   mismo y no se tratan igual. Equivalente es el mismo rubro con otro
+   nombre — un fallo que use cualquiera de ellos se cita igual. Relacionado
+   es un vecino que NO es lo mismo: "daño psicológico" está en el mismo
+   artículo que "daño moral" y tiene otros presupuestos y otra prueba.
+   Mezclarlos devuelve resultados que parecen pertinentes y no lo son, que
+   es la forma más cara de fallar en este oficio. Por eso los relacionados
+   se muestran aparte y rotulados, nunca mezclados en silencio.
+
+   Cada anillo se midió antes de entrar: si las variantes devuelven lo
+   mismo, el anillo no aporta y sobra. Los números entre paréntesis son
+   cuántos resultados nuevos aportó la segunda forma sobre la primera. */
+var TESAURO=[
+ {id:"danio-extrapatrimonial",canonico:"daño moral",rama:"dan",
+  equivalentes:["daño extrapatrimonial","consecuencias no patrimoniales","agravio moral"],
+  relacionados:["daño psicológico"],
+  normas:["ccyc:1741"],desde:2015,
+  nota:"El CCyC de 2015 lo rebautizó: los fallos anteriores dicen casi siempre «daño moral» y los posteriores alternan."},
+
+ {id:"prescripcion-adquisitiva",canonico:"prescripción adquisitiva",rama:"rea",
+  equivalentes:["usucapión","usucapión veinteañal","prescripción veinteañal"],
+  relacionados:["posesión y tenencia"],
+  normas:["ccyc:1897"],
+  nota:"El caso más extremo que se midió: 135 filas contra 47, sin una sola carátula en común en la primera página. La doctrina dice «usucapión»; los tribunales escriben «prescripción adquisitiva» en la carátula."},
+
+ {id:"arbitrariedad",canonico:"arbitrariedad de sentencia",rama:"const",
+  equivalentes:["sentencia arbitraria","doctrina de la arbitrariedad"],
+  nota:"734 filas contra 893, sin superposición en la primera página."},
+
+ {id:"indemnizacion-despido",canonico:"indemnización por despido",rama:"lab",
+  equivalentes:["indemnización por antigüedad","indemnización art. 245"],
+  relacionados:["despido sin causa"],
+  normas:["lct:245"],
+  nota:"195 filas contra 50."},
+
+ {id:"trabajo-no-registrado",canonico:"trabajo no registrado",rama:"lab",
+  equivalentes:["empleo no registrado","relación laboral no registrada"],
+  relacionados:["multa registral"],
+  normas:["lct:52"]},
+
+ {id:"responsabilidad-medica",canonico:"mala praxis médica",rama:"dan",
+  equivalentes:["responsabilidad médica","praxis médica"],
+  relacionados:["consentimiento informado"],
+  nota:"248 filas contra 109."},
+
+ {id:"probation",canonico:"suspensión del juicio a prueba",rama:"proc_pen",
+  equivalentes:["probation","suspensión del proceso a prueba"]},
+
+ {id:"alimentos",canonico:"cuota alimentaria",rama:"fam",
+  equivalentes:["obligación alimentaria","prestación alimentaria"],
+  relacionados:["alimentos provisorios"]},
+
+ {id:"danio-punitivo",canonico:"daño punitivo",rama:"cons",
+  equivalentes:["multa civil","sanción pecuniaria disuasiva"],
+  normas:["ldc:52bis"],
+  nota:"La ley 24.240 lo llama «multa civil» en su propio texto; la doctrina y los fallos dicen «daño punitivo»."},
+
+ {id:"regimen-comunicacion",canonico:"régimen de comunicación",rama:"fam",
+  equivalentes:["régimen de visitas","derecho de comunicación"],
+  relacionados:["impedimento de contacto"],
+  normas:["ccyc:652"],desde:2015,
+  nota:"Otro renombre del CCyC: hasta 2015 era «régimen de visitas»."},
+
+ {id:"cuidado-personal",canonico:"cuidado personal",rama:"fam",
+  equivalentes:["tenencia de los hijos","cuidado personal compartido"],
+  normas:["ccyc:648"],desde:2015,
+  nota:"Renombre del CCyC: antes de 2015 los fallos dicen «tenencia»."},
+
+ {id:"in-itinere",canonico:"accidente in itinere",rama:"art",
+  equivalentes:["accidente en el trayecto","accidente in itínere"],
+  nota:"La variante con tilde existe en los fallos y no la encuentra la otra."},
+
+ {id:"despido-indirecto",canonico:"despido indirecto",rama:"lab",
+  equivalentes:["autodespido"],
+  relacionados:["injuria laboral"],
+  normas:["lct:242","lct:246"]},
+
+ {id:"enfermedad-profesional",canonico:"enfermedad profesional",rama:"art",
+  equivalentes:["enfermedad laboral"],
+  relacionados:["enfermedad accidente"],
+  nota:"«Enfermedad accidente» es una categoría doctrinaria anterior a la ley de riesgos: se ofrece aparte porque no es exactamente lo mismo."},
+
+ {id:"perdida-chance",canonico:"pérdida de chance",rama:"dan",
+  equivalentes:["pérdida de oportunidad","chance frustrada"],
+  normas:["ccyc:1739"]},
+
+ {id:"accidente-transito",canonico:"accidente de tránsito",rama:"dan",
+  equivalentes:["siniestro vial","accidente de tránsito automotor"],
+  relacionados:["riesgo de la cosa"]},
+
+ {id:"riesgo-cosa",canonico:"riesgo de la cosa",rama:"dan",
+  equivalentes:["vicio o riesgo de la cosa","responsabilidad objetiva"],
+  normas:["ccyc:1757"]},
+
+ {id:"amparo",canonico:"acción de amparo",rama:"const",
+  equivalentes:["amparo"],
+  relacionados:["amparo colectivo","medida cautelar innovativa"],
+  normas:["cn:43"]},
+
+ {id:"sucesion-intestada",canonico:"declaratoria de herederos",rama:"suc",
+  equivalentes:["sucesión ab intestato","sucesión intestada"],
+  relacionados:["partición de herencia"]},
+
+ {id:"legitima",canonico:"legítima hereditaria",rama:"suc",
+  equivalentes:["porción legítima"],
+  relacionados:["acción de reducción","colación"],
+  normas:["ccyc:2444"]},
+
+ {id:"blsg",canonico:"beneficio de litigar sin gastos",rama:"proc_civ",
+  equivalentes:["carta de pobreza"],
+  nota:"«Carta de pobreza» es la forma vieja y todavía aparece en fallos y escritos."},
+
+ {id:"prision-preventiva",canonico:"prisión preventiva",rama:"proc_pen",
+  equivalentes:["detención preventiva","prisión preventiva peligro de fuga"],
+  relacionados:["excarcelación"]}
+];
+
+/* ---- resolución ---- */
+
+/* Todas las formas de un anillo, con qué relación entró cada una. */
+function formasDe(anillo){
+  var out=[{t:anillo.canonico,rel:"canonico"}];
+  (anillo.equivalentes||[]).forEach(function(t){ out.push({t:t,rel:"equivalente"}); });
+  (anillo.relacionados||[]).forEach(function(t){ out.push({t:t,rel:"relacionado"}); });
+  return out;
+}
+
+/* ¿A qué anillo pertenece lo que se escribió? Se busca por el canónico y
+   por los equivalentes, no por los relacionados: entrar por un vecino no
+   convierte la consulta en el concepto de al lado. */
+function anilloDe(termino){
+  var t=sinTildes(termino).trim();
+  if(!t) return null;
+  for(var i=0;i<TESAURO.length;i++){
+    var a=TESAURO[i];
+    var candidatos=[a.canonico].concat(a.equivalentes||[]);
+    for(var j=0;j<candidatos.length;j++){
+      if(sinTildes(candidatos[j])===t) return a;
+    }
+  }
+  return null;
+}
+
+/* Las otras formas de decir lo mismo, sin repetir la que ya está escrita. */
+function expandir(termino){
+  var a=anilloDe(termino);
+  if(!a) return null;
+  var puesto=sinTildes(termino).trim();
+  return {
+    anillo:a,
+    variantes:formasDe(a).filter(function(v){ return sinTildes(v.t)!==puesto; })
+  };
+}
+
+/* ============================================================
    6. Vistas
    ============================================================ */
 var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos","Requisitos"],["comparar","Comparar"],["norma","Norma"],["fuentes","Fuentes"],
@@ -2906,6 +3081,10 @@ function recalcularSugeridas(){
 
 function tiraSugerencias(){
   if(estado.tab!=="buscar") return "";
+  // Si lo escrito ya cae en un anillo del tesauro, manda el tesauro: dice
+  // lo mismo pero con la relación tipada (equivalente o cercano), y las
+  // dos tiras juntas repetían el mismo chip dos veces.
+  if(expandir(String(estado.q||"").trim())) return "";
   if(!estado.sugeridas.length&&estado.sugeridaRama){
     return '<div class="sugeridas">'+
       '<p class="sug-nota">No encontré una voz puntual para lo que escribiste, '+
@@ -2926,6 +3105,31 @@ function tiraSugerencias(){
     '<div class="chips">'+chips+
       '<button class="chip sug-cerrar" data-act="cerrar-sugeridas" title="Ocultar">✕</button>'+
     '</div></div>';
+}
+
+/* Las otras formas de escribir lo mismo, debajo de la consulta.
+   Los equivalentes y los cercanos van en grupos separados y rotulados
+   distinto — mezclarlos sería exactamente el error que el tesauro existe
+   para evitar (ver la nota grande de TESAURO). */
+function tiraEquivalentes(){
+  if(estado.tab!=="buscar") return "";
+  var e=expandir(String(estado.q||"").trim());
+  if(!e||!e.variantes.length) return "";
+  function chips(rel){
+    return e.variantes.filter(function(v){return v.rel===rel;}).map(function(v){
+      return '<button class="chip voz-sug" data-act="usar-equivalente" data-voz="'+esc(v.t)+'">'+
+             esc(comoTitulo(v.t))+'</button>';
+    }).join("");
+  }
+  var eq=chips("canonico")+chips("equivalente"), cer=chips("relacionado");
+  if(!eq&&!cer) return "";
+  return '<div class="sugeridas">'+
+    (eq?'<p class="sug-nota"><b>Los tribunales escriben esto mismo de otras formas</b>, y cada una devuelve fallos '+
+        'distintos: buscar sólo una deja material afuera.</p><div class="chips">'+eq+'</div>':'')+
+    (cer?'<p class="sug-nota" style="margin-top:10px">Cercanos, <b>pero no lo mismo</b> — cambian los presupuestos, '+
+        'revisalos antes de citarlos.</p><div class="chips">'+cer+'</div>':'')+
+    (e.anillo.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(e.anillo.nota)+'</p>':'')+
+    '</div>';
 }
 
 function vistaBuscar(){
@@ -2962,6 +3166,7 @@ function vistaBuscar(){
           '</div></div>'+
         '</div></div>'+
       tiraSugerencias()+
+      tiraEquivalentes()+
       '<div class="campo"><span>Cómo combinar las palabras</span><div class="chips">'+modos+'</div></div>'+
       '<div class="fila">'+
         '<label class="campo"><span>Excluir palabras</span><input type="text" id="excluir" value="'+esc(estado.excluir)+'" placeholder="seguro laboral" autocomplete="off"></label>'+
@@ -5224,6 +5429,15 @@ document.addEventListener("click",function(ev){
     estado.rama=b.getAttribute("data-rama")||""; estado.sugeridaRama="";
     render();
     flash("Rama puesta: "+comoTitulo(nombreRama(estado.rama))+" — mirá sus voces acá abajo");
+    return;
+  }
+  if(act==="usar-equivalente"){
+    var eq=b.getAttribute("data-voz")||"";
+    if(!eq) return;
+    estado.q=eq; estado.modo="exacta"; estado.articulo=""; estado.marca=0;
+    invalidarBusquedas();
+    render();
+    flash("Buscando «"+eq+"» — es lo mismo, escrito como lo escribe el tribunal");
     return;
   }
   if(act==="cerrar-sugeridas"){ estado.sugeridas=[]; estado.sugeridaRama=""; render(); return; }
