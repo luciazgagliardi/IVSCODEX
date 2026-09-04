@@ -282,4 +282,41 @@ export const errores = {
       'Iniciá sesión para hacer esto.',
       401
     ),
+
+  /* --- Propuestas del tesauro (lib/proponerAnillo.js) --- */
+
+  modeloNoConfigurado: () =>
+    new ErrorApp(
+      'MODELO_NO_CONFIGURADO',
+      'Las propuestas de terminos equivalentes necesitan una clave de API configurada en el servidor. Todo lo demas del buscador funciona igual.',
+      503
+    ),
+
+  modeloSeNego: () =>
+    new ErrorApp(
+      'MODELO_SE_NEGO',
+      'El asistente no quiso responder a esa consulta. Proba con el termino juridico solo, sin el caso alrededor.',
+      422
+    ),
+
+  modeloRespuestaIlegible: () =>
+    new ErrorApp(
+      'MODELO_RESPUESTA_ILEGIBLE',
+      'La propuesta volvio en un formato que no se pudo leer. Proba de nuevo.',
+      502
+    ),
+
+  modeloClaveInvalida: () =>
+    new ErrorApp(
+      'MODELO_CLAVE_INVALIDA',
+      'El servidor tiene una clave de API cargada, pero Anthropic la rechazo. Revisa que este bien copiada (entera, sin espacios) y que la cuenta tenga credito.',
+      502
+    ),
+
+  modeloFalla: (detalle) =>
+    new ErrorApp(
+      'MODELO_FALLA',
+      'No se pudo pedir la propuesta' + (detalle ? ': ' + detalle : '.') + ' Todo lo demas del buscador funciona igual.',
+      502
+    ),
 };

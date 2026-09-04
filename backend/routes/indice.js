@@ -18,6 +18,7 @@ import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
 import { errores, ErrorApp } from '../lib/errores.js';
+import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
 import { NORMAS, articuloDe, rubricaDe } from '../lib/legislacion.js';
 
 export const router = express.Router();
@@ -397,6 +398,44 @@ for (const { slug, buscar } of FUENTES) {
 }
 
 /** Qué normas se pueden consultar por artículo (ver lib/legislacion.js). */
+/**
+ * ¿Se pueden pedir propuestas de términos equivalentes?
+ *
+ * Devuelve un booleano y nada más: nunca la clave ni un fragmento de ella.
+ * El frontend lo usa para mostrar o esconder el botón, así que sin esto
+ * tendría que ofrecer algo que después falla.
+ */
+router.get('/tesauro/estado', (_req, res) => {
+  res.json({ ok: true, disponible: hayModelo() });
+});
+
+/**
+ * Propone un anillo de sinonimia para un término: POST /api/tesauro/proponer
+ *
+ * Devuelve una PROPUESTA, no un cambio: nada entra al tesauro hasta que una
+ * abogada lo aprueba y queda escrito en el archivo, con firma y fecha. El
+ * modelo acá no busca ni afirma nada sobre ningún fallo — su única salida
+ * son términos de búsqueda (ver la nota grande de lib/proponerAnillo.js).
+ */
+router.post('/tesauro/proponer', async (req, res, next) => {
+  try {
+    const termino = String(req.body?.termino || '').trim();
+    if (!termino) throw errores.consultaVacia();
+    if (termino.length > 120) throw errores.citaDemasiadoLarga();
+
+    const ramas = Array.isArray(req.body?.ramas)
+      ? req.body.ramas.filter((x) => typeof x === 'string').slice(0, 60)
+      : [];
+    const yaEnTesauro = Array.isArray(req.body?.yaEnTesauro)
+      ? req.body.yaEnTesauro.filter((x) => typeof x === 'string').slice(0, 200)
+      : [];
+
+    res.json({ ok: true, propuesta: await proponerAnillo(termino, { ramas, yaEnTesauro }) });
+  } catch (e) {
+    next(e);
+  }
+});
+
 router.get('/legislacion/normas', (_req, res) => {
   res.json({ ok: true, normas: NORMAS.map((n) => ({ clave: n.clave, nombre: n.nombre, sigla: n.sigla, aviso: n.aviso || null })) });
 });

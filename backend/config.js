@@ -75,6 +75,18 @@ export const TIMEOUT_MS = Number(process.env.TIMEOUT_MS || 25000);
 export const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY || '';
 
 /**
+ * API key de Anthropic, para proponer anillos nuevos del tesauro de
+ * sinonimia (ver lib/proponerAnillo.js).
+ *
+ * Sin esto configurado no se rompe nada: la busqueda y el tesauro andan
+ * igual, y lo unico que no aparece es el boton que pide una propuesta.
+ * Va SOLO aca, del lado del servidor: el frontend es un archivo publico
+ * que cualquiera puede leer entero, y una clave ahi seria una cuenta
+ * ajena gastando plata de la duena del proyecto.
+ */
+export const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
+
+/**
  * Si es false, apaga el OCR de PDFs escaneados (ver lib/ocr.js) sin tocar
  * código: sirve para un plan de hosting chico donde renderizar páginas y
  * correr Tesseract sale muy caro en CPU/memoria.
