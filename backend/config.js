@@ -17,10 +17,38 @@ export const RAIZ = path.resolve(aqui, '..');
 /** Carpeta de archivos estaticos que sirve el backend (hermana de /backend). */
 export const DIR_PUBLICO = path.join(RAIZ, 'frontend');
 
+/**
+ * Donde va lo que TIENE que sobrevivir a un despliegue.
+ *
+ * El problema, medido y no supuesto: hasta ahora todo el estado de runtime
+ * —cuentas, indice, cache— se guardaba dentro de la carpeta del propio
+ * codigo. En App Service, publicar reemplaza esa carpeta entera, asi que
+ * cada vez que se subia un cambio se borraba todo. Comprobado el 4/9/2026:
+ * el indice tenia 813 registros por la manana y quedo en 238 despues de
+ * tres publicaciones. Lo grave no era el indice —eso se vuelve a juntar—
+ * sino las CUENTAS: cada publicacion borraba los usuarios registrados y
+ * todo lo que tuvieran guardado.
+ *
+ * En App Service, /home es almacenamiento persistente de verdad y vive
+ * fuera de lo que el despliegue reemplaza. Se detecta por las variables
+ * que la propia plataforma define; en cualquier otro lado (tu maquina,
+ * otro hosting) se sigue usando la carpeta de siempre, asi que no cambia
+ * nada para desarrollo local.
+ *
+ * Se puede forzar con DIR_DATOS si algun dia el hosting es otro.
+ */
+const enAppService = Boolean(process.env.WEBSITE_INSTANCE_ID || process.env.WEBSITE_SITE_NAME);
+export const DIR_DATOS = process.env.DIR_DATOS
+  ? path.resolve(process.env.DIR_DATOS)
+  : (enAppService ? '/home/datos' : aqui);
+
+/** True cuando los datos NO estan junto al codigo (o sea, sobreviven). */
+export const DATOS_PERSISTEN = DIR_DATOS !== aqui;
+
 /** Carpeta donde se guarda el cache en disco (propia de este backend). */
 export const DIR_CACHE = process.env.DIR_CACHE
   ? path.resolve(process.env.DIR_CACHE)
-  : path.join(aqui, 'cache');
+  : path.join(DIR_DATOS, 'cache');
 
 /**
  * Carpeta donde vive el indice propio (la "copia guardada" de lo que se fue
@@ -29,7 +57,7 @@ export const DIR_CACHE = process.env.DIR_CACHE
  */
 export const DIR_INDICE = process.env.DIR_INDICE
   ? path.resolve(process.env.DIR_INDICE)
-  : path.join(aqui, 'indice');
+  : path.join(DIR_DATOS, 'indice');
 
 /**
  * Carpeta donde Tesseract guarda el modelo del idioma que descarga la
@@ -39,12 +67,12 @@ export const DIR_INDICE = process.env.DIR_INDICE
  */
 export const DIR_OCR_CACHE = process.env.DIR_OCR_CACHE
   ? path.resolve(process.env.DIR_OCR_CACHE)
-  : path.join(aqui, 'ocr-cache');
+  : path.join(DIR_DATOS, 'ocr-cache');
 
 /** Carpeta donde viven las cuentas de usuario y sus sesiones. Nunca al repo. */
 export const DIR_USUARIOS = process.env.DIR_USUARIOS
   ? path.resolve(process.env.DIR_USUARIOS)
-  : path.join(aqui, 'usuarios');
+  : path.join(DIR_DATOS, 'usuarios');
 
 /** Puerto del servidor HTTP. */
 export const PUERTO = Number(process.env.PORT || 3000);
