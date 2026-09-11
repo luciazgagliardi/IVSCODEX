@@ -547,49 +547,15 @@ mark.actual{background:var(--lacre);color:#241a0c}
 .entrada.saliendo{opacity:0;pointer-events:none}
 .entrada-contenido{
   padding:24px;display:flex;flex-direction:column;align-items:center;animation:aparece-entrada 1s ease-out both;
-  /* El ancho real del logo, en una variable para que .toque (más abajo)
-     pueda usar el mismo valor y descontarle el margen transparente del
-     archivo. Ver el comentario grande en .toque. */
   --ancho-marca:clamp(200px,82vw,1180px);
 }
-/* IURIS LOGPAGE.png (el archivo del logo) trae mucho margen transparente
-   de fábrica: medido en el archivo (3757×2112), las letras ocupan sólo el
-   12.9% del alto del PNG, con ~44% de aire vacío arriba y ~43% abajo. La
-   primera vuelta de este arreglo achicaba el espacio empujando el texto
-   de abajo hacia arriba con un margen negativo — pero eso no toca el
-   problema de fondo: .entrada centra la CAJA del archivo entero, aire
-   incluido, así que la letra quedaba muy por debajo del centro real de
-   la pantalla ("centrado en el centro" pedido). La solución de fondo es
-   recortar el archivo a la altura real de la letra ACÁ (con overflow +
-   un margen negativo en la imagen), para que lo que se centra sea la
-   letra, no el rectángulo transparente que la contiene. */
 .entrada .titulo-fila{
-  position:relative;overflow:hidden;
+  position:relative;overflow:hidden;aspect-ratio:4 / 1;
   width:var(--ancho-marca);
-  /* 0.0724 = fracción de la letra sobre el alto del archivo (12.9%) × la
-     relación alto/ancho del archivo (0.562). Es la altura real de la
-     letra a este ancho. */
-  height:calc(var(--ancho-marca) * .0724);
 }
-/* El piso de 200px (antes 360px, antes de eso el 74vw) se pensó para
-   pantallas de escritorio angostas, pero un celular es más angosto que
-   eso: medido en vivo, a 390px de ancho el 74vw da 288.6px, MENOR que un
-   piso de 360px, así que el piso ganaba y el logo se recortaba contra los
-   dos bordes de la pantalla —no hay overflow-x visible que avise, porque
-   html,body lo esconden (ver arriba)—. 82vw compensa el piso más bajo: en
-   desktop (>1440px) sigue topando en 1180px igual que antes. */
 .entrada .wordmark{
-  position:absolute;left:0;
+  position:absolute;left:0;top:0;
   width:var(--ancho-marca);height:auto;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45));
-  /* Posición fija, no centrado + margen: con align-items:center el margen
-     negativo se sumaba a un centrado que ya lo compensaba solo, y la
-     imagen terminaba clipeada entera fuera de la vista (probado en vivo).
-     Con position:absolute el "top" negativo es la única cuenta que manda:
-     sube la imagen hasta que el aire vacío de encima de la letra (44% de
-     alto × 0.562 = 0.2471 del ancho) queda tapado por el borde de arriba
-     del recorte, dejando pegada ahí la letra misma; el aire de abajo lo
-     tapa el overflow:hidden del contenedor. */
-  top:calc(var(--ancho-marca) * -.2471);
 }
 .entrada .toque{
   margin-top:32px;font-family:var(--sans);font-size:15px;letter-spacing:.06em;
@@ -617,7 +583,7 @@ mark.actual{background:var(--lacre);color:#241a0c}
 <div class="entrada" id="entrada" role="button" tabindex="0" aria-label="Entrada de Iuris et de iure. Tocar para continuar">
   <div class="entrada-contenido">
     <div class="titulo-fila">
-      <img class="wordmark" src="./IURIS LOGPAGE.png" alt="IURIS ET DE IURE">
+      <img class="wordmark" src="../ICONO/IVS CODEX (2000 x 500 px).png" alt="IVS CODEX">
     </div>
     <div class="toque">Tocá para continuar</div>
   </div>
