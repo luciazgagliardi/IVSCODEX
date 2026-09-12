@@ -429,7 +429,7 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .btn,mark,.cod.mza,.cod.int,#panic button,.chip.voz-sug[aria-pressed="true"]{text-shadow:none}
 /* Los pesos gruesos bajan junto con el resto: la pantalla entera va fina. */
 .nav button{font-weight:200}
-.blk h3,.rama h3,.grupo>h3,.voces-tit,.entrada .toque{font-weight:400}
+.blk h3,.rama h3,.grupo>h3,.voces-tit{font-weight:400}
 .btn{font-weight:400}
 strong,b{font-weight:500}
 
@@ -531,38 +531,99 @@ mark.actual{background:var(--lacre);color:#241a0c}
   border:1px solid var(--linea);box-shadow:0 8px 22px rgba(0,0,0,.4);max-width:90vw}
 #panic{display:none;background:#7c1d2b;color:#fff;padding:10px 20px;font-size:13px}
 #panic button{background:#fff;color:#7c1d2b;border:0;border-radius:999px;padding:4px 10px;margin-left:10px;cursor:pointer}
+/* ------------------------------------------------------------------ *
+   PORTADA — composicion editorial.
+   Reemplaza la pantalla anterior, que mostraba solo la marca y la
+   leyenda "Toca para continuar". Aquella no explicaba de que se trata
+   la plataforma ni de donde proviene el material, cobraba una
+   interaccion sin entregar nada a cambio, y su fondo incluia un
+   degradado violeta y una animacion en bucle de 18 segundos.
+   Esta portada declara la materia, las bases integradas y el volumen
+   del vocabulario, y entrega el acceso directo a la seccion que
+   corresponda. Las cifras no estan escritas a mano: se toman de los
+   propios datos de la aplicacion al cargar (ver 0.1).
+ * ------------------------------------------------------------------ */
 .entrada{
-  position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
-  background:
-    radial-gradient(ellipse 60% 55% at 15% 15%, rgba(217,166,42,.28), transparent 60%),
-    radial-gradient(ellipse 55% 50% at 88% 20%, rgba(122,74,158,.22), transparent 60%),
-    radial-gradient(ellipse 65% 55% at 50% 100%, rgba(95,174,144,.16), transparent 60%),
-    linear-gradient(120deg,#1c140a,#241a0c,#150f08,#221609);
-  background-size:auto,auto,auto,300% 300%;
-  animation:fondo-deriva 18s ease-in-out infinite;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  color:#fff;text-align:center;isolation:isolate;cursor:pointer;
-  opacity:1;transition:opacity .6s ease-out;
+  position:fixed;inset:0;z-index:100;overflow-y:auto;overscroll-behavior:contain;
+  background:var(--negro);color:var(--tinta);
+  opacity:1;transition:opacity .5s ease-out;
 }
 .entrada.saliendo{opacity:0;pointer-events:none}
-.entrada-contenido{
-  padding:24px;display:flex;flex-direction:column;align-items:center;animation:aparece-entrada 1s ease-out both;
-  --ancho-marca:clamp(200px,82vw,1180px);
+.pt-hoja{
+  max-width:1180px;margin:0 auto;min-height:100%;
+  padding-inline:clamp(20px,5vw,64px);
+  padding-block:clamp(30px,4.5vw,54px) clamp(34px,5vw,64px);
+  display:flex;flex-direction:column;
+  animation:pt-entra .9s ease-out both;
 }
-.entrada .titulo-fila{
-  position:relative;overflow:hidden;aspect-ratio:4 / 1;
-  width:var(--ancho-marca);
+.pt-tope{
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid var(--linea);
 }
-.entrada .wordmark{
-  position:absolute;left:0;top:0;
-  width:var(--ancho-marca);height:auto;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.45));
+.pt-tope img{width:clamp(118px,16vw,164px);height:auto;display:block}
+.pt-nav{display:flex;gap:clamp(10px,2vw,22px);flex-wrap:wrap}
+.pt-nav button{
+  background:none;border:0;padding:5px 2px;cursor:pointer;
+  font-family:var(--sans);font-size:13px;font-weight:300;color:var(--humo);
+  letter-spacing:.04em;border-bottom:1px solid transparent;transition:color .2s ease;
 }
-.entrada .toque{
-  margin-top:32px;font-family:var(--sans);font-size:15px;letter-spacing:.06em;
-  text-transform:uppercase;color:rgba(255,255,255,.6);animation:parpadeo-toque 1.8s ease-in-out infinite
+.pt-nav button:hover{color:var(--lacre)}
+.pt-nav button:focus-visible{color:var(--lacre);outline:none;border-bottom-color:var(--lacre)}
+.pt-titular{
+  font-family:var(--serif);font-weight:400;
+  font-size:clamp(31px,6.6vw,80px);line-height:1.04;letter-spacing:-.012em;
+  margin:clamp(30px,4.6vw,50px) 0 0;color:#fff;text-wrap:balance;
 }
-@keyframes parpadeo-toque{0%,100%{opacity:.55}50%{opacity:1}}
-@keyframes aparece-entrada{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.pt-titular em{font-style:italic;color:var(--lacre)}
+.pt-bajo{
+  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
+  gap:clamp(24px,4vw,56px);margin-top:clamp(26px,3.8vw,42px);align-items:end;
+}
+.pt-parrafo{
+  color:var(--tinta2);line-height:1.72;max-width:62ch;margin:0;
+  font-size:clamp(14.5px,1.5vw,16px);font-weight:200;
+}
+.pt-acciones{display:flex;gap:11px;flex-wrap:wrap;margin-top:24px}
+.pt-btn{
+  display:inline-block;border:1px solid var(--dorado);border-radius:2px;
+  padding:12px 24px;font-family:var(--sans);font-size:12.5px;font-weight:400;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--lacre);
+  background:transparent;cursor:pointer;white-space:nowrap;text-shadow:none;
+  transition:background .2s ease,color .2s ease;
+}
+.pt-btn:hover{background:rgba(217,166,42,.1)}
+.pt-btn:focus-visible{outline:2px solid var(--lacre);outline-offset:3px}
+.pt-btn.lleno{background:var(--dorado);color:#1a1206;font-weight:500}
+.pt-btn.lleno:hover{background:var(--lacre)}
+.pt-datos{display:flex;flex-direction:column;margin:0;border-top:1px solid var(--linea2)}
+.pt-datos>div{
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  padding:11px 0;border-bottom:1px solid var(--linea2);
+}
+.pt-datos dt{
+  font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--humo);margin:0;
+}
+.pt-datos dd{
+  margin:0;font-family:var(--serif);font-size:21px;font-weight:400;
+  color:var(--lacre);font-variant-numeric:tabular-nums;line-height:1;
+}
+.pt-franja{margin-top:auto;padding-top:clamp(26px,3.8vw,44px)}
+.pt-franja .pt-lin{
+  padding-top:20px;border-top:1px solid var(--linea);
+  display:flex;flex-wrap:wrap;gap:9px 20px;align-items:center;
+}
+.pt-fuente{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--humo);letter-spacing:.03em}
+.pt-fuente i{width:6px;height:6px;border-radius:50%;background:var(--acequia);display:block;flex:none}
+@keyframes pt-entra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media(max-width:860px){
+  .pt-bajo{grid-template-columns:minmax(0,1fr);align-items:start}
+  .pt-franja{margin-top:34px}
+}
+@media(prefers-reduced-motion:reduce){
+  .pt-hoja{animation:none}
+  .entrada{transition:none}
+}
 
 @media (max-width:860px){
   .wrap{grid-template-columns:1fr;gap:16px}
@@ -580,14 +641,50 @@ mark.actual{background:var(--lacre);color:#241a0c}
 <body>
 
 <div id="panic" role="alert"></div>
-<div class="entrada" id="entrada" role="button" tabindex="0" aria-label="Entrada de Iuris et de iure. Tocar para continuar">
-  <div class="entrada-contenido">
-    <div class="titulo-fila">
-      <img class="wordmark" src="./ivs-codex.png" alt="IVS CODEX">
+<section class="entrada" id="entrada" aria-labelledby="pt-titular">
+  <div class="pt-hoja">
+
+    <div class="pt-tope">
+      <img src="./ivs-codex.png" alt="IVS CODEX">
+      <nav class="pt-nav" aria-label="Secciones de la plataforma">
+        <button type="button" data-tab="buscar">Consulta</button>
+        <button type="button" data-tab="fuentes">Fuentes</button>
+        <button type="button" data-tab="verificar">Verificación</button>
+        <button type="button" data-tab="cuenta">Cuenta</button>
+      </nav>
     </div>
-    <div class="toque">Tocá para continuar</div>
+
+    <h1 class="pt-titular" id="pt-titular">Jurisprudencia y legislación argentinas, reunidas en una <em>sola consulta</em>.</h1>
+
+    <div class="pt-bajo">
+      <div>
+        <p class="pt-parrafo">La plataforma interroga de forma simultánea los repositorios oficiales integrados, extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>
+        <div class="pt-acciones">
+          <button type="button" class="pt-btn lleno" data-tab="buscar">Iniciar la consulta</button>
+          <button type="button" class="pt-btn" data-tab="fuentes">Ver el catálogo de fuentes</button>
+        </div>
+      </div>
+      <dl class="pt-datos">
+        <div><dt>Bases integradas</dt><dd>6</dd></div>
+        <div><dt>Ramas del derecho</dt><dd id="pt-n-ramas">28</dd></div>
+        <div><dt>Descriptores</dt><dd id="pt-n-voces">309</dd></div>
+        <div><dt>Fichas de requisitos</dt><dd id="pt-n-req">24</dd></div>
+      </dl>
+    </div>
+
+    <div class="pt-franja">
+      <div class="pt-lin">
+        <span class="pt-fuente"><i></i>Suprema Corte de Justicia de Mendoza</span>
+        <span class="pt-fuente"><i></i>Mendoza Legal</span>
+        <span class="pt-fuente"><i></i>Tribunal Superior de Justicia de la Ciudad de Buenos Aires</span>
+        <span class="pt-fuente"><i></i>Corte Suprema de Justicia de la Nación</span>
+        <span class="pt-fuente"><i></i>SAIJ</span>
+        <span class="pt-fuente"><i></i>InfoLeg</span>
+      </div>
+    </div>
+
   </div>
-</div>
+</section>
 
 <header class="top">
   <!-- El título grande ("IURIS ET DE IURE") ya se ve una vez, al tocar la
@@ -634,20 +731,55 @@ function panic(msg){
 window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
 
 /* ============================================================
-   0.1. Pantalla de entrada — se cierra recién cuando la tocan
+   0.1. Portada — se cierra al elegir una seccion
+   ============================================================
+   Antes la pantalla se cerraba con un clic en cualquier parte, porque
+   no habia nada que leer en ella. Ahora si lo hay, asi que solo se
+   retira cuando se elige a donde ir: cualquiera de los botones de la
+   portada, o la tecla Escape.
    ============================================================ */
 (function(){
   try{
     var entrada=document.getElementById("entrada");
     if(!entrada) return;
-    function cerrar(){
+    var cerrada=false;
+
+    function cerrar(destino){
+      if(cerrada) return;
+      cerrada=true;
       entrada.classList.add("saliendo");
       entrada.addEventListener("transitionend",function(){ entrada.style.display="none"; },{once:true});
+      // Respaldo: con "reducir movimiento" activado no hay transicion y por
+      // lo tanto tampoco evento, asi que la portada quedaria invisible pero
+      // tapando los clics del resto de la pagina.
+      setTimeout(function(){ entrada.style.display="none"; },700);
+      if(destino==="buscar"){
+        setTimeout(function(){ var c=document.getElementById("q"); if(c) c.focus(); },520);
+      }
     }
-    entrada.addEventListener("click",cerrar);
-    entrada.addEventListener("keydown",function(e){
-      if(e.key==="Enter"||e.key===" "||e.key==="Spacebar"){ e.preventDefault(); cerrar(); }
+
+    entrada.addEventListener("click",function(e){
+      var b=(e.target&&e.target.closest)?e.target.closest("[data-tab]"):null;
+      if(b) cerrar(b.getAttribute("data-tab"));
     });
+    document.addEventListener("keydown",function(e){
+      if(e.key==="Escape") cerrar();
+    });
+
+    // Las cifras de la portada salen de los datos reales de la aplicacion y
+    // no escritas a mano: si manana se agrega una rama o una ficha, la
+    // portada lo dice sola. Va en diferido porque RAMAS y REQUISITOS se
+    // declaran mas abajo, en este mismo script.
+    setTimeout(function(){
+      try{
+        function poner(id,v){ var n=document.getElementById(id); if(n) n.textContent=v; }
+        if(typeof RAMAS!=="undefined"&&RAMAS.length){
+          poner("pt-n-ramas",RAMAS.length);
+          poner("pt-n-voces",RAMAS.reduce(function(a,r){ return a+((r.v&&r.v.length)||0); },0));
+        }
+        if(typeof REQUISITOS!=="undefined"&&REQUISITOS.length) poner("pt-n-req",REQUISITOS.length);
+      }catch(e){}
+    },0);
   }catch(e){}
 })();
 
