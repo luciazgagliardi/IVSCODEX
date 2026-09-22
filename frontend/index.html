@@ -206,8 +206,8 @@ a.mini:hover{color:var(--lacre)}
    faltaba. */
 .rail{position:sticky;top:56px;min-width:0}
 .rail h2{
-  color:var(--lacre);font-family:var(--sans);font-size:16px;font-weight:300;
-  text-transform:uppercase;letter-spacing:.03em;margin:0 0 9px
+  color:var(--humo);font-family:var(--sans);font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.18em;margin:0 0 9px
 }
 .rail-buscador{
   width:100%;padding:9px 12px;margin-bottom:10px;border:1px solid var(--linea);border-radius:3px;
@@ -299,6 +299,84 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .btn:hover{background:var(--lacre);border-color:var(--lacre)}
 .btn.sec{background:transparent;color:var(--tinta);border-color:#45423a;font-weight:400;transition:background .2s ease,border-color .2s ease}
 .btn.sec:hover{background:var(--papel2);border-color:#5c584d}
+
+/* ---------- pantalla de busqueda (composicion Tinta) ---------- */
+/* El titular, la barra y los filtros salen del panel y pasan a ser la
+   cabecera de la pantalla: el formulario dejaba la consulta —lo unico que
+   se usa siempre— al mismo nivel visual que "Al abrir la fuente". */
+.busq-tope{margin-bottom:20px}
+.busq-tit{
+  font-family:var(--serif);font-size:31px;font-weight:400;color:#fff;
+  letter-spacing:-.006em;line-height:1.14;margin:0 0 20px;max-width:24ch
+}
+.busq-tit em{font-style:italic;color:var(--lacre)}
+.busq-barra{display:flex;gap:10px;align-items:stretch}
+.busq-campo{
+  flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:11px;
+  background:var(--ficha);border:1px solid #38362f;border-radius:3px;padding:0 15px
+}
+.busq-campo>svg{flex:none}
+.busq-campo input[type=text]{
+  border:0;border-radius:0;background:transparent;padding:14px 0;font-size:15px
+}
+.busq-campo input[type=text]:focus{border:0;outline:none}
+.busq-barra .btn{flex:none;padding:0 28px}
+.busq-cadena{
+  margin-top:11px;display:flex;gap:10px;align-items:center;
+  background:var(--papel2);border:1px solid var(--linea);border-radius:3px;padding:8px 12px
+}
+.busq-cadena code{
+  font-family:var(--mono);font-size:12.5px;color:var(--tinta2);
+  flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.busq-cadena code b{color:var(--lacre);font-weight:600}
+.busq-grupo{margin-top:13px}
+.busq-rotulo{
+  display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--humo);font-weight:600;margin-bottom:8px
+}
+.oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* Los resultados de un buscador: el panel deja de ser una caja y pasa a ser
+   una seccion —su rotulo arriba y la lista abajo—, y la TARJETA es cada
+   resultado. Antes era una caja dentro de otra caja, con el borde de la de
+   afuera compitiendo con el de la de adentro. */
+.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,
+.panel.f-csjn,.panel.f-saij,.panel.f-dialnet{
+  background:transparent;border-color:transparent;padding:0;margin-bottom:26px
+}
+.panel .fuente{
+  border:1px solid var(--linea);border-radius:4px;background:var(--ficha);
+  padding:16px 18px;margin-bottom:10px;transition:border-color .25s ease
+}
+.panel .fuente:hover{border-color:#45423a}
+.panel .f-top{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.panel .f-nom{font-family:var(--serif);font-size:19px;font-weight:400;color:#fff;line-height:1.26}
+.panel h3.f-nom{margin:0 0 7px}
+.panel .f-enc{
+  font-size:12px;color:var(--humo);min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.panel .f-fecha{margin-left:auto;font-size:12px;color:var(--humo);flex:none}
+.panel .f-nota{font-size:13.5px;line-height:1.6;color:var(--tinta2);margin:0 0 10px}
+/* El resaltado fuerte (amarillo pleno) se queda para el Lector, donde se
+   busca una palabra dentro de un documento entero. En un pasaje de cuatro
+   renglones alcanza con teñir el fondo. */
+.panel .f-nota mark{background:rgba(217,166,42,.2);color:#f0d68c;padding:0 2px}
+/* La sigla de la fuente: contorno en su tono, letra clara. Mismo criterio
+   que .rotulo-fuente — el color va en el filete, no en el texto. */
+.panel .f-top .cod{
+  background:transparent;border:1px solid var(--punto,var(--linea));
+  color:var(--tinta);border-radius:2px;font-size:10.5px;letter-spacing:.06em;
+  padding:3px 8px;top:0
+}
+.panel .f-acc{gap:16px;margin-top:10px}
+.panel .f-acc .mini{
+  background:transparent;border:0;border-radius:0;padding:0;
+  color:var(--lacre);font-size:12.5px
+}
+.panel .f-acc .mini:hover{color:var(--dorado);text-decoration:underline}
+.panel .f-acc .tag{margin-left:0}
 
 /* ---------- fuentes ---------- */
 .conteo{font-family:var(--sans);font-size:12px;color:var(--humo);margin:0 0 10px}
@@ -3384,7 +3462,30 @@ function vistaBuscar(){
       '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(comoTitulo(v))+'</button>';}).join("")+'</div></div>';
   }
 
-  return '<div class="aviso"><span class="av-oro">Optimizamos tu consulta con operadores de búsqueda para dirigirla a las bases de jurisprudencia oficiales, '+
+  // La consulta sale del formulario y pasa a ser la cabecera de la pantalla:
+  // titular, barra de búsqueda y filtros. Lo que queda dentro del panel son
+  // los ajustes finos, que no se tocan en la mayoría de las búsquedas.
+  return '<div class="busq-tope">'+
+      '<h1 class="busq-tit">Jurisprudencia y legislación argentinas, reunidas en una <em>sola consulta</em>.</h1>'+
+      '<div class="busq-barra">'+
+        '<div class="busq-campo">'+
+          '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8c8577" stroke-width="2" stroke-linecap="round" aria-hidden="true">'+
+            '<circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>'+
+          '<label class="oculto" for="q">¿Qué desea consultar?</label>'+
+          '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off">'+
+        '</div>'+
+        '<button class="btn" data-act="barrido">Buscar en todas a la vez</button>'+
+      '</div>'+
+      '<div class="busq-cadena">'+
+        '<code id="cadena" aria-live="polite"></code>'+
+        '<button class="mini" data-act="copiar-cadena">Copiar</button>'+
+        '<button class="mini" data-act="limpiar">Limpiar</button>'+
+      '</div>'+
+      '<div class="busq-grupo"><span class="busq-rotulo">Cómo combinar las palabras</span><div class="chips">'+modos+'</div></div>'+
+      '<div class="busq-grupo"><span class="busq-rotulo">Dónde buscar</span><div class="chips">'+ambChips+'</div></div>'+
+    '</div>'+
+
+    '<div class="aviso"><span class="av-oro">Optimizamos tu consulta con operadores de búsqueda para dirigirla a las bases de jurisprudencia oficiales, '+
     'facilitando el acceso a la fuente directa.</span></div>'+
 
     sug+
@@ -3393,33 +3494,21 @@ function vistaBuscar(){
     // contra el que se mide el listado de ramas de la izquierda, para que
     // su scroll llegue justo hasta la misma línea. Ver esa función.
     '<div class="panel" id="panel-buscar-form">'+
-      '<div class="campo"><span>¿Qué desea consultar?</span>'+
-        '<div class="fila-q">'+
-          '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off">'+
-          '<div class="cadena"><div class="cadena-in">'+
-            '<code id="cadena" aria-live="polite"></code>'+
-            '<button class="mini" data-act="copiar-cadena">Copiar</button>'+
-            '<button class="mini" data-act="limpiar">Limpiar</button>'+
-          '</div></div>'+
-        '</div></div>'+
       tiraSugerencias()+
       tiraEquivalentes()+
       tiraProponer()+
-      '<div class="campo"><span>Cómo combinar las palabras</span><div class="chips">'+modos+'</div></div>'+
       '<div class="fila">'+
         '<label class="campo"><span>Excluir palabras</span><input type="text" id="excluir" value="'+esc(estado.excluir)+'" placeholder="seguro laboral" autocomplete="off"></label>'+
         '<label class="campo"><span>Año desde</span><input type="number" id="desde" value="'+esc(estado.desde)+'" min="1863" max="2100" placeholder="2015"></label>'+
         '<label class="campo"><span>Año hasta</span><input type="number" id="hasta" value="'+esc(estado.hasta)+'" min="1863" max="2100" placeholder="2026"></label>'+
       '</div>'+
-      '<div class="campo"><span>Dónde buscar</span><div class="chips">'+ambChips+'</div></div>'+
       '<div class="campo" style="margin-bottom:0"><span>Al abrir la fuente</span><div class="chips">'+
         '<button class="chip" data-act="tog-frag" aria-pressed="'+(estado.resaltarFuente?"true":"false")+'">'+
         'Resaltar la frase en la página que se abre</button></div></div>'+
       '<div class="acciones">'+
         (estado.api?FUENTES_INDICE.map(function(f){
-          return '<button class="btn" data-act="buscar-indice" data-fuente="'+f.slug+'">Buscar en '+esc(f.boton)+'</button>';
+          return '<button class="btn sec" data-act="buscar-indice" data-fuente="'+f.slug+'">Buscar en '+esc(f.boton)+'</button>';
         }).join(""):'')+
-        '<button class="btn'+(estado.api?" sec":"")+'" data-act="barrido">Buscar en todas a la vez</button>'+
         '<button class="btn sec" data-act="copiar-cadena">Copiar la consulta</button>'+
         botonCompartir()+
         '<button class="btn sec" data-act="limpiar">Empezar de nuevo</button>'+
@@ -3632,8 +3721,9 @@ function fichaDesdeIndice(slug,r){
 function fichaIndice(f,r){
   var q=estado.q;
   var im=estado.indices[f.slug];
-  var meta=[r.tribunal,r.secretaria,r.fecha,r.magistrados,r.expediente?"Expte. "+r.expediente:""]
+  var metaEnc=[r.tribunal,r.secretaria,r.magistrados,r.expediente?"Expte. "+r.expediente:""]
     .filter(Boolean).map(esc).join(" · ");
+  var fechaEnc=r.fecha?esc(r.fecha):"";
   // Cuando la búsqueda fue por artículo, se distingue quién CITA el número de
   // quién apareció por el tema del artículo (su rúbrica). No es un detalle:
   // citar como "aplica el art. 1710" un fallo que sólo habla de prevención
@@ -3647,10 +3737,11 @@ function fichaIndice(f,r){
   var esperando=!pasaje&&r.linkFallo&&im.fragCargando&&!im.fragmentos.hasOwnProperty(r.linkFallo);
   return '<div class="fuente">'+
     '<div class="f-top"><span class="cod '+f.clase+'">'+esc(f.cod)+'</span>'+
-      '<span class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</span></div>'+
+      (metaEnc?'<span class="f-enc">'+metaEnc+'</span>':'')+
+      (fechaEnc?'<span class="f-fecha">'+fechaEnc+'</span>':'')+'</div>'+
+    '<h3 class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</h3>'+
     (pasaje?'<p class="f-nota">'+resaltarSimple(pasaje,q)+'</p>':'')+
     (esperando?'<p class="f-nota" style="opacity:.55;font-style:italic">Buscando el pasaje en el documento…</p>':'')+
-    (meta?'<p style="font-size:12px;color:var(--humo);margin:0 0 8px">'+meta+'</p>':'')+
     (r.voces&&r.voces.length?'<div class="voces">'+r.voces.slice(0,6).map(function(v){
       return '<span class="voz" style="cursor:default">'+esc(v)+'</span>';}).join("")+'</div>':"")+
     '<div class="f-acc" style="margin-top:8px">'+
