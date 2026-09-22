@@ -11,18 +11,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700&family=IBM+Plex+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --negro:#18140f;
-  --tinta:#f3efe5;
-  --tinta2:#a89b86;
+  /* Negro neutro, no marrón. El #18140f de antes era un marrón muy oscuro:
+     en pantalla grande se leía como sepia apagado más que como negro, y
+     obligaba a que todo lo demás —fichas, líneas, humo— tirara a marrón
+     para no desentonar. Con el gris neutro, el dorado de la marca es lo
+     único cálido que queda en la pantalla, y por eso resalta. */
+  --negro:#0d0d0c;
+  --tinta:#edeae3;
+  --tinta2:#b5ae9e;
   --papel:#f3efe5;
-  --papel2:rgba(33,26,16,.5);
-  --ficha:rgba(30,23,16,.5);
+  /* Opacos, no translúcidos: estos dos eran marrón al 50% para que se viera
+     el fondo a través del vidrio esmerilado. Sin vidrio, una capa
+     semitransparente sobre negro es apenas un gris —y se recalcula en cada
+     scroll—, así que ahora son directamente ese gris. */
+  --papel2:#1e1d19;
+  --ficha:#161613;
   --lacre:#e9c877;
   --lacre2:#d1ab55;
   --dorado:#d9a62a;
   --acequia:#5fae90;
-  --humo:#8a7f6a;
-  --linea:#332918;
+  --humo:#8c8577;
+  --linea:#2e2d28;
+  /* --linea2 se usaba en .pt-datos (las cifras de la portada) sin estar
+     definida en ningún lado, así que esos dos filetes no se dibujaban. */
+  --linea2:#252420;
   --oro:#e9c877;
   /* Un tono por buscador. El borde del panel dice de dónde salió cada
      resultado sin tener que leer el título — con seis fuentes abiertas a la
@@ -67,58 +79,55 @@ html{scrollbar-width:thin;scrollbar-color:var(--lacre) #150f08}
 *::-webkit-scrollbar{width:12px;height:12px}
 *::-webkit-scrollbar-track{background:#150f08}
 *::-webkit-scrollbar-thumb{background:var(--lacre);border-radius:6px}
-*::-webkit-scrollbar-thumb:hover{background:var(--dorado);box-shadow:0 0 10px 3px rgba(233,200,119,.6)}
+*::-webkit-scrollbar-thumb:hover{background:var(--dorado)}
 body{
-  /* Neón tenue en TODA la letra, a pedido. Deliberadamente por debajo del
-     resplandor de lo que está seleccionado (.rail-list button[aria-pressed]
-     usa 10px al .55): éste es de 6px al .13, así que la pantalla brilla
-     parejo sin taparle el destaque a lo que uno acaba de tocar. Va en el
-     body para que lo herede todo; abajo se apaga sólo donde la letra es
-     oscura sobre fondo claro, que es donde un halo dorado ensucia en vez
-     de iluminar. */
-  text-shadow:0 0 6px rgba(233,200,119,.13);
-  font-weight:200;
-  background:
-    radial-gradient(ellipse 55% 45% at 12% 10%, rgba(217,166,42,.18), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 90% 15%, rgba(122,74,158,.16), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(95,174,144,.12), transparent 60%),
-    linear-gradient(120deg,#0d0904,#130d06,#080503,#100a04);
-  background-size:auto,auto,auto,300% 300%;
-  animation:fondo-deriva 18s ease-in-out infinite;
-  background-attachment:fixed,fixed,fixed,scroll;
+  /* Se fueron el neón que llevaba TODA la letra (un halo dorado de 6px en
+     el text-shadow) y el fondo animado de 18 segundos. El halo parejo sobre
+     cada glifo emborronaba el borde de las letras, que en una pantalla de
+     lectura larga como ésta se paga en cansancio; y el degradado incluía
+     una mancha violeta que no aparece en ninguna otra parte de la paleta.
+     Ahora el fondo es un plano liso: el color lo ponen el dorado de la
+     marca y los seis tonos de fuente, que es donde significa algo.
+
+     font-weight de 200 a 400: la 200 de IBM Plex sobre fondo oscuro se
+     afina todavía más de lo que ya es —el claro sangra sobre el oscuro— y
+     quedaba gris justo donde tenía que quedar texto. */
+  font-weight:400;
+  background:var(--negro);
   color:var(--tinta);
   font-family:var(--sans);
   font-size:17px;
   line-height:1.55;
   -webkit-text-size-adjust:100%;
 }
-@keyframes fondo-deriva{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 a{color:var(--lacre)}
 button{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--lacre2);outline-offset:2px}
-.panel,.blk,.rama,.doc,.meta,.pasaje{transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease}
-.panel,.blk,.rama,.doc,.meta,.meta-top,.pasaje,.aviso,.barra-doc,
-textarea,input[type=text],input[type=number],select{
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
-}
-.panel:hover,.blk:hover,.rama:hover,.pasaje:hover{
-  transform:translateY(-3px);border-color:rgba(233,200,119,.4);box-shadow:0 18px 34px -18px rgba(0,0,0,.6)
-}
+/* El vidrio esmerilado (backdrop-filter:blur(16px)) estaba en doce
+   selectores a la vez: cada panel, cada ficha, cada campo de texto. Sobre
+   un fondo liso no desenfoca nada —no hay nada detrás que valga la pena
+   ver borroso—, así que era un filtro caro de pintar a cambio de nada. Y
+   el salto de 3px con sombra al pasar el mouse hacía que la página entera
+   se moviera debajo del cursor mientras uno leía. Queda el cambio de
+   borde, que es el que dice "esto responde". */
+.panel,.blk,.rama,.doc,.meta,.pasaje{transition:border-color .25s ease}
+.panel:hover,.blk:hover,.rama:hover,.pasaje:hover{border-color:#45423a}
 
 /* ---------- cabecera ---------- */
+/* La barra dejó de ser un óvalo flotante y pasó a ser una cabecera: ancho
+   completo, un filete abajo y nada más. El óvalo con borde dorado ponía un
+   segundo marco alrededor de once solapas que ya tenían el suyo, y se
+   llevaba casi 70px de alto antes de que empezara la página. */
 .top{
   position:relative;
   background:transparent;
-  color:var(--papel);isolation:isolate;padding:28px 0 40px
+  color:var(--papel);isolation:isolate;padding:0;
+  border-bottom:1px solid var(--linea)
 }
-/* Sin .top-in/.marca: el título grande vivía acá arriba, repetido en cada
-   solapa, y se sacó (ver el comentario en el HTML). padding-top de .top
-   es el único que le da aire a la barra ahora que no tiene nada encima. */
 .nav-wrap{
-  max-width:calc(100% - 32px);width:fit-content;margin:0 auto;
-  display:flex;align-items:center;gap:16px;padding:0 22px;
-  border:1px solid rgba(217,166,42,.55);border-radius:999px;
-  background:rgba(255,255,255,.06);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)
+  max-width:1560px;width:auto;margin:0 auto;
+  display:flex;align-items:center;gap:26px;padding:9px 16px;
+  border:0;border-radius:0;background:transparent
 }
 .nav-logo{
   /* Con borde, a pedido: encierra el emblema en su propio círculo dorado.
@@ -128,8 +137,8 @@ textarea,input[type=text],input[type=number],select{
      cuando había mucho más alrededor. Sacado el título, el logo pasó a
      ser el ancla visual de la cabecera, y ahí el marco propio suma en vez
      de competir. */
-  width:56px;height:56px;flex:none;display:block;border-radius:50%;
-  border:1px solid var(--lacre);object-fit:contain;padding:5px;background:transparent
+  width:44px;height:44px;flex:none;display:block;border-radius:50%;
+  border:1px solid var(--lacre);object-fit:contain;padding:4px;background:transparent
 }
 .nav{
   display:flex;gap:14px;flex:1 1 auto;min-width:0;padding:10px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;
@@ -142,18 +151,21 @@ textarea,input[type=text],input[type=number],select{
    sitio pegada justo debajo de un óvalo, se veía como un segundo borde
    grueso y desprolijo en vez de una pista de scroll. */
 .nav::-webkit-scrollbar{display:none}
+/* Once cápsulas en MAYÚSCULA eran once veces el mismo marco repetido: a esa
+   cantidad el borde deja de distinguir un botón del de al lado y pasa a ser
+   textura. Ahora las solapas son texto y la única marcada es la abierta, con
+   un filete dorado abajo, que es la pregunta que la barra tiene que
+   contestar. Se va también la MAYÚSCULA: "Requisitos" y "Guardados" en caja
+   baja se leen de un vistazo; en mayúscula hay que deletrearlas. */
 .nav button{
-  position:relative;background:none;border:1px solid rgba(255,255,255,.25);border-radius:999px;
-  padding:11px 22px;cursor:pointer;white-space:nowrap;
-  transition:color .25s ease,border-color .25s ease,transform .25s ease,box-shadow .25s ease;
-  font-family:var(--sans);font-size:16px;font-weight:300;text-transform:uppercase;
-  letter-spacing:.03em;color:rgba(255,255,255,.68)
+  position:relative;background:none;border:0;border-bottom:2px solid transparent;
+  padding:9px 2px;cursor:pointer;white-space:nowrap;
+  transition:color .25s ease,border-color .25s ease;
+  font-family:var(--sans);font-size:15px;font-weight:400;
+  letter-spacing:.01em;color:var(--tinta2)
 }
-.nav button:hover{color:#fff;border-color:rgba(255,255,255,.45);transform:translateY(-2px)}
-.nav button[aria-selected="true"]{
-  color:var(--lacre);font-weight:300;border-color:var(--lacre);
-  box-shadow:0 0 8px rgba(217,166,42,.35),inset 0 0 6px rgba(217,166,42,.1)
-}
+.nav button:hover{color:#fff}
+.nav button[aria-selected="true"]{color:#fff;font-weight:600;border-bottom-color:var(--dorado)}
 
 /* ---------- cadena ---------- */
 .fila-q{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
@@ -162,8 +174,8 @@ textarea,input[type=text],input[type=number],select{
 .cadena-in{
   padding:8px 18px;
   display:flex;gap:10px;align-items:center;
-  border:1px solid var(--lacre);border-radius:999px;
-  background:rgba(255,255,255,.05);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
+  border:1px solid var(--linea);border-radius:3px;
+  background:var(--papel2)
 }
 .cadena code{
   font-family:var(--mono);font-size:12.5px;color:var(--tinta2);
@@ -198,8 +210,8 @@ a.mini:hover{color:var(--lacre)}
   text-transform:uppercase;letter-spacing:.03em;margin:0 0 9px
 }
 .rail-buscador{
-  width:100%;padding:9px 14px;margin-bottom:10px;border:1px solid var(--linea);border-radius:999px;
-  background:var(--ficha);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  width:100%;padding:9px 12px;margin-bottom:10px;border:1px solid var(--linea);border-radius:3px;
+  background:var(--papel2);
   font-family:var(--sans);font-size:13.5px;color:var(--tinta);outline:none
 }
 .rail-buscador:focus{border-color:var(--lacre);outline:none}
@@ -216,29 +228,42 @@ a.mini:hover{color:var(--lacre)}
 .rail-list{display:flex;flex-direction:column;gap:1px;max-height:62vh;overflow:auto}
 .rail-list button{
   text-align:left;background:none;border:0;border-radius:6px;
-  padding:6px 9px;cursor:pointer;font-size:13.5px;color:var(--tinta2);
-  font-family:var(--sans);font-weight:300
+  padding:7px 9px;cursor:pointer;font-size:13.5px;color:var(--tinta2);
+  font-family:var(--sans);font-weight:400
 }
 .rail-list button:hover{background:var(--papel2)}
-.rail-list button[aria-pressed="true"]{background:transparent;color:var(--lacre);font-weight:300;
-  text-shadow:0 0 10px rgba(233,200,119,.55)}
+.rail-list button[aria-pressed="true"]{background:var(--papel2);color:var(--lacre);font-weight:600}
 .col{min-width:0}
 
 /* ---------- formulario ---------- */
-.panel{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:22px 24px;margin-bottom:20px}
+.panel{background:var(--ficha);border:1px solid var(--linea);border-radius:4px;padding:22px 24px;margin-bottom:20px}
+/* El tono de cada fuente se mudó del BORDE de la caja al rótulo. Pintar los
+   cuatro lados obligaba a que el color fuera fuerte para verse, y con seis
+   buscadores abiertos la pantalla quedaba a rayas de colores; encima competía
+   con el borde izquierdo dorado, que ahí sí quiere decir algo (resultados del
+   índice local, ver indicePanel). El rótulo ya nombra la fuente: el tono va
+   pegado al nombre, que es donde se lo busca. --punto es lo único que cambia
+   por fuente, y lo usa .rotulo-fuente.
+
+   El verde de .vivo se queda donde SÍ distingue algo: en el Lector y en el
+   Verificador, .panel.vivo contra .panel.inactivo es lo que separa "el
+   servidor está" de "ahora no está". Los seis paneles de fuente también
+   llevan .vivo, pero ahí el verde no diría nada nuevo —todos lo tendrían—,
+   así que las reglas por slug lo devuelven a neutro; van después y pesan lo
+   mismo, de modo que ganan por orden. */
 .panel.vivo{border-color:var(--acequia)}
-.panel.f-mendoza{border-color:var(--f-mendoza)}
-.panel.f-mendozalegal{border-color:var(--f-mendozalegal)}
-.panel.f-caba{border-color:var(--f-caba)}
-.panel.f-csjn{border-color:var(--f-csjn)}
-.panel.f-saij{border-color:var(--f-saij)}
-.panel.f-dialnet{border-color:var(--f-dialnet)}
 .panel.inactivo{border-color:var(--linea)}
+.panel.f-mendoza{--punto:var(--f-mendoza);border-color:var(--linea)}
+.panel.f-mendozalegal{--punto:var(--f-mendozalegal);border-color:var(--linea)}
+.panel.f-caba{--punto:var(--f-caba);border-color:var(--linea)}
+.panel.f-csjn{--punto:var(--f-csjn);border-color:var(--linea)}
+.panel.f-saij{--punto:var(--f-saij);border-color:var(--linea)}
+.panel.f-dialnet{--punto:var(--f-dialnet);border-color:var(--linea)}
 .campo{display:block;margin-bottom:14px}
 .campo span{display:block;font-family:var(--sans);font-size:13px;color:var(--tinta2);margin-bottom:6px}
 input[type=text],input[type=number],select{
-  width:100%;padding:10px 12px;border:1px solid var(--linea);border-radius:6px;
-  background:var(--ficha);font-family:var(--sans);font-size:15px;color:var(--tinta)
+  width:100%;padding:11px 12px;border:1px solid var(--linea);border-radius:3px;
+  background:var(--papel2);font-family:var(--sans);font-size:15px;color:var(--tinta)
 }
 /* outline:none a propósito: sin esto, enfocar cualquiera de estos campos
    ("Qué buscás", "Excluir palabras", "Año desde/hasta" en Buscar; "Enlace
@@ -262,14 +287,18 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .chip[aria-pressed="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
 .chip.amb[aria-pressed="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
 .acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--linea)}
+/* Radio 3px en vez de 999px: la cápsula llena de dorado era la forma más
+   ruidosa de la pantalla y se repetía en cada barra de acciones. Se va
+   también el salto con sombra dorada al pasar el mouse; queda el cambio de
+   relleno, que es lo que hace cualquier botón desde siempre. */
 .btn{
-  background:var(--lacre);color:#241a0c;border:1px solid var(--lacre);border-radius:999px;
-  padding:10px 20px;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:500;
-  transition:transform .25s ease,box-shadow .25s ease
+  background:var(--dorado);color:#17130a;border:1px solid var(--dorado);border-radius:3px;
+  padding:11px 20px;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;
+  transition:background .2s ease,border-color .2s ease
 }
-.btn:hover{transform:translateY(-2px);box-shadow:0 10px 18px -6px rgba(233,200,119,.5)}
-.btn.sec{background:transparent;color:var(--tinta);border-color:rgba(255,255,255,.24);transition:transform .25s ease,border-color .25s ease}
-.btn.sec:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.5)}
+.btn:hover{background:var(--lacre);border-color:var(--lacre)}
+.btn.sec{background:transparent;color:var(--tinta);border-color:#45423a;font-weight:400;transition:background .2s ease,border-color .2s ease}
+.btn.sec:hover{background:var(--papel2);border-color:#5c584d}
 
 /* ---------- fuentes ---------- */
 .conteo{font-family:var(--sans);font-size:12px;color:var(--humo);margin:0 0 10px}
@@ -299,13 +328,15 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .estrella[aria-pressed="true"]{color:var(--dorado)}
 
 /* ---------- ramas ---------- */
-.rama{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:18px 20px;margin-bottom:12px;font-family:var(--sans)}
+.rama{background:var(--ficha);border:1px solid var(--linea);border-radius:4px;padding:18px 20px;margin-bottom:12px;font-family:var(--sans)}
 /* Compartir: el botón y su menú de destinos. */
 .compartir{position:relative;display:inline-block}
-/* Colgado del body y en posición fija: así ningún panel lo tapa. Los
-   paneles llevan backdrop-filter, que arma su propio contexto de apilado,
-   y por eso un menú de adentro no podía subir por encima del panel
-   siguiente por más z-index que tuviera. */
+/* Colgado del body y en posición fija: así nada lo tapa ni lo recorta. La
+   causa original era el backdrop-filter de los paneles, que armaba su propio
+   contexto de apilado y dejaba al menú por debajo del panel siguiente por más
+   z-index que tuviera; ese filtro ya no está. Se queda fijo igual porque los
+   contenedores con overflow (el rail, las metas del Lector) igual lo
+   recortarían, y porque los pasajes del Lector se pintan por su cuenta. */
 .compartir-menu.flotante{position:fixed;z-index:200;right:auto;top:auto}
 .compartir-menu{
   position:absolute;z-index:30;right:0;top:calc(100% + 6px);min-width:210px;
@@ -348,7 +379,22 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .voz:hover{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.28);transition:background .25s ease}
 .rotulo{
   display:inline-block;font-family:var(--sans);font-size:12px;color:var(--tinta2);
-  background:var(--papel2);border-radius:999px;padding:5px 13px;margin:9px 0 8px
+  background:var(--papel2);border-radius:3px;padding:5px 11px;margin:9px 0 8px
+}
+/* El rótulo de un panel de resultados lleva además el tono de su fuente: una
+   bolita y el filete del contorno. El NOMBRE queda en tinta clara y no en el
+   color — los dos extremos oscuros de la rampa, SAIJ y Dialnet, no llegan a
+   4.5:1 de contraste sobre el fondo del panel, así que pintarles la letra los
+   volvía ilegibles justo en la palabra que hay que leer. La bolita sí puede ir
+   en el color: no es texto, y el nombre al lado ya dice de qué fuente se
+   trata. */
+.rotulo-fuente{
+  display:inline-flex;align-items:center;gap:8px;color:var(--tinta);
+  background:transparent;border:1px solid var(--punto,var(--linea))
+}
+.rotulo-fuente::before{
+  content:"";width:6px;height:6px;border-radius:50%;flex:none;
+  background:var(--punto,var(--acequia))
 }
 
 /* Voces sugeridas por el intérprete (ver tiraSugerencias). Se separa del
@@ -397,10 +443,9 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
   background:var(--papel2);border:1px solid var(--linea);border-radius:8px;
   padding:13px 15px;cursor:pointer;
   font-family:var(--sans);font-size:14.5px;line-height:1.5;color:var(--tinta2);
-  transition:transform .25s ease,border-color .25s ease,background .25s ease
+  transition:border-color .25s ease,background .25s ease
 }
-.ficha-paso:hover{transform:translateY(-2px);border-color:rgba(233,200,119,.45);background:var(--ficha);color:var(--tinta)}
-.ficha-paso:active{transform:translateY(0)}
+.ficha-paso:hover{border-color:#45423a;background:var(--ficha);color:var(--tinta)}
 .ficha-paso em{color:inherit}
 
 /* Nota al pie de un aviso: cuelga del cartel de arriba —sin caja propia y
@@ -425,11 +470,11 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .av-tit{display:block;color:var(--lacre);font-weight:300;margin-bottom:2px}
 .av-oro{color:var(--lacre)}
 
-/* Donde la letra es oscura sobre fondo claro el halo no ilumina: ensucia. */
-.btn,mark,.cod.mza,.cod.int,#panic button,.chip.voz-sug[aria-pressed="true"]{text-shadow:none}
-/* Los pesos gruesos bajan junto con el resto: la pantalla entera va fina. */
-.nav button{font-weight:200}
-.blk h3,.rama h3,.grupo>h3,.voces-tit{font-weight:400}
+/* La regla que apagaba el halo donde molestaba ya no hace falta: no hay
+   halo en ningún lado. Y la pantalla ya no va "fina": con el cuerpo en 400,
+   dejar los títulos también en 400 borraba la jerarquía —todo pesaba igual—,
+   así que los encabezados suben a 500. */
+.blk h3,.rama h3,.grupo>h3,.voces-tit{font-weight:500}
 .btn{font-weight:400}
 strong,b{font-weight:500}
 
@@ -442,24 +487,20 @@ strong,b{font-weight:500}
 .blk .sin-items p{
   margin:0;padding:5px 8px;border-radius:7px;
   font-size:14.5px;line-height:1.5;color:var(--humo);
-  transition:transform .25s ease,color .25s ease,text-shadow .25s ease,background .25s ease
+  transition:color .25s ease,background .25s ease
 }
-/* Al pasar por encima, la línea se enciende y sube. El resplandor acá sí
-   es el fuerte —el mismo que usa lo seleccionado— porque es respuesta a
-   un gesto, no el brillo de fondo que lleva toda la letra. */
-.blk .sin-items p:hover{
-  transform:translateY(-2px);color:var(--lacre);
-  text-shadow:0 0 10px rgba(233,200,119,.55);background:var(--papel2)
-}
+/* Al pasar por encima la línea se enciende. Antes además subía 2px y se le
+   prendía un halo dorado; sin el resplandor de fondo en el resto de la letra,
+   el cambio de color solo ya alcanza para marcar la respuesta. */
+.blk .sin-items p:hover{color:var(--lacre);background:var(--papel2)}
 
 /* ---------- prosa ---------- */
-.blk{background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;margin-bottom:16px}
+.blk{background:var(--ficha);border:1px solid var(--linea);border-radius:4px;padding:20px 22px;margin-bottom:16px}
 .blk h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 8px}
 .blk p{margin:0 0 10px;font-size:15px}
 .blk ol,.blk ul{margin:0 0 10px;padding-left:20px;font-size:14px}
 .blk li{margin-bottom:6px}
-.aviso{background:var(--ficha);color:var(--tinta2);border:1px solid var(--linea);border-radius:10px;padding:15px 18px;margin-bottom:18px;font-size:15px;transition:transform .35s ease,border-color .35s ease}
-.aviso:hover{transform:translateY(-2px);border-color:rgba(233,200,119,.35)}
+.aviso{background:var(--ficha);color:var(--tinta2);border:1px solid var(--linea);border-radius:4px;padding:15px 18px;margin-bottom:18px;font-size:15px}
 .aviso strong{color:var(--lacre)}
 .out{
   font-family:var(--mono);font-size:13px;background:var(--papel2);border:1px solid var(--linea);
@@ -2805,13 +2846,15 @@ function botonCompartir(){
  * (navigator.share), que en la Mac ofrece AirDrop, Mensajes, Notas —nada
  * de lo que se usa para pasarle un fallo a alguien—. Otra: el desplegable
  * de Buscar, que quedaba tapado por la tarjeta de la fuente de abajo,
- * porque los paneles llevan backdrop-filter y eso arma su propio contexto
- * de apilado: ningún z-index de adentro puede subir por encima del panel
- * siguiente.
+ * porque los paneles llevaban backdrop-filter y eso armaba su propio
+ * contexto de apilado: ningún z-index de adentro podía subir por encima del
+ * panel siguiente. El filtro se sacó al limpiar el vidrio, así que esa causa
+ * puntual ya no existe.
  *
- * Por eso el menú se cuelga del body en posición fija, calculada contra el
- * botón: así no hay panel que lo tape, y sirve igual en los pasajes del
- * Lector, que se pintan por su cuenta y no por render().
+ * El menú se sigue colgando del body en posición fija, calculada contra el
+ * botón: los contenedores con overflow lo recortarían igual, y así sirve
+ * también en los pasajes del Lector, que se pintan por su cuenta y no por
+ * render().
  */
 function cerrarMenuCompartir(){
   var v=document.getElementById("menu-compartir");
@@ -4265,12 +4308,13 @@ function panelIndice(f){
   var im=estado.indices[f.slug];
   var local=im.busco&&im.local;
   var nombreTrib=((f.tribunales||[]).filter(function(t){return t.v===im.tribunal;})[0]||{}).n;
-  // La clase por slug pinta el borde con el tono de esa fuente (ver :root).
+  // La clase por slug ya no pinta el borde: define --punto, y el rótulo de
+  // abajo lo usa para su contorno y su bolita (ver .rotulo-fuente).
   // El borde izquierdo dorado del caso "local" se mantiene: no es decoración
   // sino un aviso —estos resultados salieron de la copia guardada, no del
   // sitio— y sigue siendo UN borde, con un lado marcado.
   var out='<div class="panel vivo f-'+f.slug+'"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
-    '<div class="rotulo" style="margin-top:0">'+esc(f.nombre)+(local?' · desde tu índice local':' · en vivo')+'</div>';
+    '<div class="rotulo rotulo-fuente" style="margin-top:0">'+esc(f.nombre)+(local?' · desde tu índice local':' · en vivo')+'</div>';
 
   if(f.tribunales){
     out+='<div class="chips" style="margin-bottom:10px">'+f.tribunales.map(function(t){
