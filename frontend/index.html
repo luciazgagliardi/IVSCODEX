@@ -326,8 +326,15 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .busq-tope{margin-bottom:20px}
 .busq-tit{
   font-family:var(--serif);font-size:31px;font-weight:400;color:#fff;
-  letter-spacing:-.006em;line-height:1.14;margin:0 0 20px;max-width:24ch
+  letter-spacing:-.006em;line-height:1.14;margin:0 0 20px;max-width:56ch
 }
+/* 24ch alcanzaba para el titular viejo ("...reunidas en una sola
+   consulta.", 73 caracteres). El nuevo texto tiene 106: con la misma
+   columna angosta partía en cuatro renglones cortos y dejaba vacío todo
+   el resto del ancho disponible. 56ch deja que el texto fluya con el
+   ancho real de la columna: dos renglones parejos en desktop, y en
+   pantallas angostas se acomoda solo porque el bloque nunca lo restringe
+   por debajo de su propio ancho de contenedor. */
 .busq-tit em{font-style:italic;color:var(--lacre)}
 .busq-barra{display:flex;gap:10px;align-items:stretch}
 .busq-campo{
