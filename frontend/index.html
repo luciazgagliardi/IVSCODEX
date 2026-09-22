@@ -320,22 +320,12 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .rail-fuente.sin-buscar .rf-punto{background:#3a382f}
 
 /* ---------- pantalla de busqueda (composicion Tinta) ---------- */
-/* El titular, la barra y los filtros salen del panel y pasan a ser la
-   cabecera de la pantalla: el formulario dejaba la consulta —lo unico que
-   se usa siempre— al mismo nivel visual que "Al abrir la fuente". */
+/* La barra y los filtros salen del panel y pasan a ser la cabecera de la
+   pantalla: el formulario dejaba la consulta —lo unico que se usa
+   siempre— al mismo nivel visual que "Al abrir la fuente". El titular en
+   Bodoni que iba primero se sacó: Voces sugeridas ocupa ese lugar ahora
+   (ver vistaBuscar). */
 .busq-tope{margin-bottom:20px}
-.busq-tit{
-  font-family:var(--serif);font-size:31px;font-weight:400;color:#fff;
-  letter-spacing:-.006em;line-height:1.14;margin:0 0 20px;max-width:56ch
-}
-/* 24ch alcanzaba para el titular viejo ("...reunidas en una sola
-   consulta.", 73 caracteres). El nuevo texto tiene 106: con la misma
-   columna angosta partía en cuatro renglones cortos y dejaba vacío todo
-   el resto del ancho disponible. 56ch deja que el texto fluya con el
-   ancho real de la columna: dos renglones parejos en desktop, y en
-   pantallas angostas se acomoda solo porque el bloque nunca lo restringe
-   por debajo de su propio ancho de contenedor. */
-.busq-tit em{font-style:italic;color:var(--lacre)}
 .busq-barra{display:flex;gap:10px;align-items:stretch}
 .busq-campo{
   flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:11px;
@@ -3512,8 +3502,12 @@ function vistaBuscar(){
   // La consulta sale del formulario y pasa a ser la cabecera de la pantalla:
   // titular, barra de búsqueda y filtros. Lo que queda dentro del panel son
   // los ajustes finos, que no se tocan en la mayoría de las búsquedas.
-  return '<div class="busq-tope">'+
-      '<h1 class="busq-tit">Optimizamos tu consulta con operadores de búsqueda para dirigirla a las bases de jurisprudencia oficiales.</h1>'+
+  // Voces sugeridas ocupa el lugar que tenía el titular: es lo primero que
+  // se ve al entrar con una rama elegida, antes incluso de la barra de
+  // búsqueda. Sigue siendo condicional —sólo aparece con estado.rama— igual
+  // que antes; acá simplemente cambia de lugar, no de comportamiento.
+  return sug+
+    '<div class="busq-tope">'+
       '<div class="busq-barra">'+
         '<div class="busq-campo">'+
           '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8c8577" stroke-width="2" stroke-linecap="round" aria-hidden="true">'+
@@ -3532,7 +3526,6 @@ function vistaBuscar(){
       '<div class="busq-grupo"><span class="busq-rotulo">Dónde buscar</span><div class="chips">'+ambChips+'</div></div>'+
     '</div>'+
 
-    sug+
 
     // El id es el ancla de ajustarAlturaRail(): ese panel es "el rectángulo"
     // contra el que se mide el listado de ramas de la izquierda, para que
