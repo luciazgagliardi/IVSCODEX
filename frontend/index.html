@@ -253,12 +253,12 @@ a.mini:hover{color:var(--lacre)}
    mismo, de modo que ganan por orden. */
 .panel.vivo{border-color:var(--acequia)}
 .panel.inactivo{border-color:var(--linea)}
-.panel.f-mendoza{--punto:var(--f-mendoza);border-color:var(--linea)}
-.panel.f-mendozalegal{--punto:var(--f-mendozalegal);border-color:var(--linea)}
-.panel.f-caba{--punto:var(--f-caba);border-color:var(--linea)}
-.panel.f-csjn{--punto:var(--f-csjn);border-color:var(--linea)}
-.panel.f-saij{--punto:var(--f-saij);border-color:var(--linea)}
-.panel.f-dialnet{--punto:var(--f-dialnet);border-color:var(--linea)}
+.f-mendoza{--punto:var(--f-mendoza)}
+.f-mendozalegal{--punto:var(--f-mendozalegal)}
+.f-caba{--punto:var(--f-caba)}
+.f-csjn{--punto:var(--f-csjn)}
+.f-saij{--punto:var(--f-saij)}
+.f-dialnet{--punto:var(--f-dialnet)}
 .campo{display:block;margin-bottom:14px}
 .campo span{display:block;font-family:var(--sans);font-size:13px;color:var(--tinta2);margin-bottom:6px}
 input[type=text],input[type=number],select{
@@ -299,6 +299,25 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .btn:hover{background:var(--lacre);border-color:var(--lacre)}
 .btn.sec{background:transparent;color:var(--tinta);border-color:#45423a;font-weight:400;transition:background .2s ease,border-color .2s ease}
 .btn.sec:hover{background:var(--papel2);border-color:#5c584d}
+
+/* Las fuentes en el riel: bolita del tono de cada una y, cuando ya se
+   buscó, cuántas trajo. Es el mapa de la búsqueda — de un vistazo se ve
+   quién contestó y quién no— sin tener que bajar hasta su sección. */
+.rail-fuentes{display:flex;flex-direction:column;margin-bottom:22px}
+.rail-fuente{
+  display:flex;align-items:center;gap:9px;padding:7px 0;
+  font-size:12.5px;color:var(--tinta2);line-height:1.3
+}
+.rail-fuente .rf-punto{
+  width:6px;height:6px;border-radius:50%;flex:none;
+  background:var(--punto,var(--humo))
+}
+.rail-fuente .rf-nom{flex:1 1 auto;min-width:0}
+.rail-fuente .rf-n{
+  flex:none;font-size:12px;color:var(--lacre);font-variant-numeric:tabular-nums
+}
+.rail-fuente.sin-buscar{color:var(--humo)}
+.rail-fuente.sin-buscar .rf-punto{background:#3a382f}
 
 /* ---------- pantalla de busqueda (composicion Tinta) ---------- */
 /* El titular, la barra y los filtros salen del panel y pasan a ser la
@@ -3261,7 +3280,28 @@ function pintarRail(){
   var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos"||estado.tab==="norma"||estado.tab==="comparar");
   if(w) w.classList.toggle("sin-rail",sinRail);
   if(sinRail){ r.innerHTML=""; return; }
-  r.innerHTML='<input type="text" id="buscarRama" class="rail-buscador" value="'+esc(estado.buscarRama)+
+  // Las fuentes sólo en Buscar: en las otras solapas no hay una búsqueda en
+  // curso de la que informar, y el conteo quedaría congelado de la anterior.
+  var fuentes="";
+  if(estado.tab==="buscar"){
+    fuentes='<h2>Fuentes</h2><div class="rail-fuentes">'+FUENTES_INDICE.map(function(f){
+      var im=estado.indices[f.slug];
+      var busco=im&&im.busco;
+      var n=busco?(im.total||im.resultados.length):null;
+      return '<div class="rail-fuente f-'+f.slug+(busco?'':' sin-buscar')+'">'+
+        '<span class="rf-punto"></span>'+
+        // La sigla y no el nombre largo: en 210px de riel "Tribunal Superior
+        // de Justicia de la Ciudad de Buenos Aires" parte en dos renglones y
+        // la lista deja de leerse de un vistazo. Además es la MISMA sigla que
+        // lleva cada tarjeta, así que el riel y los resultados se enlazan solos.
+        '<span class="rf-nom">'+esc(f.cod)+'</span>'+
+        (n===null?'':'<span class="rf-n">'+n+'</span>')+
+      '</div>';
+    }).join("")+'</div>';
+  }
+  r.innerHTML=fuentes+
+    '<h2>Ramas del derecho</h2>'+
+    '<input type="text" id="buscarRama" class="rail-buscador" value="'+esc(estado.buscarRama)+
     '" placeholder="Buscar rama…" autocomplete="off">'+
     '<div class="rail-list" id="listaRamas">'+listaRamasHTML()+'</div>';
 }
