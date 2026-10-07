@@ -8,34 +8,38 @@
 <link rel="icon" type="image/png" href="./favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700&family=IBM+Plex+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Negro neutro, no marrón. El #18140f de antes era un marrón muy oscuro:
-     en pantalla grande se leía como sepia apagado más que como negro, y
-     obligaba a que todo lo demás —fichas, líneas, humo— tirara a marrón
-     para no desentonar. Con el gris neutro, el dorado de la marca es lo
-     único cálido que queda en la pantalla, y por eso resalta. */
-  --negro:#0d0d0c;
-  --tinta:#edeae3;
-  --tinta2:#b5ae9e;
-  --papel:#f3efe5;
-  /* Opacos, no translúcidos: estos dos eran marrón al 50% para que se viera
-     el fondo a través del vidrio esmerilado. Sin vidrio, una capa
-     semitransparente sobre negro es apenas un gris —y se recalcula en cada
-     scroll—, así que ahora son directamente ese gris. */
-  --papel2:#1e1d19;
-  --ficha:#161613;
-  --lacre:#e9c877;
-  --lacre2:#d1ab55;
-  --dorado:#d9a62a;
-  --acequia:#5fae90;
-  --humo:#8c8577;
-  --linea:#2e2d28;
-  /* --linea2 se usaba en .pt-datos (las cifras de la portada) sin estar
-     definida en ningún lado, así que esos dos filetes no se dibujaban. */
-  --linea2:#252420;
-  --oro:#e9c877;
+  /* El sistema de SIGILLVM: un casi negro cálido con grano de película,
+     crema en lugar de blanco y un solo dorado, el del sello, que aparece
+     solo donde algo está marcado o elegido. Una sola grotesca para todo
+     (Instrument Sans) y las versales romanas (Cormorant SC) reservadas
+     para el nombre y las cifras de la portada.
+
+     Las superficies son velos de crema sobre el fondo y no grises opacos:
+     así el grano se ve también a través de paneles y fichas, como en el
+     papel. Los nombres de las variables quedan como estaban para no tocar
+     las cientos de reglas y estilos en línea que las usan. */
+  --negro:#100e0b;
+  --tinta:#f1eee6;
+  --tinta2:rgba(241,238,230,.82);
+  --papel:#f1eee6;
+  --papel2:rgba(241,238,230,.045);
+  --ficha:rgba(241,238,230,.025);
+  --lacre:#c9a45c;
+  --lacre2:#e2c88e;
+  --dorado:#c9a45c;
+  --dorado55:rgba(201,164,92,.55);
+  --acequia:#7fae92;
+  --humo:rgba(241,238,230,.6);
+  --humo2:rgba(241,238,230,.42);
+  --linea:rgba(241,238,230,.14);
+  --linea2:rgba(241,238,230,.1);
+  --linea-fuerte:rgba(241,238,230,.3);
+  --oro:#c9a45c;
+  --ease:cubic-bezier(.16,.84,.24,1);
+  color-scheme:dark;
   /* Un tono por buscador. El borde del panel dice de dónde salió cada
      resultado sin tener que leer el título — con seis fuentes abiertas a la
      vez, todas con el mismo borde, había que leer el encabezado para saber
@@ -44,21 +48,22 @@
      Los seis son una sola rampa cálida —dorado, bronce, naranja, naranja
      quemado, rojo teja, bordó— en vez de seis colores sueltos: nada de azul
      ni violeta, que son fríos y no aparecen en ningún otro lugar de esta
-     paleta (lacre cera de sellar, dorado, --acequia verde queda reservado
-     para el estado "en vivo" genérico del panel, no para una fuente en
-     particular). Mendoza abre la rampa con el dorado insignia del sitio
-     (mismo valor que --dorado) y Mendoza Legal es el escalón siguiente, así
-     que además de ir una debajo de la otra en la lista, se leen como
-     parientes — más cerca entre sí que del resto de la rampa. */
-  --f-mendoza:#d9a62a;
+     paleta. Mendoza abre la rampa con el dorado del sello y Mendoza Legal
+     es el escalón siguiente, así que además de ir una debajo de la otra en
+     la lista, se leen como parientes. */
+  --f-mendoza:#c9a45c;
   --f-mendozalegal:#b58640;
   --f-caba:#d5873f;
   --f-csjn:#c95836;
   --f-saij:#b03b42;
   --f-dialnet:#8a3853;
-  --serif:"Bodoni Moda",Georgia,serif;
-  --sans:"IBM Plex Sans",Arial,sans-serif;
-  --mono:"IBM Plex Sans",Arial,sans-serif;
+  /* --serif queda como nombre, pero ya apunta a la grotesca: en SIGILLVM
+     los títulos van en la misma letra que el texto, con más peso y menos
+     interletra, y las versales romanas (--caps) son solo para el nombre. */
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:var(--sans);
+  --mono:var(--sans);
+  --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
   --bokeh:
     radial-gradient(circle at 8% 24%,rgba(255,255,255,.5) 0 3px,transparent 4px),
     radial-gradient(circle at 18% 62%,rgba(255,255,255,.32) 0 5px,transparent 6px),
@@ -74,11 +79,14 @@
     radial-gradient(circle at 96% 40%,rgba(255,255,255,.3) 0 2px,transparent 3px);
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden;max-width:100%}
-html{scrollbar-width:thin;scrollbar-color:var(--lacre) #150f08}
-*::-webkit-scrollbar{width:12px;height:12px}
-*::-webkit-scrollbar-track{background:#150f08}
-*::-webkit-scrollbar-thumb{background:var(--lacre);border-radius:6px}
+/* clip y no hidden donde se puede: hidden en html y body a la vez convierte
+   a body en un contenedor con scroll propio, y ahí la cabecera fija y el
+   riel (position:sticky) dejan de pegarse arriba al bajar. */
+html,body{margin:0;padding:0;overflow-x:hidden;overflow-x:clip;max-width:100%}
+html{scrollbar-width:thin;scrollbar-color:rgba(241,238,230,.22) var(--negro);scroll-padding-top:84px}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:var(--negro)}
+*::-webkit-scrollbar-thumb{background:rgba(241,238,230,.18);border-radius:999px;border:3px solid var(--negro)}
 *::-webkit-scrollbar-thumb:hover{background:var(--dorado)}
 body{
   /* Se fueron el neón que llevaba TODA la letra (un halo dorado de 6px en
@@ -89,20 +97,50 @@ body{
      Ahora el fondo es un plano liso: el color lo ponen el dorado de la
      marca y los seis tonos de fuente, que es donde significa algo.
 
-     font-weight de 200 a 400: la 200 de IBM Plex sobre fondo oscuro se
-     afina todavía más de lo que ya es —el claro sangra sobre el oscuro— y
-     quedaba gris justo donde tenía que quedar texto. */
+     Con el estilo de SIGILLVM el plano vuelve a moverse, pero de otra
+     manera: un grano de película que salta unas veces por segundo, detrás
+     de todo, y otro más fino por encima, letras incluidas (ver .grano). */
   font-weight:400;
   background:var(--negro);
   color:var(--tinta);
   font-family:var(--sans);
-  font-size:17px;
-  line-height:1.55;
+  font-size:16px;
+  line-height:1.6;
   -webkit-text-size-adjust:100%;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
 a{color:var(--lacre)}
 button{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--lacre2);outline-offset:2px}
+::selection{background:var(--dorado);color:var(--negro)}
+:focus-visible{outline:1px solid var(--dorado);outline-offset:4px;border-radius:2px}
+.v{color:var(--dorado)}
+
+/* ---------- grano ---------- */
+/* El de SIGILLVM: uno detrás del contenido, que salta como el de una
+   película, y otro más fino encima de todo en modo superposición. El de
+   encima va por arriba de la portada y de los menús, pero nunca recibe
+   clics. */
+.grano{
+  position:fixed;z-index:-1;top:-120px;left:-120px;right:-120px;bottom:-120px;
+  background:url("./grain.png") 0 0/256px 256px repeat;
+  pointer-events:none;animation:grano .9s steps(1,end) infinite
+}
+.grano--encima{
+  z-index:250;background-image:url("./grain-overlay.png");
+  mix-blend-mode:overlay;opacity:.32;animation-delay:-.45s
+}
+@keyframes grano{
+  0%{transform:translate(0,0)}
+  12.5%{transform:translate(-61px,37px)}
+  25%{transform:translate(43px,-88px)}
+  37.5%{transform:translate(-97px,-19px)}
+  50%{transform:translate(18px,71px)}
+  62.5%{transform:translate(79px,14px)}
+  75%{transform:translate(-28px,-63px)}
+  87.5%{transform:translate(57px,96px)}
+  100%{transform:translate(0,0)}
+}
 /* El vidrio esmerilado (backdrop-filter:blur(16px)) estaba en doce
    selectores a la vez: cada panel, cada ficha, cada campo de texto. Sobre
    un fondo liso no desenfoca nada —no hay nada detrás que valga la pena
@@ -110,25 +148,32 @@ button{font:inherit;color:inherit}
    el salto de 3px con sombra al pasar el mouse hacía que la página entera
    se moviera debajo del cursor mientras uno leía. Queda el cambio de
    borde, que es el que dice "esto responde". */
-.panel,.blk,.rama,.doc,.meta,.pasaje{transition:border-color .25s ease}
-.panel:hover,.blk:hover,.rama:hover,.pasaje:hover{border-color:#45423a}
+.panel,.blk,.rama,.doc,.meta,.pasaje{transition:border-color .5s ease}
+.panel:hover,.blk:hover,.rama:hover,.pasaje:hover{border-color:var(--linea-fuerte)}
 
 /* ---------- cabecera ---------- */
 /* La barra dejó de ser un óvalo flotante y pasó a ser una cabecera: ancho
    completo, un filete abajo y nada más. El óvalo con borde dorado ponía un
    segundo marco alrededor de once solapas que ya tenían el suyo, y se
    llevaba casi 70px de alto antes de que empezara la página. */
+/* Como la de SIGILLVM una vez que se baja: fija arriba, con un velo del
+   fondo y desenfoque detrás, y el nombre al lado del emblema. */
 .top{
-  position:relative;
-  background:transparent;
+  position:sticky;top:0;z-index:20;
+  background:rgba(16,14,11,.84);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
   color:var(--papel);isolation:isolate;padding:0;
   border-bottom:1px solid var(--linea)
 }
 .nav-wrap{
   max-width:1560px;width:auto;margin:0 auto;
-  display:flex;align-items:center;gap:26px;padding:9px 16px;
+  display:flex;align-items:center;gap:clamp(20px,3vw,48px);padding:12px clamp(16px,3vw,44px);
   border:0;border-radius:0;background:transparent
 }
+.nav-marca{display:inline-flex;align-items:center;gap:12px;flex:none;color:var(--tinta);text-decoration:none}
+.nav-palabra{font:500 15px/1 var(--caps);letter-spacing:.3em;white-space:nowrap}
+.nav-palabra .pto{color:var(--dorado);margin:0 .05em}
+@media (max-width:760px){.nav-palabra{display:none}}
 .nav-logo{
   /* Con borde, a pedido: encierra el emblema en su propio círculo dorado.
      Antes esto compartía la barra con el título grande de arriba, y ese
@@ -137,11 +182,11 @@ button{font:inherit;color:inherit}
      cuando había mucho más alrededor. Sacado el título, el logo pasó a
      ser el ancla visual de la cabecera, y ahí el marco propio suma en vez
      de competir. */
-  width:44px;height:44px;flex:none;display:block;border-radius:50%;
-  border:1px solid var(--lacre);object-fit:contain;padding:4px;background:transparent
+  width:38px;height:38px;flex:none;display:block;border-radius:50%;
+  border:1px solid var(--dorado55);object-fit:contain;padding:4px;background:transparent
 }
 .nav{
-  display:flex;gap:14px;flex:1 1 auto;min-width:0;padding:10px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  display:flex;gap:clamp(14px,1.6vw,26px);flex:1 1 auto;min-width:0;padding:6px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;
   scrollbar-width:none /* Firefox: sin esto, la línea de abajo alcanza */
 }
 /* El deslizamiento sigue andando igual —hace falta con ventana angosta,
@@ -158,14 +203,14 @@ button{font:inherit;color:inherit}
    contestar. Se va también la MAYÚSCULA: "Requisitos" y "Guardados" en caja
    baja se leen de un vistazo; en mayúscula hay que deletrearlas. */
 .nav button{
-  position:relative;background:none;border:0;border-bottom:2px solid transparent;
-  padding:9px 2px;cursor:pointer;white-space:nowrap;
-  transition:color .25s ease,border-color .25s ease;
+  position:relative;background:none;border:0;border-bottom:1px solid transparent;
+  padding:8px 0;cursor:pointer;white-space:nowrap;
+  transition:color .3s ease,border-color .3s ease;
   font-family:var(--sans);font-size:15px;font-weight:400;
-  letter-spacing:.01em;color:var(--tinta2)
+  letter-spacing:0;color:var(--humo)
 }
-.nav button:hover{color:#fff}
-.nav button[aria-selected="true"]{color:#fff;font-weight:600;border-bottom-color:var(--dorado)}
+.nav button:hover{color:var(--tinta)}
+.nav button[aria-selected="true"]{color:var(--tinta);font-weight:500;border-bottom-color:var(--dorado)}
 
 /* ---------- cadena ---------- */
 .fila-q{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
@@ -174,8 +219,8 @@ button{font:inherit;color:inherit}
 .cadena-in{
   padding:8px 18px;
   display:flex;gap:10px;align-items:center;
-  border:1px solid var(--linea);border-radius:3px;
-  background:var(--papel2)
+  border:1px solid var(--linea);border-radius:0;
+  background:var(--ficha)
 }
 .cadena code{
   font-family:var(--mono);font-size:12.5px;color:var(--tinta2);
@@ -183,17 +228,20 @@ button{font:inherit;color:inherit}
 }
 .cadena code b{color:var(--lacre);font-weight:600}
 .cadena .mini{border-color:transparent;color:var(--lacre)}
-.cadena .mini:hover{border-color:var(--dorado);color:var(--dorado)}
+.cadena .mini:hover{border-color:var(--dorado55);color:var(--tinta)}
+/* Las cápsulas chicas, como la del idioma en la cabecera de SIGILLVM: filete
+   fino, sin relleno, y el dorado recién al pasar por encima. */
 .mini{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:999px;
-  padding:5px 12px;cursor:pointer;font-family:var(--sans);font-size:12px;color:var(--tinta2);white-space:nowrap
+  background:transparent;border:1px solid var(--linea);border-radius:999px;
+  padding:5px 12px 4px;cursor:pointer;font-family:var(--sans);font-size:12.5px;color:var(--tinta2);white-space:nowrap;
+  transition:border-color .3s ease,color .3s ease
 }
-.mini:hover{border-color:rgba(255,255,255,.4);color:var(--tinta);transition:border-color .25s ease}
+.mini:hover{border-color:var(--dorado55);color:var(--tinta)}
 a.mini{text-decoration:none;display:inline-block;color:var(--tinta2)}
 a.mini:hover{color:var(--lacre)}
 
 /* ---------- estructura ---------- */
-.wrap{max-width:1560px;margin:0 auto;padding:22px 16px 70px;display:grid;grid-template-columns:210px 1fr;gap:28px;align-items:start}
+.wrap{max-width:1560px;margin:0 auto;padding:clamp(26px,3vw,40px) clamp(16px,3vw,44px) 90px;display:grid;grid-template-columns:220px 1fr;gap:clamp(28px,3vw,52px);align-items:start}
 .wrap.sin-rail{grid-template-columns:1fr}
 .wrap.sin-rail .rail{display:none}
 /* min-width:0 a propósito: sin esto, en la columna única del celular (ver
@@ -204,39 +252,43 @@ a.mini:hover{color:var(--lacre)}
    cortado fuera de la vista sin scroll posible (html,body tienen
    overflow-x:hidden). .col ya tenía este mismo min-width:0; a esta le
    faltaba. */
-.rail{position:sticky;top:56px;min-width:0}
+/* top: por debajo de la cabecera, que ahora queda fija arriba. */
+.rail{position:sticky;top:88px;min-width:0}
+/* Los rótulos, como las leyendas del formulario de SIGILLVM: texto chico
+   en tono apagado, sin versalitas espaciadas. */
 .rail h2{
-  color:var(--humo);font-family:var(--sans);font-size:10px;font-weight:600;
-  text-transform:uppercase;letter-spacing:.18em;margin:0 0 9px
+  color:var(--humo);font-family:var(--sans);font-size:13px;font-weight:400;
+  text-transform:none;letter-spacing:0;margin:0 0 10px;
+  padding-top:14px;border-top:1px solid var(--linea)
 }
 .rail-buscador{
-  width:100%;padding:9px 12px;margin-bottom:10px;border:1px solid var(--linea);border-radius:3px;
-  background:var(--papel2);
-  font-family:var(--sans);font-size:13.5px;color:var(--tinta);outline:none
+  width:100%;padding:8px 0 10px;margin-bottom:10px;border:0;border-bottom:1px solid var(--linea);border-radius:0;
+  background:transparent;
+  font-family:var(--sans);font-size:14.5px;color:var(--tinta);outline:none;transition:border-color .3s ease
 }
-.rail-buscador:focus{border-color:var(--lacre);outline:none}
+.rail-buscador:focus{border-bottom-color:var(--dorado);outline:none}
 .blk h2{
-  font-family:var(--sans);font-size:11px;letter-spacing:.04em;
-  color:var(--humo);margin:0 0 9px;font-weight:600
+  font-family:var(--sans);font-size:13px;letter-spacing:0;
+  color:var(--humo);margin:0 0 10px;font-weight:400
 }
 .voces-tit{
-  font-family:var(--serif);font-size:22px;
-  color:var(--tinta);margin:0 0 8px;font-weight:500
+  font-family:var(--sans);font-size:clamp(24px,2.2vw,32px);line-height:1.1;letter-spacing:-.02em;
+  color:var(--tinta);margin:0 0 12px;font-weight:500
 }
 .voces-tit .punto{color:var(--lacre)}
-.voces-tit .rama-nom{color:var(--lacre);font-style:italic}
+.voces-tit .rama-nom{color:var(--lacre);font-style:normal}
 .rail-list{display:flex;flex-direction:column;gap:1px;max-height:62vh;overflow:auto}
 .rail-list button{
-  text-align:left;background:none;border:0;border-radius:6px;
-  padding:7px 9px;cursor:pointer;font-size:13.5px;color:var(--tinta2);
-  font-family:var(--sans);font-weight:400
+  text-align:left;background:none;border:0;border-radius:0;border-left:1px solid transparent;
+  padding:7px 10px;cursor:pointer;font-size:14px;color:var(--humo);
+  font-family:var(--sans);font-weight:400;transition:color .3s ease,border-color .3s ease
 }
-.rail-list button:hover{background:var(--papel2)}
-.rail-list button[aria-pressed="true"]{background:var(--papel2);color:var(--lacre);font-weight:600}
+.rail-list button:hover{color:var(--tinta)}
+.rail-list button[aria-pressed="true"]{color:var(--tinta);border-left-color:var(--dorado);font-weight:500}
 .col{min-width:0}
 
 /* ---------- formulario ---------- */
-.panel{background:var(--ficha);border:1px solid var(--linea);border-radius:4px;padding:22px 24px;margin-bottom:20px}
+.panel{background:var(--ficha);border:1px solid var(--linea);border-radius:0;padding:clamp(22px,2.4vw,32px);margin-bottom:22px}
 /* El tono de cada fuente se mudó del BORDE de la caja al rótulo. Pintar los
    cuatro lados obligaba a que el color fuera fuerte para verse, y con seis
    buscadores abiertos la pantalla quedaba a rayas de colores; encima competía
@@ -260,11 +312,15 @@ a.mini:hover{color:var(--lacre)}
 .f-saij{--punto:var(--f-saij)}
 .f-dialnet{--punto:var(--f-dialnet)}
 .campo{display:block;margin-bottom:14px}
-.campo span{display:block;font-family:var(--sans);font-size:13px;color:var(--tinta2);margin-bottom:6px}
-input[type=text],input[type=number],select{
-  width:100%;padding:11px 12px;border:1px solid var(--linea);border-radius:3px;
-  background:var(--papel2);font-family:var(--sans);font-size:15px;color:var(--tinta)
+.campo span{display:block;font-family:var(--sans);font-size:13.5px;color:var(--humo);margin-bottom:4px}
+/* Los campos de SIGILLVM: sin caja, una sola línea abajo que se pone
+   dorada con el foco. */
+input[type=text],input[type=number],input[type=email],input[type=password],select{
+  width:100%;padding:8px 0 11px;border:0;border-bottom:1px solid var(--linea);border-radius:0;
+  background:transparent;font-family:var(--sans);font-size:16px;color:var(--tinta)
 }
+select option{background:var(--negro);color:var(--tinta)}
+::placeholder{color:var(--humo2);opacity:1}
 /* outline:none a propósito: sin esto, enfocar cualquiera de estos campos
    ("Qué buscás", "Excluir palabras", "Año desde/hasta" en Buscar; "Enlace
    directo del fallo", "De dónde lo sacaste" en Lector; los siete de Citar)
@@ -274,39 +330,45 @@ input[type=text],input[type=number],select{
    botones y links). El campo ya avisa que tiene el foco cambiando de color;
    agregarle un segundo anillo encima no sumaba accesibilidad, sumaba un
    defecto visual. Mismo criterio que .rail-buscador, que ya lo hacía. */
-input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--lacre);outline:none;transition:border-color .25s ease}
-#q{font-family:var(--sans);font-size:16px;padding:13px 14px}
+input[type=text]:focus,input[type=number]:focus,input[type=email]:focus,input[type=password]:focus,select:focus{border-bottom-color:var(--dorado);outline:none;transition:border-color .3s ease}
+#q{font-family:var(--sans);font-size:17px;padding:12px 0 14px}
 .fila{display:flex;gap:12px;flex-wrap:wrap}
 .fila>*{flex:1 1 130px;min-width:0}
-.chips{display:flex;gap:7px;flex-wrap:wrap}
+/* Las opciones del configurador de SIGILLVM: cápsulas de filete fino y,
+   la elegida, llena de crema con la letra en el color del fondo. */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:999px;padding:6px 13px;cursor:pointer;
-  font-size:13px;font-family:var(--sans);color:var(--tinta2)
+  background:transparent;border:1px solid var(--linea);border-radius:999px;padding:8px 16px;cursor:pointer;
+  font-size:14px;line-height:1.2;font-family:var(--sans);color:var(--tinta2);
+  transition:border-color .3s ease,background .3s ease,color .3s ease
 }
-.chip:hover{border-color:rgba(255,255,255,.4)}
-.chip[aria-pressed="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
-.chip.amb[aria-pressed="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
-.acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--linea)}
+.chip:hover{border-color:var(--dorado55);color:var(--tinta)}
+.chip[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--negro)}
+.chip.amb[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--negro)}
+.acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;padding-top:22px;border-top:1px solid var(--linea)}
 /* Radio 3px en vez de 999px: la cápsula llena de dorado era la forma más
    ruidosa de la pantalla y se repetía en cada barra de acciones. Se va
    también el salto con sombra dorada al pasar el mouse; queda el cambio de
    relleno, que es lo que hace cualquier botón desde siempre. */
+/* El botón de SIGILLVM: rectángulo sin redondeo, dorado lleno con la letra
+   del color del fondo, y crema al pasar por encima. El secundario es solo
+   el filete. */
 .btn{
-  background:var(--dorado);color:#17130a;border:1px solid var(--dorado);border-radius:3px;
-  padding:11px 20px;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;
-  transition:background .2s ease,border-color .2s ease
+  background:var(--dorado);color:var(--negro);border:1px solid var(--dorado);border-radius:0;
+  padding:13px 22px;cursor:pointer;font-family:var(--sans);font-size:15px;line-height:1;font-weight:500;
+  transition:background .3s ease,border-color .3s ease,color .3s ease
 }
-.btn:hover{background:var(--lacre);border-color:var(--lacre)}
-.btn.sec{background:transparent;color:var(--tinta);border-color:#45423a;font-weight:400;transition:background .2s ease,border-color .2s ease}
-.btn.sec:hover{background:var(--papel2);border-color:#5c584d}
+.btn:hover{background:var(--tinta);border-color:var(--tinta)}
+.btn.sec{background:transparent;color:var(--tinta);border-color:var(--linea-fuerte);font-weight:400}
+.btn.sec:hover{background:transparent;border-color:var(--tinta)}
 
 /* Las fuentes en el riel: bolita del tono de cada una y, cuando ya se
    buscó, cuántas trajo. Es el mapa de la búsqueda — de un vistazo se ve
    quién contestó y quién no— sin tener que bajar hasta su sección. */
 .rail-fuentes{display:flex;flex-direction:column;margin-bottom:22px}
 .rail-fuente{
-  display:flex;align-items:center;gap:9px;padding:7px 0;
-  font-size:12.5px;color:var(--tinta2);line-height:1.3
+  display:flex;align-items:center;gap:10px;padding:7px 0;
+  font-size:13.5px;color:var(--tinta2);line-height:1.3
 }
 .rail-fuente .rf-punto{
   width:6px;height:6px;border-radius:50%;flex:none;
@@ -314,10 +376,10 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 }
 .rail-fuente .rf-nom{flex:1 1 auto;min-width:0}
 .rail-fuente .rf-n{
-  flex:none;font-size:12px;color:var(--lacre);font-variant-numeric:tabular-nums
+  flex:none;font-size:13px;color:var(--lacre);font-variant-numeric:tabular-nums
 }
 .rail-fuente.sin-buscar{color:var(--humo)}
-.rail-fuente.sin-buscar .rf-punto{background:#3a382f}
+.rail-fuente.sin-buscar .rf-punto{background:transparent;box-shadow:inset 0 0 0 1px var(--humo2)}
 
 /* ---------- pantalla de busqueda (composicion Tinta) ---------- */
 /* La barra y los filtros salen del panel y pasan a ser la cabecera de la
@@ -328,28 +390,36 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .busq-tope{margin-bottom:20px}
 .busq-barra{display:flex;gap:10px;align-items:stretch}
 .busq-campo{
-  flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:11px;
-  background:var(--ficha);border:1px solid #38362f;border-radius:3px;padding:0 15px
+  flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:12px;
+  background:var(--ficha);border:1px solid var(--linea-fuerte);border-radius:0;padding:0 18px;
+  transition:border-color .3s ease
 }
+.busq-campo:focus-within{border-color:var(--dorado)}
 .busq-campo>svg{flex:none}
 .busq-campo input[type=text]{
-  border:0;border-radius:0;background:transparent;padding:14px 0;font-size:15px
+  border:0;border-radius:0;background:transparent;padding:17px 0;font-size:17px
 }
 .busq-campo input[type=text]:focus{border:0;outline:none}
-.busq-barra .btn{flex:none;padding:0 28px}
+.busq-barra .btn{flex:none;padding:0 30px}
+/* En el teléfono el botón baja debajo del campo: al lado, el campo quedaba
+   en cuatro letras ("daño m…") y era lo único que importaba leer. */
+@media (max-width:600px){
+  .busq-barra{flex-direction:column}
+  .busq-barra .btn{padding:16px 22px}
+}
 .busq-cadena{
-  margin-top:11px;display:flex;gap:10px;align-items:center;
-  background:var(--papel2);border:1px solid var(--linea);border-radius:3px;padding:8px 12px
+  margin-top:12px;display:flex;gap:10px;align-items:center;
+  background:transparent;border:0;border-bottom:1px solid var(--linea);border-radius:0;padding:8px 0 10px
 }
 .busq-cadena code{
   font-family:var(--mono);font-size:12.5px;color:var(--tinta2);
   flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 .busq-cadena code b{color:var(--lacre);font-weight:600}
-.busq-grupo{margin-top:13px}
+.busq-grupo{margin-top:22px}
 .busq-rotulo{
-  display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--humo);font-weight:600;margin-bottom:8px
+  display:block;font-size:13.5px;letter-spacing:0;text-transform:none;
+  color:var(--humo);font-weight:400;margin-bottom:11px
 }
 .oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
@@ -362,12 +432,12 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
   background:transparent;border-color:transparent;padding:0;margin-bottom:26px
 }
 .panel .fuente{
-  border:1px solid var(--linea);border-radius:4px;background:var(--ficha);
-  padding:16px 18px;margin-bottom:10px;transition:border-color .25s ease
+  border:1px solid var(--linea);border-radius:0;background:var(--ficha);
+  padding:18px 20px;margin-bottom:10px;transition:border-color .5s ease
 }
-.panel .fuente:hover{border-color:#45423a}
+.panel .fuente:hover{border-color:var(--dorado55)}
 .panel .f-top{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-.panel .f-nom{font-family:var(--serif);font-size:19px;font-weight:400;color:#fff;line-height:1.26}
+.panel .f-nom{font-family:var(--sans);font-size:19px;font-weight:500;letter-spacing:-.01em;color:var(--tinta);line-height:1.28}
 .panel h3.f-nom{margin:0 0 7px}
 .panel .f-enc{
   font-size:12px;color:var(--humo);min-width:0;
@@ -378,51 +448,54 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 /* El resaltado fuerte (amarillo pleno) se queda para el Lector, donde se
    busca una palabra dentro de un documento entero. En un pasaje de cuatro
    renglones alcanza con teñir el fondo. */
-.panel .f-nota mark{background:rgba(217,166,42,.2);color:#f0d68c;padding:0 2px}
+.panel .f-nota mark{background:rgba(201,164,92,.2);color:var(--lacre2);padding:0 2px}
 /* La sigla de la fuente: contorno en su tono, letra clara. Mismo criterio
    que .rotulo-fuente — el color va en el filete, no en el texto. */
 .panel .f-top .cod{
   background:transparent;border:1px solid var(--punto,var(--linea));
-  color:var(--tinta);border-radius:2px;font-size:10.5px;letter-spacing:.06em;
-  padding:3px 8px;top:0
+  color:var(--tinta);border-radius:999px;font-size:11px;letter-spacing:.08em;
+  padding:3px 9px 2px;top:0
 }
 .panel .f-acc{gap:16px;margin-top:10px}
 .panel .f-acc .mini{
   background:transparent;border:0;border-radius:0;padding:0;
   color:var(--lacre);font-size:12.5px
 }
-.panel .f-acc .mini:hover{color:var(--dorado);text-decoration:underline}
+.panel .f-acc .mini:hover{color:var(--tinta);text-decoration:none}
 .panel .f-acc .tag{margin-left:0}
 
 /* ---------- fuentes ---------- */
-.conteo{font-family:var(--sans);font-size:12px;color:var(--humo);margin:0 0 10px}
-.grupo{margin-bottom:26px}
+.conteo{font-family:var(--sans);font-size:13px;color:var(--humo);margin:0 0 12px}
+.grupo{margin-bottom:44px}
 .grupo>h3{
-  font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 3px;
-  padding-bottom:8px;border-bottom:1px solid var(--linea)
+  font-family:var(--sans);font-size:clamp(24px,2.4vw,34px);line-height:1.1;letter-spacing:-.025em;font-weight:500;margin:0 0 6px;
+  padding-bottom:12px;border-bottom:1px solid var(--linea)
 }
-.grupo>p.desc{margin:0 0 12px;font-size:13px;color:var(--humo)}
-.fuente{border-bottom:1px solid var(--linea);padding:13px 0}
+.grupo>p.desc{margin:0 0 14px;font-size:14px;color:var(--humo)}
+.fuente{border-bottom:1px solid var(--linea);padding:16px 0}
 .f-top{display:flex;gap:11px;align-items:baseline}
+/* Las siglas: cápsulas de filete, la de Mendoza en dorado (la casa) y la
+   internacional en el verde, como antes; el resto, solo el filete. */
 .cod{
-  font-family:var(--sans);font-size:10px;letter-spacing:.03em;color:#fff;
-  padding:2px 7px;border-radius:999px;flex:0 0 auto;position:relative;top:-1px
+  font-family:var(--sans);font-size:10.5px;letter-spacing:.08em;color:var(--tinta2);
+  padding:2px 8px 1px;border-radius:999px;border:1px solid var(--linea-fuerte);flex:0 0 auto;position:relative;top:-1px
 }
-.cod.mza{background:var(--lacre);color:#241a0c}.cod.nac{background:#3a3020}
-.cod.prov{background:#2c2415}.cod.int{background:var(--acequia);color:#0e2018}.cod.doc{background:#3a3020}
-.f-nom{font-family:var(--serif);font-size:17px;flex:0 1 auto}
+.cod.mza{border-color:var(--dorado);color:var(--lacre)}.cod.nac{background:transparent}
+.cod.prov{background:transparent}.cod.int{border-color:var(--acequia);color:var(--acequia)}.cod.doc{background:transparent}
+.f-nom{font-family:var(--sans);font-size:17px;font-weight:500;letter-spacing:-.01em;flex:0 1 auto}
 .leader{flex:1 1 auto;border-bottom:1px dotted var(--linea);min-width:14px;transform:translateY(-4px)}
-.f-org{font-size:12px;color:var(--humo);font-family:var(--sans);flex:0 0 auto}
-.f-nota{font-size:15px;color:var(--tinta2);margin:3px 0 7px}
+.f-org{font-size:13px;color:var(--humo);font-family:var(--sans);flex:0 0 auto}
+.f-nota{font-size:15px;color:var(--humo);margin:4px 0 9px}
 .f-acc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.tag{font-family:var(--sans);font-size:11px;color:var(--humo);border:1px solid var(--linea);padding:3px 9px;border-radius:999px}
-.tag.paga{color:var(--lacre);border-color:rgba(233,200,119,.35);background:rgba(233,200,119,.1)}
-.tag.libre{color:var(--acequia);border-color:rgba(95,174,144,.35);background:rgba(95,174,144,.1)}
-.estrella{background:none;border:0;cursor:pointer;font-size:15px;color:var(--linea);padding:0 4px;line-height:1}
+.tag{font-family:var(--sans);font-size:11.5px;color:var(--humo);border:1px solid var(--linea);padding:3px 10px 2px;border-radius:999px}
+.tag.paga{color:var(--lacre);border-color:var(--dorado55);background:transparent}
+.tag.libre{color:var(--acequia);border-color:rgba(127,174,146,.5);background:transparent}
+.estrella{background:none;border:0;cursor:pointer;font-size:15px;color:var(--humo2);padding:0 4px;line-height:1;transition:color .3s ease}
+.estrella:hover{color:var(--lacre)}
 .estrella[aria-pressed="true"]{color:var(--dorado)}
 
 /* ---------- ramas ---------- */
-.rama{background:var(--ficha);border:1px solid var(--linea);border-radius:4px;padding:18px 20px;margin-bottom:12px;font-family:var(--sans)}
+.rama{background:var(--ficha);border:1px solid var(--linea);border-radius:0;padding:clamp(20px,2vw,28px);margin-bottom:12px;font-family:var(--sans)}
 /* Compartir: el botón y su menú de destinos. */
 .compartir{position:relative;display:inline-block}
 /* Colgado del body y en posición fija: así nada lo tapa ni lo recorta. La
@@ -434,19 +507,19 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 .compartir-menu.flotante{position:fixed;z-index:200;right:auto;top:auto}
 .compartir-menu{
   position:absolute;z-index:30;right:0;top:calc(100% + 6px);min-width:210px;
-  background:var(--negro);border:1px solid var(--lacre);border-radius:10px;
-  padding:6px;box-shadow:0 12px 28px rgba(0,0,0,.55)
+  background:var(--negro);border:1px solid var(--linea-fuerte);border-radius:0;
+  padding:6px;box-shadow:0 18px 40px rgba(0,0,0,.6)
 }
 .compartir-menu button,.compartir-menu a{
   display:block;width:100%;text-align:left;background:none;border:0;
-  padding:9px 12px;border-radius:7px;cursor:pointer;
+  padding:9px 12px;border-radius:0;cursor:pointer;
   font-family:var(--sans);font-size:14px;color:var(--tinta2);text-decoration:none
 }
-.compartir-menu button:hover,.compartir-menu a:hover{background:var(--papel2);color:var(--lacre)}
+.compartir-menu button:hover,.compartir-menu a:hover{background:var(--papel2);color:var(--tinta)}
 /* Comparador: una tarjeta por buscador, en columnas que se acomodan solas. */
 .comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:18px}
-.comp-card{background:var(--ficha);border:1px solid var(--linea);border-left-width:4px;border-radius:10px;padding:14px 16px;font-family:var(--sans)}
-.comp-card h4{margin:0 0 2px;font-family:var(--serif);font-size:16px;font-weight:400;color:var(--tinta)}
+.comp-card{background:var(--ficha);border:1px solid var(--linea);border-left-width:2px;border-radius:0;padding:16px 18px;font-family:var(--sans)}
+.comp-card h4{margin:0 0 2px;font-family:var(--sans);font-size:16px;font-weight:500;color:var(--tinta)}
 .comp-cifra{font-size:13px;color:var(--humo);margin:0 0 10px}
 .comp-cifra b{color:var(--lacre);font-size:15px}
 .comp-item{border-top:1px solid var(--linea);padding:8px 0 0;margin-top:8px;font-size:13px;line-height:1.45}
@@ -463,18 +536,22 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
   font-size:12.5px;color:var(--humo)
 }
 .req-norma a{color:var(--lacre)}
-.rama h3{font-family:var(--serif);font-size:20px;font-weight:500;margin:0 0 5px}
-.rama p{margin:0 0 12px;font-size:15px;color:var(--tinta2)}
-.voces{display:flex;gap:6px;flex-wrap:wrap}
+.rama h3{font-family:var(--sans);font-size:21px;font-weight:500;letter-spacing:-.015em;margin:0 0 6px}
+.rama p{margin:0 0 14px;font-size:15px;color:var(--humo)}
+.voces{display:flex;gap:7px;flex-wrap:wrap}
 .voz{
-  background:var(--papel2);border:1px solid var(--linea);border-radius:999px;padding:4px 10px;cursor:pointer;
-  font-size:12.5px;color:var(--tinta2);font-family:var(--sans)
+  background:transparent;border:1px solid var(--linea);border-radius:999px;padding:5px 12px;cursor:pointer;
+  font-size:13px;color:var(--tinta2);font-family:var(--sans);
+  transition:border-color .3s ease,color .3s ease,background .3s ease
 }
-.voz:hover{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.28);transition:background .25s ease}
+.voz:hover{background:transparent;color:var(--tinta);border-color:var(--dorado55)}
+/* Un rótulo es texto y no se toca: sin cápsula, para que no se confunda
+   con las voces y los botones que tiene al lado. */
 .rotulo{
-  display:inline-block;font-family:var(--sans);font-size:12px;color:var(--tinta2);
-  background:var(--papel2);border-radius:3px;padding:5px 11px;margin:9px 0 8px
+  display:inline-block;font-family:var(--sans);font-size:13.5px;color:var(--humo);
+  background:transparent;border:0;border-radius:0;padding:0;margin:9px 0 12px
 }
+.rotulo strong{color:var(--tinta);font-weight:500}
 /* El rótulo de un panel de resultados lleva además el tono de su fuente: una
    bolita y el filete del contorno. El NOMBRE queda en tinta clara y no en el
    color — los dos extremos oscuros de la rampa, SAIJ y Dialnet, no llegan a
@@ -484,7 +561,7 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
    trata. */
 .rotulo-fuente{
   display:inline-flex;align-items:center;gap:8px;color:var(--tinta);
-  background:transparent;border:1px solid var(--punto,var(--linea))
+  background:transparent;border:1px solid var(--punto,var(--linea));border-radius:999px;padding:5px 13px 4px
 }
 .rotulo-fuente::before{
   content:"";width:6px;height:6px;border-radius:50%;flex:none;
@@ -495,33 +572,33 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
    resto del formulario con un filete dorado a la izquierda: es lo único de
    esta pantalla que la web propone en vez de recibir. */
 .sugeridas{
-  margin:0 0 14px;padding:12px 14px;border-left:2px solid var(--lacre);
-  background:var(--papel2);border-radius:0 8px 8px 0
+  margin:0 0 18px;padding:14px 0 14px 18px;border-left:1px solid var(--dorado);
+  background:transparent;border-radius:0
 }
-.sug-nota{margin:0 0 9px;font-size:12.5px;color:var(--humo);line-height:1.5;max-width:62ch}
-.sug-nota b{color:var(--tinta2);font-weight:600}
-.chip.voz-sug{border-color:rgba(233,200,119,.4);color:var(--lacre)}
-.chip.voz-sug:hover{border-color:var(--lacre);background:rgba(233,200,119,.1)}
-.chip.voz-sug[aria-pressed="true"]{background:var(--lacre);border-color:var(--lacre);color:#241a0c;font-weight:500}
+.sug-nota{margin:0 0 11px;font-size:13.5px;color:var(--humo);line-height:1.55;max-width:62ch}
+.sug-nota b{color:var(--tinta2);font-weight:500}
+.chip.voz-sug{border-color:var(--dorado55);color:var(--lacre)}
+.chip.voz-sug:hover{border-color:var(--dorado);background:transparent;color:var(--lacre2)}
+.chip.voz-sug[aria-pressed="true"]{background:var(--dorado);border-color:var(--dorado);color:var(--negro);font-weight:500}
 .chip.sug-cerrar{border-color:transparent;color:var(--humo);padding:6px 10px}
 .chip.sug-cerrar:hover{border-color:var(--linea);color:var(--tinta2)}
 
 /* ---------- verificador de citas ---------- */
 .veredicto{
-  display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:12px;font-weight:600;
-  letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:6px 14px;
-  border:1px solid var(--linea);background:var(--papel2);color:var(--tinta2)
+  display:inline-flex;align-items:center;gap:9px;font-family:var(--sans);font-size:13px;font-weight:500;
+  letter-spacing:0;text-transform:none;border-radius:999px;padding:7px 15px 6px;
+  border:1px solid var(--linea);background:transparent;color:var(--tinta2)
 }
 .veredicto .bolita{width:8px;height:8px;border-radius:50%;background:currentColor;flex:0 0 auto}
-.veredicto.si{color:var(--acequia);border-color:rgba(95,174,144,.45);background:rgba(95,174,144,.12)}
-.veredicto.duda{color:var(--lacre);border-color:rgba(233,200,119,.4);background:rgba(233,200,119,.1)}
-.veredicto.no{color:#e0a3a3;border-color:rgba(224,163,163,.35);background:rgba(224,163,163,.09)}
+.veredicto.si{color:var(--acequia);border-color:rgba(127,174,146,.5);background:transparent}
+.veredicto.duda{color:var(--lacre);border-color:var(--dorado55);background:transparent}
+.veredicto.no{color:#e0a3a3;border-color:rgba(224,163,163,.4);background:transparent}
 .campos-cita{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
 .campo-cita{
-  background:var(--papel2);border:1px solid var(--linea);border-radius:8px;padding:5px 11px;
-  font-family:var(--sans);font-size:12.5px;color:var(--tinta2)
+  background:transparent;border:1px solid var(--linea);border-radius:999px;padding:5px 13px 4px;
+  font-family:var(--sans);font-size:13px;color:var(--tinta2)
 }
-.campo-cita b{color:var(--humo);font-weight:600;font-size:11px;margin-right:5px}
+.campo-cita b{color:var(--humo);font-weight:400;font-size:12px;margin-right:6px}
 .campo-cita.falta{border-style:dashed;color:var(--humo);opacity:.7}
 .candidato{border-top:1px solid var(--linea);padding:13px 0}
 .candidato:first-of-type{border-top:0;padding-top:4px}
@@ -531,15 +608,15 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
 /* Cada paso de las guías de Verificar es su propia tarjeta dentro de la
    tarjeta grande, sin número ni viñeta: se toca como cualquier otra cosa
    tocable del sitio, con el mismo levantarse del resto de las fichas. */
-.fichas{display:flex;flex-direction:column;gap:8px}
+.fichas{display:flex;flex-direction:column;gap:0}
 .ficha-paso{
   display:block;width:100%;text-align:left;
-  background:var(--papel2);border:1px solid var(--linea);border-radius:8px;
-  padding:13px 15px;cursor:pointer;
-  font-family:var(--sans);font-size:14.5px;line-height:1.5;color:var(--tinta2);
-  transition:border-color .25s ease,background .25s ease
+  background:transparent;border:0;border-top:1px solid var(--linea);border-radius:0;
+  padding:14px 0;cursor:pointer;
+  font-family:var(--sans);font-size:15px;line-height:1.55;color:var(--humo);
+  transition:border-color .5s ease,color .3s ease
 }
-.ficha-paso:hover{border-color:#45423a;background:var(--ficha);color:var(--tinta)}
+.ficha-paso:hover{border-top-color:var(--dorado55);background:transparent;color:var(--tinta)}
 .ficha-paso em{color:inherit}
 
 /* Nota al pie de un aviso: cuelga del cartel de arriba —sin caja propia y
@@ -561,7 +638,7 @@ input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--
               única en rojo del sitio, y es deliberado — no comparte el
               dorado con el resto porque no es una explicación sino la
               consecuencia más grave que la página advierte. */
-.av-tit{display:block;color:var(--lacre);font-weight:300;margin-bottom:2px}
+.av-tit{display:block;color:var(--lacre);font-weight:500;margin-bottom:3px}
 .av-oro{color:var(--lacre)}
 
 /* La regla que apagaba el halo donde molestaba ya no hace falta: no hay
@@ -579,91 +656,96 @@ strong,b{font-weight:500}
    .blk p —que viene después en la hoja y tiene la misma especificidad—
    le devuelve los 10px de margen y las líneas quedan separadas igual. */
 .blk .sin-items p{
-  margin:0;padding:5px 8px;border-radius:7px;
+  margin:0;padding:6px 0;border-radius:0;
   font-size:14.5px;line-height:1.5;color:var(--humo);
   transition:color .25s ease,background .25s ease
 }
 /* Al pasar por encima la línea se enciende. Antes además subía 2px y se le
    prendía un halo dorado; sin el resplandor de fondo en el resto de la letra,
    el cambio de color solo ya alcanza para marcar la respuesta. */
-.blk .sin-items p:hover{color:var(--lacre);background:var(--papel2)}
+.blk .sin-items p:hover{color:var(--tinta);background:transparent}
 
 /* ---------- prosa ---------- */
-.blk{background:var(--ficha);border:1px solid var(--linea);border-radius:4px;padding:20px 22px;margin-bottom:16px}
-.blk h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 8px}
-.blk p{margin:0 0 10px;font-size:15px}
-.blk ol,.blk ul{margin:0 0 10px;padding-left:20px;font-size:14px}
+.blk{background:var(--ficha);border:1px solid var(--linea);border-radius:0;padding:clamp(22px,2.4vw,32px);margin-bottom:18px}
+.blk h3{font-family:var(--sans);font-size:clamp(21px,1.8vw,26px);line-height:1.2;letter-spacing:-.015em;font-weight:500;margin:0 0 10px}
+.blk p{margin:0 0 10px;font-size:15.5px}
+.blk ol,.blk ul{margin:0 0 10px;padding-left:20px;font-size:15px}
 .blk li{margin-bottom:6px}
-.aviso{background:var(--ficha);color:var(--tinta2);border:1px solid var(--linea);border-radius:4px;padding:15px 18px;margin-bottom:18px;font-size:15px}
-.aviso strong{color:var(--lacre)}
+.aviso{background:transparent;color:var(--tinta2);border:1px solid var(--linea);border-radius:0;padding:16px 20px;margin-bottom:20px;font-size:15px}
+.aviso strong{color:var(--lacre);font-weight:500}
 .out{
-  font-family:var(--mono);font-size:13px;background:var(--papel2);border:1px solid var(--linea);
-  border-radius:8px;padding:12px 14px;white-space:pre-wrap;word-break:break-word;min-height:44px
+  font-family:var(--mono);font-size:13.5px;background:transparent;border:1px solid var(--linea);
+  border-radius:0;padding:12px 14px;white-space:pre-wrap;word-break:break-word;min-height:44px
 }
-.vacio{border:1px dashed var(--linea);border-radius:10px;padding:26px 20px;text-align:center;color:var(--humo);font-size:14px}
+.vacio{border:1px dashed var(--linea-fuerte);border-radius:0;padding:30px 20px;text-align:center;color:var(--humo);font-size:14.5px}
 
 /* ---------- lector ---------- */
 textarea{
-  width:100%;min-height:260px;padding:12px;border:1px solid var(--linea);border-radius:8px;
-  background:var(--ficha);font-family:var(--mono);font-size:14px;line-height:1.5;color:var(--tinta);resize:vertical
+  width:100%;min-height:260px;padding:14px 16px;border:1px solid var(--linea);border-radius:0;
+  background:var(--ficha);font-family:var(--mono);font-size:15px;line-height:1.6;color:var(--tinta);resize:vertical;
+  transition:border-color .3s ease
 }
+textarea:focus{outline:none;border-color:var(--dorado)}
 .barra-doc{
   display:flex;gap:8px;align-items:center;flex-wrap:wrap;
-  background:rgba(36,26,12,.55);color:var(--tinta);border:1px solid var(--linea);border-radius:10px;padding:9px 14px;margin-bottom:12px
+  background:var(--ficha);color:var(--tinta);border:1px solid var(--linea);border-radius:0;padding:10px 16px;margin-bottom:12px
 }
-.barra-doc .cnt{font-family:var(--sans);font-size:12.5px;flex:1 1 auto;min-width:120px}
-.barra-doc .cnt b{color:var(--lacre)}
-.barra-doc .mini{background:#332818;border-color:#4a3c22;color:#e8dfc9}
-.barra-doc .mini:hover{background:#4a3c22;border-color:#6b5936;color:#fff}
+.barra-doc .cnt{font-family:var(--sans);font-size:13px;flex:1 1 auto;min-width:120px;color:var(--humo)}
+.barra-doc .cnt b{color:var(--lacre);font-weight:500}
 .doc{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;
-  font-family:var(--serif);font-size:15.5px;line-height:1.72;white-space:pre-wrap;word-wrap:break-word;
-  max-height:64vh;overflow:auto
+  background:var(--ficha);border:1px solid var(--linea);border-radius:0;padding:clamp(22px,2.6vw,36px);
+  font-family:var(--sans);font-size:16px;line-height:1.75;white-space:pre-wrap;word-wrap:break-word;
+  max-height:64vh;overflow:auto;color:var(--tinta2)
 }
-mark{background:#f2dea0;color:#1a1408;padding:0 1px;border-radius:2px;box-decoration-break:clone}
-mark.actual{background:var(--lacre);color:#241a0c}
+mark{background:#e2c88e;color:var(--negro);padding:0 1px;border-radius:1px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+mark.actual{background:var(--tinta);color:var(--negro);box-shadow:0 0 0 2px var(--dorado)}
 .lector-grid{display:grid;grid-template-columns:262px minmax(0,1fr);gap:16px;align-items:start;margin-bottom:12px}
 .meta{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:10px;
-  padding:16px 17px;max-height:64vh;overflow:auto
+  background:var(--ficha);border:1px solid var(--linea);border-radius:0;
+  padding:18px 20px;max-height:64vh;overflow:auto
 }
-.meta-top{background:var(--papel2);border:1px solid var(--linea);border-radius:8px;padding:12px 15px;margin-bottom:14px}
-.meta-car{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--tinta2);margin:0 0 7px;padding-bottom:7px;border-bottom:1px solid var(--linea)}
+.meta-top{background:transparent;border:1px solid var(--linea);border-radius:0;padding:14px 16px;margin-bottom:14px}
+.meta-car{font-family:var(--sans);font-style:normal;font-weight:500;font-size:15px;color:var(--tinta);margin:0 0 8px;padding-bottom:8px;border-bottom:1px solid var(--linea)}
 .meta-fila{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between}
 .meta-fila .izq{flex:1 1 auto;font-size:13.5px;color:var(--tinta2)}
-.meta-fila .izq b{font-family:var(--sans);font-size:11px;color:var(--humo);font-weight:600;margin-right:3px}
+.meta-fila .izq b{font-family:var(--sans);font-size:12px;color:var(--humo);font-weight:400;margin-right:4px}
 .meta-fila .izq .sep{color:var(--linea);margin:0 3px}
 .meta-fila .der{font-family:var(--sans);font-size:11.5px;color:var(--humo);white-space:nowrap;flex:0 0 auto}
 .meta-cuerpo{display:flex;flex-direction:column;gap:16px;margin-bottom:14px}
 .meta-bloque h3{
-  font-family:var(--sans);font-weight:600;font-size:12px;margin:0 0 8px;color:var(--tinta2)
+  font-family:var(--sans);font-weight:400;font-size:13px;margin:0 0 9px;color:var(--humo)
 }
 .meta-bloque.cn h3{color:var(--lacre)}
 .meta-cat{
-  font-family:var(--sans);font-weight:600;font-size:11.5px;
-  color:var(--tinta2);margin:0;padding-top:10px;
+  font-family:var(--sans);font-weight:400;font-size:12.5px;
+  color:var(--humo);margin:0;padding-top:10px;
   border-top:1px solid var(--linea)
 }
 .meta-cat:first-child{padding-top:0;border-top:0}
 .meta-tags{display:flex;flex-wrap:wrap;gap:6px}
 .meta-tag{
-  background:var(--papel2);border:1px solid var(--linea);border-radius:999px;
-  padding:3px 11px;font-family:var(--sans);font-size:12px;color:var(--tinta2);white-space:nowrap
+  background:transparent;border:1px solid var(--linea);border-radius:999px;
+  padding:3px 11px 2px;font-family:var(--sans);font-size:12.5px;color:var(--tinta2);white-space:nowrap
 }
 .meta-bloque.pendiente h3{color:var(--humo);font-weight:400;font-style:italic}
 .meta-bloque.pendiente .meta-tag{background:transparent;border-style:dashed;color:var(--humo)}
 .meta-acc{display:flex;gap:8px;flex-wrap:wrap}
-.pasaje{background:var(--ficha);border:1px solid var(--dorado);border-radius:10px;padding:13px 15px;margin-bottom:9px}
-.pasaje .txt{font-family:var(--serif);font-size:15.5px;line-height:1.6;margin-bottom:8px}
+.meta .mini{white-space:normal;text-align:left}
+.pasaje{background:var(--ficha);border:1px solid var(--linea);border-left:1px solid var(--dorado);border-radius:0;padding:15px 18px;margin-bottom:10px}
+.pasaje .txt{font-family:var(--sans);font-size:16px;line-height:1.65;margin-bottom:9px;color:var(--tinta2)}
 .pasaje .acc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.pasaje .pos{font-family:var(--sans);font-size:11px;color:var(--humo)}
-.pie{max-width:1560px;margin:0 auto;padding:0 16px 40px;font-size:12px;color:var(--humo);line-height:1.6}
-.pie hr{border:0;border-top:1px solid var(--linea);margin:0 0 14px}
+.pasaje .pos{font-family:var(--sans);font-size:12px;color:var(--humo)}
+/* El pie de SIGILLVM: filete arriba, letra chica y apagada, y el nombre. */
+.pie{max-width:1560px;margin:0 auto;padding:0 calc(clamp(16px,3vw,44px) + 64px) 44px clamp(16px,3vw,44px);font-size:13px;color:var(--humo2);line-height:1.6}
+.pie hr{border:0;border-top:1px solid var(--linea);margin:0 0 26px}
+.pie-marca{display:block;margin-bottom:10px;font:500 14px/1 var(--caps);letter-spacing:.3em;color:var(--tinta)}
+.pie-marca .pto{color:var(--dorado);margin:0 .05em}
 
 /* ---------- avisos flotantes ---------- */
 #flash{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:90;display:none;
-  background:#241a0c;color:var(--papel);padding:10px 18px;border-radius:999px;font-size:13px;
-  border:1px solid var(--linea);box-shadow:0 8px 22px rgba(0,0,0,.4);max-width:90vw}
+  background:rgba(16,14,11,.92);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  color:var(--papel);padding:11px 20px;border-radius:999px;font-size:14px;
+  border:1px solid var(--linea-fuerte);box-shadow:0 12px 30px rgba(0,0,0,.5);max-width:90vw}
 #panic{display:none;background:#7c1d2b;color:#fff;padding:10px 20px;font-size:13px}
 #panic button{background:#fff;color:#7c1d2b;border:0;border-radius:999px;padding:4px 10px;margin-left:10px;cursor:pointer}
 /* ------------------------------------------------------------------ *
@@ -678,82 +760,125 @@ mark.actual{background:var(--lacre);color:#241a0c}
    corresponda. Las cifras no estan escritas a mano: se toman de los
    propios datos de la aplicacion al cargar (ver 0.1).
  * ------------------------------------------------------------------ */
+/* Con el estilo de SIGILLVM, la portada toma la composición de su
+   afiche: arriba a la izquierda la línea de qué es esto, el titular y los
+   datos en el medio, y al pie el nombre en versales romanas, enorme, con
+   las letras que se desvanecen una por una y vuelven. La V y la X van
+   doradas, como en el logo de IVS CODEX. */
 .entrada{
   position:fixed;inset:0;z-index:100;overflow-y:auto;overscroll-behavior:contain;
-  background:var(--negro);color:var(--tinta);
-  opacity:1;transition:opacity .5s ease-out;
+  background:var(--negro);color:var(--tinta);isolation:isolate;
+  opacity:1;transition:opacity .6s var(--ease);
+}
+/* La portada tapa la página, así que lleva su propio grano de fondo (el
+   general queda detrás de ella). */
+.entrada::before{
+  content:"";position:fixed;z-index:-1;top:-120px;left:-120px;right:-120px;bottom:-120px;
+  background:url("./grain.png") 0 0/256px 256px repeat;pointer-events:none;
+  animation:grano .9s steps(1,end) infinite
 }
 .entrada.saliendo{opacity:0;pointer-events:none}
 .pt-hoja{
-  max-width:1180px;margin:0 auto;min-height:100%;
-  padding-inline:clamp(20px,5vw,64px);
-  padding-block:clamp(30px,4.5vw,54px) clamp(34px,5vw,64px);
+  max-width:1440px;margin:0 auto;min-height:100vh;min-height:100svh;
+  padding-inline:clamp(18px,3vw,44px);
+  padding-block:22px clamp(28px,4vw,44px);
   display:flex;flex-direction:column;
-  animation:pt-entra .9s ease-out both;
+  animation:pt-entra 1.2s var(--ease) both;
 }
 .pt-tope{
   display:flex;align-items:center;justify-content:space-between;gap:20px;
-  flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid var(--linea);
+  flex-wrap:wrap;padding-bottom:18px;
 }
-.pt-tope img{width:clamp(118px,16vw,164px);height:auto;display:block}
-.pt-nav{display:flex;gap:clamp(10px,2vw,22px);flex-wrap:wrap}
+.pt-linea{margin:0;font-size:15px;line-height:1.35;color:var(--tinta)}
+.pt-nav{display:flex;gap:clamp(16px,2vw,30px);flex-wrap:wrap}
 .pt-nav button{
-  background:none;border:0;padding:5px 2px;cursor:pointer;
-  font-family:var(--sans);font-size:13px;font-weight:300;color:var(--humo);
-  letter-spacing:.04em;border-bottom:1px solid transparent;transition:color .2s ease;
+  background:none;border:0;padding:5px 0;cursor:pointer;
+  font-family:var(--sans);font-size:15px;font-weight:400;color:var(--humo);
+  letter-spacing:0;border-bottom:1px solid transparent;transition:color .3s ease;
 }
-.pt-nav button:hover{color:var(--lacre)}
-.pt-nav button:focus-visible{color:var(--lacre);outline:none;border-bottom-color:var(--lacre)}
+.pt-nav button:hover{color:var(--tinta)}
+.pt-nav button:focus-visible{color:var(--tinta);outline:none;border-bottom-color:var(--dorado)}
 .pt-titular{
-  font-family:var(--serif);font-weight:400;
-  font-size:clamp(31px,6.6vw,80px);line-height:1.04;letter-spacing:-.012em;
-  margin:clamp(30px,4.6vw,50px) 0 0;color:#fff;text-wrap:balance;
+  font-family:var(--sans);font-weight:400;
+  font-size:clamp(34px,4vw,64px);line-height:1.04;letter-spacing:-.03em;
+  margin:clamp(40px,8vh,96px) 0 0;color:var(--tinta);text-wrap:balance;max-width:19ch;
 }
-.pt-titular em{font-style:italic;color:var(--lacre)}
+.pt-titular em{font-style:normal;color:var(--lacre)}
 .pt-bajo{
   display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
-  gap:clamp(24px,4vw,56px);margin-top:clamp(26px,3.8vw,42px);align-items:end;
+  gap:clamp(28px,5vw,96px);margin-top:clamp(30px,4.5vw,52px);align-items:end;
 }
 .pt-parrafo{
-  color:var(--tinta2);line-height:1.72;max-width:62ch;margin:0;
-  font-size:clamp(14.5px,1.5vw,16px);font-weight:200;
+  color:var(--humo);line-height:1.65;max-width:56ch;margin:0;
+  font-size:clamp(15px,1.2vw,17px);font-weight:400;
 }
-.pt-acciones{display:flex;gap:11px;flex-wrap:wrap;margin-top:24px}
+.pt-acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
 .pt-btn{
-  display:inline-block;border:1px solid var(--dorado);border-radius:2px;
-  padding:12px 24px;font-family:var(--sans);font-size:12.5px;font-weight:400;
-  letter-spacing:.15em;text-transform:uppercase;color:var(--lacre);
+  display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--linea-fuerte);border-radius:0;
+  padding:15px 22px;font-family:var(--sans);font-size:15px;line-height:1;font-weight:500;
+  letter-spacing:0;text-transform:none;color:var(--tinta);
   background:transparent;cursor:pointer;white-space:nowrap;text-shadow:none;
-  transition:background .2s ease,color .2s ease;
+  transition:background .3s ease,color .3s ease,border-color .3s ease;
 }
-.pt-btn:hover{background:rgba(217,166,42,.1)}
-.pt-btn:focus-visible{outline:2px solid var(--lacre);outline-offset:3px}
-.pt-btn.lleno{background:var(--dorado);color:#1a1206;font-weight:500}
-.pt-btn.lleno:hover{background:var(--lacre)}
-.pt-datos{display:flex;flex-direction:column;margin:0;border-top:1px solid var(--linea2)}
+.pt-btn:hover{border-color:var(--tinta)}
+.pt-btn:focus-visible{outline:1px solid var(--dorado);outline-offset:4px}
+.pt-btn.lleno{background:var(--dorado);border-color:var(--dorado);color:var(--negro)}
+.pt-btn.lleno:hover{background:var(--tinta);border-color:var(--tinta)}
+/* Las cifras, como columnas de SIGILLVM: cada una bajo un filete fino que
+   se dora al pasar, y el número en las versales romanas del nombre. */
+.pt-datos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px clamp(20px,2.4vw,40px);margin:0}
 .pt-datos>div{
-  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
-  padding:11px 0;border-bottom:1px solid var(--linea2);
+  display:flex;flex-direction:column-reverse;gap:8px;
+  padding-top:16px;border-top:1px solid var(--linea);transition:border-color .5s ease;
 }
+.pt-datos>div:hover{border-top-color:var(--dorado55)}
 .pt-datos dt{
-  font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--humo);margin:0;
+  font-family:var(--sans);font-size:14px;font-weight:400;letter-spacing:0;
+  text-transform:none;color:var(--humo);margin:0;
 }
 .pt-datos dd{
-  margin:0;font-family:var(--serif);font-size:21px;font-weight:400;
-  color:var(--lacre);font-variant-numeric:tabular-nums;line-height:1;
+  margin:0;font-family:var(--caps);font-size:clamp(34px,3.2vw,50px);font-weight:300;
+  color:var(--lacre);font-variant-numeric:lining-nums tabular-nums;line-height:.9;letter-spacing:.02em;
 }
-.pt-franja{margin-top:auto;padding-top:clamp(26px,3.8vw,44px)}
+.pt-franja{margin-top:clamp(32px,5vh,56px)}
 .pt-franja .pt-lin{
-  padding-top:20px;border-top:1px solid var(--linea);
-  display:flex;flex-wrap:wrap;gap:9px 20px;align-items:center;
+  padding-top:18px;border-top:1px solid var(--linea);
+  display:flex;flex-wrap:wrap;gap:9px 26px;align-items:center;
 }
-.pt-fuente{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--humo);letter-spacing:.03em}
-.pt-fuente i{width:6px;height:6px;border-radius:50%;background:var(--acequia);display:block;flex:none}
-@keyframes pt-entra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.pt-fuente{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--humo);letter-spacing:0}
+.pt-fuente i{width:5px;height:5px;border-radius:50%;background:var(--dorado);display:block;flex:none}
+/* margin-top:auto la empuja al pie de la pantalla cuando sobra lugar. */
+.pt-marca{
+  margin:auto 0 0;padding-top:clamp(24px,4vh,48px);white-space:nowrap;
+  font:300 clamp(56px,11vw,210px)/.86 var(--caps);letter-spacing:.02em;
+  color:rgba(241,238,230,.8);
+}
+/* Las letras se desvanecen una tras otra, desaparecen un momento y
+   vuelven en el mismo orden (propiedades sueltas: un retardo calculado
+   con una variable no sobrevive dentro del atajo "animation"). */
+.pt-marca span{
+  display:inline-block;
+  animation-name:pt-disuelve;animation-duration:11s;animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;animation-delay:calc(1.6s + var(--i) * .22s);
+}
+.pt-marca .pt-sep{color:var(--dorado);margin:0 .02em}
+.pt-marca .v{
+  background:linear-gradient(170deg,#e2c88e 8%,#c9a45c 46%,#9c7a3c 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;
+}
+@keyframes pt-disuelve{
+  0%,38%{opacity:1;filter:blur(0)}
+  48%,60%{opacity:0;filter:blur(18px)}
+  70%,100%{opacity:1;filter:blur(0)}
+}
+@keyframes pt-entra{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @media(max-width:860px){
   .pt-bajo{grid-template-columns:minmax(0,1fr);align-items:start}
-  .pt-franja{margin-top:34px}
+  .pt-titular{margin-top:48px}
+}
+@media(max-width:760px){
+  .pt-nav{gap:14px 18px}
+  .pt-marca{font-size:17.5vw}
 }
 @media(prefers-reduced-motion:reduce){
   .pt-hoja{animation:none}
@@ -770,6 +895,66 @@ mark.actual{background:var(--lacre);color:#241a0c}
   .lector-grid{grid-template-columns:1fr}
   .meta{max-height:none}
 }
+/* ---------- el sello de la esquina ---------- */
+/* Como en SIGILLVM: un círculo que se va dorando a medida que se baja y,
+   tocado, vuelve arriba. Aparece recién cuando hay algo que subir. */
+.subir{
+  position:fixed;right:clamp(16px,2.4vw,32px);bottom:clamp(16px,2.4vw,32px);z-index:30;
+  width:52px;height:52px;padding:0;border:0;border-radius:50%;cursor:pointer;
+  background:rgba(16,14,11,.7);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .5s ease,transform .5s var(--ease)
+}
+.subir.activo{opacity:1;transform:none;pointer-events:auto}
+.subir svg{width:100%;height:100%;transform:rotate(-90deg);display:block}
+.subir-pista{fill:none;stroke:var(--linea);stroke-width:1.5}
+.subir-barra{fill:none;stroke:var(--dorado);stroke-width:1.5;stroke-dasharray:1 1;stroke-dashoffset:1}
+.subir-punto{fill:var(--dorado);transition:transform .4s var(--ease);transform-box:fill-box;transform-origin:center}
+.subir:hover .subir-punto{transform:scale(1.5)}
+
+/* ---------- el puntero ---------- */
+/* El de SIGILLVM: el punto dorado del sello justo donde está el mouse, un
+   anillo que lo sigue un instante después y una luz cálida que titila.
+   Solo con mouse (nunca en pantallas táctiles) y nunca con "reducir
+   movimiento". Sobre un campo de texto o sobre el texto de un fallo se
+   corre y deja el cursor de texto de siempre: ahí se escribe y se
+   selecciona, y el anillo taparía la letra. */
+.con-puntero,.con-puntero *{cursor:none!important}
+.con-puntero :is(input:not([type=checkbox]):not([type=radio]):not([type=file]),textarea,[contenteditable="true"],.doc,.doc *,.pasaje .txt,.pasaje .txt *,.out){cursor:text!important}
+.con-puntero select{cursor:auto!important}
+.puntero{position:fixed;inset:0;z-index:300;pointer-events:none;opacity:0;transition:opacity .4s ease}
+.puntero.activo{opacity:1}
+.puntero-punto,.puntero-anillo,.puntero-luz{position:absolute;left:0;top:0;border-radius:50%;will-change:transform}
+.puntero-punto{
+  width:8px;height:8px;margin:-4px 0 0 -4px;background:var(--dorado);
+  box-shadow:0 0 10px 2px rgba(255,196,110,.75);transition:width .3s,height .3s,margin .3s,opacity .3s
+}
+.puntero-anillo{
+  width:38px;height:38px;margin:-19px 0 0 -19px;border:1px solid rgba(232,200,120,.7);
+  transition:width .35s var(--ease),height .35s var(--ease),margin .35s var(--ease),border-color .35s,background .35s,opacity .3s
+}
+.puntero-luz{
+  width:440px;height:440px;margin:-220px 0 0 -220px;mix-blend-mode:screen;
+  background:radial-gradient(circle,rgba(255,205,120,.2) 0%,rgba(240,165,80,.09) 28%,rgba(220,140,60,.035) 50%,rgba(220,140,60,0) 70%)
+}
+.puntero-luz::after{
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,220,150,.16) 0%,rgba(255,180,90,.05) 22%,rgba(255,180,90,0) 40%);
+  animation:titila 2.7s ease-in-out infinite
+}
+@keyframes titila{
+  0%,100%{opacity:.85;transform:scale(1)}
+  13%{opacity:1;transform:scale(1.05)}
+  27%{opacity:.72;transform:scale(.97)}
+  41%{opacity:.95;transform:scale(1.03)}
+  56%{opacity:.78;transform:scale(.98)}
+  72%{opacity:1;transform:scale(1.06)}
+  86%{opacity:.8;transform:scale(.99)}
+}
+.puntero.enlace .puntero-anillo{width:64px;height:64px;margin:-32px 0 0 -32px;border-color:var(--dorado);background:rgba(201,164,92,.1)}
+.puntero.enlace .puntero-punto{width:4px;height:4px;margin:-2px 0 0 -2px}
+.puntero.apretado .puntero-anillo{width:28px;height:28px;margin:-14px 0 0 -14px}
+.puntero.texto .puntero-anillo,.puntero.texto .puntero-punto{opacity:0}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -780,7 +965,7 @@ mark.actual{background:var(--lacre);color:#241a0c}
   <div class="pt-hoja">
 
     <div class="pt-tope">
-      <img src="./ivs-codex.png" alt="IVS CODEX">
+      <p class="pt-linea">Buscador de jurisprudencia<br>y legislación.</p>
       <nav class="pt-nav" aria-label="Secciones de la plataforma">
         <button type="button" data-tab="buscar">Consulta</button>
         <button type="button" data-tab="fuentes">Fuentes</button>
@@ -818,6 +1003,8 @@ mark.actual{background:var(--lacre);color:#241a0c}
       </div>
     </div>
 
+    <p class="pt-marca" role="img" aria-label="IVS CODEX"><span style="--i:0">I</span><span class="v" style="--i:1">V</span><span style="--i:2">S</span><span class="pt-sep" style="--i:3">·</span><span style="--i:4">C</span><span style="--i:5">O</span><span style="--i:6">D</span><span style="--i:7">E</span><span class="v" style="--i:8">X</span></p>
+
   </div>
 </section>
 
@@ -828,7 +1015,10 @@ mark.actual{background:var(--lacre);color:#241a0c}
        Se sacó a pedido; el emblema circular de la barra alcanza como firma
        del sitio en el uso normal. -->
   <div class="nav-wrap">
-    <img class="nav-logo" src="./logo-iu.png" alt="Emblema de Iuris et de iure">
+    <span class="nav-marca">
+      <img class="nav-logo" src="./logo-iu.png" alt="Emblema de Iuris et de iure">
+      <span class="nav-palabra" aria-hidden="true">I<span class="v">V</span>S<span class="pto">·</span>CODE<span class="v">X</span></span>
+    </span>
     <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
   </div>
 </header>
@@ -840,10 +1030,16 @@ mark.actual{background:var(--lacre);color:#241a0c}
 
 <footer class="pie">
   <hr>
+  <span class="pie-marca" aria-hidden="true">I<span class="v">V</span>S<span class="pto">·</span>CODE<span class="v">X</span></span>
   <p id="pie-txt"></p>
 </footer>
 
 <div id="flash" role="status" aria-live="polite"></div>
+
+<button class="subir" type="button" aria-label="Volver arriba" id="subir"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><circle class="subir-pista" cx="24" cy="24" r="21"/><circle class="subir-barra" cx="24" cy="24" r="21" pathLength="1"/><circle class="subir-punto" cx="24" cy="24" r="3.4"/></svg></button>
+<div class="puntero" aria-hidden="true"><div class="puntero-luz"></div><div class="puntero-anillo"></div><div class="puntero-punto"></div></div>
+<div class="grano" aria-hidden="true"></div>
+<div class="grano grano--encima" aria-hidden="true"></div>
 
 <script>
 "use strict";
@@ -6207,6 +6403,76 @@ store.get("jedj:pasajes",function(v){
   render();
 });
 
+})();
+</script>
+<script>
+/* El sello de la esquina y el puntero dorado, tomados de SIGILLVM. Van
+   aparte del script principal: no tocan el estado de la aplicación y, si
+   algo de esto fallara, la página sigue andando igual. */
+(function(){
+  "use strict";
+  try{
+    var reducir=window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    // El sello: cuánto se bajó, y un toque para volver arriba.
+    var subir=document.getElementById("subir");
+    var barra=subir&&subir.querySelector(".subir-barra");
+    var pedido=false;
+    function medir(){
+      pedido=false;
+      var alto=document.documentElement.scrollHeight-window.innerHeight;
+      var y=window.scrollY||window.pageYOffset||0;
+      var p=alto>0?Math.min(1,Math.max(0,y/alto)):0;
+      if(barra) barra.style.strokeDashoffset=String(1-p);
+      if(subir) subir.classList.toggle("activo",y>400);
+    }
+    window.addEventListener("scroll",function(){ if(!pedido){ pedido=true; requestAnimationFrame(medir); } },{passive:true});
+    window.addEventListener("resize",medir,{passive:true});
+    if(subir) subir.addEventListener("click",function(){
+      window.scrollTo({top:0,behavior:reducir.matches?"auto":"smooth"});
+    });
+    medir();
+
+    // El puntero: solo con mouse y sin "reducir movimiento".
+    if(!window.matchMedia("(hover: hover) and (pointer: fine)").matches||reducir.matches) return;
+    var puntero=document.querySelector(".puntero");
+    if(!puntero) return;
+    var punto=puntero.querySelector(".puntero-punto");
+    var anillo=puntero.querySelector(".puntero-anillo");
+    var luz=puntero.querySelector(".puntero-luz");
+    document.documentElement.classList.add("con-puntero");
+    var tx=-100,ty=-100,ax=tx,ay=ty,lx=tx,ly=ty,adentro=false,cuadro=0;
+    function poner(el,x,y){ el.style.transform="translate3d("+x.toFixed(1)+"px,"+y.toFixed(1)+"px,0)"; }
+    // El punto va exacto; el anillo y la luz lo siguen un instante después.
+    function paso(){
+      cuadro=0;
+      ax+=(tx-ax)*0.22; ay+=(ty-ay)*0.22;
+      lx+=(tx-lx)*0.1;  ly+=(ty-ly)*0.1;
+      poner(anillo,ax,ay); poner(luz,lx,ly);
+      if(Math.abs(tx-lx)+Math.abs(ty-ly)>0.3) cuadro=requestAnimationFrame(paso);
+    }
+    window.addEventListener("pointermove",function(e){
+      if(e.pointerType!=="mouse") return;
+      tx=e.clientX; ty=e.clientY;
+      if(!adentro){ adentro=true; ax=lx=tx; ay=ly=ty; puntero.classList.add("activo"); }
+      poner(punto,tx,ty);
+      if(!cuadro) cuadro=requestAnimationFrame(paso);
+    },{passive:true});
+    document.documentElement.addEventListener("mouseleave",function(){
+      adentro=false; puntero.classList.remove("activo");
+    });
+    window.addEventListener("pointerdown",function(){ puntero.classList.add("apretado"); });
+    window.addEventListener("pointerup",function(){ puntero.classList.remove("apretado"); });
+    // Sobre lo que se toca, el anillo se abre; sobre el texto, se corre.
+    var TEXTO="input:not([type=checkbox]):not([type=radio]):not([type=file]),textarea,select,[contenteditable=\"true\"],.doc,.pasaje .txt,.out";
+    var TOCABLE="a,button,label,summary,[role=tab],[data-act],[data-tab],.chip,.voz";
+    document.addEventListener("pointerover",function(e){
+      var t=e.target; if(!t||!t.closest) return;
+      var esTexto=!!t.closest(TEXTO);
+      puntero.classList.toggle("texto",esTexto);
+      puntero.classList.toggle("enlace",!esTexto&&!!t.closest(TOCABLE));
+    });
+  }catch(err){ /* sin sello ni puntero, pero con página */ }
 })();
 </script>
 </body>
