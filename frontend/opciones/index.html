@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · Opciones de diseño</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#100e0b; --fg:#f1eee6; --mute:rgba(241,238,230,.6); --mute2:rgba(241,238,230,.42);
+  --line:rgba(241,238,230,.14); --gold:#c9a45c;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --caps:"Cormorant SC",Georgia,serif;
+  --pad:clamp(16px,3vw,44px);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:url("grano.png") 0 0/256px 256px repeat;opacity:.5}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{font-weight:400;text-wrap:balance}
+.v{color:var(--gold)}
+::selection{background:var(--gold);color:var(--bg)}
+
+.tope{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px var(--pad);border-bottom:1px solid var(--line)}
+.marca{font:500 15px/1 var(--caps);letter-spacing:.26em}
+.tope a{font-size:14px;color:var(--mute);text-decoration:none}
+.tope a:hover{color:var(--fg)}
+
+.intro{padding:clamp(56px,10vh,110px) var(--pad) 0;max-width:1500px;margin:0 auto}
+.intro h1{max-width:18ch;font:400 clamp(36px,5vw,80px)/1.02 var(--sans);letter-spacing:-.03em}
+.intro__cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(24px,3vw,56px);margin-top:clamp(44px,6vw,80px)}
+.intro__col{padding-top:20px;border-top:1px solid var(--line)}
+.intro__col h2{font:500 17px/1.3 var(--sans)}
+.intro__col p{margin-top:10px;color:var(--mute);font-size:15px}
+
+.ref{max-width:1500px;margin:0 auto;padding:clamp(70px,10vh,120px) var(--pad) 0}
+.ref__fila{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:22px}
+.rotulo{font-size:14px;color:var(--mute)}
+.rotulo b{color:var(--fg);font-weight:500}
+.marco{border:1px solid var(--line);background:#0b0a08;overflow:hidden}
+.marco img{width:100%}
+
+.op{max-width:1500px;margin:0 auto;padding:clamp(90px,14vh,170px) var(--pad) 0}
+.op__cab{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:clamp(18px,3vw,48px);align-items:end;padding-bottom:26px;border-bottom:1px solid var(--line)}
+.op__letra{font:300 clamp(80px,10vw,150px)/.8 var(--caps);color:var(--gold)}
+.op__nom{font:500 clamp(30px,3.4vw,52px)/1.05 var(--sans);letter-spacing:-.03em}
+.op__nom span{display:block;margin-top:10px;font:400 16px/1.4 var(--sans);letter-spacing:0;color:var(--mute)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 22px;background:var(--gold);color:var(--bg);font:500 15px/1 var(--sans);text-decoration:none;transition:background .3s;white-space:nowrap}
+.btn:hover{background:var(--fg)}
+.op__cuerpo{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,330px);gap:clamp(24px,3vw,56px);margin-top:clamp(28px,4vw,48px);align-items:start}
+.op__grande .marco{box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.op__fila{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.op__txt{display:grid;gap:26px;position:sticky;top:24px}
+.op__txt h3{font:500 15px/1.3 var(--sans);padding-top:14px;border-top:1px solid var(--line)}
+.op__txt p,.op__txt li{color:var(--mute);font-size:15px}
+.op__txt ul{margin:8px 0 0;padding-left:18px}
+.op__txt li{margin-bottom:6px}
+.op__txt p{margin-top:8px}
+.movil{max-width:260px}
+.movil .marco{border-radius:22px}
+
+.cierre{max-width:1500px;margin:0 auto;padding:clamp(100px,16vh,180px) var(--pad) 0}
+.cierre h2{max-width:22ch;font:400 clamp(30px,3.6vw,56px)/1.06 var(--sans);letter-spacing:-.03em}
+.cierre p{max-width:60ch;margin-top:22px;color:var(--mute)}
+.cierre__links{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.cierre__links a{padding:13px 20px;border:1px solid var(--line);text-decoration:none;transition:border-color .3s}
+.cierre__links a:hover{border-color:var(--gold)}
+.pie{max-width:1500px;margin:clamp(90px,14vh,160px) auto 0;padding:26px var(--pad) 40px;border-top:1px solid var(--line);font-size:13px;color:var(--mute2)}
+
+@media (max-width:1000px){
+  .op__cuerpo{grid-template-columns:minmax(0,1fr)}
+  .op__txt{position:static}
+  .intro__cols{grid-template-columns:minmax(0,1fr)}
+  .intro__col+.intro__col{margin-top:30px}
+}
+@media (max-width:700px){
+  .op__cab{grid-template-columns:auto minmax(0,1fr)}
+  .op__cab .btn{grid-column:1/-1;justify-self:start}
+  .ref__fila,.op__fila{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+<header class="tope">
+  <span class="marca">I<span class="v">V</span>S CODE<span class="v">X</span></span>
+  <a href="../">Ver la página actual</a>
+</header>
+
+<main>
+  <section class="intro">
+    <h1>Tres rumbos para el diseño, a partir de sigillvm.com.</h1>
+    <div class="intro__cols">
+      <div class="intro__col">
+        <h2>Lo que toman de SIGILLVM.</h2>
+        <p>Instrument Sans para todo y Cormorant SC solo para IVS CODEX y el latín; el negro cálido, el crema y el dorado #C9A45C, más apagado que el actual; filetes finos en lugar de cajas; frases en caja baja que terminan en punto.</p>
+      </div>
+      <div class="intro__col">
+        <h2>Lo que se va.</h2>
+        <p>Bodoni e IBM Plex, los rótulos en mayúsculas espaciadas, el botón dorado lleno en cada barra y el emblema circular de la cabecera, que pasa a ser IVS CODEX escrito, nítido a cualquier tamaño.</p>
+      </div>
+      <div class="intro__col">
+        <h2>Las tres funcionan.</h2>
+        <p>Cada opción es la app completa, con el mismo script que la actual: se puede buscar, abrir el Lector, recorrer el catálogo. Solo cambian la hoja de estilos, la portada y la cabecera.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ref" aria-labelledby="ref-tit">
+    <p class="rotulo" id="ref-tit"><b>Como está hoy</b> · para comparar</p>
+    <div class="ref__fila">
+      <div class="marco"><img src="capturas/actual-portada-d.webp" alt="Portada actual" width="1200" height="750" loading="lazy"></div>
+      <div class="marco"><img src="capturas/actual-buscar-d.webp" alt="Pantalla Buscar actual" width="1200" height="750" loading="lazy"></div>
+    </div>
+  </section>
+
+  <section class="op" id="a" aria-labelledby="a-tit">
+    <div class="op__cab">
+      <span class="op__letra" aria-hidden="true">A</span>
+      <h2 class="op__nom" id="a-tit">Sello.<span>La más cercana a sigillvm.com: oscura, con grano y un sello propio.</span></h2>
+      <a class="btn" href="./a-sello.html">Abrir la opción A</a>
+    </div>
+    <div class="op__cuerpo">
+      <div class="op__grande">
+        <div class="marco"><img src="capturas/a-portada-d.webp" alt="Opción A, portada" width="1200" height="750"></div>
+        <div class="op__fila">
+          <div class="marco"><img src="capturas/a-buscar-d.webp" alt="Opción A, pantalla Buscar" width="1200" height="750" loading="lazy"></div>
+          <div class="marco"><img src="capturas/a-lector-d.webp" alt="Opción A, Lector con un fallo" width="1200" height="750" loading="lazy"></div>
+        </div>
+      </div>
+      <div class="op__txt">
+        <div>
+          <h3>Cómo es.</h3>
+          <p>La portada es un afiche, como la de SIGILLVM: el titular a la izquierda, IVS CODEX enorme al pie y, a la derecha, un sello que se dibuja al entrar. Adentro del sello hay una hoja de texto donde aparecen y se van marcas doradas —la búsqueda encontrando—, rodeada por IVRIS ET DE IVRE que gira despacio.</p>
+        </div>
+        <div>
+          <h3>En la app.</h3>
+          <ul>
+            <li>Sin cajas: cada sección empieza con un filete fino.</li>
+            <li>La consulta es un renglón grande, subrayado, como el formulario de SIGILLVM.</li>
+            <li>Las opciones elegidas llevan el punto dorado del sello.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>A tener en cuenta.</h3>
+          <p>Es la de más personalidad. El grano y el sello son más de marca que de herramienta: en la app el grano queda quieto, pero sigue estando.</p>
+        </div>
+        <div class="movil marco"><img src="capturas/a-portada-m.webp" alt="Opción A en el celular" width="390" height="844" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="op" id="b" aria-labelledby="b-tit">
+    <div class="op__cab">
+      <span class="op__letra" aria-hidden="true">B</span>
+      <h2 class="op__nom" id="b-tit">Códice.<span>La paleta de SIGILLVM dada vuelta: papel crema y tinta, como una edición impresa.</span></h2>
+      <a class="btn" href="./b-codice.html">Abrir la opción B</a>
+    </div>
+    <div class="op__cuerpo">
+      <div class="op__grande">
+        <div class="marco"><img src="capturas/b-portada-d.webp" alt="Opción B, portada" width="1200" height="750"></div>
+        <div class="op__fila">
+          <div class="marco"><img src="capturas/b-buscar-d.webp" alt="Opción B, pantalla Buscar" width="1200" height="750" loading="lazy"></div>
+          <div class="marco"><img src="capturas/b-lector-d.webp" alt="Opción B, Lector con un fallo" width="1200" height="750" loading="lazy"></div>
+        </div>
+      </div>
+      <div class="op__txt">
+        <div>
+          <h3>Cómo es.</h3>
+          <p>La portada es una portadilla: IVS CODEX en capitales romanas y, al lado, un índice con números romanos que es el menú. Cada renglón lleva a su sección, con las cifras reales de la app.</p>
+        </div>
+        <div>
+          <h3>En la app.</h3>
+          <ul>
+            <li>Filete doble de imprenta bajo la cabecera y filete de tinta sobre cada sección.</li>
+            <li>Los fallos y los resultados en EB Garamond: es la más cómoda para leer textos largos.</li>
+            <li>Los títulos de sección en versalitas.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>A tener en cuenta.</h3>
+          <p>Es la que más se aleja de las apps oscuras de siempre y la que más seriedad jurídica transmite, pero se aleja también del negro de SIGILLVM y suma una tercera tipografía.</p>
+        </div>
+        <div class="movil marco"><img src="capturas/b-portada-m.webp" alt="Opción B en el celular" width="390" height="844" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="op" id="c" aria-labelledby="c-tit">
+    <div class="op__cab">
+      <span class="op__letra" aria-hidden="true">C</span>
+      <h2 class="op__nom" id="c-tit">Índice.<span>La de herramienta: los colores y las letras de SIGILLVM, ordenados para trabajar.</span></h2>
+      <a class="btn" href="./c-indice.html">Abrir la opción C</a>
+    </div>
+    <div class="op__cuerpo">
+      <div class="op__grande">
+        <div class="marco"><img src="capturas/c-portada-d.webp" alt="Opción C, portada" width="1200" height="750"></div>
+        <div class="op__fila">
+          <div class="marco"><img src="capturas/c-buscar-d.webp" alt="Opción C, pantalla Buscar" width="1200" height="750" loading="lazy"></div>
+          <div class="marco"><img src="capturas/c-lector-d.webp" alt="Opción C, Lector con un fallo" width="1200" height="750" loading="lazy"></div>
+        </div>
+      </div>
+      <div class="op__txt">
+        <div>
+          <h3>Cómo es.</h3>
+          <p>La portada lleva directo a buscar: el titular grande, como el de SIGILLVM, y debajo un buscador donde se escriben solos ejemplos de consultas. Más abajo, cuatro columnas con filete para las funciones principales.</p>
+        </div>
+        <div>
+          <h3>En la app.</h3>
+          <ul>
+            <li>Las solapas como un selector, con la abierta marcada.</li>
+            <li>Superficies apenas más claras que el fondo y esquinas de 6px.</li>
+            <li>Cada resultado lleva al costado el tono de su fuente.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>A tener en cuenta.</h3>
+          <p>Es la más clara para el uso diario y no lleva grano. Tiene menos personalidad de marca que la A.</p>
+        </div>
+        <div class="movil marco"><img src="capturas/c-portada-m.webp" alt="Opción C en el celular" width="390" height="844" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cierre" aria-labelledby="cierre-tit">
+    <h2 id="cierre-tit">Se pueden combinar.</h2>
+    <p>Por ejemplo, la portada de la A con la app de la C, o la B solo para el Lector. Con la letra, o con la mezcla, se pasa a la página principal.</p>
+    <div class="cierre__links">
+      <a href="./a-sello.html">A · Sello</a>
+      <a href="./b-codice.html">B · Códice</a>
+      <a href="./c-indice.html">C · Índice</a>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">Página interna para elegir el diseño. No se indexa.</footer>
+</body>
+</html>

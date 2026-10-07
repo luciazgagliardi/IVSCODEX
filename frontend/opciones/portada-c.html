@@ -1,0 +1,72 @@
+<section class="entrada c-portada" id="entrada" aria-labelledby="pt-titular">
+  <div class="c-hoja">
+    <header class="c-tope js-in">
+      <span class="c-marca">I<span class="v">V</span>S CODE<span class="v">X</span></span>
+      <nav class="c-nav" aria-label="Secciones de la plataforma">
+        <button type="button" data-tab="buscar">Consulta</button>
+        <button type="button" data-tab="fuentes">Fuentes</button>
+        <button type="button" data-tab="verificar">Verificación</button>
+        <button type="button" data-tab="cuenta" class="c-cuenta">Cuenta</button>
+      </nav>
+    </header>
+
+    <div class="c-centro">
+      <p class="c-estado js-in"><span class="c-punto" aria-hidden="true"></span>6 bases oficiales integradas</p>
+      <h1 class="c-lead js-in" id="pt-titular" style="--d:.12s">Jurisprudencia y legislación argentinas, reunidas en una sola consulta.</h1>
+      <button type="button" class="c-busq js-in" data-tab="buscar" style="--d:.24s" aria-label="Iniciar la consulta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <span class="c-ejemplo" data-ejemplos="daño moral por incumplimiento contractual|despido sin causa e indemnización agravada|prescripción adquisitiva de inmuebles|cuota alimentaria a cargo de los abuelos|responsabilidad del Estado por falta de servicio">daño moral por incumplimiento contractual</span>
+        <span class="c-tecla">Consultar</span>
+      </button>
+      <p class="c-texto js-in" style="--d:.34s">La plataforma interroga de forma simultánea los repositorios oficiales integrados, extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>
+    </div>
+
+    <div class="c-cols">
+      <button type="button" class="c-col js-in" data-tab="buscar" style="--d:.42s">
+        <span class="c-num">01</span>
+        <span class="c-tit">Consulta unificada</span>
+        <span class="c-desc">Las bases oficiales a la vez, con la procedencia de cada resultado y el enlace al documento.</span>
+      </button>
+      <button type="button" class="c-col js-in" data-tab="ramas" style="--d:.5s">
+        <span class="c-num">02</span>
+        <span class="c-tit">Tesauro jurídico</span>
+        <span class="c-desc"><b id="pt-n-voces">309</b> voces en <b id="pt-n-ramas">28</b> ramas extienden la búsqueda a las denominaciones equivalentes.</span>
+      </button>
+      <button type="button" class="c-col js-in" data-tab="lector" style="--d:.58s">
+        <span class="c-num">03</span>
+        <span class="c-tit">Lector de fallos</span>
+        <span class="c-desc">El texto oficial con la búsqueda destacada, los pasajes recortados y la cita armada.</span>
+      </button>
+      <button type="button" class="c-col js-in" data-tab="requisitos" style="--d:.66s">
+        <span class="c-num">04</span>
+        <span class="c-tit">Requisitos normativos</span>
+        <span class="c-desc"><b id="pt-n-req">24</b> fichas con los requisitos de cada trámite y su marco legal.</span>
+      </button>
+    </div>
+
+    <footer class="c-fuentes js-in" style="--d:.74s">
+      <span class="f-mendoza"><i></i>Suprema Corte de Justicia de Mendoza</span>
+      <span class="f-mendozalegal"><i></i>Mendoza Legal</span>
+      <span class="f-caba"><i></i>TSJ de la Ciudad de Buenos Aires</span>
+      <span class="f-csjn"><i></i>Corte Suprema de Justicia de la Nación</span>
+      <span class="f-saij"><i></i>SAIJ</span>
+      <span><i></i>InfoLeg</span>
+    </footer>
+  </div>
+  <script>
+    // Los ejemplos del buscador de la portada se escriben solos, uno tras otro.
+    (function(){
+      var el=document.querySelector(".c-ejemplo"); if(!el) return;
+      if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var lista=el.getAttribute("data-ejemplos").split("|"), i=0, n=lista[0].length, borrando=false;
+      setTimeout(function paso(){
+        var e=document.getElementById("entrada"); if(!e||e.style.display==="none") return;
+        var t=lista[i];
+        if(!borrando){ n++; if(n>t.length){ borrando=true; return setTimeout(paso,2200); } }
+        else { n--; if(n<0){ borrando=false; i=(i+1)%lista.length; n=0; } }
+        el.textContent=lista[i].slice(0,Math.max(n,0));
+        setTimeout(paso,borrando?22:55);
+      },2600);
+    })();
+  </script>
+</section>

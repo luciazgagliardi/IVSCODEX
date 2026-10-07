@@ -1,0 +1,129 @@
+/* ------------------------------------------------------------------ *
+   OPCIÓN B — CÓDICE
+   La paleta de SIGILLVM dada vuelta: el crema pasa a ser el papel y el
+   negro cálido, la tinta. Se lee como una edición impresa —portadilla,
+   índice con números romanos, filetes de imprenta— y es la más cómoda
+   para leer fallos largos de día. Una tercera letra, EB Garamond, solo
+   para el texto de los documentos y los títulos de los resultados.
+ * ------------------------------------------------------------------ */
+:root{
+  --bg:#f1eee6; --bg2:#f6f4ee; --bg3:#fbfaf6; --top-bg:rgba(241,238,230,.92);
+  --fg:#2a251d; --fg-hi:#14110c; --fg2:rgba(20,17,12,.78);
+  --mute:rgba(20,17,12,.6); --mute2:rgba(20,17,12,.4);
+  --line:rgba(20,17,12,.14); --line2:rgba(20,17,12,.32);
+  --acc:#8a6a2c; --acc-hi:#6e5320; --acc-ink:#f1eee6;
+  --acc-soft:rgba(138,106,44,.1); --acc-line:rgba(138,106,44,.55);
+  --ok:#3f6b4a; --ok-line:rgba(63,107,74,.45); --ok-soft:rgba(63,107,74,.08);
+  --bad:#9a3b2e; --bad-line:rgba(154,59,46,.4); --bad-soft:rgba(154,59,46,.07);
+  --mark-bg:#ecd79f; --mark-fg:#14110c; --mark-soft:#ecdcae; --mark-soft-fg:#14110c;
+  --sel-bg:#14110c; --sel-fg:#f1eee6;
+  --f-mendoza:#a07c2e; --f-mendozalegal:#7d6128; --f-caba:#a8622e;
+  --f-csjn:#94472d; --f-saij:#843333; --f-dialnet:#6c3550;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
+  --libro:"EB Garamond",Garamond,Georgia,serif;
+  --titulo:var(--libro); --titulo-ls:0; --read:var(--libro);
+  --r:0; --r2:0; --pill:2px;
+  --top-h:62px;
+  color-scheme:light;
+}
+.v{color:var(--acc)}
+/* papel: el mismo grano, apenas, multiplicado sobre el crema */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:url("grano.png") 0 0/256px 256px repeat;opacity:.28;mix-blend-mode:multiply;filter:invert(1)
+}
+
+/* ---------- cabecera: filete doble de imprenta ---------- */
+.top{border-bottom:3px double var(--line2)}
+.marca{flex:none;font:500 19px/1 var(--caps);letter-spacing:.18em;color:var(--fg-hi);white-space:nowrap}
+.nav button{font-size:14px;color:var(--mute)}
+.nav button[aria-selected="true"]{color:var(--fg-hi)}
+.nav button[aria-selected="true"]::after{background:var(--fg-hi);height:2px;bottom:-3px}
+
+/* ---------- la app: capítulos con filete de tinta arriba ---------- */
+.panel,.blk,.rama{background:transparent;border:0;border-top:1px solid var(--fg-hi);border-radius:0;padding:24px 0 8px;margin-bottom:28px}
+.panel.vivo{border-top-color:var(--ok)}
+.rama{padding-bottom:14px;margin-bottom:6px;border-top-color:var(--line2)}
+.aviso{border-top:0;padding:0 0 0 18px;border-left:2px solid var(--acc);margin-bottom:28px}
+.av-tit{font-family:var(--libro);font-style:italic;font-weight:400;font-size:18px;color:var(--fg-hi)}
+.grupo>h3,.voces-tit,.blk h3,.rama h3{font-family:var(--caps);font-weight:500;letter-spacing:.04em}
+.grupo>h3{font-size:28px;border-bottom:1px solid var(--fg-hi)}
+.voces-tit{font-size:26px}
+.voces-tit .rama-nom{font-family:var(--libro);font-style:italic;letter-spacing:0;text-transform:none}
+.panel .f-nom{font-size:20px;font-weight:500}
+.f-nom{font-size:18.5px}
+.panel .f-nota{font-family:var(--libro);font-size:16.5px;line-height:1.55}
+.f-nota{font-family:var(--libro);font-size:16.5px}
+.comp-card{background:var(--bg3)}
+.doc,.meta{background:var(--bg3)}
+.doc{font-size:17.5px;line-height:1.7;padding:30px 36px}
+.pasaje .txt{font-size:17px}
+.cod{border-radius:0}
+
+/* la consulta: ficha de biblioteca, blanca sobre el papel */
+.busq-campo{background:var(--bg3);border:1px solid var(--fg-hi);padding:0 18px}
+.busq-campo input[type=text]{font-family:var(--libro);font-size:21px;padding:14px 0}
+.busq-campo input::placeholder{font-style:italic}
+.busq-cadena{border-bottom:1px dotted var(--line2)}
+input[type=text],input[type=number],select,textarea{background:var(--bg3);border-color:var(--line2)}
+.btn{background:var(--fg-hi);border-color:var(--fg-hi);color:var(--bg);letter-spacing:.01em}
+.btn:hover{background:var(--acc);border-color:var(--acc);color:var(--bg)}
+.btn.sec{background:transparent;color:var(--fg-hi);border-color:var(--fg-hi)}
+.btn.sec:hover{background:var(--fg-hi);color:var(--bg)}
+.chip[aria-pressed="true"],.chip.amb[aria-pressed="true"]{background:rgba(20,17,12,.07);border-color:var(--fg-hi);color:var(--fg-hi)}
+.chip:hover{border-color:var(--fg-hi)}
+.rail h2{font-family:var(--caps);font-size:16px;font-weight:500;letter-spacing:.06em;color:var(--fg-hi)}
+.rail-list button[aria-pressed="true"]{color:var(--fg-hi);background:transparent;font-weight:500;box-shadow:inset 2px 0 0 var(--acc)}
+.rail-list button:hover{background:var(--bg2)}
+.compartir-menu{box-shadow:0 14px 34px rgba(20,17,12,.14)}
+#flash{background:var(--fg-hi);color:var(--bg)}
+.pie{font-family:var(--libro);font-size:14px}
+
+/* ---------- portada: la portadilla y el índice ---------- */
+.b-hoja{
+  max-width:1240px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;
+  padding:clamp(22px,3.4vw,44px) clamp(20px,5vw,64px) clamp(24px,3.4vw,40px)
+}
+.b-tope{display:flex;justify-content:space-between;gap:16px;padding-bottom:12px;border-bottom:3px double var(--line2);font-size:13px;color:var(--mute)}
+.b-ed{font-family:var(--caps);font-size:15px;letter-spacing:.12em;color:var(--fg)}
+.b-cuerpo{
+  flex:1 0 auto;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,1fr);
+  gap:clamp(36px,6vw,110px);align-items:center;padding:clamp(36px,6vh,72px) 0
+}
+.b-nombre{
+  margin:0;font:400 clamp(72px,10.5vw,168px)/.84 var(--caps);letter-spacing:.015em;color:var(--fg-hi)
+}
+.b-lead{
+  margin:clamp(26px,4vh,40px) 0 0;max-width:22ch;
+  font:400 clamp(22px,2.1vw,30px)/1.22 var(--libro);color:var(--fg-hi)
+}
+.b-texto{margin:16px 0 0;max-width:56ch;font-size:15px;line-height:1.65;color:var(--mute)}
+.b-acciones{margin-top:28px}
+.entrada .b-btn{
+  padding:15px 26px;background:var(--fg-hi);color:var(--bg);font:500 15px/1 var(--sans);transition:background .3s
+}
+.entrada .b-btn:hover{background:var(--acc)}
+.b-ind-tit{margin:0 0 10px;font:500 15px/1 var(--caps);letter-spacing:.2em;color:var(--mute)}
+.b-indice ol{list-style:none;margin:0;padding:0;border-top:1px solid var(--fg-hi)}
+.b-indice li{border-bottom:1px solid var(--line)}
+.entrada .b-indice button{
+  width:100%;display:flex;align-items:baseline;gap:12px;padding:13px 0;
+  font-family:var(--libro);font-size:19px;color:var(--fg-hi);transition:color .25s
+}
+.b-indice .n{flex:none;width:2.6em;font:500 15px/1 var(--caps);letter-spacing:.06em;color:var(--acc)}
+.b-indice .t{flex:none}
+.b-indice .l{flex:1 1 auto;min-width:16px;border-bottom:1px dotted var(--line2);transform:translateY(-5px)}
+.b-indice .c{flex:none;font:400 15px/1 var(--sans);color:var(--mute);font-variant-numeric:tabular-nums}
+.entrada .b-indice button:hover{color:var(--acc-hi)}
+.b-indice button:hover .l{border-bottom-color:var(--acc)}
+.b-pie{
+  display:flex;flex-wrap:wrap;gap:6px 22px;padding-top:14px;border-top:1px solid var(--line2);
+  font-size:12.5px;color:var(--mute)
+}
+.b-pie-tit{font:500 13px/1.3 var(--caps);letter-spacing:.14em;color:var(--fg-hi)}
+@media (max-width:900px){
+  .b-cuerpo{grid-template-columns:minmax(0,1fr);align-items:start}
+  .b-nombre{font-size:24vw}
+  .b-tope .b-ed{display:none}
+}

@@ -1,0 +1,151 @@
+/* ------------------------------------------------------------------ *
+   OPCIÓN A — SELLO
+   La más cercana a sigillvm.com: el negro cálido con grano, el crema, el
+   dorado solo donde significa algo, Instrument Sans para todo y las
+   capitales romanas únicamente para el nombre y el latín. La portada es un
+   afiche; la app, una página impresa: filetes finos en vez de cajas.
+ * ------------------------------------------------------------------ */
+:root{
+  --bg:#100e0b; --bg2:#15130f; --bg3:#1b1814; --top-bg:rgba(16,14,11,.86);
+  --fg:#e9e5dc; --fg-hi:#f1eee6; --fg2:rgba(241,238,230,.78);
+  --mute:rgba(241,238,230,.56); --mute2:rgba(241,238,230,.36);
+  --line:rgba(241,238,230,.12); --line2:rgba(241,238,230,.26);
+  --acc:#c9a45c; --acc-hi:#d8b877; --acc-ink:#100e0b;
+  --acc-soft:rgba(201,164,92,.1); --acc-line:rgba(201,164,92,.5);
+  --ok:#a3bb95; --ok-line:rgba(163,187,149,.42); --ok-soft:rgba(163,187,149,.08);
+  --bad:#dba493; --bad-line:rgba(219,164,147,.4); --bad-soft:rgba(219,164,147,.08);
+  --mark-bg:#e2c88e; --mark-fg:#100e0b; --mark-soft:rgba(201,164,92,.24); --mark-soft-fg:#f1eee6;
+  --sel-bg:#f1eee6; --sel-fg:#100e0b;
+  --f-mendoza:#c9a45c; --f-mendozalegal:#a8864a; --f-caba:#c98a5a;
+  --f-csjn:#b96d52; --f-saij:#a8595a; --f-dialnet:#8f6176;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
+  --titulo:var(--sans); --titulo-ls:-.012em; --read:var(--sans);
+  --r:0; --r2:0; --pill:999px;
+  --top-h:64px;
+  color-scheme:dark;
+}
+.v{color:var(--acc)}
+
+/* el grano de SIGILLVM, quieto detrás de la app (en la portada se mueve) */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:url("grano.png") 0 0/256px 256px repeat;opacity:.4
+}
+
+/* ---------- cabecera ---------- */
+.marca{flex:none;font:500 16px/1 var(--caps);letter-spacing:.26em;color:var(--fg-hi);white-space:nowrap}
+.nav button{font-size:14.5px}
+
+/* ---------- la app como página impresa: filetes, no cajas ---------- */
+.panel,.blk,.rama{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:26px 0 6px;margin-bottom:26px}
+.panel:hover,.blk:hover,.rama:hover{border-top-color:var(--line2)}
+.panel.vivo{border-top-color:var(--ok-line)}
+.rama{padding-bottom:14px;margin-bottom:8px}
+.comp-card{background:transparent;border:0;border-top:2px solid var(--punto,var(--acc));padding:16px 0}
+.doc,.meta{background:var(--bg2)}
+
+/* la consulta: un renglón grande, subrayado, como el formulario de SIGILLVM */
+.busq-tope{margin-bottom:34px}
+.busq-campo{background:transparent;border:0;border-bottom:1px solid var(--line2);border-radius:0;padding:0 2px}
+.busq-campo input[type=text]{font-size:clamp(18px,1.8vw,24px);padding:16px 0;letter-spacing:-.01em}
+.busq-cadena{border-bottom:0;padding:10px 0 0}
+input[type=text],input[type=number],select,textarea{background:transparent}
+.campo input[type=text],.campo input[type=number]{border:0;border-bottom:1px solid var(--line2);padding:8px 0 10px}
+.campo input:focus{border-bottom-color:var(--acc)}
+.btn{padding:13px 22px}
+/* elegida: el contorno y la letra en crema, con el punto dorado del sello */
+.chip[aria-pressed="true"],.chip.amb[aria-pressed="true"]{background:transparent;border-color:rgba(241,238,230,.7);color:var(--fg-hi)}
+.chip[aria-pressed="true"]::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--acc);margin:0 8px 2px 0;vertical-align:middle}
+.btn.sec{border-color:var(--line2)}
+
+.rail h2{color:var(--mute)}
+.rail-buscador{background:transparent}
+
+/* ---------- portada: el afiche ---------- */
+.a-portada{overflow-x:hidden}
+.a-grano{
+  position:fixed;z-index:-1;inset:-120px;pointer-events:none;
+  background:url("grano.png") 0 0/256px 256px repeat;opacity:.8;animation:grano .9s steps(1,end) infinite
+}
+@keyframes grano{
+  0%{transform:translate(0,0)}12.5%{transform:translate(-61px,37px)}25%{transform:translate(43px,-88px)}
+  37.5%{transform:translate(-97px,-19px)}50%{transform:translate(18px,71px)}62.5%{transform:translate(79px,14px)}
+  75%{transform:translate(-28px,-63px)}87.5%{transform:translate(57px,96px)}100%{transform:translate(0,0)}
+}
+.a-portada{isolation:isolate}
+.a-tope{
+  position:absolute;z-index:2;inset:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px;
+  padding:24px var(--pad)
+}
+.a-tag{margin:0;font-size:15px;line-height:1.35;color:var(--fg-hi)}
+.a-nav{display:flex;gap:clamp(18px,2vw,30px);font-size:15px}
+.a-nav button{color:var(--mute);transition:color .3s}
+.a-nav button:hover{color:var(--fg-hi)}
+
+.a-sello{
+  position:absolute;z-index:0;left:79vw;top:56%;width:min(96vh,92vw);aspect-ratio:1;
+  transform:translate(-50%,-50%);pointer-events:none
+}
+.sello{width:100%;height:100%;overflow:visible;display:block}
+.sg-giro{animation:giro 240s linear infinite;transform-origin:0 0}
+@keyframes giro{to{transform:rotate(360deg)}}
+.sg-circ{fill:none;stroke:rgba(241,238,230,.13);stroke-width:1}
+.sg-texto{font:400 30px var(--caps);fill:rgba(241,238,230,.5);letter-spacing:.1em}
+.sg-hoja path{stroke:rgba(241,238,230,.11);stroke-width:4.5;stroke-linecap:round;
+  stroke-dasharray:900;stroke-dashoffset:900;animation:renglon 1.6s var(--ease) forwards}
+.sg-hoja path:nth-child(3n+1){animation-delay:.2s}
+.sg-hoja path:nth-child(3n+2){animation-delay:.35s}
+.sg-hoja path:nth-child(3n){animation-delay:.5s}
+@keyframes renglon{to{stroke-dashoffset:0}}
+/* la búsqueda que encuentra: cada marca dorada aparece, queda y se va, una tras otra */
+.sg-marca{fill:var(--acc);opacity:0;animation:marca 9s var(--ease) infinite;animation-delay:calc(1.8s + var(--k) * .55s)}
+@keyframes marca{0%{opacity:0}6%,52%{opacity:.85}64%,100%{opacity:0}}
+
+.a-copia{
+  position:relative;z-index:1;min-height:100vh;min-height:100svh;max-width:min(48vw,680px);
+  display:flex;flex-direction:column;justify-content:flex-start;
+  padding:clamp(120px,19vh,200px) 0 26px var(--pad)
+}
+.a-lead{margin:0;max-width:17ch;font:400 clamp(32px,3.3vw,54px)/1.05 var(--sans);letter-spacing:-.025em;color:var(--fg-hi)}
+.a-texto{margin:24px 0 0;max-width:52ch;color:var(--mute);font-size:15.5px;line-height:1.65}
+.a-acciones{display:flex;align-items:center;gap:28px;flex-wrap:wrap;margin-top:30px}
+.entrada .a-btn{
+  padding:15px 24px;background:var(--acc);color:var(--acc-ink);
+  font:500 15px/1 var(--sans);transition:background .3s
+}
+.entrada .a-btn:hover{background:var(--fg-hi)}
+.entrada .a-enlace{font-size:15px;color:var(--fg-hi);border-bottom:1px solid var(--line2);padding-bottom:3px;transition:border-color .3s}
+.entrada .a-enlace:hover{border-bottom-color:var(--acc)}
+.a-datos{display:flex;gap:clamp(22px,3vw,48px);margin:36px 0 0;flex-wrap:wrap}
+.a-datos div{display:flex;flex-direction:column-reverse;gap:6px}
+.a-datos dt{font-size:12.5px;color:var(--mute)}
+.a-datos dd{margin:0;font:400 26px/1 var(--sans);letter-spacing:-.02em;color:var(--fg-hi);font-variant-numeric:tabular-nums}
+.a-fuentes{display:flex;gap:10px;align-items:baseline;margin:22px 0 0;max-width:60ch;font-size:12.5px;line-height:1.55;color:var(--mute2)}
+.a-punto{position:relative;flex:none;width:7px;height:7px;border-radius:50%;background:var(--acc);top:-1px}
+.a-punto::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px solid var(--acc);opacity:0;animation:pulso 2.4s var(--ease) infinite}
+@keyframes pulso{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.a-nombre{
+  margin:auto 0 0;padding-top:28px;white-space:nowrap;
+  font:300 clamp(60px,9.4vw,180px)/.86 var(--caps);letter-spacing:.02em;color:rgba(241,238,230,.82)
+}
+.a-nombre span{display:inline-block}
+.a-nombre .v{background:linear-gradient(170deg,#e2c88e 8%,#c9a45c 46%,#9c7a3c 92%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+
+@media (max-height:780px) and (min-width:861px){
+  .a-fuentes{display:none}
+  .a-copia{padding-top:120px}
+}
+@media (max-width:860px){
+  .a-nav button:not([data-tab="buscar"]){display:none}
+  .a-tag{font-size:14px}
+  .a-sello{left:86vw;top:330px;width:112vw}
+  .a-copia{max-width:none;padding:560px var(--pad) 28px}
+  .a-lead{max-width:13ch}
+  .a-datos{gap:18px 26px}
+  .a-nombre{font-size:19vw;padding-top:40px}
+}
+@media (prefers-reduced-motion:reduce){
+  .sg-hoja path{stroke-dashoffset:0}
+  .sg-marca{opacity:.85}
+}

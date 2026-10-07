@@ -1,0 +1,106 @@
+/* ------------------------------------------------------------------ *
+   OPCIÓN C — ÍNDICE
+   La de herramienta: los colores y las letras de SIGILLVM, pero
+   ordenados como un instrumento de trabajo. La portada lleva directo a
+   buscar; en la app hay superficies apenas más claras que el fondo,
+   esquinas de 6px y cada resultado marcado con el tono de su fuente.
+   Sin grano: la pantalla queda limpia para trabajar muchas horas.
+ * ------------------------------------------------------------------ */
+:root{
+  --bg:#0f0e0c; --bg2:#161411; --bg3:#1d1b17; --top-bg:rgba(15,14,12,.88);
+  --fg:#e8e4db; --fg-hi:#f6f3ec; --fg2:rgba(241,238,230,.76);
+  --mute:rgba(241,238,230,.52); --mute2:rgba(241,238,230,.34);
+  --line:rgba(241,238,230,.09); --line2:rgba(241,238,230,.2);
+  --acc:#c9a45c; --acc-hi:#dcbd7f; --acc-ink:#100e0b;
+  --acc-soft:rgba(201,164,92,.12); --acc-line:rgba(201,164,92,.45);
+  --ok:#9fc0a0; --ok-line:rgba(159,192,160,.38); --ok-soft:rgba(159,192,160,.08);
+  --bad:#e0a597; --bad-line:rgba(224,165,151,.38); --bad-soft:rgba(224,165,151,.08);
+  --mark-bg:#e2c88e; --mark-fg:#100e0b; --mark-soft:rgba(201,164,92,.24); --mark-soft-fg:#f6f3ec;
+  --sel-bg:rgba(201,164,92,.14); --sel-fg:#e8cd95;
+  --f-mendoza:#d0a95c; --f-mendozalegal:#a9884c; --f-caba:#d08a55;
+  --f-csjn:#c46a4c; --f-saij:#b4575b; --f-dialnet:#9a6584;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
+  --titulo:var(--sans); --titulo-ls:-.012em; --read:var(--sans);
+  --r:6px; --r2:10px; --pill:6px;
+  --top-h:58px;
+  color-scheme:dark;
+}
+.v{color:var(--acc)}
+
+/* ---------- cabecera: las solapas como un selector ---------- */
+.marca{flex:none;font:500 15px/1 var(--caps);letter-spacing:.24em;color:var(--fg-hi);white-space:nowrap;padding-right:clamp(10px,2vw,28px);border-right:1px solid var(--line)}
+.nav{align-self:center;gap:2px}
+.nav button{padding:7px 12px;border-radius:var(--r);font-size:14px}
+.nav button:hover{background:var(--bg3)}
+.nav button[aria-selected="true"]{background:var(--bg3);color:var(--fg-hi)}
+.nav button[aria-selected="true"]::after{display:none}
+
+/* ---------- superficies ---------- */
+.panel,.blk,.rama{background:var(--bg2);border-color:var(--line)}
+.aviso{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:16px 20px}
+.av-tit{font-size:15.5px}
+.chip[aria-pressed="true"],.chip.amb[aria-pressed="true"]{border-color:var(--acc-line)}
+.rail h2{font-size:12px;letter-spacing:.02em;color:var(--mute2)}
+.rail-list button{font-size:13.5px;padding:6px 10px}
+
+/* la consulta como barra de comandos */
+.busq-campo{background:var(--bg2);border-color:var(--line2);border-radius:var(--r2);padding:0 18px}
+.busq-campo input[type=text]{font-size:17px;padding:17px 0}
+.busq-campo:focus-within{border-color:var(--acc);box-shadow:0 0 0 4px rgba(201,164,92,.1)}
+.busq-barra .btn{border-radius:var(--r2)}
+.busq-cadena{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px}
+
+/* cada resultado: una fila con el tono de su fuente al costado */
+.panel .fuente{border:1px solid var(--line);border-left:2px solid var(--punto,var(--line2));border-radius:var(--r);background:var(--bg2);padding:15px 18px;margin-bottom:8px}
+.panel .fuente:hover{border-color:var(--line2);border-left-color:var(--punto,var(--line2))}
+.fuente{padding:16px 0}
+.grupo>h3{font-size:22px}
+
+/* ---------- portada: buscar desde el primer segundo ---------- */
+.c-hoja{max-width:1240px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:0 clamp(18px,4vw,56px)}
+.c-tope{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:76px;border-bottom:1px solid var(--line)}
+.c-marca{font:500 17px/1 var(--caps);letter-spacing:.26em;color:var(--fg-hi)}
+.c-nav{display:flex;gap:4px}
+.entrada .c-nav button{padding:8px 13px;border-radius:var(--r);font-size:14.5px;color:var(--mute);transition:color .25s,background .25s}
+.entrada .c-nav button:hover{color:var(--fg-hi);background:var(--bg3)}
+.entrada .c-nav .c-cuenta{border:1px solid var(--line2);color:var(--fg)}
+.c-centro{padding:clamp(56px,11vh,120px) 0 clamp(40px,7vh,72px)}
+.c-estado{display:inline-flex;align-items:center;gap:10px;margin:0;font-size:13.5px;color:var(--mute)}
+.c-punto{position:relative;width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.c-punto::after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px solid var(--ok);opacity:0;animation:pulso 2.4s var(--ease) infinite}
+@keyframes pulso{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.c-lead{margin:20px 0 0;max-width:19ch;font:500 clamp(36px,5.2vw,80px)/1.02 var(--sans);letter-spacing:-.035em;color:var(--fg-hi)}
+.entrada .c-busq{
+  display:flex;align-items:center;gap:14px;width:min(100%,780px);margin-top:clamp(30px,5vh,48px);
+  padding:10px 10px 10px 20px;border:1px solid var(--line2);border-radius:12px;background:var(--bg2);
+  color:var(--mute);transition:border-color .3s,box-shadow .3s
+}
+.entrada .c-busq:hover{border-color:var(--acc);box-shadow:0 0 0 5px rgba(201,164,92,.08)}
+.c-busq svg{flex:none}
+.c-ejemplo{flex:1 1 auto;min-width:0;font-size:clamp(15px,1.4vw,18px);color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-ejemplo::after{content:"";display:inline-block;width:1px;height:1.1em;margin-left:2px;vertical-align:-.15em;background:var(--acc);animation:cursor 1s steps(1) infinite}
+@keyframes cursor{50%{opacity:0}}
+.c-tecla{flex:none;padding:12px 20px;border-radius:8px;background:var(--acc);color:var(--acc-ink);font-size:14.5px;font-weight:500}
+.c-texto{margin:24px 0 0;max-width:60ch;font-size:15px;line-height:1.65;color:var(--mute)}
+.c-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 clamp(20px,2.6vw,44px)}
+.entrada .c-col{display:flex;flex-direction:column;gap:8px;padding:20px 0 6px;border-top:1px solid var(--line2);transition:border-color .4s}
+.entrada .c-col:hover{border-top-color:var(--acc)}
+.c-num{font-size:12px;color:var(--acc);font-variant-numeric:tabular-nums}
+.c-tit{font-size:17px;font-weight:500;color:var(--fg-hi)}
+.c-desc{font-size:14px;line-height:1.55;color:var(--mute)}
+.c-desc b{color:var(--fg2);font-weight:500}
+.c-fuentes{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:auto;padding:30px 0 28px;font-size:12.5px;color:var(--mute2)}
+.c-fuentes span{display:inline-flex;align-items:center;gap:8px}
+.c-fuentes i{width:6px;height:6px;border-radius:50%;background:var(--punto,var(--mute2))}
+@media (max-width:980px){
+  .c-cols{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .c-col:nth-child(n+3){margin-top:18px}
+}
+@media (max-width:600px){
+  .c-nav button:not(.c-cuenta){display:none}
+  .c-cols{grid-template-columns:minmax(0,1fr)}
+  .c-col+.c-col{margin-top:14px}
+  .c-tecla{display:none}
+  .c-centro{padding-top:44px}
+}
