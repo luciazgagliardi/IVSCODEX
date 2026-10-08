@@ -35,8 +35,8 @@
   --mute-2:rgba(241,238,230,.42);
   --line:rgba(241,238,230,.14);
   --line-2:rgba(241,238,230,.08);
-  --gold:#c9a45c;
-  --gold-55:rgba(201,164,92,.55);
+  --gold:#d9a31b;
+  --gold-55:rgba(217,163,27,.55);
   --verde:#8fbf9a;
   --rojo:#dba196;
 
@@ -93,6 +93,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 input,select,textarea{font:inherit;color:inherit}
 h1,h2,h3,h4{text-wrap:balance}
 ::selection{background:var(--gold);color:var(--bg)}
+/* Sin el cursor de texto que titila: el campo activo se marca con la línea
+   dorada de abajo. */
+input,textarea,select,[contenteditable]{caret-color:transparent}
 :focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
 ::placeholder{color:var(--mute-2);opacity:1}
 [hidden]{display:none!important}
@@ -157,7 +160,7 @@ strong,b{font-weight:500}
 /* elegido: relleno pleno en el color de la letra, como en sigillvm */
 .chip[aria-pressed="true"],.chip.amb[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
 .chip.voz-sug{border-color:var(--gold-55);color:var(--gold)}
-.chip.voz-sug:hover{border-color:var(--gold);background:rgba(201,164,92,.08)}
+.chip.voz-sug:hover{border-color:var(--gold);background:rgba(217,163,27,.08)}
 .chip.voz-sug[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--bg)}
 .chip.sug-cerrar{border-color:transparent;color:var(--mute)}
 .chip.sug-cerrar:hover{border-color:var(--line);color:var(--fg)}
@@ -206,7 +209,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 }
 .nav-wrap{display:flex;align-items:center;gap:clamp(24px,3.4vw,64px);padding:14px var(--pad)}
 .marca-app{display:inline-flex;align-items:center;gap:12px;flex:none;padding:0;border:0;background:none;color:var(--fg)}
-.marca-app svg{width:26px;height:26px}
+.marca-app img{width:26px;height:26px}
 .marca-app .marca{font-size:15px;font-weight:500;letter-spacing:.3em}
 .nav{display:flex;align-items:center;gap:clamp(16px,1.8vw,28px);min-width:0}
 .nav button{
@@ -499,7 +502,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
   max-height:72vh;overflow:auto;padding:4px clamp(14px,2vw,28px) 4px 0;border:0;
   font:400 17px/1.8 var(--sans);color:var(--fg-82);white-space:pre-wrap;word-wrap:break-word
 }
-mark{background:rgba(201,164,92,.26);color:var(--fg);padding:0 2px;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+mark{background:rgba(217,163,27,.26);color:var(--fg);padding:0 2px;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 mark.actual{background:var(--gold);color:var(--bg)}
 /* Los pasajes, todos a la vista a la vez: una grilla de recortes debajo
    del fallo, cada uno con su contexto y sus acciones. */
@@ -535,12 +538,12 @@ mark.actual{background:var(--gold);color:var(--bg)}
 .mm-marca{position:absolute;left:1px;right:1px;height:3px;margin-top:-1.5px;padding:0;border:0;border-radius:2px;background:var(--gold-55);cursor:pointer;transition:background .2s}
 .mm-marca::before{content:"";position:absolute;inset:-4px -3px}
 .mm-marca:hover{background:var(--fg)}
-.mm-marca.actual{background:var(--gold);box-shadow:0 0 0 2px rgba(201,164,92,.28)}
+.mm-marca.actual{background:var(--gold);box-shadow:0 0 0 2px rgba(217,163,27,.28)}
 
 /* ---------- verificar: la constancia ---------- */
 .constancia{
   display:grid;grid-template-columns:120px minmax(0,1fr);gap:clamp(20px,3vw,40px);align-items:start;
-  margin:24px 0;padding:clamp(22px,2.6vw,32px);border:1px solid var(--gold-55);background:rgba(201,164,92,.04)
+  margin:24px 0;padding:clamp(22px,2.6vw,32px);border:1px solid var(--gold-55);background:rgba(217,163,27,.04)
 }
 .constancia__sello{width:120px;height:120px;color:var(--gold);font-family:var(--caps);animation:sella .9s cubic-bezier(.34,1.56,.64,1) both}
 @keyframes sella{from{opacity:0;transform:scale(1.35) rotate(-14deg)}to{opacity:1;transform:rotate(-6deg)}}
@@ -713,7 +716,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-brand__tag,.pt-brand__name{position:absolute;left:0;top:50%;transition:opacity .45s,transform .45s var(--ease)}
 .pt-brand__tag{transform:translateY(-50%);font-size:15px;line-height:1.35}
 .pt-brand__name{display:inline-flex;align-items:center;gap:12px;opacity:0;transform:translateY(-20%)}
-.pt-brand__name svg{width:26px;height:26px}
+.pt-brand__name img{width:26px;height:26px}
 .pt-brand__name .marca{font-size:15px;font-weight:500;letter-spacing:.3em}
 .pt-hdr.is-solid .pt-brand__tag{opacity:0;transform:translateY(-80%)}
 .pt-hdr.is-solid .pt-brand__name{opacity:1;transform:translateY(-50%)}
@@ -722,7 +725,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-nav button:hover{color:var(--fg)}
 .pt-hdr .btn{margin-left:auto;padding:9px 16px 8px;font-size:13.5px}
 
-.pt-hero{position:relative;height:calc(100vh - 84px);height:calc(100svh - 84px);min-height:600px}
+.pt-hero{position:relative;display:flex;min-height:calc(100vh - 84px);min-height:calc(100svh - 84px)}
 .pt-sello{
   position:absolute;left:80vw;top:44%;width:128vh;height:128vh;color:var(--fg);pointer-events:none;
   transform:translate(-50%,calc(-50% + var(--hp,0) * 90px));opacity:calc(1 - var(--hp,0) * .6)
@@ -736,7 +739,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 @keyframes punto{from{transform:scale(0)}to{transform:scale(1)}}
 .gira{animation:gira 240s linear infinite;transform-box:fill-box;transform-origin:center}
 @keyframes gira{to{transform:rotate(360deg)}}
-.pt-copia{position:absolute;left:var(--pad);top:22vh;bottom:36px;right:var(--pad);display:flex;flex-direction:column;align-items:flex-start;pointer-events:none}
+.pt-copia{position:relative;flex:1;min-width:0;padding:clamp(40px,12vh,150px) var(--pad) 36px;display:flex;flex-direction:column;align-items:flex-start;pointer-events:none}
 .pt-copia>*{pointer-events:auto}
 .pt-titular{margin:0;max-width:16ch;font:400 clamp(30px,3.4vw,54px)/1.06 var(--sans);letter-spacing:-.02em}
 .pt-titular em{font-style:normal}
@@ -745,14 +748,20 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-datos dt{order:2;text-transform:lowercase}
 .pt-datos dd{order:1;margin:0;color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
 .pt-datos>div:first-child::before{content:"";align-self:center;width:7px;height:7px;margin-right:6px;border-radius:50%;background:var(--gold);animation:late 2.4s var(--ease) infinite}
-@keyframes late{0%{box-shadow:0 0 0 0 rgba(201,164,92,.55)}100%{box-shadow:0 0 0 8px rgba(201,164,92,0)}}
+@keyframes late{0%{box-shadow:0 0 0 0 rgba(217,163,27,.55)}100%{box-shadow:0 0 0 8px rgba(217,163,27,0)}}
 .pt-acciones{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
-.pt-marca{margin:auto 0 0;font:300 clamp(64px,13.4vw,250px)/.84 var(--caps);letter-spacing:.02em;color:rgba(241,238,230,.82)}
-/* las letras se esfuman una tras otra y vuelven en el mismo orden */
-.pt-marca>span{display:inline-block;animation:disuelve 11s ease-in-out infinite;animation-delay:calc(1.6s + var(--i) * .22s)}
+.pt-marca{
+  position:relative;align-self:flex-start;width:76%;margin:auto 0 0;padding-top:48px;box-sizing:content-box;
+  height:0;padding-bottom:10.7%;pointer-events:none!important
+}
+/* El nombre es el logo mismo, cortado letra por letra para que se esfumen
+   una tras otra y vuelvan en el mismo orden. Cada letra es una porción del
+   mismo archivo, con su posición exacta. */
+.pt-marca>span{
+  position:absolute;top:48px;bottom:0;background:url("./ivs-codex-grande.png") no-repeat;
+  animation:disuelve 11s ease-in-out infinite;animation-delay:calc(1.6s + var(--i) * .22s)
+}
 @keyframes disuelve{0%,38%{opacity:1;filter:blur(0)}48%,60%{opacity:0;filter:blur(18px)}70%,100%{opacity:1;filter:blur(0)}}
-.pt-marca .v{background:linear-gradient(170deg,#e2c88e 8%,#c9a45c 46%,#9c7a3c 92%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
-.pt-marca .m-punto{background:linear-gradient(170deg,#e2c88e,#9c7a3c)}
 
 .pt-sec{position:relative;padding:clamp(100px,16vh,190px) var(--pad) 0}
 .pt-sec__tit{margin:0;font:500 clamp(36px,4.4vw,68px)/1.02 var(--sans);letter-spacing:-.035em}
@@ -762,6 +771,12 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-cols--3{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:clamp(40px,5vw,64px)}
 .pt-col{min-width:0;padding-top:22px;border-top:1px solid var(--line);transition:border-color .5s}
 .pt-col:hover{border-top-color:var(--gold-55)}
+/* Las seis bases llevan el color con que se identifica cada una en toda la
+   página: el filete, la sigla y un punto. */
+.pt-col[class*=" f-"]{border-top-color:color-mix(in srgb,var(--punto) 70%,transparent)}
+.pt-col[class*=" f-"]:hover{border-top-color:var(--punto)}
+.pt-col[class*=" f-"] .pt-lat{color:var(--punto)!important}
+.pt-col[class*=" f-"] .pt-lat::after{content:"";display:inline-block;width:.32em;height:.32em;margin-left:.6em;border-radius:50%;background:var(--punto);vertical-align:.18em}
 .pt-col h3{margin:0;font:500 17px/1.3 var(--sans)}
 .pt-col p{margin:10px 0 0;color:var(--mute)}
 .pt-col button{margin-top:18px;padding:0;border:0;background:none;font-size:14px;color:var(--fg);transition:color .3s}
@@ -783,7 +798,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pasos ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 .paso{position:relative;padding:34px clamp(18px,2.6vw,48px) 0 0}
 .paso__punto{position:absolute;left:-4.5px;top:calc(-3.333cqw - 4.5px);width:9px;height:9px;border-radius:50%;background:var(--bg);border:1px solid var(--mute-2);transition:background .5s,border-color .5s,box-shadow .5s}
-.paso.is-lit .paso__punto{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 6px rgba(201,164,92,.14)}
+.paso.is-lit .paso__punto{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 6px rgba(217,163,27,.14)}
 .paso h3{margin:0;font:500 clamp(20px,1.7vw,26px)/1.2 var(--sans);letter-spacing:-.01em}
 .paso p{margin:12px 0 0;color:var(--mute)}
 .lat{display:block;width:min(100%,220px);height:auto;margin-bottom:24px;overflow:visible}
@@ -813,7 +828,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .cursor .c-punto{width:8px;height:8px;margin:-4px 0 0 -4px;background:var(--gold);box-shadow:0 0 10px 2px rgba(255,196,110,.7)}
 .cursor .c-aro{width:38px;height:38px;margin:-19px 0 0 -19px;border:1px solid rgba(232,200,120,.7);transition:width .35s var(--ease),height .35s var(--ease),margin .35s var(--ease),background .35s}
 .cursor .c-luz{width:440px;height:440px;margin:-220px 0 0 -220px;mix-blend-mode:screen;background:radial-gradient(circle,rgba(255,205,120,.16) 0%,rgba(240,165,80,.07) 28%,rgba(220,140,60,.03) 50%,rgba(220,140,60,0) 70%)}
-.cursor.is-link .c-aro{width:62px;height:62px;margin:-31px 0 0 -31px;border-color:var(--gold);background:rgba(201,164,92,.1)}
+.cursor.is-link .c-aro{width:62px;height:62px;margin:-31px 0 0 -31px;border-color:var(--gold);background:rgba(217,163,27,.1)}
 .con-cursor .entrada,.con-cursor .entrada button{cursor:none}
 
 @media (max-width:1100px){ .pt-cols{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px} }
@@ -828,8 +843,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   .pt-brand{width:170px}
   .pt-hero{min-height:720px}
   .pt-sello{left:90vw;top:28%;width:125vw;height:125vw}
-  .pt-copia{top:auto}
-  .pt-marca{margin-top:30px;font-size:15vw}
+  .pt-marca{width:100%;padding-bottom:14.05%}
 }
 @media (max-width:600px){ .pt-cols{grid-template-columns:minmax(0,1fr)} }
 
@@ -857,7 +871,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
     <header class="pt-hdr" id="pt-hdr">
       <span class="pt-brand">
         <span class="pt-brand__tag">Buscador de jurisprudencia<br>argentina, mendocina e internacional.</span>
-        <span class="pt-brand__name" aria-hidden="true"><svg id="sello-pt" viewBox="0 0 1000 1000"></svg><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></span>
+        <span class="pt-brand__name" aria-hidden="true"><img src="./marca-mini.svg" alt="" width="26" height="26"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></span>
       </span>
       <nav class="pt-nav" aria-label="Secciones de la plataforma">
         <button type="button" data-tab="buscar">Consulta</button>
@@ -882,13 +896,12 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
           <button type="button" class="btn" data-tab="buscar">Iniciar la consulta</button>
           <button type="button" class="btn sec" data-tab="fuentes">Ver el catálogo de fuentes</button>
         </div>
-        <p class="pt-marca marca pt-llega" style="--d:.7s" aria-label="IVS CODEX"><span style="--i:0">I</span><span class="v" style="--i:1">V</span><span style="--i:2">S</span><span class="m-punto" style="--i:3"></span><span style="--i:4">C</span><span style="--i:5">O</span><span style="--i:6">D</span><span style="--i:7">E</span><span class="v" style="--i:8">X</span></p>
+        <p class="pt-marca pt-llega" style="--d:.7s;--ratio:3951/555" role="img" aria-label="IVS CODEX"><span style="--i:0;left:0.000%;width:3.872%;background-size:2582.353% 100%;background-position:0.000% 0"></span><span style="--i:1;left:4.784%;width:12.706%;background-size:787.052% 100%;background-position:5.480% 0"></span><span style="--i:2;left:18.021%;width:8.378%;background-size:1193.656% 100%;background-position:19.669% 0"></span><span style="--i:3;left:29.916%;width:2.860%;background-size:3496.460% 100%;background-position:30.797% 0"></span><span style="--i:4;left:36.117%;width:11.491%;background-size:870.264% 100%;background-position:40.806% 0"></span><span style="--i:5;left:48.545%;width:13.288%;background-size:752.571% 100%;background-position:55.984% 0"></span><span style="--i:6;left:63.427%;width:12.199%;background-size:819.710% 100%;background-position:72.240% 0"></span><span style="--i:7;left:77.196%;width:9.896%;background-size:1010.486% 100%;background-position:85.674% 0"></span><span style="--i:8;left:88.231%;width:11.769%;background-size:849.677% 100%;background-position:100.000% 0"></span></p>
       </div>
     </div>
 
     <section class="pt-sec" aria-label="Qué hace la plataforma">
-      <p class="pt-parrafo" data-reveal>La plataforma interroga de forma simultánea los repositorios oficiales integrados, extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>
-      <div class="pt-cols">
+            <div class="pt-cols">
         <div class="pt-col" data-reveal><h3>Consulta</h3><p>La consulta se arma con los operadores de cada buscador oficial y se envía a las seis bases integradas a la vez.</p><button type="button" data-tab="buscar">Iniciar la consulta →</button></div>
         <div class="pt-col" data-reveal style="--d:.08s"><h3>Ramas y voces</h3><p>Los buscadores judiciales argentinos indexan mediante descriptores técnicos y no por lenguaje natural.</p><button type="button" data-tab="ramas">Ver las ramas →</button></div>
         <div class="pt-col" data-reveal style="--d:.16s"><h3>Lector</h3><p>El fallo se visualiza con su búsqueda destacada, con los pasajes recortados y la cita preparada para copiar.</p><button type="button" data-tab="lector">Abrir el Lector →</button></div>
@@ -899,7 +912,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
     <section class="pt-sec" aria-label="El nombre">
       <p class="pt-entrada" data-reveal>cōdex, -icis <span>·</span> sustantivo masculino <span>·</span> latín</p>
       <div class="pt-nombre" data-reveal>
-        <h2>Libro de hojas cosidas; por extensión, el cuerpo ordenado de las leyes.</h2>
+        <h2>Por extensión, el cuerpo ordenado de las leyes.</h2>
         <div>
           <p>IVS CODEX reúne en una sola consulta los repositorios oficiales de jurisprudencia y legislación argentinas, junto con la doctrina publicada en español.</p>
           <p>No almacena fallos ni genera contenido jurídico. Cada resultado se presenta con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>
@@ -970,7 +983,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 <header class="top">
   <div class="nav-wrap">
-    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><svg id="sello-app" viewBox="0 0 1000 1000" aria-hidden="true"></svg><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
+    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><img src="./marca-mini.svg" alt="" width="26" height="26"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
     <div class="nav-fin"><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
@@ -1067,8 +1080,6 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
       svg.innerHTML=h;
     }
     sello(document.getElementById("pt-sello"),{id:"g",grosor:1.3,opacidad:.34});
-    sello(document.getElementById("sello-pt"),{id:"p",texto:false,paso:58,grosor:22,opacidad:.9});
-    sello(document.getElementById("sello-app"),{id:"a",texto:false,paso:58,grosor:22,opacidad:.9});
 
     /* el puntero de luz, solo mientras la portada está abierta */
     var cursor=null,cx=-200,cy=-200,rx=cx,ry=cy,lx=cx,ly=cy;
@@ -1174,7 +1185,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
         var cols=document.getElementById("pt-bases-cols");
         if(cols&&typeof FUENTES_INDICE!=="undefined"){
           cols.innerHTML=FUENTES_INDICE.map(function(f,i){
-            return '<div class="pt-col" data-reveal style="--d:'+(i%3*.08)+'s"><p class="pt-lat">'+esc(f.cod)+'</p><h3>'+esc(f.nombre)+'</h3><p>'+esc(f.nota)+'</p></div>';
+            return '<div class="pt-col f-'+f.slug+'" data-reveal style="--d:'+(i%3*.08)+'s"><p class="pt-lat">'+esc(f.cod)+'</p><h3>'+esc(f.nombre)+'</h3><p>'+esc(f.nota)+'</p></div>';
           }).join("");
           revelar();
         }
@@ -5971,58 +5982,67 @@ function vistaCuenta(){
    sello de la portada, con un solo punto dorado —el del logo— en el lugar
    que importa de cada uno. Se dibujan solos al entrar a la sección. */
 function dibujoSeccion(tab){
-  var k=0;
+  var k=0,h="",i,x,y,a;
   function l(d){ return '<path class="dl" style="--i:'+(k++)+'" pathLength="1" d="'+d+'"/>'; }
   function c(x,y,r){ return '<circle class="dl" style="--i:'+(k++)+'" pathLength="1" cx="'+x+'" cy="'+y+'" r="'+r+'"/>'; }
   function p(x,y,r){ return '<circle class="dd" cx="'+x+'" cy="'+y+'" r="'+(r||4)+'"/>'; }
-  var h="",i,x,y;
+  /* Todos los dibujos son simétricos respecto del eje vertical (x = 120): lo
+     que hay de un lado, hay igual del otro. El único punto dorado, el del
+     logo, va sobre el eje. */
   switch(tab){
-    case "buscar":   // la consulta baja a las seis bases
-      for(i=0;i<6;i++){ var a=(205+i*26)*Math.PI/180; x=(120+92*Math.cos(a)).toFixed(1); y=(140+92*Math.sin(a)).toFixed(1); h+=c(x,y,6)+l("M"+x+" "+y+"L120 140"); }
-      h+=p(120,140,5); break;
-    case "comparar": // una barra por base, la más alta con el punto
-      [70,40,98,56,82,30].forEach(function(v,j){ x=40+j*32; h+=l("M"+x+" 146V"+(146-v)); });
-      h+=l("M28 146H212")+p(104,40); break;
-    case "ramas":    // un tronco que se abre
-      h+=l("M120 152V96")+l("M120 96L78 58L56 26")+l("M78 58L98 22")+l("M120 96L164 54L188 24")+l("M164 54L150 18")+l("M120 96L124 34");
-      h+=p(188,24); break;
-    case "requisitos": // la lista de control
-      for(i=0;i<5;i++){ y=34+i*26; h+=c(46,y,7)+l("M66 "+y+"H"+(196-(i%3)*28)); }
-      h+=p(46,60,4); break;
-    case "norma":    // la columna: la ley como sostén
+    case "buscar":   // la consulta sale a las seis bases, en abanico
+      for(i=0;i<6;i++){ a=(-62.5+i*25)*Math.PI/180; x=(120+100*Math.sin(a)).toFixed(1); y=(142-100*Math.cos(a)).toFixed(1);
+        h+=c(x,y,7)+l("M120 142L"+(120+86*Math.sin(a)).toFixed(1)+" "+(142-86*Math.cos(a)).toFixed(1)); }
+      h+=p(120,142,5); break;
+    case "comparar": // cinco barras en pirámide
+      h+=l("M30 146H210");
+      [[48,34],[84,66],[120,100],[156,66],[192,34]].forEach(function(b){ h+=l("M"+b[0]+" 146V"+(146-b[1])); });
+      h+=p(120,32,4.5); break;
+    case "ramas":    // un árbol simétrico
+      h+=l("M120 152V84")+l("M120 84L74 52")+l("M120 84L166 52")+l("M74 52L50 26")+l("M74 52L98 24")+l("M166 52L190 26")+l("M166 52L142 24")+l("M120 84V30");
+      [[50,26],[98,24],[142,24],[190,26]].forEach(function(t){ h+=c(t[0],t[1],5); });
+      h+=p(120,24,5); break;
+    case "requisitos": // la lista de control: tres filas, espejadas
+      h+=l("M56 24H184V144H56Z");
+      [52,84,116].forEach(function(yy){ h+=c(84,yy,8)+l("M104 "+yy+"H136")+c(156,yy,8); });
+      h+=p(120,24,4.5); break;
+    case "norma":    // el templo
       h+=l("M64 30H176")+l("M72 40H168")+l("M84 40V128")+l("M102 40V128")+l("M120 40V128")+l("M138 40V128")+l("M156 40V128")+l("M72 128H168")+l("M60 140H180");
-      h+=p(120,20); break;
+      h+=p(120,18,4.5); break;
     case "lector":   // el libro abierto
       h+=l("M120 36Q86 26 40 32V132Q86 126 120 136")+l("M120 36Q154 26 200 32V132Q154 126 120 136")+l("M120 36V136");
-      for(i=0;i<5;i++){ y=52+i*16; h+=l("M52 "+(y-2)+"Q84 "+(y-8)+" 110 "+(y-1))+l("M130 "+(y-1)+"Q156 "+(y-8)+" 188 "+(y-2)); }
-      h+=p(176,24); break;
-    case "citas":    // las comillas y el texto que encierran
-      h+=l("M58 50L44 64L58 78")+l("M74 50L60 64L74 78")+l("M166 82L180 96L166 110")+l("M182 82L196 96L182 110");
-      h+=l("M88 58H196")+l("M44 96H154")+l("M44 124H118")+p(128,124,3.5); break;
+      for(i=0;i<5;i++){ y=52+i*16; h+=l("M52 "+(y-2)+"Q84 "+(y-8)+" 110 "+(y-1))+l("M188 "+(y-2)+"Q156 "+(y-8)+" 130 "+(y-1)); }
+      h+=p(120,20,4.5); break;
+    case "citas":    // las comillas, abriendo y cerrando
+      h+=l("M72 52L54 70L72 88")+l("M90 52L72 70L90 88")+l("M168 52L186 70L168 88")+l("M150 52L168 70L150 88");
+      h+=l("M84 118H156")+l("M100 134H140");
+      h+=p(120,70,5); break;
     case "verificar": // el sello con su tilde
-      h+=c(120,82,58)+c(120,82,44)+l("M98 84L114 100L144 66");
-      h+=p(120,24); break;
-    case "fuentes":  // la fuente y lo que se extiende de ella
-      h+=l("M70 52A40 40 0 0 1 70 112")+l("M90 36A62 62 0 0 1 90 128")+l("M110 20A84 84 0 0 1 110 144");
-      [[150,40],[176,70],[184,104],[160,132]].forEach(function(q){ h+=c(q[0],q[1],5); });
-      h+=p(54,82,5); break;
-    case "guardados": // las fichas apiladas
-      h+=l("M60 52H176V136H60Z")+l("M70 40H186V52")+l("M80 28H196V40")+l("M76 76H156")+l("M76 96H160")+l("M76 116H128");
-      h+=p(176,52,4); break;
+      h+=c(120,84,58)+c(120,84,44)+l("M98 86L114 102L144 68");
+      h+=p(120,22,4.5); break;
+    case "fuentes":  // la señal: arcos concéntricos que salen de un punto
+      [30,58,86].forEach(function(r){
+        a=56*Math.PI/180;
+        h+=l("M"+(120-r*Math.sin(a)).toFixed(1)+" "+(138-r*Math.cos(a)).toFixed(1)+"A"+r+" "+r+" 0 0 1 "+(120+r*Math.sin(a)).toFixed(1)+" "+(138-r*Math.cos(a)).toFixed(1));
+      });
+      h+=l("M120 138V152")+p(120,138,5.5); break;
+    case "guardados": // fichas apiladas
+      h+=l("M50 144V104H190V144Z")+l("M64 104V80H176V104")+l("M78 80V56H162V80")+l("M104 124H136")+l("M112 92H128");
+      h+=p(120,68,4.5); break;
     case "cuenta":   // la cerradura
-      h+=c(120,82,56)+c(120,70,13)+l("M112 82L106 116H134L128 82");
-      h+=p(120,70,3.5); break;
+      h+=c(120,84,56)+c(120,72,13)+l("M112 84L106 118H134L128 84");
+      h+=p(120,72,3.5); break;
     case "calculos": // el ábaco
       h+=l("M40 30H200V136H40Z");
-      for(i=0;i<4;i++){ y=52+i*24; h+=l("M40 "+y+"H200"); [0,1,2].forEach(function(j){ h+=c(56+j*16+i*14,y,6); }); }
-      h+=p(176,76,6); break;
+      [[52,2],[76,3],[100,3],[124,2]].forEach(function(r){ h+=l("M40 "+r[0]+"H200"); for(i=0;i<r[1];i++) h+=c(58+i*17,r[0],6)+c(182-i*17,r[0],6); });
+      h+=p(120,88,5); break;
     case "plazos":   // el calendario y el día que vence
       h+=l("M40 34H200V140H40Z")+l("M40 54H200")+l("M76 26V42")+l("M164 26V42");
-      for(y=0;y<4;y++) for(x=0;x<7;x++){ if(!(x===4&&y===2)) h+='<circle class="dp" cx="'+(58+x*21)+'" cy="'+(72+y*18)+'" r="1.8"/>'; }
-      h+=c(142,108,8)+p(142,108,3.5); break;
-    case "glosario": // la V romana del logo, con su punto
-      h+=l("M58 34H86")+l("M150 34H178")+l("M72 34L118 134")+l("M118 134L164 34")+l("M40 146H200");
-      h+=p(196,92,6); break;
+      for(y=0;y<4;y++) for(x=0;x<7;x++){ if(!(x===3&&y===2)) h+='<circle class="dp" cx="'+(57+x*21)+'" cy="'+(72+y*18)+'" r="1.8"/>'; }
+      h+=c(120,108,8)+p(120,108,3.5); break;
+    case "glosario": // la V romana del logo
+      h+=l("M62 34H92")+l("M148 34H178")+l("M77 34L120 134")+l("M120 134L163 34")+l("M40 146H200");
+      h+=p(120,62,5.5); break;
     default: return "";
   }
   return '<svg class="cab__dibujo" viewBox="0 0 240 160" aria-hidden="true">'+h+'</svg>';
@@ -6048,7 +6068,7 @@ var CALC={
   actualizacion:{monto:"",indice:"cer",desde:"",hasta:"",cargando:false,error:"",res:null},
   despido:{sueldo:"",ingreso:"",egreso:"",tope:"",prueba:false,sinPreaviso:true,integracion:true,sacRubros:true},
   incapacidad:{ingreso:"",porcentaje:"",edad:"",formula:"mendez",edadLimite:"75",tasa:"4"},
-  honorarios:{juris:"nacion",monto:"",uma:"",jus:"",minPct:"",maxPct:"",iva:false,tasaPct:"3"},
+  honorarios:{juris:"nacion",monto:"",uma:"",jus:"",rol:"ganador",proceso:"ordinario",merito:"",procurador:false,iva:false,tasaPct:"3"},
   liquidacion:{capital:"",intereses:"",desde:"",hasta:"",honorarios:"",iva:false,tasa:"",otros:""},
   plazosActiva:"procesales",
   procesales:{notif:"",dias:"",tipo:"habiles",juris:"nacion"},
@@ -6426,19 +6446,40 @@ function calcHonorarios(){
     filas.push(["Tramo de la escala",(t[0]===Infinity?"más de 750 UMA":"hasta "+t[0]+" UMA")+" · del "+t[1]+" % al "+t[2]+" %"]);
     base="Ley 27.423 de honorarios profesionales (Nación), art. 21: escala sobre el monto del proceso expresado en UMA. Los mínimos por tipo de proceso del art. 58 no se calculan acá. Tasa de justicia: Ley 23.898, art. 2.";
   }else{
-    var jus=num(c.jus),pmin=num(c.minPct),pmax=num(c.maxPct);
-    if(!(pmin>=0)||!(pmax>0)) return {titulo:"Honorarios",total:"—",sub:"Cargue los porcentajes mínimo y máximo que corresponden según la Ley 9131 de Mendoza."};
-    min=m*pmin/100;max=m*pmax/100;
-    filas.push(["Monto del proceso",pesos(m)+(jus>0?" · "+(m/jus).toLocaleString("es-AR",{maximumFractionDigits:2})+" JUS":"")]);
-    filas.push(["Porcentajes aplicados","del "+porc(pmin)+" al "+porc(pmax)]);
-    base="Ley 9131 de aranceles de abogados y procuradores de Mendoza: los porcentajes los carga quien calcula según la escala vigente. El valor del JUS lo fija la Suprema Corte de Mendoza.";
+    // Ley 9131 de Mendoza, art. 2: escala por tramos del monto del proceso
+    // expresado en JUS. Se aplica por tramos acumulativos: cada porcentaje
+    // alcanza solo a la porción del monto que cae en su tramo.
+    var jus=num(c.jus);
+    if(!(jus>0)) return {titulo:"Honorarios",total:"—",sub:"Cargue el valor vigente del JUS: lo fija la Suprema Corte de Mendoza por acordada y la ley no lo contiene."};
+    var enJus=m/jus,TR=[[0,20,20],[20,50,16],[50,Infinity,12]],bruto=0;
+    TR.forEach(function(t){
+      var porcion=Math.max(0,Math.min(enJus,t[1])-t[0]);
+      if(porcion>0){
+        var v=porcion*jus*t[2]/100; bruto+=v;
+        filas.push(["Tramo "+(t[1]===Infinity?"más de "+t[0]:(t[0]?"más de "+t[0]+" a ":"hasta ")+t[1])+" JUS · "+t[2]+" %",
+          porcion.toLocaleString("es-AR",{maximumFractionDigits:2})+" JUS · "+pesos(v)]);
+      }
+    });
+    var mer=num(c.merito)||0,f=bruto;
+    if(mer>0){ f=f*(1+Math.min(mer,30)/100); filas.push(["Aumento por mérito de la labor (art. 2, hasta 30 %)","+"+porc(Math.min(mer,30))]); }
+    if(c.rol==="perdedor"){ f=f*.7; filas.push(["Abogado de la parte perdedora (art. 3)","70 % de lo que corresponde al de la ganadora"]); }
+    if(c.proceso==="monitorio"){ f=f*.75; filas.push(["Proceso monitorio sin oposición (art. 7)","reducción del 25 %"]); }
+    if(c.proceso==="sucesion"){ f=f*.7; filas.push(["Sucesión (art. 8)","reducción del 30 %"]); }
+    if(c.procurador){ f=f*.5; filas.push(["Procurador, primera instancia (art. 31)","50 % del honorario del abogado"]); }
+    min=f;max=f;
+    filas.unshift(["Monto del proceso",pesos(m)+" · "+enJus.toLocaleString("es-AR",{maximumFractionDigits:2})+" JUS"]);
+    base="Ley 9131 de Mendoza (aranceles de abogados y procuradores): art. 2 (escala: hasta 20 JUS, 20 %; más de 20 y hasta 50 JUS, 16 %; más de 50 JUS, 12 %; aumento de hasta 30 % por mérito), art. 3 (parte perdedora, 70 %), art. 7 (monitorio sin oposición, reducción del 25 %), art. 8 (sucesiones, reducción del 30 %) y art. 31 (procurador, 50 % en primera instancia y 30 % en las demás). El valor del JUS lo fija la Suprema Corte. Los mínimos por tipo de proceso (arts. 9 a 19), los honorarios de segunda instancia (art. 15) y los incidentes (art. 14) no se calculan acá.";
+    avisos.push("La escala se aplica por tramos acumulativos; verifique ese criterio con la regulación del juzgado.");
   }
-  filas.push(["Honorarios mínimos",pesos(min)+(c.iva?" + IVA "+pesos(min*.21):"")]);
-  filas.push(["Honorarios máximos",pesos(max)+(c.iva?" + IVA "+pesos(max*.21):"")]);
+  if(min===max) filas.push(["Honorarios",pesos(min)+(c.iva?" + IVA "+pesos(min*.21):"")]);
+  else{
+    filas.push(["Honorarios mínimos",pesos(min)+(c.iva?" + IVA "+pesos(min*.21):"")]);
+    filas.push(["Honorarios máximos",pesos(max)+(c.iva?" + IVA "+pesos(max*.21):"")]);
+  }
   var tp=num(c.tasaPct);
   if(tp>0) filas.push(["Tasa de justicia ("+porc(tp)+")",pesos(m*tp/100)]);
   avisos.push("El monto definitivo lo regula el juez dentro de la escala, según la labor, el resultado y la complejidad.");
-  return {titulo:"Honorarios según la escala",total:pesos(min)+" a "+pesos(max),sub:c.iva?"Más IVA (21 %) por ser responsable inscripto":"",
+  return {titulo:"Honorarios según la escala",total:(min===max?pesos(min):pesos(min)+" a "+pesos(max)),sub:c.iva?"Más IVA (21 %) por ser responsable inscripto":"",
     filas:filas,avisos:avisos,base:base,aLiquidacion:{honorarios:max,iva:c.iva,tasa:tp>0?m*tp/100:0},
     texto:filas.map(function(f){return f[0]+": "+f[1];}).join("\n")};
 }
@@ -6449,11 +6490,16 @@ function formHonorarios(){
     campoC("Monto del proceso","honorarios.monto",c.monto,{ph:"12.000.000",num:true})+
     (c.juris==="nacion"
       ?campoC("Valor vigente de la UMA (Acordada de la Corte Suprema)","honorarios.uma",c.uma,{ph:"Valor en pesos",num:true})
-      :'<div class="fila">'+campoC("Valor vigente del JUS","honorarios.jus",c.jus,{ph:"Opcional",num:true})+
-        campoC("Porcentaje mínimo (%)","honorarios.minPct",c.minPct,{num:true})+campoC("Porcentaje máximo (%)","honorarios.maxPct",c.maxPct,{num:true})+'</div>')+
+      :campoC("Valor vigente del JUS (lo fija la Suprema Corte de Mendoza)","honorarios.jus",c.jus,{ph:"Valor en pesos",num:true})+
+        '<fieldset class="grupo" style="border:0;padding:0;margin:0"><legend class="busq-rotulo">Representa a la parte</legend>'+
+          chipsC("honorarios.rol",c.rol,[["ganador","Ganadora"],["perdedor","Perdedora (70 %)"]])+'</fieldset>'+
+        '<fieldset class="grupo" style="border:0;padding:0;margin:0"><legend class="busq-rotulo">Tipo de proceso</legend>'+
+          chipsC("honorarios.proceso",c.proceso,[["ordinario","Común"],["monitorio","Monitorio sin oposición"],["sucesion","Sucesión"]])+'</fieldset>'+
+        campoC("Aumento por mérito de la labor (%, hasta 30)","honorarios.merito",c.merito,{ph:"0",num:true})+
+        '<div class="calc-tildes">'+tildeC("honorarios.procurador",c.procurador,"Honorarios del procurador (primera instancia)")+'</div>')+
     campoC("Tasa de justicia (%)","honorarios.tasaPct",c.tasaPct,{ph:c.juris==="nacion"?"3":"Según la ley impositiva",num:true})+
     '<div class="calc-tildes">'+tildeC("honorarios.iva",c.iva,"El profesional es responsable inscripto en el IVA")+'</div>'+
-    '<p class="calc-nota">'+(c.juris==="nacion"?"La tasa de justicia nacional es del 3 % del monto (Ley 23.898, art. 2).":"En Mendoza, la tasa de justicia la fija la ley impositiva de cada año.")+'</p>';
+    '<p class="calc-nota">'+(c.juris==="nacion"?"La tasa de justicia nacional es del 3 % del monto (Ley 23.898, art. 2).":"En Mendoza, la tasa de justicia la fija la ley impositiva de cada año: cargue el porcentaje vigente.")+'</p>';
 }
 
 /* ================= LIQUIDACIÓN DE SENTENCIA ================= */
