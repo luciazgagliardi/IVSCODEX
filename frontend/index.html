@@ -752,27 +752,15 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .sg-punto{fill:var(--gold);transform-box:fill-box;transform-origin:center;animation:punto .9s cubic-bezier(.34,1.56,.64,1) 2.3s both}
 @keyframes renglon{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 @keyframes punto{from{transform:scale(0)}to{transform:scale(1)}}
-/* los fallos emblemáticos que aparecen y se desvanecen en el centro del sello */
-.pt-fallo{position:absolute;left:50%;top:50%;width:58vh;transform:translate(-50%,-50%);text-align:center;display:flex;flex-direction:column;align-items:center;gap:1.7vh;padding:6vh 3vh;pointer-events:none}
-.pt-fallo::before{content:"";position:absolute;inset:-4vh;z-index:-1;background:radial-gradient(closest-side,var(--bg) 58%,rgba(16,14,11,0));opacity:0;transition:opacity 1s var(--ease)}
-.pt-fallo.on::before{opacity:.94}
-.pt-fallo__rot{font:500 1.5vh/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
-.pt-fallo__nom{margin:0;font:400 4.7vh/1.08 var(--caps);letter-spacing:.04em;color:var(--fg)}
-.pt-fallo__nom .w{display:inline-block;white-space:nowrap}
-.pt-fallo__nom i{display:inline-block;font-style:normal;opacity:0;filter:blur(10px);transform:translateY(.6vh);transition:opacity .9s var(--ease),filter .9s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--d) * 1ms)}
-.pt-fallo.on .pt-fallo__nom i{opacity:1;filter:none;transform:none}
-.pt-fallo.off .pt-fallo__nom i{opacity:0;filter:blur(8px);transform:translateY(-.5vh);transition-duration:.7s}
-.pt-fallo__filete{width:5vh;height:1px;background:var(--gold);transform:scaleX(0);transition:transform 1s var(--ease) .5s}
-.pt-fallo.on .pt-fallo__filete{transform:none}
-.pt-fallo.off .pt-fallo__filete{transform:scaleX(0);transition-delay:0s;transition-duration:.5s}
-.pt-fallo__tema,.pt-fallo__ref{margin:0;opacity:0;filter:blur(6px);transition:opacity .9s var(--ease),filter .9s var(--ease)}
-.pt-fallo__tema{max-width:44vh;font:400 2vh/1.5 var(--sans);color:var(--mute);transition-delay:.7s}
-.pt-fallo__ref{font:500 1.4vh/1 var(--caps);letter-spacing:.2em;color:var(--dim);transition-delay:1s}
-.pt-fallo.on .pt-fallo__tema,.pt-fallo.on .pt-fallo__ref{opacity:1;filter:none}
-.pt-fallo.off .pt-fallo__tema,.pt-fallo.off .pt-fallo__ref{opacity:0;filter:blur(6px);transition-delay:0s;transition-duration:.6s}
-.pt-fallo__rot{opacity:0;transition:opacity .9s var(--ease) .15s}
-.pt-fallo.on .pt-fallo__rot{opacity:1}.pt-fallo.off .pt-fallo__rot{opacity:0;transition-delay:0s;transition-duration:.5s}
-@media (max-width:900px){.pt-fallo{display:none}}
+/* los renglones del sello se apartan para dejar sitio a cada fallo, y se cierran al irse */
+.sg-renglones .rg{transition:transform 1.3s var(--ease)}
+.sg-renglones path{transition:opacity .9s var(--ease),transform 1.3s var(--ease)}
+.sg-fallos text{font-family:var(--caps);font-size:27px;letter-spacing:0;fill:var(--fg);text-rendering:geometricPrecision}
+.sg-fallos .fl{opacity:0;transform:translateY(5px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--d) * 1ms)}
+.sg-fallos .fl.on{opacity:1;transform:none}
+.sg-fallos .fl.anio{fill:var(--gold)}
+.sg-fallos .fl.off{opacity:0;transform:translateY(-4px);transition-duration:.6s}
+
 
 .gira{animation:gira 240s linear infinite;transform-box:fill-box;transform-origin:center}
 @keyframes gira{to{transform:rotate(360deg)}}
@@ -922,7 +910,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
     </header>
 
     <div class="pt-hero">
-      <div class="pt-sello" aria-hidden="true"><svg id="pt-sello" viewBox="0 0 1000 1000"></svg><div class="pt-fallo" id="pt-fallo"></div></div>
+      <div class="pt-sello" aria-hidden="true"><svg id="pt-sello" viewBox="0 0 1000 1000"></svg></div>
       <div class="pt-copia">
         <h1 class="pt-titular pt-llega" id="pt-titular" style="--d:.2s">Buscador integrado de repositorios judiciales oficiales y <em>doctrina</em>.</h1>
         <dl class="pt-datos pt-llega" style="--d:.4s">
@@ -1083,7 +1071,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
        el punto del logo como punto final, y alrededor una leyenda que
        gira. Va con semilla para que salga siempre igual. */
     function azar(s){ return function(){ s=(s*16807)%2147483647; return (s-1)/2147483646; }; }
-    function renglones(c,R,paso,semilla){
+    function renglones(c,R,paso,semilla,seg){
       var rnd=azar(semilla),y=c-R+paso*1.2,i=0,par=5+Math.floor(rnd()*4),sangria=false,out=[],ult=null;
       while(y<c+R-paso*.8){
         var h=Math.sqrt(Math.max(R*R-(y-c)*(y-c),0)),x0=c-h+4,x1=c+h-4;
@@ -1097,7 +1085,8 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
           x=e+6.5+rnd()*3;
         }
         if(segs.length){
-          out.push('<path style="--i:'+i+'" pathLength="1" d="'+segs.map(function(s){return "M"+s[0].toFixed(1)+" "+y.toFixed(1)+"H"+s[1].toFixed(1);}).join("")+'"/>');
+          if(seg) out.push('<g class="rg" data-y="'+y.toFixed(1)+'" data-x0="'+x0.toFixed(1)+'" data-x1="'+x1.toFixed(1)+'">'+segs.map(function(s){return '<path style="--i:'+i+'" pathLength="1" data-a="'+s[0].toFixed(1)+'" data-b="'+s[1].toFixed(1)+'" d="M'+s[0].toFixed(1)+' '+y.toFixed(1)+'H'+s[1].toFixed(1)+'"/>';}).join("")+'</g>');
+          else out.push('<path style="--i:'+i+'" pathLength="1" d="'+segs.map(function(s){return "M"+s[0].toFixed(1)+" "+y.toFixed(1)+"H"+s[1].toFixed(1);}).join("")+'"/>');
           ult=[segs[segs.length-1][1],y]; i++;
         }
         sangria=false;
@@ -1113,60 +1102,94 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
            '<g class="gira"><text class="sg-texto" font-size="33" letter-spacing="9" opacity=".75"><textPath href="#sg-'+o.id+'" textLength="'+(2*Math.PI*rT-12).toFixed(0)+'" lengthAdjust="spacing">'+ley+ley+'</textPath></text></g>';
       }
       h+='<circle class="sg-aro" cx="500" cy="500" r="496" stroke-width="1" opacity=".5"/><circle class="sg-aro" cx="500" cy="500" r="412" stroke-width="1" opacity=".5"/>';
-      var r=renglones(500,372,o.paso||19,7);
+      var r=renglones(500,372,o.paso||19,7,o.dinamico);
       h+='<g class="sg-renglones" stroke-width="'+(o.grosor||1.6)+'" opacity="'+(o.opacidad||.5)+'">'+r.paths+'</g>';
       if(r.fin) h+='<circle class="sg-punto" cx="'+(r.fin[0]+15).toFixed(1)+'" cy="'+r.fin[1].toFixed(1)+'" r="7.5"/>';
       svg.innerHTML=h;
     }
-    sello(document.getElementById("pt-sello"),{id:"g",grosor:1.3,opacidad:.34});
+    sello(document.getElementById("pt-sello"),{id:"g",grosor:1.3,opacidad:.34,dinamico:true});
 
-    /* los fallos emblemáticos de la Corte Suprema, uno por vez, dentro del sello */
+    /* fallos emblemáticos de la Corte Suprema: aparecen en distintos puntos del círculo; los renglones se apartan y vuelven */
     (function(){
-      var cont=document.getElementById("pt-fallo"); if(!cont) return;
-      var FALLOS=[
-        ["Siri, Ángel","27/12/1957","239:459","Las garantías constitucionales son operativas: el amparo procede sin necesidad de ley que lo reglamente."],
-        ["Kot, Samuel S.R.L.","05/09/1958","241:291","El amparo procede también contra actos de particulares."],
-        ["Ercolano c/ Lanteri de Renshaw","28/04/1922","136:161","El derecho de propiedad no es absoluto: la emergencia habilita limitar el precio de las locaciones."],
-        ["Avico c/ de la Pesa","07/12/1934","172:21","La emergencia económica justifica la moratoria hipotecaria, si es razonable y temporaria."],
-        ["Municipalidad de la Capital c/ Elortondo","14/04/1888","33:162","Los jueces ejercen el control de constitucionalidad de las leyes."],
-        ["Ponzetti de Balbín c/ Editorial Atlántida","11/12/1984","306:1892","El derecho a la intimidad ampara a la persona aun frente al interés público de la información."],
-        ["Bazterrica, Gustavo","29/08/1986","308:1392","La tenencia de estupefacientes para consumo personal, sin peligro para terceros, queda amparada por el art. 19."],
-        ["Sejean c/ Zaks de Sejean","27/11/1986","308:2268","Declaró la inconstitucionalidad de la prohibición del divorcio vincular."],
-        ["Ekmekdjian c/ Sofovich","07/07/1992","315:1492","Los tratados internacionales prevalecen sobre las leyes; se reconoce el derecho de réplica."],
-        ["Giroldi, Horacio","07/04/1995","318:514","Los tribunales deben aplicar la Convención Americana sobre Derechos Humanos con jerarquía constitucional."],
-        ["Fayt, Carlos","19/08/1999","322:1616","Se declaró la nulidad de la cláusula de la reforma de 1994 sobre la edad de los jueces."],
-        ["Vizzoti, Carlos","14/09/2004","327:3677","El tope de la indemnización por despido no puede absorber más de un tercio de la base de cálculo."],
-        ["Aquino, Isacio","21/09/2004","327:3753","Es inconstitucional que la ley de riesgos del trabajo impida la reparación civil plena."],
-        ["Simón, Julio","14/06/2005","328:2056","Se declararon inconstitucionales las leyes de punto final y de obediencia debida."],
-        ["Verbitsky, Horacio","03/05/2005","328:1146","Hábeas corpus colectivo por las condiciones de detención en la provincia de Buenos Aires."],
-        ["Mendoza, Beatriz c/ Estado Nacional","08/07/2008","331:1622","Causa Matanza-Riachuelo: responsabilidad por el daño ambiental colectivo y saneamiento de la cuenca."],
-        ["Halabi, Ernesto","24/02/2009","332:111","Se reconocen las acciones colectivas en defensa de derechos individuales homogéneos."],
-        ["Arriola, Sebastián","25/08/2009","332:1963","Es inconstitucional penar la tenencia para consumo personal que no afecte a terceros."]
-      ];
+      var svg=document.getElementById("pt-sello"); if(!svg) return;
+      var NS="http://www.w3.org/2000/svg",TAM=27,LS=1.2;
+      var FALLOS=[["Siri, Ángel","1957"],["Kot, Samuel","1958"],["Ercolano","1922"],["Avico","1934"],["Elortondo","1888"],
+        ["Ponzetti de Balbín","1984"],["Bazterrica","1986"],["Sejean","1986"],["Ekmekdjian","1992"],["Giroldi","1995"],["Fayt","1999"],
+        ["Vizzoti","2004"],["Aquino","2004"],["Simón","2005"],["Verbitsky","2005"],["Mendoza · Riachuelo","2008"],["Halabi","2009"],["Arriola","2009"]];
       var quieto=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
-      var k=Math.floor(Math.random()*FALLOS.length),t1,t2;
-      function letras(txt){
-        var n=0;
-        return txt.split(" ").map(function(w){
-          return '<span class="w">'+w.split("").map(function(c){ n++; return '<i style="--d:'+((n*83)%520)+'">'+esc(c)+'</i>'; }).join("")+'</span>';
-        }).join(" ");
+      if(quieto) return;
+      var cv=document.createElement("canvas").getContext("2d"),filas=[],activos=[],cola=FALLOS.slice().sort(function(){return Math.random()-.5;}),capa,vivo=true;
+      function medir(c){ cv.font=TAM+"px 'Cormorant SC', Georgia, serif"; return cv.measureText(c).width+LS; }
+      function listo(){
+        var gs=svg.querySelectorAll(".sg-renglones .rg"); if(!gs.length) return false;
+        filas=[].map.call(gs,function(g){ return {g:g,y:+g.getAttribute("data-y"),x0:+g.getAttribute("data-x0"),x1:+g.getAttribute("data-x1"),p:[].slice.call(g.querySelectorAll("path"))}; });
+        capa=document.createElementNS(NS,"g"); capa.setAttribute("class","sg-fallos"); svg.appendChild(capa); return true;
       }
-      function esc(c){ return c==="&"?"&amp;":c==="<"?"&lt;":c; }
-      function mostrar(){
-        var f=FALLOS[k%FALLOS.length]; k++;
-        cont.className="pt-fallo";
-        cont.innerHTML='<div class="pt-fallo__rot">Corte Suprema · '+f[1]+'</div><h2 class="pt-fallo__nom">'+letras(f[0])+'</h2><span class="pt-fallo__filete"></span><p class="pt-fallo__tema">'+f[3]+'</p><div class="pt-fallo__ref">Fallos '+f[2]+'</div>';
-        void cont.offsetWidth; cont.classList.add("on");
-        if(quieto) return;
-        t1=setTimeout(function(){ cont.classList.remove("on"); cont.classList.add("off"); t2=setTimeout(siguiente,1500); },6200);
+      /* cada renglón se desplaza según la distancia a los fallos activos; los tramos que chocan con el texto se retiran */
+      function aplicar(){
+        filas.forEach(function(f,j){
+          var dy=0;
+          activos.forEach(function(a){
+            var d=j-a.fila; if(d===0) return;
+            dy+=(d<0?-1:1)*17*Math.exp(-(Math.abs(d)-1)/2.8);
+          });
+          f.g.style.transform="translateY("+dy.toFixed(1)+"px)";
+          f.p.forEach(function(p){
+            var A=+p.getAttribute("data-a"),B=+p.getAttribute("data-b"),dx=0,oculto=false;
+            activos.forEach(function(a){
+              if(a.fila!==j) return;
+              var m=(A+B)/2,c=(a.x+a.x+a.w)/2,pad=22;
+              if(B>a.x-pad&&A<a.x+a.w+pad) oculto=true; else dx+=(m<c?-1:1)*24;
+            });
+            p.style.opacity=oculto?0:"";
+            p.style.transform=dx?"translateX("+dx.toFixed(1)+"px)":"";
+          });
+        });
       }
-      function siguiente(){
-        if(typeof abierta!=="undefined"&&!abierta) return;
-        if(document.hidden){ t2=setTimeout(siguiente,1500); return; }
-        mostrar();
+      function lugar(w){
+        var libres=[];
+        filas.forEach(function(f,j){
+          var ancho=f.x1-f.x0-w-240; if(ancho<=0) return;
+          if(activos.some(function(a){return Math.abs(a.fila-j)<7;})) return;
+          libres.push(j);
+        });
+        if(!libres.length) return null;
+        var j=libres[Math.floor(Math.random()*libres.length)],f=filas[j];
+        return {fila:j,x:f.x0+120+Math.random()*(f.x1-f.x0-w-240)};
       }
-      setTimeout(siguiente,quieto?0:2800);
+      function lanzar(){
+        if(!vivo) return;
+        if(window.innerWidth<900||document.hidden||(typeof abierta!=="undefined"&&!abierta)){ setTimeout(lanzar,1500); return; }
+        if(activos.length>=2){ setTimeout(lanzar,900); return; }
+        var f=cola.shift(); if(!f){ cola=FALLOS.slice().sort(function(){return Math.random()-.5;}); f=cola.shift(); }
+        var t=f[0],an=f[1],letras=[],x=0,gap=TAM*.7,i;
+        for(i=0;i<t.length;i++){ letras.push([t[i],x,false]); x+=medir(t[i]); }
+        x+=gap;
+        for(i=0;i<an.length;i++){ letras.push([an[i],x,true]); x+=medir(an[i]); }
+        var w=x-LS,u=lugar(w);
+        if(!u){ setTimeout(lanzar,1200); return; }
+        var a={fila:u.fila,x:u.x,w:w,el:[]},y=filas[u.fila].y+TAM*.33;
+        letras.forEach(function(l,k){
+          if(l[0]===" ") return;
+          var e=document.createElementNS(NS,"text");
+          e.setAttribute("x",(u.x+l[1]).toFixed(1)); e.setAttribute("y",y.toFixed(1)); e.textContent=l[0];
+          e.setAttribute("class","fl"+(l[2]?" anio":"")); e.style.setProperty("--d",String(350+((k*83)%560)));
+          capa.appendChild(e); a.el.push(e);
+        });
+        activos.push(a); aplicar();
+        requestAnimationFrame(function(){ requestAnimationFrame(function(){ a.el.forEach(function(e){ e.classList.add("on"); }); }); });
+        setTimeout(function(){
+          a.el.forEach(function(e){ e.classList.remove("on"); e.classList.add("off"); e.style.setProperty("--d",String((a.el.indexOf(e)*37)%300)); });
+          setTimeout(function(){
+            activos.splice(activos.indexOf(a),1); aplicar();            /* los renglones se cierran */
+            setTimeout(function(){ a.el.forEach(function(e){ e.remove(); }); },1400);
+          },750);
+        },4800+Math.random()*1400);
+        setTimeout(lanzar,2600+Math.random()*2200);
+      }
+      var t0=setInterval(function(){ if(listo()){ clearInterval(t0); (document.fonts&&document.fonts.load?document.fonts.load("27px 'Cormorant SC'"):Promise.resolve()).then(function(){ setTimeout(lanzar,2600); }); } },300);
     })();
+
 
     /* el puntero de luz, solo mientras la portada está abierta */
     var cursor=null,cx=-200,cy=-200,rx=cx,ry=cy,lx=cx,ly=cy;
