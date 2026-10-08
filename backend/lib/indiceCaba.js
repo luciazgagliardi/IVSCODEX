@@ -140,7 +140,7 @@ function parsearFilas(html) {
   try {
     dom = new JSDOM(`<body>${html}</body>`, { virtualConsole: consolaMuda });
   } catch {
-    throw errores.indiceFuenteFalla('caba', 'no pude leer el HTML de resultados');
+    throw errores.indiceFuenteFalla('caba', 'no se pudo leer el HTML de resultados');
   }
   const doc = dom.window.document;
 
@@ -232,7 +232,7 @@ function errorDelSitio(html) {
     return 'la base de datos del TSJ está caída en este momento (su propio servidor lo informa así). No es algo que podamos arreglar de este lado: hay que esperar a que la repongan.';
   }
   if (/An error occurred on the server when processing the URL/i.test(cola)) {
-    return 'su servidor devolvió un error interno al listar los resultados. Probá de nuevo en un rato.';
+    return 'su servidor devolvió un error interno al listar los resultados. Pruebe de nuevo en un rato.';
   }
   return null;
 }
@@ -282,12 +282,12 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
       total = sacarTotal(html);
       filas = total ? parsearFilas(html) : [];
     }
-    if (total === null) throw errores.indiceFuenteFalla('caba', 'no encontré el contador de resultados');
+    if (total === null) throw errores.indiceFuenteFalla('caba', 'no se encontró el contador de resultados');
     if (total && !filas.length) {
       // Dice que hay resultados pero no vino ninguno: pasa cuando su servidor
       // corta la respuesta o se le cae la base. Mejor avisar qué pasó que
       // devolver una lista vacía como si la búsqueda no hubiera encontrado nada.
-      throw errores.indiceFuenteFalla('caba', errorDelSitio(html) || 'cortó la respuesta antes de listar los resultados, probá de nuevo');
+      throw errores.indiceFuenteFalla('caba', errorDelSitio(html) || 'cortó la respuesta antes de listar los resultados, pruebe de nuevo');
     }
     if (totalSitio === null) totalSitio = total;
     return filas.slice(sobran);
