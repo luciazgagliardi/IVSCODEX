@@ -607,11 +607,18 @@ mark.actual{background:var(--gold);color:var(--bg)}
   background:var(--bg);color:var(--fg);opacity:1;transition:opacity .5s ease-out
 }
 .entrada.saliendo{opacity:0;pointer-events:none}
-.entrada .grano{position:fixed;z-index:0;opacity:.14;animation:grano .9s steps(1,end) infinite}
-/* y uno más fino por encima de todo, letras incluidas, como en la película */
+/* El grano de la portada es el mismo de sigillvm.com, con sus dos texturas
+   y sus mismos valores: uno detrás del contenido y otro, más fino, por
+   encima de todo —letras incluidas— mezclado en "overlay", corridos medio
+   ciclo entre sí para que se muevan como película. */
+.entrada .grano{
+  position:fixed;z-index:0;inset:-120px;opacity:1;
+  background:url("./grano.png") 0 0/256px 256px repeat;
+  animation:grano .9s steps(1,end) infinite
+}
 .entrada .grano--sobre{
   z-index:30;opacity:.32;mix-blend-mode:overlay;
-  background-image:var(--grano-sobre);background-size:256px 256px;animation-delay:-.45s
+  background:url("./grano-sobre.png") 0 0/256px 256px repeat;animation-delay:-.45s
 }
 .pt-in{position:relative;z-index:1}
 .pt-hdr{
