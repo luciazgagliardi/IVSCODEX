@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Fondos del sello II</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+/* Seis fondos animados para el interior del sello, en lugar de los renglones de texto.
+   En todos, los fallos aparecen en distintos puntos del círculo y el fondo se aparta
+   para dejarles lugar (y se cierra cuando se van). */
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.6);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.16);--gold:#d9a31b;
+  --caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;--ease:cubic-bezier(.16,.84,.24,1)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{height:100vh;height:100dvh;margin:0;background:var(--bg);color:var(--fg);font:400 15px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow:hidden;display:flex;flex-direction:column}
+.grano{position:fixed;inset:0;z-index:5;pointer-events:none;background:url("../grano-sobre.png") 0 0/256px 256px repeat;opacity:.05}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;padding:16px clamp(16px,3vw,40px)}
+.nom{font:500 16px/1 var(--caps);letter-spacing:.3em;margin-right:8px}.nom b{color:var(--gold);font-weight:500}
+.sel{display:flex;flex-wrap:wrap;gap:8px}
+.sel button{padding:9px 16px 8px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);font:inherit;font-size:14px;cursor:pointer;transition:all .3s}
+.sel button:hover{border-color:var(--gold);color:var(--fg)}
+.sel button[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.desc{margin-left:auto;max-width:46ch;font-size:13.5px;color:var(--mute)}
+.escena{flex:1;min-height:0;display:grid;place-items:center;overflow:hidden}
+.sello{position:relative;width:var(--S);height:var(--S)}
+.sello canvas,.sello svg,.sello .cap{position:absolute;inset:0;width:100%;height:100%}
+.sello svg{overflow:visible}
+.aro{fill:none;stroke:var(--fg);opacity:.5;stroke-width:1}
+.giro text{font-family:var(--caps);font-size:33px;letter-spacing:9px;fill:var(--fg);opacity:.75}
+.giro{transform-origin:500px 500px;animation:gira 240s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.cap{transform-origin:0 0;width:1000px;height:1000px;transform:scale(calc(var(--S) / 1000px));pointer-events:none}
+@supports not (transform:scale(calc(1px / 1px))){.cap{transform:none}}
+.fb{position:absolute;opacity:1}
+.fb .t{display:flex;align-items:baseline;gap:22px;white-space:nowrap}
+.fb .n{font:400 27px/1.1 var(--caps);letter-spacing:.04em;color:var(--fg)}
+.fb .n i{display:inline-block;font-style:normal;opacity:0;transform:translateY(5px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--d) * 1ms)}
+.fb .d{font:400 27px/1.1 var(--sans);color:var(--gold);opacity:0;transition:opacity .9s var(--ease) .7s}
+.fb .f,.fb .a,.fb .c{margin:0;opacity:0;transform:translateY(4px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.fb .f{margin-top:12px;font-size:15px;line-height:19px;color:rgba(241,238,230,.82);transition-delay:1.3s}
+.fb .a{margin-top:9px;font-size:12.5px;line-height:17px;color:var(--mute);transition-delay:1.8s}
+.fb .c{margin-top:8px;font:500 13px/1.2 var(--caps);letter-spacing:.06em;color:var(--gold);transition-delay:2.3s}
+.fb.on .n i,.fb.on .d,.fb.on .f,.fb.on .a,.fb.on .c{opacity:1;transform:none}
+.fb.off .n i,.fb.off .d,.fb.off .f,.fb.off .a,.fb.off .c{opacity:0;transform:translateY(-3px);transition-duration:.55s;transition-delay:0s}
+@media (max-width:760px){.desc{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="top">
+  <span class="nom">I<b>V</b>S·CODE<b>X</b></span>
+  <div class="sel" id="sel"></div>
+  <p class="desc" id="desc"></p>
+</header>
+<main class="escena"><div class="sello" id="sello">
+  <canvas id="cv"></canvas>
+  <svg viewBox="0 0 1000 1000" aria-hidden="true">
+    <defs><path id="r" d="M500 56.3a443.7 443.7 0 1 1 0 887.4a443.7 443.7 0 1 1 0 -887.4"/></defs>
+    <g class="giro"><text><textPath href="#r" textLength="2775" lengthAdjust="spacing">IVS · CODEX · IVRISPRVDENTIA · LEGISLATIO · DOCTRINA · IVS · CODEX · IVRISPRVDENTIA · LEGISLATIO · DOCTRINA · </textPath></text></g>
+    <circle class="aro" cx="500" cy="500" r="496"/><circle class="aro" cx="500" cy="500" r="412"/>
+  </svg>
+  <div class="cap" id="cap"></div>
+</div></main>
+
+<script>
+(function(){
+var $=function(s){return document.querySelector(s);};
+var cv=$("#cv"),ctx=cv.getContext("2d"),sello=$("#sello"),cap=$("#cap"),S=0,K=1,DPR=Math.min(window.devicePixelRatio||1,2);
+function medir(){
+  var alto=document.querySelector(".escena").clientHeight;
+  S=Math.floor(Math.min(alto-8,window.innerWidth*.96));
+  sello.style.setProperty("--S",S+"px"); cap.style.transform="scale("+(S/1000)+")";
+  cv.width=Math.round(S*DPR); cv.height=Math.round(S*DPR); K=S/1000*DPR;
+}
+window.addEventListener("resize",medir); medir();
+if(window.ResizeObserver) new ResizeObserver(function(){ var alto=document.querySelector(".escena").clientHeight; if(Math.abs(Math.min(alto-8,window.innerWidth*.96)-S)>2) medir(); }).observe(document.querySelector(".escena"));
+
+/* ---------- los huecos que abren los fallos ---------- */
+var huecos=[];
+function influencia(x,y){                       // cuánto empuja el hueco más cercano sobre el punto (x,y)
+  var f=0,vx=0,vy=0,R=85;
+  for(var i=0;i<huecos.length;i++){
+    var h=huecos[i],cx=Math.max(h.x,Math.min(x,h.x+h.w)),cy=Math.max(h.y,Math.min(y,h.y+h.h)),dx=x-cx,dy=y-cy,d=Math.sqrt(dx*dx+dy*dy);
+    var q=Math.max(0,1-d/R); q=q*q*(3-2*q); q*=h.p;
+    if(q>f){ f=q; if(d>0.01){ vx=dx/d; vy=dy/d; } else { var mx=x-(h.x+h.w/2),my=y-(h.y+h.h/2),m=Math.sqrt(mx*mx+my*my)||1; vx=mx/m; vy=my/m; } }
+  }
+  return {f:f,vx:vx,vy:vy};
+}
+var CR="241,238,230",CO="217,163,27";
+function lin(x1,y1,x2,y2,a,col,w){ if(a<.01) return; ctx.strokeStyle="rgba("+(col||CR)+","+a.toFixed(3)+")"; ctx.lineWidth=(w||1.2)*K; ctx.beginPath(); ctx.moveTo(x1*K,y1*K); ctx.lineTo(x2*K,y2*K); ctx.stroke(); }
+
+/* ---------- los seis fondos ---------- */
+var P2=Math.PI*2;
+var FONDOS=[
+ {n:"Grano vivo",d:"Casi nada: solo el grano de película, que titila, con alguna chispa dorada. Los fallos aparecen sobre el vacío y el grano se retira a su alrededor.",
+  f:function(t){
+    if(!this.p||t-this.tl>.09){ this.tl=t; this.p=[]; for(var i=0;i<1300;i++){ var a=Math.random()*P2,r=Math.sqrt(Math.random())*392; this.p.push([500+r*Math.cos(a),500+r*Math.sin(a),.05+Math.random()*.2,.6+Math.random()*1.4,Math.random()<.035]); } }
+    this.p.forEach(function(p){ var q=influencia(p[0],p[1]),al=p[2]*(1-q.f); if(al<.02) return; ctx.fillStyle="rgba("+(p[4]?CO:CR)+","+(p[4]?Math.min(al*3,.7):al).toFixed(3)+")"; ctx.fillRect(p[0]*K,p[1]*K,p[3]*K,p[3]*K); });
+  }},
+ {n:"Polvo dorado",d:"Motas de luz que suben despacio, como el polvo en una biblioteca; se apartan de cada fallo y vuelven al irse.",
+  f:function(t,dt){
+    var M=this.M; if(!M){ M=this.M=[]; for(var i=0;i<140;i++){ var a=Math.random()*P2,r=Math.sqrt(Math.random())*380; M.push({x:500+r*Math.cos(a),y:500+r*Math.sin(a),v:6+Math.random()*12,ph:Math.random()*9,s:.8+Math.random()*1.9,g:Math.random()<.4}); } }
+    M.forEach(function(m){ var q=influencia(m.x,m.y); m.y-=m.v*dt; m.x+=Math.sin(t*.6+m.ph)*9*dt+q.vx*q.f*70*dt; m.y+=q.vy*q.f*70*dt;
+      if(Math.hypot(m.x-500,m.y-500)>388&&m.y<500){ var a=Math.random()*3.1416+3.1416*0+0; var xx=500+(Math.random()*2-1)*300; m.x=xx; m.y=500+Math.sqrt(Math.max(380*380-(xx-500)*(xx-500),0))*(.9+Math.random()*.1); }
+      var d=Math.hypot(m.x-500,m.y-500),edge=Math.max(0,Math.min(1,(386-d)/50)),al=(.35+.4*Math.sin(t*1.3+m.ph))*edge*(1-q.f);
+      if(al<.02) return; var col=m.g?CO:CR; ctx.fillStyle="rgba("+col+","+(al*.18).toFixed(3)+")"; ctx.beginPath(); ctx.arc(m.x*K,m.y*K,m.s*3*K,0,7); ctx.fill();
+      ctx.fillStyle="rgba("+col+","+Math.min(al*1.4,.9).toFixed(3)+")"; ctx.beginPath(); ctx.arc(m.x*K,m.y*K,m.s*K,0,7); ctx.fill(); });
+  }},
+ {n:"Destellos",d:"Un cielo de puntos que centellean al azar, cada uno con su ritmo; el destello se apaga donde aparece un fallo.",
+  f:function(t){
+    var S=this.S; if(!S){ S=this.S=[]; for(var i=0;i<80;i++){ var a=Math.random()*P2,r=Math.sqrt(Math.random())*385; S.push({x:500+r*Math.cos(a),y:500+r*Math.sin(a),ph:Math.random()*9,per:2.5+Math.random()*5,s:.9+Math.random()*1.3,g:Math.random()<.2}); } }
+    S.forEach(function(s){ var u=(Math.sin(t*P2/s.per+s.ph)+1)/2,I=Math.pow(u,7),q=influencia(s.x,s.y),k=(1-q.f),col=s.g?CO:CR,al=(.14+.8*I)*k; if(al<.02) return;
+      ctx.fillStyle="rgba("+col+","+al.toFixed(3)+")"; ctx.beginPath(); ctx.arc(s.x*K,s.y*K,s.s*K,0,7); ctx.fill();
+      if(I>.12){ var L=4+16*I; lin(s.x-L,s.y,s.x+L,s.y,I*.8*k,col,1); lin(s.x,s.y-L,s.x,s.y+L,I*.8*k,col,1); } });
+  }},
+ {n:"Lluvia de latín",d:"Columnas de letras latinas (IVS, LEX, FIDES…) que caen despacio y se desvanecen; las columnas se abren alrededor de cada fallo.",
+  f:function(t){
+    var C=this.C,PAL="IVS LEX FIDES IVSTITIA AEQVITAS VERITAS RATIO CODEX IVDEX CAVSA ACTIO FORVM PACTA DOLVS MORA CVLPA TESTIS SENTENTIA ".split(" ");
+    if(!C){ C=this.C=[]; for(var x=-374;x<=374;x+=33){ var txt=""; while(txt.length<40) txt+=PAL[Math.floor(Math.random()*PAL.length)]+" "; C.push({x:500+x,t:txt,v:16+Math.random()*26,ph:Math.random()*800}); } }
+    ctx.font=(15*K)+"px 'Cormorant SC', Georgia, serif"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    C.forEach(function(c){ var hw=Math.sqrt(Math.max(380*380-(c.x-500)*(c.x-500),0)); if(hw<20) return; var head=((t*c.v+c.ph)%(2*hw+300))-150,top=500-hw;
+      for(var k=0;k<16;k++){ var y=top+head-k*17; if(y<500-hw||y>500+hw) continue; var q=influencia(c.x,y),al=(k===0?.8:.5*Math.pow(1-k/16,1.5))*(1-q.f); if(al<.02) continue;
+        var ch=c.t[(Math.floor(head/17)-k+400)%c.t.length]; if(ch===" ") continue;
+        ctx.fillStyle="rgba("+(k===0?CO:CR)+","+al.toFixed(3)+")"; ctx.fillText(ch,(c.x+q.vx*q.f*24)*K,y*K); } });
+    ctx.textAlign="start"; ctx.textBaseline="alphabetic";
+  }},
+ {n:"Radar",d:"Un haz fino que gira y deja una estela que se apaga; puntos dorados se encienden al paso del haz. El haz se corta donde hay un fallo.",
+  f:function(t){
+    var B=this.B; if(!B){ B=this.B=[]; for(var i=0;i<46;i++){ var a=Math.random()*P2,r=Math.sqrt(Math.random())*365; B.push({x:500+r*Math.cos(a),y:500+r*Math.sin(a),f:Math.atan2(r*Math.sin(a),r*Math.cos(a))}); } }
+    for(var k=1;k<=3;k++) for(var a=0;a<360;a+=4){ var a0=a*3.1416/180,a1=(a+4)*3.1416/180,r=k*124; lin(500+r*Math.cos(a0),500+r*Math.sin(a0),500+r*Math.cos(a1),500+r*Math.sin(a1),.12*(1-influencia(500+r*Math.cos(a0),500+r*Math.sin(a0)).f)); }
+    var th=t*.45; for(var w=0;w<34;w++){ var an=th-w*.022,al=.55*Math.pow(1-w/34,1.8),c=Math.cos(an),s=Math.sin(an);
+      for(var r=0;r<372;r+=12){ var x0=500+r*c,y0=500+r*s,x1=500+(r+12)*c,y1=500+(r+12)*s; lin(x0,y0,x1,y1,al*(1-influencia((x0+x1)/2,(y0+y1)/2).f),w===0?CO:CR,w===0?1.6:1.1); } }
+    B.forEach(function(b){ var d=(((th-b.f)%P2)+P2)%P2,lit=Math.max(0,1-d/3.4),q=influencia(b.x,b.y); if(lit<.02) return; ctx.fillStyle="rgba("+CO+","+(.9*lit*(1-q.f)).toFixed(3)+")"; ctx.beginPath(); ctx.arc(b.x*K,b.y*K,(2+2*lit)*K,0,7); ctx.fill(); });
+  }},
+ {n:"Trazos de pluma",d:"Trazos a mano alzada que se dibujan solos y se desvanecen, como firmas; los trazos se interrumpen donde aparece un fallo.",
+  f:function(t){
+    var S=this.S||(this.S=[]); if(S.length<9&&(!this.tn||t-this.tn>.7)){ this.tn=t;
+      var a=Math.random()*P2,r=Math.sqrt(Math.random())*290,x=500+r*Math.cos(a),y=500+r*Math.sin(a),ang=Math.random()*P2,ph=Math.random()*9,pts=[],lo=.25+Math.random()*.35;
+      for(var i=0;i<80;i++){ pts.push([x,y]); ang+=Math.sin(i*.32+ph)*lo*.6+(Math.random()-.5)*.18; x+=Math.cos(ang)*7.5; y+=Math.sin(ang)*7.5; if(Math.hypot(x-500,y-500)>375) break; }
+      S.push({p:pts,b:t,d:2.8+Math.random(),l:7+Math.random()*2,g:Math.random()<.22}); }
+    for(var k=S.length-1;k>=0;k--){ var s=S[k],age=t-s.b; if(age>s.l){ S.splice(k,1); continue; }
+      var u=Math.min(1,age/s.d),n=Math.floor(u*(s.p.length-1)),fade=age>s.d?1-(age-s.d)/(s.l-s.d):1;
+      for(var i=1;i<=n;i++){ var q=influencia(s.p[i][0],s.p[i][1]),wd=.9+1.9*Math.sin(Math.PI*i/s.p.length); lin(s.p[i-1][0],s.p[i-1][1],s.p[i][0],s.p[i][1],.6*fade*(1-q.f),s.g?CO:CR,wd); } }
+  }}
+];
+var cur=0,sel=$("#sel"),desc=$("#desc");
+FONDOS.forEach(function(f,i){ var b=document.createElement("button"); b.type="button"; b.textContent=String.fromCharCode(65+i)+" · "+f.n; b.setAttribute("aria-pressed",String(i===0)); b.onclick=function(){ cur=i; if(f.P) f.P=null; [].forEach.call(sel.children,function(x,k){x.setAttribute("aria-pressed",String(k===i));}); desc.textContent=f.d; }; sel.appendChild(b); });
+desc.textContent=FONDOS[0].d;
+
+/* ---------- los fallos ---------- */
+var FALLOS=[
+ ["Siri, Ángel","27/12/1957","Las garantías constitucionales son operativas: el amparo procede sin necesidad de ley que lo reglamente.","Siri, Ángel s/ interpone recurso de hábeas corpus","239:459"],
+ ["Kot, Samuel","05/09/1958","El amparo procede también contra actos de particulares.","Kot, Samuel S.R.L. s/ recurso de hábeas corpus","241:291"],
+ ["Ercolano","28/04/1922","El derecho de propiedad no es absoluto: la emergencia habilita limitar el precio de las locaciones.","Ercolano, Agustín c/ Lanteri de Renshaw, Julieta s/ consignación","136:161"],
+ ["Avico","07/12/1934","La emergencia económica justifica la moratoria hipotecaria, si es razonable y temporaria.","Avico, Oscar c/ de la Pesa, Saúl G. s/ consignación de intereses","172:21"],
+ ["Elortondo","14/04/1888","Los jueces ejercen el control de constitucionalidad de las leyes.","Municipalidad de la Capital c/ Elortondo, Isabel A. de","33:162"],
+ ["Ponzetti de Balbín","11/12/1984","El derecho a la intimidad ampara a la persona aun frente al interés público de la información.","Ponzetti de Balbín, Indalia c/ Editorial Atlántida S.A. s/ daños y perjuicios","306:1892"],
+ ["Bazterrica","29/08/1986","La tenencia de estupefacientes para consumo personal, sin peligro para terceros, queda amparada por el art. 19.","Bazterrica, Gustavo Mario s/ tenencia de estupefacientes","308:1392"],
+ ["Sejean","27/11/1986","Declaró la inconstitucionalidad de la prohibición del divorcio vincular.","Sejean, Juan Bautista c/ Zaks de Sejean, Ana María s/ inconstitucionalidad del art. 64 de la ley 2393","308:2268"],
+ ["Ekmekdjian","07/07/1992","Los tratados internacionales prevalecen sobre las leyes; se reconoce el derecho de réplica.","Ekmekdjian, Miguel Ángel c/ Sofovich, Gerardo y otros s/ recurso de hecho","315:1492"],
+ ["Giroldi","07/04/1995","Los tribunales deben aplicar la Convención Americana sobre Derechos Humanos con jerarquía constitucional.","Giroldi, Horacio David y otro s/ recurso de casación","318:514"],
+ ["Fayt","19/08/1999","Se declaró la nulidad de la cláusula de la reforma de 1994 sobre la edad de los jueces.","Fayt, Carlos Santiago c/ Estado Nacional s/ proceso de conocimiento","322:1616"],
+ ["Vizzoti","14/09/2004","El tope de la indemnización por despido no puede absorber más de un tercio de la base de cálculo.","Vizzoti, Carlos Alberto c/ AMSA S.A. s/ despido","327:3677"],
+ ["Aquino","21/09/2004","Es inconstitucional que la ley de riesgos del trabajo impida la reparación civil plena.","Aquino, Isacio c/ Cargo Servicios Industriales S.A. s/ accidentes ley 9688","327:3753"],
+ ["Simón","14/06/2005","Se declararon inconstitucionales las leyes de punto final y de obediencia debida.","Simón, Julio Héctor y otros s/ privación ilegítima de la libertad, etc.","328:2056"],
+ ["Verbitsky","03/05/2005","Hábeas corpus colectivo por las condiciones de detención en la provincia de Buenos Aires.","Verbitsky, Horacio s/ hábeas corpus","328:1146"],
+ ["Mendoza · Riachuelo","08/07/2008","Responsabilidad por el daño ambiental colectivo y saneamiento de la cuenca Matanza-Riachuelo.","Mendoza, Beatriz Silvia y otros c/ Estado Nacional y otros s/ daños y perjuicios","331:1622"],
+ ["Halabi","24/02/2009","Se reconocen las acciones colectivas en defensa de derechos individuales homogéneos.","Halabi, Ernesto c/ P.E.N. – ley 25.873 – dto. 1563/04 s/ amparo ley 16.986","332:111"],
+ ["Arriola","25/08/2009","Es inconstitucional penar la tenencia para consumo personal que no afecte a terceros.","Arriola, Sebastián y otros s/ causa n.º 9080","332:1963"]
+];
+var cola=[],vivos=[];
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function lanzar(){
+  if(document.hidden||vivos.length>=2){ setTimeout(lanzar,1200); return; }
+  if(!cola.length) cola=FALLOS.slice().sort(function(){return Math.random()-.5;});
+  var f=cola.shift(),n=0,div=document.createElement("div");
+  div.className="fb"; div.style.cssText="left:0;top:0;visibility:hidden;width:max-content;max-width:410px";
+  div.innerHTML='<div class="t"><span class="n">'+f[0].split(" ").map(function(w){return '<span style="white-space:nowrap">'+w.split("").map(function(c){return '<i style="--d:'+(350+((n++*83)%520))+'">'+esc(c)+'</i>';}).join("")+'</span>';}).join(" ")+'</span><span class="d">'+f[1]+'</span></div>'+
+    '<p class="f">'+esc(f[2])+'</p><p class="a">'+esc(f[3])+'</p><p class="c">Corte Suprema de Justicia de la Nación · Fallos '+f[4]+'</p>';
+  cap.appendChild(div);
+  var w=div.offsetWidth,h=div.offsetHeight,x,y,ok=false,tries=0;
+  while(!ok&&tries++<80){
+    x=500+(Math.random()*2-1)*372-w/2; y=500+(Math.random()*2-1)*372-h/2; ok=true;
+    [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(function(c){ if(Math.hypot(c[0]-500,c[1]-500)>352) ok=false; });
+    vivos.forEach(function(v){ if(!(x>v.x+v.w+50||x+w<v.x-50||y>v.y+v.h+50||y+h<v.y-50)) ok=false; });
+  }
+  if(!ok){ div.remove(); setTimeout(lanzar,800); return; }
+  div.style.left=x+"px"; div.style.top=y+"px"; div.style.visibility="";
+  var hu={x:x-14,y:y-12,w:w+28,h:h+24,p:0,obj:1},v={x:x,y:y,w:w,h:h};
+  huecos.push(hu); vivos.push(v);
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ div.classList.add("on"); }); });
+  setTimeout(function(){
+    div.classList.remove("on"); div.classList.add("off"); hu.obj=0;
+    setTimeout(function(){ div.remove(); },800);
+    setTimeout(function(){ huecos.splice(huecos.indexOf(hu),1); vivos.splice(vivos.indexOf(v),1); },2200);
+  },8200+Math.random()*1800);
+  setTimeout(lanzar,3800+Math.random()*2200);
+}
+
+/* ---------- el bucle ---------- */
+var t0=performance.now(),tp=t0;
+function tic(now){
+  var dt=Math.min((now-tp)/1000,.05); tp=now; var t=(now-t0)/1000;
+  huecos.forEach(function(h){ h.p+=(h.obj-h.p)*(1-Math.exp(-dt*(h.obj?3.4:3))); if(h.obj===0&&h.p<.002) h.p=0; });
+  ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.save(); ctx.beginPath(); ctx.arc(500*K,500*K,396*K,0,7); ctx.clip();
+  FONDOS[cur].f.call(FONDOS[cur],t,dt);
+  ctx.restore();
+  requestAnimationFrame(tic);
+}
+(document.fonts&&document.fonts.load?Promise.all([document.fonts.load("27px 'Cormorant SC'"),document.fonts.load("15px 'Instrument Sans'")]):Promise.resolve()).then(function(){ requestAnimationFrame(tic); setTimeout(lanzar,1800); });
+})();
+</script>
+</body>
+</html>
