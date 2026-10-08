@@ -213,11 +213,11 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .marca-app .marca{font-size:15px;font-weight:500;letter-spacing:.3em}
 .nav{display:flex;align-items:center;gap:clamp(16px,1.8vw,28px);min-width:0}
 .nav button{
-  padding:6px 0;border:0;border-bottom:1px solid transparent;background:none;
+  padding:6px 0;border:0;background:none;
   font-size:15px;color:var(--mute);white-space:nowrap;transition:color .3s,border-color .3s
 }
-.nav button:hover{color:var(--fg)}
-.nav button[aria-current="page"]{color:var(--fg);border-bottom-color:var(--gold)}
+.nav button:hover,.nav button:active{color:var(--gold)}
+.nav button[aria-current="page"]{color:var(--gold)}
 .nav-fin{margin-left:auto}
 .btn-menu .fl{display:inline-block;transition:transform .4s var(--ease)}
 .btn-menu[aria-expanded="true"] .fl{transform:rotate(180deg)}
@@ -248,6 +248,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .menu__item b{display:block;font:400 clamp(24px,2.3vw,34px)/1.1 var(--sans);letter-spacing:-.02em;transition:color .3s}
 .menu__item:hover b{color:var(--gold)}
 .menu__item span{display:block;margin-top:6px;font-size:13.5px;color:var(--mute)}
+.menu__item[aria-current="page"] b,.menu__item:active b{color:var(--gold)}
 .menu__item[aria-current="page"] b::after{content:"";display:inline-block;width:7px;height:7px;margin-left:12px;border-radius:50%;background:var(--gold);vertical-align:.3em}
 .menu.is-on .menu__item{animation:entra .7s var(--ease) both;animation-delay:calc(var(--k) * 40ms)}
 @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
@@ -722,7 +723,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-hdr.is-solid .pt-brand__name{opacity:1;transform:translateY(-50%)}
 .pt-nav{display:flex;gap:clamp(18px,2vw,30px)}
 .pt-nav button{padding:4px 0;border:0;background:none;font-size:15px;color:var(--mute);transition:color .3s}
-.pt-nav button:hover{color:var(--fg)}
+.pt-nav button:hover,.pt-nav button:active{color:var(--gold)}
 .pt-hdr .btn{margin-left:auto;padding:9px 16px 8px;font-size:13.5px}
 
 .pt-hero{position:relative;display:flex;min-height:calc(100vh - 84px);min-height:calc(100svh - 84px)}
@@ -751,8 +752,8 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 @keyframes late{0%{box-shadow:0 0 0 0 rgba(217,163,27,.55)}100%{box-shadow:0 0 0 8px rgba(217,163,27,0)}}
 .pt-acciones{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
 .pt-marca{
-  position:relative;align-self:flex-start;width:76%;margin:auto 0 0;padding-top:48px;box-sizing:content-box;
-  height:0;padding-bottom:10.7%;pointer-events:none!important
+  position:relative;align-self:flex-start;width:96%;margin:auto 0 0;padding-top:48px;box-sizing:content-box;
+  height:0;padding-bottom:14.34%;pointer-events:none!important
 }
 /* El nombre es el logo mismo, cortado letra por letra para que se esfumen
    una tras otra y vuelvan en el mismo orden. Cada letra es una porción del
@@ -843,7 +844,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   .pt-brand{width:170px}
   .pt-hero{min-height:720px}
   .pt-sello{left:90vw;top:28%;width:125vw;height:125vw}
-  .pt-marca{width:100%;padding-bottom:14.05%}
+  .pt-marca{width:100%;padding-bottom:14.94%}
 }
 @media (max-width:600px){ .pt-cols{grid-template-columns:minmax(0,1fr)} }
 
@@ -896,7 +897,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
           <button type="button" class="btn" data-tab="buscar">Iniciar la consulta</button>
           <button type="button" class="btn sec" data-tab="fuentes">Ver el catálogo de fuentes</button>
         </div>
-        <p class="pt-marca pt-llega" style="--d:.7s;--ratio:3951/555" role="img" aria-label="IVS CODEX"><span style="--i:0;left:0.000%;width:3.872%;background-size:2582.353% 100%;background-position:0.000% 0"></span><span style="--i:1;left:4.784%;width:12.706%;background-size:787.052% 100%;background-position:5.480% 0"></span><span style="--i:2;left:18.021%;width:8.378%;background-size:1193.656% 100%;background-position:19.669% 0"></span><span style="--i:3;left:29.916%;width:2.860%;background-size:3496.460% 100%;background-position:30.797% 0"></span><span style="--i:4;left:36.117%;width:11.491%;background-size:870.264% 100%;background-position:40.806% 0"></span><span style="--i:5;left:48.545%;width:13.288%;background-size:752.571% 100%;background-position:55.984% 0"></span><span style="--i:6;left:63.427%;width:12.199%;background-size:819.710% 100%;background-position:72.240% 0"></span><span style="--i:7;left:77.196%;width:9.896%;background-size:1010.486% 100%;background-position:85.674% 0"></span><span style="--i:8;left:88.231%;width:11.769%;background-size:849.677% 100%;background-position:100.000% 0"></span></p>
+        <p class="pt-marca pt-llega" style="--d:.7s" role="img" aria-label="IVS CODEX"><span style="--i:0;left:0.000%;width:4.117%;background-size:2582.353% 100%;background-position:0.000% 0"></span><span style="--i:1;left:4.656%;width:13.509%;background-size:787.052% 100%;background-position:5.480% 0"></span><span style="--i:2;left:18.434%;width:8.907%;background-size:1193.656% 100%;background-position:19.669% 0"></span><span style="--i:3;left:29.225%;width:3.041%;background-size:3496.460% 100%;background-position:30.797% 0"></span><span style="--i:4;left:34.742%;width:12.217%;background-size:870.264% 100%;background-position:40.806% 0"></span><span style="--i:5;left:47.497%;width:14.128%;background-size:752.571% 100%;background-position:55.984% 0"></span><span style="--i:6;left:62.433%;width:12.971%;background-size:819.710% 100%;background-position:72.240% 0"></span><span style="--i:7;left:76.211%;width:10.522%;background-size:1010.486% 100%;background-position:85.674% 0"></span><span style="--i:8;left:87.487%;width:12.513%;background-size:849.677% 100%;background-position:100.000% 0"></span></p>
       </div>
     </div>
 
@@ -6068,7 +6069,7 @@ var CALC={
   actualizacion:{monto:"",indice:"cer",desde:"",hasta:"",cargando:false,error:"",res:null},
   despido:{sueldo:"",ingreso:"",egreso:"",tope:"",prueba:false,sinPreaviso:true,integracion:true,sacRubros:true},
   incapacidad:{ingreso:"",porcentaje:"",edad:"",formula:"mendez",edadLimite:"75",tasa:"4"},
-  honorarios:{juris:"nacion",monto:"",uma:"",jus:"",rol:"ganador",proceso:"ordinario",merito:"",procurador:false,iva:false,tasaPct:"3"},
+  honorarios:{juris:"nacion",monto:"",uma:"",jus:"784.337,29",rol:"ganador",proceso:"ordinario",merito:"",procurador:false,iva:false,tasaPct:"3"},
   liquidacion:{capital:"",intereses:"",desde:"",hasta:"",honorarios:"",iva:false,tasa:"",otros:""},
   plazosActiva:"procesales",
   procesales:{notif:"",dias:"",tipo:"habiles",juris:"nacion"},
@@ -6490,7 +6491,8 @@ function formHonorarios(){
     campoC("Monto del proceso","honorarios.monto",c.monto,{ph:"12.000.000",num:true})+
     (c.juris==="nacion"
       ?campoC("Valor vigente de la UMA (Acordada de la Corte Suprema)","honorarios.uma",c.uma,{ph:"Valor en pesos",num:true})
-      :campoC("Valor vigente del JUS (lo fija la Suprema Corte de Mendoza)","honorarios.jus",c.jus,{ph:"Valor en pesos",num:true})+
+      :campoC("Valor del JUS (lo fija la Suprema Corte de Mendoza)","honorarios.jus",c.jus,{ph:"Valor en pesos",num:true})+
+        '<p class="calc-nota">Honorarios de abogados, procuradores y auxiliares de Justicia: $ 784.337,29, vigente desde el 05/10/2026. El JUS general de 2026 es de $ 628.730,43 (del 1 de enero al 31 de diciembre).</p>'+
         '<fieldset class="grupo" style="border:0;padding:0;margin:0"><legend class="busq-rotulo">Representa a la parte</legend>'+
           chipsC("honorarios.rol",c.rol,[["ganador","Ganadora"],["perdedor","Perdedora (70 %)"]])+'</fieldset>'+
         '<fieldset class="grupo" style="border:0;padding:0;margin:0"><legend class="busq-rotulo">Tipo de proceso</legend>'+
