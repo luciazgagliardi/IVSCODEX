@@ -1774,7 +1774,7 @@ var REQUISITOS=[
   // que puede haber cambiado la semana pasada sería justo lo que este
   // proyecto combate. Queda con el botón de búsqueda, que lleva a los fallos
   // recientes — que son los que están resolviendo cómo quedó todo esto.
-  aviso:"El art. 242 fue sustituido por el DNU 70/2023 y la Ley 27.742 (2024) modificó el régimen indemnizatorio. Por eso acá no va una lista fija: buscá los fallos recientes, que son los que están fijando el alcance."},
+  aviso:"El art. 242 fue sustituido por el DNU 70/2023 y la Ley 27.742 (2024) modificó el régimen indemnizatorio. Por eso aquí no figura una lista fija: conviene buscar los fallos recientes, que son los que están fijando el alcance."},
  {id:"probation",g:"pen",n:"Suspensión del juicio a prueba",d:"Probation: extinción de la acción penal a prueba.",q:"suspensión del juicio a prueba"},
  {id:"excarcelacion",g:"pen",n:"Excarcelación",d:"Libertad durante el proceso, cese de la prisión preventiva.",q:"excarcelación cese prisión preventiva"},
  {id:"silencio-administracion",g:"adm",n:"Silencio de la administración",d:"Cuándo se considera denegado un reclamo no resuelto.",q:"silencio de la administración",
@@ -1794,7 +1794,7 @@ var F=[
 /* ---------------- MENDOZA ---------------- */
 {id:"m1",n:"Buscador de jurisprudencia de la SCJM",o:"Poder Judicial de Mendoza",a:"mza",t:"juris",c:"libre",
  u:"https://wwwjuri.jus.mendoza.gov.ar/bib/jurisprudencia/consultar.php",dom:"jus.mendoza.gov.ar",r:"*",
- nota:"El buscador central de Mendoza. Sumarios de la Suprema Corte, Cámaras y primera instancia. Podés filtrar por tribunal o usar el campo «Libre» con palabras clave; conviene empezar con pocas palabras."},
+ nota:"El buscador central de Mendoza. Sumarios de la Suprema Corte, Cámaras y primera instancia. Puede filtrarse por tribunal o usarse el campo «Libre» con palabras clave; conviene empezar con pocas palabras."},
 {id:"m2",n:"Biblioteca Judicial «Dr. Rodolfo A. De la Rosa»",o:"SCJM",a:"mza",t:"juris",c:"libre",
  u:"https://jusmendoza.gob.ar/biblioteca-judicial/",dom:"jusmendoza.gob.ar",r:"*",
  nota:"Sedes en Ciudad, San Rafael y San Martín. Envían fallos digitalizados que no están online."},
@@ -1895,7 +1895,7 @@ var F=[
  nota:"Punto de entrada a sumarios (1863 en adelante), boletines temáticos y fallos completos de la Corte."},
 {id:"n2",n:"Tomos de Fallos completos",o:"CSJN",a:"nac",t:"juris",c:"libre",
  u:"https://sjservicios.csjn.gov.ar/sj/tomosFallos.do?method=iniciar",dom:"csjn.gov.ar",r:"*",
- nota:"La colección «Fallos» tomo por tomo. Es donde confirmás una cita del tipo Fallos: 345:1234."},
+ nota:"La colección «Fallos» tomo por tomo. Es donde se confirma una cita del tipo Fallos: 345:1234."},
 {id:"n3",n:"Buscador de fallos del CIJ",o:"Centro de Información Judicial",a:"nac",t:"juris",c:"libre",
  u:"https://www.cij.gov.ar/buscador.html",dom:"cij.gov.ar",r:"*",
  tmpl:"https://www.cij.gov.ar/buscador.html?acc=search&search={q}",
@@ -1953,7 +1953,7 @@ var F=[
  nota:"Información pública sobre la organización de la justicia en todos los distritos."},
 {id:"n21",n:"Consulta pública de causas por provincia",o:"Justicia.ar",a:"nac",t:"directorio",c:"libre",
  u:"https://justicia.ar/herramientas/consulta-publica-de-causas",dom:"justicia.ar",r:"*",
- nota:"Directorio de los sistemas de consulta de cada poder judicial provincial. Atajo cuando litigás fuera de Mendoza."},
+ nota:"Directorio de los sistemas de consulta de cada poder judicial provincial. Atajo para litigar fuera de Mendoza."},
 {id:"n22",n:"Cámara Nacional Electoral",o:"CNE",a:"nac",t:"juris",c:"libre",
  u:"https://www.electoral.gob.ar/",dom:"electoral.gob.ar",r:"elec,const",
  nota:"Fallos y acordadas en materia electoral y de partidos políticos."},
@@ -2002,7 +2002,7 @@ var F=[
  nota:"Filtro por Estado, tipo de resolución y año. Es la vía rápida para los casos contra Argentina."},
 {id:"i3",n:"Cuadernillos de jurisprudencia de la Corte IDH",o:"Corte IDH",a:"int",t:"doctrina",c:"libre",
  u:"https://corteidh.or.cr/cdf/cuadernillos-jurisprudencia.html",dom:"corteidh.or.cr",r:"ddhh,gen,nna,pen,amb",
- nota:"Líneas jurisprudenciales sistematizadas por tema. Ahorra semanas de lectura cuando armás un escrito."},
+ nota:"Líneas jurisprudenciales sistematizadas por tema. Ahorra semanas de lectura al preparar un escrito."},
 {id:"i4",n:"Themis — digesto de la Corte IDH",o:"Corte IDH",a:"int",t:"juris",c:"libre",
  u:"https://themisia.corteidh.or.cr/",dom:"corteidh.or.cr",r:"ddhh",
  nota:"Busca pronunciamientos asociados a cada artículo de la Convención Americana."},
@@ -2360,7 +2360,7 @@ function enviarAuth(ruta){
   var email=(document.getElementById("auth-email")||{}).value||"";
   var password=(document.getElementById("auth-password")||{}).value||"";
   estado.authEmail=email;
-  if(!email||!password){ estado.authError="Completá correo y contraseña."; render(); return; }
+  if(!email||!password){ estado.authError="Complete el correo y la contraseña."; render(); return; }
   estado.authCargando=true; estado.authError=null; render();
   fetch(estado.api+"/auth/"+ruta,{
     method:"POST",headers:{"Content-Type":"application/json"},
@@ -2438,8 +2438,8 @@ function legacy(txt,ok){
     document.body.appendChild(ta);ta.select();
     var done=document.execCommand("copy");
     document.body.removeChild(ta);
-    if(done){ok();}else{flash("Copiá a mano: "+txt.slice(0,60));}
-  }catch(e){flash("Copiá a mano: "+txt.slice(0,60));}
+    if(done){ok();}else{flash("Copie a mano: "+txt.slice(0,60));}
+  }catch(e){flash("Copie a mano: "+txt.slice(0,60));}
 }
 function palabras(s){
   return String(s||"").trim().split(/\s+/).filter(function(w){return w.length>0;});
@@ -3107,7 +3107,7 @@ function menuCompartir(boton,texto,url){
     if(que==="mail"){ location.href="mailto:?subject="+encodeURIComponent(String(texto).split("\n")[0].slice(0,120))+
       "&body="+encodeURIComponent(todo); return; }
     if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(todo).then(function(){ flash("Copiado — pegalo donde quieras"); })
+      navigator.clipboard.writeText(todo).then(function(){ flash("Copiado — puede pegarlo donde lo necesite"); })
         ["catch"](function(){ flash("No pude copiar automáticamente"); });
     }else flash("No pude copiar automáticamente");
   });
@@ -3522,7 +3522,7 @@ function fichaFuente(f){
 }
 
 function listaPorAmbito(fs){
-  if(!fs.length) return '<div class="vacio">Ninguna fuente coincide con los filtros. Sumá un ámbito en la barra de arriba o elegí «Todas las ramas».</div>';
+  if(!fs.length) return '<div class="vacio">Ninguna fuente coincide con los filtros. Sume un ámbito en la barra de arriba o elija «Todas las ramas».</div>';
   var orden=["mza","nac","prov","int","doc"],html="";
   orden.forEach(function(a){
     var g=fs.filter(function(f){return f.a===a;});
@@ -3592,7 +3592,7 @@ function tiraSugerencias(){
   if(expandir(String(estado.q||"").trim())) return "";
   if(!estado.sugeridas.length&&estado.sugeridaRama){
     return '<div class="sugeridas">'+
-      '<p class="sug-nota">No encontré una voz puntual para lo que escribiste, '+
+      '<p class="sug-nota">No se encontró una voz puntual para la consulta escrita, '+
       'pero el tema cae en una rama. Abrirla muestra sus voces.</p>'+
       '<div class="chips"><button class="chip voz-sug" data-act="usar-rama" data-rama="'+esc(estado.sugeridaRama)+'">'+
       esc(comoTitulo(nombreRama(estado.sugeridaRama)))+'</button>'+
@@ -3606,7 +3606,7 @@ function tiraSugerencias(){
   }).join("");
   return '<div class="sugeridas">'+
     '<p class="sug-nota"><b>Los buscadores del fuero indexan por voces</b>, no por lenguaje natural: '+
-    'la frase entera casi siempre da cero. Para lo que escribiste, las voces son estas.</p>'+
+    'la frase entera casi siempre da cero. Para la consulta escrita, las voces son estas.</p>'+
     '<div class="chips">'+chips+
       '<button class="chip sug-cerrar" data-act="cerrar-sugeridas" title="Ocultar">✕</button>'+
     '</div></div>';
@@ -3632,7 +3632,7 @@ function tiraEquivalentes(){
     (eq?'<p class="sug-nota"><b>Los tribunales escriben esto mismo de otras formas</b>, y cada una devuelve fallos '+
         'distintos: buscar sólo una deja material afuera.</p><div class="chips">'+eq+'</div>':'')+
     (cer?'<p class="sug-nota" style="margin-top:10px">Cercanos, <b>pero no lo mismo</b> — cambian los presupuestos, '+
-        'revisalos antes de citarlos.</p><div class="chips">'+cer+'</div>':'')+
+        'revíselos antes de citarlos.</p><div class="chips">'+cer+'</div>':'')+
     (e.anillo.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(e.anillo.nota)+'</p>':'')+
     '</div>';
 }
@@ -3665,7 +3665,7 @@ function tiraProponer(){
       return '<div class="sugeridas"><p class="sug-nota">No se encontraron otras formas de escribir «'+esc(q)+'».</p></div>';
     return '<div class="sugeridas">'+
       '<p class="sug-nota"><b>Propuesta, para revisar.</b> Esto lo sugirió el asistente y todavía no está en el tesauro: '+
-      'comprobalo antes de darlo por bueno.</p>'+
+      'compruébelo antes de darlo por bueno.</p>'+
       (s.equivalentes.length?'<p class="sug-nota" style="margin-top:8px">Serían lo mismo:</p><div class="chips">'+chips(s.equivalentes)+'</div>':'')+
       (s.relacionados.length?'<p class="sug-nota" style="margin-top:10px">Cercanos, <b>pero no lo mismo</b>:</p><div class="chips">'+chips(s.relacionados)+'</div>':'')+
       (s.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(s.nota)+'</p>':'')+
@@ -3753,7 +3753,7 @@ function vistaBuscar(){
 
 function avisoServidor(){
   var local=/localhost|127\.0\.0\.1/.test(String(estado.api||""))||String(estado.api||"").charAt(0)==="/";
-  if(local) return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el tuyo</b> · todo disponible, incluido el texto completo de los fallos de CABA.</p>';
+  if(local) return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el propio</b> · todo disponible, incluido el texto completo de los fallos de CABA.</p>';
   // Sin número acá adentro: decía "las cuatro búsquedas andan" y ya iban
   // seis. El conteo sale de FUENTES_INDICE, que es donde se agregan.
   return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Para procesar el texto completo de un fallo de CABA, '+
@@ -3808,11 +3808,11 @@ function resaltarSimple(texto,q){
 /* Mensajes de ayuda según el código de error que devuelve /api/extraer,
    compartidos por todo lo que trae un documento al Lector. */
 var AYUDAS_ERROR_LINK={
-  DOMINIO_NO_PERMITIDO:"Agregá el dominio en server/config.js y reiniciá el servidor.",
-  PDF_ESCANEADO:"Es una foto del papel, sin texto adentro. Tocá «Aplicar OCR» acá abajo — tarda, pero funciona sin salir de la página.",
-  HTML_SIN_TEXTO:"Pasa cuando el fallo está dentro de un frame o se arma con JavaScript. Abrí el enlace y pegá el texto a mano.",
-  RESPUESTA_NO_OK:"Fijate que el enlace sea el del documento y no el del buscador.",
-  TIEMPO_AGOTADO:"Los sitios judiciales se ponen lentos en horario de tribunales. Probá más tarde.",
+  DOMINIO_NO_PERMITIDO:"Agregue el dominio en server/config.js y reinicie el servidor.",
+  PDF_ESCANEADO:"Es una foto del papel, sin texto adentro. Toque «Aplicar OCR» aquí abajo — tarda, pero funciona sin salir de la página.",
+  HTML_SIN_TEXTO:"Pasa cuando el fallo está dentro de un frame o se arma con JavaScript. Abra el enlace y pegue el texto a mano.",
+  RESPUESTA_NO_OK:"Verifique que el enlace sea el del documento y no el del buscador.",
+  TIEMPO_AGOTADO:"Los sitios judiciales se ponen lentos en horario de tribunales. Pruebe más tarde.",
   RED_PRIVADA:"El servidor no descarga de direcciones internas. Está bien que pase."
 };
 
@@ -3858,7 +3858,7 @@ function traerDocEnLector(url,opciones){
     })["catch"](function(){
       estado.cargando=false;
       estado.errorLink={mensaje:"Se cortó la comunicación con el servidor.",
-                        ayuda:"Fijate que la terminal siga diciendo «Interfaz http://localhost:3000»."};
+                        ayuda:"Verifique que la terminal siga diciendo «Interfaz http://localhost:3000»."};
       render();
     });
 }
@@ -3895,7 +3895,7 @@ function traerOcrEnLector(url,opciones){
     })["catch"](function(){
       estado.cargandoOcr=false;
       estado.errorLink={mensaje:"Se cortó la comunicación con el servidor durante el OCR.",
-                        ayuda:"El OCR tarda bastante; con una conexión lenta puede cortarse antes de terminar. Probá de nuevo.",
+                        ayuda:"El OCR tarda bastante; con una conexión lenta puede cortarse antes de terminar. Pruebe de nuevo.",
                         codigo:"OCR_CORTADO",url:url,opciones:opciones};
       render();
     });
@@ -3934,7 +3934,7 @@ function traerOcrDeArchivo(arch){
     })["catch"](function(){
       estado.cargandoOcr=false;
       estado.errorLink={mensaje:"Se cortó la comunicación con el servidor durante el OCR.",
-                        ayuda:"El OCR tarda bastante; con una conexión lenta puede cortarse antes de terminar. Probá de nuevo.",
+                        ayuda:"El OCR tarda bastante; con una conexión lenta puede cortarse antes de terminar. Pruebe de nuevo.",
                         codigo:"OCR_CORTADO",archivo:arch};
       render();
     });
@@ -4401,7 +4401,7 @@ function buscarEnFuente(slug,pagina){
   var fCfg=FUENTES_INDICE.filter(function(x){return x.slug===slug;})[0];
   var qi=estado.q.trim();
   if(!fCfg) return;
-  if(!qi){ flash("Escribí algo en «¿Qué desea consultar?» primero"); return; }
+  if(!qi){ flash("Escriba algo en «¿Qué desea consultar?» primero"); return; }
   if(!estado.api){ flash("El servidor de extracción no está disponible ahora"); return; }
   recordar(qi);
   var imBusco=estado.indices[slug];
@@ -4511,9 +4511,9 @@ function buscarEnFuente(slug,pagina){
       if(imBusco.pedido!==pedido) return;
       imBusco.cargando=false; imBusco.busco=true;
       imBusco.error=(err&&err.tope)
-        ?"Tardó demasiado y no llegó respuesta — puede haberse cortado la conexión a mitad de camino. Probá de nuevo."
+        ?"Tardó demasiado y no llegó respuesta — puede haberse cortado la conexión a mitad de camino. Pruebe de nuevo."
         :(slug==="saij"||slug==="csjn")
-          ?"No se pudo consultar SAIJ, ni desde el servidor ni desde acá. Probá de nuevo en un rato."
+          ?"No se pudo consultar SAIJ, ni desde el servidor ni desde acá. Pruebe de nuevo en un rato."
           :"Se cortó la comunicación con el servidor.";
       render();
     });
@@ -4618,7 +4618,7 @@ function conteoIndice(im,local){
   if(im.totalFuente===null) return 'coincidencias entre lo revisado hasta acá';
   return 'el sitio devuelve '+n(im.totalFuente)+' filas para esta consulta'+
     (im.parcial
-      ? ', y se van revisando de a tandas: pasá de página para seguir'
+      ? ', y se van revisando de a tandas: pase de página para seguir'
       : ', ya revisadas todas');
 }
 
@@ -4632,7 +4632,7 @@ function panelIndice(f){
   // sino un aviso —estos resultados salieron de la copia guardada, no del
   // sitio— y sigue siendo UN borde, con un lado marcado.
   var out='<div class="panel vivo f-'+f.slug+'"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
-    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0">'+esc(f.nombre)+(local?' · desde tu índice local':' · en vivo')+'</div>';
+    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0">'+esc(f.nombre)+(local?' · desde su índice local':' · en vivo')+'</div>';
 
   if(f.tribunales){
     out+='<div class="chips" style="margin-bottom:10px">'+f.tribunales.map(function(t){
@@ -4668,14 +4668,14 @@ function panelIndice(f){
   // ese momento; si desde entonces se tocó, hay que decirlo en vez de dejar
   // una lista que ya no corresponde al filtro puesto (ver invalidarBusquedas).
   var avisoRango=(im.busco&&!mismoRango(im.filtro,rangoAnios()))
-    ? '<div class="aviso" style="margin:0 0 10px"><strong>Cambiaste el rango de años.</strong> Estos resultados son de la búsqueda anterior y no respetan el rango que tenés puesto ahora. '+
+    ? '<div class="aviso" style="margin:0 0 10px"><strong>Se cambió el rango de años.</strong> Estos resultados son de la búsqueda anterior y no respetan el rango indicado ahora. '+
       '<button class="mini" data-act="buscar-indice" data-fuente="'+esc(f.slug)+'" style="margin-left:6px">Rehacer la búsqueda</button></div>'
     : '';
   var avisoLocal=avisoRango+(local?'<div class="aviso" style="margin:0 0 10px"><strong>El buscador de '+esc(f.nombre)+' no respondió'+
-    (im.avisoFalla?' ('+esc(im.avisoFalla)+')':'')+'.</strong> Esto es lo que ya tenías guardado de búsquedas anteriores en tu índice local — puede estar incompleto o desactualizado. Probá de nuevo en un rato para la versión en vivo.</div>':'');
+    (im.avisoFalla?' ('+esc(im.avisoFalla)+')':'')+'.</strong> Esto es lo que ya estaba guardado de búsquedas anteriores en su índice local — puede estar incompleto o desactualizado. Pruebe de nuevo en un rato para la versión en vivo.</div>':'');
   if(!im.resultados.length){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+
-      (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Probá con menos palabras.</p></div>';
+      (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
     return out;
   }
   var visibles=im.secFiltro?im.resultados.filter(function(r){return r.secretaria===im.secFiltro;}):im.resultados;
@@ -4703,8 +4703,8 @@ function panelIndice(f){
     // que iba sumando de a 20 sin fin; ahora se ve de entrada cuánto hay y
     // se puede saltar directo a cualquier página, como en cualquier buscador.
     paginadorIndice(f,im)+
-    (im.desdeNavegador?'<div class="aviso" style="margin:0 0 10px">Esta búsqueda la hizo <b>tu computadora</b>, no el servidor: SAIJ no atiende pedidos desde donde está publicada la web, pero sí desde un navegador común. Por eso estos resultados no quedan guardados en el índice local.</div>':'')+
-    (im.aflojado?'<div class="aviso" style="margin:0 0 10px">Ningún resultado tiene <b>todas</b> las palabras que buscaste. Estos coinciden solo con la más específica, así que revisalos con cuidado: puede que no sean del tema que buscabas.</div>':'')+
+    (im.desdeNavegador?'<div class="aviso" style="margin:0 0 10px">Esta búsqueda la hizo <b>su computadora</b>, no el servidor: SAIJ no atiende pedidos desde donde está publicada la web, pero sí desde un navegador común. Por eso estos resultados no quedan guardados en el índice local.</div>':'')+
+    (im.aflojado?'<div class="aviso" style="margin:0 0 10px">Ningún resultado tiene <b>todas</b> las palabras buscadas. Estos coinciden solo con la más específica, así que revíselos con cuidado: puede que no sean del tema buscado.</div>':'')+
     // El sitio de CABA no manda un resumen del fallo con cada resultado
     // como hace Mendoza: los pasajes se sacan del documento en sí, de a
     // tandas, mientras la lista ya está en pantalla (ver traerFragmentos).
@@ -4782,7 +4782,7 @@ function fichaRequisito(x){
   }else if(x.aviso){
     cuerpo+='<p class="req-aviso">'+esc(x.aviso)+'</p>';
   }else{
-    cuerpo+='<p class="req-aviso">Todavía sin la lista cargada — se van sumando de a una, verificando cada artículo contra el texto oficial. Mientras tanto, la búsqueda te lleva a los fallos.</p>';
+    cuerpo+='<p class="req-aviso">Todavía sin la lista cargada — se van sumando de a una, verificando cada artículo contra el texto oficial. Mientras tanto, la búsqueda lleva a los fallos.</p>';
   }
   var fuente=x.norma
     ? '<div class="req-norma">'+esc(x.norma)+
@@ -4870,7 +4870,7 @@ var GRUPOS_COMPARAR=[
  */
 function compararFuentes(){
   var qi=estado.q.trim();
-  if(!qi){ flash("Escribí algo en «¿Qué desea consultar?» primero"); return; }
+  if(!qi){ flash("Escriba algo en «¿Qué desea consultar?» primero"); return; }
   if(!estado.api){ flash("El comparador necesita el servidor de extracción"); return; }
   recordar(qi);
   estado.comparar={corriendo:true,hecho:false,q:qi,porFuente:{}};
@@ -4933,7 +4933,7 @@ function tarjetaComparar(f){
   var cifra='<p class="comp-cifra"><b>'+r.resultados.length.toLocaleString("es-AR")+'</b> resultado'+
     (r.resultados.length===1?'':'s')+' encontrados'+
     (r.parcial?' (hay más para revisar)':'')+
-    (r.local?' · de tu índice local':'')+'</p>';
+    (r.local?' · de su índice local':'')+'</p>';
 
   var items=r.resultados.slice(0,3).map(function(x){
     var enlace=x.linkFicha||x.linkFallo;
@@ -5002,7 +5002,7 @@ function vistaNorma(){
     var d=n.salida;
     salida='<div class="pasaje" style="margin-top:4px">'+
       '<div class="txt" style="white-space:pre-wrap;font-size:15px;line-height:1.6">'+esc(d.texto)+'</div>'+
-      (d.truncado?'<p class="req-aviso">El artículo sigue: se muestra el principio. Abrilo en InfoLeg para leerlo completo.</p>':"")+
+      (d.truncado?'<p class="req-aviso">El artículo sigue: se muestra el principio. Ábralo en InfoLeg para leerlo completo.</p>':"")+
       (d.aviso?'<p class="req-aviso">'+esc(d.aviso)+'</p>':"")+
       '<div class="req-norma">'+esc(d.norma)+' · art. '+esc(d.articulo)+
         ' · <a href="'+esc(d.url)+'" target="_blank" rel="noopener noreferrer">ver en InfoLeg</a></div>'+
@@ -5054,8 +5054,8 @@ function avisoErrorLector(){
   if(estado.cargandoOcr){
     return '<div class="aviso" style="margin:0 0 14px">'+
       '<strong>Aplicando OCR…</strong> puede tardar varios minutos —no son milisegundos como el resto de esta app—, '+
-      'sobre todo si el servidor anda con poca CPU en este momento. No hace falta que recargues ni vuelvas a tocar el botón: '+
-      'dejalo trabajando.'+
+      'sobre todo si el servidor anda con poca CPU en este momento. No hace falta recargar ni volver a tocar el botón: '+
+      'déjelo trabajando.'+
       (estado.texto?'<br><span style="color:var(--humo);font-size:12.5px">Mientras tanto se sigue viendo el fallo anterior.</span>':'')+
       '</div>';
   }
@@ -5068,7 +5068,7 @@ function avisoErrorLector(){
   return '<div class="aviso" style="margin:0 0 14px"><strong>No se pudo traer este documento.</strong> '+
     esc(estado.errorLink.mensaje)+
     (estado.errorLink.ayuda?'<br><span style="color:var(--humo);font-size:12.5px">'+esc(estado.errorLink.ayuda)+'</span>':'')+
-    (estado.texto?'<br><span style="color:var(--humo);font-size:12.5px">Se sigue mostrando el fallo que ya tenías abierto, no el que acabás de pedir.</span>':'')+
+    (estado.texto?'<br><span style="color:var(--humo);font-size:12.5px">Se sigue mostrando el fallo que ya estaba abierto, no el que acaba de pedirse.</span>':'')+
     ((estado.errorLink.url||puedeOcr)
       ?'<div class="f-acc" style="margin-top:10px">'+
          // El escaneo no tiene "el original y guardarlo" como primer paso:
@@ -5118,7 +5118,7 @@ function vistaLector(){
       porLink='<div class="panel inactivo">'+
         '<div class="rotulo" style="margin-top:0">Traer por enlace · no disponible ahora</div>'+
         '<p style="font-size:13.5px;margin:0;color:var(--humo)">El servidor de extracción no está corriendo, así que la carga automática por enlace está apagada. '+
-        'Todo lo demás funciona igual. Si querés activarla, levantá el servidor con <code>npm start</code> y recargá esta página.</p></div>';
+        'Todo lo demás funciona igual. Para activarla, levante el servidor con <code>npm start</code> y recargue esta página.</p></div>';
     }
 
     return '<div class="aviso"><span class="av-tit">Cargue el fallo aquí para visualizarlo con su búsqueda destacada</span>'+
@@ -5176,7 +5176,7 @@ function conteoLector(cs){
   if(!el) return;
   if(!cs.length){
     el.innerHTML=cadena()?'Sin coincidencias para <b>'+esc(cadena())+'</b>'
-                         :'Escribí abajo para resaltar dentro del fallo';
+                         :'Escriba en «Qué buscar dentro del fallo» para resaltar';
     return;
   }
   var vis=Math.min(cs.length,TOPE_MARCAS);
@@ -5298,7 +5298,7 @@ function pintarLector(){
 
     meta.innerHTML=htmlTop+
       (bloques?'<div class="meta-cuerpo">'+bloques+'</div>'
-        :(htmlTop?"":'<div class="meta-bloque"><h3>Sin datos detectados</h3><div class="txt">El encabezado no sigue un formato reconocible. Cargá los datos a mano en «Citar».</div></div>'))+
+        :(htmlTop?"":'<div class="meta-bloque"><h3>Sin datos detectados</h3><div class="txt">El encabezado no sigue un formato reconocible. Cargue los datos a mano en «Citar».</div></div>'))+
       '<div class="meta-acc">'+
       '<button class="mini" data-act="meta-a-cita">Pasar estos datos al formateador de citas</button>'+
       '<button class="mini" data-act="copiar-doc-cita">Copiar solo la cita</button>'+
@@ -5314,8 +5314,8 @@ function pintarLector(){
     if(!cs.length){
       if(tit) tit.textContent="Pasajes";
       cont.innerHTML='<div class="vacio">'+(cadena()
-        ?'Tu búsqueda no aparece en este texto. Probá con «Palabra parcial: sí», con menos palabras o cambiando el modo a «Alguna palabra» en la solapa Buscar.'
-        :'Escribí algo arriba y los pasajes aparecen acá.')+'</div>';
+        ?'Su búsqueda no aparece en este texto. Pruebe con «Palabra parcial: sí», con menos palabras o cambiando el modo a «Alguna palabra» en la solapa Buscar.'
+        :'Escriba algo arriba y los pasajes aparecerán aquí.')+'</div>';
       cont._ps=[];
     }else{
       var ps=pasajesDe(texto,cs);
@@ -5388,7 +5388,7 @@ function vistaCitas(){
         '<button class="btn sec" data-act="copiar-cita">Copiar</button>'+
       '</div>'+
       '<div class="rotulo">Resultado</div>'+
-      '<div class="out" id="cita-out">Completá los campos y tocá «Armar la cita».</div>'+
+      '<div class="out" id="cita-out">Complete los campos y toque «Armar la cita».</div>'+
     '</div>'+
     '<div class="blk">'+
       '<h3>Interpretación de citas de Fallos (CSJN)</h3>'+
@@ -5418,7 +5418,7 @@ function verificarCitaPegada(){
   var ta=document.getElementById("cita-in");
   var txt=(ta?ta.value:estado.cita.texto||"").trim();
   estado.cita.texto=txt;
-  if(!txt){ flash("Pegá la cita que querés verificar"); return; }
+  if(!txt){ flash("Pegue la cita que desea verificar"); return; }
   if(!estado.api){ flash("Esta función necesita el servidor, y ahora no responde"); return; }
   if(estado.cita.cargando) return; // ya hay uno en camino, no duplicar el pedido
 
@@ -5495,13 +5495,13 @@ function resultadoCita(){
       '<span class="tag">confianza '+esc(d.confianza||"")+'</span>'+
     '</div>'+
     '<p style="font-size:15px;margin:0 0 4px">'+esc(d.explicacion||"")+'</p>'+
-    '<div class="rotulo">Lo que leí de la cita</div>'+
+    '<div class="rotulo">Datos leídos de la cita</div>'+
     camposDeLaCita(d.campos)+
-    (d.consulta?'<p style="font-size:12.5px;color:var(--humo);margin:8px 0 0">Busqué <b>'+esc(d.consulta)+
+    (d.consulta?'<p style="font-size:12.5px;color:var(--humo);margin:8px 0 0">Se buscó <b>'+esc(d.consulta)+
       '</b>'+(d.consultaArmadaCon?' (armada con '+esc(d.consultaArmadaCon)+')':'')+'.</p>':'')+
     (fuentes?'<p style="font-size:12.5px;color:var(--humo);margin:6px 0 0">'+fuentes+'</p>':'')+
     ((d.candidatos&&d.candidatos.length)
-      ?'<div class="rotulo">'+(d.veredicto==="verificada"?"Lo que encontré":"Parecidos, por si sirven de pista")+'</div>'+
+      ?'<div class="rotulo">'+(d.veredicto==="verificada"?"Coincidencias encontradas":"Parecidos, por si sirven de pista")+'</div>'+
        d.candidatos.map(fichaCandidato).join("")
       :'')+
     '</div>';
@@ -5511,11 +5511,11 @@ function panelVerificadorCita(){
   var sinServidor=(estado.api===false);
   return '<div class="panel">'+
     '<div class="rotulo" style="margin-top:0">Verificador de citas'+(sinServidor?' · necesita el servidor':' · en vivo')+'</div>'+
-    '<label class="campo"><span>Pegá la cita tal como la tenés</span>'+
+    '<label class="campo"><span>Pegue la cita tal como la tiene</span>'+
       '<textarea id="cita-in" style="min-height:92px" placeholder="CSJN, «Halabi, Ernesto c/ P.E.N. s/ amparo», Fallos: 332:111, 24/02/2009">'+
       esc(estado.cita.texto)+'</textarea></label>'+
     (sinServidor
-      ?'<p style="font-size:13px;color:var(--humo);margin:0">Esta función consulta los buscadores oficiales a través del servidor de extracción, y ahora mismo no responde. El resto de la página funciona igual: podés seguir el protocolo de acá abajo a mano.</p>'
+      ?'<p style="font-size:13px;color:var(--humo);margin:0">Esta función consulta los buscadores oficiales a través del servidor de extracción, y ahora mismo no responde. El resto de la página funciona igual: puede seguir el protocolo de aquí abajo a mano.</p>'
       :'')+
     '<div class="acciones" style="margin-top:4px">'+
       '<button class="btn" data-act="verificar-cita"'+((estado.cita.cargando||sinServidor)?" disabled":"")+'>'+
@@ -5585,10 +5585,10 @@ function seccionAnillos(){
 
   return '<div class="blk"><h3>Mis términos equivalentes</h3>'+
     '<p style="font-size:13.5px;color:var(--humo);margin:0 0 14px;max-width:70ch">'+
-      'Cuando dos formas distintas nombran la misma figura, cargalas acá y la búsqueda va a ofrecer las dos. '+
-      'Lo que escribas pesa más que el catálogo que viene de fábrica.</p>'+
+      'Cuando dos formas distintas nombran la misma figura, cárguelas aquí y la búsqueda ofrecerá las dos. '+
+      'Lo que usted cargue pesa más que el catálogo que viene de fábrica.</p>'+
 
-    '<label class="campo"><span>El término, como lo escribirías vos</span>'+
+    '<label class="campo"><span>El término, tal como lo escribiría</span>'+
       '<input type="text" id="an-canonico" value="'+esc(n.canonico)+'" placeholder="lucro cesante" autocomplete="off"></label>'+
     '<label class="campo"><span>Formas que significan lo mismo — separadas por coma</span>'+
       '<input type="text" id="an-equivalentes" value="'+esc(n.equivalentes)+'" placeholder="ganancias dejadas de percibir, pérdida de ganancias" autocomplete="off"></label>'+
@@ -5602,8 +5602,8 @@ function seccionAnillos(){
     '</div>'+
 
     (propios?'<div style="margin-top:18px"><div class="rotulo">'+estado.anillos.length+
-      (estado.anillos.length===1?' anillo cargado por vos':' anillos cargados por vos')+'</div>'+propios+'</div>'
-      :'<div class="vacio" style="margin-top:16px">Todavía no cargaste ninguno. El catálogo de fábrica tiene '+TESAURO.length+'.</div>')+
+      (estado.anillos.length===1?' anillo cargado por usted':' anillos cargados por usted')+'</div>'+propios+'</div>'
+      :'<div class="vacio" style="margin-top:16px">Todavía no hay ninguno cargado. El catálogo de fábrica tiene '+TESAURO.length+'.</div>')+
     '</div>';
 }
 
@@ -5612,7 +5612,7 @@ function vistaGuardados(){
   var favs=F.filter(function(f){return ids.indexOf(f.id)!==-1;});
   var h='<div class="blk"><h3>Pasajes guardados</h3>';
   if(!estado.pasajes.length){
-    h+='<div class="vacio">Los pasajes que guardes en el Lector se acumulan acá, con la cita y la fecha de consulta puestas.</div>';
+    h+='<div class="vacio">Los pasajes que guarde en el Lector se acumulan acá, con la cita y la fecha de consulta puestas.</div>';
   }else{
     h+='<div class="acciones" style="margin:0 0 12px;padding:0;border:0">'+
        '<button class="btn" data-act="pasajes-copiar">Copiar los '+estado.pasajes.length+'</button>'+
@@ -5635,10 +5635,10 @@ function vistaGuardados(){
   h+='</div>';
   h+='<div class="blk"><h3>Fuentes guardadas</h3>'+
     (favs.length?listaPorAmbito(favs)
-     :'<div class="vacio">Todavía no guardaste ninguna fuente. Tocá la estrella en cualquier ficha para tenerla a mano.</div>')+'</div>';
+     :'<div class="vacio">Todavía no hay fuentes guardadas. Toque la estrella en cualquier ficha para tenerla a mano.</div>')+'</div>';
   h+='<div class="blk"><h3>Búsquedas de esta sesión</h3>';
   if(!estado.hist.length){
-    h+='<div class="vacio">Acá van quedando las consultas que lances, para repetirlas sin volver a tipearlas.</div>';
+    h+='<div class="vacio">Acá van quedando las consultas que realice, para repetirlas sin volver a tipearlas.</div>';
   }else{
     h+='<div class="chips">'+estado.hist.slice(0,20).map(function(q){
       return '<button class="voz" data-act="rehacer" data-v="'+esc(q)+'">'+esc(q)+'</button>';}).join("")+'</div>';
@@ -5663,9 +5663,9 @@ function vistaCuenta(){
         '</div>'+
         '<p style="font-size:12.5px;color:var(--humo);margin:0 0 16px">'+
           (estado.sincronizando?'Sincronizando…'
-            :(cuando?'Guardado en tu cuenta a las '+cuando.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})+
+            :(cuando?'Guardado en su cuenta a las '+cuando.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"})+
                      ' del '+cuando.toLocaleDateString("es-AR")+'.'
-                   :'Todavía no guardaste nada. Marcá una fuente en Buscar y va a aparecer acá.'))+'</p>'+
+                   :'Todavía no hay nada guardado. Marque una fuente en Buscar y aparecerá aquí.'))+'</p>'+
         '<div class="acciones">'+
           '<button class="btn sec" data-act="auth-logout"'+(estado.authCargando?" disabled":"")+'>'+
             (estado.authCargando?"Un momento…":"Cerrar sesión")+'</button>'+
@@ -5675,10 +5675,10 @@ function vistaCuenta(){
       '</div>';
   }
   var esRegistro=estado.authModo!=="login";
-  return '<div class="aviso"><strong>'+(esRegistro?"Creá tu cuenta.":"Iniciá sesión.")+
-      '</strong> Sirve para que las fuentes que marcás y tus búsquedas recientes dejen de vivir en este navegador y pasen a tu cuenta: '+
-      'las tenés igual desde el estudio, desde casa o desde el teléfono.'+
-      (esRegistro?' Lo que ya tengas guardado acá no se pierde: se suma.':'')+'</div>'+
+  return '<div class="aviso"><strong>'+(esRegistro?"Cree su cuenta.":"Inicie sesión.")+
+      '</strong> Sirve para que las fuentes que marque y sus búsquedas recientes dejen de vivir en este navegador y pasen a su cuenta: '+
+      'las tendrá igual desde el estudio, desde casa o desde el teléfono.'+
+      (esRegistro?' Lo que ya tenga guardado aquí no se pierde: se suma.':'')+'</div>'+
     '<div class="panel" style="max-width:420px">'+
       '<div class="chips" style="margin-bottom:18px">'+
         '<button class="chip" data-act="auth-modo" data-modo="registro" aria-pressed="'+(esRegistro?"true":"false")+'">Crear cuenta</button>'+
@@ -5686,10 +5686,10 @@ function vistaCuenta(){
       '</div>'+
       (estado.authError?'<div class="aviso" style="margin-bottom:14px"><strong>No se pudo.</strong> '+esc(estado.authError)+'</div>':'')+
       '<label class="campo"><span>Correo electrónico</span>'+
-        '<input type="email" id="auth-email" value="'+esc(estado.authEmail)+'" autocomplete="username" placeholder="vos@ejemplo.com"></label>'+
+        '<input type="email" id="auth-email" value="'+esc(estado.authEmail)+'" autocomplete="username" placeholder="nombre@ejemplo.com"></label>'+
       '<label class="campo"><span>Contraseña</span>'+
         '<input type="password" id="auth-password" autocomplete="'+(esRegistro?"new-password":"current-password")+
-        '" placeholder="'+(esRegistro?"Mínimo 8 caracteres":"Tu contraseña")+'"></label>'+
+        '" placeholder="'+(esRegistro?"Mínimo 8 caracteres":"Su contraseña")+'"></label>'+
       '<div class="acciones">'+
         '<button class="btn" data-act="'+(esRegistro?"auth-registro":"auth-login")+'"'+(estado.authCargando?" disabled":"")+'>'+
           (estado.authCargando?"Un momento…":(esRegistro?"Crear cuenta":"Iniciar sesión"))+'</button>'+
@@ -5718,7 +5718,7 @@ function render(){
     document.getElementById("pie-txt").innerHTML=
       "<strong>Iuris et de iure</strong> — catálogo de "+F.length+" bases oficiales y "+RAMAS.length+
       " ramas del derecho. Funciona sin conexión: los enlaces se abren en el sitio del organismo. "+
-      "No almacena fallos ni genera contenido jurídico. Verificá siempre en la fuente antes de citar.";
+      "No almacena fallos ni genera contenido jurídico. Verifique siempre en la fuente antes de citar.";
   }catch(e){ panic(e&&e.message?e.message:"error de render"); }
 }
 
@@ -5831,7 +5831,7 @@ document.addEventListener("click",function(ev){
     var k=b.getAttribute("data-amb");
     estado.ambitos[k]=!estado.ambitos[k];
     if(!Object.keys(estado.ambitos).some(function(x){return estado.ambitos[x];})){
-      estado.ambitos[k]=true; flash("Dejá al menos un ámbito activo");
+      estado.ambitos[k]=true; flash("Deje al menos un ámbito activo");
     }
     render(); return;
   }
@@ -5853,7 +5853,7 @@ document.addEventListener("click",function(ev){
     // y, si se nombró la norma, la elige sola. Ver parsearReferencia.
     var ref=parsearReferencia(estado.norma.art);
     if(ref.clave) estado.norma.clave=ref.clave;
-    if(!ref.art){ flash("No encontré un número de artículo en lo que escribiste"); return; }
+    if(!ref.art){ flash("No se encontró un número de artículo en lo escrito"); return; }
     estado.norma.num=ref.art;
     if(!estado.api){ flash("Para traer el texto oficial hace falta el servidor"); return; }
     estado.norma.cargando=true; estado.norma.error=null; estado.norma.salida=null; render();
@@ -5882,7 +5882,7 @@ document.addEventListener("click",function(ev){
     estado.articuloTema=d.rubrica||"";
     estado.modo="todas"; estado.tab="buscar";
     render(); window.scrollTo(0,0);
-    flash("Tocá una fuente abajo: a cada una se le pregunta como ella entiende");
+    flash("Toque una fuente abajo: a cada una se le pregunta como ella entiende");
     return;
   }
   if(act==="compartir-fallo"){
@@ -5911,7 +5911,7 @@ document.addEventListener("click",function(ev){
       navigator.clipboard.writeText(link).then(function(){ flash("Link copiado — se abre con esta misma búsqueda"); })
         ["catch"](function(){ flash("No pude copiar; la dirección de arriba ya es el link"); });
     }else{
-      flash("Copiá la dirección de arriba: ya es el link de esta búsqueda");
+      flash("Copie la dirección de arriba: ya es el link de esta búsqueda");
     }
     return;
   }
@@ -5965,7 +5965,7 @@ document.addEventListener("click",function(ev){
   }
   if(act==="google"){
     var c=cadena();
-    if(!c){ flash("Escribí algo en «¿Qué desea consultar?» primero"); return; }
+    if(!c){ flash("Escriba algo en «¿Qué desea consultar?» primero"); return; }
     recordar(c);
     window.open(urlGoogleSitio(b.getAttribute("data-dom")),"_blank","noopener");
     return;
@@ -6010,7 +6010,7 @@ document.addEventListener("click",function(ev){
   }
   if(act==="barrido"){
     var q=cadena();
-    if(!q){ flash("Escribí algo en «¿Qué desea consultar?» primero"); return; }
+    if(!q){ flash("Escriba algo en «¿Qué desea consultar?» primero"); return; }
     var doms=[],vistos={};
     fuentesFiltradas().forEach(function(f){
       if(!vistos[f.dom]&&doms.length<12){vistos[f.dom]=1;doms.push(f.dom);}
@@ -6037,7 +6037,7 @@ document.addEventListener("click",function(ev){
   if(act==="usar-rama"){
     estado.rama=b.getAttribute("data-rama")||""; estado.sugeridaRama="";
     render();
-    flash("Rama puesta: "+comoTitulo(nombreRama(estado.rama))+" — mirá sus voces acá abajo");
+    flash("Rama puesta: "+comoTitulo(nombreRama(estado.rama))+" — sus voces están aquí abajo");
     return;
   }
   if(act==="anillo-guardar"){
@@ -6068,7 +6068,7 @@ document.addEventListener("click",function(ev){
     estado.anillos=estado.anillos.filter(function(_,k){ return k!==ib; });
     store.set("jedj:anillos",estado.anillos);
     guardarEnCuenta(); render();
-    flash("«"+borrado+"» borrado de tus términos");
+    flash("«"+borrado+"» borrado de sus términos");
     return;
   }
   if(act==="anillo-probar"){
@@ -6144,7 +6144,7 @@ document.addEventListener("click",function(ev){
   if(act==="traer-link"){
     var iu=document.getElementById("doc-url");
     var link=iu?iu.value.trim():"";
-    if(!link){ flash("Pegá el enlace del fallo"); return; }
+    if(!link){ flash("Pegue el enlace del fallo"); return; }
     traerDocEnLector(link);
     return;
   }
@@ -6177,7 +6177,7 @@ document.addEventListener("click",function(ev){
     estado.tab="lector"; render();
     var inpDesc=document.getElementById("doc-archivo");
     if(inpDesc) inpDesc.click();
-    flash("El fallo se está descargando — elegilo en el selector para verlo acá con tu búsqueda marcada");
+    flash("El fallo se está descargando — elíjalo en el selector para verlo aquí con su búsqueda marcada");
     return;
   }
   if(act==="elegir-archivo"){
@@ -6188,7 +6188,7 @@ document.addEventListener("click",function(ev){
   if(act==="analizar"){
     var ta=document.getElementById("doc-in"),de=document.getElementById("doc-de");
     var txt=ta?ta.value:"";
-    if(!txt||txt.trim().length<40){ flash("Pegá el texto del fallo primero"); return; }
+    if(!txt||txt.trim().length<40){ flash("Pegue el texto del fallo primero"); return; }
     if(txt.length>2000000){ txt=txt.slice(0,2000000); flash("El fallo era enorme: se cargaron los primeros 2 millones de caracteres"); }
     estado.texto=txt; estado.fuenteDe=de?de.value.trim():""; estado.marca=0; estado.fichaConocida=null;
     render(); window.scrollTo(0,0); return;
@@ -6322,8 +6322,8 @@ document.addEventListener("change",function(ev){
         // OCR" sin pedir que lo vuelva a elegir — ver avisoErrorLector().
         estado.errorLink={mensaje:(d&&d.mensaje)||"No se pudo leer el archivo.",
           ayuda:(d&&d.codigo)==="PDF_ESCANEADO"
-            ?"Es una foto del papel, sin texto adentro. Tocá «Aplicar OCR» acá abajo."
-            :"Se leen PDF y .doc de Word. Si es otro formato, abrilo y pegá el texto a mano.",
+            ?"Es una foto del papel, sin texto adentro. Toque «Aplicar OCR» aquí abajo."
+            :"Se leen PDF y .doc de Word. Si es otro formato, ábralo y pegue el texto a mano.",
           codigo:d&&d.codigo,archivo:(d&&d.codigo)==="PDF_ESCANEADO"?arch:null};
         render(); return;
       }
@@ -6369,7 +6369,7 @@ function armarCita(){
                           tomo:val("c-tomo"),pag:val("c-pag"),exp:val("c-exp")});
   var o=document.getElementById("cita-out");
   if(o) o.textContent=s;
-  flash("Cita armada — verificá los datos en la fuente");
+  flash("Cita armada — verifique los datos en la fuente");
 }
 
 /* ============================================================
