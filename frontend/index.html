@@ -120,7 +120,14 @@ strong,b{font-weight:500}
 /* la marca escrita, con el punto redondo del logo y no el "·" de la fuente */
 .marca{font-family:var(--caps);white-space:nowrap}
 .marca .v{color:var(--gold)}
-.m-punto{display:inline-block;width:.17em;height:.17em;border-radius:50%;background:var(--gold);vertical-align:.19em;margin:0 .34em 0 .3em}
+.marca{--ls:.3em}
+/* El punto va exactamente a mitad de camino entre la S y la C, medido sobre
+   la tinta de las letras y no sobre sus cajas: a la izquierda ya hay el
+   espaciado entre letras (--ls) más lo que sobra a la derecha de la S (5,4 %
+   del cuerpo); a la derecha, lo que sobra a la izquierda de la C (4,9 %).
+   Con margen izquierdo cero, el derecho tiene que ser --ls + 0,5 %. El
+   alto: la mitad de las mayúsculas (cuerpo 65 %) menos la mitad del punto. */
+.m-punto{display:inline-block;width:.17em;height:.17em;border-radius:50%;background:var(--gold);vertical-align:.24em;margin:0 calc(var(--ls) + .005em) 0 0}
 
 /* ================================================================== *
    BOTONES — cápsulas
@@ -226,7 +233,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
    el rótulo se acorta a "Secciones" y el nombre se aprieta un poco. */
 @media (max-width:520px){
   .nav-wrap{gap:12px}
-  .marca-app .marca{letter-spacing:.2em}
+  .marca-app .marca{letter-spacing:.2em;--ls:.2em}
   .btn-menu{padding:9px 14px 8px;font-size:13.5px}
   .btn-menu .txt{font-size:0}
   .btn-menu .txt::after{content:"Secciones";font-size:13.5px}
@@ -377,9 +384,9 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 }
 /* el sello: la sigla de la base en un aro doble, del tono de esa base */
 .rotulo-fuente::before{
-  content:attr(data-cod);flex:none;display:grid;place-items:center;width:58px;height:58px;padding:6px;border-radius:50%;
+  content:attr(data-cod);flex:none;display:grid;place-items:center;width:78px;height:78px;padding:10px;border-radius:50%;
   border:1px solid var(--punto,var(--gold));box-shadow:inset 0 0 0 4px var(--bg),inset 0 0 0 5px var(--punto,var(--gold));
-  font:500 9.5px/1.15 var(--caps);letter-spacing:.12em;text-align:center;color:var(--fg)
+  font:500 10px/1.15 var(--caps);letter-spacing:.1em;text-align:center;color:var(--fg)
 }
 .panel .fuente{padding:22px 0;margin:0;border:0;border-bottom:1px solid var(--line);background:none;transition:border-color .5s}
 .panel .fuente:hover{border-bottom-color:var(--gold-55)}
@@ -650,6 +657,12 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 /* ---------- exportar ---------- */
 .pas-export{margin:14px 0 0}
 
+/* El punto medio "·" de la tipografía cae alto (su centro está a 38,6 % del
+   cuerpo; la mitad de una palabra, entre minúsculas y mayúsculas, está a
+   30 %). Cada uno va en un <span class="pm"> —ver centrarSeparadores— y se
+   baja esa diferencia, igual en todos. */
+.pm{position:relative;top:.087em}
+
 /* ---------- compartir, avisos flotantes, error ---------- */
 .compartir{position:relative;display:inline-block}
 .compartir-menu.flotante{position:fixed;z-index:200;right:auto;top:auto}
@@ -777,12 +790,12 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-col[class*=" f-"]{border-top-color:color-mix(in srgb,var(--punto) 70%,transparent)}
 .pt-col[class*=" f-"]:hover{border-top-color:var(--punto)}
 .pt-col[class*=" f-"] .pt-lat{color:var(--punto)!important}
-.pt-col[class*=" f-"] .pt-lat::after{content:"";display:inline-block;width:.32em;height:.32em;margin-left:.6em;border-radius:50%;background:var(--punto);vertical-align:.09em}
+.pt-col[class*=" f-"] .pt-lat::after{content:"";display:inline-block;width:.32em;height:.32em;margin-left:.6em;border-radius:50%;background:var(--punto);vertical-align:.165em}
 .pt-col h3{margin:0;font:500 17px/1.3 var(--sans)}
 .pt-col p{margin:10px 0 0;color:var(--mute)}
 .pt-col button{margin-top:18px;padding:0;border:0;background:none;font-size:14px;color:var(--fg);transition:color .3s}
 .pt-col button:hover{color:var(--gold)}
-.pt-lat{margin:0 0 18px!important;font:400 clamp(20px,2vw,30px)/1 var(--caps)!important;letter-spacing:.16em;color:var(--gold)!important}
+.pt-lat{margin:0 0 18px!important;font:400 clamp(18px,2vw,30px)/1 var(--caps)!important;letter-spacing:.16em;color:var(--gold)!important;white-space:nowrap}
 .pt-entrada{margin:0;font-size:15px;color:var(--mute)}
 .pt-entrada span{margin:0 .5em;color:var(--gold)}
 .pt-nombre{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(32px,6vw,120px);margin-top:26px;padding-top:clamp(28px,4vw,48px);border-top:1px solid var(--line)}
@@ -7592,6 +7605,40 @@ function armarCita(){
 /* ============================================================
    9. Arranque
    ============================================================ */
+/* Los separadores "·" del texto, a la mitad de la altura de las palabras.
+   Recorre los textos de la página y, cada vez que aparece algo nuevo (todo
+   se redibuja con innerHTML), envuelve cada "·" en <span class="pm">. El
+   texto no cambia: copiar o buscar sigue viendo el mismo carácter. */
+(function(){
+  var SALTAR={SCRIPT:1,STYLE:1,TEXTAREA:1,INPUT:1,SELECT:1,OPTION:1,NOSCRIPT:1};
+  function envolver(raiz){
+    if(!raiz||raiz.nodeType===8) return;
+    if(raiz.nodeType===3){ partir(raiz); return; }
+    if(raiz.nodeType!==1||SALTAR[raiz.tagName]||(raiz.classList&&raiz.classList.contains("pm"))) return;
+    var w=document.createTreeWalker(raiz,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+      if(n.nodeValue.indexOf("\u00b7")===-1) return NodeFilter.FILTER_REJECT;
+      var p=n.parentNode;
+      return (p&&(SALTAR[p.tagName]||(p.classList&&p.classList.contains("pm"))))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT;
+    }}),lista=[],n;
+    while((n=w.nextNode())) lista.push(n);
+    lista.forEach(partir);
+  }
+  function partir(n){
+    var p=n.parentNode;
+    if(!p||n.nodeValue.indexOf("\u00b7")===-1||SALTAR[p.tagName]||(p.classList&&p.classList.contains("pm"))) return;
+    var trozos=n.nodeValue.split("\u00b7"),f=document.createDocumentFragment();
+    trozos.forEach(function(t,i){
+      if(i){ var s=document.createElement("span"); s.className="pm"; s.textContent="\u00b7"; f.appendChild(s); }
+      if(t) f.appendChild(document.createTextNode(t));
+    });
+    p.replaceChild(f,n);
+  }
+  envolver(document.body);
+  new MutationObserver(function(ms){
+    ms.forEach(function(m){ for(var i=0;i<m.addedNodes.length;i++) envolver(m.addedNodes[i]); });
+  }).observe(document.body,{childList:true,subtree:true});
+})();
+
 leerDeURL();
 render();
 detectarServidor();
