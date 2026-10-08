@@ -78,7 +78,7 @@ const limite = rateLimit({
   message: {
     ok: false,
     codigo: 'DEMASIADAS_PETICIONES',
-    mensaje: 'Frenaste demasiado seguido. Esperá unos minutos y seguí: el límite existe para no castigar a los servidores oficiales.',
+    mensaje: 'Se hicieron demasiadas consultas seguidas. Espere unos minutos y continúe: el límite existe para no castigar a los servidores oficiales.',
   },
 });
 app.use('/api/', limite);
@@ -93,7 +93,7 @@ const limiteAuth = rateLimit({
   message: {
     ok: false,
     codigo: 'DEMASIADAS_PETICIONES',
-    mensaje: 'Demasiados intentos. Esperá unos minutos y volvé a probar.',
+    mensaje: 'Demasiados intentos. Espere unos minutos y vuelva a probar.',
   },
 });
 app.use('/api/auth/login', limiteAuth);
@@ -111,7 +111,7 @@ const limiteOcr = rateLimit({
   message: {
     ok: false,
     codigo: 'DEMASIADAS_PETICIONES',
-    mensaje: 'El OCR tiene un límite aparte, más bajo, porque es lo más pesado de esta API. Esperá unos minutos.',
+    mensaje: 'El OCR tiene un límite aparte, más bajo, porque es lo más pesado de esta API. Espere unos minutos.',
   },
 });
 app.use('/api/ocr', limiteOcr);
@@ -130,7 +130,7 @@ const limiteCitas = rateLimit({
   message: {
     ok: false,
     codigo: 'DEMASIADAS_PETICIONES',
-    mensaje: 'El verificador de citas tiene un límite aparte: cada consulta le pega a los buscadores oficiales de verdad. Esperá unos minutos y seguí.',
+    mensaje: 'El verificador de citas tiene un límite aparte: cada consulta le pega a los buscadores oficiales de verdad. Espere unos minutos y continúe.',
   },
 });
 app.use('/api/verificar-cita', limiteCitas);

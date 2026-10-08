@@ -217,7 +217,7 @@ test('verificación de citas contra las fuentes (con la búsqueda simulada)', as
   chk('el fallo correcto queda primero, no el ajeno', r.candidatos[0].caratula === elFallo.caratula);
   chk(
     'aun verificada, pide abrir el documento: que exista no prueba que diga eso',
-    /abrí el documento/i.test(r.explicacion),
+    /abra el documento/i.test(r.explicacion),
     r.explicacion
   );
 

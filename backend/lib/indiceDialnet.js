@@ -149,7 +149,7 @@ function parsearItems(html) {
   try {
     dom = new JSDOM(html, { virtualConsole: consolaMuda });
   } catch {
-    throw errores.indiceFuenteFalla('dialnet', 'no pude leer el HTML de resultados');
+    throw errores.indiceFuenteFalla('dialnet', 'no se pudo leer el HTML de resultados');
   }
   const items = Array.from(dom.window.document.querySelectorAll('#resultadosDeBusqueda li[id]'));
   // Una posición por documento del listado, con null donde no se pudo leer:

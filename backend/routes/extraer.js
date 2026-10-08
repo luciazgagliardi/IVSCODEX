@@ -219,6 +219,6 @@ export function manejadorErrores(err, _req, res, _next) {
   res.status(500).json({
     ok: false,
     codigo: 'ERROR_INTERNO',
-    mensaje: 'Se rompió algo del lado del servidor. Mirá la consola donde corre npm start para ver el detalle.',
+    mensaje: 'Se rompió algo del lado del servidor. Revise la consola donde corre npm start para ver el detalle.',
   });
 }

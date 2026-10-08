@@ -105,7 +105,7 @@ async function armarSql({ libre, partes = '', tribunal }) {
   // El total son los digitos justo antes de "@@": lo que venga antes puede
   // traer avisos propios del PHP del sitio, que no nos interesan.
   const antes = cuerpo.slice(0, marca).match(/(\d+)\s*$/);
-  if (!antes) throw errores.indiceMzaFalla('no encontré el contador de resultados');
+  if (!antes) throw errores.indiceMzaFalla('no se encontró el contador de resultados');
 
   return { total: parseInt(antes[1], 10), sql: cuerpo.slice(marca + 2) };
 }
@@ -143,7 +143,7 @@ function parsearFichas(html) {
   try {
     dom = new JSDOM(`<body>${html}</body>`, { virtualConsole: consolaMuda });
   } catch {
-    throw errores.indiceMzaFalla('no pude leer el HTML de resultados');
+    throw errores.indiceMzaFalla('no se pudo leer el HTML de resultados');
   }
   const doc = dom.window.document;
 

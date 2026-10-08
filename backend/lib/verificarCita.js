@@ -62,7 +62,7 @@ const PESOS = {
 
 /** La cautela que acompaña a todo veredicto negativo. No se relaja. */
 const CAUTELA =
-  'No encontrarla acá no prueba que no exista: este verificador solo puede consultar los buscadores oficiales que el proyecto tiene integrados, y ninguno de ellos publica el total de lo que dictó su tribunal. Puede no estar indexada, estar cargada con otra carátula, o no ser real. Confirmalo en la fuente antes de citarla.';
+  'No encontrarla acá no prueba que no exista: este verificador solo puede consultar los buscadores oficiales que el proyecto tiene integrados, y ninguno de ellos publica el total de lo que dictó su tribunal. Puede no estar indexada, estar cargada con otra carátula, o no ser real. Confírmela en la fuente antes de citarla.';
 
 /**
  * Las fuentes que este verificador puede llegar a consultar.
@@ -480,7 +480,7 @@ export async function verificarCita(texto, { buscar = buscarEnFuenteReal } = {})
       base,
       'no_verificable',
       'alta',
-      `No se pudo consultar ninguna fuente en este momento: ${caidas}. La búsqueda no llegó a hacerse, así que no hay nada que concluir sobre la cita — probá de nuevo en un rato.`,
+      `No se pudo consultar ninguna fuente en este momento: ${caidas}. La búsqueda no llegó a hacerse, así que no hay nada que concluir sobre la cita — pruebe de nuevo en un rato.`,
       arranque
     );
   }
@@ -499,7 +499,7 @@ export async function verificarCita(texto, { buscar = buscarEnFuenteReal } = {})
       base,
       'verificada',
       confianza,
-      `Encontré en ${mejor.nombreFuente} un fallo que coincide por un dato exacto: ${mejor.porQue.slice(0, 3).join('; ')}. Abrí el documento y confirmá que dice lo que la cita le atribuye — que el fallo exista no significa que sostenga lo que se le hace decir.`,
+      `Se encontró en ${mejor.nombreFuente} un fallo que coincide por un dato exacto: ${mejor.porQue.slice(0, 3).join('; ')}. Abra el documento y confirme que dice lo que la cita le atribuye — que el fallo exista no significa que sostenga lo que se le hace decir.`,
       arranque
     );
   }
@@ -509,7 +509,7 @@ export async function verificarCita(texto, { buscar = buscarEnFuenteReal } = {})
       base,
       'verificada',
       'media',
-      `Encontré en ${mejor.nombreFuente} un fallo cuya carátula coincide con la de la cita (${mejor.porQue.slice(0, 3).join('; ')}), pero sin un identificador exacto —expediente o tomo y página— que lo confirme. Puede ser el mismo caso u otro con partes de apellido parecido: abrí el documento y comparalo.`,
+      `Se encontró en ${mejor.nombreFuente} un fallo cuya carátula coincide con la de la cita (${mejor.porQue.slice(0, 3).join('; ')}), pero sin un identificador exacto —expediente o tomo y página— que lo confirme. Puede ser el mismo caso u otro con partes de apellido parecido: abra el documento y compárelo.`,
       arranque
     );
   }
@@ -525,7 +525,7 @@ export async function verificarCita(texto, { buscar = buscarEnFuenteReal } = {})
     base,
     'no_encontrada',
     confianza,
-    `Busqué "${consulta.q}" (armada con ${consulta.de}) en ${donde} y no apareció ningún fallo que coincida con esta cita.${parecidos} ${CAUTELA}`,
+    `Se buscó "${consulta.q}" (armada con ${consulta.de}) en ${donde} y no apareció ningún fallo que coincida con esta cita.${parecidos} ${CAUTELA}`,
     arranque
   );
 }
