@@ -760,6 +760,12 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .sg-fallos .fl.on{opacity:1;transform:none}
 .sg-fallos .fl.anio{fill:var(--gold)}
 .sg-fallos .fl.off{opacity:0;transform:translateY(-4px);transition-duration:.6s}
+.sg-fallos .ln{font-family:var(--sans);opacity:0;transform:translateY(4px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--d) * 1ms)}
+.sg-fallos .ln.on{opacity:1;transform:none}
+.sg-fallos .ln.off{opacity:0;transform:translateY(-3px);transition-duration:.5s;transition-delay:0s}
+.sg-fallos .fr{font-size:15px;fill:var(--fg);fill-opacity:.82}
+.sg-fallos .au{font-size:12.5px;fill:var(--mute)}
+.sg-fallos .ca{font:500 13px var(--caps);letter-spacing:.06em;fill:var(--gold)}
 
 
 .gira{animation:gira 240s linear infinite;transform-box:fill-box;transform-origin:center}
@@ -1112,33 +1118,58 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
     /* fallos emblemáticos de la Corte Suprema: aparecen en distintos puntos del círculo; los renglones se apartan y vuelven */
     (function(){
       var svg=document.getElementById("pt-sello"); if(!svg) return;
-      var NS="http://www.w3.org/2000/svg",TAM=27,LS=1.2;
-      var FALLOS=[["Siri, Ángel","1957"],["Kot, Samuel","1958"],["Ercolano","1922"],["Avico","1934"],["Elortondo","1888"],
-        ["Ponzetti de Balbín","1984"],["Bazterrica","1986"],["Sejean","1986"],["Ekmekdjian","1992"],["Giroldi","1995"],["Fayt","1999"],
-        ["Vizzoti","2004"],["Aquino","2004"],["Simón","2005"],["Verbitsky","2005"],["Mendoza · Riachuelo","2008"],["Halabi","2009"],["Arriola","2009"]];
+      var NS="http://www.w3.org/2000/svg",TAM=27,LS=1.2,MAXW=400,CSJN="Corte Suprema de Justicia de la Nación";
+      /* [título, fecha, frase, autos, tomo:página de Fallos] */
+      var FALLOS=[
+        ["Siri, Ángel","27/12/1957","Las garantías constitucionales son operativas: el amparo procede sin necesidad de ley que lo reglamente.","Siri, Ángel s/ interpone recurso de hábeas corpus","239:459"],
+        ["Kot, Samuel","05/09/1958","El amparo procede también contra actos de particulares.","Kot, Samuel S.R.L. s/ recurso de hábeas corpus","241:291"],
+        ["Ercolano","28/04/1922","El derecho de propiedad no es absoluto: la emergencia habilita limitar el precio de las locaciones.","Ercolano, Agustín c/ Lanteri de Renshaw, Julieta s/ consignación","136:161"],
+        ["Avico","07/12/1934","La emergencia económica justifica la moratoria hipotecaria, si es razonable y temporaria.","Avico, Oscar c/ de la Pesa, Saúl G. s/ consignación de intereses","172:21"],
+        ["Elortondo","14/04/1888","Los jueces ejercen el control de constitucionalidad de las leyes.","Municipalidad de la Capital c/ Elortondo, Isabel A. de","33:162"],
+        ["Ponzetti de Balbín","11/12/1984","El derecho a la intimidad ampara a la persona aun frente al interés público de la información.","Ponzetti de Balbín, Indalia c/ Editorial Atlántida S.A. s/ daños y perjuicios","306:1892"],
+        ["Bazterrica","29/08/1986","La tenencia de estupefacientes para consumo personal, sin peligro para terceros, queda amparada por el art. 19.","Bazterrica, Gustavo Mario s/ tenencia de estupefacientes","308:1392"],
+        ["Sejean","27/11/1986","Declaró la inconstitucionalidad de la prohibición del divorcio vincular.","Sejean, Juan Bautista c/ Zaks de Sejean, Ana María s/ inconstitucionalidad del art. 64 de la ley 2393","308:2268"],
+        ["Ekmekdjian","07/07/1992","Los tratados internacionales prevalecen sobre las leyes; se reconoce el derecho de réplica.","Ekmekdjian, Miguel Ángel c/ Sofovich, Gerardo y otros s/ recurso de hecho","315:1492"],
+        ["Giroldi","07/04/1995","Los tribunales deben aplicar la Convención Americana sobre Derechos Humanos con jerarquía constitucional.","Giroldi, Horacio David y otro s/ recurso de casación","318:514"],
+        ["Fayt","19/08/1999","Se declaró la nulidad de la cláusula de la reforma de 1994 sobre la edad de los jueces.","Fayt, Carlos Santiago c/ Estado Nacional s/ proceso de conocimiento","322:1616"],
+        ["Vizzoti","14/09/2004","El tope de la indemnización por despido no puede absorber más de un tercio de la base de cálculo.","Vizzoti, Carlos Alberto c/ AMSA S.A. s/ despido","327:3677"],
+        ["Aquino","21/09/2004","Es inconstitucional que la ley de riesgos del trabajo impida la reparación civil plena.","Aquino, Isacio c/ Cargo Servicios Industriales S.A. s/ accidentes ley 9688","327:3753"],
+        ["Simón","14/06/2005","Se declararon inconstitucionales las leyes de punto final y de obediencia debida.","Simón, Julio Héctor y otros s/ privación ilegítima de la libertad, etc.","328:2056"],
+        ["Verbitsky","03/05/2005","Hábeas corpus colectivo por las condiciones de detención en la provincia de Buenos Aires.","Verbitsky, Horacio s/ hábeas corpus","328:1146"],
+        ["Mendoza · Riachuelo","08/07/2008","Responsabilidad por el daño ambiental colectivo y saneamiento de la cuenca Matanza-Riachuelo.","Mendoza, Beatriz Silvia y otros c/ Estado Nacional y otros s/ daños y perjuicios","331:1622"],
+        ["Halabi","24/02/2009","Se reconocen las acciones colectivas en defensa de derechos individuales homogéneos.","Halabi, Ernesto c/ P.E.N. – ley 25.873 – dto. 1563/04 s/ amparo ley 16.986","332:111"],
+        ["Arriola","25/08/2009","Es inconstitucional penar la tenencia para consumo personal que no afecte a terceros.","Arriola, Sebastián y otros s/ causa n.º 9080","332:1963"]
+      ];
       var quieto=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
       if(quieto) return;
-      var cv=document.createElement("canvas").getContext("2d"),filas=[],activos=[],cola=FALLOS.slice().sort(function(){return Math.random()-.5;}),capa,vivo=true;
-      function medir(c){ cv.font=TAM+"px 'Cormorant SC', Georgia, serif"; return cv.measureText(c).width+LS; }
+      var cv=document.createElement("canvas").getContext("2d"),filas=[],activos=[],cola=[],capa,vivo=true;
+      function ancho(txt,fuente){ cv.font=fuente; return cv.measureText(txt).width; }
+      function medir(c){ return ancho(c,TAM+"px 'Cormorant SC', Georgia, serif")+LS; }
+      function envolver(txt,fuente,max){                       /* parte el texto en renglones de hasta «max» unidades */
+        var pal=txt.split(" "),out=[],cur="";
+        pal.forEach(function(w){ var t=cur?cur+" "+w:w; if(cur&&ancho(t,fuente)>max){ out.push(cur); cur=w; } else cur=t; });
+        if(cur) out.push(cur); return out;
+      }
       function listo(){
         var gs=svg.querySelectorAll(".sg-renglones .rg"); if(!gs.length) return false;
         filas=[].map.call(gs,function(g){ return {g:g,y:+g.getAttribute("data-y"),x0:+g.getAttribute("data-x0"),x1:+g.getAttribute("data-x1"),p:[].slice.call(g.querySelectorAll("path"))}; });
         capa=document.createElementNS(NS,"g"); capa.setAttribute("class","sg-fallos"); svg.appendChild(capa); return true;
       }
-      /* cada renglón se desplaza según la distancia a los fallos activos; los tramos que chocan con el texto se retiran */
+      /* los renglones se apartan del bloque (en vertical, en onda) y los tramos que chocan con el texto se retiran */
       function aplicar(){
         filas.forEach(function(f,j){
           var dy=0;
           activos.forEach(function(a){
-            var d=j-a.fila; if(d===0) return;
-            dy+=(d<0?-1:1)*17*Math.exp(-(Math.abs(d)-1)/2.8);
+            if(f.y>=a.top-4&&f.y<=a.bot+4) return;
+            var d=f.y<a.top?(a.top-f.y)/19:(f.y-a.bot)/19;
+            dy+=(f.y<a.top?-1:1)*17*Math.exp(-Math.max(d-.3,0)/2.8);
           });
-          f.g.style.transform="translateY("+dy.toFixed(1)+"px)";
+          f.g.style.transform=dy?"translateY("+dy.toFixed(1)+"px)":"";
           f.p.forEach(function(p){
             var A=+p.getAttribute("data-a"),B=+p.getAttribute("data-b"),dx=0,oculto=false;
             activos.forEach(function(a){
-              if(a.fila!==j) return;
-              var m=(A+B)/2,c=(a.x+a.x+a.w)/2,pad=22;
+              if(f.y<a.top-4||f.y>a.bot+4) return;
+              var m=(A+B)/2,c=a.x+a.w/2,pad=24;
               if(B>a.x-pad&&A<a.x+a.w+pad) oculto=true; else dx+=(m<c?-1:1)*24;
             });
             p.style.opacity=oculto?0:"";
@@ -1146,48 +1177,64 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
           });
         });
       }
-      function lugar(w){
-        var libres=[];
+      /* busca un sitio del círculo donde el bloque entre entero */
+      function lugar(w,h){
+        var libres=[],r=svg.getBoundingClientRect(),vis=(window.innerWidth-56-r.left)/r.width*1000;   /* borde derecho visible, en unidades del sello */
         filas.forEach(function(f,j){
-          var ancho=f.x1-f.x0-w-240; if(ancho<=0) return;
-          if(activos.some(function(a){return Math.abs(a.fila-j)<7;})) return;
-          libres.push(j);
+          var top=f.y-14,bot=top+h,xa=-1e9,xb=Math.min(1e9,vis+75),ok=true;
+          filas.forEach(function(g){ if(g.y>=top-6&&g.y<=bot+6){ xa=Math.max(xa,g.x0); xb=Math.min(xb,g.x1); } });
+          if(bot+6>filas[filas.length-1].y+10) ok=false;
+          if(xb-xa-w-150<=0) ok=false;
+          if(activos.some(function(a){return !(bot+40<a.top||top-40>a.bot);})) ok=false;
+          if(ok) libres.push({y:f.y,top:top,bot:bot,xa:xa,xb:xb});
         });
         if(!libres.length) return null;
-        var j=libres[Math.floor(Math.random()*libres.length)],f=filas[j];
-        return {fila:j,x:f.x0+120+Math.random()*(f.x1-f.x0-w-240)};
+        var c=libres[Math.floor(Math.random()*libres.length)];
+        return {y:c.y,top:c.top,bot:c.bot,x:c.xa+75+Math.random()*(c.xb-c.xa-w-150)};
+      }
+      function texto(clase,x,y,txt,d,extra){
+        var e=document.createElementNS(NS,"text"); e.setAttribute("x",x.toFixed(1)); e.setAttribute("y",y.toFixed(1)); e.textContent=txt;
+        e.setAttribute("class",clase); e.style.setProperty("--d",String(d)); capa.appendChild(e); return e;
       }
       function lanzar(){
         if(!vivo) return;
         if(window.innerWidth<900||document.hidden||(typeof abierta!=="undefined"&&!abierta)){ setTimeout(lanzar,1500); return; }
         if(activos.length>=2){ setTimeout(lanzar,900); return; }
-        var f=cola.shift(); if(!f){ cola=FALLOS.slice().sort(function(){return Math.random()-.5;}); f=cola.shift(); }
-        var t=f[0],an=f[1],letras=[],x=0,gap=TAM*.7,i;
-        for(i=0;i<t.length;i++){ letras.push([t[i],x,false]); x+=medir(t[i]); }
-        x+=gap;
-        for(i=0;i<an.length;i++){ letras.push([an[i],x,true]); x+=medir(an[i]); }
-        var w=x-LS,u=lugar(w);
+        if(!cola.length) cola=FALLOS.slice().sort(function(){return Math.random()-.5;});
+        var f=cola.shift(),t=f[0],i,x=0,letras=[];
+        for(i=0;i<t.length;i++){ letras.push([t[i],x]); x+=medir(t[i]); }
+        var wT=x-LS+TAM*.8,fecha=f[1];
+        for(i=0;i<fecha.length;i++){} 
+        var wF=0; for(i=0;i<fecha.length;i++) wF+=medir(fecha[i]);
+        var fr=envolver(f[2],"15px 'Instrument Sans', sans-serif",MAXW),au=envolver(f[3],"12.5px 'Instrument Sans', sans-serif",MAXW),
+            ca=CSJN+" · Fallos "+f[4];
+        var w=Math.max(wT+wF,MAXW*.72);
+        fr.forEach(function(l){ w=Math.max(w,ancho(l,"15px 'Instrument Sans', sans-serif")); });
+        au.forEach(function(l){ w=Math.max(w,ancho(l,"12.5px 'Instrument Sans', sans-serif")); });
+        w=Math.max(w,ancho(ca,"500 13px 'Cormorant SC', serif")+ca.length*.8);
+        /* alturas (unidades del sello): título, frase, autos y cámara, una debajo de otra */
+        var yT=22,yF=yT+30,yA=yF+19*(fr.length-1)+27,yC=yA+17*(au.length-1)+22,h=yC+8;
+        var u=lugar(w,h);
         if(!u){ setTimeout(lanzar,1200); return; }
-        var a={fila:u.fila,x:u.x,w:w,el:[]},y=filas[u.fila].y+TAM*.33;
-        letras.forEach(function(l,k){
-          if(l[0]===" ") return;
-          var e=document.createElementNS(NS,"text");
-          e.setAttribute("x",(u.x+l[1]).toFixed(1)); e.setAttribute("y",y.toFixed(1)); e.textContent=l[0];
-          e.setAttribute("class","fl"+(l[2]?" anio":"")); e.style.setProperty("--d",String(350+((k*83)%560)));
-          capa.appendChild(e); a.el.push(e);
-        });
+        var a={top:u.top,bot:u.bot,x:u.x,w:w,el:[]},base=u.top;
+        var k=0;
+        letras.forEach(function(l){ var e=texto("fl",u.x+l[1],base+yT,l[0],350+((k++*83)%520)); a.el.push(e); });
+        for(i=0;i<fecha.length;i++){ var eF=texto("fl anio",u.x+wT+(function(){var s=0;for(var q=0;q<i;q++) s+=medir(fecha[q]);return s;})(),base+yT,fecha[i],700+((i*71)%340)); a.el.push(eF); }
+        fr.forEach(function(l,n){ a.el.push(texto("ln fr",u.x,base+yF+19*n,l,1500+n*120)); });
+        au.forEach(function(l,n){ a.el.push(texto("ln au",u.x,base+yA+17*n,l,2000+n*120)); });
+        a.el.push(texto("ln ca",u.x,base+yC,ca,2500));
         activos.push(a); aplicar();
         requestAnimationFrame(function(){ requestAnimationFrame(function(){ a.el.forEach(function(e){ e.classList.add("on"); }); }); });
         setTimeout(function(){
-          a.el.forEach(function(e){ e.classList.remove("on"); e.classList.add("off"); e.style.setProperty("--d",String((a.el.indexOf(e)*37)%300)); });
+          a.el.forEach(function(e,n){ e.classList.remove("on"); e.classList.add("off"); if(/fl/.test(e.getAttribute("class"))) e.style.setProperty("--d",String((n*37)%300)); });
           setTimeout(function(){
             activos.splice(activos.indexOf(a),1); aplicar();            /* los renglones se cierran */
             setTimeout(function(){ a.el.forEach(function(e){ e.remove(); }); },1400);
           },750);
-        },4800+Math.random()*1400);
-        setTimeout(lanzar,2600+Math.random()*2200);
+        },7200+Math.random()*1800);
+        setTimeout(lanzar,3600+Math.random()*2400);
       }
-      var t0=setInterval(function(){ if(listo()){ clearInterval(t0); (document.fonts&&document.fonts.load?document.fonts.load("27px 'Cormorant SC'"):Promise.resolve()).then(function(){ setTimeout(lanzar,2600); }); } },300);
+      var t0=setInterval(function(){ if(listo()){ clearInterval(t0); (document.fonts&&document.fonts.load?Promise.all([document.fonts.load("27px 'Cormorant SC'"),document.fonts.load("15px 'Instrument Sans'")]):Promise.resolve()).then(function(){ setTimeout(lanzar,2600); }); } },300);
     })();
 
 
