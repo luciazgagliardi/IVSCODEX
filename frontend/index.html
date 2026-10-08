@@ -758,7 +758,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .sg-fallos text{font-family:var(--caps);font-size:27px;letter-spacing:0;fill:var(--fg);text-rendering:geometricPrecision}
 .sg-fallos .fl{opacity:0;transform:translateY(5px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--d) * 1ms)}
 .sg-fallos .fl.on{opacity:1;transform:none}
-.sg-fallos .fl.anio{fill:var(--gold)}
+.sg-fallos .fl.anio{fill:var(--gold);font-family:var(--sans)}
 .sg-fallos .fl.off{opacity:0;transform:translateY(-4px);transition-duration:.6s}
 .sg-fallos .ln{font-family:var(--sans);opacity:0;transform:translateY(4px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--d) * 1ms)}
 .sg-fallos .ln.on{opacity:1;transform:none}
@@ -1102,7 +1102,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
     }
     function sello(svg,o){
       if(!svg) return;
-      var rT=452,ley="IVS · CODEX · IVRISPRVDENTIA · LEGISLATIO · DOCTRINA · ",h="";
+      var rT=443.7,ley="IVS · CODEX · IVRISPRVDENTIA · LEGISLATIO · DOCTRINA · ",h="";
       if(o.texto!==false){
         h+='<defs><path id="sg-'+o.id+'" d="M500 '+(500-rT)+'a'+rT+' '+rT+' 0 1 1 0 '+(2*rT)+'a'+rT+' '+rT+' 0 1 1 0 '+(-2*rT)+'"/></defs>'+
            '<g class="gira"><text class="sg-texto" font-size="33" letter-spacing="9" opacity=".75"><textPath href="#sg-'+o.id+'" textLength="'+(2*Math.PI*rT-12).toFixed(0)+'" lengthAdjust="spacing">'+ley+ley+'</textPath></text></g>';
@@ -1145,6 +1145,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
       var cv=document.createElement("canvas").getContext("2d"),filas=[],activos=[],cola=[],capa,vivo=true;
       function ancho(txt,fuente){ cv.font=fuente; return cv.measureText(txt).width; }
       function medir(c){ return ancho(c,TAM+"px 'Cormorant SC', Georgia, serif")+LS; }
+      function medirF(c){ return ancho(c,TAM+"px 'Instrument Sans', sans-serif")+LS; }   /* la fecha, con la letra del texto de abajo */
       function envolver(txt,fuente,max){                       /* parte el texto en renglones de hasta «max» unidades */
         var pal=txt.split(" "),out=[],cur="";
         pal.forEach(function(w){ var t=cur?cur+" "+w:w; if(cur&&ancho(t,fuente)>max){ out.push(cur); cur=w; } else cur=t; });
@@ -1205,7 +1206,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
         for(i=0;i<t.length;i++){ letras.push([t[i],x]); x+=medir(t[i]); }
         var wT=x-LS+TAM*.8,fecha=f[1];
         for(i=0;i<fecha.length;i++){} 
-        var wF=0; for(i=0;i<fecha.length;i++) wF+=medir(fecha[i]);
+        var wF=0; for(i=0;i<fecha.length;i++) wF+=medirF(fecha[i]);
         var fr=envolver(f[2],"15px 'Instrument Sans', sans-serif",MAXW),au=envolver(f[3],"12.5px 'Instrument Sans', sans-serif",MAXW),
             ca=CSJN+" · Fallos "+f[4];
         var w=Math.max(wT+wF,MAXW*.72);
@@ -1219,7 +1220,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
         var a={top:u.top,bot:u.bot,x:u.x,w:w,el:[]},base=u.top;
         var k=0;
         letras.forEach(function(l){ var e=texto("fl",u.x+l[1],base+yT,l[0],350+((k++*83)%520)); a.el.push(e); });
-        for(i=0;i<fecha.length;i++){ var eF=texto("fl anio",u.x+wT+(function(){var s=0;for(var q=0;q<i;q++) s+=medir(fecha[q]);return s;})(),base+yT,fecha[i],700+((i*71)%340)); a.el.push(eF); }
+        for(i=0;i<fecha.length;i++){ var eF=texto("fl anio",u.x+wT+(function(){var s=0;for(var q=0;q<i;q++) s+=medirF(fecha[q]);return s;})(),base+yT,fecha[i],700+((i*71)%340)); a.el.push(eF); }
         fr.forEach(function(l,n){ a.el.push(texto("ln fr",u.x,base+yF+19*n,l,1500+n*120)); });
         au.forEach(function(l,n){ a.el.push(texto("ln au",u.x,base+yA+17*n,l,2000+n*120)); });
         a.el.push(texto("ln ca",u.x,base+yC,ca,2500));
