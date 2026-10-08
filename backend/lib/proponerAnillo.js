@@ -175,7 +175,7 @@ export async function proponerAnillo(termino, { ramas = [], yaEnTesauro = [], cl
     // pantalla como "se rompio algo del lado del servidor", que no le dice a
     // nadie que es lo que hay que arreglar.
     if (e?.status === 401 || e?.status === 403) throw errores.modeloClaveInvalida();
-    if (e?.status === 429) throw errores.modeloFalla('hay demasiadas consultas en curso, probá en un momento');
+    if (e?.status === 429) throw errores.modeloFalla('hay demasiadas consultas en curso, pruebe en un momento');
     if (e?.status === 400 && /credit|balance|saldo/i.test(e?.message || '')) throw errores.modeloClaveInvalida();
     if (e?.status) throw errores.modeloFalla('el servicio respondió ' + e.status);
     throw errores.modeloFalla('no se pudo llegar al servicio');

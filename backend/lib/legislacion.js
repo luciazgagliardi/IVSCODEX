@@ -44,7 +44,7 @@ export const NORMAS = [
     url: `https://${HOST}/infolegInternet/anexos/0-4999/804/norma.htm` },
   { clave: 'lct', nombre: 'Ley de Contrato de Trabajo (20.744)', sigla: 'LCT',
     url: `https://${HOST}/infolegInternet/anexos/25000-29999/25552/texact.htm`,
-    aviso: 'Régimen en reforma: el DNU 70/2023 y la Ley 27.742 (2024) modificaron varios artículos. Revisá las notas de InfoLeg al pie del artículo.' },
+    aviso: 'Régimen en reforma: el DNU 70/2023 y la Ley 27.742 (2024) modificaron varios artículos. Revise las notas de InfoLeg al pie del artículo.' },
   { clave: 'lcq', nombre: 'Ley de Concursos y Quiebras (24.522)', sigla: 'LCQ',
     url: `https://${HOST}/infolegInternet/anexos/25000-29999/25379/texact.htm` },
   { clave: 'lpa', nombre: 'Ley de Procedimientos Administrativos (19.549)', sigla: 'LPA',

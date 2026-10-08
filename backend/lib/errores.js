@@ -35,7 +35,7 @@ export const errores = {
   urlFaltante: () =>
     new ErrorApp(
       'URL_FALTANTE',
-      'Falta el enlace. Pegá la URL del fallo y volvé a intentar.',
+      'Falta el enlace. Pegue la URL del fallo y vuelva a intentar.',
       400
     ),
 
@@ -56,7 +56,7 @@ export const errores = {
   dominioNoPermitido: (host) =>
     new ErrorApp(
       'DOMINIO_NO_PERMITIDO',
-      `El dominio "${host}" no está en la lista de fuentes habilitadas. Agregalo en server/config.js si es una fuente oficial que querés usar.`,
+      `El dominio "${host}" no está en la lista de fuentes habilitadas. Agréguelo en server/config.js si es una fuente oficial que desea usar.`,
       403,
       { host }
     ),
@@ -78,7 +78,7 @@ export const errores = {
   tiempoAgotado: (ms) =>
     new ErrorApp(
       'TIEMPO_AGOTADO',
-      `El sitio no respondió en ${Math.round(ms / 1000)} segundos. Puede estar caído o lento; probá de nuevo en un rato.`,
+      `El sitio no respondió en ${Math.round(ms / 1000)} segundos. Puede estar caído o lento; pruebe de nuevo en un rato.`,
       504
     ),
 
@@ -90,15 +90,15 @@ export const errores = {
     // (desde un navegador comun baja sin problema).
     const redirigido = hostOriginal && hostOriginal !== host;
     const detalle = redirigido
-      ? `El enlace de "${hostOriginal}" redirige a "${host}", y ese sitio le respondió ${estado} a este servidor. No es tu enlace: desde tu navegador probablemente abra bien. Abrilo y subí el archivo acá.`
-      : `"${host}" respondió ${estado}. Si es 403 o 404, revisá que el enlace sea el del documento y no el del buscador.`;
+      ? `El enlace de "${hostOriginal}" redirige a "${host}", y ese sitio le respondió ${estado} a este servidor. No es un problema del enlace: desde su navegador probablemente abra bien. Ábralo y suba el archivo aquí.`
+      : `"${host}" respondió ${estado}. Si es 403 o 404, revise que el enlace sea el del documento y no el del buscador.`;
     return new ErrorApp('RESPUESTA_NO_OK', detalle, 502, { estadoOrigen: estado, host, redirigido: !!redirigido });
   },
 
   demasiadoGrande: (max) =>
     new ErrorApp(
       'DEMASIADO_GRANDE',
-      `El archivo supera el límite de ${Math.round(max / 1024 / 1024)} MB. Descargalo a mano y pegá el texto en el lector.`,
+      `El archivo supera el límite de ${Math.round(max / 1024 / 1024)} MB. Descárguelo a mano y pegue el texto en el Lector.`,
       413
     ),
 
@@ -121,7 +121,7 @@ export const errores = {
   ocrDeshabilitado: () =>
     new ErrorApp(
       'OCR_DESHABILITADO',
-      'El OCR está apagado en este servidor. Pasá el PDF por ocrmypdf a mano (ver el README) o pegá el texto en el Lector.',
+      'El OCR está apagado en este servidor. Pase el PDF por ocrmypdf a mano (ver el README) o pegue el texto en el Lector.',
       503
     ),
 
@@ -142,63 +142,63 @@ export const errores = {
   ocrTiempoAgotado: (ms) =>
     new ErrorApp(
       'OCR_TIEMPO_AGOTADO',
-      `El OCR no terminó en ${Math.round(ms / 1000)} segundos y se lo dio por perdido. Puede ser un documento muy largo o un servidor con poca CPU en este momento; probá con menos páginas o de nuevo más tarde.`,
+      `El OCR no terminó en ${Math.round(ms / 1000)} segundos y se lo dio por perdido. Puede ser un documento muy largo o un servidor con poca CPU en este momento; pruebe con menos páginas o de nuevo más tarde.`,
       504
     ),
 
   pdfIlegible: (detalle) =>
     new ErrorApp(
       'PDF_ILEGIBLE',
-      `No pude abrir el PDF${detalle ? ': ' + detalle : ''}. Puede estar protegido con contraseña o dañado.`,
+      `No se pudo abrir el PDF${detalle ? ': ' + detalle : ''}. Puede estar protegido con contraseña o dañado.`,
       422
     ),
 
   htmlSinTexto: () =>
     new ErrorApp(
       'HTML_SIN_TEXTO',
-      'La página cargó pero no tiene texto aprovechable. Suele pasar cuando el contenido se arma con JavaScript o vive dentro de un frame: en ese caso, abrila en el navegador y pegá el texto a mano.',
+      'La página cargó pero no tiene texto aprovechable. Suele pasar cuando el contenido se arma con JavaScript o vive dentro de un frame: en ese caso, ábrala en el navegador y pegue el texto a mano.',
       422
     ),
 
   archivoVacio: () =>
     new ErrorApp(
       'ARCHIVO_VACIO',
-      'No llegó ningún archivo. Elegí un PDF o un .doc y volvé a intentar.',
+      'No llegó ningún archivo. Elija un PDF o un .doc y vuelva a intentar.',
       400
     ),
 
   archivoNoSoportado: (nombre) =>
     new ErrorApp(
       'ARCHIVO_NO_SOPORTADO',
-      `No puedo leer ${nombre ? `"${nombre}"` : 'ese archivo'}: se leen PDF y .doc de Word. Si es un .docx, abrilo y guardalo como PDF, o copiá el texto y pegalo a mano.`,
+      `No se puede leer ${nombre ? `"${nombre}"` : 'ese archivo'}: se leen PDF y .doc de Word. Si es un .docx, ábralo y guárdelo como PDF, o copie el texto y péguelo a mano.`,
       415
     ),
 
   docIlegible: (detalle) =>
     new ErrorApp(
       'DOC_ILEGIBLE',
-      `No pude leer el documento .doc${detalle ? ': ' + detalle : ''}. Puede estar dañado o vacío.`,
+      `No se pudo leer el documento .doc${detalle ? ': ' + detalle : ''}. Puede estar dañado o vacío.`,
       422
     ),
 
   redInalcanzable: (host, detalle) =>
     new ErrorApp(
       'RED_INALCANZABLE',
-      `No pude conectarme con "${host}"${detalle ? ' (' + detalle + ')' : ''}. Revisá tu conexión y que el sitio esté en línea.`,
+      `No se pudo conectar con "${host}"${detalle ? ' (' + detalle + ')' : ''}. Revise su conexión y que el sitio esté en línea.`,
       502
     ),
 
   consultaVacia: () =>
     new ErrorApp(
       'CONSULTA_VACIA',
-      'Escribí algo para buscar antes de consultar el índice.',
+      'Escriba algo para buscar antes de consultar el índice.',
       400
     ),
 
   citaVacia: () =>
     new ErrorApp(
       'CITA_VACIA',
-      'Pegá el texto de la cita que querés verificar (por ejemplo: CSJN, "Halabi", Fallos: 332:111).',
+      'Pegue el texto de la cita que desea verificar (por ejemplo: CSJN, "Halabi", Fallos: 332:111).',
       400
     ),
 
@@ -209,21 +209,21 @@ export const errores = {
   citaDemasiadoLarga: (max) =>
     new ErrorApp(
       'CITA_DEMASIADO_LARGA',
-      `Eso supera los ${max} caracteres: es un escrito, no una cita. Pegá solo la cita que querés verificar, de a una por vez.`,
+      `Eso supera los ${max} caracteres: es un escrito, no una cita. Pegue solo la cita que desea verificar, de a una por vez.`,
       413
     ),
 
   indiceMzaFalla: (detalle) =>
     new ErrorApp(
       'INDICE_MZA_FALLA',
-      `El buscador de la SCJM no respondió como se esperaba${detalle ? ': ' + detalle : ''}. Puede estar caído o haber cambiado de formato; probá de nuevo en un rato.`,
+      `El buscador de la SCJM no respondió como se esperaba${detalle ? ': ' + detalle : ''}. Puede estar caído o haber cambiado de formato; pruebe de nuevo en un rato.`,
       502
     ),
 
   indiceFuenteFalla: (fuente, detalle) =>
     new ErrorApp(
       'INDICE_FUENTE_FALLA',
-      `El buscador de "${fuente}" no respondió como se esperaba${detalle ? ': ' + detalle : ''}. Puede estar caído, lento o haber cambiado de formato; probá de nuevo en un rato.`,
+      `El buscador de "${fuente}" no respondió como se esperaba${detalle ? ': ' + detalle : ''}. Puede estar caído, lento o haber cambiado de formato; pruebe de nuevo en un rato.`,
       502,
       { fuente }
     ),
@@ -238,14 +238,14 @@ export const errores = {
   articuloInvalido: (num) =>
     new ErrorApp(
       'ARTICULO_INVALIDO',
-      `"${num}" no parece un número de artículo. Escribí sólo el número (por ejemplo 1741, o "76 bis").`,
+      `"${num}" no parece un número de artículo. Escriba sólo el número (por ejemplo 1741, o "76 bis").`,
       400
     ),
 
   articuloNoEncontrado: (num, norma) =>
     new ErrorApp(
       'ARTICULO_NO_ENCONTRADO',
-      `No encontré el artículo ${num} en ${norma}. Puede que no exista, que esté derogado, o que ese número corresponda a otra norma.`,
+      `No se encontró el artículo ${num} en ${norma}. Puede que no exista, que esté derogado, o que ese número corresponda a otra norma.`,
       404
     ),
 

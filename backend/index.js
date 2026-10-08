@@ -58,7 +58,10 @@ app.use(
       if (CORS_ORIGENES.includes('*') || CORS_ORIGENES.includes(origen)) {
         return cb(null, true);
       }
-      cb(new Error(`Origen no permitido por CORS: ${origen}`));
+      // Un origen que no está en la lista no recibe las cabeceras CORS y el
+      // navegador bloquea la respuesta: no hace falta (ni conviene) tirar un
+      // error 500 por cada visita de un sitio ajeno.
+      cb(null, false);
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Nombre-Archivo'],
@@ -78,7 +81,7 @@ const limite = rateLimit({
   message: {
     ok: false,
     codigo: 'DEMASIADAS_PETICIONES',
-    mensaje: 'Frenaste demasiado seguido. Esperá unos minutos y seguí: el límite existe para no castigar a los servidores oficiales.',
+    mensaje: 'Se hicieron demasiadas consultas seguidas. Espere unos minutos y continúe: el límite existe para no castigar a los servidores oficiales.',
   },
 });
 app.use('/api/', limite);
@@ -93,7 +96,7 @@ const limiteAuth = rateLimit({
   message: {
     ok: false,
     codigo: 'DEMASIADAS_PETICIONES',
-    mensaje: 'Demasiados intentos. Esperá unos minutos y volvé a probar.',
+    mensaje: 'Demasiados intentos. Espere unos minutos y vuelva a probar.',
   },
 });
 app.use('/api/auth/login', limiteAuth);
@@ -111,7 +114,7 @@ const limiteOcr = rateLimit({
   message: {
     ok: false,
     codigo: 'DEMASIADAS_PETICIONES',
-    mensaje: 'El OCR tiene un límite aparte, más bajo, porque es lo más pesado de esta API. Esperá unos minutos.',
+    mensaje: 'El OCR tiene un límite aparte, más bajo, porque es lo más pesado de esta API. Espere unos minutos.',
   },
 });
 app.use('/api/ocr', limiteOcr);
@@ -130,7 +133,7 @@ const limiteCitas = rateLimit({
   message: {
     ok: false,
     codigo: 'DEMASIADAS_PETICIONES',
-    mensaje: 'El verificador de citas tiene un límite aparte: cada consulta le pega a los buscadores oficiales de verdad. Esperá unos minutos y seguí.',
+    mensaje: 'El verificador de citas tiene un límite aparte: cada consulta le pega a los buscadores oficiales de verdad. Espere unos minutos y continúe.',
   },
 });
 app.use('/api/verificar-cita', limiteCitas);
