@@ -218,7 +218,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 /* Las medidas son las de sigillvm.com: la marca ocupa 180 × 44 px, el
    símbolo mide 24 px y la palabra va 12 px a su derecha. */
 .marca-app{display:inline-flex;align-items:center;gap:12px;flex:none;width:180px;height:44px;padding:0;border:0;background:none;color:var(--fg)}
-.marca-app .marca{font-size:15px;font-weight:500;letter-spacing:.3em;line-height:15px}
+.marca-app .marca{font-size:18px;font-weight:500;letter-spacing:.3em;line-height:18px;position:relative;top:-.5px}
 .nav{display:flex;align-items:center;gap:clamp(16px,1.8vw,28px);min-width:0}
 .nav button{
   padding:6px 0;border:0;background:none;
@@ -664,6 +664,114 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
    baja esa diferencia, igual en todos. */
 .pm{position:relative;top:.087em}
 
+
+/* ================================================================== *
+   EFECTO VIDRIADO (vista previa, ?vidrio=1)
+   Vidrio esmerilado sobre el fondo oscuro: detrás hay manchas de color
+   que se mueven muy despacio y cada superficie las desenfoca, con un
+   borde claro y un reflejo arriba, como un vidrio de verdad. Todo está
+   dentro de html.vidrio: sin esa clase no cambia nada.
+ * ================================================================== */
+html.vidrio{
+  --vg-fondo:linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.03));
+  --vg-borde:rgba(255,255,255,.15);
+  --vg-sombra:0 18px 50px -18px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.20),inset 0 -1px 0 rgba(255,255,255,.04);
+  --vg-blur:blur(22px) saturate(160%);
+  --vg-orbes:
+    radial-gradient(42vmax 42vmax at 10% 6%,rgba(217,163,27,.34),transparent 62%),
+    radial-gradient(48vmax 48vmax at 92% 16%,rgba(176,59,66,.30),transparent 62%),
+    radial-gradient(52vmax 52vmax at 62% 104%,rgba(181,134,64,.28),transparent 62%),
+    radial-gradient(36vmax 36vmax at 14% 88%,rgba(138,56,83,.26),transparent 62%);
+  --line:rgba(255,255,255,.12);--line-2:rgba(255,255,255,.07)
+}
+html.vidrio body::before{
+  content:"";position:fixed;inset:-10vmax;z-index:-2;pointer-events:none;background:var(--vg-orbes);
+  animation:vg-flota 46s ease-in-out infinite alternate
+}
+@keyframes vg-flota{from{transform:translate3d(-2vmax,-1vmax,0) scale(1)}to{transform:translate3d(3vmax,2vmax,0) scale(1.08)}}
+html.vidrio .entrada{background:var(--vg-orbes),var(--bg);background-attachment:fixed}
+
+/* superficies de vidrio */
+html.vidrio .panel,html.vidrio .blk,html.vidrio .rama,html.vidrio .aviso,html.vidrio .brief__summary,
+html.vidrio .comp-card,html.vidrio .pasaje,html.vidrio .constancia,html.vidrio .pt-col,html.vidrio .meta,
+html.vidrio .rail-fuentes,html.vidrio .anillo,html.vidrio .glos-item,html.vidrio .g-fila,html.vidrio .candidato,
+html.vidrio .cal-hoy,html.vidrio .tramo,html.vidrio .vacio,html.vidrio .out{
+  background:var(--vg-fondo);border:1px solid var(--vg-borde);border-radius:26px;box-shadow:var(--vg-sombra);
+  -webkit-backdrop-filter:var(--vg-blur);backdrop-filter:var(--vg-blur)
+}
+html.vidrio .panel,html.vidrio .blk,html.vidrio .rama,html.vidrio .aviso,html.vidrio .comp-card,html.vidrio .candidato,
+html.vidrio .pasaje,html.vidrio .g-fila,html.vidrio .glos-item,html.vidrio .pt-col,html.vidrio .tramo{padding:26px 28px}
+html.vidrio .panel.vivo{border-color:var(--vg-borde)}
+html.vidrio .panel.f-mendoza,html.vidrio .panel.f-mendozalegal,html.vidrio .panel.f-caba,
+html.vidrio .panel.f-csjn,html.vidrio .panel.f-saij,html.vidrio .panel.f-dialnet{padding:26px 28px 8px;margin-bottom:30px;border:1px solid var(--vg-borde)}
+html.vidrio .panel .fuente{border-bottom-color:rgba(255,255,255,.09)}
+html.vidrio .panel .fuente:last-child{border-bottom:0}
+html.vidrio .cab .aviso{background:none;border:0;box-shadow:none;border-radius:0;padding:0;-webkit-backdrop-filter:none;backdrop-filter:none}
+html.vidrio .brief__summary{padding:clamp(26px,2.6vw,36px)}
+html.vidrio .brief__form .panel{margin:0}
+html.vidrio .pt-col:hover,html.vidrio .blk:hover,html.vidrio .rama:hover,html.vidrio .comp-card:hover{border-color:rgba(255,255,255,.28)}
+html.vidrio .pt-col[class*=" f-"]{border-color:color-mix(in srgb,var(--punto) 55%,rgba(255,255,255,.15))}
+html.vidrio .pt-col[class*=" f-"]:hover{border-color:var(--punto)}
+html.vidrio .rail-fuentes{padding:6px 16px;border-radius:22px}
+html.vidrio .meta{padding:18px 18px 8px;border-radius:24px}
+html.vidrio .doc{padding:28px clamp(20px,3vw,40px);background:var(--vg-fondo);border:1px solid var(--vg-borde);border-radius:26px;box-shadow:var(--vg-sombra)}
+html.vidrio .grupo>.fuente{padding:18px 24px;margin-bottom:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:22px}
+html.vidrio .grupo>.fuente:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22)}
+html.vidrio .menu__item{padding:18px 22px;margin-top:10px;border-radius:22px}
+html.vidrio .menu__item:hover{border-color:rgba(217,163,27,.6);background:rgba(217,163,27,.08)}
+html.vidrio .menu__grupo h2{border-bottom:0;padding-left:6px}
+html.vidrio .cal-dia{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.10)}
+html.vidrio .cal-dia.hoy{background:var(--fg)}
+
+/* cabeceras y barras: vidrio ahumado */
+html.vidrio .top,html.vidrio .pt-hdr.is-solid,html.vidrio .barra-doc{
+  background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03));
+  border-bottom:1px solid var(--vg-borde);box-shadow:inset 0 -1px 0 rgba(255,255,255,.04),0 12px 40px -20px rgba(0,0,0,.7);
+  -webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%)
+}
+html.vidrio .barra-doc{border-radius:0 0 22px 22px;padding-left:20px;padding-right:20px}
+html.vidrio .menu{background:rgba(16,14,11,.50);-webkit-backdrop-filter:blur(34px) saturate(170%);backdrop-filter:blur(34px) saturate(170%)}
+html.vidrio .compartir-menu,html.vidrio #flash{
+  background:rgba(30,26,20,.55);border:1px solid var(--vg-borde);color:var(--fg);
+  -webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%);box-shadow:var(--vg-sombra)
+}
+
+/* campos */
+html.vidrio input[type=text],html.vidrio input[type=number],html.vidrio input[type=email],html.vidrio input[type=password],
+html.vidrio input[type=date],html.vidrio select,html.vidrio textarea{
+  background:rgba(255,255,255,.055);border:1px solid var(--vg-borde);border-radius:18px;padding:13px 18px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)
+}
+html.vidrio .campo--q input[type=text]{padding:16px 24px;border-radius:24px;border-bottom-color:var(--vg-borde)}
+html.vidrio input:focus,html.vidrio select:focus,html.vidrio textarea:focus{border-color:var(--gold)!important;box-shadow:0 0 0 4px rgba(217,163,27,.16),inset 0 1px 0 rgba(255,255,255,.10)}
+html.vidrio .barra-doc .campo input{padding:8px 16px}
+
+/* botones y fichas pequeñas */
+html.vidrio .chip,html.vidrio .mini,html.vidrio a.mini,html.vidrio .btn.sec,html.vidrio .voz,html.vidrio .tag,html.vidrio .cod,
+html.vidrio .estrella,html.vidrio .redondo,html.vidrio .calc-sel,html.vidrio .meta-tag,html.vidrio .campo-cita,html.vidrio .pill{
+  background:rgba(255,255,255,.06);border-color:var(--vg-borde);box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  -webkit-backdrop-filter:blur(12px) saturate(150%);backdrop-filter:blur(12px) saturate(150%)
+}
+html.vidrio .chip:hover,html.vidrio .mini:hover,html.vidrio .btn.sec:hover,html.vidrio .voz:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.32)}
+html.vidrio .chip[aria-pressed="true"],html.vidrio .chip.amb[aria-pressed="true"],html.vidrio .calc-sel__b[aria-selected="true"]{
+  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.80));box-shadow:0 6px 20px -8px rgba(255,255,255,.5),inset 0 1px 0 #fff
+}
+html.vidrio .chip.voz-sug{background:rgba(217,163,27,.10);border-color:rgba(217,163,27,.55)}
+html.vidrio .btn:not(.sec){
+  background:linear-gradient(180deg,#f3cd62,#d9a31b 58%,#c08c0c);border-color:rgba(255,236,170,.6);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 10px 28px -10px rgba(217,163,27,.7)
+}
+html.vidrio .btn:not(.sec):hover{filter:brightness(1.08);background:linear-gradient(180deg,#f7d874,#e0aa22 58%,#c8940f)}
+html.vidrio .req-caja{background:rgba(255,255,255,.05)}
+html.vidrio .minimapa{background:rgba(255,255,255,.07);border:1px solid var(--vg-borde)}
+
+/* el sello de cada base, como una moneda de vidrio */
+html.vidrio .rotulo-fuente::before{
+  background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.18),rgba(255,255,255,.03) 70%);
+  box-shadow:inset 0 0 0 4px rgba(16,14,11,.0),inset 0 0 0 5px var(--punto,var(--gold)),0 8px 24px -10px var(--punto,var(--gold))
+}
+@media (prefers-reduced-motion:reduce){ html.vidrio body::before{animation:none} }
+
 /* ---------- compartir, avisos flotantes, error ---------- */
 .compartir{position:relative;display:inline-block}
 .compartir-menu.flotante{position:fixed;z-index:200;right:auto;top:auto}
@@ -731,7 +839,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-brand__tag,.pt-brand__name{position:absolute;left:0;top:50%;transition:opacity .45s,transform .45s var(--ease)}
 .pt-brand__tag{transform:translateY(-50%);font-size:15px;line-height:1.35;white-space:nowrap}
 .pt-brand__name{display:inline-flex;align-items:center;gap:12px;opacity:0;transform:translateY(-20%)}
-.pt-brand__name .marca{font-size:15px;font-weight:500;letter-spacing:.3em;line-height:15px}
+.pt-brand__name .marca{font-size:18px;font-weight:500;letter-spacing:.3em;line-height:18px}
 .pt-hdr.is-solid .pt-brand__tag{opacity:0;transform:translateY(-80%)}
 .pt-hdr.is-solid .pt-brand__name{opacity:1;transform:translateY(-50%)}
 .pt-nav{display:flex;gap:clamp(18px,2vw,30px)}
@@ -869,6 +977,15 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 }
 .cab.quieta>*{animation:none}
 </style>
+<script>
+/* Vista previa del efecto vidriado: ?vidrio=1 la enciende (y la recuerda en
+   este navegador), ?vidrio=0 la apaga. Sin el parámetro la página no cambia. */
+(function(){try{
+  var q=new URLSearchParams(location.search).get("vidrio");
+  if(q==="1") localStorage.setItem("jedj:vidrio","1"); else if(q==="0") localStorage.removeItem("jedj:vidrio");
+  if(localStorage.getItem("jedj:vidrio")==="1") document.documentElement.classList.add("vidrio");
+}catch(e){}})();
+</script>
 </head>
 <body>
 
