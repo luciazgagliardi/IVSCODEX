@@ -496,7 +496,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .meta-bloque.pendiente .meta-tag{border-style:dashed;color:var(--mute-2)}
 .meta-acc{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .doc{
-  max-height:72vh;overflow:auto;padding:4px clamp(18px,3vw,40px) 4px 0;border:0;border-right:1px solid var(--line-2);
+  max-height:72vh;overflow:auto;padding:4px clamp(14px,2vw,28px) 4px 0;border:0;
   font:400 17px/1.8 var(--sans);color:var(--fg-82);white-space:pre-wrap;word-wrap:break-word
 }
 mark{background:rgba(201,164,92,.26);color:var(--fg);padding:0 2px;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
@@ -510,7 +510,59 @@ mark.actual{background:var(--gold);color:var(--bg)}
 .pasaje .txt{margin-bottom:14px;font:400 15.5px/1.65 var(--sans);color:var(--fg-82)}
 .pasaje .acc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .pasaje .pos{font-size:12px;color:var(--mute-2)}
-@media (max-width:980px){ .lector-grid{grid-template-columns:minmax(0,1fr)} .meta{position:static;max-height:none} .doc{border-right:0;padding-right:0} }
+@media (max-width:980px){ .lector-grid{grid-template-columns:minmax(0,1fr)} .meta{position:static;max-height:none} }
+
+/* ---------- estado de las bases (riel de Buscar) ---------- */
+.rail-resumen{display:flex;align-items:center;gap:8px;margin:-2px 0 12px;font-size:12.5px;color:var(--mute-2)}
+.rf-srv{width:6px;height:6px;border-radius:50%;background:var(--rojo);flex:none}
+.rf-srv.ok{background:var(--verde);box-shadow:0 0 0 3px rgba(143,191,154,.15)}
+.rail-fuente .rf-t{flex:none;margin-left:8px;font-size:11.5px;color:var(--mute-2);font-variant-numeric:tabular-nums}
+.rail-fuente.consultando .rf-punto{animation:parpadeo 1s ease-in-out infinite alternate}
+.rail-fuente.consultando .rf-t{color:var(--gold)}
+.rail-fuente.con-error .rf-punto{background:var(--rojo)}
+.rail-fuente.con-error .rf-t{color:var(--rojo)}
+@keyframes parpadeo{from{opacity:.25}to{opacity:1}}
+
+/* ---------- comparar: la barra de cada base ---------- */
+.comp-barra{display:block;height:3px;margin:0 0 14px;border-radius:999px;background:var(--line-2);overflow:hidden}
+.comp-barra i{display:block;height:100%;border-radius:999px;background:var(--punto,var(--gold));transition:width .9s var(--ease)}
+
+/* ---------- lector: el minimapa ---------- */
+.doc-marco{position:relative;min-width:0;padding-right:26px}
+.doc{position:relative}
+.minimapa{position:absolute;top:0;right:0;bottom:0;width:12px;border-radius:999px;background:rgba(241,238,230,.05)}
+.mm-ventana{position:absolute;left:0;right:0;border-radius:999px;background:rgba(241,238,230,.12);pointer-events:none}
+.mm-marca{position:absolute;left:1px;right:1px;height:3px;margin-top:-1.5px;padding:0;border:0;border-radius:2px;background:var(--gold-55);cursor:pointer;transition:background .2s}
+.mm-marca::before{content:"";position:absolute;inset:-4px -3px}
+.mm-marca:hover{background:var(--fg)}
+.mm-marca.actual{background:var(--gold);box-shadow:0 0 0 2px rgba(201,164,92,.28)}
+
+/* ---------- verificar: la constancia ---------- */
+.constancia{
+  display:grid;grid-template-columns:120px minmax(0,1fr);gap:clamp(20px,3vw,40px);align-items:start;
+  margin:24px 0;padding:clamp(22px,2.6vw,32px);border:1px solid var(--gold-55);background:rgba(201,164,92,.04)
+}
+.constancia__sello{width:120px;height:120px;color:var(--gold);font-family:var(--caps);animation:sella .9s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes sella{from{opacity:0;transform:scale(1.35) rotate(-14deg)}to{opacity:1;transform:rotate(-6deg)}}
+.constancia__tit{margin:0 0 14px;font:500 20px/1.25 var(--sans);color:var(--fg)}
+.constancia dl{display:grid;gap:12px;margin:0}
+.constancia dl div{padding-top:10px;border-top:1px solid var(--line)}
+.constancia dt{font-size:12.5px;color:var(--mute-2)}
+.constancia dd{margin:4px 0 0;color:var(--fg-82);overflow-wrap:anywhere}
+.constancia .acciones{margin-top:18px;padding-top:0;border-top:0}
+.constancia__nota{margin:14px 0 0;font-size:12.5px;color:var(--mute-2)}
+@media (max-width:640px){ .constancia{grid-template-columns:minmax(0,1fr)} .constancia__sello{width:96px;height:96px} }
+
+/* ---------- requisitos: la lista de control ---------- */
+.req-item{
+  display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;align-items:start;width:100%;padding:0;border:0;background:none;
+  text-align:left;font:inherit;color:var(--fg-82);cursor:pointer
+}
+.req-caja{width:18px;height:18px;margin-top:3px;border:1px solid var(--mute-2);border-radius:50%;transition:background .25s,border-color .25s,box-shadow .25s}
+.req-item:hover .req-caja{border-color:var(--gold)}
+.req-item[aria-pressed="true"] .req-caja{background:var(--gold);border-color:var(--gold);box-shadow:inset 0 0 0 3px var(--bg)}
+.req-item[aria-pressed="true"] .req-txt{color:var(--mute-2);text-decoration:line-through;text-decoration-color:var(--gold-55)}
+.req-progreso{color:var(--gold)}
 
 /* ---------- compartir, avisos flotantes, error ---------- */
 .compartir{position:relative;display:inline-block}
@@ -2221,6 +2273,9 @@ function nuevoEstado(){
           // en lenguaje natural. Se guardan aparte de q para que tocar una
           // no borre las otras (ver tiraSugerencias).
           sugeridas:[],sugeridaRama:"",buscarReq:"",
+          // Requisitos tildados como cumplidos, por ficha: {id:{0:true,…}}.
+          // Se guardan en el navegador (ver la checklist de fichaRequisito).
+          reqHecho:{},
           // Propuestas de anillos nuevos para el tesauro (capa 3).
           // modeloTesauro queda en null hasta que el servidor contesta si
           // tiene clave; false significa que la función no se ofrece.
@@ -3477,20 +3532,37 @@ function pintarRail(){
   // curso de la que informar, y el conteo quedaría congelado de la anterior.
   var fuentes="";
   if(estado.tab==="buscar"){
-    fuentes='<h2>Fuentes</h2><div class="rail-fuentes">'+FUENTES_INDICE.map(function(f){
-      var im=estado.indices[f.slug];
-      var busco=im&&im.busco;
-      var n=busco?(im.total||im.resultados.length):null;
-      return '<div class="rail-fuente f-'+f.slug+(busco?'':' sin-buscar')+'">'+
-        '<span class="rf-punto"></span>'+
-        // La sigla y no el nombre largo: en 210px de riel "Tribunal Superior
-        // de Justicia de la Ciudad de Buenos Aires" parte en dos renglones y
-        // la lista deja de leerse de un vistazo. Además es la MISMA sigla que
-        // lleva cada tarjeta, así que el riel y los resultados se enlazan solos.
-        '<span class="rf-nom">'+esc(f.cod)+'</span>'+
-        (n===null?'':'<span class="rf-n">'+n+'</span>')+
-      '</div>';
-    }).join("")+'</div>';
+    // Estado de las bases: por cada una, si ya se consultó, si está
+    // respondiendo, cuántos documentos trajo y cuánto tardó. Es el mapa de
+    // la búsqueda: de un vistazo se ve quién contestó, quién no y quién
+    // sigue pensando, sin bajar hasta su sección. Arriba, si el servidor
+    // de búsqueda está en línea.
+    var consultadas=0,respondieron=0;
+    var filas=FUENTES_INDICE.map(function(f){
+      var im=estado.indices[f.slug]||{};
+      var clase="",der="";
+      if(im.cargando){
+        clase=" consultando"; der='<span class="rf-t">consultando…</span>'; consultadas++;
+      }else if(im.busco&&im.error){
+        clase=" con-error"; der='<span class="rf-t">sin respuesta</span>'; consultadas++;
+      }else if(im.busco){
+        consultadas++; respondieron++;
+        der='<span class="rf-n">'+(im.total||im.resultados.length)+'</span>'+
+            (im.ms?'<span class="rf-t">'+(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+' s</span>':'');
+      }else{
+        clase=" sin-buscar"; der='<span class="rf-t">en espera</span>';
+      }
+      // La sigla y no el nombre largo: en el riel "Tribunal Superior de
+      // Justicia de la Ciudad de Buenos Aires" parte en dos renglones. Es
+      // además la misma sigla que lleva el sello de sus resultados.
+      return '<div class="rail-fuente f-'+f.slug+clase+'"><span class="rf-punto"></span>'+
+        '<span class="rf-nom">'+esc(f.cod)+'</span>'+der+'</div>';
+    }).join("");
+    var servidor=estado.api?'Servidor en línea':(estado.api===false?'Servidor sin conexión':'Comprobando el servidor…');
+    fuentes='<h2>Estado de las bases</h2>'+
+      '<p class="rail-resumen"><span class="rf-srv'+(estado.api?' ok':'')+'"></span>'+servidor+
+        (consultadas?' · '+respondieron+' de '+FUENTES_INDICE.length+' respondieron':'')+'</p>'+
+      '<div class="rail-fuentes">'+filas+'</div>';
   }
   r.innerHTML=fuentes+
     '<h2>Ramas del derecho</h2>'+
@@ -4309,6 +4381,7 @@ var UMBRAL_PRECARGA_INDICE=5*POR_PAGINA_INDICE;
 function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   imBusco.pagina=pagina;
   imBusco.cargando=false;
+  if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
   imBusco.desdeNavegador=!!d.desdeNavegador;
   imBusco.resultados=d.resultados||[];
   imBusco.total=d.total||0;
@@ -4430,7 +4503,7 @@ function buscarEnFuente(slug,pagina){
   // (ver precargarPaginasIndice).
   if(esNueva){ imBusco.busquedaId=(imBusco.busquedaId||0)+1; imBusco.paginas={}; imBusco.cursores={1:0}; }
   var busquedaId=imBusco.busquedaId;
-  imBusco.cargando=true; imBusco.error=null; render();
+  imBusco.cargando=true; imBusco.error=null; imBusco.inicio=Date.now(); render();
   // El modo y las palabras a excluir viajan al servidor: antes se elegían
   // acá y no cambiaban nada de la búsqueda real (ver lib/relevancia.js).
   var cuerpo={q:qi,modo:estado.modo||"todas",pagina:paginaPedida};
@@ -4487,6 +4560,7 @@ function buscarEnFuente(slug,pagina){
       imBusco.busco=true;
       if(!d||!d.ok){
         imBusco.cargando=false;
+        if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
         imBusco.error=(d&&d.mensaje)||"El servidor no devolvió resultados.";
         render(); return;
       }
@@ -4510,6 +4584,7 @@ function buscarEnFuente(slug,pagina){
     })["catch"](function(err){
       if(imBusco.pedido!==pedido) return;
       imBusco.cargando=false; imBusco.busco=true;
+      if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
       imBusco.error=(err&&err.tope)
         ?"Tardó demasiado y no llegó respuesta — puede haberse cortado la conexión a mitad de camino. Pruebe de nuevo."
         :(slug==="saij"||slug==="csjn")
@@ -4777,8 +4852,18 @@ function vistaRequisitos(){
 function fichaRequisito(x){
   var cuerpo='';
   if(x.req&&x.req.length){
-    cuerpo+='<div class="rotulo" style="margin-top:12px">Qué exige la norma</div>'+
-      '<ol class="req-lista">'+x.req.map(function(r){return '<li>'+esc(r)+'</li>';}).join("")+'</ol>';
+    // Cada requisito se puede tildar a medida que se reúne: la ficha pasa a
+    // ser la lista de control del trámite. Queda guardado en el navegador.
+    var hechos=(estado.reqHecho&&estado.reqHecho[x.id])||{};
+    var n=x.req.filter(function(r,i){ return hechos[i]; }).length;
+    cuerpo+='<div class="rotulo" style="margin-top:12px">Qué exige la norma'+
+        (n?' <span class="req-progreso">· '+n+' de '+x.req.length+' cumplidos</span>':'')+'</div>'+
+      '<ol class="req-lista">'+x.req.map(function(r,i){
+        return '<li><button type="button" class="req-item" data-act="req-tilde" data-req="'+esc(x.id)+'" data-i="'+i+'"'+
+          ' aria-pressed="'+(hechos[i]?"true":"false")+'"><span class="req-caja" aria-hidden="true"></span>'+
+          '<span class="req-txt">'+esc(r)+'</span></button></li>';
+      }).join("")+'</ol>'+
+      (n?'<button class="mini" data-act="req-reiniciar" data-req="'+esc(x.id)+'" style="margin-top:10px">Desmarcar todo</button>':'');
   }else if(x.aviso){
     cuerpo+='<p class="req-aviso">'+esc(x.aviso)+'</p>';
   }else{
@@ -4930,6 +5015,13 @@ function tarjetaComparar(f){
   // Lo que se muestra es lo único que significa lo mismo en las seis: cuántos
   // resultados de verdad trajo esta consulta acá. Es un piso, no un censo, y
   // se dice así.
+  // La barra: lo que trajo esta base contra la que más trajo, para leer la
+  // comparación de un vistazo. Es material encontrado, no un ranking: los
+  // contadores oficiales miden distinto (ver el aviso de la solapa).
+  var tope=Math.max.apply(null,FUENTES_INDICE.map(function(x){
+    var y=estado.comparar.porFuente[x.slug]; return y&&y.ok?y.resultados.length:0;
+  }).concat([1]));
+  var barra='<span class="comp-barra" aria-hidden="true"><i style="width:'+Math.round(r.resultados.length/tope*100)+'%"></i></span>';
   var cifra='<p class="comp-cifra"><b>'+r.resultados.length.toLocaleString("es-AR")+'</b> resultado'+
     (r.resultados.length===1?'':'s')+' encontrados'+
     (r.parcial?' (hay más para revisar)':'')+
@@ -4944,7 +5036,7 @@ function tarjetaComparar(f){
       '</div>';
   }).join("");
 
-  return '<div class="comp-card"'+borde+'>'+cab+cifra+items+
+  return '<div class="comp-card"'+borde+'>'+cab+cifra+barra+items+
     '<div class="f-acc" style="margin-top:10px">'+
       '<button class="mini" data-act="ir-a-fuente" data-fuente="'+esc(f.slug)+'">Ver todos en Buscar</button>'+
     '</div></div>';
@@ -5165,7 +5257,8 @@ function vistaLector(){
     '</div>'+
     '<div class="lector-grid">'+
       '<div class="meta" id="doc-meta"></div>'+
-      '<div class="doc" id="doc"></div>'+
+      '<div class="doc-marco"><div class="doc" id="doc"></div>'+
+        '<div class="minimapa" id="minimapa" aria-label="Mapa de coincidencias del fallo"></div></div>'+
     '</div>'+
     '<h2 style="margin:20px 0 9px" class="conteo" id="doc-tit-pas">Pasajes</h2>'+
     '<div id="pasajes"></div>';
@@ -5307,6 +5400,7 @@ function pintarLector(){
 
   var doc=document.getElementById("doc");
   if(doc) doc.innerHTML=textoResaltado(texto,cs);
+  pintarMinimapa();
 
   var tit=document.getElementById("doc-tit-pas");
   var cont=document.getElementById("pasajes");
@@ -5334,6 +5428,33 @@ function pintarLector(){
   irAMarca(false);
 }
 
+/* El minimapa del Lector: una franja junto al fallo con una marca por cada
+   coincidencia, a la altura en que aparece en el texto. De un vistazo se
+   ve dónde se concentran —en los considerandos, en la parte resolutiva— y
+   tocar una marca lleva hasta ella. Una ventana tenue muestra qué parte
+   del fallo está a la vista. Complementa la grilla de pasajes: los pasajes
+   dicen qué; el minimapa, dónde. */
+function pintarMinimapa(){
+  var doc=document.getElementById("doc"),mm=document.getElementById("minimapa");
+  if(!doc||!mm) return;
+  var ms=doc.querySelectorAll("mark"),alto=doc.scrollHeight||1,h="";
+  for(var k=0;k<ms.length;k++){
+    h+='<button type="button" class="mm-marca'+(k===estado.marca?' actual':'')+'" data-act="ir-marca" data-i="'+k+'"'+
+       ' style="top:'+(ms[k].offsetTop/alto*100).toFixed(2)+'%" aria-label="Coincidencia '+(k+1)+' de '+ms.length+'"></button>';
+  }
+  mm.innerHTML='<span class="mm-ventana" id="mm-ventana"></span>'+h;
+  mm.hidden=!ms.length;
+  ventanaMinimapa();
+  if(!doc._conMinimapa){ doc._conMinimapa=true; doc.addEventListener("scroll",ventanaMinimapa,{passive:true}); }
+}
+function ventanaMinimapa(){
+  var doc=document.getElementById("doc"),v=document.getElementById("mm-ventana");
+  if(!doc||!v) return;
+  var alto=doc.scrollHeight||1;
+  v.style.top=(doc.scrollTop/alto*100)+"%";
+  v.style.height=Math.max(3,doc.clientHeight/alto*100)+"%";
+}
+
 function irAMarca(mover){
   try{
     var doc=document.getElementById("doc");
@@ -5342,6 +5463,8 @@ function irAMarca(mover){
     if(!ms.length) return;
     var i=Math.max(0,Math.min(estado.marca,ms.length-1));
     for(var k=0;k<ms.length;k++) ms[k].className=(k===i?"actual":"");
+    var mm=document.querySelectorAll("#minimapa .mm-marca");
+    for(var m=0;m<mm.length;m++) mm[m].classList.toggle("actual",m===i);
     if(mover&&ms[i].scrollIntoView) ms[i].scrollIntoView({block:"center"});
   }catch(e){}
 }
@@ -5434,6 +5557,7 @@ function verificarCitaPegada(){
         render(); return;
       }
       estado.cita.salida=d;
+      estado.cita.cuando=new Date();
       render();
       var v=VEREDICTOS[d.veredicto];
       flash(v?v.rotulo:"Listo");
@@ -5481,6 +5605,52 @@ function fichaCandidato(c){
     '</div></div>';
 }
 
+/* La constancia de verificación: cuando la cita coincide con un registro
+   oficial, queda asentado qué se consultó, qué se encontró, en qué bases
+   y cuándo, con el sello de IVS CODEX. Se copia como texto para adjuntar
+   al expediente o al borrador del escrito. Acredita la coincidencia a esa
+   fecha; no reemplaza la lectura del fallo, y lo dice. */
+function datosConstancia(){
+  var d=estado.cita.salida,c=d&&(d.candidatos||[])[0];
+  // Solo con confianza alta: un identificador exacto (expediente, tomo y
+  // página) corroborado por la carátula o la fecha. Con menos que eso la
+  // explicación pide abrir el documento y comparar, y una constancia diría
+  // más de lo que se comprobó.
+  if(!d||d.veredicto!=="verificada"||d.confianza!=="alta"||!c) return null;
+  var cuando=estado.cita.cuando||new Date();
+  return {
+    cita:estado.cita.texto||"",
+    caratula:c.caratula||"(sin carátula)",
+    meta:[c.nombreFuente,c.tribunal,c.fecha,c.expediente?"Expte. "+c.expediente:""].filter(Boolean).join(" · "),
+    link:c.link||"",
+    bases:(d.fuentesConsultadas||[]).filter(function(f){return f.ok;}).map(function(f){return f.nombre;}).join(" · "),
+    fecha:cuando.toLocaleDateString("es-AR")+" · "+cuando.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"}),
+    confianza:d.confianza||""
+  };
+}
+function constanciaCita(){
+  var k=datosConstancia();
+  if(!k) return "";
+  function fila(rot,val){ return val?'<div><dt>'+esc(rot)+'</dt><dd>'+esc(val)+'</dd></div>':''; }
+  return '<div class="constancia">'+
+    '<svg class="constancia__sello" viewBox="0 0 120 120" aria-hidden="true">'+
+      '<defs><path id="cs-aro" d="M60 15a45 45 0 1 1 0 90a45 45 0 1 1 0-90"/></defs>'+
+      '<circle cx="60" cy="60" r="57" fill="none" stroke="currentColor" stroke-width="1"/>'+
+      '<circle cx="60" cy="60" r="34" fill="none" stroke="currentColor" stroke-width=".8"/>'+
+      '<text font-size="9.5" letter-spacing="2.4" fill="currentColor"><textPath href="#cs-aro" textLength="278" lengthAdjust="spacing">VERIFICADO · IVS CODEX · FIDES · </textPath></text>'+
+      '<path d="M46 61l10 10 19-22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '</svg>'+
+    '<div class="constancia__txt"><p class="constancia__tit">Constancia de verificación</p>'+
+      '<dl>'+fila("Cita consultada",k.cita)+fila("Coincidencia",k.caratula+(k.meta?" — "+k.meta:""))+
+        fila("Bases consultadas",k.bases)+fila("Fecha de consulta",k.fecha)+'</dl>'+
+      '<div class="acciones">'+
+        '<button class="btn" data-act="copiar-constancia">Copiar la constancia</button>'+
+        (k.link?'<a class="mini" href="'+esc(k.link)+'" target="_blank" rel="noopener noreferrer">Abrir el documento oficial</a>':'')+
+      '</div>'+
+      '<p class="constancia__nota">Acredita que la cita coincide con un registro oficial a la fecha indicada. No sustituye la lectura de los considerandos.</p>'+
+    '</div></div>';
+}
+
 function resultadoCita(){
   var d=estado.cita.salida;
   if(!d) return '';
@@ -5495,6 +5665,7 @@ function resultadoCita(){
       '<span class="tag">confianza '+esc(d.confianza||"")+'</span>'+
     '</div>'+
     '<p style="font-size:15px;margin:0 0 4px">'+esc(d.explicacion||"")+'</p>'+
+    constanciaCita()+
     '<div class="rotulo">Datos leídos de la cita</div>'+
     camposDeLaCita(d.campos)+
     (d.consulta?'<p style="font-size:12.5px;color:var(--humo);margin:8px 0 0">Se buscó <b>'+esc(d.consulta)+
@@ -6129,7 +6300,31 @@ document.addEventListener("click",function(ev){
     estado.q="";estado.excluir="";estado.desde="";estado.hasta="";estado.rama="";estado.modo="exacta";
     render(); return;
   }
+  if(act==="req-tilde"||act==="req-reiniciar"){
+    var rid=b.getAttribute("data-req");
+    estado.reqHecho=estado.reqHecho||{};
+    if(act==="req-reiniciar") delete estado.reqHecho[rid];
+    else{
+      var hr=estado.reqHecho[rid]=estado.reqHecho[rid]||{},ri=b.getAttribute("data-i");
+      if(hr[ri]) delete hr[ri]; else hr[ri]=true;
+    }
+    store.set("jedj:requisitos",estado.reqHecho);
+    render(); return;
+  }
   if(act==="verificar-cita"){ verificarCitaPegada(); return; }
+  if(act==="copiar-constancia"){
+    var kc=datosConstancia();
+    if(kc) copiar(["Constancia de verificación — IVS CODEX",
+      "Cita consultada: "+kc.cita,
+      "Coincidencia: "+kc.caratula+(kc.meta?" — "+kc.meta:""),
+      kc.link?"Documento oficial: "+kc.link:"",
+      "Bases consultadas: "+kc.bases,
+      "Fecha de consulta: "+kc.fecha,
+      "Veredicto: coincidencia encontrada"+(kc.confianza?" (confianza "+kc.confianza+")":"")+".",
+      "Acredita la coincidencia con un registro oficial a la fecha indicada; no sustituye la lectura de los considerandos."
+    ].filter(Boolean).join("\n"));
+    return;
+  }
   if(act==="limpiar-cita"){
     estado.cita={texto:"",cargando:false,error:null,salida:null};
     render(); window.scrollTo(0,0); return;
@@ -6194,6 +6389,11 @@ document.addEventListener("click",function(ev){
     render(); window.scrollTo(0,0); return;
   }
   if(act==="doc-otro"){ estado.texto=""; estado.fuenteDe=""; estado.marca=0; estado.infoDoc=null; estado.fichaConocida=null; estado.errorLink=null; render(); window.scrollTo(0,0); return; }
+  if(act==="ir-marca"){
+    estado.marca=parseInt(b.getAttribute("data-i"),10)||0;
+    irAMarca(true); conteoLector(coincidencias(estado.texto));
+    return;
+  }
   if(act==="marca-sig"||act==="marca-ant"){
     var cs2=coincidencias(estado.texto),total=Math.min(cs2.length,TOPE_MARCAS);
     if(!total){ flash("No hay coincidencias para recorrer"); return; }
@@ -6384,6 +6584,11 @@ store.get("jedj:fav",function(v){
   var activo=document.activeElement;
   if(activo&&["INPUT","SELECT","TEXTAREA"].indexOf(activo.tagName)!==-1) return;
   render();
+});
+store.get("jedj:requisitos",function(v){
+  if(!v||typeof v!=="object") return;
+  estado.reqHecho=v;
+  if(estado.tab==="requisitos") render();
 });
 store.get("jedj:anillos",function(v){
   if(!Array.isArray(v)||!v.length) return;
