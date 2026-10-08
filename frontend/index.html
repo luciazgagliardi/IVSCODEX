@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Iuris Et De Iure</title>
-<meta name="description" content="Buscador de jurisprudencia argentina, mendocina e internacional. Arma la consulta y te lleva a las bases oficiales.">
-<link rel="icon" type="image/png" href="./favicon.png">
+<title>IVS CODEX</title>
+<meta name="description" content="Buscador integrado de repositorios judiciales oficiales y doctrina. Arme la consulta y la plataforma lo lleva a las bases oficiales.">
+<link rel="icon" type="image/png" href="./favicon.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -902,7 +902,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
     <div class="pt-hero">
       <div class="pt-sello" aria-hidden="true"><svg id="pt-sello" viewBox="0 0 1000 1000"></svg></div>
       <div class="pt-copia">
-        <h1 class="pt-titular pt-llega" id="pt-titular" style="--d:.2s">Jurisprudencia y legislación argentinas, reunidas en una <em>sola consulta</em>.</h1>
+        <h1 class="pt-titular pt-llega" id="pt-titular" style="--d:.2s">Buscador integrado de repositorios judiciales oficiales y <em>doctrina</em>.</h1>
         <dl class="pt-datos pt-llega" style="--d:.4s">
           <div><dt>Bases integradas</dt><dd>6</dd></div>
           <div><dt>Ramas del derecho</dt><dd id="pt-n-ramas">28</dd></div>
@@ -3316,7 +3316,7 @@ function fichaLegible(fc){
 /** El texto que acompaña al link cuando se comparte. */
 function textoCompartir(){
   var q=estado.q.trim();
-  return q ? ('Búsqueda de jurisprudencia en Iuris et de iure: "'+q+'"') : 'Iuris et de iure — buscador de jurisprudencia';
+  return q ? ('Búsqueda de jurisprudencia en IVS CODEX: "'+q+'"') : 'IVS CODEX — buscador integrado de repositorios judiciales oficiales y doctrina';
 }
 
 /** El rango de años que hay puesto ahora, tal como viaja al servidor. */
@@ -6850,7 +6850,7 @@ function render(){
     ajustarAlturaRail();
     guardarEnURL();
     document.getElementById("pie-txt").innerHTML=
-      "<strong>Iuris et de iure</strong> — catálogo de "+F.length+" bases oficiales y "+RAMAS.length+
+      "<strong>IVS CODEX</strong> — catálogo de "+F.length+" bases oficiales y "+RAMAS.length+
       " ramas del derecho. Funciona sin conexión: los enlaces se abren en el sitio del organismo. "+
       "No almacena fallos ni genera contenido jurídico. Verifique siempre en la fuente antes de citar.";
   }catch(e){ panic(e&&e.message?e.message:"error de render"); }
