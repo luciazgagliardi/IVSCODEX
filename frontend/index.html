@@ -214,10 +214,12 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
   background:rgba(16,14,11,.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line)
 }
-.nav-wrap{display:flex;align-items:center;gap:clamp(24px,3.4vw,64px);padding:14px var(--pad)}
-.marca-app{display:inline-flex;align-items:center;gap:12px;flex:none;padding:0;border:0;background:none;color:var(--fg)}
-.marca-app img{width:26px;height:26px}
-.marca-app .marca{font-size:15px;font-weight:500;letter-spacing:.3em}
+.nav-wrap{display:flex;align-items:center;gap:clamp(28px,4vw,72px);padding:14px var(--pad)}
+/* Las medidas son las de sigillvm.com: la marca ocupa 180 × 44 px, el
+   símbolo mide 24 px y la palabra va 12 px a su derecha. */
+.marca-app{display:inline-flex;align-items:center;gap:12px;flex:none;width:180px;height:44px;padding:0;border:0;background:none;color:var(--fg)}
+.marca-app img{width:24px;height:24px}
+.marca-app .marca{font-size:15px;font-weight:500;letter-spacing:.3em;line-height:15px}
 .nav{display:flex;align-items:center;gap:clamp(16px,1.8vw,28px);min-width:0}
 .nav button{
   padding:6px 0;border:0;background:none;
@@ -721,17 +723,17 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 }
 .pt-in{position:relative;z-index:1}
 .pt-hdr{
-  position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:clamp(24px,3.4vw,64px);
+  position:fixed;top:0;left:0;right:var(--sbw,0px);z-index:20;display:flex;align-items:center;gap:clamp(28px,4vw,72px);
   padding:calc(22px + env(safe-area-inset-top,0px)) var(--pad) 18px;border-bottom:1px solid transparent;
   transition:background .5s,border-color .5s,padding .5s
 }
 .pt-hdr.is-solid{padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:14px;background:rgba(16,14,11,.84);border-bottom-color:var(--line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
-.pt-brand{position:relative;display:block;width:270px;height:44px;flex:none}
+.pt-brand{position:relative;display:block;width:180px;height:44px;flex:none}
 .pt-brand__tag,.pt-brand__name{position:absolute;left:0;top:50%;transition:opacity .45s,transform .45s var(--ease)}
-.pt-brand__tag{transform:translateY(-50%);font-size:15px;line-height:1.35}
+.pt-brand__tag{transform:translateY(-50%);font-size:15px;line-height:1.35;white-space:nowrap}
 .pt-brand__name{display:inline-flex;align-items:center;gap:12px;opacity:0;transform:translateY(-20%)}
-.pt-brand__name img{width:26px;height:26px}
-.pt-brand__name .marca{font-size:15px;font-weight:500;letter-spacing:.3em}
+.pt-brand__name img{width:24px;height:24px}
+.pt-brand__name .marca{font-size:15px;font-weight:500;letter-spacing:.3em;line-height:15px}
 .pt-hdr.is-solid .pt-brand__tag{opacity:0;transform:translateY(-80%)}
 .pt-hdr.is-solid .pt-brand__name{opacity:1;transform:translateY(-50%)}
 .pt-nav{display:flex;gap:clamp(18px,2vw,30px)}
@@ -739,7 +741,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-nav button:hover,.pt-nav button:active{color:var(--gold)}
 .pt-hdr .btn{margin-left:auto;padding:9px 16px 8px;font-size:13.5px}
 
-.pt-hero{position:relative;display:flex;min-height:calc(100vh - 84px);min-height:calc(100svh - 84px)}
+.pt-hero{position:relative;display:flex;min-height:100vh;min-height:100svh}
 .pt-sello{
   position:absolute;left:80vw;top:44%;width:128vh;height:128vh;color:var(--fg);pointer-events:none;
   transform:translate(-50%,calc(-50% + var(--hp,0) * 90px));opacity:calc(1 - var(--hp,0) * .6)
@@ -753,9 +755,9 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 @keyframes punto{from{transform:scale(0)}to{transform:scale(1)}}
 .gira{animation:gira 240s linear infinite;transform-box:fill-box;transform-origin:center}
 @keyframes gira{to{transform:rotate(360deg)}}
-.pt-copia{position:relative;flex:1;min-width:0;padding:clamp(40px,12vh,150px) var(--pad) 36px;display:flex;flex-direction:column;align-items:flex-start;pointer-events:none}
+.pt-copia{position:relative;flex:1;min-width:0;padding:clamp(110px,26vh,280px) var(--pad) 40px;display:flex;flex-direction:column;align-items:flex-start;pointer-events:none}
 .pt-copia>*{pointer-events:auto}
-.pt-titular{margin:0;max-width:16ch;font:400 clamp(30px,3.4vw,54px)/1.06 var(--sans);letter-spacing:-.02em}
+.pt-titular{margin:0;max-width:20ch;font:400 clamp(30px,3.4vw,54px)/1.06 var(--sans);letter-spacing:-.02em}
 .pt-titular em{font-style:normal}
 .pt-datos{display:flex;flex-wrap:wrap;gap:8px 26px;margin:24px 0 0;font-size:13px;color:var(--mute)}
 .pt-datos>div{display:flex;align-items:baseline;gap:6px}
@@ -765,16 +767,18 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 @keyframes late{0%{box-shadow:0 0 0 0 rgba(217,163,27,.55)}100%{box-shadow:0 0 0 8px rgba(217,163,27,0)}}
 .pt-acciones{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
 .pt-marca{
-  position:relative;align-self:flex-start;width:96%;margin:auto 0 0;padding-top:48px;box-sizing:content-box;
-  height:0;padding-bottom:14.34%;pointer-events:none!important
+  margin:auto 0 -16px;padding-top:48px;white-space:nowrap;pointer-events:none!important;--ls:.02em;
+  font:300 clamp(64px,11.5vw,220px)/.86 var(--caps);letter-spacing:.02em;color:rgba(241,238,230,.8)
 }
-/* El nombre es el logo mismo, cortado letra por letra para que se esfumen
-   una tras otra y vuelvan en el mismo orden. Cada letra es una porción del
-   mismo archivo, con su posición exacta. */
-.pt-marca>span{
-  position:absolute;top:48px;bottom:0;background:url("./ivs-codex-grande.png") no-repeat;
-  animation:disuelve 11s ease-in-out infinite;animation-delay:calc(1.6s + var(--i) * .22s)
-}
+/* Igual que el nombre de sigillvm.com: Cormorant SC en peso 300, 11,5 % del
+   ancho, interlineado .86, y las letras que se esfuman una tras otra y
+   vuelven en el mismo orden. La V, la X y el punto llevan el dorado. */
+.pt-marca>span{display:inline-block;animation:disuelve 11s ease-in-out infinite;animation-delay:calc(1.6s + var(--i) * .22s)}
+.pt-marca .v,.pt-marca .m-punto{background:linear-gradient(170deg,#f0c75a 8%,#d9a31b 46%,#a77a0c 92%)}
+.pt-marca .v{-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+/* El punto, a igual distancia de la tinta de la S y de la C y a media altura
+   de las mayúsculas, con más aire que en la marca chica por el tamaño. */
+.pt-marca .m-punto{width:.17em;height:.17em;vertical-align:.24em;margin:0 .091em 0 .066em}
 @keyframes disuelve{0%,38%{opacity:1;filter:blur(0)}48%,60%{opacity:0;filter:blur(18px)}70%,100%{opacity:1;filter:blur(0)}}
 
 .pt-sec{position:relative;padding:clamp(100px,16vh,190px) var(--pad) 0}
@@ -857,7 +861,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   .pt-brand{width:170px}
   .pt-hero{min-height:720px}
   .pt-sello{left:90vw;top:28%;width:125vw;height:125vw}
-  .pt-marca{width:100%;padding-bottom:14.94%}
+  .pt-marca{font-size:16vw}
 }
 @media (max-width:600px){ .pt-cols{grid-template-columns:minmax(0,1fr)} }
 
@@ -884,7 +888,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   <div class="pt-in">
     <header class="pt-hdr" id="pt-hdr">
       <span class="pt-brand">
-        <span class="pt-brand__tag">Buscador de jurisprudencia<br>argentina, mendocina e internacional.</span>
+        <span class="pt-brand__tag">Buscador de jurisprudencia<br>argentina e internacional.</span>
         <span class="pt-brand__name" aria-hidden="true"><img src="./marca-mini.svg" alt="" width="26" height="26"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></span>
       </span>
       <nav class="pt-nav" aria-label="Secciones de la plataforma">
@@ -910,7 +914,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
           <button type="button" class="btn" data-tab="buscar">Iniciar la consulta</button>
           <button type="button" class="btn sec" data-tab="fuentes">Ver el catálogo de fuentes</button>
         </div>
-        <p class="pt-marca pt-llega" style="--d:.7s" role="img" aria-label="IVS CODEX"><span style="--i:0;left:0.000%;width:4.117%;background-size:2582.353% 100%;background-position:0.000% 0"></span><span style="--i:1;left:4.656%;width:13.509%;background-size:787.052% 100%;background-position:5.480% 0"></span><span style="--i:2;left:18.434%;width:8.907%;background-size:1193.656% 100%;background-position:19.669% 0"></span><span style="--i:3;left:29.225%;width:3.041%;background-size:3496.460% 100%;background-position:30.797% 0"></span><span style="--i:4;left:34.742%;width:12.217%;background-size:870.264% 100%;background-position:40.806% 0"></span><span style="--i:5;left:47.497%;width:14.128%;background-size:752.571% 100%;background-position:55.984% 0"></span><span style="--i:6;left:62.433%;width:12.971%;background-size:819.710% 100%;background-position:72.240% 0"></span><span style="--i:7;left:76.211%;width:10.522%;background-size:1010.486% 100%;background-position:85.674% 0"></span><span style="--i:8;left:87.487%;width:12.513%;background-size:849.677% 100%;background-position:100.000% 0"></span></p>
+        <p class="pt-marca marca pt-llega" style="--d:.7s" aria-label="IVS CODEX"><span style="--i:0">I</span><span class="v" style="--i:1">V</span><span style="--i:2">S</span><span class="m-punto" style="--i:3"></span><span style="--i:4">C</span><span style="--i:5">O</span><span style="--i:6">D</span><span style="--i:7">E</span><span class="v" style="--i:8">X</span></p>
       </div>
     </div>
 
@@ -1123,6 +1127,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
     /* con el scroll de la portada: la cabecera, el sello y la onda */
     var hdr=document.getElementById("pt-hdr"),hero=entrada.querySelector(".pt-hero"),pasos=document.getElementById("pt-pasos");
     function alMover(){
+      entrada.style.setProperty("--sbw",(entrada.offsetWidth-entrada.clientWidth)+"px");
       var y=entrada.scrollTop,h=entrada.clientHeight;
       if(hdr) hdr.classList.toggle("is-solid",y>h*.5);
       if(hero) hero.style.setProperty("--hp",Math.min(y/h,1).toFixed(3));
