@@ -218,7 +218,6 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 /* Las medidas son las de sigillvm.com: la marca ocupa 180 × 44 px, el
    símbolo mide 24 px y la palabra va 12 px a su derecha. */
 .marca-app{display:inline-flex;align-items:center;gap:12px;flex:none;width:180px;height:44px;padding:0;border:0;background:none;color:var(--fg)}
-.marca-app img{width:24px;height:24px}
 .marca-app .marca{font-size:15px;font-weight:500;letter-spacing:.3em;line-height:15px}
 .nav{display:flex;align-items:center;gap:clamp(16px,1.8vw,28px);min-width:0}
 .nav button{
@@ -732,7 +731,6 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-brand__tag,.pt-brand__name{position:absolute;left:0;top:50%;transition:opacity .45s,transform .45s var(--ease)}
 .pt-brand__tag{transform:translateY(-50%);font-size:15px;line-height:1.35;white-space:nowrap}
 .pt-brand__name{display:inline-flex;align-items:center;gap:12px;opacity:0;transform:translateY(-20%)}
-.pt-brand__name img{width:24px;height:24px}
 .pt-brand__name .marca{font-size:15px;font-weight:500;letter-spacing:.3em;line-height:15px}
 .pt-hdr.is-solid .pt-brand__tag{opacity:0;transform:translateY(-80%)}
 .pt-hdr.is-solid .pt-brand__name{opacity:1;transform:translateY(-50%)}
@@ -889,7 +887,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
     <header class="pt-hdr" id="pt-hdr">
       <span class="pt-brand">
         <span class="pt-brand__tag">Buscador de jurisprudencia<br>argentina e internacional.</span>
-        <span class="pt-brand__name" aria-hidden="true"><img src="./marca-mini.svg" alt="" width="26" height="26"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></span>
+        <span class="pt-brand__name" aria-hidden="true"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></span>
       </span>
       <nav class="pt-nav" aria-label="Secciones de la plataforma">
         <button type="button" data-tab="buscar">Consulta</button>
@@ -1001,7 +999,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 <header class="top">
   <div class="nav-wrap">
-    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><img src="./marca-mini.svg" alt="" width="26" height="26"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
+    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
     <div class="nav-fin"><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
