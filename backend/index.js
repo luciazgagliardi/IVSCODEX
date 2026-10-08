@@ -58,7 +58,10 @@ app.use(
       if (CORS_ORIGENES.includes('*') || CORS_ORIGENES.includes(origen)) {
         return cb(null, true);
       }
-      cb(new Error(`Origen no permitido por CORS: ${origen}`));
+      // Un origen que no está en la lista no recibe las cabeceras CORS y el
+      // navegador bloquea la respuesta: no hace falta (ni conviene) tirar un
+      // error 500 por cada visita de un sitio ajeno.
+      cb(null, false);
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Nombre-Archivo'],
