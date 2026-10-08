@@ -2,836 +2,842 @@
 <html lang="es-AR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Iuris Et De Iure</title>
 <meta name="description" content="Buscador de jurisprudencia argentina, mendocina e internacional. Arma la consulta y te lleva a las bases oficiales.">
 <link rel="icon" type="image/png" href="./favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600;6..96,700&family=IBM+Plex+Sans:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
-:root{
-  /* Negro neutro, no marrón. El #18140f de antes era un marrón muy oscuro:
-     en pantalla grande se leía como sepia apagado más que como negro, y
-     obligaba a que todo lo demás —fichas, líneas, humo— tirara a marrón
-     para no desentonar. Con el gris neutro, el dorado de la marca es lo
-     único cálido que queda en la pantalla, y por eso resalta. */
-  --negro:#0d0d0c;
-  --tinta:#edeae3;
-  --tinta2:#b5ae9e;
-  --papel:#f3efe5;
-  /* Opacos, no translúcidos: estos dos eran marrón al 50% para que se viera
-     el fondo a través del vidrio esmerilado. Sin vidrio, una capa
-     semitransparente sobre negro es apenas un gris —y se recalcula en cada
-     scroll—, así que ahora son directamente ese gris. */
-  --papel2:#1e1d19;
-  --ficha:#161613;
-  --lacre:#e9c877;
-  --lacre2:#d1ab55;
-  --dorado:#d9a62a;
-  --acequia:#5fae90;
-  --humo:#8c8577;
-  --linea:#2e2d28;
-  /* --linea2 se usaba en .pt-datos (las cifras de la portada) sin estar
-     definida en ningún lado, así que esos dos filetes no se dibujaban. */
-  --linea2:#252420;
-  --oro:#e9c877;
-  /* Un tono por buscador. El borde del panel dice de dónde salió cada
-     resultado sin tener que leer el título — con seis fuentes abiertas a la
-     vez, todas con el mismo borde, había que leer el encabezado para saber
-     qué se estaba mirando.
+/* ------------------------------------------------------------------ *
+   IVS CODEX con el lenguaje de sigillvm.com (rumbo A · Afiche).
 
-     Los seis son una sola rampa cálida —dorado, bronce, naranja, naranja
-     quemado, rojo teja, bordó— en vez de seis colores sueltos: nada de azul
-     ni violeta, que son fríos y no aparecen en ningún otro lugar de esta
-     paleta (lacre cera de sellar, dorado, --acequia verde queda reservado
-     para el estado "en vivo" genérico del panel, no para una fuente en
-     particular). Mendoza abre la rampa con el dorado insignia del sitio
-     (mismo valor que --dorado) y Mendoza Legal es el escalón siguiente, así
-     que además de ir una debajo de la otra en la lista, se leen como
-     parientes — más cerca entre sí que del resto de la rampa. */
+   Lo que se tomó de sigillvm: el negro cálido con grano de película, una
+   sola grotesca (Instrument Sans) para todo, las versalitas romanas
+   (Cormorant SC) solo para el nombre y las palabras latinas, el dorado
+   solo donde lo tiene el logo —la V, la X y el punto— y en lo que se
+   elige, filetes finos en lugar de cajas, y secciones que abren con un
+   título terminado en punto.
+
+   Los botones, todos, son cápsulas: bordes completamente redondeados.
+
+   Los nombres de las variables viejas (--negro, --tinta, --humo,
+   --lacre…) se conservan apuntando a la paleta nueva porque el
+   JavaScript los usa en estilos en línea; cambiarlos obligaría a tocar
+   cada plantilla.
+ * ------------------------------------------------------------------ */
+:root{
+  --bg:#100e0b;
+  --fg:#f1eee6;
+  --fg-82:rgba(241,238,230,.82);
+  --mute:rgba(241,238,230,.6);
+  --mute-2:rgba(241,238,230,.42);
+  --line:rgba(241,238,230,.14);
+  --line-2:rgba(241,238,230,.08);
+  --gold:#c9a45c;
+  --gold-55:rgba(201,164,92,.55);
+  --verde:#8fbf9a;
+  --rojo:#dba196;
+
+  --negro:var(--bg);
+  --tinta:var(--fg);
+  --tinta2:rgba(241,238,230,.74);
+  --papel:var(--fg);
+  --papel2:rgba(241,238,230,.05);
+  --ficha:rgba(241,238,230,.025);
+  --lacre:var(--gold);
+  --lacre2:var(--gold);
+  --dorado:var(--gold);
+  --oro:var(--gold);
+  --acequia:var(--verde);
+  /* crema al 58% sobre el negro, opaco: 5:1 de contraste en letra chica */
+  --humo:#94918a;
+  --linea:var(--line);
+  --linea2:var(--line-2);
+  /* Un tono por buscador, la misma rampa cálida de antes: ahora solo
+     tiñe el filete del sello de cada base y la sigla de cada resultado. */
   --f-mendoza:#d9a62a;
   --f-mendozalegal:#b58640;
   --f-caba:#d5873f;
   --f-csjn:#c95836;
   --f-saij:#b03b42;
   --f-dialnet:#8a3853;
-  --serif:"Bodoni Moda",Georgia,serif;
-  --sans:"IBM Plex Sans",Arial,sans-serif;
-  --mono:"IBM Plex Sans",Arial,sans-serif;
-  --bokeh:
-    radial-gradient(circle at 8% 24%,rgba(255,255,255,.5) 0 3px,transparent 4px),
-    radial-gradient(circle at 18% 62%,rgba(255,255,255,.32) 0 5px,transparent 6px),
-    radial-gradient(circle at 29% 12%,rgba(255,255,255,.28) 0 2px,transparent 3px),
-    radial-gradient(circle at 41% 78%,rgba(255,255,255,.4) 0 3px,transparent 4px),
-    radial-gradient(circle at 54% 34%,rgba(255,255,255,.22) 0 6px,transparent 7px),
-    radial-gradient(circle at 63% 8%,rgba(255,255,255,.35) 0 2px,transparent 3px),
-    radial-gradient(circle at 71% 58%,rgba(255,255,255,.3) 0 4px,transparent 5px),
-    radial-gradient(circle at 83% 22%,rgba(255,255,255,.45) 0 3px,transparent 4px),
-    radial-gradient(circle at 91% 70%,rgba(255,255,255,.25) 0 5px,transparent 6px),
-    radial-gradient(circle at 12% 88%,rgba(255,255,255,.3) 0 3px,transparent 4px),
-    radial-gradient(circle at 48% 92%,rgba(255,255,255,.2) 0 4px,transparent 5px),
-    radial-gradient(circle at 96% 40%,rgba(255,255,255,.3) 0 2px,transparent 3px);
+
+  --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:var(--sans);
+  --mono:var(--sans);
+  --pad:clamp(18px,3vw,44px);
+  --ease:cubic-bezier(.16,.84,.24,1);
+  --grano:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.6 -.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grano-sobre:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  color-scheme:dark;
 }
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden;max-width:100%}
-html{scrollbar-width:thin;scrollbar-color:var(--lacre) #150f08}
-*::-webkit-scrollbar{width:12px;height:12px}
-*::-webkit-scrollbar-track{background:#150f08}
-*::-webkit-scrollbar-thumb{background:var(--lacre);border-radius:6px}
-*::-webkit-scrollbar-thumb:hover{background:var(--dorado)}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scrollbar-width:thin;scrollbar-color:rgba(241,238,230,.18) transparent}
+html,body{margin:0;padding:0}
+/* clip y no hidden: con overflow-x:hidden en el body, el body pasa a ser
+   un contenedor de scroll propio y la cabecera sticky deja de pegarse. */
 body{
-  /* Se fueron el neón que llevaba TODA la letra (un halo dorado de 6px en
-     el text-shadow) y el fondo animado de 18 segundos. El halo parejo sobre
-     cada glifo emborronaba el borde de las letras, que en una pantalla de
-     lectura larga como ésta se paga en cansancio; y el degradado incluía
-     una mancha violeta que no aparece en ninguna otra parte de la paleta.
-     Ahora el fondo es un plano liso: el color lo ponen el dorado de la
-     marca y los seis tonos de fuente, que es donde significa algo.
-
-     font-weight de 200 a 400: la 200 de IBM Plex sobre fondo oscuro se
-     afina todavía más de lo que ya es —el claro sangra sobre el oscuro— y
-     quedaba gris justo donde tenía que quedar texto. */
-  font-weight:400;
-  background:var(--negro);
-  color:var(--tinta);
-  font-family:var(--sans);
-  font-size:17px;
-  line-height:1.55;
-  -webkit-text-size-adjust:100%;
+  background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--sans);
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:clip
 }
-a{color:var(--lacre)}
-button{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--lacre2);outline-offset:2px}
-/* El vidrio esmerilado (backdrop-filter:blur(16px)) estaba en doce
-   selectores a la vez: cada panel, cada ficha, cada campo de texto. Sobre
-   un fondo liso no desenfoca nada —no hay nada detrás que valga la pena
-   ver borroso—, así que era un filtro caro de pintar a cambio de nada. Y
-   el salto de 3px con sombra al pasar el mouse hacía que la página entera
-   se moviera debajo del cursor mientras uno leía. Queda el cambio de
-   borde, que es el que dice "esto responde". */
-.panel,.blk,.rama,.doc,.meta,.pasaje{transition:border-color .25s ease}
-.panel:hover,.blk:hover,.rama:hover,.pasaje:hover{border-color:#45423a}
+*::-webkit-scrollbar{width:10px;height:10px}
+*::-webkit-scrollbar-track{background:transparent}
+*::-webkit-scrollbar-thumb{background:rgba(241,238,230,.16);border-radius:10px;border:3px solid transparent;background-clip:padding-box}
+*::-webkit-scrollbar-thumb:hover{background:rgba(241,238,230,.3);background-clip:padding-box}
+a{color:var(--gold);text-underline-offset:3px}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3,h4{text-wrap:balance}
+::selection{background:var(--gold);color:var(--bg)}
+:focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
+::placeholder{color:var(--mute-2);opacity:1}
+[hidden]{display:none!important}
+.oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.v{color:var(--gold)}
+strong,b{font-weight:500}
 
-/* ---------- cabecera ---------- */
-/* La barra dejó de ser un óvalo flotante y pasó a ser una cabecera: ancho
-   completo, un filete abajo y nada más. El óvalo con borde dorado ponía un
-   segundo marco alrededor de once solapas que ya tenían el suyo, y se
-   llevaba casi 70px de alto antes de que empezara la página. */
+/* El grano. En la aplicación, apenas perceptible y quieto: es una
+   pantalla de lectura larga, y un grano que titila cansa la vista. En la
+   portada va como en sigillvm (ver más abajo): bien visible y en
+   movimiento, más una segunda capa que pasa por encima de todo. */
+.grano{
+  position:fixed;z-index:-1;inset:-120px;pointer-events:none;
+  background:var(--grano) 0 0/256px 256px repeat;opacity:.035
+}
+@keyframes grano{
+  0%{transform:translate(0,0)}12.5%{transform:translate(-61px,37px)}25%{transform:translate(43px,-88px)}
+  37.5%{transform:translate(-97px,-19px)}50%{transform:translate(18px,71px)}62.5%{transform:translate(79px,14px)}
+  75%{transform:translate(-28px,-63px)}87.5%{transform:translate(57px,96px)}100%{transform:translate(0,0)}
+}
+
+/* la marca escrita, con el punto redondo del logo y no el "·" de la fuente */
+.marca{font-family:var(--caps);white-space:nowrap}
+.marca .v{color:var(--gold)}
+.m-punto{display:inline-block;width:.17em;height:.17em;border-radius:50%;background:var(--gold);vertical-align:.22em;margin:0 .34em 0 .3em}
+
+/* ================================================================== *
+   BOTONES — cápsulas
+ * ================================================================== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:13px 22px;border:1px solid var(--gold);border-radius:999px;background:var(--gold);color:var(--bg);
+  font:500 15px/1 var(--sans);white-space:nowrap;text-decoration:none;
+  transition:background .3s,color .3s,border-color .3s
+}
+.btn:hover{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.btn.sec{background:transparent;border-color:var(--line);color:var(--fg-82);font-weight:400}
+.btn.sec:hover{border-color:var(--gold-55);color:var(--fg);background:transparent}
+.btn--ancho{width:100%}
+.mini,a.mini{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 14px 6px;border:1px solid var(--line);border-radius:999px;
+  background:transparent;color:var(--fg-82);font:400 13px/1.2 var(--sans);white-space:nowrap;text-decoration:none;
+  transition:border-color .3s,color .3s,background .3s
+}
+.mini:hover,a.mini:hover{border-color:var(--gold-55);color:var(--fg)}
+.mini[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.estrella{
+  width:36px;height:36px;padding:0;border:1px solid var(--line);border-radius:50%;background:none;
+  font-size:14px;line-height:1;color:var(--mute-2);transition:color .3s,border-color .3s
+}
+.estrella:hover{border-color:var(--gold-55)}
+.estrella[aria-pressed="true"]{color:var(--gold);border-color:var(--gold-55)}
+
+/* ---------- chips ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  appearance:none;padding:9px 16px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--fg-82);
+  font:400 14.5px/1.2 var(--sans);transition:border-color .3s,background .3s,color .3s
+}
+.chip:hover{border-color:var(--gold-55);color:var(--fg)}
+/* elegido: relleno pleno en el color de la letra, como en sigillvm */
+.chip[aria-pressed="true"],.chip.amb[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.chip.voz-sug{border-color:var(--gold-55);color:var(--gold)}
+.chip.voz-sug:hover{border-color:var(--gold);background:rgba(201,164,92,.08)}
+.chip.voz-sug[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.chip.sug-cerrar{border-color:transparent;color:var(--mute)}
+.chip.sug-cerrar:hover{border-color:var(--line);color:var(--fg)}
+.voces{display:flex;gap:6px;flex-wrap:wrap}
+.voz{
+  padding:6px 13px 5px;border:1px solid var(--line);border-radius:999px;background:transparent;
+  font:400 13px/1.3 var(--sans);color:var(--fg-82);transition:border-color .3s,color .3s
+}
+.voz:hover{border-color:var(--gold-55);color:var(--fg)}
+.tag{display:inline-flex;align-items:center;padding:4px 10px 3px;border:1px solid var(--line);border-radius:999px;font-size:11.5px;color:var(--mute)}
+.tag.paga{color:var(--gold);border-color:var(--gold-55)}
+.tag.libre{color:var(--verde);border-color:rgba(143,191,154,.45)}
+.cod{
+  display:inline-flex;align-items:center;padding:3px 9px 2px;border:1px solid var(--line);border-radius:999px;
+  font:500 11px/1.2 var(--caps);letter-spacing:.14em;color:var(--fg-82);flex:none
+}
+.cod.mza{border-color:var(--gold-55);color:var(--gold)}
+.cod.int{border-color:rgba(143,191,154,.45);color:var(--verde)}
+
+/* ---------- campos: solo la línea de abajo, como el formulario de sigillvm ---------- */
+.campo{display:block;margin-bottom:22px;min-width:0}
+.campo span{display:block;margin-bottom:10px;font-size:14px;color:var(--mute)}
+input[type=text],input[type=number],input[type=email],input[type=password],select{
+  display:block;width:100%;padding:8px 0 12px;border:0;border-bottom:1px solid var(--line);border-radius:0;
+  background:transparent;color:var(--fg);font:400 17px/1.5 var(--sans);transition:border-color .3s
+}
+select{appearance:none;cursor:pointer;background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 10px) 55%,calc(100% - 5px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+select option{background:var(--bg);color:var(--fg)}
+input[type=text]:focus,input[type=number]:focus,input[type=email]:focus,input[type=password]:focus,select:focus{outline:none;border-bottom-color:var(--gold)}
+textarea{
+  display:block;width:100%;min-height:220px;padding:18px 20px;border:1px solid var(--line);border-radius:0;background:var(--ficha);
+  color:var(--fg);font:400 15.5px/1.65 var(--sans);resize:vertical;transition:border-color .3s
+}
+textarea:focus{outline:none;border-color:var(--gold-55)}
+.fila{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0 28px}
+.fila>*{min-width:0}
+.acciones{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+
+/* ================================================================== *
+   CABECERA DE LA APLICACIÓN
+ * ================================================================== */
 .top{
-  position:relative;
-  background:transparent;
-  color:var(--papel);isolation:isolate;padding:0;
-  border-bottom:1px solid var(--linea)
+  position:sticky;top:0;z-index:50;padding-top:env(safe-area-inset-top,0px);
+  background:rgba(16,14,11,.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line)
 }
-.nav-wrap{
-  max-width:1560px;width:auto;margin:0 auto;
-  display:flex;align-items:center;gap:26px;padding:9px 16px;
-  border:0;border-radius:0;background:transparent
-}
-.nav-logo{
-  /* Con borde, a pedido: encierra el emblema en su propio círculo dorado.
-     Antes esto compartía la barra con el título grande de arriba, y ese
-     anillo quedaba a centímetros de otro dorado más (el del propio óvalo
-     de la barra) apenas quitado el título — un roce que no se notaba
-     cuando había mucho más alrededor. Sacado el título, el logo pasó a
-     ser el ancla visual de la cabecera, y ahí el marco propio suma en vez
-     de competir. */
-  width:44px;height:44px;flex:none;display:block;border-radius:50%;
-  border:1px solid var(--lacre);object-fit:contain;padding:4px;background:transparent
-}
-.nav{
-  display:flex;gap:14px;flex:1 1 auto;min-width:0;padding:10px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;
-  scrollbar-width:none /* Firefox: sin esto, la línea de abajo alcanza */
-}
-/* El deslizamiento sigue andando igual —hace falta con ventana angosta,
-   para llegar a "Cuenta" sin que las solapas se achiquen ni se corten—:
-   solo se esconde la barra, con la misma barra dorada gruesa (12px, ver
-   *::-webkit-scrollbar más arriba) que en cualquier otro overflow del
-   sitio pegada justo debajo de un óvalo, se veía como un segundo borde
-   grueso y desprolijo en vez de una pista de scroll. */
-.nav::-webkit-scrollbar{display:none}
-/* Once cápsulas en MAYÚSCULA eran once veces el mismo marco repetido: a esa
-   cantidad el borde deja de distinguir un botón del de al lado y pasa a ser
-   textura. Ahora las solapas son texto y la única marcada es la abierta, con
-   un filete dorado abajo, que es la pregunta que la barra tiene que
-   contestar. Se va también la MAYÚSCULA: "Requisitos" y "Guardados" en caja
-   baja se leen de un vistazo; en mayúscula hay que deletrearlas. */
+.nav-wrap{display:flex;align-items:center;gap:clamp(24px,3.4vw,64px);padding:14px var(--pad)}
+.marca-app{display:inline-flex;align-items:center;gap:12px;flex:none;padding:0;border:0;background:none;color:var(--fg)}
+.marca-app svg{width:26px;height:26px}
+.marca-app .marca{font-size:15px;font-weight:500;letter-spacing:.3em}
+.nav{display:flex;align-items:center;gap:clamp(16px,1.8vw,28px);min-width:0}
 .nav button{
-  position:relative;background:none;border:0;border-bottom:2px solid transparent;
-  padding:9px 2px;cursor:pointer;white-space:nowrap;
-  transition:color .25s ease,border-color .25s ease;
-  font-family:var(--sans);font-size:15px;font-weight:400;
-  letter-spacing:.01em;color:var(--tinta2)
+  padding:6px 0;border:0;border-bottom:1px solid transparent;background:none;
+  font-size:15px;color:var(--mute);white-space:nowrap;transition:color .3s,border-color .3s
 }
-.nav button:hover{color:#fff}
-.nav button[aria-selected="true"]{color:#fff;font-weight:600;border-bottom-color:var(--dorado)}
+.nav button:hover{color:var(--fg)}
+.nav button[aria-current="page"]{color:var(--fg);border-bottom-color:var(--gold)}
+.nav-fin{margin-left:auto}
+.btn-menu .fl{display:inline-block;transition:transform .4s var(--ease)}
+.btn-menu[aria-expanded="true"] .fl{transform:rotate(180deg)}
+@media (max-width:980px){ .nav{display:none} }
+/* En el teléfono el nombre y el botón del índice tienen que entrar juntos:
+   el rótulo se acorta a "Secciones" y el nombre se aprieta un poco. */
+@media (max-width:520px){
+  .nav-wrap{gap:12px}
+  .marca-app .marca{letter-spacing:.2em}
+  .btn-menu{padding:9px 14px 8px;font-size:13.5px}
+  .btn-menu .txt{font-size:0}
+  .btn-menu .txt::after{content:"Secciones";font-size:13.5px}
+  .btn-menu[aria-expanded="true"] .txt::after{content:"Cerrar"}
+}
 
-/* ---------- cadena ---------- */
-.fila-q{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.fila-q input{flex:2 1 300px}
-.cadena{flex:0 1 auto;min-width:0}
-.cadena-in{
-  padding:8px 18px;
-  display:flex;gap:10px;align-items:center;
-  border:1px solid var(--linea);border-radius:3px;
-  background:var(--papel2)
+/* el índice de las once secciones */
+.menu{
+  position:fixed;inset:0;z-index:45;overflow-y:auto;overscroll-behavior:contain;
+  padding:calc(118px + env(safe-area-inset-top,0px)) var(--pad) 64px;
+  background:rgba(16,14,11,.97);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility 0s .45s
 }
-.cadena code{
-  font-family:var(--mono);font-size:12.5px;color:var(--tinta2);
-  flex:0 1 auto;max-width:min(50vw,560px);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
-}
-.cadena code b{color:var(--lacre);font-weight:600}
-.cadena .mini{border-color:transparent;color:var(--lacre)}
-.cadena .mini:hover{border-color:var(--dorado);color:var(--dorado)}
-.mini{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:999px;
-  padding:5px 12px;cursor:pointer;font-family:var(--sans);font-size:12px;color:var(--tinta2);white-space:nowrap
-}
-.mini:hover{border-color:rgba(255,255,255,.4);color:var(--tinta);transition:border-color .25s ease}
-a.mini{text-decoration:none;display:inline-block;color:var(--tinta2)}
-a.mini:hover{color:var(--lacre)}
+.menu.is-on{opacity:1;visibility:visible;transition:opacity .45s var(--ease)}
+.menu__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 clamp(24px,3vw,56px)}
+.menu__grupo h2{margin:0;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:13px;font-weight:400;color:var(--mute-2)}
+.menu__item{display:block;width:100%;padding:18px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;transition:border-color .5s}
+.menu__item:hover{border-bottom-color:var(--gold-55)}
+.menu__item b{display:block;font:400 clamp(24px,2.3vw,34px)/1.1 var(--sans);letter-spacing:-.02em;transition:color .3s}
+.menu__item:hover b{color:var(--gold)}
+.menu__item span{display:block;margin-top:6px;font-size:13.5px;color:var(--mute)}
+.menu__item[aria-current="page"] b::after{content:"";display:inline-block;width:7px;height:7px;margin-left:12px;border-radius:50%;background:var(--gold);vertical-align:.3em}
+.menu.is-on .menu__item{animation:entra .7s var(--ease) both;animation-delay:calc(var(--k) * 40ms)}
+@keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (max-width:980px){ .menu__grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px} }
+@media (max-width:560px){ .menu__grid{grid-template-columns:minmax(0,1fr)} }
+
+/* ---------- la cabecera de cada sección ---------- */
+.cab{padding:clamp(56px,9vh,110px) var(--pad) 0}
+.cab>*{animation:entra .9s var(--ease) both}
+.cab>*:nth-child(2){animation-delay:.07s}.cab>*:nth-child(3){animation-delay:.14s}.cab>*:nth-child(4){animation-delay:.21s}
+.cab__ojo{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0;font-size:14px;color:var(--mute)}
+.cab__lat{font:500 15px/1 var(--caps);letter-spacing:.24em;color:var(--gold)}
+.cab h1{margin:18px 0 0;font:500 clamp(36px,4.4vw,68px)/1.02 var(--sans);letter-spacing:-.035em}
+.cab__intro{max-width:46em;margin:22px 0 0;color:var(--mute)}
+/* El primer aviso de cada solapa sube a la cabecera y hace de bajada:
+   es el mismo texto de siempre, sin caja. */
+.cab .aviso{max-width:52em;margin:22px 0 0;padding:0;border:0;background:none;color:var(--mute);font-size:16px}
+.cab .aviso .av-tit{display:block;margin-bottom:6px;font-size:18px;font-weight:500;color:var(--fg)}
+.cab .aviso .av-oro{color:var(--mute)}
+.cab .aviso strong{color:var(--fg)}
+.cab .nota-suelta{max-width:52em;margin:12px 0 0;padding:0;font-size:13.5px;color:var(--mute-2)}
 
 /* ---------- estructura ---------- */
-.wrap{max-width:1560px;margin:0 auto;padding:22px 16px 70px;display:grid;grid-template-columns:210px 1fr;gap:28px;align-items:start}
-.wrap.sin-rail{grid-template-columns:1fr}
+.wrap{
+  display:grid;grid-template-columns:220px minmax(0,1fr);gap:clamp(28px,4vw,64px);align-items:start;
+  padding:clamp(44px,5.5vw,72px) var(--pad) 110px
+}
+.wrap.sin-rail{grid-template-columns:minmax(0,1fr)}
 .wrap.sin-rail .rail{display:none}
-/* min-width:0 a propósito: sin esto, en la columna única del celular (ver
-   @media abajo) esta aside y .col comparten la misma pista de la grilla, y
-   la pista se dimensiona por el contenido más ancho de las DOS juntas en
-   vez de por el ancho real de pantalla —medido en vivo: 4016px de pista
-   para una ventana de 390px—, así que todo el panel de búsqueda quedaba
-   cortado fuera de la vista sin scroll posible (html,body tienen
-   overflow-x:hidden). .col ya tenía este mismo min-width:0; a esta le
-   faltaba. */
-.rail{position:sticky;top:56px;min-width:0}
-.rail h2{
-  color:var(--humo);font-family:var(--sans);font-size:10px;font-weight:600;
-  text-transform:uppercase;letter-spacing:.18em;margin:0 0 9px
-}
-.rail-buscador{
-  width:100%;padding:9px 12px;margin-bottom:10px;border:1px solid var(--linea);border-radius:3px;
-  background:var(--papel2);
-  font-family:var(--sans);font-size:13.5px;color:var(--tinta);outline:none
-}
-.rail-buscador:focus{border-color:var(--lacre);outline:none}
-.blk h2{
-  font-family:var(--sans);font-size:11px;letter-spacing:.04em;
-  color:var(--humo);margin:0 0 9px;font-weight:600
-}
-.voces-tit{
-  font-family:var(--serif);font-size:22px;
-  color:var(--tinta);margin:0 0 8px;font-weight:500
-}
-.voces-tit .punto{color:var(--lacre)}
-.voces-tit .rama-nom{color:var(--lacre);font-style:italic}
-.rail-list{display:flex;flex-direction:column;gap:1px;max-height:62vh;overflow:auto}
-.rail-list button{
-  text-align:left;background:none;border:0;border-radius:6px;
-  padding:7px 9px;cursor:pointer;font-size:13.5px;color:var(--tinta2);
-  font-family:var(--sans);font-weight:400
-}
-.rail-list button:hover{background:var(--papel2)}
-.rail-list button[aria-pressed="true"]{background:var(--papel2);color:var(--lacre);font-weight:600}
 .col{min-width:0}
 
-/* ---------- formulario ---------- */
-.panel{background:var(--ficha);border:1px solid var(--linea);border-radius:4px;padding:22px 24px;margin-bottom:20px}
-/* El tono de cada fuente se mudó del BORDE de la caja al rótulo. Pintar los
-   cuatro lados obligaba a que el color fuera fuerte para verse, y con seis
-   buscadores abiertos la pantalla quedaba a rayas de colores; encima competía
-   con el borde izquierdo dorado, que ahí sí quiere decir algo (resultados del
-   índice local, ver indicePanel). El rótulo ya nombra la fuente: el tono va
-   pegado al nombre, que es donde se lo busca. --punto es lo único que cambia
-   por fuente, y lo usa .rotulo-fuente.
-
-   El verde de .vivo se queda donde SÍ distingue algo: en el Lector y en el
-   Verificador, .panel.vivo contra .panel.inactivo es lo que separa "el
-   servidor está" de "ahora no está". Los seis paneles de fuente también
-   llevan .vivo, pero ahí el verde no diría nada nuevo —todos lo tendrían—,
-   así que las reglas por slug lo devuelven a neutro; van después y pesan lo
-   mismo, de modo que ganan por orden. */
-.panel.vivo{border-color:var(--acequia)}
-.panel.inactivo{border-color:var(--linea)}
+/* el riel: las fuentes en vivo y las ramas */
+.rail{position:sticky;top:96px;min-width:0}
+.rail h2{margin:0 0 12px;font-size:13px;font-weight:400;color:var(--mute)}
+.rail-fuentes{display:flex;flex-direction:column;margin-bottom:36px;border-top:1px solid var(--line)}
+.rail-fuente{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13.5px;color:var(--tinta2);line-height:1.3}
+.rail-fuente .rf-punto{width:6px;height:6px;border-radius:50%;flex:none;background:var(--punto,var(--humo))}
+.rail-fuente .rf-nom{flex:1 1 auto;min-width:0;font:500 12.5px/1.2 var(--caps);letter-spacing:.14em}
+.rail-fuente .rf-n{flex:none;font-size:13px;color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
+.rail-fuente.sin-buscar{color:var(--humo)}
+.rail-fuente.sin-buscar .rf-punto{background:var(--line)}
+.rail-buscador{margin-bottom:10px;font-size:15px!important}
+.rail-list{display:flex;flex-direction:column;max-height:62vh;overflow:auto;padding-right:6px}
+.rail-list button{
+  position:relative;text-align:left;padding:8px 0 8px 16px;border:0;background:none;
+  font-size:14px;line-height:1.35;color:var(--tinta2);transition:color .25s
+}
+.rail-list button:hover{color:var(--fg)}
+.rail-list button[aria-pressed="true"]{color:var(--fg)}
+.rail-list button[aria-pressed="true"]::before{content:"";position:absolute;left:2px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--gold)}
 .f-mendoza{--punto:var(--f-mendoza)}
 .f-mendozalegal{--punto:var(--f-mendozalegal)}
 .f-caba{--punto:var(--f-caba)}
 .f-csjn{--punto:var(--f-csjn)}
 .f-saij{--punto:var(--f-saij)}
 .f-dialnet{--punto:var(--f-dialnet)}
-.campo{display:block;margin-bottom:14px}
-.campo span{display:block;font-family:var(--sans);font-size:13px;color:var(--tinta2);margin-bottom:6px}
-input[type=text],input[type=number],select{
-  width:100%;padding:11px 12px;border:1px solid var(--linea);border-radius:3px;
-  background:var(--papel2);font-family:var(--sans);font-size:15px;color:var(--tinta)
-}
-/* outline:none a propósito: sin esto, enfocar cualquiera de estos campos
-   ("Qué buscás", "Excluir palabras", "Año desde/hasta" en Buscar; "Enlace
-   directo del fallo", "De dónde lo sacaste" en Lector; los siete de Citar)
-   dibujaba DOS anillos dorados a la vez — el borde propio, que ya cambia a
-   --lacre acá abajo, más el contorno de foco genérico de más arriba
-   (:focus-visible, pensado para elementos sin su propio indicador, como
-   botones y links). El campo ya avisa que tiene el foco cambiando de color;
-   agregarle un segundo anillo encima no sumaba accesibilidad, sumaba un
-   defecto visual. Mismo criterio que .rail-buscador, que ya lo hacía. */
-input[type=text]:focus,input[type=number]:focus,select:focus{border-color:var(--lacre);outline:none;transition:border-color .25s ease}
-#q{font-family:var(--sans);font-size:16px;padding:13px 14px}
-.fila{display:flex;gap:12px;flex-wrap:wrap}
-.fila>*{flex:1 1 130px;min-width:0}
-.chips{display:flex;gap:7px;flex-wrap:wrap}
-.chip{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:999px;padding:6px 13px;cursor:pointer;
-  font-size:13px;font-family:var(--sans);color:var(--tinta2)
-}
-.chip:hover{border-color:rgba(255,255,255,.4)}
-.chip[aria-pressed="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
-.chip.amb[aria-pressed="true"]{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28);color:#fff}
-.acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--linea)}
-/* Radio 3px en vez de 999px: la cápsula llena de dorado era la forma más
-   ruidosa de la pantalla y se repetía en cada barra de acciones. Se va
-   también el salto con sombra dorada al pasar el mouse; queda el cambio de
-   relleno, que es lo que hace cualquier botón desde siempre. */
-.btn{
-  background:var(--dorado);color:#17130a;border:1px solid var(--dorado);border-radius:3px;
-  padding:11px 20px;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:600;
-  transition:background .2s ease,border-color .2s ease
-}
-.btn:hover{background:var(--lacre);border-color:var(--lacre)}
-.btn.sec{background:transparent;color:var(--tinta);border-color:#45423a;font-weight:400;transition:background .2s ease,border-color .2s ease}
-.btn.sec:hover{background:var(--papel2);border-color:#5c584d}
 
-/* Las fuentes en el riel: bolita del tono de cada una y, cuando ya se
-   buscó, cuántas trajo. Es el mapa de la búsqueda — de un vistazo se ve
-   quién contestó y quién no— sin tener que bajar hasta su sección. */
-.rail-fuentes{display:flex;flex-direction:column;margin-bottom:22px}
-.rail-fuente{
-  display:flex;align-items:center;gap:9px;padding:7px 0;
-  font-size:12.5px;color:var(--tinta2);line-height:1.3
+/* ---------- sin cajas: un filete arriba y aire ---------- */
+.panel,.blk,.rama,.aviso{
+  margin:0 0 48px;padding:24px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;
+  transition:border-color .5s
 }
-.rail-fuente .rf-punto{
-  width:6px;height:6px;border-radius:50%;flex:none;
-  background:var(--punto,var(--humo))
+.blk:hover,.rama:hover{border-top-color:var(--gold-55)}
+.panel.vivo{border-top-color:rgba(143,191,154,.45)}
+.aviso{color:var(--mute);font-size:15px}
+.aviso strong{color:var(--fg)}
+.av-tit{display:block;margin-bottom:4px;color:var(--fg);font-weight:500}
+.av-oro{color:var(--gold)}
+.nota-suelta{margin:-30px 0 40px;font-size:13.5px;line-height:1.55;color:var(--mute-2)}
+.blk h3,.grupo>h3{margin:0 0 14px;font:500 clamp(24px,2.2vw,32px)/1.12 var(--sans);letter-spacing:-.025em}
+.blk p{margin:0 0 12px;color:var(--fg-82)}
+.blk ol,.blk ul{margin:0 0 12px;padding-left:20px;color:var(--fg-82)}
+.blk li{margin-bottom:6px}
+.rama h3{margin:0 0 8px;font:500 21px/1.25 var(--sans);letter-spacing:-.015em}
+.rama p{margin:0 0 14px;color:var(--mute)}
+.rotulo{display:block;margin:16px 0 10px;font-size:13px;color:var(--mute)}
+.rotulo strong{font-weight:500;color:var(--fg)}
+.conteo{margin:0 0 18px;font-size:13px;color:var(--mute-2)}
+.vacio{padding:32px 24px;border:1px dashed var(--line);color:var(--mute);text-align:center;font-size:15px}
+.out{
+  padding:22px 24px;border:0;border-left:1px solid var(--gold);background:var(--ficha);
+  font:400 clamp(17px,1.4vw,20px)/1.55 var(--sans);color:var(--fg);white-space:pre-wrap;word-break:break-word;min-height:44px
 }
-.rail-fuente .rf-nom{flex:1 1 auto;min-width:0}
-.rail-fuente .rf-n{
-  flex:none;font-size:12px;color:var(--lacre);font-variant-numeric:tabular-nums
-}
-.rail-fuente.sin-buscar{color:var(--humo)}
-.rail-fuente.sin-buscar .rf-punto{background:#3a382f}
+.voces-tit{margin:0 0 14px;font:500 22px/1.2 var(--sans);letter-spacing:-.015em}
+.voces-tit .punto{color:var(--gold)}
+.voces-tit .rama-nom{color:var(--gold);font-style:normal}
 
-/* ---------- pantalla de busqueda (composicion Tinta) ---------- */
-/* La barra y los filtros salen del panel y pasan a ser la cabecera de la
-   pantalla: el formulario dejaba la consulta —lo unico que se usa
-   siempre— al mismo nivel visual que "Al abrir la fuente". El titular en
-   Bodoni que iba primero se sacó: Voces sugeridas ocupa ese lugar ahora
-   (ver vistaBuscar). */
-.busq-tope{margin-bottom:20px}
-.busq-barra{display:flex;gap:10px;align-items:stretch}
-.busq-campo{
-  flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:11px;
-  background:var(--ficha);border:1px solid #38362f;border-radius:3px;padding:0 15px
+/* ================================================================== *
+   BUSCAR — el formulario de presupuesto de sigillvm, con su resumen
+   fijo al costado
+ * ================================================================== */
+.brief{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:clamp(28px,3.4vw,64px);align-items:start;margin-bottom:clamp(56px,7vw,96px)}
+.brief__form{display:grid;gap:32px;min-width:0}
+.brief__form .panel{margin:0}
+.brief__form .campo,.brief__form .fila .campo{margin-bottom:0}
+.campo--q input[type=text]{
+  padding:4px 0 14px;border-bottom-color:rgba(241,238,230,.3);
+  font:400 clamp(26px,3vw,42px)/1.15 var(--sans);letter-spacing:-.02em
 }
-.busq-campo>svg{flex:none}
-.busq-campo input[type=text]{
-  border:0;border-radius:0;background:transparent;padding:14px 0;font-size:15px
-}
-.busq-campo input[type=text]:focus{border:0;outline:none}
-.busq-barra .btn{flex:none;padding:0 28px}
-.busq-cadena{
-  margin-top:11px;display:flex;gap:10px;align-items:center;
-  background:var(--papel2);border:1px solid var(--linea);border-radius:3px;padding:8px 12px
-}
-.busq-cadena code{
-  font-family:var(--mono);font-size:12.5px;color:var(--tinta2);
-  flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
-}
-.busq-cadena code b{color:var(--lacre);font-weight:600}
-.busq-grupo{margin-top:13px}
-.busq-rotulo{
-  display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--humo);font-weight:600;margin-bottom:8px
-}
-.oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.busq-grupo{min-width:0}
+.busq-rotulo{display:block;margin-bottom:14px;font-size:14px;color:var(--mute)}
+.brief__summary{position:sticky;top:96px;padding:clamp(24px,2.4vw,32px);border:1px solid var(--line);background:var(--ficha);min-width:0}
+.brief__title{margin:0;font:500 20px/1.25 var(--sans)}
+.brief__list{margin:22px 0 0;display:grid;gap:16px}
+.brief__list div{padding-top:14px;border-top:1px solid var(--line)}
+.brief__list dt{font-size:13px;color:var(--mute-2)}
+.brief__list dd{margin:6px 0 0;overflow-wrap:anywhere}
+#cadena{display:block;font:400 15px/1.5 var(--sans);color:var(--mute)}
+#cadena b{color:var(--gold);font-weight:500}
+.brief__summary .acciones{margin-top:16px;padding-top:0;border-top:0;gap:8px}
+.brief__summary .btn--ancho{margin-top:26px}
+.brief__sub{margin:26px 0 0;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--mute-2)}
+.brief__summary .btn.sec{padding:8px 14px 7px;font-size:13px}
+.sugeridas{margin:0;padding:2px 0 2px 18px;border-left:1px solid var(--gold);background:none;border-radius:0}
+.sug-nota{margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--mute);max-width:62ch}
+.sug-nota b{color:var(--fg);font-weight:500}
+@media (max-width:1180px){ .brief{grid-template-columns:minmax(0,1fr)} .brief__summary{position:static} }
 
-/* Los resultados de un buscador: el panel deja de ser una caja y pasa a ser
-   una seccion —su rotulo arriba y la lista abajo—, y la TARJETA es cada
-   resultado. Antes era una caja dentro de otra caja, con el borde de la de
-   afuera compitiendo con el de la de adentro. */
-.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,
-.panel.f-csjn,.panel.f-saij,.panel.f-dialnet{
-  background:transparent;border-color:transparent;padding:0;margin-bottom:26px
+/* ---------- resultados en vivo: cada base con su sello de procedencia ---------- */
+.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet{
+  margin:0 0 64px;padding:0;border-top:0
 }
-.panel .fuente{
-  border:1px solid var(--linea);border-radius:4px;background:var(--ficha);
-  padding:16px 18px;margin-bottom:10px;transition:border-color .25s ease
+.rotulo-fuente{
+  display:flex;align-items:center;gap:18px;margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid var(--line);
+  font:500 18px/1.3 var(--sans);letter-spacing:-.01em;color:var(--fg)
 }
-.panel .fuente:hover{border-color:#45423a}
-.panel .f-top{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-.panel .f-nom{font-family:var(--serif);font-size:19px;font-weight:400;color:#fff;line-height:1.26}
-.panel h3.f-nom{margin:0 0 7px}
-.panel .f-enc{
-  font-size:12px;color:var(--humo);min-width:0;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+/* el sello: la sigla de la base en un aro doble, del tono de esa base */
+.rotulo-fuente::before{
+  content:attr(data-cod);flex:none;display:grid;place-items:center;width:58px;height:58px;padding:6px;border-radius:50%;
+  border:1px solid var(--punto,var(--gold));box-shadow:inset 0 0 0 4px var(--bg),inset 0 0 0 5px var(--punto,var(--gold));
+  font:500 9.5px/1.15 var(--caps);letter-spacing:.12em;text-align:center;color:var(--fg)
 }
-.panel .f-fecha{margin-left:auto;font-size:12px;color:var(--humo);flex:none}
-.panel .f-nota{font-size:13.5px;line-height:1.6;color:var(--tinta2);margin:0 0 10px}
-/* El resaltado fuerte (amarillo pleno) se queda para el Lector, donde se
-   busca una palabra dentro de un documento entero. En un pasaje de cuatro
-   renglones alcanza con teñir el fondo. */
-.panel .f-nota mark{background:rgba(217,166,42,.2);color:#f0d68c;padding:0 2px}
-/* La sigla de la fuente: contorno en su tono, letra clara. Mismo criterio
-   que .rotulo-fuente — el color va en el filete, no en el texto. */
-.panel .f-top .cod{
-  background:transparent;border:1px solid var(--punto,var(--linea));
-  color:var(--tinta);border-radius:2px;font-size:10.5px;letter-spacing:.06em;
-  padding:3px 8px;top:0
-}
-.panel .f-acc{gap:16px;margin-top:10px}
-.panel .f-acc .mini{
-  background:transparent;border:0;border-radius:0;padding:0;
-  color:var(--lacre);font-size:12.5px
-}
-.panel .f-acc .mini:hover{color:var(--dorado);text-decoration:underline}
-.panel .f-acc .tag{margin-left:0}
+.panel .fuente{padding:22px 0;margin:0;border:0;border-bottom:1px solid var(--line);background:none;transition:border-color .5s}
+.panel .fuente:hover{border-bottom-color:var(--gold-55)}
+.panel .f-top{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.panel .f-top .cod{border-color:var(--punto,var(--line));color:var(--fg)}
+.panel .f-enc{font-size:13px;color:var(--mute-2);min-width:0}
+.panel .f-fecha{margin-left:auto;font-size:13px;color:var(--mute-2);font-variant-numeric:tabular-nums;flex:none}
+.panel h3.f-nom,.panel .f-nom{margin:0 0 10px;font:500 clamp(18px,1.5vw,21px)/1.3 var(--sans);letter-spacing:-.01em;color:var(--fg)}
+.panel .f-nota{margin:0 0 14px;max-width:70ch;font-size:15.5px;line-height:1.65;color:var(--fg-82)}
+.panel .f-nota mark{background:none;color:var(--gold);box-shadow:inset 0 -1px 0 var(--gold-55);padding:0}
+.panel .voces{margin-bottom:12px}
+.panel .f-acc{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.paginador{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:16px 0}
 
-/* ---------- fuentes ---------- */
-.conteo{font-family:var(--sans);font-size:12px;color:var(--humo);margin:0 0 10px}
-.grupo{margin-bottom:26px}
-.grupo>h3{
-  font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 3px;
-  padding-bottom:8px;border-bottom:1px solid var(--linea)
+/* ---------- el catálogo de fuentes ---------- */
+.grupo{margin-bottom:clamp(56px,7vw,88px)}
+.grupo>h3{padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.grupo>p.desc{margin:10px 0 8px;color:var(--mute)}
+/* Solo dentro de los grupos del catálogo: .fuente también es la clase de
+   cada resultado en vivo, que tiene su propio orden (ver más arriba). */
+.grupo>.fuente{
+  display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.4fr) auto;gap:10px clamp(20px,3vw,48px);align-items:start;
+  padding:20px 0;border-bottom:1px solid var(--line);transition:border-color .5s
 }
-.grupo>p.desc{margin:0 0 12px;font-size:13px;color:var(--humo)}
-.fuente{border-bottom:1px solid var(--linea);padding:13px 0}
-.f-top{display:flex;gap:11px;align-items:baseline}
-.cod{
-  font-family:var(--sans);font-size:10px;letter-spacing:.03em;color:#fff;
-  padding:2px 7px;border-radius:999px;flex:0 0 auto;position:relative;top:-1px
-}
-.cod.mza{background:var(--lacre);color:#241a0c}.cod.nac{background:#3a3020}
-.cod.prov{background:#2c2415}.cod.int{background:var(--acequia);color:#0e2018}.cod.doc{background:#3a3020}
-.f-nom{font-family:var(--serif);font-size:17px;flex:0 1 auto}
-.leader{flex:1 1 auto;border-bottom:1px dotted var(--linea);min-width:14px;transform:translateY(-4px)}
-.f-org{font-size:12px;color:var(--humo);font-family:var(--sans);flex:0 0 auto}
-.f-nota{font-size:15px;color:var(--tinta2);margin:3px 0 7px}
-.f-acc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.tag{font-family:var(--sans);font-size:11px;color:var(--humo);border:1px solid var(--linea);padding:3px 9px;border-radius:999px}
-.tag.paga{color:var(--lacre);border-color:rgba(233,200,119,.35);background:rgba(233,200,119,.1)}
-.tag.libre{color:var(--acequia);border-color:rgba(95,174,144,.35);background:rgba(95,174,144,.1)}
-.estrella{background:none;border:0;cursor:pointer;font-size:15px;color:var(--linea);padding:0 4px;line-height:1}
-.estrella[aria-pressed="true"]{color:var(--dorado)}
+.grupo>.fuente:hover{border-bottom-color:var(--gold-55)}
+.grupo .f-top{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;min-width:0}
+.grupo .f-nom{font:500 17px/1.35 var(--sans);min-width:0}
+.leader{display:none}
+.grupo .f-org{flex-basis:100%;font-size:13px;color:var(--mute-2)}
+.grupo .f-nota{margin:0;font-size:14.5px;line-height:1.6;color:var(--mute)}
+.grupo .f-acc{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end;max-width:300px}
+@media (max-width:900px){ .grupo>.fuente{grid-template-columns:minmax(0,1fr)} .grupo .f-acc{justify-content:flex-start;max-width:none} }
 
 /* ---------- ramas ---------- */
-.rama{background:var(--ficha);border:1px solid var(--linea);border-radius:4px;padding:18px 20px;margin-bottom:12px;font-family:var(--sans)}
-/* Compartir: el botón y su menú de destinos. */
-.compartir{position:relative;display:inline-block}
-/* Colgado del body y en posición fija: así nada lo tapa ni lo recorta. La
-   causa original era el backdrop-filter de los paneles, que armaba su propio
-   contexto de apilado y dejaba al menú por debajo del panel siguiente por más
-   z-index que tuviera; ese filtro ya no está. Se queda fijo igual porque los
-   contenedores con overflow (el rail, las metas del Lector) igual lo
-   recortarían, y porque los pasajes del Lector se pintan por su cuenta. */
-.compartir-menu.flotante{position:fixed;z-index:200;right:auto;top:auto}
-.compartir-menu{
-  position:absolute;z-index:30;right:0;top:calc(100% + 6px);min-width:210px;
-  background:var(--negro);border:1px solid var(--lacre);border-radius:10px;
-  padding:6px;box-shadow:0 12px 28px rgba(0,0,0,.55)
-}
-.compartir-menu button,.compartir-menu a{
-  display:block;width:100%;text-align:left;background:none;border:0;
-  padding:9px 12px;border-radius:7px;cursor:pointer;
-  font-family:var(--sans);font-size:14px;color:var(--tinta2);text-decoration:none
-}
-.compartir-menu button:hover,.compartir-menu a:hover{background:var(--papel2);color:var(--lacre)}
-/* Comparador: una tarjeta por buscador, en columnas que se acomodan solas. */
-.comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:18px}
-.comp-card{background:var(--ficha);border:1px solid var(--linea);border-left-width:4px;border-radius:10px;padding:14px 16px;font-family:var(--sans)}
-.comp-card h4{margin:0 0 2px;font-family:var(--serif);font-size:16px;font-weight:400;color:var(--tinta)}
-.comp-cifra{font-size:13px;color:var(--humo);margin:0 0 10px}
-.comp-cifra b{color:var(--lacre);font-size:15px}
-.comp-item{border-top:1px solid var(--linea);padding:8px 0 0;margin-top:8px;font-size:13px;line-height:1.45}
-.comp-item a{color:var(--tinta2);text-decoration:none}
-.comp-item a:hover{color:var(--lacre)}
-.comp-fecha{color:var(--humo);font-size:11.5px;display:block;margin-top:2px}
-.comp-vacio{font-size:13px;color:var(--humo);font-style:italic}
-/* Requisitos: la lista de la norma y su cita al pie. */
-.req-lista{margin:6px 0 0;padding-left:22px;font-size:14.5px;color:var(--tinta2);line-height:1.55}
-.req-lista li{margin-bottom:7px}
-.req-aviso{font-size:14px;color:var(--humo);font-style:italic;margin:10px 0 0}
-.req-norma{
-  margin-top:12px;padding-top:10px;border-top:1px solid var(--linea);
-  font-size:12.5px;color:var(--humo)
-}
-.req-norma a{color:var(--lacre)}
-.rama h3{font-family:var(--serif);font-size:20px;font-weight:500;margin:0 0 5px}
-.rama p{margin:0 0 12px;font-size:15px;color:var(--tinta2)}
-.voces{display:flex;gap:6px;flex-wrap:wrap}
-.voz{
-  background:var(--papel2);border:1px solid var(--linea);border-radius:999px;padding:4px 10px;cursor:pointer;
-  font-size:12.5px;color:var(--tinta2);font-family:var(--sans)
-}
-.voz:hover{background:rgba(255,255,255,.14);color:#fff;border-color:rgba(255,255,255,.28);transition:background .25s ease}
-.rotulo{
-  display:inline-block;font-family:var(--sans);font-size:12px;color:var(--tinta2);
-  background:var(--papel2);border-radius:3px;padding:5px 11px;margin:9px 0 8px
-}
-/* El rótulo de un panel de resultados lleva además el tono de su fuente: una
-   bolita y el filete del contorno. El NOMBRE queda en tinta clara y no en el
-   color — los dos extremos oscuros de la rampa, SAIJ y Dialnet, no llegan a
-   4.5:1 de contraste sobre el fondo del panel, así que pintarles la letra los
-   volvía ilegibles justo en la palabra que hay que leer. La bolita sí puede ir
-   en el color: no es texto, y el nombre al lado ya dice de qué fuente se
-   trata. */
-.rotulo-fuente{
-  display:inline-flex;align-items:center;gap:8px;color:var(--tinta);
-  background:transparent;border:1px solid var(--punto,var(--linea))
-}
-.rotulo-fuente::before{
-  content:"";width:6px;height:6px;border-radius:50%;flex:none;
-  background:var(--punto,var(--acequia))
-}
+.col.v-ramas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 clamp(28px,3.4vw,56px);align-items:start}
+.col.v-ramas>.conteo,.col.v-ramas>.aviso{grid-column:1/-1}
+.col.v-ramas .rama{margin-bottom:56px}
+@media (max-width:1100px){ .col.v-ramas{grid-template-columns:minmax(0,1fr)} }
 
-/* Voces sugeridas por el intérprete (ver tiraSugerencias). Se separa del
-   resto del formulario con un filete dorado a la izquierda: es lo único de
-   esta pantalla que la web propone en vez de recibir. */
-.sugeridas{
-  margin:0 0 14px;padding:12px 14px;border-left:2px solid var(--lacre);
-  background:var(--papel2);border-radius:0 8px 8px 0
-}
-.sug-nota{margin:0 0 9px;font-size:12.5px;color:var(--humo);line-height:1.5;max-width:62ch}
-.sug-nota b{color:var(--tinta2);font-weight:600}
-.chip.voz-sug{border-color:rgba(233,200,119,.4);color:var(--lacre)}
-.chip.voz-sug:hover{border-color:var(--lacre);background:rgba(233,200,119,.1)}
-.chip.voz-sug[aria-pressed="true"]{background:var(--lacre);border-color:var(--lacre);color:#241a0c;font-weight:500}
-.chip.sug-cerrar{border-color:transparent;color:var(--humo);padding:6px 10px}
-.chip.sug-cerrar:hover{border-color:var(--linea);color:var(--tinta2)}
+/* ---------- requisitos ---------- */
+.req-lista{margin:6px 0 0;padding:0;list-style:none;counter-reset:inc}
+.req-lista li{counter-increment:inc;display:grid;grid-template-columns:2.4em minmax(0,1fr);gap:10px;margin:0;padding:10px 0;border-top:1px solid var(--line-2);color:var(--fg-82)}
+.req-lista li::before{content:counter(inc,lower-alpha) ")";font:500 15px/1.5 var(--caps);letter-spacing:.06em;color:var(--gold)}
+.req-aviso{margin:10px 0 0;font-size:14.5px;color:var(--mute)}
+.req-norma{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
 
-/* ---------- verificador de citas ---------- */
+/* ---------- comparar ---------- */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0 clamp(24px,3vw,48px);margin-bottom:24px}
+.comp-card{padding:20px 0 0;border:0;border-top:1px solid var(--line);background:none;border-radius:0;transition:border-color .5s}
+.comp-card:hover{border-top-color:var(--gold-55)}
+.comp-card h4{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px;font:500 16px/1.3 var(--sans);color:var(--fg)}
+.comp-cifra{margin:0 0 12px;font-size:13.5px;color:var(--mute)}
+.comp-cifra b{display:block;font:400 clamp(40px,4vw,56px)/1 var(--sans);letter-spacing:-.04em;color:var(--fg);font-variant-numeric:tabular-nums;margin-bottom:6px}
+.comp-item{padding:10px 0;border-top:1px solid var(--line-2);font-size:14.5px;line-height:1.45}
+.comp-item a{color:var(--fg-82);text-decoration:none;transition:color .3s}
+.comp-item a:hover{color:var(--gold)}
+.comp-fecha{display:block;margin-top:3px;font-size:12.5px;color:var(--mute-2)}
+.comp-vacio{font-size:14px;color:var(--mute)}
+
+/* ---------- verificar ---------- */
 .veredicto{
-  display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:12px;font-weight:600;
-  letter-spacing:.03em;text-transform:uppercase;border-radius:999px;padding:6px 14px;
-  border:1px solid var(--linea);background:var(--papel2);color:var(--tinta2)
+  display:inline-flex;align-items:center;gap:10px;padding:8px 16px 7px;border:1px solid currentColor;border-radius:999px;
+  font-size:14px;font-weight:500;color:var(--fg-82);background:transparent
 }
-.veredicto .bolita{width:8px;height:8px;border-radius:50%;background:currentColor;flex:0 0 auto}
-.veredicto.si{color:var(--acequia);border-color:rgba(95,174,144,.45);background:rgba(95,174,144,.12)}
-.veredicto.duda{color:var(--lacre);border-color:rgba(233,200,119,.4);background:rgba(233,200,119,.1)}
-.veredicto.no{color:#e0a3a3;border-color:rgba(224,163,163,.35);background:rgba(224,163,163,.09)}
-.campos-cita{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 4px}
-.campo-cita{
-  background:var(--papel2);border:1px solid var(--linea);border-radius:8px;padding:5px 11px;
-  font-family:var(--sans);font-size:12.5px;color:var(--tinta2)
-}
-.campo-cita b{color:var(--humo);font-weight:600;font-size:11px;margin-right:5px}
-.campo-cita.falta{border-style:dashed;color:var(--humo);opacity:.7}
-.candidato{border-top:1px solid var(--linea);padding:13px 0}
-.candidato:first-of-type{border-top:0;padding-top:4px}
-.candidato .porque{margin:6px 0 8px;padding-left:17px;font-size:12.5px;color:var(--tinta2)}
-.candidato .porque li{margin-bottom:2px}
-
-/* Cada paso de las guías de Verificar es su propia tarjeta dentro de la
-   tarjeta grande, sin número ni viñeta: se toca como cualquier otra cosa
-   tocable del sitio, con el mismo levantarse del resto de las fichas. */
-.fichas{display:flex;flex-direction:column;gap:8px}
+.veredicto .bolita{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.veredicto.si{color:var(--verde)}
+.veredicto.duda{color:var(--gold)}
+.veredicto.no{color:var(--rojo)}
+.campos-cita{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 4px}
+.campo-cita{padding:7px 14px 6px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--fg-82)}
+.campo-cita b{margin-right:6px;font-size:11.5px;font-weight:500;color:var(--mute-2)}
+.campo-cita.falta{border-style:dashed;color:var(--mute-2)}
+.candidato{padding:18px 0;border-top:1px solid var(--line)}
+.candidato .porque{margin:8px 0 10px;padding-left:18px;font-size:14px;color:var(--mute)}
+.candidato .porque li{margin-bottom:3px}
+/* las guías: una línea con un punto por paso */
+.fichas{display:grid;gap:26px;margin-top:10px;padding-left:30px;border-left:1px solid var(--line)}
 .ficha-paso{
-  display:block;width:100%;text-align:left;
-  background:var(--papel2);border:1px solid var(--linea);border-radius:8px;
-  padding:13px 15px;cursor:pointer;
-  font-family:var(--sans);font-size:14.5px;line-height:1.5;color:var(--tinta2);
-  transition:border-color .25s ease,background .25s ease
+  position:relative;display:block;width:100%;padding:0;border:0;background:none;text-align:left;
+  font:400 16px/1.55 var(--sans);color:var(--fg-82);transition:color .3s
 }
-.ficha-paso:hover{border-color:#45423a;background:var(--ficha);color:var(--tinta)}
+.ficha-paso::before{content:"";position:absolute;left:-35px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--bg);border:1px solid var(--gold);transition:background .3s}
+.ficha-paso:hover{color:var(--fg)}
+.ficha-paso:hover::before{background:var(--gold)}
 .ficha-paso em{color:inherit}
+.blk .sin-items{display:grid;gap:0}
+.blk .sin-items p{margin:0;padding:12px 0;border-top:1px solid var(--line-2);font-size:15.5px;color:var(--mute);transition:color .3s}
+.blk .sin-items p:hover{color:var(--fg)}
 
-/* Nota al pie de un aviso: cuelga del cartel de arriba —sin caja propia y
-   en cuerpo menor— para que se lea como su letra chica y no como un
-   segundo aviso del mismo peso. */
-.nota-suelta{
-  margin:-8px 0 14px;padding:0 2px;
-  font-size:13px;line-height:1.55;color:var(--humo)
-}
-.nota-suelta+.nota-suelta{margin-top:-8px}
-
-/* Tipografía de los avisos, tal como está marcada en el documento de
-   corrección. Tres tratamientos distintos y a propósito:
-   .av-tit    la bajada de casi todos los avisos: serif itálica dorada.
-   .av-serif  las dos frases que van enteras en serif dorada, derecha
-              (Buscar y Cuenta): son avisos de una sola oración, sin
-              bajada que separar.
-   .av-alerta la advertencia por citar precedentes inexistentes: es la
-              única en rojo del sitio, y es deliberado — no comparte el
-              dorado con el resto porque no es una explicación sino la
-              consecuencia más grave que la página advierte. */
-.av-tit{display:block;color:var(--lacre);font-weight:300;margin-bottom:2px}
-.av-oro{color:var(--lacre)}
-
-/* La regla que apagaba el halo donde molestaba ya no hace falta: no hay
-   halo en ningún lado. Y la pantalla ya no va "fina": con el cuerpo en 400,
-   dejar los títulos también en 400 borraba la jerarquía —todo pesaba igual—,
-   así que los encabezados suben a 500. */
-.blk h3,.rama h3,.grupo>h3,.voces-tit{font-weight:500}
-.btn{font-weight:400}
-strong,b{font-weight:500}
-
-/* "El resultado incluye": tarjeta sin ítems, a pedido. Cada línea suelta,
-   sin viñeta ni número, separadas por su propio aire. */
-.sin-items{display:flex;flex-direction:column;gap:2px}
-/* .blk .sin-items en vez de .sin-items a secas: si no, la regla general
-   .blk p —que viene después en la hoja y tiene la misma especificidad—
-   le devuelve los 10px de margen y las líneas quedan separadas igual. */
-.blk .sin-items p{
-  margin:0;padding:5px 8px;border-radius:7px;
-  font-size:14.5px;line-height:1.5;color:var(--humo);
-  transition:color .25s ease,background .25s ease
-}
-/* Al pasar por encima la línea se enciende. Antes además subía 2px y se le
-   prendía un halo dorado; sin el resplandor de fondo en el resto de la letra,
-   el cambio de color solo ya alcanza para marcar la respuesta. */
-.blk .sin-items p:hover{color:var(--lacre);background:var(--papel2)}
-
-/* ---------- prosa ---------- */
-.blk{background:var(--ficha);border:1px solid var(--linea);border-radius:4px;padding:20px 22px;margin-bottom:16px}
-.blk h3{font-family:var(--serif);font-size:22px;font-weight:500;margin:0 0 8px}
-.blk p{margin:0 0 10px;font-size:15px}
-.blk ol,.blk ul{margin:0 0 10px;padding-left:20px;font-size:14px}
-.blk li{margin-bottom:6px}
-.aviso{background:var(--ficha);color:var(--tinta2);border:1px solid var(--linea);border-radius:4px;padding:15px 18px;margin-bottom:18px;font-size:15px}
-.aviso strong{color:var(--lacre)}
-.out{
-  font-family:var(--mono);font-size:13px;background:var(--papel2);border:1px solid var(--linea);
-  border-radius:8px;padding:12px 14px;white-space:pre-wrap;word-break:break-word;min-height:44px
-}
-.vacio{border:1px dashed var(--linea);border-radius:10px;padding:26px 20px;text-align:center;color:var(--humo);font-size:14px}
-
-/* ---------- lector ---------- */
-textarea{
-  width:100%;min-height:260px;padding:12px;border:1px solid var(--linea);border-radius:8px;
-  background:var(--ficha);font-family:var(--mono);font-size:14px;line-height:1.5;color:var(--tinta);resize:vertical
-}
+/* ---------- el lector ---------- */
 .barra-doc{
-  display:flex;gap:8px;align-items:center;flex-wrap:wrap;
-  background:rgba(36,26,12,.55);color:var(--tinta);border:1px solid var(--linea);border-radius:10px;padding:9px 14px;margin-bottom:12px
+  position:sticky;top:calc(71px + env(safe-area-inset-top,0px));z-index:5;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;
+  margin:0 0 22px;padding:14px 0;background:rgba(16,14,11,.92);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)
 }
-.barra-doc .cnt{font-family:var(--sans);font-size:12.5px;flex:1 1 auto;min-width:120px}
-.barra-doc .cnt b{color:var(--lacre)}
-.barra-doc .mini{background:#332818;border-color:#4a3c22;color:#e8dfc9}
-.barra-doc .mini:hover{background:#4a3c22;border-color:#6b5936;color:#fff}
-.doc{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:10px;padding:20px 22px;
-  font-family:var(--serif);font-size:15.5px;line-height:1.72;white-space:pre-wrap;word-wrap:break-word;
-  max-height:64vh;overflow:auto
-}
-mark{background:#f2dea0;color:#1a1408;padding:0 1px;border-radius:2px;box-decoration-break:clone}
-mark.actual{background:var(--lacre);color:#241a0c}
-.lector-grid{display:grid;grid-template-columns:262px minmax(0,1fr);gap:16px;align-items:start;margin-bottom:12px}
-.meta{
-  background:var(--ficha);border:1px solid var(--linea);border-radius:10px;
-  padding:16px 17px;max-height:64vh;overflow:auto
-}
-.meta-top{background:var(--papel2);border:1px solid var(--linea);border-radius:8px;padding:12px 15px;margin-bottom:14px}
-.meta-car{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--tinta2);margin:0 0 7px;padding-bottom:7px;border-bottom:1px solid var(--linea)}
-.meta-fila{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;justify-content:space-between}
-.meta-fila .izq{flex:1 1 auto;font-size:13.5px;color:var(--tinta2)}
-.meta-fila .izq b{font-family:var(--sans);font-size:11px;color:var(--humo);font-weight:600;margin-right:3px}
-.meta-fila .izq .sep{color:var(--linea);margin:0 3px}
-.meta-fila .der{font-family:var(--sans);font-size:11.5px;color:var(--humo);white-space:nowrap;flex:0 0 auto}
-.meta-cuerpo{display:flex;flex-direction:column;gap:16px;margin-bottom:14px}
-.meta-bloque h3{
-  font-family:var(--sans);font-weight:600;font-size:12px;margin:0 0 8px;color:var(--tinta2)
-}
-.meta-bloque.cn h3{color:var(--lacre)}
-.meta-cat{
-  font-family:var(--sans);font-weight:600;font-size:11.5px;
-  color:var(--tinta2);margin:0;padding-top:10px;
-  border-top:1px solid var(--linea)
-}
+.barra-doc .cnt{flex:1 1 220px;min-width:0;font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums}
+.barra-doc .cnt b{color:var(--fg);font-weight:500}
+.barra-doc .campo{flex:1 1 260px;margin:0}
+.barra-doc .campo span{margin-bottom:2px;font-size:12.5px}
+.barra-doc .campo input{padding:2px 0 8px;font-size:18px}
+.lector-grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(24px,3vw,48px);align-items:start;margin-bottom:12px}
+.meta{position:sticky;top:170px;max-height:calc(100vh - 200px);overflow:auto;overflow-x:hidden;padding:0 6px 0 0;border:0;background:none}
+.meta-top{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.meta-car{margin:0 0 10px;font:500 16px/1.4 var(--sans);color:var(--fg)}
+.meta-fila{display:grid;gap:6px}
+.meta-fila .izq{font-size:13.5px;line-height:1.6;color:var(--fg-82)}
+.meta-fila .izq b{font-size:12px;font-weight:400;color:var(--mute-2);margin-right:3px}
+.meta-fila .izq .sep{color:var(--mute-2);margin:0 3px}
+.meta-fila .der{font-size:12px;color:var(--mute-2)}
+.meta-cuerpo{display:grid;gap:16px;margin-bottom:16px}
+.meta-bloque h3{margin:0 0 8px;font-size:13px;font-weight:500;color:var(--fg-82)}
+.meta-bloque.cn h3{color:var(--gold)}
+.meta-cat{margin:0;padding-top:12px;border-top:1px solid var(--line);font-size:12px;color:var(--mute-2)}
 .meta-cat:first-child{padding-top:0;border-top:0}
 .meta-tags{display:flex;flex-wrap:wrap;gap:6px}
-.meta-tag{
-  background:var(--papel2);border:1px solid var(--linea);border-radius:999px;
-  padding:3px 11px;font-family:var(--sans);font-size:12px;color:var(--tinta2);white-space:nowrap
+.meta-tag{padding:4px 11px 3px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--fg-82);max-width:100%;overflow-wrap:anywhere}
+.meta-bloque.pendiente h3{color:var(--mute);font-weight:400}
+.meta-bloque.pendiente .meta-tag{border-style:dashed;color:var(--mute-2)}
+.meta-acc{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.doc{
+  max-height:72vh;overflow:auto;padding:4px clamp(18px,3vw,40px) 4px 0;border:0;border-right:1px solid var(--line-2);
+  font:400 17px/1.8 var(--sans);color:var(--fg-82);white-space:pre-wrap;word-wrap:break-word
 }
-.meta-bloque.pendiente h3{color:var(--humo);font-weight:400;font-style:italic}
-.meta-bloque.pendiente .meta-tag{background:transparent;border-style:dashed;color:var(--humo)}
-.meta-acc{display:flex;gap:8px;flex-wrap:wrap}
-.pasaje{background:var(--ficha);border:1px solid var(--dorado);border-radius:10px;padding:13px 15px;margin-bottom:9px}
-.pasaje .txt{font-family:var(--serif);font-size:15.5px;line-height:1.6;margin-bottom:8px}
+mark{background:rgba(201,164,92,.26);color:var(--fg);padding:0 2px;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+mark.actual{background:var(--gold);color:var(--bg)}
+/* Los pasajes, todos a la vista a la vez: una grilla de recortes debajo
+   del fallo, cada uno con su contexto y sus acciones. */
+#doc-tit-pas{margin:clamp(48px,6vw,72px) 0 0;padding-bottom:16px;border-bottom:1px solid var(--line);font:500 clamp(24px,2.2vw,32px)/1.1 var(--sans);letter-spacing:-.025em;color:var(--fg)}
+#pasajes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:0 clamp(24px,3vw,48px)}
+.pasaje{margin:0;padding:22px 0;border:0;border-bottom:1px solid var(--line);background:none;border-radius:0;transition:border-color .5s}
+.pasaje:hover{border-bottom-color:var(--gold-55)}
+.pasaje .txt{margin-bottom:14px;font:400 15.5px/1.65 var(--sans);color:var(--fg-82)}
 .pasaje .acc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.pasaje .pos{font-family:var(--sans);font-size:11px;color:var(--humo)}
-.pie{max-width:1560px;margin:0 auto;padding:0 16px 40px;font-size:12px;color:var(--humo);line-height:1.6}
-.pie hr{border:0;border-top:1px solid var(--linea);margin:0 0 14px}
+.pasaje .pos{font-size:12px;color:var(--mute-2)}
+@media (max-width:980px){ .lector-grid{grid-template-columns:minmax(0,1fr)} .meta{position:static;max-height:none} .doc{border-right:0;padding-right:0} }
 
-/* ---------- avisos flotantes ---------- */
-#flash{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:90;display:none;
-  background:#241a0c;color:var(--papel);padding:10px 18px;border-radius:999px;font-size:13px;
-  border:1px solid var(--linea);box-shadow:0 8px 22px rgba(0,0,0,.4);max-width:90vw}
-#panic{display:none;background:#7c1d2b;color:#fff;padding:10px 20px;font-size:13px}
-#panic button{background:#fff;color:#7c1d2b;border:0;border-radius:999px;padding:4px 10px;margin-left:10px;cursor:pointer}
-/* ------------------------------------------------------------------ *
-   PORTADA — composicion editorial.
-   Reemplaza la pantalla anterior, que mostraba solo la marca y la
-   leyenda "Toca para continuar". Aquella no explicaba de que se trata
-   la plataforma ni de donde proviene el material, cobraba una
-   interaccion sin entregar nada a cambio, y su fondo incluia un
-   degradado violeta y una animacion en bucle de 18 segundos.
-   Esta portada declara la materia, las bases integradas y el volumen
-   del vocabulario, y entrega el acceso directo a la seccion que
-   corresponda. Las cifras no estan escritas a mano: se toman de los
-   propios datos de la aplicacion al cargar (ver 0.1).
- * ------------------------------------------------------------------ */
-.entrada{
-  position:fixed;inset:0;z-index:100;overflow-y:auto;overscroll-behavior:contain;
-  background:var(--negro);color:var(--tinta);
-  opacity:1;transition:opacity .5s ease-out;
+/* ---------- compartir, avisos flotantes, error ---------- */
+.compartir{position:relative;display:inline-block}
+.compartir-menu.flotante{position:fixed;z-index:200;right:auto;top:auto}
+.compartir-menu{
+  position:absolute;z-index:30;right:0;top:calc(100% + 8px);min-width:220px;padding:6px;
+  background:#16130f;border:1px solid var(--line);border-radius:20px;box-shadow:0 18px 40px -14px rgba(0,0,0,.6)
 }
-.entrada.saliendo{opacity:0;pointer-events:none}
-.pt-hoja{
-  max-width:1180px;margin:0 auto;min-height:100%;
-  padding-inline:clamp(20px,5vw,64px);
-  padding-block:clamp(30px,4.5vw,54px) clamp(34px,5vw,64px);
-  display:flex;flex-direction:column;
-  animation:pt-entra .9s ease-out both;
+.compartir-menu button,.compartir-menu a{
+  display:block;width:100%;padding:10px 14px;border:0;border-radius:999px;background:none;text-align:left;
+  font-size:14px;color:var(--fg-82);text-decoration:none
 }
-.pt-tope{
-  display:flex;align-items:center;justify-content:space-between;gap:20px;
-  flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid var(--linea);
+.compartir-menu button:hover,.compartir-menu a:hover{background:rgba(241,238,230,.06);color:var(--fg)}
+#flash{
+  position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:90;transform:translateX(-50%);display:none;
+  max-width:calc(100vw - 32px);padding:12px 20px 11px;border-radius:999px;background:var(--fg);color:var(--bg);
+  font-size:14px;font-weight:500;box-shadow:0 12px 30px -12px rgba(0,0,0,.5)
 }
-.pt-tope img{width:clamp(118px,16vw,164px);height:auto;display:block}
-.pt-nav{display:flex;gap:clamp(10px,2vw,22px);flex-wrap:wrap}
-.pt-nav button{
-  background:none;border:0;padding:5px 2px;cursor:pointer;
-  font-family:var(--sans);font-size:13px;font-weight:300;color:var(--humo);
-  letter-spacing:.04em;border-bottom:1px solid transparent;transition:color .2s ease;
-}
-.pt-nav button:hover{color:var(--lacre)}
-.pt-nav button:focus-visible{color:var(--lacre);outline:none;border-bottom-color:var(--lacre)}
-.pt-titular{
-  font-family:var(--serif);font-weight:400;
-  font-size:clamp(31px,6.6vw,80px);line-height:1.04;letter-spacing:-.012em;
-  margin:clamp(30px,4.6vw,50px) 0 0;color:#fff;text-wrap:balance;
-}
-.pt-titular em{font-style:italic;color:var(--lacre)}
-.pt-bajo{
-  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
-  gap:clamp(24px,4vw,56px);margin-top:clamp(26px,3.8vw,42px);align-items:end;
-}
-.pt-parrafo{
-  color:var(--tinta2);line-height:1.72;max-width:62ch;margin:0;
-  font-size:clamp(14.5px,1.5vw,16px);font-weight:200;
-}
-.pt-acciones{display:flex;gap:11px;flex-wrap:wrap;margin-top:24px}
-.pt-btn{
-  display:inline-block;border:1px solid var(--dorado);border-radius:2px;
-  padding:12px 24px;font-family:var(--sans);font-size:12.5px;font-weight:400;
-  letter-spacing:.15em;text-transform:uppercase;color:var(--lacre);
-  background:transparent;cursor:pointer;white-space:nowrap;text-shadow:none;
-  transition:background .2s ease,color .2s ease;
-}
-.pt-btn:hover{background:rgba(217,166,42,.1)}
-.pt-btn:focus-visible{outline:2px solid var(--lacre);outline-offset:3px}
-.pt-btn.lleno{background:var(--dorado);color:#1a1206;font-weight:500}
-.pt-btn.lleno:hover{background:var(--lacre)}
-.pt-datos{display:flex;flex-direction:column;margin:0;border-top:1px solid var(--linea2)}
-.pt-datos>div{
-  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
-  padding:11px 0;border-bottom:1px solid var(--linea2);
-}
-.pt-datos dt{
-  font-family:var(--sans);font-size:11px;font-weight:300;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--humo);margin:0;
-}
-.pt-datos dd{
-  margin:0;font-family:var(--serif);font-size:21px;font-weight:400;
-  color:var(--lacre);font-variant-numeric:tabular-nums;line-height:1;
-}
-.pt-franja{margin-top:auto;padding-top:clamp(26px,3.8vw,44px)}
-.pt-franja .pt-lin{
-  padding-top:20px;border-top:1px solid var(--linea);
-  display:flex;flex-wrap:wrap;gap:9px 20px;align-items:center;
-}
-.pt-fuente{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--humo);letter-spacing:.03em}
-.pt-fuente i{width:6px;height:6px;border-radius:50%;background:var(--acequia);display:block;flex:none}
-@keyframes pt-entra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@media(max-width:860px){
-  .pt-bajo{grid-template-columns:minmax(0,1fr);align-items:start}
-  .pt-franja{margin-top:34px}
-}
-@media(prefers-reduced-motion:reduce){
-  .pt-hoja{animation:none}
-  .entrada{transition:none}
-}
+#panic{display:none;padding:12px var(--pad);background:#5c1f1a;color:var(--fg);font-size:14px}
+#panic button{margin-left:12px;padding:5px 14px;border:0;border-radius:999px;background:var(--fg);color:#5c1f1a;cursor:pointer}
+
+/* ---------- pie ---------- */
+.pie{padding:0 var(--pad) calc(40px + env(safe-area-inset-bottom,0px));font-size:13px;line-height:1.6;color:var(--mute-2)}
+.pie hr{margin:0 0 20px;border:0;border-top:1px solid var(--line)}
+.pie strong{color:var(--fg-82)}
 
 @media (max-width:860px){
-  .wrap{grid-template-columns:1fr;gap:16px}
-  .rail{position:static;max-height:none}
-  .rail-list{flex-direction:row;overflow-x:auto;max-height:none;padding-bottom:6px}
-  .rail-list button{white-space:nowrap;padding:6px 12px}
-  .f-top{flex-wrap:wrap}
-  .leader{display:none}
-  .lector-grid{grid-template-columns:1fr}
-  .meta{max-height:none}
+  .wrap{grid-template-columns:minmax(0,1fr);gap:24px}
+  .rail{position:static}
+  .rail-list{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;max-height:none;gap:6px;padding-bottom:8px}
+  .rail-list button{white-space:nowrap;padding:7px 14px;border:1px solid var(--line);border-radius:999px}
+  .rail-list button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+  .rail-list button[aria-pressed="true"]::before{display:none}
 }
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ================================================================== *
+   PORTADA — el afiche de sigillvm. Se abre al entrar y se cierra al
+   elegir a dónde ir; el nombre de la cabecera la vuelve a abrir.
+ * ================================================================== */
+.entrada{
+  position:fixed;inset:0;z-index:100;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+  background:var(--bg);color:var(--fg);opacity:1;transition:opacity .5s ease-out
+}
+.entrada.saliendo{opacity:0;pointer-events:none}
+.entrada .grano{position:fixed;z-index:0;opacity:.14;animation:grano .9s steps(1,end) infinite}
+/* y uno más fino por encima de todo, letras incluidas, como en la película */
+.entrada .grano--sobre{
+  z-index:30;opacity:.32;mix-blend-mode:overlay;
+  background-image:var(--grano-sobre);background-size:256px 256px;animation-delay:-.45s
+}
+.pt-in{position:relative;z-index:1}
+.pt-hdr{
+  position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:clamp(24px,3.4vw,64px);
+  padding:calc(22px + env(safe-area-inset-top,0px)) var(--pad) 18px;border-bottom:1px solid transparent;
+  transition:background .5s,border-color .5s,padding .5s
+}
+.pt-hdr.is-solid{padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:14px;background:rgba(16,14,11,.84);border-bottom-color:var(--line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.pt-brand{position:relative;display:block;width:270px;height:44px;flex:none}
+.pt-brand__tag,.pt-brand__name{position:absolute;left:0;top:50%;transition:opacity .45s,transform .45s var(--ease)}
+.pt-brand__tag{transform:translateY(-50%);font-size:15px;line-height:1.35}
+.pt-brand__name{display:inline-flex;align-items:center;gap:12px;opacity:0;transform:translateY(-20%)}
+.pt-brand__name svg{width:26px;height:26px}
+.pt-brand__name .marca{font-size:15px;font-weight:500;letter-spacing:.3em}
+.pt-hdr.is-solid .pt-brand__tag{opacity:0;transform:translateY(-80%)}
+.pt-hdr.is-solid .pt-brand__name{opacity:1;transform:translateY(-50%)}
+.pt-nav{display:flex;gap:clamp(18px,2vw,30px)}
+.pt-nav button{padding:4px 0;border:0;background:none;font-size:15px;color:var(--mute);transition:color .3s}
+.pt-nav button:hover{color:var(--fg)}
+.pt-hdr .btn{margin-left:auto;padding:9px 16px 8px;font-size:13.5px}
+
+.pt-hero{position:relative;height:calc(100vh - 84px);height:calc(100svh - 84px);min-height:600px}
+.pt-sello{
+  position:absolute;left:80vw;top:44%;width:128vh;height:128vh;color:var(--fg);pointer-events:none;
+  transform:translate(-50%,calc(-50% + var(--hp,0) * 90px));opacity:calc(1 - var(--hp,0) * .6)
+}
+.pt-sello svg{width:100%;height:100%;overflow:visible}
+.sg-texto{font-family:var(--caps);fill:currentColor}
+.sg-aro{fill:none;stroke:currentColor}
+.sg-renglones path{fill:none;stroke:currentColor;stroke-dasharray:1 1;stroke-dashoffset:0;animation:renglon 1.1s var(--ease) both;animation-delay:calc(.35s + var(--i) * 42ms)}
+.sg-punto{fill:var(--gold);transform-box:fill-box;transform-origin:center;animation:punto .9s cubic-bezier(.34,1.56,.64,1) 2.3s both}
+@keyframes renglon{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes punto{from{transform:scale(0)}to{transform:scale(1)}}
+.gira{animation:gira 240s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes gira{to{transform:rotate(360deg)}}
+.pt-copia{position:absolute;left:var(--pad);top:22vh;bottom:36px;right:var(--pad);display:flex;flex-direction:column;align-items:flex-start;pointer-events:none}
+.pt-copia>*{pointer-events:auto}
+.pt-titular{margin:0;max-width:16ch;font:400 clamp(30px,3.4vw,54px)/1.06 var(--sans);letter-spacing:-.02em}
+.pt-titular em{font-style:normal}
+.pt-datos{display:flex;flex-wrap:wrap;gap:8px 26px;margin:24px 0 0;font-size:13px;color:var(--mute)}
+.pt-datos>div{display:flex;align-items:baseline;gap:6px}
+.pt-datos dt{order:2;text-transform:lowercase}
+.pt-datos dd{order:1;margin:0;color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
+.pt-datos>div:first-child::before{content:"";align-self:center;width:7px;height:7px;margin-right:6px;border-radius:50%;background:var(--gold);animation:late 2.4s var(--ease) infinite}
+@keyframes late{0%{box-shadow:0 0 0 0 rgba(201,164,92,.55)}100%{box-shadow:0 0 0 8px rgba(201,164,92,0)}}
+.pt-acciones{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.pt-marca{margin:auto 0 0;font:300 clamp(64px,13.4vw,250px)/.84 var(--caps);letter-spacing:.02em;color:rgba(241,238,230,.82)}
+/* las letras se esfuman una tras otra y vuelven en el mismo orden */
+.pt-marca>span{display:inline-block;animation:disuelve 11s ease-in-out infinite;animation-delay:calc(1.6s + var(--i) * .22s)}
+@keyframes disuelve{0%,38%{opacity:1;filter:blur(0)}48%,60%{opacity:0;filter:blur(18px)}70%,100%{opacity:1;filter:blur(0)}}
+.pt-marca .v{background:linear-gradient(170deg,#e2c88e 8%,#c9a45c 46%,#9c7a3c 92%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.pt-marca .m-punto{background:linear-gradient(170deg,#e2c88e,#9c7a3c)}
+
+.pt-sec{position:relative;padding:clamp(100px,16vh,190px) var(--pad) 0}
+.pt-sec__tit{margin:0;font:500 clamp(36px,4.4vw,68px)/1.02 var(--sans);letter-spacing:-.035em}
+.pt-sec__intro{margin:24px 0 0;max-width:46em;color:var(--mute)}
+.pt-parrafo{margin:0;max-width:24ch;font:400 clamp(30px,4.2vw,70px)/1.05 var(--sans);letter-spacing:-.03em}
+.pt-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 clamp(24px,3vw,56px);margin-top:clamp(56px,8vh,110px)}
+.pt-cols--3{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:clamp(40px,5vw,64px)}
+.pt-col{min-width:0;padding-top:22px;border-top:1px solid var(--line);transition:border-color .5s}
+.pt-col:hover{border-top-color:var(--gold-55)}
+.pt-col h3{margin:0;font:500 17px/1.3 var(--sans)}
+.pt-col p{margin:10px 0 0;color:var(--mute)}
+.pt-col button{margin-top:18px;padding:0;border:0;background:none;font-size:14px;color:var(--fg);transition:color .3s}
+.pt-col button:hover{color:var(--gold)}
+.pt-lat{margin:0 0 18px!important;font:400 clamp(20px,2vw,30px)/1 var(--caps)!important;letter-spacing:.16em;color:var(--gold)!important}
+.pt-entrada{margin:0;font-size:15px;color:var(--mute)}
+.pt-entrada span{margin:0 .5em;color:var(--gold)}
+.pt-nombre{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(32px,6vw,120px);margin-top:26px;padding-top:clamp(28px,4vw,48px);border-top:1px solid var(--line)}
+.pt-nombre h2{margin:0;max-width:21ch;font:400 clamp(28px,3vw,46px)/1.14 var(--sans);letter-spacing:-.02em}
+.pt-nombre div{display:grid;gap:1.1em;color:var(--mute);max-width:40em}
+.pt-nombre p{margin:0}
+.pt-pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px 32px;margin-top:clamp(56px,7vw,88px);padding-top:28px;border-top:1px solid var(--line)}
+.pt-pie p{margin:0;max-width:40em;color:var(--mute)}
+.pasos{position:relative;margin-top:clamp(56px,7vw,96px);container-type:inline-size}
+.pasos__onda{display:block;width:100%;height:auto;overflow:visible}
+.pasos__onda path{fill:none;stroke-width:1.2}
+.pasos__pista{stroke:var(--line)}
+.pasos__linea{stroke:var(--gold);stroke-dasharray:1 1;stroke-dashoffset:calc(1 - var(--sp,0))}
+.pasos ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.paso{position:relative;padding:34px clamp(18px,2.6vw,48px) 0 0}
+.paso__punto{position:absolute;left:-4.5px;top:calc(-3.333cqw - 4.5px);width:9px;height:9px;border-radius:50%;background:var(--bg);border:1px solid var(--mute-2);transition:background .5s,border-color .5s,box-shadow .5s}
+.paso.is-lit .paso__punto{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 6px rgba(201,164,92,.14)}
+.paso h3{margin:0;font:500 clamp(20px,1.7vw,26px)/1.2 var(--sans);letter-spacing:-.01em}
+.paso p{margin:12px 0 0;color:var(--mute)}
+.lat{display:block;width:min(100%,220px);height:auto;margin-bottom:24px;overflow:visible}
+.lat path,.lat circle.l{fill:none;stroke:rgba(241,238,230,.5);stroke-width:1}
+.lat .d{fill:var(--gold)}
+.onda{animation:onda 3.6s var(--ease) infinite;transform-box:fill-box;transform-origin:left center}
+.onda:nth-of-type(2){animation-delay:.9s}.onda:nth-of-type(3){animation-delay:1.8s}.onda:nth-of-type(4){animation-delay:2.7s}
+@keyframes onda{0%{opacity:0;transform:scale(.6)}30%{opacity:1}100%{opacity:0;transform:scale(1.15)}}
+.deriva{animation:deriva 9s linear infinite}
+@keyframes deriva{0%{transform:translateX(0)}100%{transform:translateX(180px)}}
+.latido{animation:latido 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
+.pt-cierre{padding-bottom:clamp(110px,16vh,180px)}
+.pt-cierre__txt{margin:0;max-width:18ch;font:400 clamp(36px,5.4vw,92px)/1.02 var(--sans);letter-spacing:-.03em}
+.pt-cierre__txt em{font-style:normal;color:var(--gold)}
+.pt-ftr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px;padding:34px var(--pad) calc(40px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);font-size:13px;color:var(--mute-2)}
+.pt-ftr .marca{font-size:14px;letter-spacing:.3em;color:var(--fg)}
+/* aparecer al entrar en pantalla (solo en la portada) */
+.entrada [data-reveal]{opacity:0;transform:translateY(22px)}
+.entrada [data-reveal].is-in{opacity:1;transform:none;transition:opacity 1s var(--ease) var(--d,0s),transform 1.1s var(--ease) var(--d,0s)}
+.pt-llega{opacity:0;transform:translateY(16px)}
+.entrada.lista .pt-llega{opacity:1;transform:none;transition:opacity 1.2s var(--ease) var(--d,0s),transform 1.3s var(--ease) var(--d,0s)}
+/* el puntero de luz de sigillvm, solo mientras está la portada */
+.cursor{position:fixed;inset:0;z-index:120;pointer-events:none;opacity:0;transition:opacity .4s}
+.cursor.is-on{opacity:1}
+.cursor i{position:absolute;left:0;top:0;border-radius:50%;will-change:transform}
+.cursor .c-punto{width:8px;height:8px;margin:-4px 0 0 -4px;background:var(--gold);box-shadow:0 0 10px 2px rgba(255,196,110,.7)}
+.cursor .c-aro{width:38px;height:38px;margin:-19px 0 0 -19px;border:1px solid rgba(232,200,120,.7);transition:width .35s var(--ease),height .35s var(--ease),margin .35s var(--ease),background .35s}
+.cursor .c-luz{width:440px;height:440px;margin:-220px 0 0 -220px;mix-blend-mode:screen;background:radial-gradient(circle,rgba(255,205,120,.16) 0%,rgba(240,165,80,.07) 28%,rgba(220,140,60,.03) 50%,rgba(220,140,60,0) 70%)}
+.cursor.is-link .c-aro{width:62px;height:62px;margin:-31px 0 0 -31px;border-color:var(--gold);background:rgba(201,164,92,.1)}
+.con-cursor .entrada,.con-cursor .entrada button{cursor:none}
+
+@media (max-width:1100px){ .pt-cols{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px} }
+@media (max-width:860px){
+  .pt-cols--3,.pt-nombre{grid-template-columns:minmax(0,1fr)}
+  .pasos__onda{display:none}
+  .pasos ol{grid-template-columns:minmax(0,1fr);gap:40px;padding-left:30px;border-left:1px solid var(--line)}
+  .paso{padding:0}.paso__punto{left:-35px;top:7px}
+}
+@media (max-width:760px){
+  .pt-nav{display:none}
+  .pt-brand{width:170px}
+  .pt-hero{min-height:720px}
+  .pt-sello{left:90vw;top:28%;width:125vw;height:125vw}
+  .pt-copia{top:auto}
+  .pt-marca{margin-top:30px;font-size:15vw}
+}
+@media (max-width:600px){ .pt-cols{grid-template-columns:minmax(0,1fr)} }
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  .entrada [data-reveal],.pt-llega{opacity:1;transform:none}
+}
+.cab.quieta>*{animation:none}
 </style>
 </head>
 <body>
 
 <div id="panic" role="alert"></div>
-<section class="entrada" id="entrada" aria-labelledby="pt-titular">
-  <div class="pt-hoja">
+<div class="grano" aria-hidden="true"></div>
 
-    <div class="pt-tope">
-      <img src="./ivs-codex.png" alt="IVS CODEX">
+<!-- La portada: el afiche de sigillvm.com. Se cierra al elegir a dónde ir
+     (cualquier botón con data-tab) o con Escape, y el nombre de la
+     cabecera la vuelve a abrir. Los textos son los de la portada anterior;
+     lo que se sumó (el nombre, las bases, el proceso, los principios) va en
+     el mismo registro formal. -->
+<section class="entrada" id="entrada" aria-labelledby="pt-titular">
+  <div class="grano" aria-hidden="true"></div>
+  <div class="grano grano--sobre" aria-hidden="true"></div>
+  <div class="pt-in">
+    <header class="pt-hdr" id="pt-hdr">
+      <span class="pt-brand">
+        <span class="pt-brand__tag">Buscador de jurisprudencia<br>argentina, mendocina e internacional.</span>
+        <span class="pt-brand__name" aria-hidden="true"><svg id="sello-pt" viewBox="0 0 1000 1000"></svg><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></span>
+      </span>
       <nav class="pt-nav" aria-label="Secciones de la plataforma">
         <button type="button" data-tab="buscar">Consulta</button>
         <button type="button" data-tab="fuentes">Fuentes</button>
         <button type="button" data-tab="verificar">Verificación</button>
         <button type="button" data-tab="cuenta">Cuenta</button>
       </nav>
+      <button type="button" class="btn" data-tab="buscar">Iniciar la consulta</button>
+    </header>
+
+    <div class="pt-hero">
+      <div class="pt-sello" aria-hidden="true"><svg id="pt-sello" viewBox="0 0 1000 1000"></svg></div>
+      <div class="pt-copia">
+        <h1 class="pt-titular pt-llega" id="pt-titular" style="--d:.2s">Jurisprudencia y legislación argentinas, reunidas en una <em>sola consulta</em>.</h1>
+        <dl class="pt-datos pt-llega" style="--d:.4s">
+          <div><dt>Bases integradas</dt><dd>6</dd></div>
+          <div><dt>Ramas del derecho</dt><dd id="pt-n-ramas">28</dd></div>
+          <div><dt>Descriptores</dt><dd id="pt-n-voces">309</dd></div>
+          <div><dt>Fichas de requisitos</dt><dd id="pt-n-req">24</dd></div>
+        </dl>
+        <div class="pt-acciones pt-llega" style="--d:.55s">
+          <button type="button" class="btn" data-tab="buscar">Iniciar la consulta</button>
+          <button type="button" class="btn sec" data-tab="fuentes">Ver el catálogo de fuentes</button>
+        </div>
+        <p class="pt-marca marca pt-llega" style="--d:.7s" aria-label="IVS CODEX"><span style="--i:0">I</span><span class="v" style="--i:1">V</span><span style="--i:2">S</span><span class="m-punto" style="--i:3"></span><span style="--i:4">C</span><span style="--i:5">O</span><span style="--i:6">D</span><span style="--i:7">E</span><span class="v" style="--i:8">X</span></p>
+      </div>
     </div>
 
-    <h1 class="pt-titular" id="pt-titular">Jurisprudencia y legislación argentinas, reunidas en una <em>sola consulta</em>.</h1>
+    <section class="pt-sec" aria-label="Qué hace la plataforma">
+      <p class="pt-parrafo" data-reveal>La plataforma interroga de forma simultánea los repositorios oficiales integrados, extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>
+      <div class="pt-cols">
+        <div class="pt-col" data-reveal><h3>Consulta</h3><p>La consulta se arma con los operadores de cada buscador oficial y se envía a las seis bases integradas a la vez.</p><button type="button" data-tab="buscar">Iniciar la consulta →</button></div>
+        <div class="pt-col" data-reveal style="--d:.08s"><h3>Ramas y voces</h3><p>Los buscadores judiciales argentinos indexan mediante descriptores técnicos y no por lenguaje natural.</p><button type="button" data-tab="ramas">Ver las ramas →</button></div>
+        <div class="pt-col" data-reveal style="--d:.16s"><h3>Lector</h3><p>El fallo se visualiza con su búsqueda destacada, con los pasajes recortados y la cita preparada para copiar.</p><button type="button" data-tab="lector">Abrir el Lector →</button></div>
+        <div class="pt-col" data-reveal style="--d:.24s"><h3>Verificación</h3><p>La plataforma permite verificar citas jurisprudenciales mediante la contrastación automatizada con los repositorios oficiales.</p><button type="button" data-tab="verificar">Verificar una cita →</button></div>
+      </div>
+    </section>
 
-    <div class="pt-bajo">
-      <div>
-        <p class="pt-parrafo">La plataforma interroga de forma simultánea los repositorios oficiales integrados, extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>
-        <div class="pt-acciones">
-          <button type="button" class="pt-btn lleno" data-tab="buscar">Iniciar la consulta</button>
-          <button type="button" class="pt-btn" data-tab="fuentes">Ver el catálogo de fuentes</button>
+    <section class="pt-sec" aria-label="El nombre">
+      <p class="pt-entrada" data-reveal>cōdex, -icis <span>·</span> sustantivo masculino <span>·</span> latín</p>
+      <div class="pt-nombre" data-reveal>
+        <h2>Libro de hojas cosidas; por extensión, el cuerpo ordenado de las leyes.</h2>
+        <div>
+          <p>IVS CODEX reúne en una sola consulta los repositorios oficiales de jurisprudencia y legislación argentinas, junto con la doctrina publicada en español.</p>
+          <p>No almacena fallos ni genera contenido jurídico. Cada resultado se presenta con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>
         </div>
       </div>
-      <dl class="pt-datos">
-        <div><dt>Bases integradas</dt><dd>6</dd></div>
-        <div><dt>Ramas del derecho</dt><dd id="pt-n-ramas">28</dd></div>
-        <div><dt>Descriptores</dt><dd id="pt-n-voces">309</dd></div>
-        <div><dt>Fichas de requisitos</dt><dd id="pt-n-req">24</dd></div>
-      </dl>
-    </div>
+    </section>
 
-    <div class="pt-franja">
-      <div class="pt-lin">
-        <span class="pt-fuente"><i></i>Suprema Corte de Justicia de Mendoza</span>
-        <span class="pt-fuente"><i></i>Mendoza Legal</span>
-        <span class="pt-fuente"><i></i>Tribunal Superior de Justicia de la Ciudad de Buenos Aires</span>
-        <span class="pt-fuente"><i></i>Corte Suprema de Justicia de la Nación</span>
-        <span class="pt-fuente"><i></i>SAIJ</span>
-        <span class="pt-fuente"><i></i>InfoLeg</span>
+    <section class="pt-sec" id="pt-bases" aria-labelledby="pt-t-bases">
+      <h2 class="pt-sec__tit" id="pt-t-bases" data-reveal>Bases integradas.</h2>
+      <p class="pt-sec__intro" data-reveal>Seis repositorios oficiales se consultan de forma simultánea y en vivo. Cada resultado conserva el sello de la base que lo publicó.</p>
+      <div class="pt-cols pt-cols--3" id="pt-bases-cols"></div>
+      <div class="pt-pie" data-reveal>
+        <p>Acceso a <span id="pt-n-fuentes">106</span> bases de datos y buscadores públicos, verificados e identificados individualmente.</p>
+        <button type="button" class="btn sec" data-tab="fuentes">Ver el catálogo de fuentes</button>
       </div>
-    </div>
+    </section>
 
+    <section class="pt-sec" aria-labelledby="pt-t-proceso">
+      <h2 class="pt-sec__tit" id="pt-t-proceso" data-reveal>Proceso de consulta.</h2>
+      <div class="pasos" id="pt-pasos">
+        <svg class="pasos__onda" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
+          <path class="pasos__pista" d="M0 40 C150 -4 150 -4 300 40 S450 84 600 40 S750 -4 900 40 S1050 84 1200 40"/>
+          <path class="pasos__linea" pathLength="1" d="M0 40 C150 -4 150 -4 300 40 S450 84 600 40 S750 -4 900 40 S1050 84 1200 40"/>
+        </svg>
+        <ol>
+          <li class="paso"><span class="paso__punto"></span><h3>Consulta.</h3><p>Los términos se traducen a la sintaxis de cada buscador: comillas, operadores, exclusiones y rango de años.</p></li>
+          <li class="paso"><span class="paso__punto"></span><h3>Ampliación.</h3><p>El tesauro suma las denominaciones equivalentes: el Código de 2015 rebautizó figuras que los fallos anteriores nombran de otra forma.</p></li>
+          <li class="paso"><span class="paso__punto"></span><h3>Búsqueda.</h3><p>Las seis bases se consultan a la vez. Cada una responde por su cuenta y con su propio tiempo.</p></li>
+          <li class="paso"><span class="paso__punto"></span><h3>Documento.</h3><p>Cada resultado conserva su procedencia y el enlace al documento oficial, listo para leer, recortar y citar.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="pt-sec" aria-labelledby="pt-t-princ">
+      <h2 class="pt-sec__tit" id="pt-t-princ" data-reveal>Principios.</h2>
+      <p class="pt-sec__intro" data-reveal>Tres condiciones que ningún resultado puede dejar de cumplir.</p>
+      <div class="pt-cols pt-cols--3">
+        <div class="pt-col" data-reveal>
+          <svg class="lat" viewBox="0 0 220 80" aria-hidden="true"><circle class="d latido" cx="20" cy="40" r="3.5"/><path class="onda" d="M40 12 A40 40 0 0 1 40 68"/><path class="onda" d="M40 12 A40 40 0 0 1 40 68"/><path class="onda" d="M40 12 A40 40 0 0 1 40 68"/><path class="onda" d="M40 12 A40 40 0 0 1 40 68"/></svg>
+          <p class="pt-lat">FONS</p><h3>La fuente.</h3><p>Todo resultado remite al documento del organismo que lo dictó. Lo que se lee nunca es una versión propia.</p>
+        </div>
+        <div class="pt-col" data-reveal style="--d:.08s">
+          <svg class="lat" viewBox="0 0 220 80" aria-hidden="true"><path d="M0 14H200"/><path d="M0 28H168"/><path d="M0 42H136"/><path d="M0 56H104"/><path d="M0 70H72"/><circle class="d deriva" cx="0" cy="14" r="3.5"/></svg>
+          <p class="pt-lat">ORDO</p><h3>El orden.</h3><p>Los resultados de las seis bases se presentan juntos, con la misma forma y la procedencia a la vista.</p>
+        </div>
+        <div class="pt-col" data-reveal style="--d:.16s">
+          <svg class="lat" viewBox="0 0 220 80" aria-hidden="true"><circle class="l" cx="70" cy="40" r="32"/><circle class="l" cx="114" cy="40" r="32"/><circle class="d latido" cx="92" cy="40" r="3.5"/></svg>
+          <p class="pt-lat">FIDES</p><h3>La fe.</h3><p>Una cita se contrasta con la base oficial antes de presentarse. Ante su ausencia, el antecedente se presume inexistente.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="pt-sec pt-cierre" aria-label="Advertencia">
+      <p class="pt-cierre__txt" data-reveal>Verifique siempre en la <em>fuente</em> antes de citar.</p>
+      <p class="pt-sec__intro" data-reveal>La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</p>
+      <div class="pt-acciones" data-reveal>
+        <button type="button" class="btn" data-tab="buscar">Iniciar la consulta</button>
+        <button type="button" class="btn sec" data-tab="verificar">Verificar una cita</button>
+      </div>
+    </section>
+
+    <footer class="pt-ftr">
+      <span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span>
+      <span>No almacena fallos ni genera contenido jurídico.</span>
+    </footer>
   </div>
 </section>
 
 <header class="top">
-  <!-- El título grande ("IURIS ET DE IURE") ya se ve una vez, al tocar la
-       pantalla de entrada (#entrada, más abajo): repetirlo acá arriba, en
-       cada una de las ocho solapas, era la misma marca dos veces seguidas.
-       Se sacó a pedido; el emblema circular de la barra alcanza como firma
-       del sitio en el uso normal. -->
   <div class="nav-wrap">
-    <img class="nav-logo" src="./logo-iu.png" alt="Emblema de Iuris et de iure">
-    <nav class="nav" id="nav" role="tablist" aria-label="Secciones"></nav>
+    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><svg id="sello-app" viewBox="0 0 1000 1000" aria-hidden="true"></svg><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
+    <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
+    <div class="nav-fin"><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
 </header>
+
+<div class="menu" id="menu" aria-label="Índice de secciones"><div class="menu__grid" id="menu-grid"></div></div>
+
+<div class="cab" id="cab"></div>
 
 <main class="wrap" id="wrap">
   <aside class="rail" id="rail"></aside>
@@ -866,45 +872,155 @@ function panic(msg){
 window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
 
 /* ============================================================
-   0.1. Portada — se cierra al elegir una seccion
+   0.1. Portada — el afiche de sigillvm.com
    ============================================================
-   Antes la pantalla se cerraba con un clic en cualquier parte, porque
-   no habia nada que leer en ella. Ahora si lo hay, asi que solo se
-   retira cuando se elige a donde ir: cualquiera de los botones de la
-   portada, o la tecla Escape.
+   Se retira cuando se elige a dónde ir —cualquiera de sus botones con
+   data-tab, o la tecla Escape— y el nombre de la cabecera la vuelve a
+   abrir. Mientras está abierta tiene su propio scroll: la cabecera pasa
+   de la bajada al nombre, el sello se aleja, la onda del proceso se
+   dibuja y las secciones aparecen al entrar en pantalla.
    ============================================================ */
 (function(){
   try{
     var entrada=document.getElementById("entrada");
     if(!entrada) return;
-    var cerrada=false;
+    var abierta=true;
+
+    /* El sello: los renglones de un códice recortados por un círculo, con
+       el punto del logo como punto final, y alrededor una leyenda que
+       gira. Va con semilla para que salga siempre igual. */
+    function azar(s){ return function(){ s=(s*16807)%2147483647; return (s-1)/2147483646; }; }
+    function renglones(c,R,paso,semilla){
+      var rnd=azar(semilla),y=c-R+paso*1.2,i=0,par=5+Math.floor(rnd()*4),sangria=false,out=[],ult=null;
+      while(y<c+R-paso*.8){
+        var h=Math.sqrt(Math.max(R*R-(y-c)*(y-c),0)),x0=c-h+4,x1=c+h-4;
+        if(x1-x0<60){ y+=paso; continue; }
+        var ini=x0+(sangria?paso*1.5:0),fin=x1; par--;
+        if(par===0) fin=ini+(x1-ini)*(.35+rnd()*.35);
+        var segs=[],x=ini;
+        while(x<fin-12){
+          var r=rnd(),w=r<.33?10+rnd()*24:(r<.66?28+rnd()*42:50+rnd()*46),e=Math.min(x+w,fin);
+          if(e-x>5) segs.push([x,e]);
+          x=e+6.5+rnd()*3;
+        }
+        if(segs.length){
+          out.push('<path style="--i:'+i+'" pathLength="1" d="'+segs.map(function(s){return "M"+s[0].toFixed(1)+" "+y.toFixed(1)+"H"+s[1].toFixed(1);}).join("")+'"/>');
+          ult=[segs[segs.length-1][1],y]; i++;
+        }
+        sangria=false;
+        if(par===0){ par=5+Math.floor(rnd()*5); sangria=true; y+=paso*1.6; } else y+=paso;
+      }
+      return {paths:out.join(""),fin:ult};
+    }
+    function sello(svg,o){
+      if(!svg) return;
+      var rT=452,ley="IVS · CODEX · IVRISPRVDENTIA · LEGISLATIO · DOCTRINA · ",h="";
+      if(o.texto!==false){
+        h+='<defs><path id="sg-'+o.id+'" d="M500 '+(500-rT)+'a'+rT+' '+rT+' 0 1 1 0 '+(2*rT)+'a'+rT+' '+rT+' 0 1 1 0 '+(-2*rT)+'"/></defs>'+
+           '<g class="gira"><text class="sg-texto" font-size="33" letter-spacing="9" opacity=".75"><textPath href="#sg-'+o.id+'" textLength="'+(2*Math.PI*rT-12).toFixed(0)+'" lengthAdjust="spacing">'+ley+ley+'</textPath></text></g>';
+      }
+      h+='<circle class="sg-aro" cx="500" cy="500" r="496" stroke-width="1" opacity=".5"/><circle class="sg-aro" cx="500" cy="500" r="412" stroke-width="1" opacity=".5"/>';
+      var r=renglones(500,372,o.paso||19,7);
+      h+='<g class="sg-renglones" stroke-width="'+(o.grosor||1.6)+'" opacity="'+(o.opacidad||.5)+'">'+r.paths+'</g>';
+      if(r.fin) h+='<circle class="sg-punto" cx="'+(r.fin[0]+15).toFixed(1)+'" cy="'+r.fin[1].toFixed(1)+'" r="7.5"/>';
+      svg.innerHTML=h;
+    }
+    sello(document.getElementById("pt-sello"),{id:"g",grosor:1.3,opacidad:.34});
+    sello(document.getElementById("sello-pt"),{id:"p",texto:false,paso:58,grosor:22,opacidad:.9});
+    sello(document.getElementById("sello-app"),{id:"a",texto:false,paso:58,grosor:22,opacidad:.9});
+
+    /* el puntero de luz, solo mientras la portada está abierta */
+    var cursor=null,cx=-200,cy=-200,rx=cx,ry=cy,lx=cx,ly=cy;
+    if(window.matchMedia&&matchMedia("(pointer:fine)").matches&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
+      cursor=document.createElement("div");
+      cursor.className="cursor";cursor.setAttribute("aria-hidden","true");
+      cursor.innerHTML='<i class="c-luz"></i><i class="c-aro"></i><i class="c-punto"></i>';
+      document.body.appendChild(cursor);
+      document.documentElement.classList.add("con-cursor");
+      var p=cursor.querySelector(".c-punto"),a=cursor.querySelector(".c-aro"),l=cursor.querySelector(".c-luz");
+      entrada.addEventListener("mousemove",function(e){
+        cx=e.clientX;cy=e.clientY;cursor.classList.add("is-on");
+        cursor.classList.toggle("is-link",!!(e.target.closest&&e.target.closest("button,a")));
+      },{passive:true});
+      entrada.addEventListener("mouseleave",function(){ cursor.classList.remove("is-on"); });
+      (function tic(){
+        if(abierta){
+          rx+=(cx-rx)*.2;ry+=(cy-ry)*.2;lx+=(cx-lx)*.08;ly+=(cy-ly)*.08;
+          p.style.transform="translate("+cx+"px,"+cy+"px)";
+          a.style.transform="translate("+rx+"px,"+ry+"px)";
+          l.style.transform="translate("+lx+"px,"+ly+"px)";
+        }
+        requestAnimationFrame(tic);
+      })();
+    }
+
+    /* con el scroll de la portada: la cabecera, el sello y la onda */
+    var hdr=document.getElementById("pt-hdr"),hero=entrada.querySelector(".pt-hero"),pasos=document.getElementById("pt-pasos");
+    function alMover(){
+      var y=entrada.scrollTop,h=entrada.clientHeight;
+      if(hdr) hdr.classList.toggle("is-solid",y>h*.5);
+      if(hero) hero.style.setProperty("--hp",Math.min(y/h,1).toFixed(3));
+      if(pasos){
+        var r=pasos.getBoundingClientRect(),pr=Math.min(Math.max((h*.8-r.top)/(r.height+h*.3),0),1);
+        pasos.style.setProperty("--sp",pr.toFixed(3));
+        var ps=pasos.querySelectorAll(".paso");
+        for(var i=0;i<ps.length;i++) ps[i].classList.toggle("is-lit",pr>i/ps.length+.02);
+      }
+    }
+    entrada.addEventListener("scroll",alMover,{passive:true});
+
+    function revelar(){
+      var els=entrada.querySelectorAll("[data-reveal]:not(.is-in)");
+      if(!("IntersectionObserver" in window)){ for(var i=0;i<els.length;i++) els[i].classList.add("is-in"); return; }
+      var io=new IntersectionObserver(function(es){
+        es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("is-in"); io.unobserve(e.target); } });
+      },{root:entrada,rootMargin:"0px 0px -8% 0px"});
+      for(var k=0;k<els.length;k++) io.observe(els[k]);
+    }
 
     function cerrar(destino){
-      if(cerrada) return;
-      cerrada=true;
+      if(!abierta) return;
+      abierta=false;
       entrada.classList.add("saliendo");
-      entrada.addEventListener("transitionend",function(){ entrada.style.display="none"; },{once:true});
-      // Respaldo: con "reducir movimiento" activado no hay transicion y por
-      // lo tanto tampoco evento, asi que la portada quedaria invisible pero
-      // tapando los clics del resto de la pagina.
-      setTimeout(function(){ entrada.style.display="none"; },700);
+      if(cursor) cursor.classList.remove("is-on");
+      document.documentElement.classList.remove("con-cursor");
+      entrada.addEventListener("transitionend",function(){ if(!abierta) entrada.style.display="none"; },{once:true});
+      // Respaldo: con "reducir movimiento" activado no hay transición y por
+      // lo tanto tampoco evento, así que la portada quedaría invisible pero
+      // tapando los clics del resto de la página.
+      setTimeout(function(){ if(!abierta) entrada.style.display="none"; },700);
       if(destino==="buscar"){
         setTimeout(function(){ var c=document.getElementById("q"); if(c) c.focus(); },520);
       }
+    }
+    function abrir(){
+      if(abierta) return;
+      abierta=true;
+      entrada.style.display="";
+      void entrada.offsetWidth;
+      entrada.classList.remove("saliendo");
+      entrada.scrollTop=0;
+      if(cursor) document.documentElement.classList.add("con-cursor");
+      alMover();
     }
 
     entrada.addEventListener("click",function(e){
       var b=(e.target&&e.target.closest)?e.target.closest("[data-tab]"):null;
       if(b) cerrar(b.getAttribute("data-tab"));
     });
+    document.addEventListener("click",function(e){
+      if(e.target&&e.target.closest&&e.target.closest("[data-portada]")) abrir();
+    });
     document.addEventListener("keydown",function(e){
-      if(e.key==="Escape") cerrar();
+      if(e.key==="Escape"&&abierta) cerrar();
     });
 
-    // Las cifras de la portada salen de los datos reales de la aplicacion y
-    // no escritas a mano: si manana se agrega una rama o una ficha, la
-    // portada lo dice sola. Va en diferido porque RAMAS y REQUISITOS se
-    // declaran mas abajo, en este mismo script.
+    requestAnimationFrame(function(){ entrada.classList.add("lista"); revelar(); alMover(); });
+
+    // Las cifras de la portada salen de los datos reales de la aplicación y
+    // no escritas a mano: si mañana se agrega una rama, una ficha o una
+    // fuente, la portada lo dice sola. Lo mismo las seis bases, con su nota.
+    // Va en diferido porque esos datos se declaran más abajo en este script.
     setTimeout(function(){
       try{
         function poner(id,v){ var n=document.getElementById(id); if(n) n.textContent=v; }
@@ -913,6 +1029,14 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
           poner("pt-n-voces",RAMAS.reduce(function(a,r){ return a+((r.v&&r.v.length)||0); },0));
         }
         if(typeof REQUISITOS!=="undefined"&&REQUISITOS.length) poner("pt-n-req",REQUISITOS.length);
+        if(typeof F!=="undefined"&&F.length) poner("pt-n-fuentes",F.length);
+        var cols=document.getElementById("pt-bases-cols");
+        if(cols&&typeof FUENTES_INDICE!=="undefined"){
+          cols.innerHTML=FUENTES_INDICE.map(function(f,i){
+            return '<div class="pt-col" data-reveal style="--d:'+(i%3*.08)+'s"><p class="pt-lat">'+esc(f.cod)+'</p><h3>'+esc(f.nombre)+'</h3><p>'+esc(f.nota)+'</p></div>';
+          }).join("");
+          revelar();
+        }
       }catch(e){}
     },0);
   }catch(e){}
@@ -3247,11 +3371,83 @@ function expandir(termino){
 var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos","Requisitos"],["comparar","Comparar"],["norma","Norma"],["fuentes","Fuentes"],
           ["citas","Citar"],["verificar","Verificar"],["guardados","Guardados"],["cuenta","Cuenta"]];
 
+/* La cabecera muestra las cinco solapas que más se usan; las once están en
+   el índice que abre «Todas las secciones», agrupadas por lo que se hace en
+   cada una. Once rótulos en una fila no entraban en una pantalla común y,
+   a esa cantidad, dejaban de leerse como un menú.
+   Cada sección abre con su palabra latina y su título (ver pintarCabecera). */
+var PRINCIPALES=["buscar","lector","ramas","fuentes","verificar"];
+var GRUPOS_NAV=["Investigar","Leer y citar","Fuentes","Archivo personal"];
+var SECCIONES={
+  buscar:["QVAESTIO","Investigar","Las seis bases a la vez"],
+  comparar:["COLLATIO","Investigar","Una consulta, por jurisdicción"],
+  ramas:["MATERIAE","Investigar","Las ramas del derecho y sus voces"],
+  requisitos:["REQVISITA","Investigar","Lo que exige cada trámite"],
+  norma:["LEX","Investigar","El artículo, desde InfoLeg"],
+  lector:["LECTIO","Leer y citar","El fallo con su búsqueda destacada"],
+  citas:["CITATIO","Leer y citar","Formateador de citas"],
+  verificar:["PROBATIO","Leer y citar","Contrastar antes de citar"],
+  fuentes:["FONTES","Fuentes","Catálogo de fuentes oficiales"],
+  guardados:["THESAVRVS","Archivo personal","Pasajes, fuentes y búsquedas"],
+  cuenta:["RATIO","Archivo personal","Sincronización entre dispositivos"]
+};
 function pintarNav(){
   var n=document.getElementById("nav");
-  n.innerHTML=TABS.map(function(t){
-    return '<button role="tab" data-tab="'+t[0]+'" aria-selected="'+(estado.tab===t[0])+'">'+esc(t[1])+'</button>';
+  n.innerHTML=PRINCIPALES.map(function(id){
+    var t=TABS.filter(function(x){return x[0]===id;})[0];
+    return '<button type="button" data-tab="'+id+'"'+(estado.tab===id?' aria-current="page"':'')+'>'+esc(t[1])+'</button>';
   }).join("");
+  var g=document.getElementById("menu-grid");
+  if(!g) return;
+  var k=0;
+  g.innerHTML=GRUPOS_NAV.map(function(gr){
+    return '<div class="menu__grupo"><h2>'+esc(gr)+'</h2>'+
+      TABS.filter(function(t){ return SECCIONES[t[0]][1]===gr; }).map(function(t){
+        return '<button type="button" class="menu__item" data-tab="'+t[0]+'" style="--k:'+(k++)+'"'+
+          (estado.tab===t[0]?' aria-current="page"':'')+'><b>'+esc(t[1])+'</b><span>'+esc(SECCIONES[t[0]][2])+'</span></button>';
+      }).join("")+'</div>';
+  }).join("");
+}
+function menuAbierto(on){
+  var m=document.getElementById("menu"),b=document.getElementById("abrir-menu");
+  if(!m||!b) return;
+  m.classList.toggle("is-on",on);
+  b.setAttribute("aria-expanded",String(on));
+  b.querySelector(".txt").textContent=on?"Cerrar":"Todas las secciones";
+  document.documentElement.style.overflow=on?"hidden":"";
+}
+document.addEventListener("click",function(ev){
+  var t=ev.target;
+  if(!t.closest) return;
+  if(t.closest("#abrir-menu")){ menuAbierto(!document.getElementById("menu").classList.contains("is-on")); return; }
+  if(t.closest("#menu [data-tab]")||t.closest("[data-portada]")) menuAbierto(false);
+});
+document.addEventListener("keydown",function(ev){ if(ev.key==="Escape") menuAbierto(false); });
+
+/* La cabecera de cada sección: palabra latina, grupo y título. El primer
+   aviso de la solapa —el que explica para qué sirve— sube a la cabecera
+   y hace de bajada: es el mismo texto de siempre, en el mismo orden, solo
+   que sin caja. Las notas sueltas que lo acompañan suben con él.
+   La animación de entrada corre solo al cambiar de solapa: render() se
+   llama a cada tecla, y repetirla ahí haría parpadear el título. */
+function pintarCabecera(v){
+  var c=document.getElementById("cab");
+  if(!c) return;
+  var t=TABS.filter(function(x){return x[0]===estado.tab;})[0]||TABS[0];
+  var s=SECCIONES[t[0]];
+  c.classList.toggle("quieta",c.getAttribute("data-tab")===t[0]);
+  c.setAttribute("data-tab",t[0]);
+  c.innerHTML='<p class="cab__ojo"><span class="cab__lat">'+s[0]+'</span>'+esc(s[1])+'</p>'+
+    '<h1>'+esc(t[1])+'.</h1>'+
+    (t[0]==="buscar"?'<p class="cab__intro">La plataforma interroga de forma simultánea los repositorios oficiales integrados, '+
+      'extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, '+
+      'con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>':'');
+  var primero=v.firstElementChild;
+  if(primero&&primero.classList.contains("aviso")&&(primero.querySelector(".av-tit,.av-oro")||t[0]==="cuenta")){
+    c.appendChild(primero);
+    var sig=v.firstElementChild;
+    while(sig&&sig.classList.contains("nota-suelta")){ c.appendChild(sig); sig=v.firstElementChild; }
+  }
 }
 
 function ramasFiltradas(){
@@ -3499,58 +3695,52 @@ function vistaBuscar(){
       '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(comoTitulo(v))+'</button>';}).join("")+'</div></div>';
   }
 
-  // La consulta sale del formulario y pasa a ser la cabecera de la pantalla:
-  // titular, barra de búsqueda y filtros. Lo que queda dentro del panel son
-  // los ajustes finos, que no se tocan en la mayoría de las búsquedas.
-  // Voces sugeridas ocupa el lugar que tenía el titular: es lo primero que
-  // se ve al entrar con una rama elegida, antes incluso de la barra de
-  // búsqueda. Sigue siendo condicional —sólo aparece con estado.rama— igual
-  // que antes; acá simplemente cambia de lugar, no de comportamiento.
-  return sug+
-    '<div class="busq-tope">'+
-      '<div class="busq-barra">'+
-        '<div class="busq-campo">'+
-          '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8c8577" stroke-width="2" stroke-linecap="round" aria-hidden="true">'+
-            '<circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>'+
-          '<label class="oculto" for="q">¿Qué desea consultar?</label>'+
-          '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off">'+
-        '</div>'+
-        '<button class="btn" data-act="barrido">Buscar en todas a la vez</button>'+
-      '</div>'+
-      '<div class="busq-cadena">'+
-        '<code id="cadena" aria-live="polite"></code>'+
-        '<button class="mini" data-act="copiar-cadena">Copiar</button>'+
-        '<button class="mini" data-act="limpiar">Limpiar</button>'+
-      '</div>'+
-      '<div class="busq-grupo"><span class="busq-rotulo">Cómo combinar las palabras</span><div class="chips">'+modos+'</div></div>'+
-      '<div class="busq-grupo"><span class="busq-rotulo">Dónde buscar</span><div class="chips">'+ambChips+'</div></div>'+
-    '</div>'+
-
-
-    // El id es el ancla de ajustarAlturaRail(): ese panel es "el rectángulo"
-    // contra el que se mide el listado de ramas de la izquierda, para que
-    // su scroll llegue justo hasta la misma línea. Ver esa función.
-    '<div class="panel" id="panel-buscar-form">'+
+  // La consulta como el formulario de presupuesto de sigillvm.com: a la
+  // izquierda lo que se completa, a la derecha el resumen fijo con la
+  // consulta ya armada y los botones para lanzarla. El resumen acompaña el
+  // scroll, así que la cadena se ve mientras se tocan los filtros de abajo.
+  // Los textos de los rótulos y los botones son los de siempre; lo único
+  // nuevo son los títulos del resumen.
+  // El id panel-buscar-form sigue siendo el ancla de ajustarAlturaRail():
+  // ahora marca la columna del formulario.
+  return '<div class="brief">'+
+    '<div class="brief__form" id="panel-buscar-form">'+
+      sug+
+      '<label class="campo campo--q"><span>¿Qué desea consultar?</span>'+
+        '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off"></label>'+
       tiraSugerencias()+
       tiraEquivalentes()+
       tiraProponer()+
+      '<div class="busq-grupo"><span class="busq-rotulo">Cómo combinar las palabras</span><div class="chips">'+modos+'</div></div>'+
+      '<div class="busq-grupo"><span class="busq-rotulo">Dónde buscar</span><div class="chips">'+ambChips+'</div></div>'+
       '<div class="fila">'+
         '<label class="campo"><span>Excluir palabras</span><input type="text" id="excluir" value="'+esc(estado.excluir)+'" placeholder="seguro laboral" autocomplete="off"></label>'+
         '<label class="campo"><span>Año desde</span><input type="number" id="desde" value="'+esc(estado.desde)+'" min="1863" max="2100" placeholder="2015"></label>'+
         '<label class="campo"><span>Año hasta</span><input type="number" id="hasta" value="'+esc(estado.hasta)+'" min="1863" max="2100" placeholder="2026"></label>'+
       '</div>'+
-      '<div class="campo" style="margin-bottom:0"><span>Al abrir la fuente</span><div class="chips">'+
+      '<div class="campo"><span>Al abrir la fuente</span><div class="chips">'+
         '<button class="chip" data-act="tog-frag" aria-pressed="'+(estado.resaltarFuente?"true":"false")+'">'+
         'Resaltar la frase en la página que se abre</button></div></div>'+
+    '</div>'+
+    '<aside class="brief__summary" aria-label="Resumen de su consulta">'+
+      '<h2 class="brief__title">Resumen de su consulta</h2>'+
+      '<dl class="brief__list"><div><dt>Consulta</dt><dd><code id="cadena" aria-live="polite"></code></dd></div></dl>'+
       '<div class="acciones">'+
-        (estado.api?FUENTES_INDICE.map(function(f){
+        '<button class="mini" data-act="copiar-cadena">Copiar</button>'+
+        '<button class="mini" data-act="limpiar">Limpiar</button>'+
+      '</div>'+
+      '<button class="btn btn--ancho" data-act="barrido">Buscar en todas a la vez</button>'+
+      (estado.api?'<p class="brief__sub">O en una sola base:</p><div class="acciones">'+
+        FUENTES_INDICE.map(function(f){
           return '<button class="btn sec" data-act="buscar-indice" data-fuente="'+f.slug+'">Buscar en '+esc(f.boton)+'</button>';
-        }).join(""):'')+
+        }).join("")+'</div>':'')+
+      '<div class="acciones" style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">'+
         '<button class="btn sec" data-act="copiar-cadena">Copiar la consulta</button>'+
         botonCompartir()+
         '<button class="btn sec" data-act="limpiar">Empezar de nuevo</button>'+
       '</div>'+
-    '</div>'+
+    '</aside>'+
+  '</div>'+
 
     // Qué servidor está atendiendo. Importa saberlo: el publicado corre en un
     // datacenter al que el TSJ de CABA no le entrega los PDF (le responde 403),
@@ -4442,7 +4632,7 @@ function panelIndice(f){
   // sino un aviso —estos resultados salieron de la copia guardada, no del
   // sitio— y sigue siendo UN borde, con un lado marcado.
   var out='<div class="panel vivo f-'+f.slug+'"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
-    '<div class="rotulo rotulo-fuente" style="margin-top:0">'+esc(f.nombre)+(local?' · desde tu índice local':' · en vivo')+'</div>';
+    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0">'+esc(f.nombre)+(local?' · desde tu índice local':' · en vivo')+'</div>';
 
   if(f.tribunales){
     out+='<div class="chips" style="margin-bottom:10px">'+f.tribunales.map(function(t){
@@ -4968,10 +5158,11 @@ function vistaLector(){
       // ficha del fallo. Es el gesto natural leyendo: marcar el párrafo que
       // sirve y mandarlo.
       '<button class="mini" data-act="compartir-lector">Compartir selección</button>'+
+      // El campo de búsqueda vive en la barra fija: así, mientras se lee y
+      // se salta de una coincidencia a otra, lo buscado sigue a la vista.
+      '<label class="campo"><span>Qué buscar dentro del fallo</span>'+
+      '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></label>'+
     '</div>'+
-    '<div class="panel" style="padding:12px 14px;margin-bottom:14px">'+
-      '<label class="campo" style="margin:0"><span>Qué buscar dentro del fallo</span>'+
-      '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></label></div>'+
     '<div class="lector-grid">'+
       '<div class="meta" id="doc-meta"></div>'+
       '<div class="doc" id="doc"></div>'+
@@ -5517,7 +5708,9 @@ function render(){
     var f={buscar:vistaBuscar,lector:vistaLector,ramas:vistaRamas,requisitos:vistaRequisitos,comparar:vistaComparar,norma:vistaNorma,fuentes:vistaFuentes,
            citas:vistaCitas,verificar:vistaVerificar,guardados:vistaGuardados,
            cuenta:vistaCuenta}[estado.tab]||vistaBuscar;
+    v.className="col v-"+estado.tab;
     v.innerHTML=f();
+    pintarCabecera(v);
     if(estado.tab==="lector") pintarLector();
     pintarCadena();
     ajustarAlturaRail();
@@ -5624,7 +5817,7 @@ document.addEventListener("click",function(ev){
   var b=t.closest?t.closest("[data-act],[data-tab],[data-rama]"):null;
   if(!b) return;
 
-  if(b.hasAttribute("data-tab")){ estado.tab=b.getAttribute("data-tab"); render(); return; }
+  if(b.hasAttribute("data-tab")){ estado.tab=b.getAttribute("data-tab"); render(); window.scrollTo(0,0); return; }
 
   var act=b.getAttribute("data-act");
 
