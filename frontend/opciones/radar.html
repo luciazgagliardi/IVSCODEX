@@ -142,8 +142,9 @@ function letras(txt){ return txt.split(" ").map(function(w){ return '<span style
 function armar(sl){
   if(!cola.length) cola=FALLOS.slice().sort(function(){return Math.random()-.5;});
   var f=cola.shift();
-  sl.div.innerHTML='<div class="t"><span class="n">'+letras(f[0])+'</span><span class="d">'+letras(f[1])+'</span></div>'+
+  sl.div.innerHTML='<div class="t"><span class="n">'+letras(f[0])+'</span><span class="d">'+letras(f[1].slice(-4))+'</span></div>'+
     '<p class="f">'+letras(f[2])+'</p><p class="a">'+letras(f[3])+'</p><p class="c">'+letras("Corte Suprema de Justicia de la Nación · Fallos "+f[4])+'</p>';
+  sl.div.style.maxWidth=Math.round(250+Math.random()*150)+"px";
   sl.div.style.visibility="hidden"; sl.div.style.left="0"; sl.div.style.top="0";
   var w=sl.div.offsetWidth,h=sl.div.offsetHeight,r0=sl.div.getBoundingClientRect(),esc_=r0.width/w||1;
   var ks=[].slice.call(sl.div.querySelectorAll(".k"));
