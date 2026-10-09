@@ -761,7 +761,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .rf-d{font:400 20px/1.1 var(--sans);color:var(--gold)}
 .rf-f,.rf-a,.rf-c{margin:0}
 .rf-f{margin-top:12px;font:400 15px/19px var(--sans);color:rgba(241,238,230,.82)}
-.rf-a{margin-top:9px;font:400 12.5px/17px var(--sans);color:var(--mute)}
+.rf-a{margin-top:12px;font:400 12.5px/17px var(--sans);color:var(--mute)}
 .rf-c{margin-top:8px;font:500 13px/1.2 var(--caps);letter-spacing:.06em;color:var(--gold)}
 .rk{opacity:0}
 @media (max-width:900px){.rf-cap{display:none}}
@@ -1166,7 +1166,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
       function armar(sl){
         if(!cola.length) cola=FALLOS.slice().sort(function(){return Math.random()-.5;});
         var f=cola.shift();
-        sl.div.innerHTML='<div class="rf-t"><span class="rf-n">'+letras(f[0])+'</span><span class="rf-d">'+letras(f[1].slice(-4))+'</span></div><p class="rf-f">'+letras(f[2])+'</p><p class="rf-a">'+letras(f[3])+'</p><p class="rf-c">'+letras("Corte Suprema de Justicia de la Nación · Fallos "+f[4])+'</p>';
+        sl.div.innerHTML='<div class="rf-t"><span class="rf-n">'+letras(f[0])+'</span><span class="rf-d">'+letras(f[1].slice(-4))+'</span></div><p class="rf-a">'+letras(f[3])+'</p><p class="rf-c">'+letras("Corte Suprema de Justicia de la Nación · Fallos "+f[4])+'</p>';
         sl.div.style.maxWidth=Math.round(250+Math.random()*150)+"px";                      /* cada fallo, con su ancho: así caben en cualquier parte del círculo */
         sl.div.style.visibility="hidden"; sl.div.style.left="0"; sl.div.style.top="0";
         var w=sl.div.offsetWidth,h=sl.div.offsetHeight,r0=sl.div.getBoundingClientRect(),sc=r0.width/w||1;
