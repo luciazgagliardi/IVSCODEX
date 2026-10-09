@@ -102,13 +102,13 @@ var RADAR={B:null,pings:[],
     if(!B){ B=this.B=[]; for(var i=0;i<34;i++){ var a=Math.random()*P2,r=Math.sqrt(Math.random())*365; B.push({x:500+r*Math.cos(a),y:500+r*Math.sin(a),f:a}); } }
     for(var k=1;k<=3;k++) for(var a=0;a<360;a+=4){ var a0=a*Math.PI/180,a1=(a+4)*Math.PI/180,r=k*124; lin(500+r*Math.cos(a0),500+r*Math.sin(a0),500+r*Math.cos(a1),500+r*Math.sin(a1),.13*(1-influencia(500+r*Math.cos(a0),500+r*Math.sin(a0)).f)); }
     for(var w=0;w<38;w++){ var an=th-w*.022,al=.6*Math.pow(1-w/38,1.8),c=Math.cos(an),sn=Math.sin(an);
-      for(var r=0;r<372;r+=12){ var x0=500+r*c,y0=500+r*sn,x1=500+(r+12)*c,y1=500+(r+12)*sn; lin(x0,y0,x1,y1,al*(1-influencia((x0+x1)/2,(y0+y1)/2).f),w===0?CO:CR,w===0?1.7:1.1); } }
+      for(var r=0;r<372;r+=12){ var x0=500+r*c,y0=500+r*sn,x1=500+(r+12)*c,y1=500+(r+12)*sn; lin(x0,y0,x1,y1,al*(1-.2*influencia((x0+x1)/2,(y0+y1)/2).f),w===0?CO:CR,w===0?1.7:1.1); } }
     B.forEach(function(b){ var d=(((th-b.f)%P2)+P2)%P2,lit=Math.max(0,1-d/3.4),q=influencia(b.x,b.y); if(lit<.02) return; ctx.fillStyle="rgba("+CO+","+(.9*lit*(1-q.f)).toFixed(3)+")"; ctx.beginPath(); ctx.arc(b.x*K,b.y*K,(2+2*lit)*K,0,7); ctx.fill(); });
     /* el destello dorado donde el haz acaba de descubrir un fallo */
     var self=this; this.pings=this.pings.filter(function(p){ return t-p.t0<1.6; });
     this.pings.forEach(function(p){ var u=(t-p.t0)/1.6,r=8+60*(1-Math.pow(1-u,3)); ctx.strokeStyle="rgba("+CO+","+(.8*(1-u)).toFixed(3)+")"; ctx.lineWidth=1.4*K; ctx.beginPath(); ctx.arc(p.x*K,p.y*K,r*K,0,7); ctx.stroke(); });
   }};
-$("#sel").remove(); $("#desc").textContent="Cada fallo se enciende cuando el haz lo cruza y se apaga con la estela, como los puntos.";
+$("#sel").remove(); $("#desc").textContent="Las letras se encienden bajo el haz, en el instante en que pasa sobre ellas, y se apagan con la estela.";
 
 /* ---------- los fallos ---------- */
 var FALLOS=[
@@ -133,43 +133,62 @@ var FALLOS=[
 ];
 var cola=[],vivos=[];
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;");}
-/* Cada fallo es como uno de los puntos del radar: se enciende de golpe cuando el haz lo cruza y se va apagando
-   con la estela hasta desaparecer. Cuando se apagó del todo, reaparece en otro lugar con otro fallo. */
-var FADE=4.6,ATK=.14,NS=4,slots=[];
+/* El texto está «debajo» del haz: cada letra se enciende en el instante en que el haz pasa por encima de ella
+   (según el ángulo que forma con el centro del sello) y se apaga con la estela. Cuando todas se apagaron,
+   el fallo se muda a otro lugar con otro texto. */
+var FADE=3.5,ATK=.05,NS=4,slots=[];
 function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;");}
+function letras(txt){ return txt.split(" ").map(function(w){ return '<span style="white-space:nowrap">'+w.split("").map(function(c){return '<span class="k">'+esc(c)+'</span>';}).join("")+'</span>'; }).join(" "); }
 function armar(sl){
   if(!cola.length) cola=FALLOS.slice().sort(function(){return Math.random()-.5;});
   var f=cola.shift();
-  sl.div.innerHTML='<div class="t"><span class="n">'+esc(f[0])+'</span><span class="d">'+f[1]+'</span></div>'+
-    '<p class="f">'+esc(f[2])+'</p><p class="a">'+esc(f[3])+'</p><p class="c">Corte Suprema de Justicia de la Nación · Fallos '+f[4]+'</p>';
+  sl.div.innerHTML='<div class="t"><span class="n">'+letras(f[0])+'</span><span class="d">'+letras(f[1])+'</span></div>'+
+    '<p class="f">'+letras(f[2])+'</p><p class="a">'+letras(f[3])+'</p><p class="c">'+letras("Corte Suprema de Justicia de la Nación · Fallos "+f[4])+'</p>';
   sl.div.style.visibility="hidden"; sl.div.style.left="0"; sl.div.style.top="0";
-  var w=sl.div.offsetWidth,h=sl.div.offsetHeight,x,y,ok=false,tries=0,phi,d;
-  while(!ok&&tries++<600){
+  var w=sl.div.offsetWidth,h=sl.div.offsetHeight,r0=sl.div.getBoundingClientRect(),esc_=r0.width/w||1;
+  var ks=[].slice.call(sl.div.querySelectorAll(".k"));
+  sl.ks=ks.map(function(k){ var r=k.getBoundingClientRect(); return {el:k,lx:(r.left+r.width/2-r0.left)/esc_,ly:(r.top+r.height/2-r0.top)/esc_,o:-1,phi:0}; });
+  sl.w=w; sl.h=h; sl.armado=false; sl.visto=false; sl.espera=true; sl.t=0;
+  sl.ks.forEach(function(k){ k.el.style.opacity=0; });
+}
+function ubicar(sl){
+  var w=sl.w,h=sl.h,x,y,ok=false,tries=0;
+  while(!ok&&tries++<160){
     x=500+(Math.random()*2-1)*372-w/2; y=500+(Math.random()*2-1)*372-h/2; ok=true;
     [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(function(c){ if(Math.hypot(c[0]-500,c[1]-500)>352) ok=false; });
-    slots.forEach(function(o){ if(o===sl||!o.w) return; if(!(x>o.x+o.w+36||x+w<o.x-36||y>o.y+o.h+36||y+h<o.y-36)) ok=false; });
-    phi=Math.atan2(y+h/2-500,x+w/2-500);
-    d=(((TH-phi)%P2)+P2)%P2; if(d<FADE+.25) ok=false;      /* que el haz no lo haya cruzado hace poco: llega en menos de 3 s */
+    if(!ok) continue;
+    if(x<500&&x+w>500&&y<500&&y+h>500) ok=false;                                        /* no encima del centro del haz */
+    slots.forEach(function(o){ if(o===sl||!o.armado) return; if(!(x>o.x+o.w+36||x+w<o.x-36||y>o.y+o.h+36||y+h<o.y-36)) ok=false; });
+    if(!ok) continue;
+    for(var q=0;q<sl.ks.length&&ok;q++){                                                  /* ninguna letra puede estar a media estela */
+      var k=sl.ks[q],ph=Math.atan2(y+k.ly-500,x+k.lx-500),d=(((TH-ph)%P2)+P2)%P2; if(d<FADE+.1) ok=false;
+    }
   }
-  if(!ok){ sl.w=0; sl.espera=true; return; }
-  sl.espera=false; sl.x=x; sl.y=y; sl.w=w; sl.h=h; sl.phi=phi;
-  sl.div.style.left=x+"px"; sl.div.style.top=y+"px";
-  sl.hu.x=x-14; sl.hu.y=y-12; sl.hu.w=w+28; sl.hu.h=h+24; sl.hu.p=0; sl.div.style.opacity=0; sl.div.style.visibility="";
-  sl.armado=true;
+  if(!ok) return false;
+  sl.x=x; sl.y=y; sl.div.style.left=x+"px"; sl.div.style.top=y+"px"; sl.div.style.visibility="";
+  sl.ks.forEach(function(k){ k.phi=Math.atan2(y+k.ly-500,x+k.lx-500); });
+  sl.hu.x=x-14; sl.hu.y=y-12; sl.hu.w=w+28; sl.hu.h=h+24; sl.hu.p=0; sl.armado=true; return true;
 }
-function actualizarSlots(){
+function actualizarSlots(t){
   slots.forEach(function(sl){
-    if(sl.espera||!sl.armado){ armar(sl); return; }
-    var d=(((TH-sl.phi)%P2)+P2)%P2,lit;
-    if(d>FADE){ lit=0; if(sl.visto){ sl.visto=false; armar(sl); return; } }          /* ya se apagó del todo: se muda */
-    else{ sl.visto=true; lit=d<ATK?d/ATK:Math.max(0,1-(d-ATK)/(FADE-ATK)); lit=lit>.5?1-Math.pow(1-lit,1.6)*.86:lit; }
-    sl.div.style.opacity=lit.toFixed(3); sl.hu.p=lit;
+    if(!sl.ks){ armar(sl); return; }
+    if(!sl.armado){ if(t-sl.t>.25){ sl.t=t; ubicar(sl); } return; }
+    var mx=0;
+    for(var q=0;q<sl.ks.length;q++){
+      var k=sl.ks[q],d=(((TH-k.phi)%P2)+P2)%P2,lit=0;
+      if(d<=FADE){ lit=d<ATK?d/ATK:1-(d-ATK)/(FADE-ATK); lit=lit>.5?1-Math.pow(1-lit,1.7)*.88:lit; }
+      lit=Math.round(lit*40)/40; if(lit>mx) mx=lit;
+      if(lit!==k.o){ k.o=lit; k.el.style.opacity=lit; }
+    }
+    if(mx>0) sl.visto=true;
+    sl.hu.p=mx*.85;
+    if(sl.visto&&mx===0){ sl.hu.p=0; sl.armado=false; armar(sl); }
   });
 }
 function lanzar(){ }
 
 /* ---------- el bucle ---------- */
-for(var q=0;q<NS;q++){ var dv=document.createElement("div"); dv.className="fb on"; dv.style.cssText="left:0;top:0;width:max-content;max-width:410px;opacity:0"; cap.appendChild(dv); var hu={x:0,y:0,w:0,h:0,p:0,obj:0,fijo:true}; huecos.push(hu); slots.push({div:dv,hu:hu,w:0,armado:false}); }
+for(var q=0;q<NS;q++){ var dv=document.createElement("div"); dv.className="fb on"; dv.style.cssText="left:0;top:0;width:max-content;max-width:410px;visibility:hidden"; cap.appendChild(dv); var hu={x:0,y:0,w:0,h:0,p:0,obj:0,fijo:true}; huecos.push(hu); slots.push({div:dv,hu:hu,w:0,armado:false,t:0}); }
 var t0=performance.now(),tp=t0;
 function tic(now){
   var dt=Math.min((now-tp)/1000,.05); tp=now; var t=(now-t0)/1000;
@@ -177,7 +196,7 @@ function tic(now){
   ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,cv.width,cv.height);
   ctx.save(); ctx.beginPath(); ctx.arc(500*K,500*K,396*K,0,7); ctx.clip();
   RADAR.f.call(RADAR,t,dt);
-  actualizarSlots();
+  actualizarSlots(t);
   ctx.restore();
   requestAnimationFrame(tic);
 }
