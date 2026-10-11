@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>IVS CODEX</title>
 <meta name="description" content="Buscador integrado de repositorios judiciales oficiales y doctrina. Arme la consulta y la plataforma lo lleva a las bases oficiales.">
+<meta name="theme-color" content="#100e0b">
 <link rel="preload" as="image" href="./grano.png" media="(min-width:761px)">
 <link rel="preload" as="image" href="./grano-sobre.png" media="(min-width:761px)">
 <link rel="preload" as="image" href="./grano-m.png" media="(max-width:760px)">
-<link rel="preload" as="image" href="./grano-sobre-m.png" media="(max-width:760px)">
 <link rel="icon" type="image/png" href="./favicon.png?v=16">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,6 +82,7 @@
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scrollbar-width:thin;scrollbar-color:rgba(241,238,230,.18) transparent}
 html,body{margin:0;padding:0}
+html{background:var(--bg)}
 /* clip y no hidden: con overflow-x:hidden en el body, el body pasa a ser
    un contenedor de scroll propio y la cabecera sticky deja de pegarse. */
 body{
@@ -891,8 +892,9 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   .pt-sec{padding-top:44px}
   .pt-cols{margin-top:30px}
   /* el grano, más fino y más suave que en la pantalla grande */
-  .entrada .grano{background-image:url("./grano-m.png");background-size:128px 128px;opacity:.75}
-  .entrada .grano--sobre{background-image:url("./grano-sobre-m.png");background-size:128px 128px;opacity:.16}
+  .entrada .grano{background-image:url("./grano-m.png");background-size:128px 128px;opacity:.7}
+  /* sin la capa que se mezcla en «overlay»: en muchos celulares esa mezcla no se aplica y la capa se ve como un velo gris */
+  .entrada .grano--sobre{display:none}
 }
 @media (max-width:600px){ .pt-cols{grid-template-columns:minmax(0,1fr)} }
 
