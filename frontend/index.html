@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>IVS CODEX</title>
 <meta name="description" content="Buscador integrado de repositorios judiciales oficiales y doctrina. Arme la consulta y la plataforma lo lleva a las bases oficiales.">
+<link rel="preload" as="image" href="./grano.png" media="(min-width:761px)">
+<link rel="preload" as="image" href="./grano-sobre.png" media="(min-width:761px)">
+<link rel="preload" as="image" href="./grano-m.png" media="(max-width:760px)">
+<link rel="preload" as="image" href="./grano-sobre-m.png" media="(max-width:760px)">
 <link rel="icon" type="image/png" href="./favicon.png?v=16">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,9 +116,9 @@ strong,b{font-weight:500}
   background:var(--grano) 0 0/256px 256px repeat;opacity:.035
 }
 @keyframes grano{
-  0%{transform:translate(0,0)}12.5%{transform:translate(-61px,37px)}25%{transform:translate(43px,-88px)}
-  37.5%{transform:translate(-97px,-19px)}50%{transform:translate(18px,71px)}62.5%{transform:translate(79px,14px)}
-  75%{transform:translate(-28px,-63px)}87.5%{transform:translate(57px,96px)}100%{transform:translate(0,0)}
+  0%{background-position:0 0}12.5%{background-position:-61px 37px}25%{background-position:43px -88px}
+  37.5%{background-position:-97px -19px}50%{background-position:18px 71px}62.5%{background-position:79px 14px}
+  75%{background-position:-28px -63px}87.5%{background-position:57px 96px}100%{background-position:0 0}
 }
 
 /* la marca escrita, con el punto redondo del logo y no el "·" de la fuente */
@@ -381,13 +385,13 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 }
 .rotulo-fuente{
   display:flex;align-items:center;gap:18px;margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid var(--line);
-  font:500 18px/1.3 var(--sans);letter-spacing:-.01em;color:var(--fg)
+  font:500 18px/1.3 var(--sans);letter-spacing:-.01em;color:var(--fg);min-width:0;overflow-wrap:anywhere
 }
 /* el sello: la sigla de la base en un aro doble, del tono de esa base */
 .rotulo-fuente::before{
   content:attr(data-cod);flex:none;display:grid;place-items:center;width:78px;height:78px;padding:10px;border-radius:50%;
   border:1px solid var(--punto,var(--gold));box-shadow:inset 0 0 0 4px var(--bg),inset 0 0 0 5px var(--punto,var(--gold));
-  font:500 10px/1.15 var(--caps);letter-spacing:.1em;text-align:center;color:var(--fg)
+  font:500 10px/1.15 var(--caps);letter-spacing:.1em;text-align:center;color:var(--fg);overflow:hidden;overflow-wrap:normal
 }
 .panel .fuente{padding:22px 0;margin:0;border:0;border-bottom:1px solid var(--line);background:none;transition:border-color .5s}
 .panel .fuente:hover{border-bottom-color:var(--gold-55)}
@@ -713,7 +717,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
    encima de todo —letras incluidas— mezclado en "overlay", corridos medio
    ciclo entre sí para que se muevan como película. */
 .entrada .grano{
-  position:fixed;z-index:0;inset:-120px;opacity:1;
+  position:fixed;z-index:0;inset:0;opacity:1;
   background:url("./grano.png") 0 0/256px 256px repeat;
   animation:grano .9s steps(1,end) infinite
 }
@@ -740,7 +744,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-nav button:hover,.pt-nav button:active{color:var(--gold)}
 .pt-hdr .btn{margin-left:auto;padding:9px 16px 8px;font-size:13.5px}
 
-.pt-hero{position:relative;display:flex;min-height:100vh;min-height:100svh}
+.pt-hero{position:relative;display:flex;min-height:100vh;min-height:100svh;overflow-x:clip}
 .pt-sello{
   position:absolute;left:80vw;top:44%;width:128vh;height:128vh;color:var(--fg);pointer-events:none;
   transform:translate(-50%,calc(-50% + var(--hp,0) * 90px));opacity:calc(1 - var(--hp,0) * .6)
@@ -872,10 +876,23 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 }
 @media (max-width:760px){
   .pt-nav{display:none}
-  .pt-brand{width:170px}
-  .pt-hero{min-height:720px}
-  .pt-sello{left:90vw;top:28%;width:125vw;height:125vw}
-  .pt-marca{font-size:16vw}
+  /* cabecera: la marca y el botón caben en una fila sin salirse de la pantalla */
+  .pt-hdr{gap:10px}
+  .pt-brand{width:150px}
+  .pt-brand__tag{font-size:12px}
+  .pt-hdr .btn{padding:8px 13px 7px;font-size:12.5px;white-space:nowrap}
+  /* portada: una sola pantalla, con el sello arriba y debajo, pegados, titular, botones y nombre */
+  .pt-hero{min-height:100vh;min-height:100svh}
+  .pt-sello{left:72vw;top:33%;width:104vw;height:104vw}
+  .pt-copia{justify-content:flex-end;padding:0 var(--pad) 4px}
+  .pt-titular{max-width:none;font-size:clamp(28px,8.4vw,36px)}
+  .pt-acciones{margin-top:22px}
+  .pt-marca{margin:30px 0 0;padding-top:0;font-size:15.4vw}
+  .pt-sec{padding-top:44px}
+  .pt-cols{margin-top:30px}
+  /* el grano, más fino y más suave que en la pantalla grande */
+  .entrada .grano{background-image:url("./grano-m.png");background-size:128px 128px;opacity:.75}
+  .entrada .grano--sobre{background-image:url("./grano-sobre-m.png");background-size:128px 128px;opacity:.16}
 }
 @media (max-width:600px){ .pt-cols{grid-template-columns:minmax(0,1fr)} }
 
