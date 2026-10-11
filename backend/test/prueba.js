@@ -146,7 +146,7 @@ chk('/api/salud responde', s.ok===true);
 let v=await (await fetch('http://127.0.0.1:9912/api/verificar?url=https://www.csjn.gov.ar/x')).json();
 chk('/api/verificar acepta una fuente oficial', v.valida===true);
 let f=await fetch('http://127.0.0.1:9912/');
-chk('sirve el frontend en la raiz', f.status===200 && (await f.text()).includes('Iuris Et De Iure'));
+chk('sirve el frontend en la raiz', f.status===200 && (await f.text()).includes('IVS CODEX'));
 let n=await (await fetch('http://127.0.0.1:9912/api/inexistente')).json();
 chk('las rutas inexistentes devuelven JSON', n.ok===false && n.codigo==='RUTA_INEXISTENTE');
 

@@ -228,12 +228,19 @@ async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anio
   };
 }
 
+/** Largo máximo de una consulta de búsqueda. */
+const MAX_CONSULTA = 500;
+
 // El catálogo de fuentes vive en lib/fuentes.js: lo comparten estas rutas y
 // el verificador de citas (lib/verificarCita.js).
 for (const { slug, buscar } of FUENTES) {
   router.post(`/indice/${slug}/buscar`, async (req, res, next) => {
     try {
-      const { q, pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo, norma } = req.body || {};
+      const cuerpo = req.body || {};
+      const { pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo, norma } = cuerpo;
+      // La consulta es solo texto y de largo acotado: un objeto o un texto de
+      // megabytes no debe llegar a los buscadores oficiales.
+      const q = typeof cuerpo.q === 'string' ? cuerpo.q.trim().slice(0, MAX_CONSULTA) : '';
       const art = String(articulo || '').trim();
       const esPorArticulo = /^\d{1,4}(\s*(bis|ter|quater))?$/i.test(art);
 
@@ -359,14 +366,15 @@ for (const { slug, buscar } of FUENTES) {
    */
   router.post(`/indice/${slug}/fragmentos`, async (req, res, next) => {
     try {
-      const { q, urls } = req.body || {};
+      const urls = req.body?.urls;
+      const q = typeof req.body?.q === 'string' ? req.body.q.trim().slice(0, MAX_CONSULTA) : '';
       if (!q) throw errores.consultaVacia();
       if (!Array.isArray(urls) || !urls.length) {
         return res.json({ ok: true, fragmentos: [] });
       }
 
       const arranque = Date.now();
-      const pedidas = urls.filter((u) => typeof u === 'string' && u).slice(0, MAX_FRAGMENTOS);
+      const pedidas = urls.filter((u) => typeof u === 'string' && u && u.length <= 2048).slice(0, MAX_FRAGMENTOS);
 
       const fragmentos = [];
       for (const url of pedidas) {
@@ -448,6 +456,10 @@ router.get('/legislacion/normas', (_req, res) => {
  */
 router.get('/legislacion/:norma/:articulo', async (req, res, next) => {
   try {
+    // Las claves de norma son cortas y alfanuméricas; el artículo, un número.
+    if (!/^[a-z0-9_-]{1,40}$/i.test(req.params.norma) || req.params.articulo.length > 20) {
+      throw errores.normaDesconocida(req.params.norma);
+    }
     res.json({ ok: true, ...(await articuloDe(req.params.norma, req.params.articulo)) });
   } catch (e) {
     next(e instanceof ErrorApp ? e : errores.indiceFuenteFalla('infoleg', e?.message));
@@ -464,7 +476,14 @@ router.get('/legislacion/:norma/:articulo', async (req, res, next) => {
  * red del servidor, o nuestro código. El frontend, cuando el servidor no
  * llega a SAIJ, repite la consulta desde el navegador de quien busca.
  */
+let ultimoEstado = { en: 0, dato: null };
 router.get('/fuentes/estado', async (_req, res) => {
+  // Cada llamada hace una búsqueda de verdad en cada sitio oficial: se
+  // reutiliza el último resultado durante 2 minutos para que esta ruta no
+  // sirva para multiplicar pedidos contra terceros.
+  if (ultimoEstado.dato && Date.now() - ultimoEstado.en < 120000) {
+    return res.json({ ok: true, fuentes: ultimoEstado.dato });
+  }
   const fuentes = await Promise.all(
     FUENTES.map(async ({ slug, buscar }) => {
       const arranque = Date.now();
@@ -482,5 +501,6 @@ router.get('/fuentes/estado', async (_req, res) => {
       }
     })
   );
+  ultimoEstado = { en: Date.now(), dato: fuentes };
   res.json({ ok: true, fuentes });
 });

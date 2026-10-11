@@ -12,6 +12,7 @@
 
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 import {
@@ -34,14 +35,59 @@ const app = express();
  * Middlewares base
  * ------------------------------------------------------------------ */
 
-app.disable('x-powered-by');
+app.disable('x-powered-by'); // no anunciar que es Express (reconocimiento de la tecnología)
+
+/**
+ * Cabeceras de seguridad (helmet) + política de contenido (CSP).
+ *
+ * - CSP: aunque se colara un script ajeno en un texto, el navegador no lo
+ *   ejecuta (script-src) ni manda datos a un servidor que no esté en la lista
+ *   (connect-src), no se puede incrustar la página en otra (frame-ancestors,
+ *   previene clickjacking) ni cambiar a dónde apuntan los enlaces relativos
+ *   (base-uri). La página usa scripts y estilos en línea, por eso
+ *   'unsafe-inline'; el resto es lo más cerrado que permite su estructura.
+ * - HSTS: el navegador deja de aceptar http:// para este dominio.
+ * - nosniff: el navegador no adivina el tipo de un archivo (evita que un
+ *   texto subido se interprete como script).
+ * - Referrer-Policy: no se filtran las URL internas hacia otros sitios.
+ * - CORP cross-origin: el frontend vive en otro dominio (GitHub Pages) y
+ *   necesita leer las respuestas de la API.
+ */
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: false,
+      directives: {
+        'default-src': ["'self'"],
+        'script-src': ["'self'", "'unsafe-inline'"],
+        'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        'font-src': ["'self'", 'https://fonts.gstatic.com'],
+        'img-src': ["'self'", 'data:', 'blob:'],
+        'connect-src': ["'self'", 'https://www.saij.gob.ar', 'https://apis.datos.gob.ar'],
+        'object-src': ["'none'"],
+        'base-uri': ["'none'"],
+        'form-action': ["'self'"],
+        'frame-ancestors': ["'none'"],
+      },
+    },
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+    crossOriginEmbedderPolicy: false,
+    referrerPolicy: { policy: 'no-referrer' },
+    strictTransportSecurity: { maxAge: 31536000, includeSubDomains: true },
+  })
+);
+// Permisos del navegador que esta aplicación nunca usa.
+app.use((_req, res, next) => {
+  res.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  next();
+});
 
 // Detras de un proxy (nginx, Render, Railway) esto hace que el rate limit
 // vea la IP real del visitante y no la del proxy.
 app.set('trust proxy', 1);
 
 // Cuerpos JSON chicos: solo mandamos una URL.
-app.use(express.json({ limit: '32kb' }));
+app.use(express.json({ limit: '32kb', strict: true }));
 
 /**
  * CORS.
@@ -138,6 +184,25 @@ const limiteCitas = rateLimit({
 });
 app.use('/api/verificar-cita', limiteCitas);
 
+// Dos rutas con costo externo propio: la propuesta de sinónimos gasta saldo de
+// una API de pago, y el estado de las fuentes dispara una búsqueda real en
+// cada sitio oficial. Un límite aparte, bajo, evita el abuso (gasto ajeno y
+// carga contra terceros).
+const limiteCostoso = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    codigo: 'DEMASIADAS_PETICIONES',
+    mensaje: 'Se alcanzó el límite de esta operación. Espere un rato y vuelva a intentar.',
+  },
+});
+app.use('/api/tesauro/proponer', limiteCostoso);
+app.use('/api/fuentes/estado', limiteCostoso);
+app.use('/api/cache', limiteCostoso);
+
 /* ------------------------------------------------------------------ *
  * Rutas
  * ------------------------------------------------------------------ */
@@ -146,7 +211,7 @@ app.use('/api', router);
 app.use('/api', routerIndice);
 app.use('/api', routerAuth);
 app.use('/api', routerCitas);
-app.use(express.static(DIR_PUBLICO, { extensions: ['html'], maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0 }));
+app.use(express.static(DIR_PUBLICO, { extensions: ['html'], dotfiles: 'ignore', index: 'index.html', maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0 }));
 
 app.use((req, res) => {
   if (req.path.startsWith('/api')) {

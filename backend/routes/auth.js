@@ -23,16 +23,56 @@ export const router = express.Router();
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Largos máximos: el correo de la norma llega a 254 caracteres; la contraseña
+// se acota para que nadie mande megabytes a scrypt (agotar CPU/memoria).
+const MAX_EMAIL = 254;
+const MIN_PASSWORD = 8;
+const MAX_PASSWORD = 128;
+
+// Nada de lo que devuelve este router debe quedar en cachés intermedias ni en
+// el navegador: llevan tokens y datos personales.
+router.use((_req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
+/**
+ * Freno por cuenta (además del límite por IP de index.js): tras 6 fallos
+ * seguidos con el mismo correo se bloquea ese correo 15 minutos. Una
+ * botnet con muchas IPs no puede probar contraseñas sin fin contra una
+ * sola cuenta. En memoria: se reinicia con el servidor, y está acotado.
+ */
+const FALLOS = new Map();
+const MAX_FALLOS = 6;
+const BLOQUEO_MS = 15 * 60 * 1000;
+function bloqueada(correo) {
+  const f = FALLOS.get(correo);
+  if (!f) return false;
+  if (f.hasta && f.hasta > Date.now()) return true;
+  if (f.hasta) FALLOS.delete(correo);
+  return false;
+}
+function anotarFallo(correo) {
+  if (FALLOS.size > 5000) FALLOS.clear(); // tope: no es un vector de memoria
+  const f = FALLOS.get(correo) || { n: 0, hasta: 0 };
+  f.n += 1;
+  if (f.n >= MAX_FALLOS) { f.hasta = Date.now() + BLOQUEO_MS; f.n = 0; }
+  FALLOS.set(correo, f);
+}
+
 function tokenDe(req) {
   const cab = req.get('authorization') || '';
   const m = /^Bearer\s+(.+)$/i.exec(cab.trim());
-  return m ? m[1].trim() : null;
+  return m && m[1].trim().length <= 200 ? m[1].trim() : null;
 }
 
 function validarEmailYPassword(email, password) {
-  if (!email) throw errores.emailFaltante();
-  if (!EMAIL_RE.test(String(email).trim())) throw errores.emailInvalido();
-  if (!password || String(password).length < 8) throw errores.passwordDebil();
+  // Solo cadenas: un objeto en el JSON ({"$ne":""}) no debe llegar más lejos.
+  if (!email || typeof email !== 'string') throw errores.emailFaltante();
+  const correo = email.trim();
+  if (correo.length > MAX_EMAIL || !EMAIL_RE.test(correo)) throw errores.emailInvalido();
+  if (typeof password !== 'string' || password.length < MIN_PASSWORD || password.length > MAX_PASSWORD
+      || password.toLowerCase() === correo.toLowerCase()) throw errores.passwordDebil();
 }
 
 /** Middleware para rutas futuras que necesiten sesión. Deja req.usuarioId. */
@@ -68,10 +108,15 @@ router.post('/auth/registro', async (req, res, next) => {
 router.post('/auth/login', async (req, res, next) => {
   try {
     const { email, password } = req.body || {};
-    if (!email) throw errores.emailFaltante();
-    if (!password) throw errores.credencialesInvalidas();
+    if (!email || typeof email !== 'string') throw errores.emailFaltante();
+    if (!password || typeof password !== 'string' || password.length > MAX_PASSWORD || email.length > MAX_EMAIL) {
+      throw errores.credencialesInvalidas();
+    }
+    const correo = email.trim().toLowerCase();
+    if (bloqueada(correo)) throw errores.demasiadosIntentos();
     const usuario = await verificarCredenciales(email, password);
-    if (!usuario) throw errores.credencialesInvalidas();
+    if (!usuario) { anotarFallo(correo); throw errores.credencialesInvalidas(); }
+    FALLOS.delete(correo);
     const token = await crearSesion(usuario.id);
     res.json({ ok: true, token, usuario });
   } catch (e) {
