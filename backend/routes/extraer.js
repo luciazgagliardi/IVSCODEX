@@ -11,6 +11,7 @@
  */
 
 import express from 'express';
+import crypto from 'node:crypto';
 import { dominioHabilitado } from '../lib/descargador.js';
 import {
   obtenerDocumento,
@@ -33,9 +34,20 @@ import {
 
 export const router = express.Router();
 
+/** Largo máximo de un enlace aceptado (los navegadores cortan en ~2000). */
+const MAX_URL = 2048;
+
+/** El enlace tiene que ser una cadena razonable: no un objeto ni un texto enorme. */
+function urlDe(valor) {
+  if (typeof valor !== 'string' || !valor.trim()) throw errores.urlFaltante();
+  if (valor.length > MAX_URL) throw errores.urlInvalida('es demasiado largo');
+  return valor.trim();
+}
+
 router.post('/extraer', async (req, res, next) => {
   try {
-    const { url, refrescar } = req.body || {};
+    const { refrescar } = req.body || {};
+    const url = urlDe(req.body?.url);
     const arranque = Date.now();
     const salida = await obtenerDocumento(url, { refrescar });
     res.json({ ...salida, ms: Date.now() - arranque });
@@ -52,7 +64,8 @@ router.post('/extraer', async (req, res, next) => {
  */
 router.post('/ocr', async (req, res, next) => {
   try {
-    const { url, refrescar } = req.body || {};
+    const { refrescar } = req.body || {};
+    const url = urlDe(req.body?.url);
     const arranque = Date.now();
     const salida = await ocrDocumento(url, { refrescar });
     res.json({ ...salida, ms: Date.now() - arranque });
@@ -173,8 +186,6 @@ router.get('/salud', (_req, res) => {
   res.json({
     ok: true,
     servicio: 'juris-et-de-jure',
-    node: process.version,
-    tiempoActivoSeg: Math.round(process.uptime()),
     cacheHoras: CACHE_HORAS,
     maxMB: Math.round(MAX_BYTES / 1024 / 1024),
     timeoutSeg: Math.round(TIMEOUT_MS / 1000),
@@ -201,8 +212,29 @@ router.get('/verificar', (req, res) => {
   }
 });
 
-router.delete('/cache', async (_req, res, next) => {
+/**
+ * Vaciar el cache cambia el comportamiento de todos (cada documento vuelve a
+ * pedirse al sitio oficial) y antes lo podía hacer cualquiera: se exige la
+ * clave de administración (ADMIN_TOKEN, cabecera X-Admin-Token). Sin
+ * ADMIN_TOKEN configurado, solo se acepta desde la propia máquina y fuera de
+ * producción.
+ */
+function puedeAdministrar(req) {
+  const clave = process.env.ADMIN_TOKEN || '';
+  if (clave) {
+    const dada = String(req.get('X-Admin-Token') || '');
+    const a = crypto.createHash('sha256').update(dada).digest();
+    const b = crypto.createHash('sha256').update(clave).digest();
+    return crypto.timingSafeEqual(a, b);
+  }
+  const ip = req.socket?.remoteAddress || '';
+  const local = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+  return local && process.env.NODE_ENV !== 'production' && !req.get('X-Forwarded-For');
+}
+
+router.delete('/cache', async (req, res, next) => {
   try {
+    if (!puedeAdministrar(req)) throw errores.prohibido();
     const n = await vaciarCache();
     res.json({ ok: true, borradas: n });
   } catch (e) {
@@ -210,15 +242,27 @@ router.delete('/cache', async (_req, res, next) => {
   }
 });
 
-/** Manejador de errores propio de la API: siempre responde JSON. */
-export function manejadorErrores(err, _req, res, _next) {
+/**
+ * Manejador de errores propio de la API: siempre responde JSON y nunca
+ * devuelve detalles internos (stack, rutas, mensajes de librerías). El
+ * detalle completo va solo al registro del servidor.
+ */
+export function manejadorErrores(err, req, res, _next) {
+  if (res.headersSent) return;
   if (err instanceof ErrorApp) {
     return res.status(err.http).json(err.aJSON());
   }
-  console.error('[error no previsto]', err);
+  // Errores del analizador del cuerpo (express.json / express.raw).
+  if (err && err.type === 'entity.too.large') {
+    return res.status(413).json(errores.cuerpoDemasiado().aJSON());
+  }
+  if (err && (err.type === 'entity.parse.failed' || err.type === 'encoding.unsupported' || err instanceof SyntaxError)) {
+    return res.status(400).json(errores.cuerpoInvalido().aJSON());
+  }
+  console.error('[error no previsto]', req?.method, req?.path, err && err.stack ? err.stack : err);
   res.status(500).json({
     ok: false,
     codigo: 'ERROR_INTERNO',
-    mensaje: 'Se rompió algo del lado del servidor. Revise la consola donde corre npm start para ver el detalle.',
+    mensaje: 'Ocurrió un error inesperado en el servidor. Intente de nuevo en unos minutos.',
   });
 }

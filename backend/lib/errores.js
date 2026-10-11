@@ -6,6 +6,18 @@
  * pueda leer y entender que hacer. Nada de "Error 500" a secas.
  */
 
+/**
+ * Todo lo que llega de afuera (una URL, un nombre de archivo, el mensaje de
+ * un error de red) y se repite dentro de un mensaje pasa por acá: sin
+ * caracteres de control, sin comillas ni signos de marcado, y con tope de
+ * largo. Evita que un pedido arme un mensaje a medida (HTML, saltos de
+ * línea, textos enormes) que después se muestre en pantalla.
+ */
+const lim = (valor, max = 80) =>
+  String(valor ?? '')
+    .replace(/[\u0000-\u001f\u007f<>"'`]/g, '')
+    .slice(0, max);
+
 export class ErrorApp extends Error {
   /**
    * @param {string} codigo   identificador estable, ej. DOMINIO_NO_PERMITIDO
@@ -42,21 +54,21 @@ export const errores = {
   urlInvalida: (detalle) =>
     new ErrorApp(
       'URL_INVALIDA',
-      `Ese enlace no se entiende como una dirección web${detalle ? ': ' + detalle : ''}. Tiene que empezar con http:// o https://`,
+      `Ese enlace no se entiende como una dirección web${detalle ? ': ' + lim(detalle, 160) : ''}. Tiene que empezar con http:// o https://`,
       400
     ),
 
   esquemaInvalido: (esquema) =>
     new ErrorApp(
       'ESQUEMA_INVALIDO',
-      `Solo se pueden descargar enlaces http o https. Recibí "${esquema}".`,
+      `Solo se pueden descargar enlaces http o https. Recibí "${lim(esquema, 20)}".`,
       400
     ),
 
   dominioNoPermitido: (host) =>
     new ErrorApp(
       'DOMINIO_NO_PERMITIDO',
-      `El dominio "${host}" no está en la lista de fuentes habilitadas. Agréguelo en server/config.js si es una fuente oficial que desea usar.`,
+      `El dominio "${lim(host, 100)}" no está en la lista de fuentes habilitadas.`,
       403,
       { host }
     ),
@@ -64,7 +76,7 @@ export const errores = {
   redPrivada: (host, ip) =>
     new ErrorApp(
       'RED_PRIVADA',
-      `"${host}" resuelve a una dirección interna (${ip}). El servidor no descarga de la red privada por seguridad.`,
+      `"${lim(host, 100)}" resuelve a una dirección interna. El servidor no descarga de la red privada por seguridad.`,
       403
     ),
 
@@ -149,7 +161,7 @@ export const errores = {
   pdfIlegible: (detalle) =>
     new ErrorApp(
       'PDF_ILEGIBLE',
-      `No se pudo abrir el PDF${detalle ? ': ' + detalle : ''}. Puede estar protegido con contraseña o dañado.`,
+      `No se pudo abrir el PDF${detalle ? ': ' + lim(detalle, 160) : ''}. Puede estar protegido con contraseña o dañado.`,
       422
     ),
 
@@ -170,21 +182,21 @@ export const errores = {
   archivoNoSoportado: (nombre) =>
     new ErrorApp(
       'ARCHIVO_NO_SOPORTADO',
-      `No se puede leer ${nombre ? `"${nombre}"` : 'ese archivo'}: se leen PDF y .doc de Word. Si es un .docx, ábralo y guárdelo como PDF, o copie el texto y péguelo a mano.`,
+      `No se puede leer ${nombre ? `"${lim(nombre, 80)}"` : 'ese archivo'}: se leen PDF y .doc de Word. Si es un .docx, ábralo y guárdelo como PDF, o copie el texto y péguelo a mano.`,
       415
     ),
 
   docIlegible: (detalle) =>
     new ErrorApp(
       'DOC_ILEGIBLE',
-      `No se pudo leer el documento .doc${detalle ? ': ' + detalle : ''}. Puede estar dañado o vacío.`,
+      `No se pudo leer el documento .doc${detalle ? ': ' + lim(detalle, 160) : ''}. Puede estar dañado o vacío.`,
       422
     ),
 
   redInalcanzable: (host, detalle) =>
     new ErrorApp(
       'RED_INALCANZABLE',
-      `No se pudo conectar con "${host}"${detalle ? ' (' + detalle + ')' : ''}. Revise su conexión y que el sitio esté en línea.`,
+      `No se pudo conectar con "${host}"${detalle ? ' (' + lim(detalle, 120) + ')' : ''}. Revise su conexión y que el sitio esté en línea.`,
       502
     ),
 
@@ -216,14 +228,14 @@ export const errores = {
   indiceMzaFalla: (detalle) =>
     new ErrorApp(
       'INDICE_MZA_FALLA',
-      `El buscador de la SCJM no respondió como se esperaba${detalle ? ': ' + detalle : ''}. Puede estar caído o haber cambiado de formato; pruebe de nuevo en un rato.`,
+      `El buscador de la SCJM no respondió como se esperaba${detalle ? ': ' + lim(detalle, 160) : ''}. Puede estar caído o haber cambiado de formato; pruebe de nuevo en un rato.`,
       502
     ),
 
   indiceFuenteFalla: (fuente, detalle) =>
     new ErrorApp(
       'INDICE_FUENTE_FALLA',
-      `El buscador de "${fuente}" no respondió como se esperaba${detalle ? ': ' + detalle : ''}. Puede estar caído, lento o haber cambiado de formato; pruebe de nuevo en un rato.`,
+      `El buscador de "${fuente}" no respondió como se esperaba${detalle ? ': ' + lim(detalle, 160) : ''}. Puede estar caído, lento o haber cambiado de formato; pruebe de nuevo en un rato.`,
       502,
       { fuente }
     ),
@@ -231,21 +243,21 @@ export const errores = {
   normaDesconocida: (clave) =>
     new ErrorApp(
       'NORMA_DESCONOCIDA',
-      `No tengo cargada la norma "${clave}". Por ahora se pueden consultar el Código Civil y Comercial, la Constitución, la LCT, la Ley de Concursos, la de Procedimientos Administrativos y la de Amparo.`,
+      `No tengo cargada la norma "${lim(clave, 40)}". Por ahora se pueden consultar el Código Civil y Comercial, la Constitución, la LCT, la Ley de Concursos, la de Procedimientos Administrativos y la de Amparo.`,
       400
     ),
 
   articuloInvalido: (num) =>
     new ErrorApp(
       'ARTICULO_INVALIDO',
-      `"${num}" no parece un número de artículo. Escriba sólo el número (por ejemplo 1741, o "76 bis").`,
+      `"${lim(num, 20)}" no parece un número de artículo. Escriba sólo el número (por ejemplo 1741, o "76 bis").`,
       400
     ),
 
   articuloNoEncontrado: (num, norma) =>
     new ErrorApp(
       'ARTICULO_NO_ENCONTRADO',
-      `No se encontró el artículo ${num} en ${norma}. Puede que no exista, que esté derogado, o que ese número corresponda a otra norma.`,
+      `No se encontró el artículo ${lim(num, 20)} en ${lim(norma, 80)}. Puede que no exista, que esté derogado, o que ese número corresponda a otra norma.`,
       404
     ),
 
@@ -258,14 +270,14 @@ export const errores = {
   passwordDebil: () =>
     new ErrorApp(
       'PASSWORD_DEBIL',
-      'La contraseña tiene que tener al menos 8 caracteres.',
+      'La contraseña debe tener entre 8 y 128 caracteres y no puede ser igual al correo.',
       400
     ),
 
   emailYaRegistrado: () =>
     new ErrorApp(
       'EMAIL_YA_REGISTRADO',
-      'Ya existe una cuenta con ese correo. Iniciá sesión en vez de registrarte de nuevo.',
+      'Ya existe una cuenta con ese correo. Inicie sesión en vez de registrarse de nuevo.',
       409
     ),
 
@@ -276,10 +288,26 @@ export const errores = {
       401
     ),
 
+  demasiadosIntentos: () =>
+    new ErrorApp(
+      'DEMASIADOS_INTENTOS',
+      'Demasiados intentos con esa cuenta. Espere unos minutos y vuelva a probar.',
+      429
+    ),
+
+  cuerpoDemasiado: () =>
+    new ErrorApp('CUERPO_DEMASIADO_GRANDE', 'El pedido es más grande de lo permitido.', 413),
+
+  cuerpoInvalido: () =>
+    new ErrorApp('PEDIDO_INVALIDO', 'El pedido no tiene un formato válido.', 400),
+
+  prohibido: () =>
+    new ErrorApp('PROHIBIDO', 'Esta operación no está permitida.', 403),
+
   noAutenticado: () =>
     new ErrorApp(
       'NO_AUTENTICADO',
-      'Iniciá sesión para hacer esto.',
+      'Inicie sesión para hacer esto.',
       401
     ),
 

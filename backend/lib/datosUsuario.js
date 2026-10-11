@@ -17,6 +17,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { DIR_USUARIOS } from '../config.js';
+import { enCola, escribirJsonAtomico } from './almacen.js';
 
 const CARPETA = path.join(DIR_USUARIOS, 'datos');
 
@@ -34,7 +35,7 @@ const LARGO_MAX_CORTO = 300; // búsqueda, url
 let listo = false;
 async function asegurarCarpeta() {
   if (listo) return;
-  await fs.mkdir(CARPETA, { recursive: true });
+  await fs.mkdir(CARPETA, { recursive: true, mode: 0o700 });
   listo = true;
 }
 
@@ -187,7 +188,10 @@ function sanear({ fav, hist, pasajes, anillos }) {
 export async function guardarDatos(usuarioId, entrada) {
   await asegurarCarpeta();
   const dato = { ...sanear(entrada || {}), actualizadoEn: Date.now() };
-  await fs.writeFile(archivoDe(usuarioId), JSON.stringify(dato), 'utf8');
+  // Atómico y en cola por usuario: dos pestañas guardando a la vez no
+  // dejan el archivo a medio escribir.
+  const archivo = archivoDe(usuarioId);
+  await enCola(archivo, () => escribirJsonAtomico(archivo, dato));
   return dato;
 }
 

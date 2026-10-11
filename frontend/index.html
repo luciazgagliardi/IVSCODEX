@@ -6,6 +6,12 @@
 <title>IVS CODEX</title>
 <meta name="description" content="Buscador integrado de repositorios judiciales oficiales y doctrina. Arme la consulta y la plataforma lo lleva a las bases oficiales.">
 <meta name="theme-color" content="#100e0b">
+<!-- Política de contenido: la página solo puede cargar scripts propios, hablar con su
+     propio servidor (API), con el backend publicado, con SAIJ y con la API de
+     series de datos.gob.ar, y nunca cargar plugins ni cambiar su base de enlaces. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:3000 https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net https://www.saij.gob.ar https://apis.datos.gob.ar; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="referrer" content="no-referrer">
+
 <link rel="preload" as="image" href="./grano.png" media="(min-width:761px)">
 <link rel="preload" as="image" href="./grano-sobre.png" media="(min-width:761px)">
 <link rel="preload" as="image" href="./grano-m.png" media="(max-width:760px)">
