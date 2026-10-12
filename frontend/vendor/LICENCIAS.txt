@@ -1,0 +1,7 @@
+Bibliotecas de terceros incluidas en esta carpeta (sin modificar):
+
+- pdf-lib 1.17.1 — MIT — https://github.com/Hopding/pdf-lib
+  (pdf-lib.min.js: unir, dividir, foliar y armar PDF)
+
+- PDF.js 4.10.38 (pdfjs-dist) — Apache-2.0 — https://github.com/mozilla/pdf.js
+  (pdf.min.mjs y pdf.worker.min.mjs: dibujar las páginas para reducir el tamaño)

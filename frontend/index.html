@@ -260,7 +260,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
   opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility 0s .45s
 }
 .menu.is-on{opacity:1;visibility:visible;transition:opacity .45s var(--ease)}
-.menu__grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0 clamp(24px,3vw,56px)}
+.menu__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(24px,3vw,56px)}
 .menu__grupo h2{margin:0;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:13px;font-weight:400;color:var(--mute-2)}
 .menu__item{display:block;width:100%;padding:18px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;transition:border-color .5s}
 .menu__item:hover{border-bottom-color:var(--gold-55)}
@@ -623,6 +623,39 @@ mark.actual{background:var(--gold);color:var(--bg)}
 @media (max-width:640px){ .tramo .fila{grid-template-columns:minmax(0,1fr)} }
 input[type=date]{color-scheme:dark;min-height:46px}
 input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
+
+
+/* ---------- herramientas para PDF ---------- */
+.her{margin:0 0 clamp(36px,5vw,64px);padding-top:28px;border-top:1px solid var(--line)}
+.her-cab{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 18px;align-items:start;margin-bottom:20px}
+.her-n{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--gold);border-radius:50%;font:500 14px/1 var(--caps);color:var(--gold)}
+.her-cab h2{margin:3px 0 4px;font:500 clamp(20px,2vw,26px)/1.2 var(--sans);letter-spacing:-.02em}
+.her-cab p{margin:0;max-width:62ch;color:var(--mute);font-size:14.5px}
+.her-zona{display:block;margin:0 0 14px;padding:18px 22px;border:1px dashed rgba(241,238,230,.22);border-radius:999px;
+  color:var(--mute);cursor:pointer;transition:border-color .3s,color .3s}
+.her-zona:hover,.her-zona:focus-within{border-color:var(--gold);color:var(--fg)}
+.her-zona__t b{color:var(--fg);font-weight:500}
+.her-zona input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.her-lista{list-style:none;margin:0 0 14px;padding:0;border-top:1px solid var(--line)}
+.her-lista li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 0;border-bottom:1px solid var(--line)}
+.her-nom{flex:1 1 220px;min-width:0;overflow-wrap:anywhere;font-size:14.5px}
+.her-peso{font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.her-ctl{display:flex;gap:6px}
+.her-opc{display:grid;gap:12px;margin:0 0 16px}
+.her-opc--fila{grid-template-columns:repeat(auto-fit,minmax(160px,1fr));align-items:end}
+.her-opc--fila .her-radio{grid-column:1/-1}
+.her-campo{margin:0}
+.her-radio{display:flex;align-items:flex-start;gap:10px;font-size:14.5px;cursor:pointer}
+.her-radio input{margin-top:5px;accent-color:var(--gold)}
+.her-radio em{font-style:normal;color:var(--mute);font-size:13px}
+.her-sub{display:grid;gap:8px;margin:0 0 4px 28px}
+.her-acc{display:flex;flex-wrap:wrap;gap:10px;margin:2px 0 8px}
+.her-acc .btn[disabled],.her-ctl .mini[disabled]{opacity:.4;cursor:not-allowed}
+.her-estado{min-height:1.4em;margin:6px 0 0;font-size:14px;color:var(--fg)}
+.her-estado.mal{color:#e0a0a0}
+.her-nota{margin:10px 0 0;max-width:70ch;font-size:13px;line-height:1.55;color:var(--mute)}
+.her-nota--solo{margin:0;font-size:14px}
+.her-texto{width:100%;margin:10px 0;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:none;color:var(--fg);font:400 14px/1.6 var(--sans);resize:vertical}
 
 /* ---------- calendario judicial ---------- */
 .cal{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,1fr);gap:28px clamp(28px,4vw,64px);align-items:start}
@@ -3691,7 +3724,7 @@ function expandir(termino){
    ============================================================ */
 var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos","Requisitos"],["comparar","Comparar"],["norma","Norma"],["fuentes","Fuentes"],
           ["citas","Citar"],["verificar","Verificar"],["guardados","Guardados"],["cuenta","Cuenta"],
-          ["calculos","Cálculos"],["plazos","Plazos"],["glosario","Glosario"]];
+          ["calculos","Cálculos"],["plazos","Plazos"],["glosario","Glosario"],["herramientas","Herramientas"]];
 
 /* La cabecera muestra las cinco solapas que más se usan; las once están en
    el índice que abre «Todas las secciones», agrupadas por lo que se hace en
@@ -3699,7 +3732,7 @@ var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos
    a esa cantidad, dejaban de leerse como un menú.
    Cada sección abre con su palabra latina y su título (ver pintarCabecera). */
 var PRINCIPALES=["buscar","lector","ramas","calculos","fuentes","verificar"];
-var GRUPOS_NAV=["Investigar","Leer y citar","Calcular","Fuentes","Archivo personal"];
+var GRUPOS_NAV=["Investigar","Leer y citar","Calcular","Preparar","Fuentes","Archivo personal"];
 var SECCIONES={
   buscar:["QVAESTIO","Investigar","Las seis bases a la vez"],
   comparar:["COLLATIO","Investigar","Una consulta, por jurisdicción"],
@@ -3714,7 +3747,8 @@ var SECCIONES={
   cuenta:["RATIO","Archivo personal","Sincronización entre dispositivos"],
   calculos:["CALCVLVS","Calcular","Intereses, índices, despido y más"],
   plazos:["TEMPVS","Calcular","Plazos, prescripción y calendario"],
-  glosario:["VERBA","Leer y citar","Latín jurídico"]
+  glosario:["VERBA","Leer y citar","Latín jurídico"],
+  herramientas:["INSTRVMENTA","Preparar","PDF listos para presentar"]
 };
 function pintarNav(){
   var n=document.getElementById("nav");
@@ -3796,7 +3830,7 @@ function pintarRail(){
   // "requisitos" también queda sin riel: el filtro de ahí es por RAMA, y acá
   // el listado es por TRÁMITE — mostrarlo daría un control que no filtra nada.
   var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos"||estado.tab==="norma"||estado.tab==="comparar"||
-    estado.tab==="calculos"||estado.tab==="plazos"||estado.tab==="glosario");
+    estado.tab==="calculos"||estado.tab==="plazos"||estado.tab==="glosario"||estado.tab==="herramientas");
   if(w) w.classList.toggle("sin-rail",sinRail);
   if(sinRail){ r.innerHTML=""; return; }
   // Las fuentes sólo en Buscar: en las otras solapas no hay una búsqueda en
@@ -6206,6 +6240,9 @@ function dibujoSeccion(tab){
       h+=l("M40 34H200V140H40Z")+l("M40 54H200")+l("M76 26V42")+l("M164 26V42");
       for(y=0;y<4;y++) for(x=0;x<7;x++){ if(!(x===3&&y===2)) h+='<circle class="dp" cx="'+(57+x*21)+'" cy="'+(72+y*18)+'" r="1.8"/>'; }
       h+=c(120,108,8)+p(120,108,3.5); break;
+    case "herramientas": // páginas que se juntan en un solo cuerpo
+      h+=l("M70 40H170V132H70Z")+l("M82 28H182V40")+l("M94 16H194V28")+l("M90 64H150")+l("M90 84H150")+l("M90 104H128");
+      h+=p(170,40,4); break;
     case "glosario": // la V romana del logo
       h+=l("M62 34H92")+l("M148 34H178")+l("M77 34L120 134")+l("M120 134L163 34")+l("M40 146H200");
       h+=p(120,62,5.5); break;
@@ -6988,7 +7025,8 @@ function render(){
     var v=document.getElementById("vista");
     var f={buscar:vistaBuscar,lector:vistaLector,ramas:vistaRamas,requisitos:vistaRequisitos,comparar:vistaComparar,norma:vistaNorma,fuentes:vistaFuentes,
            citas:vistaCitas,verificar:vistaVerificar,guardados:vistaGuardados,
-           cuenta:vistaCuenta,calculos:vistaCalculos,plazos:vistaPlazos,glosario:vistaGlosario}[estado.tab]||vistaBuscar;
+           cuenta:vistaCuenta,calculos:vistaCalculos,plazos:vistaPlazos,glosario:vistaGlosario,
+           herramientas:function(){ return window.vistaHerramientas?window.vistaHerramientas():'<div class="vacio">Cargando las herramientas…</div>'; }}[estado.tab]||vistaBuscar;
     v.className="col v-"+estado.tab;
     v.innerHTML=f();
     pintarCabecera(v);
@@ -7821,7 +7859,15 @@ store.get("jedj:pasajes",function(v){
   render();
 });
 
+/* Puente para herramientas.js (la aplicación vive dentro de esta función): lo mínimo que necesita. */
+window.IVS={
+  esc:esc, flash:flash, copiar:copiar,
+  estado:function(){ return estado; },
+  render:function(){ render(); },
+  abrirLector:function(texto){ estado.texto=texto; estado.tab="lector"; render(); window.scrollTo(0,0); }
+};
 })();
 </script>
+<script src="./herramientas.js" defer></script>
 </body>
 </html>
