@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 8 · Lector</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="c.css">
+<style>
+
+.hero{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(24px,5vw,90px);align-items:center;padding:84px var(--pad) 36px}
+.izq{display:grid;gap:clamp(16px,3vh,28px);align-content:center}
+.q{display:inline-flex;align-items:center;gap:12px;padding:8px 8px 8px 20px;border:1px solid var(--line);border-radius:999px;font-size:15px;color:var(--fg);justify-self:start;min-width:min(100%,360px)}
+.q .tx{flex:1;white-space:nowrap}
+.q .tx::after{content:"";display:inline-block;width:2px;height:1em;margin-left:2px;background:var(--gold);vertical-align:-.15em;animation:parp 1s steps(1) infinite}
+@keyframes parp{50%{opacity:0}}
+.q .n{padding:7px 12px 6px;border-radius:999px;background:var(--gold);color:#14110a;font:500 12.5px/1 var(--sans);white-space:nowrap}
+.pap{position:relative;border:1px solid var(--line);border-radius:26px;padding:clamp(20px,3vw,40px);background:rgba(241,238,230,.025);height:min(72svh,600px);overflow:hidden}
+.pap::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,var(--bg));pointer-events:none}
+.pap .tit{font:500 11px/1 var(--caps);letter-spacing:.22em;color:var(--mute);margin:0 0 1.2em}
+.sent{font:400 clamp(14.5px,1.35vw,18.5px)/1.85 "Cormorant",Georgia,serif;color:rgba(241,238,230,.84);column-count:2;column-gap:clamp(20px,2.4vw,40px);text-align:justify;hyphens:auto}
+.sent p{margin:0 0 1em}
+.h{position:relative;white-space:nowrap}
+.h::before{content:"";position:absolute;left:-3px;right:-3px;top:.12em;bottom:.02em;border-radius:5px;background:rgba(217,163,27,.34);transform:scaleX(0);transform-origin:left center;transition:transform .55s var(--ease);transition-delay:var(--d,0s);z-index:-1}
+.h.on::before{transform:scaleX(1)}
+.mini{position:absolute;right:10px;top:70px;bottom:50px;width:3px;border-radius:3px;background:var(--line)}
+.mini i{position:absolute;left:-3px;width:9px;height:2px;border-radius:2px;background:var(--dim);transition:background .4s,transform .4s}
+.mini i.on{background:var(--gold);transform:scaleX(1.4)}
+@media (max-width:860px){.hero{height:auto;grid-template-columns:minmax(0,1fr);padding-top:84px}.pap{height:min(60svh,480px)}.sent{column-count:1}}
+
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<section class="hero" id="hero">
+  <div class="izq">
+    <h1 class="t">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1>
+    <div class="q" id="q" aria-hidden="true"><span class="tx" id="qt"></span><span class="n" id="qn">0 coincidencias</span></div>
+    <div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+  </div>
+  <div class="pap" id="pap" aria-hidden="true">
+    <p class="tit">SENTENCIA · DOCUMENTO DE EJEMPLO</p>
+    <div class="sent" id="sent">
+      <p>Que la reparación del <span class="h" data-t="0">daño moral</span> debe fijarse atendiendo a las circunstancias del caso y a la entidad del sufrimiento padecido, sin que pueda resultar meramente simbólica.</p>
+      <p>Que la excepción de <span class="h" data-t="1">cosa juzgada</span> exige la triple identidad de sujeto, objeto y causa, y su procedencia debe apreciarse con criterio restrictivo.</p>
+      <p>Que el principio de <span class="h" data-t="2">buena fe</span> rige todo el iter contractual y obliga a las partes a un comportamiento leal desde las tratativas preliminares.</p>
+      <p>Que, valorado el <span class="h" data-t="0">daño moral</span> con prudencia, y siendo la indemnización una reparación y no una sanción, corresponde moderar el monto fijado en la instancia anterior.</p>
+      <p>Que no se configura el supuesto de <span class="h" data-t="1">cosa juzgada</span> invocado, toda vez que el objeto de la pretensión actual difiere del debatido en el proceso anterior.</p>
+      <p>Que la conducta de la demandada, contraria a la <span class="h" data-t="2">buena fe</span>, justifica la imposición de las costas en su totalidad y la condena en los términos solicitados.</p>
+      <p>Que, en consecuencia, el <span class="h" data-t="0">daño moral</span> reclamado debe prosperar y ha de ser cuantificado con arreglo a las pautas fijadas en los considerandos precedentes.</p>
+    </div>
+    <div class="mini" id="mini"></div>
+  </div>
+</section>
+<script>
+/* 8 · LECTOR — la función estrella de la plataforma como portada: un marcador dorado recorre una sentencia
+   y subraya cada coincidencia de la búsqueda, con el contador y el minimapa al costado. Cambia de término solo. */
+(function(){
+  var T=["daño moral","cosa juzgada","buena fe"],q=document.getElementById("qt"),n=document.getElementById("qn"),pap=document.getElementById("pap"),mini=document.getElementById("mini");
+  var hs=[].slice.call(document.querySelectorAll(".h")),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches,tick=[];
+  function esp(ms){return new Promise(function(r){setTimeout(r,ms);});}
+  function colocar(){mini.innerHTML="";tick=hs.map(function(h){var i=document.createElement("i");mini.appendChild(i);return i;});posicionar();}
+  function posicionar(){var H=pap.scrollHeight||1,all=document.getElementById("sent");hs.forEach(function(h,k){var y=(h.getBoundingClientRect().top-all.getBoundingClientRect().top)/all.getBoundingClientRect().height;tick[k].style.top=(Math.max(0,Math.min(.98,y))*100)+"%";});}
+  addEventListener("resize",posicionar);
+  async function ciclo(){
+    var k=0;colocar();
+    if(quieto){hs.forEach(function(h){h.classList.add("on");});q.textContent=T[0];n.textContent=hs.filter(function(h){return h.dataset.t==="0";}).length+" coincidencias";return;}
+    while(true){
+      var term=T[k%3],id=String(k%3);k++;
+      hs.forEach(function(h){h.classList.remove("on");});tick.forEach(function(t){t.classList.remove("on");});
+      n.textContent="0 coincidencias";q.textContent="";
+      for(var i=1;i<=term.length;i++){q.textContent=term.slice(0,i);await esp(70);}
+      await esp(450);
+      var m=hs.map(function(h,j){return h.dataset.t===id?j:-1;}).filter(function(j){return j>=0;});
+      for(var j=0;j<m.length;j++){hs[m[j]].style.setProperty("--d","0s");hs[m[j]].classList.add("on");tick[m[j]].classList.add("on");n.textContent=(j+1)+" coincidencia"+(j?"s":"");await esp(650);}
+      await esp(3000);
+    }
+  }
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(ciclo);
+})();
+</script>
+</body></html>

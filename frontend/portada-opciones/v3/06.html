@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 6 · Red de citas</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="c.css">
+<style>
+
+.hero .top{position:absolute;left:var(--pad);top:clamp(80px,13vh,130px);max-width:min(520px,62vw);z-index:3}
+.hero .t{font-size:clamp(28px,3.4vw,52px)}
+.hero .bot{position:absolute;left:var(--pad);bottom:clamp(22px,6vh,60px);z-index:3}
+.hero .nota{position:absolute;right:var(--pad);bottom:clamp(22px,5vh,48px);z-index:3;text-align:right;max-width:34ch}
+.hero .top::before{content:"";position:absolute;inset:-40px -90px -40px -60px;background:radial-gradient(closest-side,rgba(16,14,11,.9) 55%,rgba(16,14,11,0));z-index:-1}
+@media (max-width:760px){.hero .nota{display:none}.hero .t{font-size:clamp(26px,8vw,36px)}}
+
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<section class="hero" id="hero">
+  <canvas class="fx" id="cv" aria-hidden="true"></canvas>
+  <div class="top"><h1 class="t">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1></div>
+  <div class="acc bot"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+  <p class="nota">Cada punto es un fallo; cada hilo, una cita. Relaciones ilustrativas entre fallos de la Corte Suprema.</p>
+</section>
+<script>
+/* 6 · RED DE CITAS — la jurisprudencia es una red: cada fallo cita a otros. Los puntos se acomodan solos;
+   al acercar el cursor a uno, se encienden sus citas y la luz viaja por los hilos. Sin cursor, recorre sola. */
+(function(){
+  var hero=document.getElementById("hero"),cv=document.getElementById("cv"),ctx=cv.getContext("2d"),W=1,H=1,D=Math.min(devicePixelRatio||1,2),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var N=[["Siri",1957],["Kot",1958],["Ercolano",1922],["Avico",1934],["Elortondo",1888],["Ponzetti de Balbín",1984],["Bazterrica",1986],["Sejean",1986],["Ekmekdjian",1992],["Giroldi",1995],["Fayt",1999],["Vizzoti",2004],["Aquino",2004],["Simón",2005],["Verbitsky",2005],["Mendoza · Riachuelo",2008],["Halabi",2009],["Arriola",2009]]
+    .map(function(n,i){return {n:n[0],y:n[1],x:0,y0:0,vx:0,vy:0,i:i,lit:0};});
+  var idx={};N.forEach(function(n){idx[n.n]=n;});
+  var E=[["Siri","Kot"],["Ercolano","Avico"],["Bazterrica","Arriola"],["Ekmekdjian","Giroldi"],["Vizzoti","Aquino"],["Verbitsky","Halabi"],["Mendoza · Riachuelo","Halabi"],["Siri","Halabi"],["Kot","Halabi"],["Giroldi","Simón"],["Elortondo","Siri"]]
+    .map(function(e){return [idx[e[0]],idx[e[1]]];});
+  N.forEach(function(n){n.nb=[];});E.forEach(function(e){e[0].nb.push(e[1]);e[1].nb.push(e[0]);});
+  var cx=0,cy=0,R=0,hot=null,mx=-1e3,my=-1e3,idle=0,autoI=0,pack=[],tm=0,last=0;
+  function medir(){W=hero.clientWidth;H=hero.clientHeight;cv.width=W*D;cv.height=H*D;cx=W*(W<760?.5:.62);cy=H*(W<760?.55:.52);R=Math.min(W*(W<760?.42:.3),H*.4);}
+  function sembrar(){N.forEach(function(n,i){var a=i*2.399,r=R*.2+R*.8*Math.sqrt((i+1)/N.length);n.x=cx+Math.cos(a)*r;n.y0=cy+Math.sin(a)*r;n.vx=n.vy=0;});for(var k=0;k<320;k++)paso(.9);}
+  function paso(al){
+    for(var i=0;i<N.length;i++){var a=N[i];
+      for(var j=i+1;j<N.length;j++){var b=N[j],dx=a.x-b.x,dy=a.y0-b.y0,d2=dx*dx+dy*dy+.01,d=Math.sqrt(d2),f=(R*R*.22)/d2;dx/=d;dy/=d;a.vx+=dx*f*al;a.vy+=dy*f*al;b.vx-=dx*f*al;b.vy-=dy*f*al;}
+      a.vx+=(cx-a.x)*.012*al;a.vy+=(cy-a.y0)*.012*al;}
+    E.forEach(function(e){var a=e[0],b=e[1],dx=b.x-a.x,dy=b.y0-a.y0,d=Math.sqrt(dx*dx+dy*dy)+.01,L=R*.34,f=(d-L)*.05*al;dx/=d;dy/=d;a.vx+=dx*f;a.vy+=dy*f;b.vx-=dx*f;b.vy-=dy*f;});
+    N.forEach(function(n){n.vx*=.78;n.vy*=.78;n.x+=n.vx;n.y0+=n.vy;});
+  }
+  addEventListener("resize",function(){medir();sembrar();});
+  hero.addEventListener("pointermove",function(e){var r=hero.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;idle=0;});
+  hero.addEventListener("pointerleave",function(){mx=my=-1e3;});
+  function frame(now){
+    var dt=Math.min((now-last)/1000,.05);last=now;tm+=dt;idle+=dt;
+    if(!quieto){paso(.05);N.forEach(function(n,i){n.x+=Math.sin(tm*.5+i*1.7)*.12;n.y0+=Math.cos(tm*.43+i*2.1)*.12;});}
+    // nodo caliente: el más cercano al cursor, o recorrido automático
+    var best=null,bd=70;
+    if(mx>-500)N.forEach(function(n){var d=Math.hypot(n.x-mx,n.y0-my);if(d<bd){bd=d;best=n;}});
+    if(!best&&(idle>2.5||mx<-500)){var con=N.filter(function(n){return n.nb.length;});if(!autoI||tm>autoI){autoI=tm+3.4;hot=con[Math.floor(Math.random()*con.length)];}best=hot;}
+    hot=best||hot;if(best)hot=best;
+    N.forEach(function(n){var t=(hot&&(n===hot||hot.nb.indexOf(n)>-1))?1:0;n.lit+=(t-n.lit)*Math.min(1,dt*6);});
+    if(hot&&!quieto){hot.pk=(hot.pk||0)-dt;if(hot.pk<=0){hot.pk=.55;hot.nb.forEach(function(b){pack.push({a:hot,b:b,u:0});});}}
+    ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
+    var any=!!hot;
+    E.forEach(function(e){var on=hot&&(e[0]===hot||e[1]===hot),a=on?.85:(any?.1:.3);
+      ctx.strokeStyle=on?"rgba(217,163,27,"+a+")":"rgba(241,238,230,"+a+")";ctx.lineWidth=on?1.5:1;ctx.beginPath();ctx.moveTo(e[0].x,e[0].y0);ctx.lineTo(e[1].x,e[1].y0);ctx.stroke();});
+    pack=pack.filter(function(p){p.u+=dt*.9;if(p.u>=1)return false;var x=p.a.x+(p.b.x-p.a.x)*p.u,y=p.a.y0+(p.b.y0-p.a.y0)*p.u;
+      ctx.globalCompositeOperation="lighter";var g=ctx.createRadialGradient(x,y,0,x,y,10);g.addColorStop(0,"rgba(255,226,140,.9)");g.addColorStop(1,"rgba(217,163,27,0)");ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,10,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";return true;});
+    ctx.font="400 12px 'Instrument Sans',sans-serif";ctx.textBaseline="middle";
+    N.forEach(function(n){
+      var dim=any&&n.lit<.5?.4:1,c=n.lit>.5?"217,163,27":"241,238,230",r=3+n.lit*2.6;
+      ctx.fillStyle="rgba("+c+","+(.9*dim).toFixed(2)+")";ctx.beginPath();ctx.arc(n.x,n.y0,r,0,7);ctx.fill();
+      if(n.lit>.05){ctx.strokeStyle="rgba(217,163,27,"+(.4*n.lit).toFixed(2)+")";ctx.lineWidth=1;ctx.beginPath();ctx.arc(n.x,n.y0,r+5,0,7);ctx.stroke();}
+      ctx.fillStyle="rgba("+c+","+((.62+.38*n.lit)*dim).toFixed(2)+")";ctx.textAlign=n.x>cx?"left":"right";
+      ctx.fillText(n.n+"  "+n.y,n.x+(n.x>cx?10:-10),n.y0);
+    });
+    if(!quieto)requestAnimationFrame(frame);
+  }
+  medir();sembrar();requestAnimationFrame(function(t){last=t;frame(t);});
+})();
+</script>
+</body></html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 9 · Sismógrafo</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="c.css">
+<style>
+
+.hero .top{position:absolute;left:var(--pad);top:clamp(80px,13vh,130px);max-width:min(620px,88vw);z-index:3}
+.hero .t{font-size:clamp(28px,3.6vw,54px)}
+.hero .bot{position:absolute;left:var(--pad);bottom:clamp(22px,6vh,60px);z-index:3}
+.hero .nota{position:absolute;right:var(--pad);bottom:clamp(30px,7vh,70px);z-index:3}
+@media (max-width:760px){.hero .nota{display:none}}
+
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<section class="hero" id="hero">
+  <canvas class="fx" id="cv" aria-hidden="true"></canvas>
+  <div class="top"><h1 class="t">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1></div>
+  <div class="acc bot"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+  <p class="nota">Fallos emblemáticos de la Corte Suprema · ejemplo</p>
+</section>
+<script>
+/* 9 · SISMÓGRAFO — el papel avanza y una pluma dorada traza el pulso de la jurisprudencia: en cada fallo
+   hay un temblor y su rótulo (nombre y año) queda escrito sobre el papel mientras se aleja. */
+(function(){
+  var hero=document.getElementById("hero"),cv=document.getElementById("cv"),ctx=cv.getContext("2d"),W=1,H=1,D=Math.min(devicePixelRatio||1,2),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var F=[["Elortondo",1888],["Ercolano",1922],["Avico",1934],["Siri",1957],["Kot",1958],["Ponzetti de Balbín",1984],["Bazterrica",1986],["Sejean",1986],["Ekmekdjian",1992],["Giroldi",1995],["Fayt",1999],["Vizzoti",2004],["Aquino",2004],["Simón",2005],["Verbitsky",2005],["Mendoza · Riachuelo",2008],["Halabi",2009],["Arriola",2009]];
+  var GAP=430,X0=260,V=62,wx=700,last=0,amp=[];
+  F.forEach(function(f,i){amp.push((i%2?-1:1)*(.55+((i*37)%10)/16));});
+  function medir(){W=hero.clientWidth;H=hero.clientHeight;cv.width=W*D;cv.height=H*D;}
+  addEventListener("resize",medir);medir();
+  function ruido(x){return Math.sin(x*.07)*.6+Math.sin(x*.173+1.3)*.4+Math.sin(x*.41+.2)*.25;}
+  function pico(x,k){var d=x-(X0+k*GAP);if(d<0)return 0;var A=amp[((k%F.length)+F.length)%F.length];return A*Math.exp(-d/70)*Math.sin(d*.22)*(1+3*Math.exp(-d/10));}
+  function yEn(x,A){var s=ruido(x)*3,k0=Math.floor((x-X0)/GAP);for(var k=k0-2;k<=k0;k++)s+=pico(x,k)*A;return s;}
+  function frame(now){
+    var dt=Math.min((now-last)/1000,.05);last=now;if(!quieto)wx+=V*dt;
+    ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
+    var m=W<760,xp=W*(m?.72:.78),cy=H*(m?.57:.66),A=Math.min(H*(m?.085:.125),118);
+    // papel milimetrado que se desplaza
+    var off=wx%14;ctx.lineWidth=1;
+    for(var x=-off;x<W;x+=14){var gx=Math.round((x+wx)/14),mayor=gx%5===0;ctx.strokeStyle=mayor?"rgba(217,163,27,.09)":"rgba(241,238,230,.035)";ctx.beginPath();ctx.moveTo(x,H*.28);ctx.lineTo(x,H*.96);ctx.stroke();}
+    for(var y=H*.28;y<H*.96;y+=14){var gy=Math.round((y-H*.28)/14);ctx.strokeStyle=gy%5===0?"rgba(217,163,27,.09)":"rgba(241,238,230,.035)";ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    ctx.strokeStyle="rgba(241,238,230,.16)";ctx.setLineDash([2,6]);ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.setLineDash([]);
+    // traza hasta la pluma
+    var g=ctx.createLinearGradient(0,0,xp,0);g.addColorStop(0,"rgba(217,163,27,0)");g.addColorStop(.35,"rgba(217,163,27,.55)");g.addColorStop(1,"rgba(255,226,150,1)");
+    ctx.beginPath();for(var s=0;s<=xp;s+=2){var Y=cy+yEn(wx-(xp-s),A);if(s===0)ctx.moveTo(s,Y);else ctx.lineTo(s,Y);}
+    ctx.strokeStyle=g;ctx.lineWidth=1.8;ctx.lineJoin="round";ctx.stroke();
+    // rótulos
+    ctx.textBaseline="middle";var kmin=Math.floor((wx-xp-X0)/GAP),kmax=Math.floor((wx-X0)/GAP);
+    for(var k=kmin;k<=kmax;k++){
+      var sx=xp-(wx-(X0+k*GAP));if(sx<20||sx>xp+2)continue;
+      var fi=((k%F.length)+F.length)%F.length,up=amp[fi]>0?-1:1,pk=cy+up*(A*Math.min(1.2,Math.abs(amp[fi]))*.8+34),a=Math.min(1,(xp-sx)/50)*Math.min(1,sx/160);
+      ctx.strokeStyle="rgba(217,163,27,"+(.5*a).toFixed(2)+")";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(sx,cy);ctx.lineTo(sx,pk);ctx.stroke();
+      ctx.textAlign="left";ctx.font="400 13px 'Instrument Sans',sans-serif";ctx.fillStyle="rgba(241,238,230,"+(.9*a).toFixed(2)+")";
+      ctx.fillText(F[fi][0],sx+6,pk+(up<0?-8:10));
+      ctx.font="500 11.5px 'Instrument Sans',sans-serif";ctx.fillStyle="rgba(217,163,27,"+(.95*a).toFixed(2)+")";ctx.fillText(String(F[fi][1]),sx+6,pk+(up<0?-24:26));
+    }
+    // pluma
+    var yp=cy+yEn(wx,A);
+    ctx.strokeStyle="rgba(217,163,27,.35)";ctx.setLineDash([3,5]);ctx.beginPath();ctx.moveTo(xp,H*.28);ctx.lineTo(xp,H*.96);ctx.stroke();ctx.setLineDash([]);
+    var pg=ctx.createRadialGradient(xp,yp,0,xp,yp,26);pg.addColorStop(0,"rgba(255,226,140,.65)");pg.addColorStop(1,"rgba(217,163,27,0)");
+    ctx.fillStyle=pg;ctx.beginPath();ctx.arc(xp,yp,26,0,7);ctx.fill();
+    var dg=ctx.createLinearGradient(xp,yp-6,xp,yp+6);dg.addColorStop(0,"#f6d77a");dg.addColorStop(1,"#a77a0c");ctx.fillStyle=dg;ctx.beginPath();ctx.arc(xp,yp,5.5,0,7);ctx.fill();
+    if(!quieto)requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(function(n){last=n;frame(n);});
+})();
+</script>
+</body></html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 7 · Linterna</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="c.css">
+<style>
+
+body{overflow-x:clip}
+.hero{cursor:none}
+.muro{position:absolute;inset:0;columns:4 260px;column-gap:clamp(24px,3vw,56px);padding:84px var(--pad) 40px;font:400 clamp(12.5px,1.05vw,15px)/1.75 "Cormorant",Georgia,serif;text-align:justify;hyphens:auto;overflow:hidden}
+.muro p{margin:0 0 1em}
+.muro.base{color:rgba(241,238,230,.075)}
+.muro.luz{color:rgba(241,238,230,.92);-webkit-mask-image:radial-gradient(circle clamp(150px,22vmin,260px) at var(--x,50%) var(--y,50%),#000 0,rgba(0,0,0,.65) 42%,transparent 100%);mask-image:radial-gradient(circle clamp(150px,22vmin,260px) at var(--x,50%) var(--y,50%),#000 0,rgba(0,0,0,.65) 42%,transparent 100%)}
+.muro mark{background:none;color:inherit}
+.muro.base mark{color:rgba(217,163,27,.2)}
+.muro.luz mark{color:#f6c94a;text-shadow:0 0 14px rgba(217,163,27,.8)}
+.halo{position:absolute;left:var(--x,50%);top:var(--y,50%);width:34px;height:34px;margin:-17px 0 0 -17px;border:1px solid rgba(217,163,27,.7);border-radius:50%;pointer-events:none;box-shadow:0 0 30px 6px rgba(217,163,27,.18)}
+.txt{position:absolute;left:var(--pad);bottom:clamp(24px,7vh,70px);max-width:min(640px,88vw);z-index:3}
+.txt::before{content:"";position:absolute;inset:-60px -110px -50px -70px;background:radial-gradient(closest-side,rgba(16,14,11,.96) 52%,rgba(16,14,11,0));z-index:-1}
+.txt .t{font-size:clamp(28px,3.9vw,60px)}
+.txt .acc{margin-top:clamp(16px,3vh,28px)}
+.txt a{cursor:pointer}
+.hero .nota{position:absolute;right:var(--pad);top:88px;z-index:3}
+@media (max-width:760px){.muro{columns:2 140px;font-size:12px}.hero{cursor:auto}}
+
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<section class="hero" id="hero">
+  <div class="muro base" id="mb" aria-hidden="true"></div>
+  <div class="muro luz" id="ml" aria-hidden="true"></div>
+  <div class="halo" id="halo" aria-hidden="true"></div>
+  <p class="nota">Mueva el cursor: la luz descubre el texto</p>
+  <div class="txt"><h1 class="t">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1><div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div></div>
+</section>
+<script>
+/* 7 · LINTERNA — una pared de sentencias en la oscuridad, apenas visible. La luz del cursor las lee: el
+   texto se enciende donde pasa y las expresiones clave (daño moral, cosa juzgada…) brillan en oro.
+   Sin cursor (celular), la luz recorre sola la pared. */
+(function(){
+  var S=["Que el recurrente sostiene que la sentencia de la instancia anterior ha omitido valorar la prueba pericial producida en autos, lo que a su juicio configura un supuesto de arbitrariedad.",
+    "Que corresponde examinar, en primer término, si el agravio guarda relación directa e inmediata con la cuestión federal planteada y si la decisión apelada es definitiva.",
+    "Que la reparación del daño moral debe fijarse atendiendo a las circunstancias del caso y a la entidad del sufrimiento padecido, sin que pueda resultar meramente simbólica.",
+    "Que la excepción de cosa juzgada exige la triple identidad de sujeto, objeto y causa, y su procedencia debe apreciarse con criterio restrictivo.",
+    "Que el principio de buena fe rige todo el iter contractual y obliga a las partes a un comportamiento leal desde las tratativas preliminares.",
+    "Que la garantía del debido proceso comprende el derecho a ser oído, a ofrecer y producir prueba y a obtener una sentencia fundada en derecho.",
+    "Que la medida cautelar solicitada exige la verosimilitud del derecho y el peligro en la demora, recaudos que en el caso se encuentran acreditados.",
+    "Que la acción de amparo es admisible cuando no existe otro medio judicial más idóneo y se verifica una lesión actual o inminente, manifiestamente arbitraria.",
+    "Que los honorarios de los profesionales deben regularse conforme a la escala vigente, atendiendo a la naturaleza y complejidad del asunto y al resultado obtenido.",
+    "Que, por las razones expuestas, corresponde hacer lugar parcialmente al recurso, revocar la sentencia en lo que fue materia de agravio e imponer las costas en el orden causado."];
+  var K=["daño moral","cosa juzgada","buena fe","debido proceso","medida cautelar","amparo"];
+  var html="",n=0;
+  for(var p=0;p<14;p++){var s="";for(var i=0;i<4;i++){s+=S[(n*7+i*3+p)%S.length]+" ";n++;}
+    K.forEach(function(k){s=s.replace(new RegExp(k),"<mark>"+k+"</mark>");});html+="<p>"+s+"</p>";}
+  document.getElementById("mb").innerHTML=html;document.getElementById("ml").innerHTML=html;
+  var hero=document.getElementById("hero"),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches,x=.6,y=.4,tx=.6,ty=.4,usa=false,t=0,last=0;
+  function pon(){var w=hero.clientWidth,h=hero.clientHeight;hero.style.setProperty("--x",(x*w).toFixed(0)+"px");hero.style.setProperty("--y",(y*h).toFixed(0)+"px");}
+  hero.addEventListener("pointermove",function(e){var r=hero.getBoundingClientRect();tx=(e.clientX-r.left)/r.width;ty=(e.clientY-r.top)/r.height;usa=true;});
+  hero.addEventListener("pointerleave",function(){usa=false;});
+  function f(now){var dt=Math.min((now-last)/1000,.05);last=now;t+=dt;
+    if(!usa){tx=.5+.38*Math.sin(t*.37);ty=.45+.3*Math.sin(t*.53+1);}
+    x+=(tx-x)*Math.min(1,dt*5);y+=(ty-y)*Math.min(1,dt*5);pon();
+    if(!quieto)requestAnimationFrame(f);}
+  pon();requestAnimationFrame(function(n){last=n;f(n);});
+})();
+</script>
+</body></html>
