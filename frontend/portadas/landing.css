@@ -1,0 +1,89 @@
+/* Las tres partes de la portada, en sus distintas versiones. Ver landing.js. */
+body{min-height:100svh}
+.cab{position:absolute;left:0;right:0;top:0;z-index:20}
+.ey{margin:0 0 14px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.acc{display:flex;gap:10px;flex-wrap:wrap}
+em{font-style:normal;color:var(--gold)}
+
+/* ---------- PORTADA ---------- */
+.hero{position:relative;height:100svh;min-height:560px;overflow:hidden}
+.hero .rad{position:absolute}
+.hero h1{margin:0;font:400 clamp(24px,2.6vw,40px)/1.08 var(--sans);letter-spacing:-.03em}
+
+/* H1 · radar al centro, texto a las esquinas */
+.h1 .rad{left:50%;top:53%;width:min(100%,calc(100svh - 110px));aspect-ratio:1;transform:translate(-50%,-50%)}
+.h1 .t{position:absolute;left:var(--pad);bottom:clamp(44px,7vh,64px);max-width:min(30ch,30vw);z-index:3}
+.h1 .a{position:absolute;right:var(--pad);bottom:clamp(44px,7vh,64px);z-index:3;display:flex;flex-direction:column;gap:10px}
+
+/* H2 · horizonte: el nombre enorme y el radar saliendo por abajo */
+.h2{display:flex;flex-direction:column;align-items:center;text-align:center}
+.h2 .nombre{margin:clamp(70px,13vh,130px) 0 0;font-size:clamp(54px,12.4vw,200px);line-height:.9;font-weight:300}
+.h2 .nombre span{display:inline-block;animation:disuelve 12s ease-in-out infinite;animation-delay:calc(1.2s + var(--k)*.24s)}
+.h2 .nombre .d{animation:none}
+.h2 .lema{margin:clamp(14px,2.6vh,26px) 0 0;max-width:34ch;font-size:clamp(17px,1.7vw,24px);color:var(--mute)}
+.h2 .acc{justify-content:center;margin-top:clamp(18px,3.4vh,32px);position:relative;z-index:3}
+@keyframes disuelve{0%,40%{opacity:1;filter:blur(0)}50%,60%{opacity:0;filter:blur(16px)}70%,100%{opacity:1;filter:blur(0)}}
+.hor{left:50%;bottom:0;width:min(96vw,150svh);aspect-ratio:2/1;transform:translateX(-50%)}
+.h2 .hor,.h5 .hor{z-index:1}
+
+/* H3 · espejo: texto a la izquierda, radar a la derecha */
+.h3{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center}
+.h3 .t{padding:96px var(--pad) 40px;position:relative;z-index:3}
+.h3 h1{font-size:clamp(30px,3.7vw,58px);max-width:15ch}
+.h3 .acc{margin-top:clamp(20px,4vh,36px)}
+.h3 .bs{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:clamp(24px,5vh,50px);font:500 12px/1 var(--caps);letter-spacing:.16em;color:var(--mute)}
+.h3 .bs span{display:inline-flex;align-items:center;gap:8px}.h3 .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.h3 .rad{position:relative;width:min(100%,calc(100svh - 70px));aspect-ratio:1;justify-self:end;margin-right:2vw}
+
+/* H4 · sello: el radar dentro del anillo de texto que gira */
+.h4 .sello{position:absolute;left:50%;top:52%;width:min(94vw,calc(100svh - 96px));aspect-ratio:1;transform:translate(-50%,-50%)}
+.h4 .sello svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.h4 .sello .rad{inset:0}
+.h4 .giro{transform-origin:500px 500px;animation:gira 240s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.h4 .sg-texto{font-family:var(--caps);font-size:33px;letter-spacing:9px;fill:var(--fg);opacity:.7}
+.h4 .sg-aro{fill:none;stroke:var(--fg);opacity:.4;stroke-width:1}
+.h4 .t{position:absolute;left:var(--pad);bottom:clamp(44px,7vh,64px);max-width:min(30ch,28vw);z-index:3}
+.h4 .a{position:absolute;right:var(--pad);bottom:clamp(44px,7vh,64px);z-index:3;display:flex;flex-direction:column;gap:10px}
+
+/* H5 · panorama: titular grande centrado y el radar saliendo por abajo */
+.h5{display:flex;flex-direction:column;align-items:center;text-align:center}
+.h5 h1{margin:clamp(96px,16vh,170px) var(--pad) 0;max-width:20ch;font-size:clamp(32px,5vw,78px);line-height:1.02;letter-spacing:-.04em}
+.h5 .acc{justify-content:center;margin-top:clamp(20px,4vh,38px);position:relative;z-index:3}
+
+@media (max-width:760px){
+  .hero{height:auto;min-height:100svh;display:flex;flex-direction:column;padding-top:76px}
+  .hero .rad{position:relative}
+  .h1 .rad,.h4 .sello{position:relative;left:auto;top:auto;transform:none;width:100%;margin:0}
+  .h1 .t,.h4 .t,.h1 .a,.h4 .a{position:static;max-width:none;padding:0 var(--pad)}
+  .h1 .t,.h4 .t{margin-top:8px}.h1 h1,.h4 h1{font-size:clamp(26px,8vw,34px)}
+  .h1 .a,.h4 .a{flex-direction:row;flex-wrap:wrap;margin:18px 0 30px}
+  .h3{display:flex}.h3 .t{padding:0 var(--pad)}.h3 .rad{order:-1;width:100%;margin:0}
+  .h3 h1{font-size:clamp(28px,8vw,36px);max-width:none}
+  .h2 .nombre{font-size:15vw;margin-top:20px}
+  .hor{position:relative;left:auto;transform:none;margin-top:26px;width:100%;bottom:auto}
+  .h2.hero,.h5.hero{min-height:0}
+  .h5 h1{margin-top:20px;font-size:clamp(30px,9vw,44px)}
+}
+
+/* ---------- SEGUNDA PARTE: EL RECORRIDO ---------- */
+.seg .pista{position:relative;height:460vh}
+@media (max-width:760px){.seg .pista{height:380vh}}
+
+/* ---------- AGREGADO: EL RADAR EN LA PÁGINA ---------- */
+.add{position:relative;padding:clamp(70px,12vh,140px) var(--pad);border-top:1px solid var(--line);overflow:hidden}
+.add h2{margin:0;font:400 clamp(26px,3.2vw,50px)/1.06 var(--sans);letter-spacing:-.03em;max-width:17ch}
+.add .par{margin:18px 0 0;max-width:46ch;color:var(--mute)}
+.add .acc{margin-top:clamp(20px,4vh,34px)}
+.a1,.a3{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(20px,5vw,80px);align-items:center}
+.a1 .rad,.a3 .rad{position:relative;width:100%;max-width:min(760px,86svh);aspect-ratio:1;justify-self:center}
+.a3 .rad{max-width:min(820px,92svh)}
+.a2{text-align:center;padding-bottom:0}
+.a2 h2{margin-inline:auto;max-width:22ch}
+.a2 .rad{position:relative;width:min(1100px,96vw);aspect-ratio:2/1;margin:clamp(20px,4vh,40px) auto 0}
+@media (max-width:760px){.a1,.a3{display:block}.a1 .rad,.a3 .rad{margin-top:30px}}
+
+.pie-l{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:22px var(--pad) 26px;border-top:1px solid var(--line);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.nota-muestra{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:70;white-space:nowrap;max-width:94vw;overflow:hidden;text-overflow:ellipsis;padding:6px 12px 5px;border:1px solid var(--line);border-radius:999px;background:rgba(16,14,11,.7);font-size:11.5px;color:var(--mute)}
+.nota-muestra a{color:var(--gold)}
+@media (max-width:760px){.nota-muestra{font-size:10.5px;bottom:6px}}
