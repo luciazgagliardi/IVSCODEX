@@ -85,28 +85,30 @@
     }
     /* El haz como luz. Se dibuja aparte (octx) para poder atenuarlo con la distancia al centro sin tocar lo demás. */
     function haz(R){
-      var TR=1.35,cX=cx*K,cY=cy*K,a0=TH-TR,f=TR/P2;
+      var TR=1.5,BORDE=.16,cX=cx*K,cY=cy*K,a0=TH-TR,a1=TH+BORDE,f=(TR+BORDE)/P2,fp=TR/(TR+BORDE),I=(opt.luz==null?.26:opt.luz);
       if(octx.createConicGradient){
         octx.setTransform(1,0,0,1,0,0); octx.globalCompositeOperation="source-over"; octx.clearRect(0,0,off.width,off.height);
-        var g=octx.createConicGradient(a0,cX,cY),N=14;
-        for(var i=0;i<=N;i++){ var u=i/N; g.addColorStop(f*u,"rgba(248,222,140,"+(0.46*Math.pow(u,2.6)).toFixed(3)+")"); }
+        var g=octx.createConicGradient(a0,cX,cY),N=16;
+        // sube suave hacia el borde (curva cuadrática) y el borde mismo se difumina: no hay una línea nítida
+        for(var i=0;i<=N;i++){ var u=i/N; g.addColorStop(f*fp*u,"rgba(248,222,140,"+(I*Math.pow(u,2.2)).toFixed(3)+")"); }
+        g.addColorStop(f,"rgba(248,222,140,0)");
         g.addColorStop(Math.min(f+.0006,1),"rgba(248,222,140,0)");
-        octx.fillStyle=g; octx.beginPath(); octx.moveTo(cX,cY); octx.arc(cX,cY,R*K,a0,TH); octx.closePath(); octx.fill();
+        octx.fillStyle=g; octx.beginPath(); octx.moveTo(cX,cY); octx.arc(cX,cY,R*K,a0,a1); octx.closePath(); octx.fill();
         octx.globalCompositeOperation="destination-in";
         var rg=octx.createRadialGradient(cX,cY,0,cX,cY,R*K);
         rg.addColorStop(0,"rgba(0,0,0,1)"); rg.addColorStop(.55,"rgba(0,0,0,.8)"); rg.addColorStop(1,"rgba(0,0,0,0)");
         octx.fillStyle=rg; octx.fillRect(0,0,off.width,off.height);
         ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.drawImage(off,0,0); ctx.restore();
       }
-      // el filo: un hilo dorado que se desvanece hacia afuera, con un resplandor ancho y muy tenue
+      // el borde: un velo ancho y difuso, sin hilo nítido
       var ex=(cx+R*Math.cos(TH))*K,ey=(cy+R*Math.sin(TH))*K;
-      [[7,.10],[1.5,.95]].forEach(function(l){
+      [[18,.035],[7,.07]].forEach(function(l){
         var lg=ctx.createLinearGradient(cX,cY,ex,ey);
         lg.addColorStop(0,"rgba(255,238,176,"+l[1]+")"); lg.addColorStop(.5,"rgba(224,172,36,"+(l[1]*.75).toFixed(2)+")"); lg.addColorStop(1,"rgba(217,163,27,0)");
         ctx.strokeStyle=lg; ctx.lineWidth=l[0]*K; ctx.lineCap="round"; ctx.beginPath(); ctx.moveTo(cX,cY); ctx.lineTo(ex,ey); ctx.stroke();
       });
       var gl=ctx.createRadialGradient(cX,cY,0,cX,cY,34*E*K);
-      gl.addColorStop(0,"rgba(255,226,140,.55)"); gl.addColorStop(1,"rgba(217,163,27,0)");
+      gl.addColorStop(0,"rgba(255,226,140,.28)"); gl.addColorStop(1,"rgba(217,163,27,0)");
       ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(cX,cY,34*E*K,0,P2); ctx.fill();
     }
     function sp(s){ return '<span style="white-space:nowrap">'+s+'</span>'; }
@@ -124,6 +126,7 @@
     }
     function libre(x,y,w,h){
       var corn=[[x,y],[x+w,y],[x,y+h],[x+w,y+h]];
+      if(x<10||y<10||x+w>W-10||y+h>H-10) return false;                 // nunca fuera de la superficie visible
       if(opt.full){
         var p=14; if(x<p||y<p||x+w>W-p||y+h>H-p) return false;
       }else{
@@ -185,6 +188,7 @@
       dibujar(t);
       if(!opt.full) ctx.restore();
       if(fuentes) actualizar(t);
+      if(opt.alCuadro) opt.alCuadro(TH,{cx:cx,cy:cy,rv:RV,w:W,h:H});
     }
     if(quieto){ TH=2.2; dibujar(0); } else requestAnimationFrame(tic);
   };
