@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Opción B · La luz se transforma</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="shared.css">
+<style>
+/* B · LA LUZ SE TRANSFORMA — un solo escenario fijo. El haz del prisma se junta en un punto y ese punto se
+   «convierte» en cada metáfora, una tras otra (la consulta que se traduce, el árbol de voces, la lupa…).
+   Abajo, el hilo con seis nodos marca dónde se va. Al final, el punto vuelve a juntarse y nace el libro. */
+.pista{height:1000vh;position:relative}
+.esc{position:sticky;top:0;height:100svh;overflow:hidden}
+.prisma{position:absolute;inset:0;transform-origin:34% 50%;will-change:transform,opacity}
+.prisma canvas{width:100%;height:100%;display:block}
+.escena{position:absolute;left:50%;top:50%;width:min(92vw,720px);height:min(54svh,440px);margin:calc(min(54svh,440px)/-2 - 6vh) 0 0 calc(min(92vw,720px)/-2);opacity:0;filter:blur(14px);transform:scale(.94);transition:opacity .6s var(--ease),filter .6s var(--ease),transform .6s var(--ease);pointer-events:none}
+.escena.on{opacity:1;filter:none;transform:none}
+.escena.ya{opacity:0;filter:blur(10px);transform:scale(1.04)}
+.cap2{position:absolute;left:50%;bottom:clamp(74px,12vh,120px);transform:translateX(-50%);z-index:5;width:min(88vw,560px);text-align:center;opacity:0;transition:opacity .5s var(--ease)}
+.cap2.on{opacity:1}
+.hilo2{position:absolute;left:50%;bottom:clamp(30px,6vh,56px);transform:translateX(-50%);z-index:5;width:min(78vw,560px);height:2px;background:rgba(241,238,230,.14);opacity:0;transition:opacity .4s}
+.hilo2.on{opacity:1}
+.hilo2 i{position:absolute;left:0;top:0;height:2px;background:var(--gold);box-shadow:0 0 12px rgba(217,163,27,.6)}
+.hilo2 b{position:absolute;top:-6px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--bg);border:2px solid rgba(241,238,230,.3);transition:all .5s var(--ease)}
+.hilo2 b.on{border-color:var(--c);background:var(--c);box-shadow:0 0 16px 2px var(--c)}
+.luz{position:absolute;left:50%;top:calc(50% - 6vh);width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a8,#d9a31b 55%,#8a6200);box-shadow:0 0 50px 14px rgba(217,163,27,.38);opacity:0}
+.libro{position:absolute;inset:0;opacity:0}
+.htxt{position:absolute;left:50%;top:clamp(76px,12vh,120px);transform:translateX(-50%);width:min(92vw,880px);text-align:center;z-index:5}
+.inic{position:absolute;left:50%;bottom:clamp(22px,6vh,60px);transform:translateX(-50%);z-index:5}
+.fin{position:absolute;left:50%;bottom:clamp(24px,6vh,60px);transform:translateX(-50%);z-index:6;opacity:0;pointer-events:none}
+.fin.on{pointer-events:auto}
+.hint{position:absolute;right:var(--pad);bottom:clamp(26px,6.5vh,60px);z-index:5;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);white-space:nowrap;transition:opacity .4s}
+.guia{position:absolute;left:0;bottom:0;height:2px;background:var(--gold);width:100%;transform-origin:left;transform:scaleX(0);opacity:.7;z-index:6}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<div class="pista" id="pista"><div class="esc" id="esc">
+  <div class="prisma" id="prisma"><canvas id="cv" aria-hidden="true"></canvas></div>
+  <div class="luz" id="luz"></div>
+  <div id="escenas"></div>
+  <div class="cap2" id="cap"><span class="lat5" id="clat"></span><h3 id="ct"></h3><p id="cp"></p></div>
+  <div class="hilo2" id="hilo2"><i id="hi"></i></div>
+  <div class="libro" id="libro"></div>
+  <div class="htxt" id="htxt"><h1 class="t" id="h1"></h1></div>
+  <div class="inic" id="inic"></div>
+  <div class="fin" id="fin"></div>
+  <p class="hint" id="hint">Desplace · la luz se transforma</p>
+  <div class="guia" id="guia"></div>
+</div></div>
+<script src="shared.js"></script><script src="scenes.js"></script>
+<script>
+(function(){
+  var S=IVS4,pista=document.getElementById("pista"),prisma=document.getElementById("prisma"),escs=document.getElementById("escenas"),libroEl=document.getElementById("libro"),luz=document.getElementById("luz");
+  document.getElementById("h1").innerHTML=S.TITULO;document.getElementById("inic").innerHTML=S.BOTONES;document.getElementById("fin").innerHTML=S.BOTONES;
+  var htxt=document.getElementById("htxt"),inic=document.getElementById("inic"),fin=document.getElementById("fin"),hint=document.getElementById("hint"),guia=document.getElementById("guia"),cap=document.getElementById("cap"),hilo2=document.getElementById("hilo2"),hi=document.getElementById("hi");
+  var N=S.OFERTAS.length,items=[],nodos=[];
+  S.OFERTAS.forEach(function(f,i){
+    var d=document.createElement("div");d.className="escena";d.innerHTML='<canvas class="esc-cv"></canvas>';escs.appendChild(d);
+    items.push({d:d,e:IVSEscena(d.firstChild,f.k)});
+    var b=document.createElement("b");b.style.left=(i/(N-1)*100)+"%";b.style.setProperty("--c","var("+f.c+")");hilo2.appendChild(b);nodos.push(b);
+  });
+  var libro=IVSLibro(libroEl),pr=IVSPrisma(document.getElementById("cv"),{px:.34,cy:.5,band:[.38,.62],out:function(P,w,h){return [[w,P.y]];}});
+  var cur=-2,pend=false;
+  function marco(){
+    pend=false;var r=pista.getBoundingClientRect(),tot=r.height-innerHeight,p=S.clamp(-r.top/tot,0,1);
+    // 1) zambullida en el prisma
+    var z=S.sm(p/.09);prisma.style.transform="scale("+(1+7*z).toFixed(3)+")";prisma.style.opacity=(1-S.sm((p-.03)/.07)).toFixed(3);prisma.style.visibility=p>.11?"hidden":"visible";
+    // 2) las seis escenas, una tras otra
+    var a0=.1,a1=.76,q=S.clamp((p-a0)/(a1-a0),0,.9999),idx=p<a0||p>=a1?-1:Math.floor(q*N);
+    if(idx!==cur){cur=idx;items.forEach(function(it,i){it.d.classList.toggle("on",i===idx);it.d.classList.toggle("ya",idx>=0&&i<idx);it.e.activar(i===idx);});
+      if(idx>=0){var f=S.OFERTAS[idx];document.getElementById("clat").textContent=f.lat;document.getElementById("ct").textContent=f.t;document.getElementById("cp").textContent=f.d;cap.style.setProperty("--c","var("+f.c+")");}
+      nodos.forEach(function(b,i){b.classList.toggle("on",idx>=0&&i<=idx);});}
+    cap.classList.toggle("on",idx>=0);hilo2.classList.toggle("on",p>.08&&p<.8);hi.style.width=(idx<0?0:(q*N-.5)/(N-1)*100).toFixed(1)+"%";
+    if(idx>=0&&((q*N)%1)>0){hi.style.width=S.clamp((q*N-.5)/(N-1),0,1)*100+"%";}
+    // 3) la luz se junta y nace el libro
+    var g=S.sm((p-.74)/.06),t=S.sm((p-.78)/.06);
+    luz.style.opacity=(g*(1-S.sm((p-.82)/.04))).toFixed(2);luz.style.transform="scale("+(1+4*g).toFixed(2)+")";
+    libroEl.style.opacity=S.clamp(t*1.4,0,1).toFixed(3);libroEl.style.transform="scale("+S.lerp(.04,1,t).toFixed(3)+")";
+    var a=S.sm((p-.85)/.06),b=S.sm((p-.915)/.045),cB=S.sm((p-.955)/.02),cA=S.sm((p-.975)/.02);
+    libro.set(a*(1-cA),b*(1-cB));
+    var o0=S.clamp(1-(p-.015)/.04,0,1);htxt.style.opacity=o0.toFixed(2);inic.style.opacity=o0.toFixed(2);inic.style.pointerEvents=p>.05?"none":"auto";
+    var f2=S.sm((p-.99)/.01);fin.style.opacity=f2.toFixed(2);fin.classList.toggle("on",f2>.5);
+    hint.style.opacity=p<.03?1:0;guia.style.transform="scaleX("+p.toFixed(3)+")";
+  }
+  function pedir(){if(!pend){pend=true;requestAnimationFrame(marco);}}
+  addEventListener("scroll",pedir,{passive:true});addEventListener("resize",function(){pr.medir();items.forEach(function(it){it.e.medir();});pedir();});
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){items.forEach(function(it){it.e.medir();});pedir();});
+  marco();
+})();
+</script>
+</body></html>
