@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 5 · Mesa</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="v.css">
+</head>
+<body data-c="5">
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+
+<section class="cover" id="cover">
+  <div class="radar" id="radar"></div>
+  <div class="c-marco"></div>
+  <svg class="c-anillo" id="anillo" viewBox="0 0 1000 1000" aria-hidden="true"><defs><path id="aro" d="M500 40a460 460 0 1 1 0 920a460 460 0 1 1 0 -920"/></defs><g><text><textPath href="#aro" textLength="2890" lengthAdjust="spacing">IVS · CODEX · IVRISPRVDENTIA · LEGISLATIO · DOCTRINA · IVS · CODEX · IVRISPRVDENTIA · LEGISLATIO · DOCTRINA · </textPath></text></g></svg>
+  <div class="c-nombre marca-g" aria-hidden="true">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></div>
+  <div class="c-txt" id="txt">
+  <h1 class="c-titulo" id="titulo">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1>
+    <div class="c-acc" id="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+  </div>
+  <p class="c-lema" id="lema">Seis bases oficiales · una sola consulta</p>
+  <ul class="c-bases" id="bases">
+    <li style="--c:var(--c-mza)"><i></i>MZA</li><li style="--c:var(--c-mzl)"><i></i>MZA LEGAL</li><li style="--c:var(--c-caba)"><i></i>TSJ</li>
+    <li style="--c:var(--c-csjn)"><i></i>CSJN</li><li style="--c:var(--c-saij)"><i></i>SAIJ</li><li style="--c:var(--c-dial)"><i></i>DIALNET</li>
+  </ul>
+</section>
+
+<section class="reco" id="reco" data-r="punto" aria-label="Cómo funciona">
+  <div class="reco-escena">
+    <div class="reco-centro"><div class="reco-nucleo"></div><div class="reco-capsula"><span></span></div></div>
+    <div class="reco-fin"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+    <div class="reco-pies">
+      <p class="on">Seis repositorios <em>oficiales.</em></p>
+      <p>Cada uno con su buscador y su lógica.</p>
+      <p>Una sola consulta los <em>recorre.</em></p>
+      <p>Una consulta, seis bases y <em>doctrina.</em></p>
+    </div>
+    <div class="reco-guia"><i></i></div>
+  </div>
+</section>
+
+<section class="barr" data-b="b" aria-label="Fallos emblemáticos">
+  <div class="radar" id="radar2"></div>
+  <div class="barr-txt" id="barrtxt"><h2>El haz descubre <em>cada fallo.</em></h2><p>Fallos emblemáticos de la Corte Suprema, con su carátula y la cita de donde salen.</p></div>
+</section>
+
+<footer class="pie-f"><small>Seis bases oficiales · una sola consulta</small><div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div></footer>
+
+<script src="../radar.js"></script>
+<script src="recorrido.js"></script>
+<script>
+(function(){
+  var N=5,O={"cx": 0.5, "cy": 0.5, "r": 0.3},movil=innerWidth<=860,cover=document.getElementById("cover");
+  function rects(){
+    if(innerWidth<=860) return [];
+    return ["#txt","#lema",".c-nombre","#bases"].map(function(s){ var e=document.querySelector(s); return (e&&getComputedStyle(e).display!=="none")?e.getBoundingClientRect():null; }).filter(Boolean)
+      .concat([document.querySelector(".cab").getBoundingClientRect()]);
+  }
+  var o={cx:movil?.5:O.cx,cy:movil?.5:O.cy,r:movil?.46:O.r,movil:true,n:movil?3:4,evitar:rects,luz:.26};
+  var bases=[].slice.call(document.querySelectorAll("#bases li")),anillo=document.getElementById("anillo");
+  o.alCuadro=function(th,g){
+    if(movil) return;
+    if(N===5){ bases.forEach(function(li,k){
+        var a=-Math.PI/2+k*Math.PI/3,x=g.cx+Math.cos(a)*g.rv*1.2,y=g.cy+Math.sin(a)*g.rv*1.2,d=(((th-a)%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
+        li.style.left=x+"px"; li.style.top=y+"px"; li.classList.toggle("on",d<2.6);
+      }); }
+    if(N===4&&anillo){ var s=g.rv*2.26; anillo.style.width=s+"px"; anillo.style.height=s+"px"; anillo.style.left=(g.cx-s/2)+"px"; anillo.style.top=(g.cy-s/2)+"px"; }
+  };
+  IVSRadar(document.getElementById("radar"),o);
+  IVSRecorrido(document.getElementById("reco"),"punto");
+  var t=document.getElementById("barrtxt"),mv=innerWidth<=860;
+  IVSRadar(document.getElementById("radar2"),{full:true,cx:mv?.5:(0.5),cy:.5,r:.5,movil:true,n:mv?2:4,luz:.2,evitar:function(){ return mv?[]:[t.getBoundingClientRect()]; }});
+})();
+</script>
+</body></html>
