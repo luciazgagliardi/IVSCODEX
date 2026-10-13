@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Opción B · La inmersión</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="shared.css">
+<style>
+/* B · LA INMERSIÓN — la cámara se zambulle en el prisma. El haz se vuelve el eje de una arcada en perspectiva: cada
+   arco es una puerta con su dibujo. Al final del pasillo la luz se junta en un punto y de ahí nace el libro. */
+.pista{height:1000vh;position:relative}
+.esc{position:sticky;top:0;height:100svh;overflow:hidden}
+.capa{position:absolute;inset:0}
+.prisma{transform-origin:50% 50%;will-change:transform,opacity}
+.prisma canvas{width:100%;height:100%;display:block}
+.tun{perspective:760px;perspective-origin:50% 50%;opacity:0}
+.cam{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+.p3{position:absolute;left:50%;top:50%;--w:min(54vmin,500px);--h:min(78vmin,700px);width:var(--w);height:var(--h);margin:calc(var(--h)/-2) 0 0 calc(var(--w)/-2);transform-style:preserve-3d;--c:var(--gold)}
+.p3 .arco{position:absolute;inset:0;border:2px solid var(--c);border-bottom:0;border-radius:999px 999px 0 0;box-shadow:0 0 26px -6px var(--c),inset 0 0 40px -14px var(--c);background:linear-gradient(rgba(16,14,11,0) 50%,rgba(16,14,11,.5))}
+.p3 .lat{position:absolute;left:0;right:0;top:7%;text-align:center;font:500 clamp(11px,1.7vmin,16px)/1 var(--caps);letter-spacing:.26em;color:var(--c)}
+.p3 .im{position:absolute;left:19%;right:19%;top:17%}
+.p3 .dib .dl{stroke-dashoffset:0}
+.p3 .dib .dd,.p3 .dib .dp{opacity:1}
+.cap{position:absolute;left:50%;bottom:clamp(86px,15vh,150px);transform:translateX(-50%);z-index:5;width:min(88vw,520px);text-align:center;opacity:0;transition:opacity .45s var(--ease);text-shadow:0 0 22px var(--bg),0 0 8px var(--bg)}
+.cap.on{opacity:1}
+.cap h3{margin:0 0 .35em;font:500 clamp(20px,3.2vh,30px)/1.1 var(--sans);letter-spacing:-.03em}
+.cap p{margin:0;font-size:clamp(13px,1.9vh,16px);line-height:1.5;color:var(--mute)}
+.piso{position:absolute;left:50%;top:50%;width:2px;margin-left:-1px;height:9000px;transform-origin:top center;transform:translateY(calc(var(--h,0px)*0)) rotateX(-90deg);
+  background:linear-gradient(to bottom,rgba(255,226,150,.95),rgba(217,163,27,.6) 40%,rgba(217,163,27,0));box-shadow:0 0 20px 3px rgba(217,163,27,.25)}
+.luz{position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a8,#d9a31b 55%,#8a6200);box-shadow:0 0 50px 14px rgba(217,163,27,.38)}
+.libro{opacity:0}
+.htxt{position:absolute;left:50%;top:clamp(76px,12vh,120px);transform:translateX(-50%);width:min(92vw,880px);text-align:center;z-index:5}
+.inic{position:absolute;left:50%;bottom:clamp(22px,6vh,60px);transform:translateX(-50%);z-index:5}
+.pie{position:absolute;left:var(--pad);bottom:clamp(30px,7vh,70px);z-index:5;max-width:min(22ch,60vw);font:400 clamp(22px,3vw,44px)/1.08 var(--sans);letter-spacing:-.035em;opacity:0;transform:translateY(12px);transition:opacity .5s var(--ease),transform .5s var(--ease);text-shadow:0 0 22px var(--bg),0 0 8px var(--bg)}
+.pie.on{opacity:1;transform:none}.pie em{font-style:normal;color:var(--gold)}
+.fin{position:absolute;left:50%;bottom:clamp(24px,6vh,60px);transform:translateX(-50%);z-index:6;opacity:0;pointer-events:none}
+.fin.on{pointer-events:auto}
+.hint{position:absolute;right:var(--pad);bottom:clamp(26px,6.5vh,60px);z-index:5;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);white-space:nowrap;transition:opacity .4s}
+.guia{position:absolute;left:0;bottom:0;height:2px;background:var(--gold);width:100%;transform-origin:left;transform:scaleX(0);opacity:.7;z-index:6}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<div class="pista" id="pista"><div class="esc" id="esc">
+  <div class="capa prisma" id="prisma"><canvas id="cv" aria-hidden="true"></canvas></div>
+  <div class="capa tun" id="tun"><div class="cam" id="cam"><div class="piso"></div></div></div>
+  <div class="capa libro" id="libro"></div>
+  <div class="htxt" id="htxt"><h1 class="t" id="h1"></h1></div>
+  <div class="inic" id="inic"></div>
+  <div class="cap" id="cap"><h3 id="ct"></h3><p id="cp"></p></div>
+  <p class="pie" id="pie"></p>
+  <div class="fin" id="fin"></div>
+  <p class="hint" id="hint">Desplace · se zambulle</p>
+  <div class="guia" id="guia"></div>
+</div></div>
+<script src="shared.js"></script>
+<script>
+(function(){
+  var S=IVS4,pista=document.getElementById("pista"),esc=document.getElementById("esc"),prisma=document.getElementById("prisma"),tun=document.getElementById("tun"),cam=document.getElementById("cam"),libroEl=document.getElementById("libro");
+  document.getElementById("h1").innerHTML=S.TITULO;document.getElementById("inic").innerHTML=S.BOTONES;document.getElementById("fin").innerHTML=S.BOTONES;
+  var capEl=document.getElementById("cap"),htxt=document.getElementById("htxt"),inic=document.getElementById("inic"),pie=document.getElementById("pie"),fin=document.getElementById("fin"),hint=document.getElementById("hint"),guia=document.getElementById("guia");
+  var GAP=640,N=6,ps=[];
+  S.OFERTAS.forEach(function(f,i){
+    var d=document.createElement("div");d.className="p3";d.style.setProperty("--c","var("+f.c+")");d.style.transform="translateZ("+(-i*GAP)+"px)";
+    d.innerHTML='<div class="arco"></div><div class="lat">'+f.lat+'</div><div class="im">'+S.dibujo(f.k)+'</div>';
+    cam.appendChild(d);ps.push(d);
+  });
+  var luz=document.createElement("div");luz.className="luz";luz.style.transform="translateZ("+(-(N)*GAP-200)+"px)";cam.appendChild(luz);
+  var libro=IVSLibro(libroEl);
+  var pr=IVSPrisma(document.getElementById("cv"),{px:.34,cy:.5,band:[.38,.62],out:function(P,w,h){return [[w*.5,P.y],[w,P.y]];}});
+  var TX=["Seis puertas, <em>cada una un repositorio oficial.</em>","Lo que ofrece la plataforma, <em>de una en una.</em>","Y al fondo, <em>todo estaba en un libro.</em>"],tx=-1;
+  var pend=false;
+  function marco(){
+    pend=false;var r=pista.getBoundingClientRect(),tot=r.height-innerHeight,p=S.clamp(-r.top/tot,0,1);
+    // 1) zambullida en el prisma: la escena se agranda alrededor del haz y se apaga
+    var z=S.sm(p/.1);
+    prisma.style.transform="scale("+(1+7*z).toFixed(3)+")";prisma.style.opacity=(1-S.sm((p-.04)/.07)).toFixed(3);
+    prisma.style.visibility=p>.12?"hidden":"visible";
+    // 2) el pasillo: la cámara avanza por la arcada
+    var tin=S.sm((p-.05)/.06);tun.style.opacity=tin.toFixed(3);
+    var pasillo=S.clamp((p-.08)/.6,0,1),z0=-GAP*.4;
+    cam.style.transform="translateZ("+(pasillo*(N*GAP+GAP*.4)).toFixed(1)+"px)";
+    var c=pasillo*(N*GAP+GAP*.4),act=-1,ao=0;
+    ps.forEach(function(d,i){
+      var rel=c-i*GAP;                                     // <0: la puerta está adelante; >0: ya pasó
+      var o=S.clamp(1-(rel-GAP*.12)/(GAP*.45),0,1)*S.clamp(1+rel/(3.4*GAP),0,1);
+      d.style.opacity=o.toFixed(3);
+      d.querySelector(".im").style.opacity=S.clamp(1-(rel+GAP*.04)/(GAP*.16),0,1).toFixed(2);
+      var w=S.clamp((rel+GAP*.85)/(GAP*.25),0,1)*S.clamp(1-(rel+GAP*.12)/(GAP*.2),0,1);   // sólo cuando está a la distancia justa
+      if(w>ao){ao=w;act=i;}
+    });
+    if(act>=0){document.getElementById("ct").textContent=S.OFERTAS[act].t;document.getElementById("cp").textContent=S.OFERTAS[act].d;}
+    capEl.classList.toggle("on",act>=0&&ao>.5&&p<.66);
+    // 3) la luz del fondo se vuelve el punto del que nace el libro
+    var t=S.sm((p-.7)/.06),fo=S.sm((p-.68)/.05);
+    tun.style.opacity=(tin*(1-fo)).toFixed(3);tun.style.visibility=fo>=1?"hidden":"visible";
+    luz.style.transform="translateZ("+(-(N)*GAP-200)+"px) scale("+(1+4*S.sm((p-.58)/.12)).toFixed(2)+")";
+    libroEl.style.opacity=S.clamp(t*1.4,0,1).toFixed(3);libroEl.style.transform="scale("+S.lerp(.04,1,t).toFixed(3)+")";
+    var a=S.sm((p-.8)/.08),b=S.sm((p-.89)/.06),cB=S.sm((p-.95)/.025),cA=S.sm((p-.972)/.025);
+    libro.set(a*(1-cA),b*(1-cB));
+    // textos
+    var o0=S.clamp(1-(p-.015)/.04,0,1);htxt.style.opacity=o0.toFixed(2);inic.style.opacity=o0.toFixed(2);inic.style.pointerEvents=p>.05?"none":"auto";
+    var seg=p<.26?0:p<.5?1:2,mostrar=(p>.1&&p<.3)||(p>.62&&p<.78);
+    if(seg!==tx){tx=seg;pie.innerHTML=TX[seg];}pie.classList.toggle("on",mostrar);
+    var f=S.sm((p-.99)/.01);fin.style.opacity=f.toFixed(2);fin.classList.toggle("on",f>.5);
+    hint.style.opacity=p<.03?1:0;guia.style.transform="scaleX("+p.toFixed(3)+")";
+  }
+  function pedir(){if(!pend){pend=true;requestAnimationFrame(marco);}}
+  addEventListener("scroll",pedir,{passive:true});addEventListener("resize",function(){pr.medir();pedir();});marco();
+})();
+</script>
+</body></html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Opción A · El hilo</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="shared.css">
+<style>
+/* A · EL HILO — el haz dorado del prisma sigue su camino de costado: el scroll recorre el hilo y cada puerta que
+   atraviesa se enciende con su dibujo. Al final el hilo entra en un libro: todo estaba en él, y se cierra. */
+.pista{height:960vh;position:relative}
+.esc{position:sticky;top:0;height:100svh;overflow:hidden}
+.zoom{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
+.mundo{position:absolute;left:0;top:0;height:100%;will-change:transform}
+.mundo canvas{position:absolute;left:0;top:0;height:100%;display:block}
+.hilo{position:absolute;height:2px;margin-top:-1px;background:linear-gradient(90deg,rgba(255,226,150,.9),rgba(217,163,27,.75));box-shadow:0 0 22px 3px rgba(217,163,27,.18)}
+.hilo::after{content:"";position:absolute;inset:-3px 0;background:repeating-linear-gradient(90deg,transparent 0 150px,rgba(255,240,190,.95) 150px 156px,transparent 156px 300px);
+  background-size:300px 100%;animation:viaja 2.2s linear infinite;filter:blur(1.5px);-webkit-mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent)}
+@keyframes viaja{to{background-position:300px 0}}
+.puerta{position:absolute;--c:var(--gold)}
+.arco{position:absolute;inset:0;border:2px solid var(--c);border-bottom:0;border-radius:999px 999px 0 0;opacity:.35;transition:opacity .8s var(--ease),box-shadow .8s var(--ease)}
+.puerta.on .arco{opacity:1;box-shadow:0 0 30px -6px var(--c),inset 0 0 44px -16px var(--c)}
+.puerta .lat{position:absolute;left:0;right:0;top:9%;text-align:center;font:500 clamp(10px,1.3vh,13px)/1 var(--caps);letter-spacing:.26em;color:var(--c);opacity:.6;transition:opacity .6s}
+.puerta.on .lat{opacity:1}
+.puerta .im{position:absolute;left:19%;right:19%;top:17%;opacity:.0;transition:opacity .6s}
+.puerta.on .im{opacity:1}
+.puerta .tx{position:absolute;left:11%;right:11%;top:57%;text-align:center;opacity:0;transform:translateY(10px);transition:opacity .8s var(--ease) .3s,transform .8s var(--ease) .3s}
+.puerta.on .tx{opacity:1;transform:none}
+.puerta h3{margin:0 0 .35em;font:500 clamp(18px,3vh,28px)/1.1 var(--sans);letter-spacing:-.03em}
+.puerta p{margin:0;font-size:clamp(12.5px,1.7vh,15px);line-height:1.5;color:var(--mute)}
+.sello{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a8,#d9a31b 55%,#8a6200);box-shadow:0 0 40px 10px rgba(217,163,27,.35)}
+.htxt{position:absolute;left:50%;top:clamp(76px,12vh,120px);transform:translateX(-50%);width:min(92vw,880px);text-align:center;z-index:5;transition:opacity .3s}
+.fin{position:absolute;left:50%;bottom:clamp(24px,6vh,60px);transform:translateX(-50%);z-index:6;opacity:0;pointer-events:none}
+.fin.on{pointer-events:auto}
+.inic{position:absolute;left:50%;bottom:clamp(22px,6vh,60px);transform:translateX(-50%);z-index:5;transition:opacity .3s}
+.hint{position:absolute;right:var(--pad);bottom:clamp(26px,6.5vh,60px);z-index:5;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);transition:opacity .4s}
+.guia{position:absolute;left:0;bottom:0;height:2px;background:var(--gold);width:100%;transform-origin:left;transform:scaleX(0);opacity:.7;z-index:6}
+@media (max-width:640px){.htxt{top:84px}}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<div class="pista" id="pista"><div class="esc" id="esc">
+  <div class="zoom" id="zoom"><div class="mundo" id="mundo"><canvas id="cv" aria-hidden="true"></canvas></div></div>
+  <div class="htxt" id="htxt"><h1 class="t" id="h1"></h1></div>
+  <div class="inic" id="inic"></div>
+  <div class="lb-host" id="lbhost" style="opacity:0;transform:scale(.04)"></div>
+  <div class="fin" id="fin"></div>
+  <p class="hint" id="hint">Desplace · la luz sigue</p>
+  <div class="guia" id="guia"></div>
+</div></div>
+<script src="shared.js"></script>
+<script>
+(function(){
+  var S=IVS4,pista=document.getElementById("pista"),esc=document.getElementById("esc"),zoom=document.getElementById("zoom"),mundo=document.getElementById("mundo"),cv=document.getElementById("cv");
+  document.getElementById("h1").innerHTML=S.TITULO;document.getElementById("inic").innerHTML=S.BOTONES;document.getElementById("fin").innerHTML=S.BOTONES;
+  var lbhost=document.getElementById("lbhost"),libro=IVSLibro(lbhost),htxt=document.getElementById("htxt"),inic=document.getElementById("inic"),fin=document.getElementById("fin"),guia=document.getElementById("guia"),hint=document.getElementById("hint");
+  var W,H,Px,Py,dh,dw,G,X,Lw,camMax,doors=[],hilo,sello,pr;
+  function construir(){
+    W=esc.clientWidth;H=esc.clientHeight;Px=W*.54;Py=H*.5;
+    dh=Math.min(H*.72,680);dw=Math.min(dh*.74,W*.84);G=dw+Math.max(W*.3,160);
+    var x0=Px+Math.max(W*.42,200);X=S.OFERTAS.map(function(_,i){return x0+i*G;});
+    var xs=X[5]+dw+Math.max(W*.28,150);Lw=xs+W*.5;camMax=xs-W*.5;   /* la cámara termina con el sello del hilo en el centro */
+    mundo.style.width=Lw+"px";cv.style.width=W+"px";cv.style.height=H+"px";
+    mundo.querySelectorAll(".puerta,.hilo,.sello").forEach(function(e){e.remove();});
+    hilo=document.createElement("div");hilo.className="hilo";hilo.style.left=Px+"px";hilo.style.top=Py+"px";hilo.style.width=(xs-Px)+"px";mundo.appendChild(hilo);
+    doors=S.OFERTAS.map(function(f,i){
+      var d=document.createElement("div");d.className="puerta";d.style.cssText="left:"+X[i]+"px;top:"+(Py-dh*.53)+"px;width:"+dw+"px;height:"+dh+"px;--c:var("+f.c+")";
+      d.innerHTML='<div class="arco"></div><div class="lat">'+f.lat+'</div><div class="im">'+S.dibujo(f.k)+'</div><div class="tx"><h3>'+f.t+'</h3><p>'+f.d+'</p></div>';
+      mundo.appendChild(d);return d;});
+    sello=document.createElement("div");sello.className="sello";sello.style.left=xs+"px";sello.style.top=Py+"px";mundo.appendChild(sello);
+  }
+  construir();
+  pr=IVSPrisma(cv,{px:.54,cy:.5,band:[.38,.62],out:function(P,w,h){return [[w,P.y]];}});
+  var pend=false;
+  function marco(){
+    pend=false;var r=pista.getBoundingClientRect(),tot=r.height-innerHeight,p=S.clamp(-r.top/tot,0,1);
+    var pan=S.clamp((p-.06)/.6,0,1),cam=pan*camMax;
+    mundo.style.transform="translateX("+(-cam).toFixed(1)+"px)";
+    doors.forEach(function(d,i){d.classList.toggle("on",X[i]+dw/2-cam<W*.8&&X[i]+dw/2-cam>-dw*.2);});
+    var t=S.sm((p-.7)/.07),fo=S.sm((p-.7)/.05);
+    zoom.style.opacity=(1-fo).toFixed(3);zoom.style.visibility=fo>=1?"hidden":"visible";
+    // el sello del hilo queda en el centro y de él nace el libro
+    sello.style.transform="scale("+(1+2.2*S.sm((p-.6)/.1)).toFixed(2)+")";
+    var a=S.sm((p-.8)/.08),b=S.sm((p-.89)/.06),cB=S.sm((p-.95)/.025),cA=S.sm((p-.972)/.025);
+    lbhost.style.opacity=S.clamp(t*1.4,0,1).toFixed(3);
+    lbhost.style.transform="scale("+S.lerp(.04,1,t).toFixed(3)+")";
+    libro.set(a*(1-cA),b*(1-cB));
+    htxt.style.opacity=S.clamp(1-(p-.02)/.05,0,1).toFixed(2);inic.style.opacity=S.clamp(1-(p-.02)/.05,0,1).toFixed(2);inic.style.pointerEvents=p>.06?"none":"auto";
+    var f=S.sm((p-.99)/.01);fin.style.opacity=f.toFixed(2);fin.classList.toggle("on",f>.5);
+    hint.style.opacity=p<.03?1:0;guia.style.transform="scaleX("+p.toFixed(3)+")";
+  }
+  function pedir(){if(!pend){pend=true;requestAnimationFrame(marco);}}
+  addEventListener("scroll",pedir,{passive:true});addEventListener("resize",function(){construir();pr.medir();pedir();});marco();
+})();
+</script>
+</body></html>
