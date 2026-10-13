@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 4 · Afiche partido</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="p.css">
+<style>
+/* 4 · AFICHE PARTIDO — dos superficies, negro y crema (los mismos colores, usados como papel).
+   A la izquierda, el lema romano a escala de cartel, en cuatro renglones que entran detrás de una línea.
+   A la derecha, el instrumento: el buscador sobre papel. Debajo, una cinta que se desplaza muy despacio. */
+body{min-height:100svh;display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);grid-template-rows:1fr auto}
+.izq{position:relative;padding:clamp(18px,3vh,30px) var(--pad) clamp(22px,4vh,44px);display:flex;flex-direction:column;justify-content:space-between;min-height:calc(100svh - 60px)}
+.izq .marca{font-size:17px}
+.lema{margin:0;font:300 clamp(54px,9.2vw,168px)/.88 var(--caps);letter-spacing:.01em;text-transform:none}
+.lema span{display:block;overflow:hidden;padding:.02em 0}
+.lema span i{display:block;font-style:normal;transform:translateY(106%);animation:sube 1.5s var(--ease) forwards;animation-delay:calc(.2s + var(--k)*.16s)}
+@keyframes sube{to{transform:none}}
+.lema .v{background:linear-gradient(170deg,#f0c75a 8%,#d9a31b 46%,#a77a0c 92%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+.sig{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);opacity:0;animation:ap 1.2s var(--ease) 1.4s forwards}
+@keyframes ap{to{opacity:1}}
+.der{background:var(--fg);color:#14110a;padding:clamp(18px,3vh,30px) var(--pad) clamp(22px,4vh,44px);display:flex;flex-direction:column;justify-content:space-between;position:relative}
+.der::after{content:"";position:absolute;inset:0;background:url("../grano-sobre.png") 0 0/256px;mix-blend-mode:multiply;opacity:.35;pointer-events:none}
+.der nav{display:flex;gap:clamp(14px,1.6vw,26px);font-size:14.5px;color:rgba(20,17,10,.62);justify-content:flex-end}
+.der nav a:hover{color:#8a6200}
+.der h1{margin:clamp(30px,6vh,70px) 0 0;font:500 clamp(26px,2.9vw,44px)/1.08 var(--sans);letter-spacing:-.03em;max-width:15ch}
+.der h1 em{font-style:normal;color:#a77a0c}
+.busca{display:flex;align-items:center;gap:8px;margin-top:clamp(22px,4vh,40px);padding:7px 7px 7px 22px;border:1px solid rgba(20,17,10,.28);border-radius:999px;background:rgba(255,255,255,.35)}
+.busca input{flex:1;min-width:0;border:0;background:none;outline:none;font-size:16.5px;color:#14110a;letter-spacing:-.01em}
+.busca input::placeholder{color:rgba(20,17,10,.45)}
+.busca button{padding:13px 22px 12px;border:0;border-radius:999px;background:#14110a;color:var(--fg);font:500 14.5px/1 var(--sans);cursor:pointer;transition:background .3s}
+.busca button:hover{background:#8a6200}
+.lista{list-style:none;margin:clamp(22px,4vh,40px) 0 0;padding:0;border-top:1px solid rgba(20,17,10,.2)}
+.lista li{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(20,17,10,.2);font-size:14.5px;opacity:0;transform:translateX(18px);animation:ent .9s var(--ease) forwards;animation-delay:calc(.9s + var(--k)*.09s)}
+@keyframes ent{to{opacity:1;transform:none}}
+.lista i{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none}
+.lista b{font:500 13px/1 var(--caps);letter-spacing:.14em;min-width:7.5em}
+.lista span{color:rgba(20,17,10,.6)}
+.ctas{display:flex;gap:10px;flex-wrap:wrap;margin-top:clamp(22px,4vh,40px)}
+.ctas .sec{border-color:rgba(20,17,10,.3);color:#14110a}
+.ctas .sec:hover{border-color:#8a6200;color:#8a6200}
+.cinta{grid-column:1/-1;overflow:hidden;border-top:1px solid var(--line);padding:14px 0;white-space:nowrap}
+.cinta div{display:inline-block;animation:corre 70s linear infinite;font:400 15px/1 var(--caps);letter-spacing:.3em;color:var(--mute)}
+.cinta b{color:var(--gold);font-weight:500}
+@keyframes corre{to{transform:translateX(-50%)}}
+@media (max-width:860px){body{grid-template-columns:minmax(0,1fr)}.izq{min-height:62svh}.lema{font-size:clamp(52px,17vw,110px)}.der nav{justify-content:flex-start}}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<section class="izq">
+  <span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span>
+  <h2 class="lema" aria-label="Ius est ars boni et aequi"><span><i style="--k:0">I<b class="v" style="font-weight:inherit">V</b>S</i></span><span><i style="--k:1">EST ARS</i></span><span><i style="--k:2">BONI ET</i></span><span><i style="--k:3">AEQ<b class="v" style="font-weight:inherit">V</b>I</i></span></h2>
+  <span class="sig">El derecho es el arte de lo bueno y de lo justo · Celso</span>
+</section>
+<section class="der">
+  <nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav>
+  <div>
+    <h1>Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1>
+    <form class="busca" onsubmit="return false"><input type="text" placeholder="Escriba su consulta: daño moral, despido…" aria-label="Consulta"><button type="submit">Consultar</button></form>
+    <ul class="lista">
+      <li style="--k:0"><i style="--c:var(--c-mza)"></i><b>MZA</b><span>Poder Judicial de Mendoza</span></li>
+      <li style="--k:1"><i style="--c:var(--c-mzl)"></i><b>MZA LEGAL</b><span>Mendoza Legal</span></li>
+      <li style="--k:2"><i style="--c:var(--c-caba)"></i><b>TSJ</b><span>Tribunal Superior de la Ciudad</span></li>
+      <li style="--k:3"><i style="--c:var(--c-csjn)"></i><b>CSJN</b><span>Corte Suprema de la Nación</span></li>
+      <li style="--k:4"><i style="--c:var(--c-saij)"></i><b>SAIJ</b><span>Sistema Argentino de Información Jurídica</span></li>
+      <li style="--k:5"><i style="--c:var(--c-dial)"></i><b>DIALNET</b><span>Doctrina en español</span></li>
+    </ul>
+  </div>
+  <div class="ctas"><a class="btn" style="background:#14110a;border-color:#14110a;color:var(--fg)" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+</section>
+<div class="cinta" aria-hidden="true"><div>IVS <b>·</b> CODEX <b>·</b> IVRISPRVDENTIA <b>·</b> LEGISLATIO <b>·</b> DOCTRINA <b>·</b> IVS <b>·</b> CODEX <b>·</b> IVRISPRVDENTIA <b>·</b> LEGISLATIO <b>·</b> DOCTRINA <b>·</b> IVS <b>·</b> CODEX <b>·</b> IVRISPRVDENTIA <b>·</b> LEGISLATIO <b>·</b> DOCTRINA <b>·</b> IVS <b>·</b> CODEX <b>·</b> IVRISPRVDENTIA <b>·</b> LEGISLATIO <b>·</b> DOCTRINA <b>·</b></div></div>
+</body></html>

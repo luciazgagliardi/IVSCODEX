@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 3 · Recorrido</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="p.css">
+<style>
+/* 3 · RECORRIDO — la portada se cuenta con el scroll.
+   Seis puntos (las seis bases) orbitan separados; al bajar, se juntan en uno,
+   y ese punto se abre en el campo de búsqueda. El movimiento ES la explicación:
+   seis repositorios → una consulta. Sin texto corrido. */
+.pista{height:480vh;position:relative}
+.escena{position:sticky;top:0;height:100svh;overflow:hidden}
+.cab{position:absolute;left:0;right:0;top:0;z-index:5}
+.centro{position:absolute;left:50%;top:47%;width:0;height:0}
+.nodo{position:absolute;left:0;top:0;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--c);will-change:transform}
+.nodo b{position:absolute;left:50%;top:-30px;transform:translateX(-50%);font:500 12px/1 var(--caps);letter-spacing:.16em;color:var(--fg);white-space:nowrap;transition:opacity .2s}
+.nucleo{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:var(--gold);opacity:0;transform:scale(0)}
+.capsula{position:absolute;left:0;top:0;transform:translate(-50%,-50%);height:14px;width:14px;border:1px solid var(--gold);border-radius:999px;background:rgba(16,14,11,.9);display:flex;align-items:center;padding:0 26px;overflow:hidden;opacity:0}
+.capsula span{font-size:clamp(17px,2vw,24px);white-space:nowrap;letter-spacing:-.01em;opacity:0}
+.capsula span::after{content:"";display:inline-block;width:2px;height:1.05em;margin-left:3px;background:var(--gold);vertical-align:-.15em;animation:parp 1s steps(1) infinite}
+@keyframes parp{50%{opacity:0}}
+.pie-cap{position:absolute;left:var(--pad);bottom:clamp(30px,7vh,70px);right:var(--pad);z-index:4}
+.pie-cap p{position:absolute;left:0;bottom:0;margin:0;max-width:20ch;font:400 clamp(26px,4vw,56px)/1.05 var(--sans);letter-spacing:-.03em;opacity:0;transform:translateY(16px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.pie-cap p.on{opacity:1;transform:none}
+.pie-cap p em{font-style:normal;color:var(--gold)}
+.fin{position:absolute;left:50%;top:calc(47% + clamp(60px,9vh,100px));transform:translate(-50%,12px);z-index:4;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.fin.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.guia{position:absolute;right:var(--pad);bottom:clamp(30px,7vh,70px);z-index:4;width:1px;height:90px;background:var(--line)}
+.guia i{display:block;width:100%;height:100%;background:var(--gold);transform-origin:top;transform:scaleY(0)}
+.pista .desplace{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);transition:opacity .4s}
+@media (max-width:760px){.pie-cap p{max-width:14ch}.guia{display:none}}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="pista" id="pista">
+  <div class="escena">
+    <header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+    <div class="centro" id="centro">
+      <div class="nucleo" id="nucleo"></div>
+      <div class="capsula" id="capsula"><span id="ct"></span></div>
+    </div>
+    <div class="fin" id="fin"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+    <div class="pie-cap">
+      <p class="on">Seis repositorios <em>oficiales.</em></p>
+      <p>Cada uno con su buscador y su lógica.</p>
+      <p>Una sola consulta los <em>recorre.</em></p>
+      <p>Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+    </div>
+    <div class="guia"><i id="guia"></i></div>
+    <div class="desplace" id="desp">Desplace para recorrer</div>
+  </div>
+</div>
+<script>
+(function(){
+  var B=[["MZA","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"]];
+  var centro=document.getElementById("centro"),pista=document.getElementById("pista"),nuc=document.getElementById("nucleo"),cap=document.getElementById("capsula"),ct=document.getElementById("ct"),
+      fin=document.getElementById("fin"),guia=document.getElementById("guia"),desp=document.getElementById("desp"),ps=[].slice.call(document.querySelectorAll(".pie-cap p"));
+  var nodos=B.map(function(b,i){ var d=document.createElement("div"); d.className="nodo"; d.style.setProperty("--c","var("+b[1]+")"); d.innerHTML="<b>"+b[0]+"</b>"; centro.insertBefore(d,nuc); return d; });
+  var TEXTO="amparo contra actos de particulares";
+  var sm=function(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}, lerp=function(a,b,t){return a+(b-a)*t;};
+  var pend=false, quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  function marco(){
+    pend=false;
+    var r=pista.getBoundingClientRect(),total=r.height-innerHeight,p=Math.max(0,Math.min(1,-r.top/total));
+    var W=innerWidth,H=innerHeight,R=Math.min(W*.36,H*.34,360);
+    var junta=sm((p-.27)/.3);                       // de 0 (separados) a 1 (juntos)
+    var radio=R*(1-junta)+4*junta, giro=p*3.2-0.5;
+    nodos.forEach(function(n,i){
+      var a=giro+i*Math.PI*2/6, elip=lerp(1,.62,junta);
+      var x=Math.cos(a)*radio*1.25, y=Math.sin(a)*radio*elip;
+      n.style.transform="translate("+x.toFixed(1)+"px,"+y.toFixed(1)+"px) scale("+lerp(1,.8,junta).toFixed(2)+")";
+      n.firstChild.style.opacity=1-sm((junta-.1)/.35);
+    });
+    var cn=sm((p-.52)/.1); nuc.style.opacity=cn*(1-sm((p-.64)/.06)); nuc.style.transform="scale("+cn.toFixed(2)+")";
+    var cp=sm((p-.62)/.24), ancho=Math.min(680,W-2*24);
+    cap.style.opacity=cp>0.01?1:0; cap.style.width=lerp(14,ancho,cp).toFixed(0)+"px"; cap.style.height=lerp(14,64,cp).toFixed(0)+"px";
+    cap.style.padding="0 "+lerp(0,26,cp).toFixed(0)+"px";
+    var tt=sm((p-.78)/.12); ct.style.opacity=tt>0?1:0; ct.textContent=TEXTO.slice(0,Math.round(TEXTO.length*tt));
+    var seg=p<.26?0:p<.56?1:p<.86?2:3;
+    ps.forEach(function(el,i){ el.classList.toggle("on",i===seg); });
+    fin.classList.toggle("on",p>.9);
+    guia.style.transform="scaleY("+p.toFixed(3)+")"; desp.style.opacity=p<.03?1:0;
+  }
+  function pedir(){ if(!pend){ pend=true; requestAnimationFrame(marco); } }
+  addEventListener("scroll",pedir,{passive:true}); addEventListener("resize",pedir); marco();
+  if(!quieto){ var t0=performance.now(); (function flota(now){ if(window.scrollY<4){ var t=(now-t0)/1000; centro.style.transform="translateY("+(Math.sin(t*.8)*4).toFixed(1)+"px)"; } requestAnimationFrame(flota); })(t0); }
+})();
+</script>
+</body></html>

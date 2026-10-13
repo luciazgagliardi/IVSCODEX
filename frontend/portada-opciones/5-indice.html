@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 5 · Índice</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="p.css">
+<style>
+/* 5 · ÍNDICE — tipografía y nada más: las seis bases como un índice a escala de cartel.
+   Cada renglón es una fuente real; al pasar el cursor (o solo, cada tanto) se enciende
+   con el color de su base y muestra qué contiene. Sin imágenes, sin figuras. */
+body{min-height:100svh;display:grid;grid-template-rows:auto auto 1fr auto}
+.intro{display:flex;flex-wrap:wrap;gap:16px 40px;align-items:flex-end;justify-content:space-between;padding:clamp(14px,3vh,34px) var(--pad) clamp(14px,3vh,30px)}
+.intro h1{margin:0;max-width:22ch;font:400 clamp(24px,3vw,44px)/1.08 var(--sans);letter-spacing:-.03em}
+.intro h1 em{font-style:normal;color:var(--gold)}
+.intro .acc{display:flex;gap:10px;flex-wrap:wrap}
+.ind{list-style:none;margin:0;padding:0;border-top:1px solid var(--line);align-self:stretch;display:grid;grid-template-rows:repeat(6,1fr)}
+.fila{position:relative;display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:0 24px;padding:0 var(--pad);border-bottom:1px solid var(--line);cursor:pointer;overflow:hidden;
+  opacity:0;transform:translateY(20px);animation:ent 1s var(--ease) forwards;animation-delay:calc(.15s + var(--k)*.1s)}
+@keyframes ent{to{opacity:1;transform:none}}
+.fila::before{content:"";position:absolute;inset:0;background:var(--c);transform:scaleY(0);transform-origin:bottom;transition:transform .55s var(--ease)}
+.fila.on::before{transform:scaleY(1)}
+.fila>*{position:relative}
+.sigla{font:300 clamp(40px,7.2vw,118px)/1 var(--caps);letter-spacing:.02em;transition:color .4s,transform .55s var(--ease);padding:.04em 0}
+.fila.on .sigla{color:#14110a;transform:translateX(clamp(8px,1.2vw,22px))}
+.dato{display:flex;flex-direction:column;gap:3px;font-size:clamp(13px,1.15vw,16px);color:var(--mute);transition:color .4s}
+.dato b{font-weight:500;color:var(--fg);font-size:clamp(14px,1.3vw,18px);transition:color .4s}
+.dato .ej{max-height:0;opacity:0;overflow:hidden;transition:max-height .55s var(--ease),opacity .4s;font-size:clamp(13px,1.1vw,15px)}
+.fila.on .dato,.fila.on .dato b{color:#14110a}
+.fila.on .dato .ej{max-height:4em;opacity:1;margin-top:6px}
+.pie{padding:14px var(--pad);display:flex;justify-content:space-between;gap:16px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+@media (max-width:760px){.fila{grid-template-columns:minmax(0,1fr);padding-block:12px;gap:2px}.ind{grid-template-rows:none}.sigla{font-size:clamp(38px,13vw,64px)}.dato .ej{max-height:4em;opacity:1;margin-top:4px}.pie span:last-child{display:none}}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<section class="intro">
+  <h1>Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1>
+  <div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+</section>
+<ol class="ind" id="ind">
+  <li class="fila" style="--c:var(--c-mza);--k:0"><span class="sigla">MZA</span><span class="dato"><b>Poder Judicial de Mendoza</b>Suprema Corte y tribunales provinciales<span class="ej">Autos y sentencias de todas las instancias y fueros.</span></span></li>
+  <li class="fila" style="--c:var(--c-mzl);--k:1"><span class="sigla">MZA LEGAL</span><span class="dato"><b>Mendoza Legal</b>Jurisprudencia provincial seleccionada<span class="ej">Sumarios procesales y doctrina de aplicación local.</span></span></li>
+  <li class="fila" style="--c:var(--c-caba);--k:2"><span class="sigla">TSJ</span><span class="dato"><b>Tribunal Superior de la Ciudad</b>Buenos Aires<span class="ej">Contencioso-administrativo, tributario, penal y electoral.</span></span></li>
+  <li class="fila" style="--c:var(--c-csjn);--k:3"><span class="sigla">CSJN</span><span class="dato"><b>Corte Suprema de la Nación</b>Fallos con carátula y fecha<span class="ej">Siri, Kot, Vizzoti, Mendoza (Riachuelo), Halabi.</span></span></li>
+  <li class="fila" style="--c:var(--c-saij);--k:4"><span class="sigla">SAIJ</span><span class="dato"><b>Sistema Argentino de Información Jurídica</b>Ministerio de Justicia de la Nación<span class="ej">Jurisprudencia, legislación y doctrina de todo el país.</span></span></li>
+  <li class="fila" style="--c:var(--c-dial);--k:5"><span class="sigla">DIALNET</span><span class="dato"><b>Dialnet</b>Doctrina jurídica en español<span class="ej">Artículos de revistas y trabajos académicos.</span></span></li>
+</ol>
+<footer class="pie"><span>Seis bases oficiales · una sola consulta</span><span>IVS EST ARS BONI ET AEQVI</span></footer>
+<script>
+(function(){
+  var f=[].slice.call(document.querySelectorAll(".fila")),i=-1,mano=false,quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  function act(n){ f.forEach(function(x,k){ x.classList.toggle("on",k===n); }); }
+  f.forEach(function(x,k){ x.addEventListener("mouseenter",function(){ mano=true; act(k); }); });
+  document.getElementById("ind").addEventListener("mouseleave",function(){ mano=false; });
+  if(!quieto) setInterval(function(){ if(mano||innerWidth<=760) return; i=(i+1)%f.length; act(i); },2600);
+  else act(3);
+})();
+</script>
+</body></html>
