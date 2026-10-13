@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 6 · Radar al centro</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="p.css">
+<style>
+/* 6 · RADAR AL CENTRO — el radar de la portada actual, pero como único protagonista y centrado.
+   Con escala de rumbo, estela más larga y anillos dorados donde el haz descubre cada fallo.
+   El texto se baja a las esquinas para no competir con él. */
+body{height:100svh;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
+.escena{position:relative;min-height:0}
+.radar{position:absolute;left:50%;top:50%;width:min(100%,calc(100svh - 80px));aspect-ratio:1;transform:translate(-50%,-50%)}
+.txt{position:absolute;left:var(--pad);bottom:clamp(18px,4vh,40px);z-index:3;max-width:min(26ch,34vw)}
+.txt h1{margin:0;font:400 clamp(22px,2.5vw,38px)/1.08 var(--sans);letter-spacing:-.03em}
+.txt h1 em{font-style:normal;color:var(--gold)}
+.acc{position:absolute;right:var(--pad);bottom:clamp(18px,4vh,40px);z-index:3;display:flex;flex-direction:column;gap:10px;align-items:stretch}
+.sello{position:absolute;right:var(--pad);top:clamp(10px,2vh,24px);z-index:3;text-align:right;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+@media (max-width:760px){
+  body{overflow:auto;height:auto;min-height:100svh}
+  .escena{display:flex;flex-direction:column}
+  .radar{position:relative;left:auto;top:auto;transform:none;width:100%;margin-top:6px}
+  .txt,.acc{position:static;max-width:none;padding:0 var(--pad)}
+  .txt{margin-top:10px}.txt h1{font-size:clamp(26px,8vw,34px)}
+  .acc{flex-direction:row;flex-wrap:wrap;margin:18px 0 32px}
+  .sello{display:none}
+}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<main class="escena">
+  <div class="radar" id="radar"></div>
+  <div class="txt"><h1>Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1></div>
+  <div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+  <div class="sello">Seis bases oficiales</div>
+</main>
+<script src="radar.js"></script>
+<script>IVSRadar(document.getElementById("radar"),{r:.46,movil:true,evitar:function(){ return []; }});</script>
+</body></html>

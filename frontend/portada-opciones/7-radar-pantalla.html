@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 7 · Radar a pantalla completa</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="p.css">
+<style>
+/* 7 · RADAR A PANTALLA COMPLETA — el haz barre toda la pantalla, no un círculo.
+   Los fallos se descubren en cualquier lugar, también detrás de la composición.
+   El texto queda en una columna a la izquierda, sobre un halo que despeja el fondo. */
+body{height:100svh;overflow:hidden}
+.fondo{position:fixed;inset:0}
+.col{position:relative;z-index:3;height:100svh;display:flex;flex-direction:column;justify-content:center;padding:0 var(--pad);max-width:min(560px,92vw)}
+.col::before{content:"";position:absolute;inset:-12% -8% -12% -30%;z-index:-1;background:radial-gradient(closest-side,rgba(16,14,11,.92) 55%,rgba(16,14,11,0));pointer-events:none}
+.col h1{margin:0;font:400 clamp(30px,3.9vw,58px)/1.04 var(--sans);letter-spacing:-.035em}
+.col h1 em{font-style:normal;color:var(--gold)}
+.col .acc{display:flex;gap:10px;flex-wrap:wrap;margin-top:clamp(20px,4vh,38px)}
+.col .sig{margin-top:clamp(22px,5vh,48px);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.cab{position:fixed;left:0;right:0;top:0;z-index:5}
+@media (max-width:760px){.col{justify-content:flex-end;padding-bottom:34px}.col::before{inset:-30% 0 -10% 0}}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="fondo" id="radar"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<main class="col" id="col">
+  <h1>Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1>
+  <div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+  <p class="sig">Seis bases oficiales · una sola consulta</p>
+</main>
+<script src="radar.js"></script>
+<script>
+(function(){
+  var movil=innerWidth<=760;
+  IVSRadar(document.getElementById("radar"),{full:true,cx:movil?.5:.7,cy:movil?.34:.5,r:.5,movil:true,n:movil?2:5,
+    evitar:function(){ var c=document.getElementById("col"),h=c.querySelector("h1").getBoundingClientRect(),a=c.querySelector(".acc").getBoundingClientRect(),
+      g=c.querySelector(".sig").getBoundingClientRect(),cab=document.querySelector(".cab").getBoundingClientRect(); return [h,a,g,cab]; }});
+})();
+</script>
+</body></html>

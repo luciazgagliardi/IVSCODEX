@@ -1170,6 +1170,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
        sobre ellas (según el ángulo que forman con el centro) y se apagan con la estela, como los puntos. */
     (function(){
       var cv=document.getElementById("pt-radar"),cap=document.getElementById("rf-cap"),sel=cv&&cv.parentNode; if(!cv||!cap) return;
+      var off=document.createElement("canvas"),octx=off.getContext("2d");   /* el haz se dibuja aparte, para atenuarlo con la distancia */
       var ctx=cv.getContext("2d"),K=1,DPR=Math.min(window.devicePixelRatio||1,1.5),P2=Math.PI*2,W=.55,TH=0,FADE=3.5,ATK=.05,NS=4;
       var CR="241,238,230",CO="217,163,27",quieto=window.matchMedia&&matchMedia("(prefers-reduced-motion:reduce)").matches;
       var FALLOS=[
@@ -1193,7 +1194,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
  ["Arriola","25/08/2009","Es inconstitucional penar la tenencia para consumo personal que no afecte a terceros.","Arriola, Sebastián y otros s/ causa n.º 9080","332:1963"]
 ];
       function medir(){
-        var S=sel.offsetWidth||1; cv.width=Math.round(S*DPR); cv.height=Math.round(S*DPR); K=S/1000*DPR; cap.style.transform="scale("+(S/1000)+")";
+        var S=sel.offsetWidth||1; cv.width=Math.round(S*DPR); cv.height=Math.round(S*DPR); off.width=cv.width; off.height=cv.height; K=S/1000*DPR; cap.style.transform="scale("+(S/1000)+")";
       }
       medir(); if(window.ResizeObserver) new ResizeObserver(medir).observe(sel); else window.addEventListener("resize",medir);
       var huecos=[],slots=[],cola=[],B=[],recientes=[];
@@ -1208,9 +1209,33 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
       function dibujar(){
         var th=TH;
         for(var k=1;k<=3;k++) for(var a=0;a<360;a+=4){ var a0=a*Math.PI/180,a1=(a+4)*Math.PI/180,r=k*124; lin(500+r*Math.cos(a0),500+r*Math.sin(a0),500+r*Math.cos(a1),500+r*Math.sin(a1),.13*(1-infl(500+r*Math.cos(a0),500+r*Math.sin(a0)))); }
-        for(var w=0;w<38;w++){ var an=th-w*.022,al=.6*Math.pow(1-w/38,1.8),c=Math.cos(an),sn=Math.sin(an);
-          for(var r=0;r<372;r+=12){ var x0=500+r*c,y0=500+r*sn,x1=500+(r+12)*c,y1=500+(r+12)*sn; lin(x0,y0,x1,y1,al*(1-.2*infl((x0+x1)/2,(y0+y1)/2)),w===0?CO:CR,w===0?1.7:1.1); } }
+        haz();
         B.forEach(function(b){ var d=(((th-b.f)%P2)+P2)%P2,lit=Math.max(0,1-d/3.4),q=infl(b.x,b.y); if(lit<.02) return; ctx.fillStyle="rgba("+CO+","+(.9*lit*(1-q)).toFixed(3)+")"; ctx.beginPath(); ctx.arc(b.x*K,b.y*K,(2+2*lit)*K,0,7); ctx.fill(); });
+      }
+      /* El haz como luz: un sector con degradado cónico que se atenúa hacia atrás y hacia afuera, con un filo dorado. */
+      function haz(){
+        var R=396,TR=1.35,cX=500*K,cY=500*K,a0=TH-TR,f=TR/P2;
+        if(octx.createConicGradient){
+          octx.setTransform(1,0,0,1,0,0); octx.globalCompositeOperation="source-over"; octx.clearRect(0,0,off.width,off.height);
+          var g=octx.createConicGradient(a0,cX,cY);
+          for(var i=0;i<=14;i++){ var u=i/14; g.addColorStop(f*u,"rgba(248,222,140,"+(0.46*Math.pow(u,2.6)).toFixed(3)+")"); }
+          g.addColorStop(Math.min(f+.0006,1),"rgba(248,222,140,0)");
+          octx.fillStyle=g; octx.beginPath(); octx.moveTo(cX,cY); octx.arc(cX,cY,R*K,a0,TH); octx.closePath(); octx.fill();
+          octx.globalCompositeOperation="destination-in";
+          var rg=octx.createRadialGradient(cX,cY,0,cX,cY,R*K);
+          rg.addColorStop(0,"rgba(0,0,0,1)"); rg.addColorStop(.55,"rgba(0,0,0,.8)"); rg.addColorStop(1,"rgba(0,0,0,0)");
+          octx.fillStyle=rg; octx.fillRect(0,0,off.width,off.height);
+          ctx.save(); ctx.globalCompositeOperation="lighter"; ctx.drawImage(off,0,0); ctx.restore();
+        }
+        var ex=(500+R*Math.cos(TH))*K,ey=(500+R*Math.sin(TH))*K;
+        [[7,.10],[1.5,.95]].forEach(function(l){
+          var lg=ctx.createLinearGradient(cX,cY,ex,ey);
+          lg.addColorStop(0,"rgba(255,238,176,"+l[1]+")"); lg.addColorStop(.5,"rgba(224,172,36,"+(l[1]*.75).toFixed(2)+")"); lg.addColorStop(1,"rgba(217,163,27,0)");
+          ctx.strokeStyle=lg; ctx.lineWidth=l[0]*K; ctx.lineCap="round"; ctx.beginPath(); ctx.moveTo(cX,cY); ctx.lineTo(ex,ey); ctx.stroke();
+        });
+        var gl=ctx.createRadialGradient(cX,cY,0,cX,cY,30*K);
+        gl.addColorStop(0,"rgba(255,226,140,.55)"); gl.addColorStop(1,"rgba(217,163,27,0)");
+        ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(cX,cY,30*K,0,P2); ctx.fill();
       }
       function ph(s){ return '<span style="white-space:nowrap">'+s+'</span>'; }
       function esc2(c){ return c==="&"?"&amp;":c==="<"?"&lt;":c; }
