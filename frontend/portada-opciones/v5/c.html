@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Opción C · El camino</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="shared.css">
+<style>
+/* C · EL CAMINO — scroll natural, sin nada fijo. El haz del prisma gira hacia abajo y se vuelve una línea que se
+   dibuja mientras se baja; en cada nodo se enciende una escena (sin marco) con su texto, alternando de lado.
+   Es la que mejor se lee en el celular. */
+body{overflow-x:clip}
+.hero{position:relative;height:100svh;min-height:560px}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero .top{position:absolute;left:50%;top:clamp(78px,12vh,120px);transform:translateX(-50%);width:min(92vw,880px);text-align:center;z-index:3}
+.hero .bot{position:absolute;left:var(--pad);bottom:clamp(24px,6vh,60px);z-index:3}
+.camino{position:relative}
+.camino svg.ruta{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.ruta .base{fill:none;stroke:rgba(217,163,27,.16);stroke-width:2}
+.ruta .viva{fill:none;stroke:#e8b92c;stroke-width:2.4;stroke-linecap:round;filter:drop-shadow(0 0 7px rgba(217,163,27,.7))}
+.ruta .cab2{fill:#ffe9a8;filter:drop-shadow(0 0 10px rgba(255,226,140,.9))}
+.est{position:absolute;--c:var(--gold);width:min(440px,calc(100% - 2*var(--pad)));opacity:.35;transition:opacity .8s var(--ease)}
+.est.on{opacity:1}
+.est .lienzo{width:100%;height:clamp(200px,28vh,300px)}
+.est .cap{padding:0 4px}
+.tick{position:absolute;height:2px;margin-top:-1px;background:rgba(217,163,27,.2);transition:background .6s var(--ease),box-shadow .6s var(--ease)}
+.tick.on{background:#e8b92c;box-shadow:0 0 12px rgba(217,163,27,.6)}
+.nodo{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--bg);border:2px solid rgba(217,163,27,.3);transition:all .6s var(--ease)}
+.nodo.on{background:#ffe9a8;border-color:#e8b92c;box-shadow:0 0 16px 3px rgba(217,163,27,.55)}
+.fondo{position:relative;height:420vh}
+.fondo .e{position:sticky;top:0;height:100svh;overflow:hidden}
+.fondo .entra{position:absolute;left:50%;top:0;width:2px;height:calc(50% - 150px);margin-left:-1px;background:#e8b92c;box-shadow:0 0 12px rgba(217,163,27,.6)}
+.fin{position:absolute;left:50%;bottom:clamp(24px,6vh,60px);transform:translateX(-50%);z-index:6;opacity:0;pointer-events:none}
+.fin.on{pointer-events:auto}
+.leyenda{position:absolute;left:50%;top:clamp(84px,12vh,112px);transform:translateX(-50%);text-align:center;font:400 clamp(20px,2.6vw,36px)/1.1 var(--sans);letter-spacing:-.03em;white-space:nowrap;opacity:0;transition:opacity .5s}
+.leyenda em{font-style:normal;color:var(--gold)}
+.lb-host{position:absolute;inset:0}
+@media (max-width:760px){.hero .bot{left:50%;transform:translateX(-50%)}.leyenda{white-space:normal;width:84vw}.est{text-align:left}}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<section class="hero" id="hero"><canvas id="cv" aria-hidden="true"></canvas><div class="top"><h1 class="t" id="h1"></h1></div><div class="bot" id="inic"></div></section>
+<section class="camino" id="camino"><svg class="ruta" id="ruta" aria-hidden="true"><path class="base" id="rb"/><path class="viva" id="rv"/><circle class="cab2" id="rc" r="6"/></svg></section>
+<section class="fondo" id="fondo"><div class="e">
+  <div class="entra" id="entra"></div>
+  <div class="lb-host" id="lbhost" style="opacity:0;transform:scale(.04)"></div>
+  <p class="leyenda" id="ley"></p>
+  <div class="fin" id="fin"></div>
+</div></section>
+<script src="shared.js"></script><script src="scenes.js"></script>
+<script>
+(function(){
+  var S=IVS4,cam=document.getElementById("camino"),svg=document.getElementById("ruta"),rb=document.getElementById("rb"),rv=document.getElementById("rv"),rc=document.getElementById("rc");
+  document.getElementById("h1").innerHTML=S.TITULO;document.getElementById("inic").innerHTML=S.BOTONES;document.getElementById("fin").innerHTML=S.BOTONES;
+  var W=innerWidth,mobile=W<760,ptos=[],L=0,extras=[],escenas=[];
+  var pr=IVSPrisma(document.getElementById("cv"),{px:.34,cy:.46,band:[.34,.58],out:function(P,w,h){return [[w*.5,P.y],[w*.5,h+10]];}});
+  var bloques=S.OFERTAS.map(function(f,i){
+    var d=document.createElement("div");d.className="est";d.style.setProperty("--c","var("+f.c+")");
+    d.innerHTML='<div class="lienzo"><canvas class="esc-cv"></canvas></div><div class="cap"><span class="lat5">'+f.lat+'</span><h3>'+f.t+'</h3><p>'+f.d+'</p></div>';
+    cam.appendChild(d);escenas[i]=IVSEscena(d.querySelector("canvas"),f.k);return d;
+  });
+  var lbhost=document.getElementById("lbhost"),libro=IVSLibro(lbhost),fondo=document.getElementById("fondo"),entra=document.getElementById("entra"),ley=document.getElementById("ley"),fin=document.getElementById("fin");
+  ley.innerHTML="Todo esto estaba en <em>un libro.</em>";
+  function construir(){
+    W=innerWidth;mobile=W<760;var cx=W/2,y=0,gap=mobile?46:70;
+    extras.forEach(function(e){e.remove();});extras=[];ptos=[];
+    bloques.forEach(function(d,i){
+      var h=d.offsetHeight||360,top=y+gap;y=top;
+      var lado=mobile?0:(i%2?1:-1),dx=mobile?0:lado*Math.min(W*.2,300),w=d.offsetWidth;
+      d.style.top=top+"px";d.style.left=(cx+dx-w/2)+"px";
+      var ay=top+h*.5;ptos.push(ay);
+      if(!mobile){
+        var borde=cx+dx-lado*w/2,x0=Math.min(cx,borde),ww=Math.abs(cx-borde);
+        var t=document.createElement("div");t.className="tick";t.style.cssText="left:"+x0+"px;top:"+ay+"px;width:"+ww+"px";cam.appendChild(t);extras.push(t);
+        var n=document.createElement("div");n.className="nodo";n.style.cssText="left:"+cx+"px;top:"+ay+"px";cam.appendChild(n);extras.push(n);
+      }else{d.style.background="linear-gradient(var(--bg) 0,var(--bg) 100%)";d.style.padding="10px 0";}
+      y=top+h;
+    });
+    var H=y+gap+60;cam.style.height=H+"px";
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);svg.setAttribute("width",W);svg.setAttribute("height",H);
+    var dstr="M"+cx+" 0 L"+cx+" "+H;rb.setAttribute("d",dstr);rv.setAttribute("d",dstr);
+    L=rv.getTotalLength();rv.style.strokeDasharray=L;rv.style.strokeDashoffset=L;
+    escenas.forEach(function(e){e.medir();});
+  }
+  function ajustar(){construir();construir();}
+  var pend=false;
+  function marco(){
+    pend=false;var r=cam.getBoundingClientRect(),vh=innerHeight,ymax=vh*.62-r.top;
+    var alc=S.clamp(ymax,0,r.height);
+    rv.style.strokeDashoffset=(L-alc).toFixed(1);rc.setAttribute("cx",W/2);rc.setAttribute("cy",alc);rc.style.opacity=alc>1?1:0;
+    bloques.forEach(function(d,i){var on=alc>ptos[i]-d.offsetHeight*.42;d.classList.toggle("on",on);
+      var vis=r.top+ptos[i]>-d.offsetHeight*.4&&r.top+ptos[i]<vh+d.offsetHeight*.4;escenas[i].activar(on&&vis);});
+    cam.querySelectorAll(".tick,.nodo").forEach(function(e,k){e.classList.toggle("on",alc>ptos[k>>1]-12);});
+    var fr=fondo.getBoundingClientRect(),tot=fr.height-vh,p=S.clamp(-fr.top/tot,0,1);
+    var t=S.sm((p-.05)/.12);
+    lbhost.style.opacity=S.clamp(t*1.4,0,1).toFixed(3);lbhost.style.transform="scale("+S.lerp(.04,1,t).toFixed(3)+")";
+    entra.style.opacity=(1-S.sm((p-.04)/.1)).toFixed(2);
+    var a=S.sm((p-.3)/.2),b=S.sm((p-.52)/.14),cB=S.sm((p-.74)/.08),cA=S.sm((p-.84)/.08);
+    libro.set(a*(1-cA),b*(1-cB));
+    ley.style.opacity=(p>.87?1:0);
+    var f=S.sm((p-.9)/.05);fin.style.opacity=f.toFixed(2);fin.classList.toggle("on",f>.5);
+  }
+  function pedir(){if(!pend){pend=true;requestAnimationFrame(marco);}}
+  addEventListener("scroll",pedir,{passive:true});
+  addEventListener("resize",function(){pr.medir();ajustar();pedir();});
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){ajustar();pedir();});
+  ajustar();marco();
+})();
+</script>
+</body></html>

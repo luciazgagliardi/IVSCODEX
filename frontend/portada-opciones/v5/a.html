@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Opción A · El hilo</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="shared.css">
+<style>
+/* A · EL HILO — el haz del prisma sigue su camino de costado y, en cada estación, la luz «se vuelve» una escena
+   que cuenta una función. No hay marcos ni puertas: la escena vive sobre el hilo. Al final entra en el libro. */
+.pista{height:1000vh;position:relative}
+.esc{position:sticky;top:0;height:100svh;overflow:hidden}
+.zoom{position:absolute;inset:0;will-change:transform}
+.mundo{position:absolute;left:0;top:0;height:100%;will-change:transform}
+.mundo canvas.pr{position:absolute;left:0;top:0;height:100%;display:block}
+.hilo{position:absolute;height:2px;margin-top:-1px;background:linear-gradient(90deg,rgba(255,226,150,.9),rgba(217,163,27,.75));box-shadow:0 0 22px 3px rgba(217,163,27,.18)}
+.hilo::after{content:"";position:absolute;inset:-3px 0;background:repeating-linear-gradient(90deg,transparent 0 150px,rgba(255,240,190,.95) 150px 156px,transparent 156px 300px);background-size:300px 100%;animation:viaja 2.2s linear infinite;filter:blur(1.5px);-webkit-mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent)}
+@keyframes viaja{to{background-position:300px 0}}
+.est{position:absolute;--c:var(--gold)}
+.est .lienzo{position:absolute;left:0;right:0;bottom:calc(100% - 0px)}
+.est .pie5{position:absolute;left:0;right:0;top:0;padding-top:26px;text-align:center;opacity:0;transform:translateY(12px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.est.on .pie5{opacity:1;transform:none}
+.est .nodo{position:absolute;left:50%;top:0;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:var(--bg);border:2px solid var(--c);transition:all .6s var(--ease)}
+.est.on .nodo{background:var(--c);box-shadow:0 0 22px 4px var(--c)}
+.sello{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9a8,#d9a31b 55%,#8a6200);box-shadow:0 0 40px 10px rgba(217,163,27,.35)}
+.htxt{position:absolute;left:50%;top:clamp(76px,12vh,120px);transform:translateX(-50%);width:min(92vw,880px);text-align:center;z-index:5}
+.inic{position:absolute;left:50%;bottom:clamp(22px,6vh,60px);transform:translateX(-50%);z-index:5}
+.fin{position:absolute;left:50%;bottom:clamp(24px,6vh,60px);transform:translateX(-50%);z-index:6;opacity:0;pointer-events:none}
+.fin.on{pointer-events:auto}
+.hint{position:absolute;right:var(--pad);bottom:clamp(26px,6.5vh,60px);z-index:5;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);white-space:nowrap;transition:opacity .4s}
+.guia{position:absolute;left:0;bottom:0;height:2px;background:var(--gold);width:100%;transform-origin:left;transform:scaleX(0);opacity:.7;z-index:6}
+.lb-host{position:absolute;inset:0}
+@media (max-width:640px){.htxt{top:84px}}
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<div class="pista" id="pista"><div class="esc" id="esc">
+  <div class="zoom" id="zoom"><div class="mundo" id="mundo"><canvas class="pr" id="cv" aria-hidden="true"></canvas></div></div>
+  <div class="htxt" id="htxt"><h1 class="t" id="h1"></h1></div>
+  <div class="inic" id="inic"></div>
+  <div class="lb-host" id="lbhost" style="opacity:0;transform:scale(.04)"></div>
+  <div class="fin" id="fin"></div>
+  <p class="hint" id="hint">Desplace · la luz sigue</p>
+  <div class="guia" id="guia"></div>
+</div></div>
+<script src="shared.js"></script><script src="scenes.js"></script>
+<script>
+(function(){
+  var S=IVS4,pista=document.getElementById("pista"),esc=document.getElementById("esc"),zoom=document.getElementById("zoom"),mundo=document.getElementById("mundo"),cv=document.getElementById("cv");
+  document.getElementById("h1").innerHTML=S.TITULO;document.getElementById("inic").innerHTML=S.BOTONES;document.getElementById("fin").innerHTML=S.BOTONES;
+  var lbhost=document.getElementById("lbhost"),libro=IVSLibro(lbhost),htxt=document.getElementById("htxt"),inic=document.getElementById("inic"),fin=document.getElementById("fin"),guia=document.getElementById("guia"),hint=document.getElementById("hint");
+  var W,H,Px,Py,G,X,Lw,camMax,sw,sh,est=[],hilo,sello,pr,xs;
+  var escenas=[];
+  function construir(){
+    W=esc.clientWidth;H=esc.clientHeight;Px=W*.54;Py=H*.56;
+    sw=Math.min(W*.86,640);sh=Math.min(H*.42,400);G=sw+Math.max(W*.2,120);
+    var x0=Px+Math.max(W*.4,220);X=S.OFERTAS.map(function(_,i){return x0+i*G+sw/2;});
+    xs=X[5]+sw/2+Math.max(W*.26,140);Lw=xs+W*.5;camMax=xs-W*.5;
+    mundo.style.width=Lw+"px";cv.style.width=W+"px";cv.style.height=H+"px";
+    mundo.querySelectorAll(".est,.hilo,.sello").forEach(function(e){e.remove();});
+    hilo=document.createElement("div");hilo.className="hilo";hilo.style.left=Px+"px";hilo.style.top=Py+"px";hilo.style.width=(xs-Px)+"px";mundo.appendChild(hilo);
+    est=S.OFERTAS.map(function(f,i){
+      var d=document.createElement("div");d.className="est";d.style.cssText="left:"+(X[i]-sw/2)+"px;top:"+Py+"px;width:"+sw+"px;--c:var("+f.c+")";
+      d.innerHTML='<div class="lienzo" style="height:'+sh+'px"><canvas class="esc-cv"></canvas></div><div class="nodo"></div><div class="pie5"><span class="lat5">'+f.lat+'</span><div class="cap"><h3>'+f.t+'</h3><p>'+f.d+'</p></div></div>';
+      mundo.appendChild(d);
+      var c=d.querySelector("canvas");escenas[i]=IVSEscena(c,f.k);return d;});
+    sello=document.createElement("div");sello.className="sello";sello.style.left=xs+"px";sello.style.top=Py+"px";mundo.appendChild(sello);
+    escenas.forEach(function(e){e.medir();});
+  }
+  construir();
+  pr=IVSPrisma(cv,{px:.54,cy:.56,band:[.44,.68],out:function(P,w,h){return [[w,P.y]];}});
+  var pend=false;
+  function marco(){
+    pend=false;var r=pista.getBoundingClientRect(),tot=r.height-innerHeight,p=S.clamp(-r.top/tot,0,1);
+    var pan=S.clamp((p-.05)/.66,0,1),cam=pan*camMax;
+    mundo.style.transform="translateX("+(-cam).toFixed(1)+"px)";
+    est.forEach(function(d,i){var cx=X[i]-cam,on=cx>W*.12&&cx<W*.88;d.classList.toggle("on",on);escenas[i].activar(on);});
+    var t=S.sm((p-.76)/.06),fo=S.sm((p-.76)/.05);
+    zoom.style.opacity=(1-fo).toFixed(3);zoom.style.visibility=fo>=1?"hidden":"visible";
+    sello.style.transform="scale("+(1+2.2*S.sm((p-.68)/.1)).toFixed(2)+")";
+    var a=S.sm((p-.84)/.06),b=S.sm((p-.91)/.045),cB=S.sm((p-.955)/.02),cA=S.sm((p-.975)/.02);
+    lbhost.style.opacity=S.clamp(t*1.4,0,1).toFixed(3);lbhost.style.transform="scale("+S.lerp(.04,1,t).toFixed(3)+")";
+    libro.set(a*(1-cA),b*(1-cB));
+    var o0=S.clamp(1-(p-.02)/.05,0,1);htxt.style.opacity=o0.toFixed(2);inic.style.opacity=o0.toFixed(2);inic.style.pointerEvents=p>.06?"none":"auto";
+    var f=S.sm((p-.99)/.01);fin.style.opacity=f.toFixed(2);fin.classList.toggle("on",f>.5);
+    hint.style.opacity=p<.03?1:0;guia.style.transform="scaleX("+p.toFixed(3)+")";
+  }
+  function pedir(){if(!pend){pend=true;requestAnimationFrame(marco);}}
+  addEventListener("scroll",pedir,{passive:true});addEventListener("resize",function(){construir();pr.medir();pedir();});
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){escenas.forEach(function(e){e.medir();});pedir();});
+  marco();
+})();
+</script>
+</body></html>
