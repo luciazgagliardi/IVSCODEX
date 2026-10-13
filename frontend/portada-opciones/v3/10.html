@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 10 · Pórtico</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="c.css">
+<style>
+
+.pista{height:460vh;position:relative}
+.esc{position:sticky;top:0;height:100svh;overflow:hidden;perspective:820px;perspective-origin:50% 56%}
+.tunel{position:absolute;inset:0;transform-style:preserve-3d}
+.arco{--g:760px;position:absolute;left:50%;top:50%;width:min(58vmin,520px);height:min(80vmin,720px);margin:calc(min(80vmin,720px)/-2 + 6vmin) 0 0 calc(min(58vmin,520px)/-2);
+  border:2px solid var(--c);border-bottom:0;border-radius:999px 999px 0 0;transform:translateZ(calc(var(--i) * var(--g) * -1));
+  box-shadow:0 0 26px -6px var(--c),inset 0 0 40px -14px var(--c);background:linear-gradient(rgba(16,14,11,0) 55%,rgba(16,14,11,.55))}
+.arco b{position:absolute;left:50%;top:clamp(26px,6vmin,56px);transform:translateX(-50%);font:500 clamp(12px,1.5vmin,17px)/1 var(--caps);letter-spacing:.24em;color:var(--c);white-space:nowrap}
+.arco::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--c);opacity:.55}
+.piso{position:absolute;left:50%;top:calc(50% + 46vmin);width:min(58vmin,520px);margin-left:calc(min(58vmin,520px)/-2);height:6200px;transform-origin:top center;transform:rotateX(-90deg);
+  background:repeating-linear-gradient(to bottom,rgba(241,238,230,.16) 0 1px,transparent 1px 190px);-webkit-mask-image:linear-gradient(to bottom,#000,transparent 95%);mask-image:linear-gradient(to bottom,#000,transparent 95%)}
+.fin10{position:absolute;left:50%;top:calc(50% - 3vmin);transform:translate(-50%,-50%);z-index:5;width:min(92vw,820px);text-align:center;display:grid;gap:clamp(14px,2.4vh,24px);justify-items:center;opacity:0;pointer-events:none;transition:opacity .6s var(--ease)}
+.fin10.on{opacity:1;pointer-events:auto}
+.fin10 .campo{display:flex;align-items:center;gap:12px;width:min(100%,560px);padding:9px 9px 9px 22px;border:1px solid var(--gold);border-radius:999px;background:rgba(16,14,11,.8);text-align:left;font-size:clamp(15px,1.6vw,19px)}
+.fin10 .campo span{flex:1;white-space:nowrap;overflow:hidden}
+.fin10 .campo span::after{content:"";display:inline-block;width:2px;height:1.05em;margin-left:3px;background:var(--gold);vertical-align:-.15em;animation:parp 1s steps(1) infinite}
+@keyframes parp{50%{opacity:0}}
+.fin10 .campo i{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--gold);color:#14110a;flex:none;font-style:normal;font-weight:500}
+.t10{position:absolute;left:var(--pad);bottom:clamp(30px,7vh,70px);z-index:4;max-width:min(18ch,70vw);font:400 clamp(24px,3.4vw,50px)/1.06 var(--sans);letter-spacing:-.035em;opacity:0;transform:translateY(14px);text-shadow:0 0 22px var(--bg),0 0 8px var(--bg);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.t10.on{opacity:1;transform:none}.t10 em{font-style:normal;color:var(--gold)}
+.g10{position:absolute;right:var(--pad);bottom:clamp(30px,7vh,70px);z-index:4;width:1px;height:90px;background:var(--line)}
+.g10 i{display:block;width:100%;height:100%;background:var(--gold);transform-origin:top;transform:scaleY(0)}
+.pie10{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:4;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);white-space:nowrap;transition:opacity .4s}
+@media (max-width:760px){.arco{--g:640px}.g10{display:none}.t10{max-width:14ch}}
+
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<div class="pista" id="pista"><div class="esc" id="esc">
+  <div class="tunel" id="tunel"><div class="piso"></div>
+    <div class="arco" style="--i:0;--c:var(--c-mza)" data-i="0"><b>MZA</b></div>
+    <div class="arco" style="--i:1;--c:var(--c-mzl)" data-i="1"><b>MZA LEGAL</b></div>
+    <div class="arco" style="--i:2;--c:var(--c-caba)" data-i="2"><b>TSJ</b></div>
+    <div class="arco" style="--i:3;--c:var(--c-csjn)" data-i="3"><b>CSJN</b></div>
+    <div class="arco" style="--i:4;--c:var(--c-saij)" data-i="4"><b>SAIJ</b></div>
+    <div class="arco" style="--i:5;--c:var(--c-dial)" data-i="5"><b>DIALNET</b></div>
+    <div class="arco" style="--i:6;--c:var(--gold)" data-i="6"><b>IVS · CODEX</b></div>
+  </div>
+  <div class="fin10" id="fin10"><h1 class="t">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h1><div class="campo"><span id="q10"></span><i>→</i></div><div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div></div>
+  <p class="t10 on" id="t10">Seis puertas, <em>cada una un repositorio oficial.</em></p>
+  <div class="g10"><i id="g10"></i></div>
+  <p class="pie10" id="pie10">Desplace para avanzar</p>
+</div></div>
+<script>
+/* 10 · PÓRTICO — una arcada romana en perspectiva: un arco por cada base, de color distinto. Con el scroll
+   se avanza a través de las seis y, al final, el arco dorado se abre en la consulta. */
+(function(){
+  var pista=document.getElementById("pista"),tun=document.getElementById("tunel"),arcos=[].slice.call(tun.querySelectorAll(".arco")),fin=document.getElementById("fin10"),q=document.getElementById("q10"),
+      t10=document.getElementById("t10"),g=document.getElementById("g10"),pie=document.getElementById("pie10");
+  var TX=["Seis puertas, <em>cada una un repositorio oficial.</em>","Cada una con su <em>buscador y su lógica.</em>","Una sola consulta <em>las atraviesa.</em>"],tx=-1,pend=false,Q="amparo contra actos de particulares";
+  function sm(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
+  function marco(){
+    pend=false;var r=pista.getBoundingClientRect(),tot=r.height-innerHeight,p=Math.max(0,Math.min(1,-r.top/tot));
+    var GAP=parseFloat(getComputedStyle(arcos[0]).getPropertyValue("--g"))||760,cam=p*6.25*GAP;
+    tun.style.transform="translateZ("+cam.toFixed(1)+"px)";
+    arcos.forEach(function(a,i){
+      var rel=cam-i*GAP,o=Math.max(0,Math.min(1,1-(rel-.35*GAP)/(.55*GAP)))*Math.max(0,Math.min(1,1+rel/(4.2*GAP)));
+      if(i===6)o=Math.max(o,0);
+      a.style.opacity=o.toFixed(3);
+    });
+    var seg=p<.3?0:p<.62?1:2;
+    if(p>.86){t10.classList.remove("on");}else{if(tx!==seg){tx=seg;t10.innerHTML=TX[seg];}t10.classList.add("on");}
+    fin.classList.toggle("on",p>.9);
+    q.textContent=Q.slice(0,Math.round(Q.length*sm((p-.92)/.07)));
+    g.style.transform="scaleY("+p.toFixed(3)+")";pie.style.opacity=p<.03?1:0;
+  }
+  function pedir(){if(!pend){pend=true;requestAnimationFrame(marco);}}
+  addEventListener("scroll",pedir,{passive:true});addEventListener("resize",pedir);marco();
+})();
+</script>
+</body></html>

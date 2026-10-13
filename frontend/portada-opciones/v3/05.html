@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 5 · Codex</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="c.css">
+<style>
+
+.pista{height:380vh;position:relative}
+.esc{position:sticky;top:0;height:100svh;overflow:hidden;perspective:2400px;perspective-origin:50% 42%}
+.libro{--pw:min(34vw,420px,calc(74svh/1.38));--ph:calc(var(--pw)*1.38);position:absolute;left:50%;top:52%;width:var(--pw);height:var(--ph);
+  transform-style:preserve-3d;transform:translate(-50%,-50%) translateX(calc(var(--pw)*.5*var(--o,0))) rotateX(10deg) rotateZ(calc(var(--o,0)*-1deg))}
+.libro::before{content:"";position:absolute;left:calc(var(--pw)*-1);right:0;bottom:-26px;height:34px;background:radial-gradient(closest-side,rgba(0,0,0,.55),transparent);filter:blur(8px);opacity:var(--o2,.6);transform:translateZ(-20px)}
+.hoja{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d}
+.cara{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;padding:9% 9% 8%}
+.dorso{transform:rotateY(180deg)}
+.papel{background:#efe9d9;color:#1a1712;box-shadow:inset 0 0 40px rgba(120,95,40,.16)}
+.papel.izq{box-shadow:inset -18px 0 24px -14px rgba(60,40,10,.35),inset 0 0 40px rgba(120,95,40,.12)}
+.papel.der{box-shadow:inset 18px 0 24px -14px rgba(60,40,10,.35),inset 0 0 40px rgba(120,95,40,.12)}
+.tapa{background:#15120d;border:1px solid #2b241a;border-radius:2px 8px 8px 2px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12% 8%}
+.tapa::before{content:"";position:absolute;inset:5%;border:1px solid rgba(217,163,27,.55);pointer-events:none}
+.tapa .nom{font:400 clamp(18px,2.4vw,34px)/1 var(--caps);letter-spacing:.22em;text-align:center;background:linear-gradient(170deg,#f6d77a,#d9a31b 50%,#9a6f0a);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;margin-top:30%}
+.tapa .lema{font:400 clamp(8px,.9vw,11px)/1.6 var(--caps);letter-spacing:.28em;text-align:center;color:rgba(217,163,27,.8)}
+.tapa i{display:block;width:10px;height:10px;border-radius:50%;background:var(--gold);margin:0 auto}
+.pg h2{margin:0 0 .7em;font:500 clamp(8px,.85vw,11px)/1 var(--caps);letter-spacing:.24em;color:#8a6200;text-transform:uppercase}
+.pg h3{margin:0;font:400 clamp(16px,1.9vw,26px)/1.1 var(--sans);letter-spacing:-.03em}
+.pg h3 em{font-style:normal;color:#8a6200}
+.pg p{margin:.8em 0 0;font:400 clamp(9.5px,.95vw,12.5px)/1.55 var(--sans);color:#4a4435}
+.pg ul{list-style:none;margin:1.2em 0 0;padding:0;border-top:1px solid rgba(26,23,18,.18)}
+.pg li{display:flex;align-items:center;gap:.8em;padding:.7em 0;border-bottom:1px solid rgba(26,23,18,.18);font:400 clamp(9.5px,.95vw,12.5px)/1.2 var(--sans)}
+.pg li i{width:.8em;height:.8em;border-radius:50%;background:var(--c);flex:none}
+.pg li b{font:500 clamp(8px,.85vw,11px)/1 var(--caps);letter-spacing:.16em;min-width:6.4em}
+.pg .btn{padding:.9em 1.4em .8em;font-size:clamp(9.5px,.95vw,12.5px);background:#1a1712;border-color:#1a1712;color:#efe9d9}
+.pg .btn.sec{background:none;color:#1a1712;border-color:rgba(26,23,18,.35)}
+.pg .acc{margin-top:1.4em;gap:.6em}
+.pg .campo{margin-top:1.2em;padding:.7em 1em;border:1px solid rgba(26,23,18,.35);border-radius:999px;font:400 clamp(9.5px,1vw,13px)/1.2 var(--sans);white-space:nowrap;overflow:hidden}
+.pg .campo::after{content:"";display:inline-block;width:1.5px;height:1em;margin-left:2px;background:#8a6200;vertical-align:-.15em;animation:parp 1s steps(1) infinite}
+@keyframes parp{50%{opacity:0}}
+.pie5{position:absolute;left:var(--pad);bottom:clamp(20px,5vh,48px);z-index:4;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);transition:opacity .4s}
+.m5{display:none}
+@media (max-width:860px){.pista{display:none}.m5{display:block;padding:92px var(--pad) 48px}.m5 .papel{border-radius:18px;padding:22px;margin-bottom:16px}.m5 .pg h3{font-size:26px}.m5 .pg p,.m5 .pg li{font-size:14px}.m5 .pg h2{font-size:11px}.m5 .pg .btn{font-size:14px}.m5 .pg li b{font-size:11px}}
+
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<div class="pista" id="pista"><div class="esc" id="esc">
+  <div class="libro" id="libro">
+    <!-- página derecha final: la consulta -->
+    <div class="cara papel der pg" style="transform:translateZ(0)"><h2>Consulta</h2><h3>Una consulta, <em>seis bases.</em></h3><div class="campo" id="campo"></div><ul><li style="--c:var(--c-csjn)"><i></i><b>CSJN</b>Siri, Ángel · 1957</li><li style="--c:var(--c-csjn)"><i></i><b>CSJN</b>Kot, Samuel · 1958</li><li style="--c:var(--c-saij)"><i></i><b>SAIJ</b>Halabi, Ernesto · 2009</li><li style="--c:var(--c-dial)"><i></i><b>DIALNET</b>El amparo contra particulares</li></ul></div>
+    <!-- hoja B: texto al frente / principios al dorso -->
+    <div class="hoja" id="hB"><div class="cara papel der pg"><h2>Prefacio</h2><h3>Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h3><p>Seis repositorios oficiales se consultan a la vez; cada resultado conserva la base que lo publicó y el enlace al documento de origen.</p><div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div></div>
+      <div class="cara dorso papel izq pg"><h2>Principios</h2><h3>Tres condiciones que ningún resultado <em>puede dejar de cumplir.</em></h3><ul><li><b>FONS</b>La fuente</li><li><b>ORDO</b>El orden</li><li><b>FIDES</b>La fe</li></ul><p>Todo resultado remite al documento del organismo que lo dictó; se presentan juntos, con su procedencia; y una cita se contrasta antes de presentarse.</p></div></div>
+    <!-- hoja A: tapa / índice al dorso -->
+    <div class="hoja" id="hA"><div class="cara tapa"><span class="nom">IVS·CODEX</span><span class="lema">IVS EST ARS BONI ET AEQVI</span><i></i></div>
+      <div class="cara dorso papel izq pg"><h2>Índice</h2><h3>Seis bases <em>oficiales.</em></h3><ul><li style="--c:var(--c-mza)"><i></i><b>MZA</b>Poder Judicial de Mendoza</li><li style="--c:var(--c-mzl)"><i></i><b>MZA LEGAL</b>Mendoza Legal</li><li style="--c:var(--c-caba)"><i></i><b>TSJ</b>Tribunal Superior de la Ciudad</li><li style="--c:var(--c-csjn)"><i></i><b>CSJN</b>Corte Suprema de la Nación</li><li style="--c:var(--c-saij)"><i></i><b>SAIJ</b>Sistema Argentino de Información Jurídica</li><li style="--c:var(--c-dial)"><i></i><b>DIALNET</b>Doctrina en español</li></ul></div></div>
+  </div>
+  <p class="pie5" id="pie5">Desplace para abrir el libro</p>
+</div></div>
+<section class="m5">
+  <div class="papel pg"><h2>Prefacio</h2><h3>Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></h3><div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div></div>
+  <div class="papel pg"><h2>Índice</h2><h3>Seis bases <em>oficiales.</em></h3><ul><li style="--c:var(--c-mza)"><i></i><b>MZA</b>Poder Judicial de Mendoza</li><li style="--c:var(--c-mzl)"><i></i><b>MZA LEGAL</b>Mendoza Legal</li><li style="--c:var(--c-caba)"><i></i><b>TSJ</b>Tribunal Superior de la Ciudad</li><li style="--c:var(--c-csjn)"><i></i><b>CSJN</b>Corte Suprema de la Nación</li><li style="--c:var(--c-saij)"><i></i><b>SAIJ</b>Sistema Argentino de Información Jurídica</li><li style="--c:var(--c-dial)"><i></i><b>DIALNET</b>Doctrina en español</li></ul></div>
+  <div class="papel pg"><h2>Principios</h2><ul><li><b>FONS</b>La fuente</li><li><b>ORDO</b>El orden</li><li><b>FIDES</b>La fe</li></ul></div>
+</section>
+<script>
+/* 5 · CODEX — el nombre es literal: un libro. Se abre con el scroll (la tapa, y después una hoja) y en
+   cada página están las seis bases, el titular y la consulta. */
+(function(){
+  var pista=document.getElementById("pista"),lib=document.getElementById("libro"),hA=document.getElementById("hA"),hB=document.getElementById("hB"),campo=document.getElementById("campo"),pie=document.getElementById("pie5");
+  var T="amparo contra actos de particulares",pend=false;
+  function sm(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
+  function marco(){
+    pend=false;var r=pista.getBoundingClientRect(),tot=r.height-innerHeight,p=Math.max(0,Math.min(1,-r.top/tot));
+    var a=sm((p-.06)/.3),b=sm((p-.46)/.3);
+    hA.style.transform="translateZ("+(3*(1-a)).toFixed(2)+"px) rotateY("+(-180*a).toFixed(2)+"deg)";
+    hB.style.transform="translateZ("+(2-.6*b).toFixed(2)+"px) rotateY("+(-180*b).toFixed(2)+"deg)";
+    lib.style.setProperty("--o",a.toFixed(3));lib.style.setProperty("--o2",(.6+.3*a).toFixed(2));
+    var n=Math.round(T.length*sm((p-.82)/.14));campo.textContent=T.slice(0,n);
+    pie.style.opacity=p<.04?1:0;
+  }
+  function pedir(){if(!pend){pend=true;requestAnimationFrame(marco);}}
+  addEventListener("scroll",pedir,{passive:true});addEventListener("resize",pedir);marco();
+})();
+</script>
+</body></html>

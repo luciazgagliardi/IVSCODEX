@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IVS CODEX · Portada 3 · Palabras</title>
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="c.css">
+<style>
+
+.hero .bot{position:absolute;left:50%;bottom:clamp(22px,6vh,64px);transform:translateX(-50%);z-index:3;justify-content:center}
+.hero .nota{position:absolute;left:50%;bottom:clamp(76px,14vh,130px);transform:translateX(-50%);z-index:3;white-space:nowrap}
+
+</style></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#">Consulta</a><a href="#">Fuentes</a><a href="#">Verificación</a><a href="#">Cuenta</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<section class="hero" id="hero">
+  <h1 class="sr">Buscador integrado de repositorios judiciales oficiales y doctrina.</h1>
+  <canvas class="fx" id="cv" aria-hidden="true"></canvas>
+  <p class="nota" id="nota"></p>
+  <div class="acc bot"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Ver el catálogo de fuentes</a></div>
+</section>
+<script>
+/* 3 · PALABRAS — una nube de términos jurídicos a la deriva. Cada tanto, de entre todas, ocho se separan,
+   crecen y se ordenan formando el titular; después se sueltan y vuelven a la nube. */
+(function(){
+  var hero=document.getElementById("hero"),cv=document.getElementById("cv"),ctx=cv.getContext("2d"),W=1,H=1,D=Math.min(devicePixelRatio||1,2),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var HEAD=["Buscador","integrado","de","repositorios","judiciales","oficiales","y","doctrina."];
+  var CLOUD="amparo|daño moral|cosa juzgada|medida cautelar|prescripción|despido|indemnización|competencia|litispendencia|buena fe|enriquecimiento sin causa|debido proceso|tutela judicial|hábeas corpus|inconstitucionalidad|caducidad|recurso extraordinario|sentencia|costas|honorarios|mora|culpa|dolo|nulidad|legitimación|jurisdicción|prueba|pericia|alimentos|sucesión|contrato|responsabilidad|usucapión|desalojo|divorcio|tenencia|filiación|quiebra|concurso|hipoteca|prenda|locación|consumidor|daño emergente|lucro cesante|pérdida de chance|riesgo del trabajo|incapacidad|ART|art. 1741|art. 245|ley 24.240|ley 27.348|CCyC|LCT|CPCC|casación|apelación|queja|aclaratoria|excepción|reconvención|reposición|rebeldía|perención|desistimiento|allanamiento|transacción|mediación|arbitraje|jura|dictamen|fiscal|defensor|querella|prisión|excarcelación|sobreseimiento|condena|agravante|atenuante|dolo eventual".split("|");
+  var P=[],lay={fs:60,lines:[]},tt=0,last=0;
+  function rnd(a,b){return a+Math.random()*(b-a);}
+  function medir(){W=hero.clientWidth;H=hero.clientHeight;cv.width=W*D;cv.height=H*D;ctx.setTransform(D,0,0,D,0,0);armar();}
+  function armar(){
+    var fs=Math.max(30,Math.min(W*.072,92));lay.fs=fs;ctx.font="400 "+fs+"px 'Instrument Sans',sans-serif";
+    var maxW=Math.min(W*.88,1040),sp=fs*.27,x=0,line=[],lines=[];
+    HEAD.forEach(function(w,i){var ww=ctx.measureText(w).width;if(x+ww>maxW&&line.length){lines.push(line);line=[];x=0;}line.push({i:i,w:ww,x:x});x+=ww+sp;});
+    lines.push(line);
+    var lh=fs*1.12,y0=H*(W<700?.4:.42)-(lines.length*lh)/2+lh/2;
+    var T=[];lines.forEach(function(l,li){var tw=l[l.length-1].x+l[l.length-1].w,off=(W-tw)/2;l.forEach(function(it){T[it.i]={x:off+it.x,y:y0+li*lh};});});
+    P.forEach(function(p){if(p.head){var t=T[p.idx];p.tx=t.x;p.ty=t.y;}});
+  }
+  function crear(){
+    P=[];
+    HEAD.forEach(function(w,i){P.push({w:w,head:true,idx:i,x:rnd(0,W),y:rnd(0,H),vx:rnd(-9,9),vy:rnd(-6,6),s:rnd(15,26),a:rnd(.4,.7),d:rnd(0,.5)});});
+    for(var k=0;k<120;k++){var w=CLOUD[k%CLOUD.length];P.push({w:w,head:false,x:rnd(0,W),y:rnd(0,H),vx:rnd(-10,10),vy:rnd(-7,7),s:rnd(11,24),a:rnd(.12,.5),caps:Math.random()<.3});}
+  }
+  function ease(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
+  function estado(t){var u=t-1.2;if(u<0)return 0;var T=14.1;u=u%T;if(u<1.8)return u/1.8;if(u<8.8)return 1;if(u<10.6)return 1-(u-8.8)/1.8;return 0;}
+  function dibujar(now){
+    var dt=Math.min((now-last)/1000,.05);last=now;tt+=dt;
+    var S=quieto?1:estado(tt);
+    ctx.clearRect(0,0,W,H);ctx.textBaseline="middle";
+    var head=[];
+    P.forEach(function(p){
+      if(!quieto){p.x+=p.vx*dt;p.y+=p.vy*dt;if(p.x<-120)p.x=W+60;if(p.x>W+120)p.x=-60;if(p.y<-30)p.y=H+20;if(p.y>H+30)p.y=-20;}
+      if(p.head){head.push(p);return;}
+      var a=p.a*(1-.9*ease(S));
+      ctx.font=(p.caps?"400 ":"400 ")+p.s+"px "+(p.caps?"'Cormorant SC',serif":"'Instrument Sans',sans-serif");
+      ctx.fillStyle="rgba(241,238,230,"+a.toFixed(3)+")";ctx.fillText(p.w,p.x,p.y);
+    });
+    head.forEach(function(p){
+      var s=ease(S*1.5-p.d),x=p.x+(p.tx-p.x)*s,y=p.y+(p.ty-p.y)*s,sz=p.s+(lay.fs-p.s)*s,a=p.a+(1-p.a)*s;
+      ctx.font="400 "+sz+"px 'Instrument Sans',sans-serif";
+      ctx.fillStyle=p.w==="doctrina."?"rgba(217,163,27,"+(a).toFixed(3)+")":"rgba(241,238,230,"+a.toFixed(3)+")";
+      ctx.fillText(p.w,x,y);
+    });
+    document.getElementById("nota").textContent=S>.5?"":"entre miles de términos, una sola consulta";
+    if(!quieto)requestAnimationFrame(dibujar);
+  }
+  addEventListener("resize",function(){medir();});
+  medir();crear();armar();
+  (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(function(){armar();});
+  requestAnimationFrame(function(t){last=t;dibujar(t);});
+})();
+</script>
+</body></html>
