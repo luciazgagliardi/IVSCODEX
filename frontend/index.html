@@ -6128,10 +6128,8 @@ function dibujoSeccion(tab){
       h+=l("M30 146H210");
       [[48,34],[84,66],[120,100],[156,66],[192,34]].forEach(function(b){ h+=l("M"+b[0]+" 146V"+(146-b[1])); });
       h+=p(120,32,4.5); break;
-    case "ramas":    // un árbol simétrico
-      h+=l("M120 152V84")+l("M120 84L74 52")+l("M120 84L166 52")+l("M74 52L50 26")+l("M74 52L98 24")+l("M166 52L190 26")+l("M166 52L142 24")+l("M120 84V30");
-      [[50,26],[98,24],[142,24],[190,26]].forEach(function(t){ h+=c(t[0],t[1],5); });
-      h+=p(120,24,5); break;
+    case "ramas":    // un árbol simétrico: tronco y tres pares de ramas
+      h+=l("M120 152V40")+l("M120 128L66 94")+l("M120 128L174 94")+l("M120 100L76 68")+l("M120 100L164 68")+l("M120 72L90 46")+l("M120 72L150 46")+p(120,26,5); break;
     case "requisitos": // la lista de control: tres filas, espejadas
       h+=l("M56 24H184V144H56Z");
       [52,84,116].forEach(function(yy){ h+=c(84,yy,8)+l("M104 "+yy+"H136")+c(156,yy,8); });
@@ -6162,10 +6160,8 @@ function dibujoSeccion(tab){
     case "cuenta":   // la cerradura
       h+=c(120,84,56)+c(120,72,13)+l("M112 84L106 118H134L128 84");
       h+=p(120,72,3.5); break;
-    case "calculos": // el ábaco
-      h+=l("M40 30H200V136H40Z");
-      [[52,2],[76,3],[100,3],[124,2]].forEach(function(r){ h+=l("M40 "+r[0]+"H200"); for(i=0;i<r[1];i++) h+=c(58+i*17,r[0],6)+c(182-i*17,r[0],6); });
-      h+=p(120,88,5); break;
+    case "calculos": // el ábaco: tres hileras de tres cuentas, centradas
+      h+=l("M44 34H196V138H44Z"); [58,86,114].forEach(function(y){ h+=l("M44 "+y+"H196")+c(92,y,10)+c(120,y,10)+c(148,y,10); }); h+=p(120,20,5); break;
     case "plazos":   // el calendario y el día que vence
       h+=l("M40 34H200V140H40Z")+l("M40 54H200")+l("M76 26V42")+l("M164 26V42");
       for(y=0;y<4;y++) for(x=0;x<7;x++){ if(!(x===3&&y===2)) h+='<circle class="dp" cx="'+(57+x*21)+'" cy="'+(72+y*18)+'" r="1.8"/>'; }
