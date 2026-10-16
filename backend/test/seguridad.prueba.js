@@ -21,7 +21,7 @@ const post = (ruta, body, extra={}) => j(ruta, { method:'POST', headers:{'conten
 
 console.log('\n--- cabeceras ---');
 let r = await j('/salud');
-chk('CSP presente con frame-ancestors none', /frame-ancestors 'none'/.test(r.cab.get('content-security-policy')||''));
+chk("CSP presente con frame-ancestors 'self'", /frame-ancestors 'self'/.test(r.cab.get('content-security-policy')||''));
 chk('X-Content-Type-Options nosniff', r.cab.get('x-content-type-options')==='nosniff');
 chk('no anuncia Express', !r.cab.get('x-powered-by'));
 chk('Referrer-Policy no-referrer', r.cab.get('referrer-policy')==='no-referrer');

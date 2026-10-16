@@ -1,0 +1,190 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="p.css"><link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="shared6.css">
+<title>IVS CODEX</title>
+<style>
+/* LA MESA DE TRABAJO — el prisma, y debajo la plataforma funcionando: siete instrumentos que se pueden usar ahí mismo.
+   Los cálculos son los mismos de la aplicación (calculos.js se copió de ella). Nada se envía a ningún servidor. */
+.mesa{--mp:clamp(60px,9vw,120px);padding:var(--mp) var(--pad) 0;margin-top:calc(var(--mp) * -1)}
+/* «Desplace» a mitad de camino entre los botones y «Laboratorivm» */
+.desp{--bb:clamp(86px,13vh,120px);--mp:clamp(60px,9vw,120px);position:relative;z-index:5;height:calc(var(--bb) + var(--mp));margin-top:calc(var(--bb) * -1);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding-left:.2em;pointer-events:none;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.desp i{display:block;width:1px;height:22px;background:linear-gradient(var(--gold),transparent);animation:cae 2s var(--ease) infinite}
+@media (max-width:640px){.desp{--bb:104px}}
+.lab{display:grid;grid-template-columns:minmax(200px,3fr) minmax(0,9fr);gap:clamp(18px,3vw,44px);margin-top:clamp(26px,4vw,50px);align-items:start}
+.tabs{display:flex;flex-direction:column;gap:8px;position:sticky;top:96px}
+.tab{display:flex;align-items:center;gap:12px;padding:12px 18px 11px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);text-align:left;font-size:14.5px;cursor:pointer;transition:all .3s}
+.tab i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--c)}
+.tab:hover{border-color:var(--gold);color:var(--fg)}
+.tab[aria-selected="true"]{background:var(--fg);border-color:var(--fg);color:#14110a}
+.panel{border:1px solid var(--line);border-radius:28px;background:rgba(241,238,230,.02);padding:clamp(20px,2.6vw,36px);min-height:520px}
+.panel .lat{font:500 11.5px/1 var(--caps);letter-spacing:.26em;color:var(--c)}
+.panel h3{margin:10px 0 6px;font:500 clamp(24px,2.6vw,36px)/1.08 var(--sans);letter-spacing:-.035em}
+.panel .s{margin:0 0 20px;max-width:60ch;font-size:14.5px;color:var(--mute)}
+.form{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:18px}
+.form label,.chips legend{display:grid;gap:6px;font-size:12.5px;color:var(--mute)}
+.form .ancho{grid-column:1/-1}
+.panel input[type=text],.panel input[type=date],.panel select,.panel input[type=number]{width:100%;padding:11px 16px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--fg);font-size:15px;caret-color:var(--gold);color-scheme:dark}
+.panel input:focus,.panel select:focus{outline:none;border-color:var(--gold)}
+.panel select option{background:#15120d}
+.chips{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px}.chips legend{padding:0;margin-bottom:6px}
+.chip{padding:8px 16px 7px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);font-size:13.5px;cursor:pointer;transition:all .3s}
+.chip[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#14110a}
+.chip:hover{border-color:var(--gold)}
+.form label.check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--fg);cursor:pointer}.check input{accent-color:var(--gold);width:16px;height:16px}
+.sal{padding:clamp(14px,1.8vw,22px);border-radius:20px;background:rgba(217,163,27,.07);border:1px solid rgba(217,163,27,.25);font-size:14.5px;min-height:96px}
+.sal .gran{display:block;font:500 clamp(24px,2.8vw,40px)/1.1 var(--sans);letter-spacing:-.035em;color:var(--gold);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.sal small{display:block;margin-top:4px;color:var(--mute);font-size:13px}
+.sal .mal{color:#e0a0a0}
+.sal table{width:100%;margin-top:12px;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.sal td{padding:8px 0;border-top:1px solid var(--line);vertical-align:top}.sal td:last-child{text-align:right;white-space:nowrap;padding-left:14px}
+.sal td em{display:block;font-style:normal;font-size:11.5px;letter-spacing:.06em;color:var(--dim)}
+.sal .tot td{border-top:1px solid var(--gold);color:var(--gold);font-weight:500}
+.camp{display:flex;flex-wrap:wrap;gap:6px}.camp span{padding:5px 11px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;color:var(--mute)}.camp span.ok{border-color:var(--gold);color:var(--fg)}.camp span em{font-style:normal;color:var(--gold)}
+.hoy{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0 0 16px;font-size:13.5px;color:var(--mute)}.hoy b{font-weight:500;color:var(--fg)}.hoy i{display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:#7aa86b}.hoy i.no{background:var(--c-csjn)}
+.glos{display:grid;gap:0;margin:0}
+.glos div{padding:14px 0;border-top:1px solid var(--line)}.glos dt{font:500 20px/1.2 var(--caps);letter-spacing:.06em;color:var(--gold)}.glos dd{margin:6px 0 0;font-size:14.5px;color:var(--fg)}.glos dd small{display:block;margin-bottom:3px;color:var(--mute)}
+.drop{display:block;margin:0 0 14px;padding:26px 24px;border:1px dashed rgba(241,238,230,.3);border-radius:28px;text-align:center;color:var(--mute);cursor:pointer;transition:all .3s}
+.drop:hover,.drop.on{border-color:var(--gold);color:var(--fg)}.drop b{color:var(--fg);font-weight:500}.drop input{position:absolute;width:1px;height:1px;opacity:0}
+.nota5{margin-top:16px;font-size:12px;color:var(--dim)}
+.ofr{padding:clamp(60px,9vw,120px) var(--pad) 0}
+.ofr .rej{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.4vw,18px);margin-top:clamp(24px,4vw,50px)}
+.ofr .cel{--c:var(--gold);text-align:center;padding:clamp(20px,2.6vw,36px);border-radius:28px;outline:0;cursor:default;-webkit-tap-highlight-color:transparent;transition:background .5s var(--ease)}
+.ofr .cel .dib{width:104px;margin:0 auto 16px;transition:filter .5s var(--ease),transform .6s var(--ease)}
+.ofr .cel .dib .dl{stroke:rgba(241,238,230,.42);stroke-dashoffset:0;transition:stroke .5s var(--ease)}.ofr .cel .dib .dd{fill:rgba(241,238,230,.55);opacity:1;transition:fill .5s var(--ease)}
+.ofr .cel:hover,.ofr .cel:focus,.ofr .cel:active{background:color-mix(in srgb,var(--c) 7%,transparent)}
+.ofr .cel:hover .dib,.ofr .cel:focus .dib,.ofr .cel:active .dib{filter:drop-shadow(0 0 10px color-mix(in srgb,var(--c) 60%,transparent));transform:scale(1.04)}
+.ofr .cel:hover .dib .dl,.ofr .cel:focus .dib .dl,.ofr .cel:active .dib .dl{stroke:var(--c)}
+.ofr .cel:hover .dib .dd,.ofr .cel:focus .dib .dd,.ofr .cel:active .dib .dd{fill:#ffe9a8}
+.ofr .cel:hover h3,.ofr .cel:focus h3{color:var(--c)}
+.ofr h3{margin:0 0 6px;font:500 clamp(18px,1.8vw,24px)/1.1 var(--sans);letter-spacing:-.03em}.ofr .cel p{margin:0 auto;max-width:34ch;color:var(--mute);font-size:14px}
+.pie9{margin-top:clamp(70px,10vw,140px);padding:clamp(40px,6vw,80px) var(--pad) 30px;border-top:1px solid var(--line)}
+.pie9 .bs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(30px,4vw,50px)}
+.pie9 .bs span{display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;font:500 11.5px/1 var(--caps);letter-spacing:.16em}.pie9 .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.pie9 .adv{max-width:24ch;margin:0 0 22px;font:500 clamp(28px,4.2vw,58px)/1.02 var(--sans);letter-spacing:-.04em;text-wrap:balance}.pie9 .adv em{font-style:normal;color:var(--gold)}
+.pie9 .aviso{max-width:70ch;margin:0 0 28px;color:var(--mute);font-size:14px}
+.legal{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 40px;align-items:end;margin-top:clamp(40px,6vw,80px);padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
+.legal p{margin:0;max-width:62ch}.legal b{font-weight:500;color:var(--fg)}
+.legal nav{display:flex;flex-wrap:wrap;gap:8px 22px}.legal a:hover{color:var(--gold)}
+.legal .ct{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 26px}
+@media (max-width:900px){.lab{grid-template-columns:1fr}.tabs{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px;margin:0 calc(var(--pad) * -1);padding-left:var(--pad);padding-right:var(--pad);scrollbar-width:none}.tab{flex:none;white-space:nowrap}.ofr .rej{grid-template-columns:repeat(2,minmax(0,1fr))}.legal{grid-template-columns:1fr}}
+@media (max-width:560px){.ofr .rej{grid-template-columns:1fr}}
+</style></head><body>
+<script src="shared.js"></script><script src="shared6.js"></script><script src="calculos.js"></script>
+<script>
+var m=IVS6.montar(),O=IVS4.OFERTAS;
+var hh=document.querySelector('.h6hint');if(hh)hh.remove();
+var dp=document.createElement('div');dp.className='desp';dp.setAttribute('aria-hidden','true');dp.innerHTML='Desplace<i></i>';m.appendChild(dp);
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function $(i){return document.getElementById(i);}
+function fh(d){return d.toISOString().slice(0,10);}
+var hoy=hoyUTC(),h180=masDias(hoy,-180);
+var TOOLS=[
+ {k:"cita",c:"--c-saij",lat:"LECTVRA",n:"Lector de citas",t:"Lector de citas",s:"Pegue una cita y vea qué entiende de ella: tribunal, tomo y página, año y carátula."},
+ {k:"int",c:"--c-csjn",lat:"CALCVLVS",n:"Intereses",t:"Intereses",s:"Interés simple sobre un capital, entre dos fechas. Para tasas variables o capitalización, use la herramienta completa de la plataforma."},
+ {k:"pla",c:"--c-mzl",lat:"TEMPVS",n:"Plazos procesales",t:"Plazos procesales",s:"Calcula el vencimiento descontando fines de semana y feriados nacionales (o de Mendoza), con el plazo de gracia."},
+ {k:"des",c:"--c-caba",lat:"CALCVLVS",n:"Despido sin causa",t:"Indemnización por despido",s:"Liquidación final con los rubros de la Ley de Contrato de Trabajo: antigüedad, preaviso, integración, SAC y vacaciones."},
+ {k:"pre",c:"--c-mza",lat:"TEMPVS",n:"Prescripción",t:"Prescripción de la acción",s:"Cuándo prescribe cada tipo de acción según el Código Civil y Comercial y la LCT."},
+ {k:"glo",c:"--c-dial",lat:"VERBA",n:"Glosario latino",t:"Glosario de latín jurídico",s:"Setenta brocardos y expresiones de uso en los tribunales, con su traducción y su sentido."},
+ {k:"fol",c:"--c-saij",lat:"INSTRVMENTA",n:"Foliar un PDF",t:"Numerador de fojas",s:"Elija un PDF y descárguelo foliado («Fs. 1, Fs. 2…»). El archivo no sale de su computadora."}
+];
+var st={tab:"cita",modo:"habiles",juris:"nacion",pdf:null};
+var s=document.createElement("section");s.className="mesa";
+s.innerHTML='<p class="eyebrow">LABORATORIVM</p><h2 class="h2">Pruébelo <em>aquí mismo.</em></h2><p class="lead6">Siete instrumentos de la plataforma, funcionando dentro de esta página. Los cálculos son los mismos que usa la aplicación y nada se envía a ningún servidor.</p>'+
+ '<div class="lab"><div class="tabs" id="tabs" role="tablist" aria-label="Instrumentos"></div><div class="panel" id="panel" role="tabpanel"></div></div>';
+m.appendChild(s);
+function pintarTabs(){$("tabs").innerHTML=TOOLS.map(function(t){return '<button class="tab" role="tab" data-k="'+t.k+'" aria-selected="'+(st.tab===t.k)+'" style="--c:var('+t.c+')"><i></i>'+t.n+'</button>';}).join("");}
+$("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;st.tab=b.dataset.k;pintarTabs();pintarPanel();});
+function campo(id,rot,val,extra){return '<label>'+rot+'<input type="text" id="'+id+'" value="'+esc(val)+'" '+(extra||"")+' autocomplete="off"></label>';}
+function fecha(id,rot,val){return '<label>'+rot+'<input type="date" id="'+id+'" value="'+esc(val)+'"></label>';}
+function chips(nombre,rot,vals,sel){return '<fieldset class="chips ancho"><legend>'+rot+'</legend>'+vals.map(function(v){return '<button type="button" class="chip" data-g="'+nombre+'" data-v="'+v[0]+'" aria-pressed="'+(sel===v[0])+'">'+v[1]+'</button>';}).join("")+'</fieldset>';}
+function fila(a,b,cls){return '<tr class="'+(cls||"")+'"><td>'+a+'</td><td>'+b+'</td></tr>';}
+function nota(t){return '<p class="nota5">'+t+'</p>';}
+
+/* ---------- los siete instrumentos ---------- */
+var P={
+ cita:{f:function(){return '<div class="form">'+campo("ci","Cita","CSJN, Fallos 328:2056 (2005), «Simón, Julio»",'class="ancho"')+'</div><div class="sal" id="out" aria-live="polite"></div>'+nota("Muestra simplificada del verificador: lee los datos de la cita. La verificación contra las bases oficiales se hace en la plataforma.");},
+  c:function(){var t=$("ci").value,tr=/(CSJN|C\.?S\.?J\.?N\.?|Corte Suprema)/i.exec(t),fl=/Fallos?\s*:?\s*(\d{1,3})\s*[:,]\s*(\d{1,5})/i.exec(t),an=/\b(1[89]\d\d|20[0-3]\d)\b/.exec(t),car=/[«"“]([^»"”]{3,80})[»"”]/.exec(t)||/\b([A-ZÁÉÍÓÚ][\wáéíóúñ]+,\s*[A-ZÁÉÍÓÚ][\wáéíóúñ ]+)\s*(?:c\/|s\/|$)/.exec(t);
+   var cs=[["Tribunal",tr?"Corte Suprema de Justicia de la Nación":null],["Tomo:página",fl?fl[1]+":"+fl[2]:null],["Año",an?an[1]:null],["Carátula",car?car[1].trim():null]],ok=cs.filter(function(c){return c[1];}).length;
+   $("out").innerHTML='<div class="camp">'+cs.map(function(c){return '<span class="'+(c[1]?"ok":"")+'">'+c[0]+(c[1]?': <em>'+esc(c[1])+'</em>':' —')+'</span>';}).join("")+'</div><small style="margin-top:12px">'+(ok>=3?"Se podría contrastar con la base oficial.":"Faltan datos para contrastarla: agregue tribunal, año o tomo y página.")+'</small>';}},
+ int:{f:function(){return '<div class="form">'+campo("ic","Capital ($)","1.500.000",'inputmode="decimal"')+campo("it","Tasa nominal anual (%)","60",'inputmode="decimal"')+fecha("id","Desde",fh(h180))+fecha("ih","Hasta",fh(hoy))+'</div><div class="sal" id="out" aria-live="polite"></div>'+nota("Interés simple: capital × tasa × días ÷ 365. No incluye capitalización ni tasas variables por tramos.");},
+  c:function(){var c=num($("ic").value),t=num($("it").value),a=fechaDe($("id").value),b=fechaDe($("ih").value);
+   if(!(c>=0)||!(t>=0)||!a||!b||b<a){$("out").innerHTML='<span class="mal">Complete capital, tasa y un rango de fechas válido (hasta posterior a desde).</span>';return;}
+   var d=diasEntre(a,b),i=c*(t/100)*d/365;$("out").innerHTML='<span class="gran">'+pesos(i)+'</span><small>Intereses por '+d+' días · total '+pesos(c+i)+'</small><table>'+fila("Capital",pesos(c))+fila("Tasa anual",t.toLocaleString("es-AR")+" %")+fila("Período",fechaCorta(a)+" a "+fechaCorta(b))+'</table>';}},
+ pla:{f:function(){var hb=motivo(hoy),mn=motivo(masDias(hoy,1));
+   return '<p class="hoy"><span><i class="'+(hb?"no":"")+'"></i>Hoy: <b>'+(hb?"inhábil ("+esc(hb.toLowerCase())+")":"día hábil")+'</b></span><span><i class="'+(mn?"no":"")+'"></i>Mañana: <b>'+(mn?"inhábil ("+esc(mn.toLowerCase())+")":"día hábil")+'</b></span></p>'+
+   '<div class="form">'+fecha("pn","Fecha de notificación",fh(hoy))+campo("pd","Plazo (días)","5",'inputmode="numeric"')+chips("modo","Cómo se cuenta",[["habiles","Días hábiles judiciales"],["corridos","Días corridos"]],st.modo)+chips("juris","Jurisdicción",[["nacion","Nación"],["caba","Ciudad de Buenos Aires"],["mendoza","Mendoza"]],st.juris)+'</div><div class="sal" id="out" aria-live="polite"></div>'+nota("Se descuentan fines de semana y feriados. No incluye las ferias judiciales de enero y julio ni los asuetos: cárguelos en el calendario de la plataforma.");},
+  c:function(){var n=parseInt($("pd").value,10),d=fechaDe($("pn").value);if(!d||!(n>0)){$("out").innerHTML='<span class="mal">Indique la fecha de notificación y el plazo en días.</span>';return;}
+   var vence,salt=[];if(st.modo==="habiles"){var x=d,k=0;while(k<n){x=masDias(x,1);var mo=motivo(x);if(mo){if(mo!=="Fin de semana")salt.push([x,mo]);continue;}k++;}vence=x;}else vence=masDias(d,n);
+   var g=masDias(vence,1);while(motivo(g))g=masDias(g,1);
+   $("out").innerHTML='<span class="gran">'+esc(fechaLarga(vence))+'</span><small>Con plazo de gracia: '+esc(fechaLarga(g))+', dos primeras horas de despacho</small><table>'+fila("Notificación",esc(fechaLarga(d)))+fila("Plazo",n+(st.modo==="habiles"?" días hábiles":" días corridos")+" · desde el día siguiente")+salt.map(function(q){return fila("No se computa · "+fechaCorta(q[0]),esc(q[1]));}).join("")+'</table>';}},
+ des:{f:function(){return '<div class="form">'+campo("ds","Mejor remuneración mensual, normal y habitual del último año ($)","1.250.000",'inputmode="decimal" class="ancho"')+fecha("di","Fecha de ingreso","2020-03-10")+fecha("de","Fecha de egreso",fh(hoy))+
+   '<label class="check ancho"><input type="checkbox" id="dp" checked> No se otorgó preaviso</label><label class="check ancho"><input type="checkbox" id="dg" checked> Corresponde la integración del mes de despido</label></div><div class="sal" id="out" aria-live="polite"></div>'+nota("Cálculo orientativo con la Ley de Contrato de Trabajo 20.744. No aplica topes de convenio ni intereses. Verifique siempre con un profesional.");},
+  c:function(){var sl=num($("ds").value),a=fechaDe($("di").value),b=fechaDe($("de").value);if(!(sl>0)||!a||!b||b<=a){$("out").innerHTML='<span class="mal">Complete la remuneración y fechas de ingreso y egreso (el egreso debe ser posterior).</span>';return;}
+   var ant=antiguedad(a,b),comp=Math.max(1,ant.anios+(ant.masDeTres?1:0)),dm=diasDelMes(b.getUTCFullYear(),b.getUTCMonth()),dia=b.getUTCDate(),r=[];
+   function ru(n,l,v){if(v>0)r.push([n,l,v]);}
+   ru("Indemnización por antigüedad ("+comp+(comp===1?" año":" años")+")","art. 245 LCT",sl*comp);
+   if($("dp").checked){var m5=masMeses(a,60)<b;ru("Preaviso omitido ("+(m5?"2 meses":"1 mes")+")","arts. 231 y 232 LCT",m5?2*sl:sl);
+     if($("dg").checked&&dia<dm)ru("Integración del mes de despido ("+(dm-dia)+" días)","art. 233 LCT",sl/dm*(dm-dia));}
+   ru("Días trabajados del mes ("+dia+")","art. 103 LCT",sl/dm*dia);
+   var ini=new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?0:6,1));if(ini<a)ini=a;var fin=new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?5:11,b.getUTCMonth()<6?30:31)),ds=diasEntre(new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?0:6,1)),fin)+1;
+   ru("SAC proporcional del semestre","art. 123 LCT",sl/2*(diasEntre(ini,b)+1)/ds);
+   var ia=new Date(Date.UTC(b.getUTCFullYear(),0,1));if(ia<a)ia=a;var vd=diasVacaciones(antiguedad(a,new Date(Date.UTC(b.getUTCFullYear(),11,31))).anios)*(diasEntre(ia,b)+1)/365;
+   ru("Vacaciones no gozadas ("+vd.toLocaleString("es-AR",{maximumFractionDigits:1})+" días)","arts. 150, 155 y 156 LCT",sl/25*vd);
+   var tot=r.reduce(function(x,q){return x+q[2];},0);
+   $("out").innerHTML='<span class="gran">'+pesos(tot)+'</span><small>Antigüedad: '+ant.anios+(ant.anios===1?" año":" años")+(ant.meses?" y "+ant.meses+(ant.meses===1?" mes":" meses"):"")+' · '+comp+' computables</small><table>'+r.map(function(q){return fila(esc(q[0])+'<em>'+q[1]+'</em>',pesos(q[2]));}).join("")+fila("Total",pesos(tot),"tot")+'</table>';}},
+ pre:{f:function(){return '<div class="form"><label class="ancho">Acción<select id="pa">'+ACCIONES.map(function(a){return '<option value="'+a[0]+'">'+esc(a[1])+'</option>';}).join("")+'</select></label>'+fecha("pi","Inicio del cómputo (desde que es exigible)",fh(masMeses(hoy,-12)))+campo("ps","Días de suspensión (opcional)","0",'inputmode="numeric"')+'</div><div class="sal" id="out" aria-live="polite"></div>'+nota("Plazos de los arts. 2560 a 2564 del CCyC y 256 de la LCT. La interpelación y la mediación pueden suspender el curso: súmelo en los días de suspensión.");},
+  c:function(){var ac=ACCIONES.filter(function(a){return a[0]===$("pa").value;})[0],d=fechaDe($("pi").value);if(!ac)return;
+   if(ac[2]===0){$("out").innerHTML='<span class="gran">Imprescriptible</span><small>'+esc(ac[3])+'. '+esc(ac[4])+'</small>';return;}
+   if(!d){$("out").innerHTML='<span class="mal">Indique la fecha de inicio del cómputo.</span>';return;}
+   var su=parseInt($("ps").value,10)||0,v=masDias(masMeses(d,ac[2]),su),f=diasEntre(hoyUTC(),v),an=ac[2]/12;
+   $("out").innerHTML='<span class="gran">'+esc(fechaLarga(v))+'</span><small>'+(f>=0?"Faltan "+f+(f===1?" día":" días"):"Venció hace "+(-f)+(f===-1?" día":" días"))+'</small><table>'+fila("Acción",esc(ac[1]))+fila("Plazo",(an>=1&&an%1===0?an+(an===1?" año":" años"):ac[2]+" meses")+" · "+esc(ac[3]))+fila("Inicio",esc(fechaCorta(d)))+(ac[4]?fila("Nota",esc(ac[4])):"")+'</table>';}},
+ glo:{f:function(){return '<div class="form">'+campo("gq","Buscar","",'placeholder="cosa juzgada, cautelar, prueba…" class="ancho"')+'</div><div id="out" aria-live="polite"></div>'+nota("Brocardos y expresiones de uso en los tribunales argentinos.");},
+  c:function(){var q=sinTildes($("gq").value).trim(),L=GLOSARIO.filter(function(g){return !q||sinTildes(g.join(" ")).indexOf(q)!==-1;}),mas=L.length>6;L=L.slice(0,6);
+   $("out").innerHTML=L.length?'<dl class="glos">'+L.map(function(g){return '<div><dt>'+esc(g[0])+'</dt><dd><small>«'+esc(g[1])+'»</small>'+esc(g[2])+'</dd></div>';}).join("")+'</dl>'+(mas?'<p class="nota5">Mostrando 6 de '+GLOSARIO.filter(function(g){return !q||sinTildes(g.join(" ")).indexOf(q)!==-1;}).length+'. Afine la búsqueda.</p>':""):'<div class="sal"><span class="mal">Ninguna expresión coincide con «'+esc($("gq").value)+'».</span></div>';}},
+ fol:{f:function(){return '<label class="drop" id="drop" for="pdf"><span id="dt">'+(st.pdf?'<b>'+esc(st.pdf.name)+'</b> · '+st.pdf.pag+' páginas (cambiar)':'<b>Elegir un PDF</b> o arrastrarlo aquí')+'</span><input type="file" id="pdf" accept=".pdf,application/pdf"></label>'+
+   '<div class="form">'+campo("fp","Texto antes del número","Fs. ")+campo("fi","Empezar en","1",'inputmode="numeric"')+'</div><div class="acciones" style="margin-bottom:14px"><button class="btn" id="fgo"'+(st.pdf?"":" disabled")+'>Foliar y descargar</button></div><div class="sal" id="out" aria-live="polite"></div>'+nota("Se hace dentro de su navegador con pdf-lib: el archivo no se envía a ningún servidor. Máximo 150 MB.");},
+  c:function(){$("out").innerHTML=st.pdf?'<small>Listo para foliar '+st.pdf.pag+' páginas.</small>':'<small>Elija un archivo PDF para empezar.</small>';}}
+};
+function motivo(d){var w=d.getUTCDay();if(w===0||w===6)return "Fin de semana";return feriados(d.getUTCFullYear(),st.juris)[isoDe(d)]||"";}
+function pintarPanel(){var t=TOOLS.filter(function(x){return x.k===st.tab;})[0];
+ $("panel").style.setProperty("--c","var("+t.c+")");
+ $("panel").innerHTML='<span class="lat">'+t.lat+'</span><h3>'+t.t+'</h3><p class="s">'+t.s+'</p>'+P[st.tab].f();
+ P[st.tab].c();
+ [].forEach.call($("panel").querySelectorAll("input[type=text],input[type=date],select,input[type=checkbox]"),function(i){i.addEventListener("input",function(){P[st.tab].c();});i.addEventListener("change",function(){P[st.tab].c();});});
+ if(st.tab==="fol")conectarPdf();
+}
+$("panel").addEventListener("click",function(e){var b=e.target.closest(".chip");if(!b)return;st[b.dataset.g]=b.dataset.v;var y=scrollY;pintarPanel();scrollTo(0,y);});
+/* foliador real, con pdf-lib cargado recién cuando se usa */
+var lib=null;function cargarLib(){return lib||(lib=new Promise(function(ok,mal){var x=document.createElement("script");x.src="../vendor/pdf-lib.min.js";x.onload=function(){ok(window.PDFLib);};x.onerror=function(){lib=null;mal(new Error("No se pudo cargar el módulo de PDF."));};document.head.appendChild(x);}));}
+function aPdf(r,W,H,x,y){return r===90?{x:W-y,y:x}:r===180?{x:W-x,y:H-y}:r===270?{x:y,y:H-x}:{x:x,y:y};}
+function conectarPdf(){var inp=$("pdf"),dr=$("drop");
+ ["dragover","dragenter"].forEach(function(e){dr.addEventListener(e,function(ev){ev.preventDefault();dr.classList.add("on");});});["dragleave","drop"].forEach(function(e){dr.addEventListener(e,function(ev){ev.preventDefault();dr.classList.remove("on");});});
+ dr.addEventListener("drop",function(ev){var f=ev.dataTransfer.files[0];if(f)elegir(f);});inp.addEventListener("change",function(){if(inp.files[0])elegir(inp.files[0]);});
+ function elegir(f){if(!/\.pdf$/i.test(f.name)&&f.type!=="application/pdf"){$("out").innerHTML='<span class="mal">Elija un archivo PDF.</span>';return;}if(f.size>150*1048576){$("out").innerHTML='<span class="mal">El archivo supera los 150 MB.</span>';return;}
+  $("out").innerHTML='<small>Leyendo el archivo…</small>';
+  Promise.all([cargarLib(),f.arrayBuffer()]).then(function(x){return x[0].PDFDocument.load(new Uint8Array(x[1]),{ignoreEncryption:true}).then(function(d){st.pdf={name:f.name,pag:d.getPageCount(),bytes:new Uint8Array(x[1])};pintarPanel();});})["catch"](function(){$("out").innerHTML='<span class="mal">No se pudo abrir «'+esc(f.name)+'»: está dañado o protegido con contraseña.</span>';});}
+ var go=$("fgo");if(go)go.onclick=function(){var pre=$("fp").value.slice(0,12),ini=Math.max(0,parseInt($("fi").value,10)||1);go.disabled=true;$("out").innerHTML='<small>Foliando…</small>';
+  cargarLib().then(function(L){return L.PDFDocument.load(st.pdf.bytes,{ignoreEncryption:true}).then(function(doc){return doc.embedFont(L.StandardFonts.HelveticaBold).then(function(font){
+   doc.getPages().forEach(function(p,i){var mb=p.getMediaBox(),r=((p.getRotation().angle%360)+360)%360,vw=(r===90||r===270)?mb.height:mb.width,vh=(r===90||r===270)?mb.width:mb.height,txt=pre+(ini+i),tam=11,tw=font.widthOfTextAtSize(txt,tam),mg=24,pd=3,vx=vw-mg-tw,vy=mg;
+    var a=aPdf(r,mb.width,mb.height,vx,vy),c1=aPdf(r,mb.width,mb.height,vx-pd,vy-pd),c2=aPdf(r,mb.width,mb.height,vx+tw+pd,vy+tam+pd);
+    p.drawRectangle({x:Math.min(c1.x,c2.x)+mb.x,y:Math.min(c1.y,c2.y)+mb.y,width:Math.abs(c2.x-c1.x),height:Math.abs(c2.y-c1.y),color:L.rgb(1,1,1),opacity:.9});
+    p.drawText(txt,{x:a.x+mb.x,y:a.y+mb.y,size:tam,font:font,color:L.rgb(0,0,0),rotate:L.degrees(r)});});
+   return doc.save({useObjectStreams:true});});});}).then(function(b){var bl=new Blob([b],{type:"application/pdf"}),a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=st.pdf.name.replace(/\.pdf$/i,"")+"-foliado.pdf";document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
+   $("out").innerHTML='<span class="gran">Listo</span><small>'+st.pdf.pag+' páginas numeradas desde «'+esc(pre+ini)+'». Se descargó el archivo foliado.</small>';go.disabled=false;})["catch"](function(){$("out").innerHTML='<span class="mal">No se pudo foliar el archivo.</span>';go.disabled=false;});};}
+pintarTabs();pintarPanel();
+
+/* lo demás */
+var of=document.createElement("section");of.className="ofr";of.innerHTML='<p class="eyebrow">ET ALIA</p><h2 class="h2">Y lo demás, <em>en seis celdas.</em></h2><div class="rej">'+O.map(function(f){return '<div class="cel" tabindex="0" style="--c:var('+f.c+')">'+IVS4.dibujo(f.k)+'<h3>'+f.t+'</h3><p>'+f.d+'</p></div>';}).join("")+'</div>';m.appendChild(of);
+/* pie: sin el nombre grande; aviso, derechos reservados y contacto */
+var pie=document.createElement("footer");pie.className="pie9";
+pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<span style="--c:var('+b[1]+')"><i></i>'+b[0]+'</span>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</p>'+IVS4.BOTONES+
+ '<div class="legal"><p><b>© 2026 IVS CODEX.</b> Todos los derechos reservados. Las marcas, nombres y contenidos de esta plataforma no pueden reproducirse sin autorización. Los fallos y normas pertenecen a los organismos oficiales que los publican; esta plataforma no los almacena ni genera contenido jurídico.</p><nav aria-label="Información legal"><a href="#">Términos de uso</a><a href="#">Política de privacidad</a><a href="#">Fuentes oficiales</a></nav>'+
+ '<div class="ct"><span>Contacto: <a href="#" style="color:var(--fg)">contacto@su-dominio.com</a></span><span>Mendoza, Argentina</span></div></div>';
+m.appendChild(pie);
+
+/* La portada vive dentro de la aplicación: los botones y enlaces con data-tab le piden a la página madre que abra esa sección. */
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-tab]");if(!b)return;e.preventDefault();
+ try{parent.postMessage({ivs:"abrir",tab:b.getAttribute("data-tab")},location.origin);}catch(x){}});
+addEventListener("message",function(e){if(e.origin!==location.origin||!e.data||e.data.ivs!=="arriba")return;scrollTo(0,0);});
+</script></body></html>

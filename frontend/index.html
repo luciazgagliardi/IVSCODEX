@@ -752,6 +752,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   background:var(--bg);color:var(--fg);opacity:1;transition:opacity .5s ease-out
 }
 .entrada.saliendo{opacity:0;pointer-events:none}
+.portada-marco{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg);display:block}
 /* El grano de la portada es el mismo de sigillvm.com, con sus dos texturas
    y sus mismos valores: uno detrás del contenido y otro, más fino, por
    encima de todo —letras incluidas— mezclado en "overlay", corridos medio
@@ -954,115 +955,10 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
      cabecera la vuelve a abrir. Los textos son los de la portada anterior;
      lo que se sumó (el nombre, las bases, el proceso, los principios) va en
      el mismo registro formal. -->
-<section class="entrada" id="entrada" aria-labelledby="pt-titular">
-  <div class="grano" aria-hidden="true"></div>
-  <div class="grano grano--sobre" aria-hidden="true"></div>
-  <div class="pt-in">
-    <header class="pt-hdr" id="pt-hdr">
-      <span class="pt-brand">
-        <span class="pt-brand__tag">Buscador de jurisprudencia<br>argentina e internacional.</span>
-        <span class="pt-brand__name" aria-hidden="true"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></span>
-      </span>
-      <nav class="pt-nav" aria-label="Secciones de la plataforma">
-        <button type="button" data-tab="buscar">Consulta</button>
-        <button type="button" data-tab="fuentes">Fuentes</button>
-        <button type="button" data-tab="verificar">Verificación</button>
-        <button type="button" data-tab="cuenta">Cuenta</button>
-      </nav>
-      <button type="button" class="btn" data-tab="buscar">Iniciar la consulta</button>
-    </header>
-
-    <div class="pt-hero">
-      <div class="pt-sello" aria-hidden="true"><canvas id="pt-radar"></canvas><svg id="pt-sello" viewBox="0 0 1000 1000"></svg><div class="rf-cap" id="rf-cap"></div></div>
-      <div class="pt-copia">
-        <h1 class="pt-titular pt-llega" id="pt-titular" style="--d:.2s">Buscador integrado de repositorios judiciales oficiales y <em>doctrina</em>.</h1>
-        <div class="pt-acciones pt-llega" style="--d:.55s">
-          <button type="button" class="btn" data-tab="buscar">Iniciar la consulta</button>
-          <button type="button" class="btn sec" data-tab="fuentes">Ver el catálogo de fuentes</button>
-        </div>
-        <p class="pt-marca marca pt-llega" style="--d:.7s" aria-label="IVS CODEX"><span style="--i:0">I</span><span class="v" style="--i:1">V</span><span style="--i:2">S</span><span class="m-punto" style="--i:3"></span><span style="--i:4">C</span><span style="--i:5">O</span><span style="--i:6">D</span><span style="--i:7">E</span><span class="v" style="--i:8">X</span></p>
-      </div>
-    </div>
-
-    <section class="pt-sec" aria-label="Qué hace la plataforma">
-            <div class="pt-cols">
-        <div class="pt-col" data-reveal><h3>Consulta</h3><p>La consulta se arma con los operadores de cada buscador oficial y se envía a las seis bases integradas a la vez.</p><button type="button" data-tab="buscar">Iniciar la consulta →</button></div>
-        <div class="pt-col" data-reveal style="--d:.08s"><h3>Ramas y voces</h3><p>Los buscadores judiciales argentinos indexan mediante descriptores técnicos y no por lenguaje natural.</p><button type="button" data-tab="ramas">Ver las ramas →</button></div>
-        <div class="pt-col" data-reveal style="--d:.16s"><h3>Lector</h3><p>El fallo se visualiza con su búsqueda destacada, con los pasajes recortados y la cita preparada para copiar.</p><button type="button" data-tab="lector">Abrir el Lector →</button></div>
-        <div class="pt-col" data-reveal style="--d:.24s"><h3>Verificación</h3><p>La plataforma permite verificar citas jurisprudenciales mediante la contrastación automatizada con los repositorios oficiales.</p><button type="button" data-tab="verificar">Verificar una cita →</button></div>
-      </div>
-    </section>
-
-    <section class="pt-sec" aria-label="El nombre">
-      <p class="pt-entrada" data-reveal>cōdex, -icis <span>·</span> sustantivo masculino <span>·</span> latín</p>
-      <div class="pt-nombre" data-reveal>
-        <h2>Por extensión, el cuerpo ordenado de las leyes.</h2>
-        <div>
-          <p>IVS CODEX reúne en una sola consulta los repositorios oficiales de jurisprudencia y legislación argentinas, junto con la doctrina publicada en español.</p>
-          <p>No almacena fallos ni genera contenido jurídico. Cada resultado se presenta con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="pt-sec" id="pt-bases" aria-labelledby="pt-t-bases">
-      <h2 class="pt-sec__tit" id="pt-t-bases" data-reveal>Bases integradas.</h2>
-      <p class="pt-sec__intro" data-reveal>Seis repositorios oficiales se consultan de forma simultánea y en vivo. Cada resultado conserva el sello de la base que lo publicó.</p>
-      <div class="pt-cols pt-cols--3" id="pt-bases-cols"></div>
-      <div class="pt-pie" data-reveal>
-        <p>Acceso a <span id="pt-n-fuentes">106</span> bases de datos y buscadores públicos, verificados e identificados individualmente.</p>
-        <button type="button" class="btn sec" data-tab="fuentes">Ver el catálogo de fuentes</button>
-      </div>
-    </section>
-
-    <section class="pt-sec" aria-labelledby="pt-t-proceso">
-      <h2 class="pt-sec__tit" id="pt-t-proceso" data-reveal>Proceso de consulta.</h2>
-      <div class="pasos" id="pt-pasos">
-        <svg class="pasos__onda" viewBox="0 0 1200 80" preserveAspectRatio="none" aria-hidden="true">
-          <path class="pasos__pista" d="M0 40 C150 -4 150 -4 300 40 S450 84 600 40 S750 -4 900 40 S1050 84 1200 40"/>
-          <path class="pasos__linea" pathLength="1" d="M0 40 C150 -4 150 -4 300 40 S450 84 600 40 S750 -4 900 40 S1050 84 1200 40"/>
-        </svg>
-        <ol>
-          <li class="paso"><span class="paso__punto"></span><h3>Consulta.</h3><p>Los términos se traducen a la sintaxis de cada buscador: comillas, operadores, exclusiones y rango de años.</p></li>
-          <li class="paso"><span class="paso__punto"></span><h3>Ampliación.</h3><p>El tesauro suma las denominaciones equivalentes: el Código de 2015 rebautizó figuras que los fallos anteriores nombran de otra forma.</p></li>
-          <li class="paso"><span class="paso__punto"></span><h3>Búsqueda.</h3><p>Las seis bases se consultan a la vez. Cada una responde por su cuenta y con su propio tiempo.</p></li>
-          <li class="paso"><span class="paso__punto"></span><h3>Documento.</h3><p>Cada resultado conserva su procedencia y el enlace al documento oficial, listo para leer, recortar y citar.</p></li>
-        </ol>
-      </div>
-    </section>
-
-    <section class="pt-sec" aria-labelledby="pt-t-princ">
-      <h2 class="pt-sec__tit" id="pt-t-princ" data-reveal>Principios.</h2>
-      <p class="pt-sec__intro" data-reveal>Tres condiciones que ningún resultado puede dejar de cumplir.</p>
-      <div class="pt-cols pt-cols--3">
-        <div class="pt-col" data-reveal>
-          <svg class="lat" viewBox="0 0 220 80" aria-hidden="true"><circle class="d latido" cx="20" cy="40" r="3.5"/><path class="onda" d="M40 12 A40 40 0 0 1 40 68"/><path class="onda" d="M40 12 A40 40 0 0 1 40 68"/><path class="onda" d="M40 12 A40 40 0 0 1 40 68"/><path class="onda" d="M40 12 A40 40 0 0 1 40 68"/></svg>
-          <p class="pt-lat">FONS</p><h3>La fuente.</h3><p>Todo resultado remite al documento del organismo que lo dictó. Lo que se lee nunca es una versión propia.</p>
-        </div>
-        <div class="pt-col" data-reveal style="--d:.08s">
-          <svg class="lat" viewBox="0 0 220 80" aria-hidden="true"><path d="M0 14H200"/><path d="M0 28H168"/><path d="M0 42H136"/><path d="M0 56H104"/><path d="M0 70H72"/><circle class="d deriva" cx="0" cy="14" r="3.5"/></svg>
-          <p class="pt-lat">ORDO</p><h3>El orden.</h3><p>Los resultados de las seis bases se presentan juntos, con la misma forma y la procedencia a la vista.</p>
-        </div>
-        <div class="pt-col" data-reveal style="--d:.16s">
-          <svg class="lat" viewBox="0 0 220 80" aria-hidden="true"><circle class="l" cx="70" cy="40" r="32"/><circle class="l" cx="114" cy="40" r="32"/><circle class="d latido" cx="92" cy="40" r="3.5"/></svg>
-          <p class="pt-lat">FIDES</p><h3>La fe.</h3><p>Una cita se contrasta con la base oficial antes de presentarse. Ante su ausencia, el antecedente se presume inexistente.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="pt-sec pt-cierre" aria-label="Advertencia">
-      <p class="pt-cierre__txt" data-reveal>Verifique siempre en la <em>fuente</em> antes de citar.</p>
-      <p class="pt-sec__intro" data-reveal>La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</p>
-      <div class="pt-acciones" data-reveal>
-        <button type="button" class="btn" data-tab="buscar">Iniciar la consulta</button>
-        <button type="button" class="btn sec" data-tab="verificar">Verificar una cita</button>
-      </div>
-    </section>
-
-    <footer class="pt-ftr">
-      <span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span>
-      <span>No almacena fallos ni genera contenido jurídico.</span>
-    </footer>
-  </div>
+<section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
+  <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
+       Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
@@ -1306,7 +1202,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
 
     /* el puntero de luz, solo mientras la portada está abierta */
     var cursor=null,cx=-200,cy=-200,rx=cx,ry=cy,lx=cx,ly=cy;
-    if(window.matchMedia&&matchMedia("(pointer:fine)").matches&&!matchMedia("(prefers-reduced-motion:reduce)").matches){
+    if(false&&window.matchMedia&&matchMedia("(pointer:fine)").matches&&!matchMedia("(prefers-reduced-motion:reduce)").matches){   /* sin cursor propio: la portada vive en un marco */
       cursor=document.createElement("div");
       cursor.className="cursor";cursor.setAttribute("aria-hidden","true");
       cursor.innerHTML='<i class="c-luz"></i><i class="c-aro"></i><i class="c-punto"></i>';
@@ -1376,6 +1272,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
       void entrada.offsetWidth;
       entrada.classList.remove("saliendo");
       entrada.scrollTop=0;
+      try{ var mc=document.getElementById("portada-marco"); if(mc&&mc.contentWindow) mc.contentWindow.postMessage({ivs:"arriba"},location.origin); }catch(x){}
       if(cursor) document.documentElement.classList.add("con-cursor");
       alMover();
     }
@@ -1386,6 +1283,14 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
     });
     document.addEventListener("click",function(e){
       if(e.target&&e.target.closest&&e.target.closest("[data-portada]")) abrir();
+    });
+    /* La portada (en su marco) pide abrir una sección. Solo se aceptan mensajes del mismo origen y secciones conocidas. */
+    window.addEventListener("message",function(e){
+      if(e.origin!==location.origin||!e.data||e.data.ivs!=="abrir") return;
+      var tab=String(e.data.tab||"");
+      if(["buscar","fuentes","verificar","cuenta"].indexOf(tab)===-1) return;
+      var b=document.createElement("button"); b.type="button"; b.setAttribute("data-tab",tab); b.hidden=true;
+      entrada.appendChild(b); b.click(); b.remove();
     });
     document.addEventListener("keydown",function(e){
       if(e.key==="Escape"&&abierta) cerrar();
