@@ -18,11 +18,11 @@
     switch(tab){
       case "buscar": for(i=0;i<6;i++){ var a=(205+i*26)*Math.PI/180; x=(120+92*Math.cos(a)).toFixed(1); y=(140+92*Math.sin(a)).toFixed(1); h+=c(x,y,6)+l("M"+x+" "+y+"L120 140"); } h+=p(120,140,5); break;
       case "lector": h+=l("M120 36Q86 26 40 32V132Q86 126 120 136")+l("M120 36Q154 26 200 32V132Q154 126 120 136")+l("M120 36V136");
-        for(i=0;i<5;i++){ y=52+i*16; h+=l("M52 "+(y-2)+"Q84 "+(y-8)+" 110 "+(y-1))+l("M130 "+(y-1)+"Q156 "+(y-8)+" 188 "+(y-2)); } h+=p(176,24); break;
-      case "ramas": h+=l("M120 152V96")+l("M120 96L78 58L56 26")+l("M78 58L98 22")+l("M120 96L164 54L188 24")+l("M164 54L150 18")+l("M120 96L124 34")+p(188,24); break;
-      case "calculos": h+=l("M40 30H200V136H40Z"); for(i=0;i<4;i++){ y=52+i*24; h+=l("M40 "+y+"H200"); [0,1,2].forEach(function(j){ h+=c(56+j*16+i*14,y,6); }); } h+=p(176,76,6); break;
-      case "verificar": h+=c(120,82,58)+c(120,82,44)+l("M98 84L114 100L144 66")+p(120,24); break;
-      case "herramientas": h+=l("M70 40H170V132H70Z")+l("M82 28H182V40")+l("M94 16H194V28")+l("M90 64H150")+l("M90 84H150")+l("M90 104H128")+p(170,40,4); break;
+        for(i=0;i<5;i++){ y=52+i*16; h+=l("M52 "+(y-2)+"Q84 "+(y-8)+" 110 "+(y-1))+l("M130 "+(y-1)+"Q156 "+(y-8)+" 188 "+(y-2)); } h+=p(120,18); break;
+      case "ramas": h+=l("M120 152V96")+l("M120 96L78 58L56 26")+l("M78 58L98 22")+l("M120 96L162 58L184 26")+l("M162 58L142 22")+l("M120 96V30")+p(120,20); break;
+      case "calculos": h+=l("M40 30H200V136H40Z")+l("M120 30V136"); for(i=0;i<4;i++){ y=52+i*24; h+=l("M40 "+y+"H200"); [0,1,2].forEach(function(j){ h+=c(58+j*16,y,6)+c(182-j*16,y,6); }); } h+=p(120,20,5); break;
+      case "verificar": h+=c(120,82,58)+c(120,82,44)+l("M120 24V38")+l("M120 126V140")+l("M62 82H76")+l("M164 82H178")+p(120,82,6); break;
+      case "herramientas": h+=l("M70 40H170V132H70Z")+l("M82 28H158V40")+l("M94 16H146V28")+l("M90 64H150")+l("M90 84H150")+l("M100 104H140")+p(120,8,4); break;
     }
     return '<svg class="dib" viewBox="0 0 240 160" aria-hidden="true">'+h+'</svg>';
   }
@@ -77,7 +77,7 @@
         var g=ctx.createLinearGradient(0,0,P.x,0);g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
         ctx.strokeStyle=g;ctx.lineWidth=1.3;ctx.stroke();ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();
-        if(!quieto){b.next-=dt*(1+vel*5);if(b.next<=0){b.next=1.1+Math.random()*1.4;puls.push({i:i,t:0,v:.2+Math.random()*.1,out:false,s:0});}}
+        if(!quieto){b.next-=dt;if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}}
       });
       ctx.beginPath();out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
       ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();

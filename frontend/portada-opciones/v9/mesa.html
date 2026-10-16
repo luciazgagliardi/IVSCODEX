@@ -44,12 +44,16 @@
 .drop:hover,.drop.on{border-color:var(--gold);color:var(--fg)}.drop b{color:var(--fg);font-weight:500}.drop input{position:absolute;width:1px;height:1px;opacity:0}
 .nota5{margin-top:16px;font-size:12px;color:var(--dim)}
 .ofr{padding:clamp(60px,9vw,120px) var(--pad) 0}
-.ofr .rej{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:clamp(24px,4vw,50px);border-top:1px solid var(--line)}
-.ofr .cel{padding:clamp(18px,2.4vw,32px) clamp(14px,2vw,28px) clamp(18px,2.4vw,32px) 0;border-bottom:1px solid var(--line)}
-.ofr .cel:not(:nth-child(3n)){border-right:1px solid var(--line);padding-right:clamp(14px,2vw,28px)}
-.ofr .cel:not(:nth-child(3n+1)){padding-left:clamp(14px,2vw,28px)}
-.ofr .cel .dib{width:70px;margin-bottom:14px}.ofr .cel .dib .dl{stroke-dashoffset:0}.ofr .cel .dib .dd{opacity:1}
-.ofr h3{margin:0 0 6px;font:500 clamp(18px,1.8vw,24px)/1.1 var(--sans);letter-spacing:-.03em}.ofr p{margin:0;color:var(--mute);font-size:14px}
+.ofr .rej{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.4vw,18px);margin-top:clamp(24px,4vw,50px)}
+.ofr .cel{--c:var(--gold);text-align:center;padding:clamp(20px,2.6vw,36px);border-radius:28px;outline:0;cursor:default;-webkit-tap-highlight-color:transparent;transition:background .5s var(--ease)}
+.ofr .cel .dib{width:104px;margin:0 auto 16px;transition:filter .5s var(--ease),transform .6s var(--ease)}
+.ofr .cel .dib .dl{stroke:rgba(241,238,230,.42);stroke-dashoffset:0;transition:stroke .5s var(--ease)}.ofr .cel .dib .dd{fill:rgba(241,238,230,.55);opacity:1;transition:fill .5s var(--ease)}
+.ofr .cel:hover,.ofr .cel:focus,.ofr .cel:active{background:color-mix(in srgb,var(--c) 7%,transparent)}
+.ofr .cel:hover .dib,.ofr .cel:focus .dib,.ofr .cel:active .dib{filter:drop-shadow(0 0 10px color-mix(in srgb,var(--c) 60%,transparent));transform:scale(1.04)}
+.ofr .cel:hover .dib .dl,.ofr .cel:focus .dib .dl,.ofr .cel:active .dib .dl{stroke:var(--c)}
+.ofr .cel:hover .dib .dd,.ofr .cel:focus .dib .dd,.ofr .cel:active .dib .dd{fill:#ffe9a8}
+.ofr .cel:hover h3,.ofr .cel:focus h3{color:var(--c)}
+.ofr h3{margin:0 0 6px;font:500 clamp(18px,1.8vw,24px)/1.1 var(--sans);letter-spacing:-.03em}.ofr .cel p{margin:0 auto;max-width:34ch;color:var(--mute);font-size:14px}
 .pie9{margin-top:clamp(70px,10vw,140px);padding:clamp(40px,6vw,80px) var(--pad) 30px;border-top:1px solid var(--line)}
 .pie9 .bs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(30px,4vw,50px)}
 .pie9 .bs span{display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;font:500 11.5px/1 var(--caps);letter-spacing:.16em}.pie9 .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
@@ -59,7 +63,7 @@
 .legal p{margin:0;max-width:62ch}.legal b{font-weight:500;color:var(--fg)}
 .legal nav{display:flex;flex-wrap:wrap;gap:8px 22px}.legal a:hover{color:var(--gold)}
 .legal .ct{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 26px}
-@media (max-width:900px){.lab{grid-template-columns:1fr}.tabs{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px;margin:0 calc(var(--pad) * -1);padding-left:var(--pad);padding-right:var(--pad);scrollbar-width:none}.tab{flex:none;white-space:nowrap}.ofr .rej{grid-template-columns:repeat(2,minmax(0,1fr))}.ofr .cel{border-right:0!important;padding-left:0!important}.legal{grid-template-columns:1fr}}
+@media (max-width:900px){.lab{grid-template-columns:1fr}.tabs{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px;margin:0 calc(var(--pad) * -1);padding-left:var(--pad);padding-right:var(--pad);scrollbar-width:none}.tab{flex:none;white-space:nowrap}.ofr .rej{grid-template-columns:repeat(2,minmax(0,1fr))}.legal{grid-template-columns:1fr}}
 @media (max-width:560px){.ofr .rej{grid-template-columns:1fr}}
 </style></head><body>
 <script src="../v4/shared.js"></script><script src="../v6/shared6.js"></script><script src="calculos.js"></script>
@@ -165,8 +169,7 @@ function conectarPdf(){var inp=$("pdf"),dr=$("drop");
 pintarTabs();pintarPanel();
 
 /* lo demás */
-var of=document.createElement("section");of.className="ofr";of.innerHTML='<p class="eyebrow">ET ALIA</p><h2 class="h2">Y lo demás, <em>en seis celdas.</em></h2><div class="rej">'+O.map(function(f){return '<div class="cel" style="--c:var('+f.c+')">'+IVS4.dibujo(f.k)+'<h3>'+f.t+'</h3><p>'+f.d+'</p></div>';}).join("")+'</div>';m.appendChild(of);
-var pr=document.createElement("section");pr.className="sec6";pr.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(18px,3vw,44px)">'+IVS6.PRINC.map(function(q){return '<div style="padding-top:14px;border-top:1px solid var(--line)"><b style="font:500 12px/1 var(--caps);letter-spacing:.22em;color:var(--gold)">'+q[0]+'</b><h3 style="margin:10px 0 6px;font:500 clamp(20px,2vw,28px)/1.1 var(--sans);letter-spacing:-.03em">'+q[1]+'.</h3><p style="margin:0;color:var(--mute);font-size:14.5px">'+q[2]+'</p></div>';}).join("")+'</div>';m.appendChild(pr);
+var of=document.createElement("section");of.className="ofr";of.innerHTML='<p class="eyebrow">ET ALIA</p><h2 class="h2">Y lo demás, <em>en seis celdas.</em></h2><div class="rej">'+O.map(function(f){return '<div class="cel" tabindex="0" style="--c:var('+f.c+')">'+IVS4.dibujo(f.k)+'<h3>'+f.t+'</h3><p>'+f.d+'</p></div>';}).join("")+'</div>';m.appendChild(of);
 /* pie: sin el nombre grande; aviso, derechos reservados y contacto */
 var pie=document.createElement("footer");pie.className="pie9";
 pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<span style="--c:var('+b[1]+')"><i></i>'+b[0]+'</span>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</p>'+IVS4.BOTONES+
