@@ -42,7 +42,7 @@ app.disable('x-powered-by'); // no anunciar que es Express (reconocimiento de la
  *
  * - CSP: aunque se colara un script ajeno en un texto, el navegador no lo
  *   ejecuta (script-src) ni manda datos a un servidor que no esté en la lista
- *   (connect-src), no se puede incrustar la página en otra (frame-ancestors,
+ *   (connect-src), no se puede incrustar la página en otro sitio (frame-ancestors 'self',
  *   previene clickjacking) ni cambiar a dónde apuntan los enlaces relativos
  *   (base-uri). La página usa scripts y estilos en línea, por eso
  *   'unsafe-inline'; el resto es lo más cerrado que permite su estructura.
@@ -67,7 +67,7 @@ app.use(
         'object-src': ["'none'"],
         'base-uri': ["'none'"],
         'form-action': ["'self'"],
-        'frame-ancestors': ["'none'"],
+        'frame-ancestors': ["'self'"], // la portada vive en un marco de la misma página; ningún otro sitio puede enmarcarla
       },
     },
     crossOriginResourcePolicy: { policy: 'cross-origin' },

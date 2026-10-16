@@ -1,0 +1,29 @@
+/* v6 · La portada es el prisma; lo que sigue cambia en cada propuesta. Se apoya en ../p.css y ../v4/shared.css. */
+.hero6{position:relative;height:100svh;min-height:560px;overflow:hidden}
+.hero6 canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.h6t{position:absolute;left:50%;top:clamp(76px,12vh,120px);transform:translateX(-50%);width:min(92vw,880px);text-align:center;z-index:5}
+.h6b{position:absolute;left:50%;bottom:clamp(86px,13vh,120px);transform:translateX(-50%);z-index:5;width:max-content;max-width:92vw}
+.h6b .acc{justify-content:center}
+.h6hint{position:absolute;left:0;right:0;bottom:clamp(14px,2.4vh,24px);z-index:5;margin:0;padding-left:.2em;text-align:center;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:8px}
+.h6hint i{display:block;width:1px;height:22px;background:linear-gradient(var(--gold),transparent);animation:cae 2s var(--ease) infinite}
+@keyframes cae{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+@media (max-width:640px){.h6t{top:84px}.h6b{bottom:104px}}
+
+/* títulos de sección comunes */
+.sec6{position:relative;padding:clamp(70px,11vw,150px) var(--pad)}
+.eyebrow{margin:0 0 16px;font:500 12px/1 var(--caps);letter-spacing:.28em;color:var(--gold)}
+.h2{margin:0;font:500 clamp(28px,4.4vw,64px)/1.02 var(--sans);letter-spacing:-.04em;text-wrap:balance}
+.h2 em{font-style:normal;color:var(--gold)}
+.lead6{margin:18px 0 0;max-width:54ch;color:var(--mute)}
+
+/* cierre común: bases, advertencia y llamada */
+.cierre{padding:clamp(70px,10vw,130px) var(--pad) 70px;border-top:1px solid var(--line)}
+.cierre .bs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(34px,5vw,64px)}
+.cierre .bs span{display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;font:500 11.5px/1 var(--caps);letter-spacing:.16em}
+.cierre .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.cierre .adv{max-width:30ch;margin:0 0 28px;font:500 clamp(28px,4.4vw,62px)/1.02 var(--sans);letter-spacing:-.04em;text-wrap:balance}
+.cierre .adv em{font-style:normal;color:var(--gold)}
+.cierre .sub{max-width:62ch;margin:0 0 30px;color:var(--mute);font-size:14.5px}
+.cierre .marcaf{margin-top:clamp(40px,7vw,90px);font-size:clamp(46px,12vw,200px);color:rgba(241,238,230,.8);line-height:.86}
+.idx6{position:fixed;right:14px;bottom:14px;z-index:80;padding:9px 15px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(16,14,11,.78);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-size:12.5px;color:var(--mute)}
+.idx6:hover{color:var(--gold);border-color:var(--gold)}
