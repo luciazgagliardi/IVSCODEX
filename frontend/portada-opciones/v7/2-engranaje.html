@@ -1,0 +1,54 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap"><link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="../v4/shared.css"><link rel="stylesheet" href="../v6/shared6.css"><title>IVS CODEX · El engranaje</title>
+<style>
+/* 2 · EL ENGRANAJE — seis ruedas dentadas, una por cosa que ofrece la página, engranadas entre sí. El scroll las hace girar a todas
+   (cada una al ritmo que le toca por sus dientes) y se van encendiendo de a una con su color. */
+.pista2{position:relative;height:640vh}
+.esc2{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);align-items:center;gap:clamp(10px,3vw,50px);padding:84px var(--pad) 20px}
+.esc2 svg{width:100%;height:auto;max-height:78svh;overflow:visible}
+.gr path.cuerpo{fill:rgba(241,238,230,.03);stroke:rgba(241,238,230,.4);stroke-width:2;stroke-linejoin:round;transition:fill .6s,stroke .6s}
+.gr circle.eje{fill:#100e0b;stroke:rgba(241,238,230,.4);stroke-width:2;transition:stroke .6s}
+.gr .aro{fill:none;stroke:rgba(241,238,230,.18);stroke-width:1.4}
+.gr text{font:500 13px "Cormorant SC",serif;letter-spacing:.14em;text-anchor:middle;fill:rgba(241,238,230,.55);transition:fill .6s}
+.gr.on path.cuerpo{fill:color-mix(in srgb,var(--c) 18%,transparent);stroke:var(--c)}
+.gr.on circle.eje{stroke:var(--c)}.gr.on text{fill:var(--c)}
+.pnl2 .n{font:300 clamp(60px,8vw,120px)/1 var(--caps);color:var(--gold)}
+.pnl2 h2{margin:6px 0 10px;font:500 clamp(26px,3.4vw,48px)/1.02 var(--sans);letter-spacing:-.04em;min-height:2.1em}
+.pnl2 p{margin:0;max-width:36ch;color:var(--mute);min-height:6em}
+.pnl2 .dib{width:130px;margin:18px 0 0}.pnl2 .dib .dl{stroke-dashoffset:0}.pnl2 .dib .dd{opacity:1}
+.pg2{display:flex;gap:8px;margin-top:20px}.pg2 i{width:28px;height:2px;background:var(--line);transition:background .4s}.pg2 i.on{background:var(--gold)}
+@media (max-width:860px){.esc2{grid-template-columns:1fr;align-content:center;gap:0;padding-top:76px}.esc2 svg{max-height:34svh}.pnl2 p{min-height:0}.pnl2 h2{min-height:0}.pnl2 .n{font-size:48px}.pnl2 .dib{display:none}}
+.fin2{padding:clamp(60px,9vw,120px) var(--pad) 0}
+.fin2 .tres{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:clamp(18px,3vw,44px);margin-top:clamp(26px,4vw,50px)}
+.fin2 .tres div{padding-top:14px;border-top:1px solid var(--line)}
+.fin2 b{font:500 12px/1 var(--caps);letter-spacing:.22em;color:var(--gold)}.fin2 h3{margin:10px 0 6px;font:500 clamp(20px,2vw,28px)/1.1 var(--sans);letter-spacing:-.03em}.fin2 p{margin:0;color:var(--mute);font-size:14.5px}
+</style></head><body><script src="../v4/shared.js"></script><script src="../v6/shared6.js"></script>
+<script>
+var m=IVS6.montar(),O=IVS4.OFERTAS,NS="http://www.w3.org/2000/svg";
+var pista=document.createElement("section");pista.className="pista2";pista.id="pista2";
+pista.innerHTML='<div class="esc2"><svg id="sv" viewBox="0 0 1000 640" role="img" aria-label="Seis engranajes encadenados"></svg><div class="pnl2"><span class="n" id="n2">01</span><h2 id="t2"></h2><p id="d2"></p><div id="di2"></div><div class="pg2" id="pg2"></div></div></div>';
+m.appendChild(pista);
+/* geometría: dientes de cada rueda, módulo común, centros encadenados en zigzag y fase de engrane */
+var Nd=[14,20,16,24,18,22],mod=8.2,R=Nd.map(function(n){return n*mod/2;}),th=[-.28,.42,-.38,.34,-.32],C=[[0,0]],phi=[];
+for(var i=1;i<6;i++){var a=th[i-1];phi.push(a);C.push([C[i-1][0]+(R[i-1]+R[i])*Math.cos(a),C[i-1][1]+(R[i-1]+R[i])*Math.sin(a)]);}
+var minx=1e9,maxx=-1e9,miny=1e9,maxy=-1e9;C.forEach(function(c,i){minx=Math.min(minx,c[0]-R[i]-10);maxx=Math.max(maxx,c[0]+R[i]+10);miny=Math.min(miny,c[1]-R[i]-10);maxy=Math.max(maxy,c[1]+R[i]+10);});
+var sc=Math.min(940/(maxx-minx),560/(maxy-miny)),ox=500-sc*(minx+maxx)/2,oy=320-sc*(miny+maxy)/2;
+var A0=[0];for(i=1;i<6;i++){var fr=((A0[i-1]-phi[i-1])*Nd[i-1]/(2*Math.PI))%1;if(fr<0)fr+=1;A0.push(phi[i-1]+Math.PI-(fr+.5)*2*Math.PI/Nd[i]);}
+function diente(n,r){var a=mod*.95,pts=[],s=2*Math.PI/n;for(var k=0;k<n;k++){var c=k*s;[[-.46,r-a*.9],[-.27,r+a*.9],[.27,r+a*.9],[.46,r-a*.9]].forEach(function(q){var ang=c+q[0]*s;pts.push((q[1]*Math.cos(ang)).toFixed(1)+","+(q[1]*Math.sin(ang)).toFixed(1));});}
+ return "M"+pts.join("L")+"Z";}
+var sv=document.getElementById("sv"),gs=[];
+O.forEach(function(o,i){var g=document.createElementNS(NS,"g");g.setAttribute("class","gr");g.style.setProperty("--c","var("+o.c+")");
+ var rr=R[i]*sc;g.innerHTML='<g class="rot"><path class="cuerpo" d="'+diente(Nd[i],R[i]*sc*1).replace(/(-?[\d.]+),(-?[\d.]+)/g,function(_,x,y){return x+","+y;})+'"/><circle class="aro" r="'+(rr*.62)+'"/><circle class="aro" r="'+(rr*.34)+'"/>'+[0,1,2,3,4,5].map(function(k){var a=k*Math.PI/3;return '<line class="aro" x1="'+(rr*.34*Math.cos(a))+'" y1="'+(rr*.34*Math.sin(a))+'" x2="'+(rr*.62*Math.cos(a))+'" y2="'+(rr*.62*Math.sin(a))+'"/>';}).join("")+'<circle class="eje" r="'+(rr*.12)+'"/></g><text y="'+(rr*.06)+'" dy=".35em" style="transform:none">'+(i+1)+'</text>';
+ g.setAttribute("transform","translate("+(ox+sc*C[i][0])+" "+(oy+sc*C[i][1])+")");sv.appendChild(g);gs.push(g);});
+/* los dientes se dibujan ya en escala: se rehace con radio escalado */
+gs.forEach(function(g,i){g.querySelector(".cuerpo").setAttribute("d",diente(Nd[i],R[i]).replace(/(-?[\d.]+),(-?[\d.]+)/g,function(_,x,y){return (x*sc).toFixed(1)+","+(y*sc).toFixed(1);}));});
+var pg=document.getElementById("pg2");O.forEach(function(){pg.appendChild(document.createElement("i"));});
+var act=-1,TOT=Math.PI*2*2.2;
+function f(){var r=pista.getBoundingClientRect(),tot=r.height-innerHeight,p=IVS4.clamp(-r.top/tot,0,1),k=Math.min(5,Math.floor(p*6));
+ var a=[A0[0]+p*TOT],i;for(i=1;i<6;i++)a.push(A0[i]-(Nd[i-1]/Nd[i])*(a[i-1]-A0[i-1]));
+ gs.forEach(function(g,i){g.firstChild.setAttribute("transform","rotate("+((a[i]-A0[i])*180/Math.PI).toFixed(2)+")");});
+ if(k!==act){act=k;var o=O[k];document.getElementById("n2").textContent="0"+(k+1);document.getElementById("t2").textContent=o.t;document.getElementById("d2").textContent=o.d;document.getElementById("di2").innerHTML=IVS4.dibujo(o.k);
+  gs.forEach(function(g,j){g.classList.toggle("on",j<=k);});[].forEach.call(pg.children,function(d,j){d.className=j<=k?"on":"";});}}
+var pend=false;addEventListener("scroll",function(){if(!pend){pend=true;requestAnimationFrame(function(){pend=false;f();});}},{passive:true});addEventListener("resize",f);f();
+var fi=document.createElement("section");fi.className="fin2";fi.innerHTML='<p class="eyebrow">MECHANICA</p><h2 class="h2">Y todo gira <em>sobre tres ejes.</em></h2><div class="tres">'+IVS6.PRINC.map(function(q){return '<div><b>'+q[0]+'</b><h3>'+q[1]+'.</h3><p>'+q[2]+'</p></div>';}).join("")+'</div>';m.appendChild(fi);
+IVS6.cierre(m);
+</script></body></html>
