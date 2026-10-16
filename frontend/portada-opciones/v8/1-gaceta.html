@@ -1,0 +1,74 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Sans:wght@400;500;600&display=swap"><link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="../v4/shared.css"><link rel="stylesheet" href="../v6/shared6.css"><title>IVS CODEX · La gaceta</title>
+<style>
+/* 1 · LA GACETA — el prisma es la noche; al bajar, su luz se expande y la página entera pasa a papel de diario, con tinta negra.
+   Tapa de periódico, tres columnas, grabados, capitulares y un sello. Serio y con un golpe de contraste que no se olvida. */
+:root{--tinta:#1a1712;--papel:#ece4cd;--oro2:#8a6200}
+.cab.dia{mix-blend-mode:difference;background:none}
+.cab.dia .marca,.cab.dia nav a{color:#fff}.cab.dia .btn{background:#fff;border-color:#fff;color:#000}
+.cab.papel{mix-blend-mode:normal;background:var(--papel);border-bottom:1px solid var(--tinta)}
+.cab.papel .marca,.cab.papel nav a{color:var(--tinta)}.cab.papel .marca .v{background:none;-webkit-text-fill-color:var(--oro2);color:var(--oro2)}.cab.papel .btn{background:var(--tinta);border-color:var(--tinta);color:var(--papel)}
+.alba{position:relative;height:300vh}
+.alba .st{position:sticky;top:0;height:100svh;overflow:hidden}
+.velo{position:absolute;inset:0;background:var(--papel);clip-path:circle(var(--r,0px) at 54% 50%);will-change:clip-path}
+.velo::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 54% 50%,rgba(255,226,150,.5),transparent 55%);opacity:calc(1 - var(--k,0))}
+.alba h2{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,1000px);margin:0;text-align:center;font:300 clamp(40px,8vw,128px)/.98 "Cormorant",serif;letter-spacing:-.03em;color:var(--tinta);opacity:var(--t,0)}
+.alba h2 em{color:var(--oro2)}
+.alba .sub{position:absolute;left:50%;bottom:9vh;transform:translateX(-50%);font:500 12px/1 "Cormorant SC",serif;letter-spacing:.3em;color:var(--oro2);opacity:var(--t,0)}
+.gz{position:relative;background:var(--papel);color:var(--tinta);padding:0 var(--pad) 0;background-image:repeating-linear-gradient(0deg,rgba(120,90,40,.035) 0 1px,transparent 1px 4px)}
+.gz a{color:inherit}
+.mast{padding-top:clamp(60px,9vw,110px);text-align:center}
+.mast .top{display:flex;justify-content:space-between;gap:16px;font:500 11.5px/1.2 "Cormorant SC",serif;letter-spacing:.22em;padding-bottom:12px;border-bottom:1px solid var(--tinta)}
+.mast .nom{margin:clamp(14px,2.4vw,30px) 0 0;font:300 clamp(70px,17vw,290px)/.84 "Cormorant SC",serif;letter-spacing:.02em;white-space:nowrap}
+.mast .nom b{font-weight:300;color:var(--oro2)}.mast .nom i{display:inline-block;width:.17em;height:.17em;margin:0 .09em 0 .066em;border-radius:50%;background:var(--oro2);vertical-align:.24em}
+.dbl{border-top:3px solid var(--tinta);border-bottom:1px solid var(--tinta);height:7px;margin-top:clamp(14px,2.4vw,28px)}
+.edic{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--tinta);font:italic 400 clamp(14px,1.4vw,18px)/1.2 "Cormorant",serif}
+.cols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,6.4fr) minmax(0,3.4fr);gap:0;padding:clamp(20px,3vw,40px) 0}
+.cols>*{padding:0 clamp(14px,2vw,30px)}.cols>*:first-child{padding-left:0}.cols>*:last-child{padding-right:0}
+.cols>*+*{border-left:1px solid var(--tinta)}
+.cols h3.k{margin:0 0 14px;padding-bottom:6px;border-bottom:1px solid var(--tinta);font:500 12px/1 "Cormorant SC",serif;letter-spacing:.28em}
+.bases li{list-style:none;display:grid;grid-template-columns:14px 1fr;gap:2px 10px;align-items:baseline;padding:10px 0;border-bottom:1px dotted rgba(26,23,24,.5)}
+.bases{margin:0;padding:0}.bases i{width:10px;height:10px;background:var(--c);transform:translateY(1px)}
+.bases b{font:500 13px/1.1 "Cormorant SC",serif;letter-spacing:.18em}.bases span{grid-column:2;font:400 15px/1.3 "Cormorant",serif}
+.art{display:grid;grid-template-columns:1fr 1fr;gap:clamp(18px,2.6vw,36px) clamp(18px,2.6vw,36px)}
+.art article{padding-bottom:clamp(14px,2vw,26px);border-bottom:1px solid var(--tinta)}
+.art .gr{width:clamp(70px,8vw,110px);margin:0 0 8px}
+.art .gr .dl{stroke:var(--tinta);stroke-width:1.5;stroke-dashoffset:0}.art .gr .dd{fill:var(--oro2);opacity:1}
+.art h4{margin:0;font:500 clamp(22px,2.2vw,32px)/1 "Cormorant",serif;letter-spacing:-.01em}
+.art h4 em{font:500 11px/1 "Cormorant SC",serif;letter-spacing:.24em;color:var(--oro2);font-style:normal;display:block;margin-bottom:6px}
+.art p{margin:8px 0 0;font:400 clamp(14.5px,1.25vw,17px)/1.45 "Cormorant",serif;text-align:justify;hyphens:auto}
+.art p::first-letter{float:left;margin:2px 7px 0 0;font:500 3.3em/.78 "Cormorant",serif;color:var(--oro2)}
+.nota{margin:0 0 18px;padding:14px 16px;border:1px solid var(--tinta)}
+.nota b{display:block;font:500 11.5px/1 "Cormorant SC",serif;letter-spacing:.26em;color:var(--oro2)}.nota h5{margin:8px 0 4px;font:500 22px/1 "Cormorant",serif}.nota p{margin:0;font:400 15px/1.4 "Cormorant",serif}
+.sello8{display:block;width:112px;margin:10px auto 0;animation:estampa 1s var(--ease) both paused}.sello8.on{animation-play-state:running}
+@keyframes estampa{from{transform:scale(2.4) rotate(-26deg);opacity:0}55%{opacity:1}to{transform:rotate(-9deg)}}
+.cita8{padding:clamp(50px,8vw,110px) 0 clamp(40px,6vw,80px);border-top:3px solid var(--tinta);margin-top:clamp(10px,2vw,24px);text-align:center}
+.cita8 q{display:block;margin:0 auto;max-width:15em;quotes:none;font:italic 300 clamp(40px,7.4vw,118px)/.98 "Cormorant",serif;letter-spacing:-.03em;text-wrap:balance}
+.cita8 q em{font-style:normal;background:linear-gradient(transparent 70%,rgba(217,163,27,.55) 70% 92%,transparent 92%)}
+.cita8 .acc{justify-content:center;margin-top:clamp(24px,4vw,44px)}
+.cita8 .btn{background:var(--tinta);border-color:var(--tinta);color:var(--papel)}.cita8 .btn:hover{background:var(--oro2);border-color:var(--oro2)}
+.cita8 .btn.sec{background:none;color:var(--tinta)}.cita8 .btn.sec:hover{background:none;color:var(--oro2);border-color:var(--oro2)}
+.pie8{background:#100e0b;color:var(--fg);padding:clamp(40px,6vw,80px) var(--pad) 40px}
+.pie8 p{max-width:70ch;margin:0 0 24px;color:var(--mute);font-size:14px}.pie8 .marcaf{font-size:clamp(46px,12vw,200px);line-height:.86;color:rgba(241,238,230,.8)}
+@media (max-width:980px){.cols{grid-template-columns:1fr}.cols>*{padding:0 0 26px!important}.cols>*+*{border-left:0;border-top:1px solid var(--tinta);padding-top:22px!important}.mast .top span:nth-child(2){display:none}}
+@media (max-width:560px){.art{grid-template-columns:1fr}.edic span:last-child{display:none}}
+</style></head><body><script src="../v4/shared.js"></script><script src="shared8.js"></script>
+<script>
+var m=IVS8.montar();document.getElementById("cab").classList.add("dia");
+var alba=document.createElement("section");alba.className="alba";alba.id="alba";
+alba.innerHTML='<div class="st"><div class="velo" id="velo"><h2>Y la luz <em>se hizo texto.</em></h2><span class="sub">LVX · VERBVM · CHARTA</span></div></div>';m.appendChild(alba);
+var velo=document.getElementById("velo");
+IVS8.scroll(alba,function(p){var R=Math.hypot(innerWidth,innerHeight)*1.05,e=IVS8.sm(IVS8.clamp(p/.55,0,1));velo.style.setProperty("--r",(R*e).toFixed(1)+"px");velo.style.setProperty("--k",e.toFixed(2));velo.style.setProperty("--t",IVS8.sm(IVS8.clamp((p-.45)/.25,0,1)).toFixed(2));},1,0);
+var O=IVS4.OFERTAS,B=IVS8.BASES;
+var g=document.createElement("section");g.className="gz";
+g.innerHTML='<div class="mast"><div class="top"><span>REPOSITORIOS JUDICIALES OFICIALES Y DOCTRINA</span><span>SEIS BASES · UNA CONSULTA</span><span>AÑO I · NÚM. 1</span></div><h2 class="nom" aria-label="IVS CODEX">I<b>V</b>S<i></i>CODE<b>X</b></h2><div class="dbl"></div><div class="edic"><span>Buscador integrado de repositorios judiciales oficiales y doctrina.</span><span>Edición permanente · Verifique en la fuente</span></div></div>'+
+'<div class="cols"><aside><h3 class="k">LAS SEIS BASES</h3><ul class="bases">'+B.map(function(b){return '<li style="--c:var('+b[2]+')"><i></i><b>'+b[0]+'</b><span>'+b[1]+'</span></li>';}).join("")+'</ul></aside>'+
+'<section><h3 class="k">LO QUE OFRECE LA PLATAFORMA</h3><div class="art">'+O.map(function(f){return '<article><div class="gr">'+IVS4.dibujo(f.k)+'</div><h4><em>'+f.lat+'</em>'+f.t+'</h4><p>'+f.d+'</p></article>';}).join("")+'</div></section>'+
+'<aside><h3 class="k">PRINCIPIOS</h3>'+IVS8.PRINC.map(function(q){return '<div class="nota"><b>'+q[0]+'</b><h5>'+q[1]+'.</h5><p>'+q[2]+'</p></div>';}).join("")+
+'<svg class="sello8" id="sel8" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="ar8" d="M60 14a46 46 0 1 1 0 92a46 46 0 1 1 0-92"/></defs><circle cx="60" cy="60" r="57" fill="none" stroke="#8a6200" stroke-width="1.6"/><circle cx="60" cy="60" r="35" fill="none" stroke="#8a6200"/><text font-family="Cormorant SC,serif" font-size="9.5" letter-spacing="2.4" fill="#8a6200"><textPath href="#ar8">VERIFICADO · IVS CODEX · FIDES · </textPath></text><circle cx="60" cy="60" r="5" fill="#8a6200"/></svg></aside></div>'+
+'<div class="cita8"><q>Verifique siempre <em>en la fuente</em> antes de citar.</q><div class="acciones acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Verificar una cita</a></div></div>';
+m.appendChild(g);
+var pie=document.createElement("footer");pie.className="pie8";pie.innerHTML='<p>'+IVS8.ADV+'</p><div class="marcaf marca-g" aria-label="IVS CODEX">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></div>';m.appendChild(pie);
+new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting)document.getElementById("sel8").classList.add("on");});},{threshold:.6}).observe(document.getElementById("sel8"));
+/* al pasar a papel, la cabecera se vuelve de papel con tinta (con la mezcla por diferencia se pisaba con el nombre grande) */
+(function(){var c=document.getElementById('cab');function f(){c.classList.toggle('papel',alba.getBoundingClientRect().bottom<=innerHeight*.5);}addEventListener('scroll',f,{passive:true});f();})();
+</script></body></html>

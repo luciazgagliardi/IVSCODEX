@@ -1,0 +1,55 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Sans:wght@400;500;600&display=swap"><link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="../v4/shared.css"><link rel="stylesheet" href="../v6/shared6.css"><title>IVS CODEX · El monolito</title>
+<style>
+/* 2 · EL MONOLITO — tipografía monumental. Cada cosa que ofrece la página es una palabra del ancho de la pantalla, hueca como una inscripción,
+   que se llena de su color al pasar por el centro. Luego, las bases en cintas que corren en sentidos opuestos, tres números y un nombre
+   gigante que se ilumina donde está el cursor. */
+.mon{padding:clamp(60px,9vw,120px) 0 0}
+.fila{--c:var(--gold);--p:0;position:relative;padding:clamp(16px,2.4vw,34px) var(--pad);border-top:1px solid var(--line)}
+.fila:last-child{border-bottom:1px solid var(--line)}
+.fila .met{display:flex;gap:16px;align-items:center;font:500 12px/1 var(--caps);letter-spacing:.28em;color:var(--c)}
+.fila .met::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--c),transparent)}
+.pal{margin:clamp(6px,1.4vw,18px) 0 0;font:600 clamp(48px,12.4vw,230px)/.9 var(--sans);letter-spacing:-.055em;text-transform:uppercase;white-space:nowrap;color:transparent;
+  background:linear-gradient(90deg,var(--c) calc(var(--p) * 100%),rgba(241,238,230,.1) calc(var(--p) * 100% + .5px));-webkit-background-clip:text;background-clip:text}
+.fila .det{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:20px;align-items:center;max-width:760px;margin:clamp(6px,1.4vw,16px) 0 0 auto;opacity:calc((var(--p) - .45) * 2.4);transform:translateY(calc((1 - var(--p)) * 18px))}
+.fila .det p{margin:0;color:var(--mute);font-size:clamp(14px,1.3vw,17px)}
+.fila .det .dib .dl{stroke-dashoffset:0}.fila .det .dib .dd{opacity:1}
+.cinta{overflow:hidden;padding:clamp(40px,6vw,90px) 0 0}
+.cinta .rail{display:flex;gap:clamp(30px,5vw,80px);white-space:nowrap;will-change:transform;padding:clamp(8px,1.4vw,18px) 0}
+.cinta span{display:inline-flex;align-items:center;gap:clamp(16px,3vw,44px);font:300 clamp(40px,8vw,130px)/1 var(--caps);letter-spacing:.02em;color:var(--c)}
+.cinta span::after{content:"";width:.16em;height:.16em;border-radius:50%;background:var(--gold)}
+.cinta .r2 span{color:color-mix(in srgb,var(--c) 38%,transparent)}
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(18px,3vw,48px);padding:clamp(60px,9vw,130px) var(--pad) 0}
+.tres div{padding-top:18px;border-top:1px solid var(--line)}
+.tres .n{font:300 clamp(80px,12vw,190px)/.9 var(--caps);color:var(--gold);letter-spacing:.02em;display:block;overflow:hidden}
+.tres .n i{display:block;font-style:normal;transform:translateY(calc((1 - var(--q,0)) * 100%))}
+.tres h3{margin:10px 0 8px;font:500 clamp(22px,2.4vw,34px)/1.05 var(--sans);letter-spacing:-.035em}
+.tres p{margin:0;color:var(--mute);font-size:15px}
+.fin8{position:relative;padding:clamp(70px,11vw,150px) var(--pad) 40px;--mx:50%;--my:50%}
+.fin8 .gran{margin:0;font:600 clamp(60px,19vw,330px)/.86 var(--sans);letter-spacing:-.06em;white-space:nowrap;text-align:center;color:rgba(241,238,230,.1);
+  background:radial-gradient(circle clamp(180px,26vw,420px) at var(--mx) var(--my),#ffe9a8,#d9a31b 38%,rgba(217,163,27,0) 72%),rgba(241,238,230,.1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.fin8 .ad{max-width:70ch;margin:clamp(30px,5vw,60px) 0 28px;color:var(--mute);font-size:14.5px}
+.fin8 .adv{margin:0 0 22px;font:500 clamp(28px,4vw,56px)/1.02 var(--sans);letter-spacing:-.04em;max-width:20ch}.fin8 .adv em{font-style:normal;color:var(--gold)}
+@media (max-width:760px){.tres{grid-template-columns:1fr}.fila .det{grid-template-columns:1fr;margin-left:0}.fila .det .dib{display:none}}
+</style></head><body><script src="../v4/shared.js"></script><script src="shared8.js"></script>
+<script>
+var m=IVS8.montar(),O=IVS4.OFERTAS,P=["Consulta","Lector","Ramas","Cálculos","Verificar","Herramientas"];
+var mon=document.createElement("section");mon.className="mon";
+mon.innerHTML=O.map(function(f,i){return '<div class="fila" style="--c:var('+f.c+')"><div class="met"><span>0'+(i+1)+'</span><span>'+f.lat+'</span></div><h2 class="pal">'+P[i]+'</h2><div class="det"><p>'+f.d+'</p><div>'+IVS4.dibujo(f.k)+'</div></div></div>';}).join("");
+m.appendChild(mon);
+[].forEach.call(mon.querySelectorAll(".fila"),function(el){IVS8.scroll(el,function(p){el.style.setProperty("--p",IVS8.sm(IVS8.clamp((p-.12)/.5,0,1)).toFixed(3));},.95,.35);});
+var B=IVS8.BASES,c=document.createElement("section");c.className="cinta";
+function riel(cl){var t=B.map(function(b){return '<span style="--c:var('+b[2]+')">'+b[0]+'</span>';}).join("");return '<div class="rail '+cl+'">'+t+t+t+'</div>';}
+c.innerHTML=riel("r1")+riel("r2");m.appendChild(c);
+var r1=c.querySelector(".r1"),r2=c.querySelector(".r2");IVS8.scroll(c,function(p,r){var w=r1.scrollWidth/3;r1.style.transform="translateX("+(-w*(.15+p*.8)).toFixed(1)+"px)";r2.style.transform="translateX("+(-w*(1.15-p*.8)).toFixed(1)+"px)";},1.1,-.2);
+var t3=document.createElement("section");t3.className="tres";
+t3.innerHTML=IVS8.PRINC.map(function(q,i){return '<div><span class="n"><i>0'+(i+1)+'</i></span><h3>'+q[0]+' · '+q[1]+'.</h3><p>'+q[2]+'</p></div>';}).join("");m.appendChild(t3);
+[].forEach.call(t3.querySelectorAll("div"),function(el){IVS8.scroll(el,function(p){el.style.setProperty("--q",IVS8.sm(IVS8.clamp((p-.1)/.4,0,1)).toFixed(3));},.95,.4);});
+var f=document.createElement("section");f.className="fin8";f.id="fin8";
+f.innerHTML='<h2 class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</h2><div class="acciones"><a class="btn" href="#">Iniciar la consulta</a><a class="btn sec" href="#">Verificar una cita</a></div><p class="ad">'+IVS8.ADV+'</p><div class="gran" aria-label="IVS CODEX" style="margin:0;font:600 clamp(60px,19vw,330px)/.86 var(--sans);letter-spacing:-.06em;white-space:nowrap;text-align:center;background:radial-gradient(circle clamp(180px,26vw,420px) at var(--mx) var(--my),#ffe9a8,#d9a31b 38%,rgba(217,163,27,0) 72%),rgba(241,238,230,.1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">IVS·CODEX</div>';
+m.appendChild(f);
+(function(){var el=document.getElementById("fin8"),g=el.querySelector(".gran"),usr=0,q=matchMedia("(prefers-reduced-motion:reduce)").matches;
+ function pon(x,y){g.style.setProperty("--mx",x+"px");g.style.setProperty("--my",y+"px");}
+ g.addEventListener("pointermove",function(e){usr=performance.now();var r=g.getBoundingClientRect();pon(e.clientX-r.left,e.clientY-r.top);});
+ g.addEventListener("touchmove",function(e){usr=performance.now();var r=g.getBoundingClientRect();pon(e.touches[0].clientX-r.left,e.touches[0].clientY-r.top);},{passive:true});
+ function tic(t){if(!q&&t-usr>2000){var r=g.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0)pon(r.width*(.5+.46*Math.sin(t/1600)),r.height*.5);}requestAnimationFrame(tic);}requestAnimationFrame(tic);})();
+</script></body></html>
