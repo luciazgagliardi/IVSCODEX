@@ -8,11 +8,11 @@
     /* monta la cabecera, el héroe del prisma y devuelve el contenedor <main> donde van las secciones */
     montar:function(nombre){
       document.body.insertAdjacentHTML("afterbegin",'<div class="grano" aria-hidden="true"></div>'+CAB+
-        '<a class="idx6" href="index.html">← Las cinco opciones</a>'+
+        '<a class="idx6" href="../v6/index.html">← Otras opciones</a>'+
         '<main id="m6"><section class="hero6" id="hero6"><canvas id="cv6" aria-hidden="true"></canvas>'+
         '<div class="h6t"><h1 class="t">'+S.TITULO+'</h1></div><div class="h6b">'+S.BOTONES+'</div>'+
         '<p class="h6hint">Desplace<i></i></p></section></main>');
-      IVSPrisma(document.getElementById("cv6"),{px:.54,cy:.5,band:[.38,.62],out:function(P,w,h){return [[w,P.y]];}});
+      IVSPrisma(document.getElementById("cv6"),{px:.54,cy:.5,band:[.38,.62],mouse:true,out:function(P,w,h){return [[w,P.y]];}});
       return document.getElementById("m6");
     },
     /* el cierre común: las seis bases, la advertencia y la llamada a la acción */
