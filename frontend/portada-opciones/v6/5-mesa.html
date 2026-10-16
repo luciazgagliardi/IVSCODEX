@@ -1,0 +1,66 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap"><link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="../v4/shared.css"><link rel="stylesheet" href="shared6.css"><title>IVS CODEX · La mesa de trabajo</title>
+<style>
+/* 5 · LA MESA DE TRABAJO — en vez de contar lo que ofrece, lo deja probar: tres instrumentos que funcionan ahí mismo
+   (un lector de citas, una calculadora de intereses y un foliador), y debajo el resto. */
+.mesa{padding:clamp(60px,9vw,120px) var(--pad) 0}
+.inst{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2vw,28px);margin-top:clamp(28px,4vw,54px)}
+.ins{position:relative;display:flex;flex-direction:column;gap:14px;padding:clamp(20px,2.2vw,30px);border:1px solid var(--line);border-radius:28px;background:rgba(241,238,230,.02)}
+.ins .lat{font:500 11.5px/1 var(--caps);letter-spacing:.26em;color:var(--c)}
+.ins h3{margin:0;font:500 clamp(22px,2.2vw,30px)/1.1 var(--sans);letter-spacing:-.03em}
+.ins p.s{margin:0;font-size:14px;color:var(--mute)}
+.ins label{display:grid;gap:6px;font-size:12.5px;color:var(--mute)}
+.ins input,.ins select{width:100%;padding:11px 16px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--fg);font-size:15px;caret-color:var(--gold)}
+.ins input:focus,.ins select:focus{outline:none;border-color:var(--gold)}
+.ins select option{background:#15120d}
+.fila2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sal{margin-top:auto;padding:14px 16px;border-radius:18px;background:rgba(217,163,27,.07);border:1px solid rgba(217,163,27,.25);min-height:84px;font-size:14px;color:var(--fg)}
+.sal b{font:500 clamp(22px,2.4vw,32px)/1.1 var(--sans);letter-spacing:-.03em;color:var(--gold);display:block;margin-bottom:2px;font-variant-numeric:tabular-nums}
+.sal small{color:var(--mute);display:block}
+.camp{display:flex;flex-wrap:wrap;gap:6px}.camp span{padding:5px 11px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;color:var(--mute)}.camp span.ok{border-color:var(--gold);color:var(--fg)}
+.camp span em{font-style:normal;color:var(--gold)}
+.hojas{display:flex;gap:6px;flex-wrap:wrap;min-height:90px;align-items:flex-start;align-content:flex-start}
+.hoja{position:relative;width:46px;height:62px;background:#efe9d9;border-radius:2px;box-shadow:0 6px 12px -6px rgba(0,0,0,.7);animation:cae2 .5s var(--ease) both;animation-delay:calc(var(--k) * 40ms)}
+.hoja i{position:absolute;right:3px;bottom:4px;font:500 8.5px/1 var(--caps);letter-spacing:.06em;color:#8a6200;font-style:normal}
+.hoja::before{content:"";position:absolute;left:6px;right:6px;top:10px;height:1px;background:#1a1712;box-shadow:0 6px #1a1712,0 12px #1a1712,0 18px #1a1712;opacity:.35}
+@keyframes cae2{from{opacity:0;transform:translateY(-10px) rotate(-6deg)}}
+.ofr{padding:clamp(60px,9vw,120px) var(--pad) 0}
+.ofr .rej{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:clamp(24px,4vw,50px);border-top:1px solid var(--line)}
+.ofr .cel{padding:clamp(18px,2.4vw,32px) clamp(14px,2vw,28px) clamp(18px,2.4vw,32px) 0;border-bottom:1px solid var(--line)}
+.ofr .cel:not(:nth-child(3n)){border-right:1px solid var(--line);padding-right:clamp(14px,2vw,28px)}
+.ofr .cel:not(:nth-child(3n+1)){padding-left:clamp(14px,2vw,28px)}
+.ofr .cel .dib{width:70px;margin-bottom:14px}
+.ofr .cel .dib .dl{stroke-dashoffset:0}.ofr .cel .dib .dd{opacity:1}
+.ofr h3{margin:0 0 6px;font:500 clamp(18px,1.8vw,24px)/1.1 var(--sans);letter-spacing:-.03em}
+.ofr p{margin:0;color:var(--mute);font-size:14px}
+.nota5{margin-top:14px;font-size:12px;color:var(--dim)}
+@media (max-width:980px){.inst{grid-template-columns:1fr}.ofr .rej{grid-template-columns:repeat(2,minmax(0,1fr))}.ofr .cel{border-right:0!important;padding-left:0!important}}
+@media (max-width:560px){.ofr .rej{grid-template-columns:1fr}}
+</style></head><body><script src="../v4/shared.js"></script><script src="shared6.js"></script>
+<script>
+var m=IVS6.montar();
+var s=document.createElement("section");s.className="mesa";
+s.innerHTML='<p class="eyebrow">LABORATORIVM</p><h2 class="h2">Pruébelo <em>aquí mismo.</em></h2><p class="lead6">Tres instrumentos de los que trae la plataforma, funcionando dentro de esta página. Nada se envía a ningún servidor.</p><div class="inst">'+
+ '<article class="ins" style="--c:var(--c-saij)"><span class="lat">LECTVRA</span><h3>Lector de citas</h3><p class="s">Pegue una cita y vea qué entiende de ella.</p><label>Cita<input id="ci" value="CSJN, Fallos 328:2056 (2005), «Simón, Julio»" autocomplete="off"></label><div class="sal" id="cs" aria-live="polite"></div></article>'+
+ '<article class="ins" style="--c:var(--c-csjn)"><span class="lat">CALCVLVS</span><h3>Intereses</h3><p class="s">Interés simple sobre un capital, por días.</p><label>Capital ($)<input id="cap" inputmode="decimal" value="1.500.000"></label><div class="fila2"><label>Tasa anual (%)<input id="tas" inputmode="decimal" value="60"></label><label>Días<input id="dia" inputmode="numeric" value="180"></label></div><div class="sal" id="cr" aria-live="polite"></div></article>'+
+ '<article class="ins" style="--c:var(--c-dial)"><span class="lat">INSTRVMENTA</span><h3>Foliador</h3><p class="s">Vea cómo quedan numeradas las fojas de una prueba.</p><div class="fila2"><label>Páginas<input id="pgs" inputmode="numeric" value="12"></label><label>Texto previo<input id="pre" value="Fs. "></label></div><div class="hojas" id="hj"></div><div class="sal" id="fr" aria-live="polite"></div></article></div><p class="nota5">Muestras simplificadas de las herramientas de la plataforma, con fines ilustrativos: no reemplazan el cálculo ni la verificación en la fuente.</p>';
+m.appendChild(s);
+/* lector de citas */
+function leer(){var t=document.getElementById("ci").value,o=document.getElementById("cs"),camps=[],
+ tr=/(CSJN|C\.?S\.?J\.?N\.?|Corte Suprema)/i.exec(t),fl=/Fallos?\s*:?\s*(\d{1,3})\s*[:,]\s*(\d{1,5})/i.exec(t),an=/\b(1[89]\d\d|20[0-3]\d)\b/.exec(t),car=/[«"“]([^»"”]{3,80})[»"”]/.exec(t)||/\b([A-ZÁÉÍÓÚ][\wáéíóúñ]+,\s*[A-ZÁÉÍÓÚ][\wáéíóúñ ]+)\s*(?:c\/|s\/|$)/.exec(t);
+ camps.push(['Tribunal',tr?"Corte Suprema de Justicia de la Nación":null]);camps.push(['Tomo:página',fl?fl[1]+":"+fl[2]:null]);camps.push(['Año',an?an[1]:null]);camps.push(['Carátula',car?car[1].trim():null]);
+ var ok=camps.filter(function(c){return c[1];}).length;
+ o.innerHTML='<div class="camp">'+camps.map(function(c){return '<span class="'+(c[1]?'ok':'')+'">'+c[0]+(c[1]?': <em>'+c[1].replace(/[<>&]/g,"")+'</em>':' —')+'</span>';}).join("")+'</div><small style="margin-top:10px">'+(ok>=3?"Se podría contrastar con la base oficial.":"Faltan datos para contrastarla: agregue tribunal, año o tomo y página.")+'</small>';}
+function num(v){var x=String(v).replace(/\./g,"").replace(",",".");return parseFloat(x);}
+function fmt(n){return n.toLocaleString("es-AR",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function inter(){var c=num(document.getElementById("cap").value),t=num(document.getElementById("tas").value),d=parseInt(document.getElementById("dia").value,10),o=document.getElementById("cr");
+ if(!(c>=0)||!(t>=0)||!(d>=0)){o.innerHTML='<small>Complete capital, tasa y días con números.</small>';return;}
+ var i=c*(t/100)*(d/365);o.innerHTML='<b>$ '+fmt(i)+'</b><small>Intereses · total $ '+fmt(c+i)+'</small><small>Capital × tasa × días ÷ 365</small>';}
+function fol(){var n=Math.max(1,Math.min(40,parseInt(document.getElementById("pgs").value,10)||1)),p=document.getElementById("pre").value.slice(0,10),h=document.getElementById("hj"),o=document.getElementById("fr");
+ h.innerHTML=Array.from({length:n},function(_,i){return '<div class="hoja" style="--k:'+i+'"><i>'+p.replace(/[<>&]/g,"")+(i+1)+'</i></div>';}).join("");
+ o.innerHTML='<b>'+n+' página'+(n===1?"":"s")+'</b><small>De «'+p.replace(/[<>&]/g,"")+'1» a «'+p.replace(/[<>&]/g,"")+n+'», correlativas.</small>';}
+["ci"].forEach(function(i){document.getElementById(i).addEventListener("input",leer);});["cap","tas","dia"].forEach(function(i){document.getElementById(i).addEventListener("input",inter);});["pgs","pre"].forEach(function(i){document.getElementById(i).addEventListener("input",fol);});
+leer();inter();fol();
+var of=document.createElement("section");of.className="ofr";of.innerHTML='<p class="eyebrow">ET ALIA</p><h2 class="h2">Y lo demás, <em>en seis celdas.</em></h2><div class="rej">'+IVS4.OFERTAS.map(function(f){return '<div class="cel" style="--c:var('+f.c+')">'+IVS4.dibujo(f.k)+'<h3>'+f.t+'</h3><p>'+f.d+'</p></div>';}).join("")+'</div>';m.appendChild(of);
+var pr=document.createElement("section");pr.className="sec6";pr.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(18px,3vw,44px)">'+IVS6.PRINC.map(function(q){return '<div style="padding-top:14px;border-top:1px solid var(--line)"><b style="font:500 12px/1 var(--caps);letter-spacing:.22em;color:var(--gold)">'+q[0]+'</b><h3 style="margin:10px 0 6px;font:500 clamp(20px,2vw,28px)/1.1 var(--sans);letter-spacing:-.03em">'+q[1]+'.</h3><p style="margin:0;color:var(--mute);font-size:14.5px">'+q[2]+'</p></div>';}).join("")+'</div>';m.appendChild(pr);
+IVS6.cierre(m);
+</script></body></html>
