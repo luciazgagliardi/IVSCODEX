@@ -1,0 +1,60 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap"><link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="../v4/shared.css"><link rel="stylesheet" href="shared6.css"><title>IVS CODEX · La rueda</title>
+<style>
+/* 3 · LA RUEDA — un sello gigante gira con el scroll y se detiene en cada una de las seis cosas que ofrece la página;
+   en el centro, la que está en curso, con su dibujo. */
+.pista3{position:relative;height:640vh}
+.esc3{position:sticky;top:0;height:100svh;overflow:hidden;display:grid;place-items:center}
+.rueda{position:absolute;left:50%;top:53svh;width:min(84svh,150vw);aspect-ratio:1;transform:translate(-50%,-50%) rotate(var(--rot,0deg));will-change:transform}
+.rueda svg{width:100%;height:100%;overflow:visible}
+.rueda .aro{fill:none;stroke:rgba(241,238,230,.3)}
+.rueda .tk{stroke:rgba(241,238,230,.34);stroke-width:1.4}
+.est{position:absolute;left:50%;top:50%;width:0;height:0}
+.est .in{position:absolute;left:0;top:0;width:0;height:0}
+.est .bola{position:absolute;left:0;top:0;width:16px;height:16px;margin:-8px;border-radius:50%;background:var(--c);box-shadow:0 0 0 6px rgba(16,14,11,1),0 0 0 7px var(--c);transition:transform .5s var(--ease),box-shadow .5s}
+.est .nom{position:absolute;left:0;top:0;transform:translate(26px,-50%);font:500 clamp(10px,1.3vh,13px)/1 var(--caps);letter-spacing:.26em;color:var(--c);white-space:nowrap;opacity:.7;transition:opacity .4s}
+.est.on .bola{transform:scale(1.6);box-shadow:0 0 0 6px #100e0b,0 0 0 7px var(--c),0 0 34px 8px color-mix(in srgb,var(--c) 45%,transparent)}
+.est.on .nom{opacity:1}
+.centro{position:absolute;left:50%;top:53svh;transform:translate(-50%,-50%);z-index:3;width:min(40svh,60vw);text-align:center}
+.centro .pag{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transform:translateY(14px) scale(.98);transition:opacity .55s var(--ease),transform .55s var(--ease);pointer-events:none}
+.centro .pag.on{opacity:1;transform:none}
+.centro{height:min(52vh,70vw)}
+.centro .dib{width:62%;margin-bottom:12px}
+.centro h3{margin:4px 0 8px;font:500 clamp(24px,3.6vh,42px)/1 var(--sans);letter-spacing:-.04em}
+.centro p{margin:0;font-size:clamp(12.5px,1.8vh,15.5px);line-height:1.5;color:var(--mute)}
+.centro .lat{font:500 11.5px/1 var(--caps);letter-spacing:.28em;color:var(--c)}
+.prog3{position:absolute;left:50%;bottom:clamp(18px,4vh,40px);transform:translateX(-50%);display:flex;gap:8px;z-index:4}
+.prog3 i{width:30px;height:2px;background:var(--line);transition:background .4s}.prog3 i.on{background:var(--gold)}
+.tit3{position:absolute;left:var(--pad);top:clamp(80px,12vh,120px);z-index:4;max-width:22ch}
+.mark3{position:absolute;left:50%;top:calc(53svh - min(84svh,150vw)*.47 - 40px);width:2px;height:26px;background:var(--gold);transform:translateX(-50%);z-index:3;box-shadow:0 0 14px 2px rgba(217,163,27,.4)}
+@media (max-width:760px){.rueda{top:62svh}.mark3{top:calc(62svh - 150vw*.47 - 40px)}.tit3{top:76px}.centro{width:76vw;height:42svh;top:62svh}.est .nom{display:none}.prog3{left:var(--pad);transform:none;bottom:26px}}
+</style></head><body><script src="../v4/shared.js"></script><script src="shared6.js"></script>
+<script>
+var m=IVS6.montar();
+var O=IVS4.OFERTAS,N=O.length,R=470;
+var p=document.createElement("section");p.className="pista3";p.id="pista3";
+var ticks="";for(var i=0;i<120;i++){var a=i*3,L=i%10===0?16:6;ticks+='<line class="tk" x1="500" y1="'+(500-R-L/2)+'" x2="500" y2="'+(500-R+L/2)+'" transform="rotate('+a+' 500 500)"/>';}
+p.innerHTML='<div class="esc3"><div class="tit3"><p class="eyebrow">ROTA</p><h2 class="h2">Seis estaciones, <em>una rueda.</em></h2></div><div class="rueda" id="rueda"><svg viewBox="0 0 1000 1000" aria-hidden="true"><circle class="aro" cx="500" cy="500" r="'+R+'"/><circle class="aro" cx="500" cy="500" r="'+(R-70)+'" style="stroke-opacity:.14"/>'+ticks+'</svg></div><div class="mark3"></div><div class="centro" id="centro"></div><div class="prog3" id="prog3"></div></div>';
+m.appendChild(p);
+var rueda=document.getElementById("rueda"),centro=document.getElementById("centro"),prog=document.getElementById("prog3"),ests=[],pags=[];
+O.forEach(function(f,i){
+  var a=i*60,e=document.createElement("div");e.className="est";e.style.cssText="--c:var("+f.c+");transform:rotate("+a+"deg) translateY(-"+(R/1000*100/1)*0+"px)";
+  e.innerHTML='<div class="in"><div class="bola"></div><div class="nom">'+f.lat+'</div></div>';
+  e.style.transform="";rueda.appendChild(e);ests.push(e);
+  var pg=document.createElement("div");pg.className="pag";pg.style.setProperty("--c","var("+f.c+")");pg.innerHTML='<span class="lat">'+f.lat+'</span><h3>'+f.t+'</h3><div style="width:100%">'+IVS4.dibujo(f.k)+'</div><p>'+f.d+'</p>';centro.appendChild(pg);pags.push(pg);
+  var d=document.createElement("i");prog.appendChild(d);
+});
+function colocar(){var w=rueda.clientWidth,r=w*R/1000;ests.forEach(function(e,i){var a=(i*60-90)*Math.PI/180;e.style.left=(w/2+r*Math.cos(a))+"px";e.style.top=(w/2+r*Math.sin(a))+"px";e.style.position="absolute";});}
+colocar();addEventListener("resize",colocar);
+var act=-1;
+function f(){var r=p.getBoundingClientRect(),tot=r.height-innerHeight,pp=IVS4.clamp(-r.top/tot,0,1),x=pp*(N-1)*1.0;
+  /* se queda un rato en cada estación y gira entre ellas */
+  var k=Math.floor(x),u=x-k,ease=u<.35?0:u>.65?1:IVS4.sm((u-.35)/.3),pos=Math.min(N-1,k)+(k>=N-1?0:ease);
+  rueda.style.setProperty("--rot",(-pos*60)+"deg");
+  var i=Math.round(pos);ests.forEach(function(e,j){e.classList.toggle("on",j===i);});
+  /* cada estación se contragira sobre su propio punto para que bola y rótulo queden siempre derechos */
+  ests.forEach(function(e){e.firstChild.style.transform="rotate("+(pos*60)+"deg)";});
+  if(i!==act){act=i;pags.forEach(function(g,j){g.classList.toggle("on",j===i);});[].forEach.call(prog.children,function(d,j){d.className=j<=i?"on":"";});}}
+var pend=false;addEventListener("scroll",function(){if(!pend){pend=true;requestAnimationFrame(function(){pend=false;f();});}},{passive:true});addEventListener("resize",f);f();
+var pr=document.createElement("section");pr.className="sec6";pr.innerHTML='<p class="eyebrow">PRINCIPIA</p><h2 class="h2">Tres condiciones que ningún resultado <em>puede dejar de cumplir.</em></h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(18px,3vw,44px);margin-top:clamp(30px,5vw,60px)">'+IVS6.PRINC.map(function(q,i){return '<div style="padding-top:16px;border-top:1px solid var(--line)"><span style="font:300 clamp(48px,6vw,86px)/1 var(--caps);color:var(--gold)">0'+(i+1)+'</span><h3 style="margin:8px 0;font:500 clamp(20px,2vw,28px)/1.1 var(--sans);letter-spacing:-.03em">'+q[0]+' · '+q[1]+'</h3><p style="margin:0;color:var(--mute);font-size:14.5px">'+q[2]+'</p></div>';}).join("")+'</div>';m.appendChild(pr);
+IVS6.cierre(m);
+</script></body></html>
