@@ -1,0 +1,48 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap"><link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="../v4/shared.css"><link rel="stylesheet" href="../v6/shared6.css"><title>IVS CODEX · El mazo</title>
+<style>
+/* 5 · EL MAZO — seis cartas boca abajo en abanico. Se levantan al pasar el cursor y se dan vuelta al tocarlas, o se pide
+   «Sacar una carta» y el mazo elige. Cada una tiene su dibujo, su palabra en latín y lo que ofrece. */
+.mesa5{position:relative;padding:clamp(60px,9vw,120px) var(--pad) clamp(40px,6vw,80px);overflow:hidden}
+.mesa5 .cab5{display:flex;flex-wrap:wrap;gap:18px 40px;align-items:end;justify-content:space-between;margin-bottom:clamp(20px,4vw,50px)}
+.mazo{position:relative;height:clamp(440px,64vh,600px);--cw:min(250px,26vw);--ch:calc(var(--cw)*1.52)}
+.carta{position:absolute;left:50%;bottom:6%;width:var(--cw);height:var(--ch);margin-left:calc(var(--cw)/-2);transform-origin:50% 160%;cursor:pointer;
+  transform:rotate(calc((var(--i) - 2.5) * 9deg)) translateY(calc(var(--lift,0px) * -1));transition:transform .55s var(--ease);perspective:1200px;z-index:var(--z,1);-webkit-tap-highlight-color:transparent}
+.carta:hover{--lift:34px}
+.carta.v{--lift:70px;z-index:20!important}
+.giro{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .8s var(--ease)}
+.carta.v .giro{transform:rotateY(180deg)}
+.cara{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden}
+.dorso{background:#15120d;border:1px solid rgba(217,163,27,.55);display:grid;place-items:center;box-shadow:0 18px 40px -18px rgba(0,0,0,.9)}
+.dorso::before{content:"";position:absolute;inset:9px;border:1px solid rgba(217,163,27,.3);border-radius:12px}
+.dorso svg{width:62%;height:auto;overflow:visible}
+.dorso .t{font:500 14px "Cormorant SC",serif;letter-spacing:.3em;fill:#d9a31b}
+.frente{transform:rotateY(180deg);background:#efe9d9;color:#1a1712;padding:clamp(14px,1.6vw,22px);display:flex;flex-direction:column;box-shadow:0 18px 40px -18px rgba(0,0,0,.9),inset 0 0 40px rgba(120,95,40,.16)}
+.frente .num{display:flex;justify-content:space-between;align-items:center;font:500 11px/1 var(--caps);letter-spacing:.22em;color:#8a6200}
+.frente .dib{width:74%;margin:auto;flex:none}.frente .dib .dl{stroke:#1a1712;stroke-width:1.6;stroke-dashoffset:0}.frente .dib .dd{fill:#8a6200;opacity:1}
+.frente h3{margin:0 0 6px;font:500 clamp(18px,1.8vw,24px)/1.05 var(--sans);letter-spacing:-.035em}
+.frente p{margin:0;font-size:clamp(11px,.95vw,13px);line-height:1.45;color:#4a4435}
+.frente .barra{height:4px;margin-top:10px;background:var(--c)}
+.sacar{display:flex;gap:10px;flex-wrap:wrap}
+@media (max-width:760px){
+ .mazo{height:auto;display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:20px var(--pad) 30px;margin:0 calc(var(--pad) * -1);--cw:min(70vw,270px)}
+ .carta{position:relative;left:auto;bottom:auto;margin:0;flex:none;transform:none!important;scroll-snap-align:center}
+ .carta:hover{--lift:0px}.carta.v{--lift:0px}
+}
+.arc{padding:clamp(40px,6vw,90px) var(--pad) 0}
+.arc .tres{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:clamp(18px,3vw,44px);margin-top:clamp(26px,4vw,50px)}
+.arc .tres div{padding-top:14px;border-top:1px solid var(--line)}.arc b{font:500 12px/1 var(--caps);letter-spacing:.22em;color:var(--gold)}.arc h3{margin:10px 0 6px;font:500 clamp(20px,2vw,28px)/1.1 var(--sans);letter-spacing:-.03em}.arc p{margin:0;color:var(--mute);font-size:14.5px}
+</style></head><body><script src="../v4/shared.js"></script><script src="../v6/shared6.js"></script>
+<script>
+var m=IVS6.montar(),O=IVS4.OFERTAS;
+var s=document.createElement("section");s.className="mesa5";
+s.innerHTML='<div class="cab5"><div><p class="eyebrow">ARCANA</p><h2 class="h2">Seis cartas, <em>seis cosas.</em></h2><p class="lead6">Toque una carta para darla vuelta. O deje que el mazo elija.</p></div><div class="sacar"><button class="btn" id="sac">Sacar una carta</button><button class="btn sec" id="tod">Dar vuelta todas</button></div></div><div class="mazo" id="mazo"></div>';
+m.appendChild(s);
+var mazo=document.getElementById("mazo");
+mazo.innerHTML=O.map(function(f,i){return '<div class="carta" style="--i:'+i+';--z:'+(i+1)+';--c:var('+f.c+')" tabindex="0" role="button" aria-label="'+f.t+'"><div class="giro"><div class="cara dorso"><svg viewBox="0 0 120 120" aria-hidden="true"><defs><path id="d'+i+'" d="M60 14a46 46 0 1 1 0 92a46 46 0 1 1 0-92"/></defs><circle cx="60" cy="60" r="57" fill="none" stroke="#d9a31b" stroke-width="1.2"/><circle cx="60" cy="60" r="35" fill="none" stroke="#d9a31b" stroke-opacity=".6"/><text class="t" font-size="8" letter-spacing="2.4"><textPath href="#d'+i+'">IVS · CODEX · IVS · CODEX · </textPath></text><circle cx="60" cy="60" r="5" fill="#d9a31b"/></svg></div><div class="cara frente"><div class="num"><span>'+f.lat+'</span><span>'+(i+1)+' / 6</span></div>'+IVS4.dibujo(f.k)+'<div><h3>'+f.t+'</h3><p>'+f.d+'</p><div class="barra"></div></div></div></div></div>';}).join("");
+var cs=[].slice.call(mazo.querySelectorAll(".carta"));
+cs.forEach(function(c){function t(){c.classList.toggle("v");}c.addEventListener("click",t);c.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();t();}});});
+document.getElementById("sac").onclick=function(){cs.forEach(function(c){c.classList.remove("v");});var k=Math.floor(Math.random()*cs.length);setTimeout(function(){cs[k].classList.add("v");if(innerWidth<=760)cs[k].scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"});},250);};
+document.getElementById("tod").onclick=function(){var todas=cs.every(function(c){return c.classList.contains("v");});cs.forEach(function(c,i){setTimeout(function(){c.classList.toggle("v",!todas);},i*90);});};
+var ar=document.createElement("section");ar.className="arc";ar.innerHTML='<p class="eyebrow">PRINCIPIA</p><h2 class="h2">Y tres reglas <em>que no se negocian.</em></h2><div class="tres">'+IVS6.PRINC.map(function(q){return '<div><b>'+q[0]+'</b><h3>'+q[1]+'.</h3><p>'+q[2]+'</p></div>';}).join("")+'</div>';m.appendChild(ar);
+IVS6.cierre(m);
+</script></body></html>

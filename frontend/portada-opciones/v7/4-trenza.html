@@ -1,0 +1,60 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:wght@400;500&display=swap"><link rel="stylesheet" href="../p.css"><link rel="stylesheet" href="../v4/shared.css"><link rel="stylesheet" href="../v6/shared6.css"><title>IVS CODEX · La trenza</title>
+<style>
+/* 4 · LA TRENZA — los seis colores de las bases son seis hilos que, al bajar, se entrelazan en una sola cuerda dorada.
+   De la cuerda cuelgan, a un lado y otro, las seis cosas que ofrece la página. */
+.pista4{position:relative;height:760vh}
+.esc4{position:sticky;top:0;height:100svh;overflow:hidden}
+.esc4 canvas{position:absolute;inset:0;width:100%;height:100%}
+.mundo4{position:absolute;left:0;top:0;width:100%;will-change:transform}
+.tag{position:absolute;display:flex;gap:14px;align-items:center;--c:var(--gold)}
+.tag .lin{flex:none;height:1px;width:var(--lw);background:linear-gradient(90deg,var(--c),rgba(241,238,230,.15))}
+.tag.izq{flex-direction:row-reverse;text-align:right}.tag.izq .lin{background:linear-gradient(270deg,var(--c),rgba(241,238,230,.15))}
+.tag .cue{width:min(330px,36vw);padding:16px 20px;border:1px solid color-mix(in srgb,var(--c) 55%,transparent);border-radius:22px;background:rgba(16,14,11,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);opacity:0;transform:translateY(12px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.tag.on .cue{opacity:1;transform:none}
+.tag .lat{font:500 11px/1 var(--caps);letter-spacing:.24em;color:var(--c)}
+.tag h3{margin:6px 0 4px;font:500 clamp(19px,1.9vw,26px)/1.05 var(--sans);letter-spacing:-.03em}
+.tag p{margin:0;font-size:clamp(12.5px,1.05vw,14px);line-height:1.45;color:var(--mute)}
+.tag .dib{width:56px;margin:0 0 8px;display:inline-block}.tag.izq .dib{margin-left:auto;display:block}
+.tag .dib .dl{stroke-dashoffset:0}.tag .dib .dd{opacity:1}
+.intro4{position:absolute;left:50%;top:clamp(84px,15vh,150px);transform:translateX(-50%);width:min(92vw,820px);text-align:center;z-index:4;transition:opacity .3s}
+.fin4{position:absolute;left:50%;transform:translateX(-50%);width:min(90vw,640px);text-align:center}
+@media (max-width:760px){.tag .cue{width:calc(100vw - 150px)}.tag.izq{flex-direction:row;text-align:left}.tag.izq .lin{background:linear-gradient(90deg,var(--c),rgba(241,238,230,.15))}.tag.izq .dib{margin-left:0}.intro4{text-align:left;left:var(--pad);transform:none;width:calc(100% - 2*var(--pad))}}
+</style></head><body><script src="../v4/shared.js"></script><script src="../v6/shared6.js"></script>
+<script>
+var m=IVS6.montar(),O=IVS4.OFERTAS,COL=[[217,166,42],[181,134,64],[213,135,63],[201,88,54],[176,59,66],[138,56,83]],ORO=[240,199,90];
+var pista=document.createElement("section");pista.className="pista4";pista.id="pista4";
+pista.innerHTML='<div class="esc4" id="esc4"><canvas id="cv4" aria-hidden="true"></canvas><div class="mundo4" id="mundo4"></div><div class="intro4" id="intro4"><p class="eyebrow">TEXTVS</p><h2 class="h2">Seis hilos, <em>una sola cuerda.</em></h2></div></div>';
+m.appendChild(pista);
+var esc=document.getElementById("esc4"),cv=document.getElementById("cv4"),ctx=cv.getContext("2d"),mundo=document.getElementById("mundo4"),intro=document.getElementById("intro4"),W,H,D=Math.min(devicePixelRatio||1,2),HW,CX,tags=[],YT=[];
+function lay(){W=esc.clientWidth;H=esc.clientHeight;cv.width=W*D;cv.height=H*D;HW=H*5.6;var mob=W<760;CX=mob?W*.14:W*.5;mundo.style.height=HW+"px";
+ mundo.innerHTML="";tags=[];YT=[];
+ O.forEach(function(f,i){var y=HW*(.33+i*.105),izq=!mob&&i%2===0,t=document.createElement("div");t.className="tag"+(izq?" izq":"");t.style.setProperty("--c","var("+f.c+")");
+  var lw=mob?22:60;t.style.setProperty("--lw",lw+"px");
+  t.innerHTML='<span class="lin"></span><div class="cue">'+IVS4.dibujo(f.k)+'<span class="lat">'+f.lat+'</span><h3>'+f.t+'</h3><p>'+f.d+'</p></div>';
+  t.style.top=(y-30)+"px";if(izq)t.style.right=(W-CX+(mob?0:46))+"px";else t.style.left=(CX+(mob?26:46))+"px";mundo.appendChild(t);tags.push(t);YT.push(y);});
+ var fin=document.createElement("div");fin.className="fin4";fin.style.top=(HW*.985-30)+"px";fin.style.left=mob?"auto":"50%";fin.innerHTML='';mundo.appendChild(fin);}
+lay();
+function sm(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
+function dib(cam){ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
+ var A=Math.min(W*.05,46),sp=Math.min(W*.115,112),k=.034,y0=HW*.06,y1=HW*.28,ye=HW*.955,seg=[],prev=[];
+ var ys=Math.max(0,Math.floor((cam-30)/3)*3),ye2=Math.min(HW,cam+H+30);
+ for(var y=ys;y<=ye2;y+=3){var b=sm((y-y0)/(y1-y0)),b2=1-sm((y-ye)/(HW*.04)),gold=sm((y-ye+HW*.02)/(HW*.04)),cur=[];
+  for(var i=0;i<6;i++){var ph=k*y+i*Math.PI/3,x=CX+(1-b)*((i-2.5)*sp+9*Math.sin(y*.011+i*1.7))+b*b2*A*Math.sin(ph),z=Math.cos(ph)*b*b2;cur.push([x,z]);
+   if(prev.length){var c=COL[i],mix=gold,r=Math.round(c[0]+(ORO[0]-c[0])*mix),g=Math.round(c[1]+(ORO[1]-c[1])*mix),bl=Math.round(c[2]+(ORO[2]-c[2])*mix);
+    seg.push({z:z,x0:prev[i][0],y0:y-3-cam,x1:x,y1:y-cam,w:2.2+1.5*(z+1)*b+0*b2,col:"rgba("+r+","+g+","+bl+","+(.55+.4*(z+1)/2).toFixed(2)+")"});}}
+  prev=cur;}
+ ctx.lineCap="round";
+ /* resplandor de la cuerda */
+ ctx.globalCompositeOperation="lighter";ctx.strokeStyle="rgba(217,163,27,.05)";ctx.lineWidth=46;ctx.beginPath();for(var y2=ys;y2<=ye2;y2+=12){var bb=sm((y2-y0)/(y1-y0))*(1-sm((y2-ye)/(HW*.04)));var xx=CX;if(y2===ys)ctx.moveTo(xx,y2-cam);else ctx.lineTo(xx,y2-cam);}ctx.stroke();ctx.globalCompositeOperation="source-over";
+ seg.sort(function(a,b){return a.z-b.z;});
+ seg.forEach(function(s){ctx.strokeStyle=s.col;ctx.lineWidth=s.w;ctx.beginPath();ctx.moveTo(s.x0,s.y0);ctx.lineTo(s.x1,s.y1);ctx.stroke();});
+ /* el nudo del final */
+ var yn=HW*.968-cam;if(yn>-30&&yn<H+30){var g2=ctx.createRadialGradient(CX,yn,0,CX,yn,26);g2.addColorStop(0,"rgba(255,233,168,.95)");g2.addColorStop(.35,"rgba(217,163,27,.9)");g2.addColorStop(1,"rgba(217,163,27,0)");ctx.fillStyle=g2;ctx.beginPath();ctx.arc(CX,yn,26,0,7);ctx.fill();}}
+function f(){var r=pista.getBoundingClientRect(),tot=r.height-innerHeight,p=IVS4.clamp(-r.top/tot,0,1),cam=p*(HW-H);
+ mundo.style.transform="translateY("+(-cam).toFixed(1)+"px)";dib(cam);
+ tags.forEach(function(t,i){var yy=YT[i]-cam;t.classList.toggle("on",yy<H*.8&&yy>-40);});
+ intro.style.opacity=IVS4.clamp(1-cam/(H*.5),0,1).toFixed(2);}
+var pend=false;addEventListener("scroll",function(){if(!pend){pend=true;requestAnimationFrame(function(){pend=false;f();});}},{passive:true});addEventListener("resize",function(){lay();f();});f();
+var fi=document.createElement("section");fi.className="sec6";fi.innerHTML='<p class="eyebrow">PRINCIPIA</p><h2 class="h2">Tres condiciones que ningún resultado <em>puede dejar de cumplir.</em></h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(18px,3vw,44px);margin-top:clamp(28px,5vw,56px)">'+IVS6.PRINC.map(function(q){return '<div style="padding-top:14px;border-top:1px solid var(--line)"><b style="font:500 12px/1 var(--caps);letter-spacing:.22em;color:var(--gold)">'+q[0]+'</b><h3 style="margin:10px 0 6px;font:500 clamp(20px,2vw,28px)/1.1 var(--sans);letter-spacing:-.03em">'+q[1]+'.</h3><p style="margin:0;color:var(--mute);font-size:14.5px">'+q[2]+'</p></div>';}).join("")+'</div>';m.appendChild(fi);
+IVS6.cierre(m);
+</script></body></html>
