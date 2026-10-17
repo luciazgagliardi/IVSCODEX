@@ -16,6 +16,7 @@
 import express from 'express';
 import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
+import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
 import { errores, ErrorApp } from '../lib/errores.js';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
@@ -379,6 +380,16 @@ for (const { slug, buscar } of FUENTES) {
       const fragmentos = [];
       for (const url of pedidas) {
         try {
+          // Dialnet: lo útil es el resumen del artículo (otra página de la misma ficha).
+          if (/^https?:\/\/dialnet\.unirioja\.es\/servlet\/articulo/i.test(url)) {
+            const resumen = await resumenDeArticulo(url);
+            fragmentos.push({
+              url,
+              fragmento: resumen ? recortarPasaje(resumen, q) : '',
+              error: resumen ? null : 'Dialnet no publica un resumen de este artículo.',
+            });
+            continue;
+          }
           const doc = await obtenerDocumento(url);
           fragmentos.push({ url, fragmento: recortarPasaje(doc.texto, q), error: null });
         } catch (e) {

@@ -169,8 +169,11 @@ function aRegistro(bruto) {
     id: `saij_${uuid}`,
     expediente: c['numero-interno'] || c['id-infojus'] || '',
     caratula: caratula || '(sin carátula)',
-    // Solo los sumarios traen la doctrina; los fallos son ficha sin texto.
+    // Solo los sumarios traen la doctrina; los fallos son ficha sin texto
+    // propio, pero cada uno apunta a sus sumarios (ver enriquecerConSumarios).
     sumario: esSumario ? limpiarTexto(c.texto) : '',
+    _rel: esSumario ? [] : [].concat(c['sumarios-relacionados']?.['sumario-relacionado'] || []),
+    _tema: esSumario ? '' : limpiarTexto(c.sobre),
     voces: sacarVoces(c.descriptores),
     fecha: fechaLegible(c.fecha),
     tribunal: sacarTribunal(c),
@@ -180,6 +183,102 @@ function aRegistro(bruto) {
     linkFicha: `https://${HOST}/${uuid}`,
     linkFallo: null,
   };
+}
+
+/*
+ * Un fallo de SAIJ (y por lo tanto todo lo de la Corte Suprema) es una ficha
+ * sin texto, pero trae la lista de sus sumarios ("sumarios-relacionados":
+ * A0001538, A0001539…). Cada sumario SÍ tiene el texto de la doctrina, y se
+ * lo puede pedir por su identificador sin buscar nada: SAIJ arma el uuid del
+ * documento con el número invertido ("D0008636" -> ...defg6368-000dsoiramus,
+ * verificado contra resultados reales). Con eso cada resultado de la Corte
+ * muestra el pasaje donde está la coincidencia, igual que Mendoza.
+ */
+const CACHE_SUMARIOS = new Map();
+const MAX_CACHE_SUMARIOS = 2000;
+
+function uuidDeSumario(numero) {
+  const m = /^([A-Za-z])(\d{7})$/.exec(String(numero || ''));
+  if (!m) return null;
+  const r = m[2].split('').reverse().join('');
+  return `123456789-0abc-defg${r.slice(0, 4)}-${r.slice(4)}${m[1].toLowerCase()}soiramus`;
+}
+
+async function textoDeSumario(numero, senal) {
+  if (CACHE_SUMARIOS.has(numero)) return CACHE_SUMARIOS.get(numero);
+  const guid = uuidDeSumario(numero);
+  if (!guid) return null;
+  let salida = null;
+  try {
+    const resp = await fetch(`https://${HOST}/view-document?guid=${encodeURIComponent(guid)}`, {
+      signal: senal,
+      headers: {
+        'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`,
+        Accept: 'application/json, text/plain, */*',
+        'Accept-Language': 'es-AR,es;q=0.9',
+        Referer: `https://${HOST}/`,
+      },
+    });
+    if (resp.ok) {
+      const j = await resp.json();
+      const c = j?.data ? JSON.parse(j.data)?.document?.content : null;
+      const texto = limpiarTexto(c?.texto);
+      if (texto) salida = { titulo: limpiarTexto(c?.titulo), texto };
+    }
+  } catch {
+    return null; // sin red o cortado: no se guarda, se reintenta otra vez
+  }
+  if (CACHE_SUMARIOS.size >= MAX_CACHE_SUMARIOS) CACHE_SUMARIOS.clear();
+  CACHE_SUMARIOS.set(numero, salida);
+  return salida;
+}
+
+const sinAcentos = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+/** Un trozo de ~700 caracteres alrededor de la primera palabra buscada. */
+function recorteAlrededor(texto, terminos) {
+  if (texto.length <= 700) return texto;
+  const plano = sinAcentos(texto);
+  let pos = -1;
+  for (const t of terminos) { pos = plano.indexOf(t); if (pos !== -1) break; }
+  const desde = Math.max(0, (pos === -1 ? 0 : pos) - 220);
+  const hasta = Math.min(texto.length, desde + 700);
+  return (desde > 0 ? '… ' : '') + texto.slice(desde, hasta).trim() + (hasta < texto.length ? ' …' : '');
+}
+
+async function enriquecerConSumarios(registros, q) {
+  const pendientes = registros.filter((r) => r && r._rel && r._rel.length && !r.sumario);
+  if (!pendientes.length) return;
+  const terminos = sinAcentos(q).split(/\s+/).filter((t) => t.length > 2);
+  const control = new AbortController();
+  const tope = setTimeout(() => control.abort(), 9000); // mejor esfuerzo: la búsqueda no espera más que esto
+  let i = 0;
+  async function uno() {
+    while (i < pendientes.length) {
+      const r = pendientes[i++];
+      const textos = (await Promise.all(r._rel.slice(0, 3).map((n) => textoDeSumario(n, control.signal)))).filter(Boolean);
+      if (!textos.length) continue;
+      // el sumario que más palabras de la consulta contiene
+      const puntaje = (t) => terminos.reduce((n, w) => n + (sinAcentos(t.titulo + ' ' + t.texto).includes(w) ? 1 : 0), 0);
+      textos.sort((a, b) => puntaje(b) - puntaje(a));
+      r.sumario = recorteAlrededor(textos[0].texto, terminos);
+    }
+  }
+  try {
+    await Promise.all(Array.from({ length: 6 }, uno));
+  } finally {
+    clearTimeout(tope);
+  }
+}
+
+/** Lo que no se pudo traer queda con el tema del fallo, que también describe de qué trata. */
+function cerrarRegistros(registros) {
+  for (const r of registros) {
+    if (!r) continue;
+    if (!r.sumario && r._tema) r.sumario = r._tema;
+    delete r._rel;
+    delete r._tema;
+  }
 }
 
 /**
@@ -249,6 +348,9 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
   });
 
   if (!totalCrudo) return { total: 0, totalFuente: 0, siguienteDesde: null, revisados: 0, pagina, porPagina, resultados: [] };
+
+  await enriquecerConSumarios(resultados, termino);
+  cerrarRegistros(resultados);
 
   return {
     // El total que informa SAIJ cuenta los del OR y sobra por dos órdenes de

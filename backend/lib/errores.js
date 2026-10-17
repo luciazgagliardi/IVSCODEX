@@ -348,3 +348,4 @@ export const errores = {
       502
     ),
 };
+
