@@ -3,7 +3,11 @@
 .hero6 canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .h6t{position:absolute;left:50%;top:clamp(108px,17vh,170px);transform:translateX(-50%);width:min(92vw,880px);text-align:center;z-index:5}
 .h6d{position:absolute;left:0;right:0;z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px;padding-left:.2em;pointer-events:none;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
-.h6d i{display:block;width:1px;height:22px;background:linear-gradient(var(--gold),transparent);animation:cae 2s var(--ease) infinite}
+.h6d i{position:relative;display:block;width:1px;height:30px;background:linear-gradient(rgba(217,163,27,.55),transparent)}
+/* la lucecita que baja por la línea */
+.h6d i::after{content:"";position:absolute;left:-2px;top:0;width:5px;height:5px;border-radius:50%;background:#ffe9a8;box-shadow:0 0 10px 2px rgba(217,163,27,.7);animation:luz 1.9s cubic-bezier(.45,0,.25,1) infinite}
+@keyframes luz{0%{transform:translateY(-2px);opacity:0}15%{opacity:1}75%{opacity:1}100%{transform:translateY(28px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.h6d i::after{animation:none;opacity:1;transform:translateY(12px)}}
 .cab .acts{margin-left:auto;display:flex;gap:10px;align-items:center}
 .cab .acts .btn{margin-left:0}
 @media (max-width:900px){.cab .acts .btn.sec{display:none}}
