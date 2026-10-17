@@ -6,11 +6,10 @@
 <style>
 /* LA MESA DE TRABAJO — el prisma, y debajo la plataforma funcionando: siete instrumentos que se pueden usar ahí mismo.
    Los cálculos son los mismos de la aplicación (calculos.js se copió de ella). Nada se envía a ningún servidor. */
-.mesa{--mp:clamp(60px,9vw,120px);padding:var(--mp) var(--pad) 0;margin-top:calc(var(--mp) * -1)}
-/* «Desplace» a mitad de camino entre los botones y «Laboratorivm» */
-.desp{--bb:clamp(86px,13vh,120px);--mp:clamp(60px,9vw,120px);position:relative;z-index:5;height:calc(var(--bb) + var(--mp));margin-top:calc(var(--bb) * -1);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding-left:.2em;pointer-events:none;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.mesa{padding:clamp(60px,9vw,120px) var(--pad) 0}
+/* «Desplace»: al pie del primer pantallazo, centrado */
+.desp{position:relative;z-index:5;height:76px;margin-top:-76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding-left:.2em;pointer-events:none;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
 .desp i{display:block;width:1px;height:22px;background:linear-gradient(var(--gold),transparent);animation:cae 2s var(--ease) infinite}
-@media (max-width:640px){.desp{--bb:104px}}
 .lab{display:grid;grid-template-columns:minmax(200px,3fr) minmax(0,9fr);gap:clamp(18px,3vw,44px);margin-top:clamp(26px,4vw,50px);align-items:start}
 .tabs{display:flex;flex-direction:column;gap:8px;position:sticky;top:96px}
 .tab{display:flex;align-items:center;gap:12px;padding:12px 18px 11px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);text-align:left;font-size:14.5px;cursor:pointer;transition:all .3s}
@@ -49,7 +48,7 @@
 .nota5{margin-top:16px;font-size:12px;color:var(--dim)}
 .ofr{padding:clamp(60px,9vw,120px) var(--pad) 0}
 .ofr .rej{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,1.4vw,18px);margin-top:clamp(24px,4vw,50px)}
-.ofr .cel{--c:var(--gold);text-align:center;padding:clamp(20px,2.6vw,36px);border-radius:28px;outline:0;cursor:default;-webkit-tap-highlight-color:transparent;transition:background .5s var(--ease)}
+.ofr .cel{display:block;color:inherit;--c:var(--gold);text-align:center;cursor:pointer;padding:clamp(20px,2.6vw,36px);border-radius:28px;outline:0;-webkit-tap-highlight-color:transparent;transition:background .5s var(--ease)}
 .ofr .cel .dib{width:104px;margin:0 auto 16px;transition:filter .5s var(--ease),transform .6s var(--ease)}
 .ofr .cel .dib .dl{stroke:rgba(241,238,230,.42);stroke-dashoffset:0;transition:stroke .5s var(--ease)}.ofr .cel .dib .dd{fill:rgba(241,238,230,.55);opacity:1;transition:fill .5s var(--ease)}
 .ofr .cel:hover,.ofr .cel:focus,.ofr .cel:active{background:color-mix(in srgb,var(--c) 7%,transparent)}
@@ -69,11 +68,12 @@
 .legal .ct{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 26px}
 @media (max-width:900px){.lab{grid-template-columns:1fr}.tabs{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px;margin:0 calc(var(--pad) * -1);padding-left:var(--pad);padding-right:var(--pad);scrollbar-width:none}.tab{flex:none;white-space:nowrap}.ofr .rej{grid-template-columns:repeat(2,minmax(0,1fr))}.legal{grid-template-columns:1fr}}
 @media (max-width:560px){.ofr .rej{grid-template-columns:1fr}}
+/* sin grano en la portada */
+.grano{display:none!important}
 </style></head><body>
 <script src="shared.js"></script><script src="shared6.js"></script><script src="calculos.js"></script>
 <script>
 var m=IVS6.montar(),O=IVS4.OFERTAS;
-var hh=document.querySelector('.h6hint');if(hh)hh.remove();
 var dp=document.createElement('div');dp.className='desp';dp.setAttribute('aria-hidden','true');dp.innerHTML='Desplace<i></i>';m.appendChild(dp);
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function $(i){return document.getElementById(i);}
@@ -175,7 +175,22 @@ function conectarPdf(){var inp=$("pdf"),dr=$("drop");
 pintarTabs();pintarPanel();
 
 /* lo demás */
-var of=document.createElement("section");of.className="ofr";of.innerHTML='<p class="eyebrow">ET ALIA</p><h2 class="h2">Y lo demás, <em>en seis celdas.</em></h2><div class="rej">'+O.map(function(f){return '<div class="cel" tabindex="0" style="--c:var('+f.c+')">'+IVS4.dibujo(f.k)+'<h3>'+f.t+'</h3><p>'+f.d+'</p></div>';}).join("")+'</div>';m.appendChild(of);
+var SERV=[["buscar","Buscar","Las seis bases a la vez, con los términos que usted elija.","--c-mza"],
+["lector","Lector","El fallo con su búsqueda destacada, los pasajes recortados y la cita preparada para copiar.","--c-mzl"],
+["ramas","Ramas","Las ramas del derecho y sus voces: los descriptores con que indexan los buscadores judiciales.","--c-caba"],
+["requisitos","Requisitos","Lo que exige cada trámite, en fichas de control.","--c-csjn"],
+["comparar","Comparar","Una misma consulta, por jurisdicción: Mendoza, la Nación y otras provincias.","--c-saij"],
+["norma","Norma","El texto oficial de un artículo, tomado de InfoLeg.","--c-dial"],
+["fuentes","Fuentes","El catálogo de fuentes oficiales, con enlace a cada una.","--c-mza"],
+["citas","Citar","El formateador de citas jurisprudenciales, listo para copiar.","--c-mzl"],
+["verificar","Verificar","Contrasta una cita con los repositorios oficiales antes de presentarla.","--c-caba"],
+["guardados","Guardados","Sus pasajes, fuentes y búsquedas, reunidos en un solo lugar.","--c-csjn"],
+["cuenta","Cuenta","Sincronice sus guardados entre dispositivos.","--c-saij"],
+["calculos","Cálculos","Intereses, índices, despido, incapacidad y honorarios.","--c-dial"],
+["plazos","Plazos","Plazos procesales, prescripción y calendario judicial.","--c-mza"],
+["glosario","Glosario","Brocardos y expresiones latinas de uso en los tribunales.","--c-mzl"],
+["herramientas","Herramientas","Unir, dividir, foliar y reducir PDF dentro del navegador: los archivos no salen de su computadora.","--c-caba"]];
+var of=document.createElement("section");of.className="ofr";of.id="servicios";of.innerHTML='<h2 class="h2">Servicios.</h2><p class="lead6">Todo lo que ofrece la plataforma. Seleccione un servicio para abrirlo.</p><div class="rej">'+SERV.map(function(f){return '<a class="cel" href="#" data-tab="'+f[0]+'" style="--c:var('+f[3]+')">'+IVS4.dibujo(f[0])+'<h3>'+f[1]+'</h3><p>'+f[2]+'</p></a>';}).join("")+'</div>';m.appendChild(of);
 /* pie: sin el nombre grande; aviso, derechos reservados y contacto */
 var pie=document.createElement("footer");pie.className="pie9";
 pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<span style="--c:var('+b[1]+')"><i></i>'+b[0]+'</span>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</p>'+IVS4.BOTONES+

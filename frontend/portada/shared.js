@@ -11,18 +11,63 @@
   ];
   /* dibujos de línea, simétricos o geométricos, con un solo punto dorado */
   function dibujo(tab){
-    var k=0,h="",i,x,y;
+    var k=0,h="",i,x,y,a;
     function l(d){ return '<path class="dl" style="--i:'+(k++)+'" pathLength="1" d="'+d+'"/>'; }
     function c(x,y,r){ return '<circle class="dl" style="--i:'+(k++)+'" pathLength="1" cx="'+x+'" cy="'+y+'" r="'+r+'"/>'; }
     function p(x,y,r){ return '<circle class="dd" cx="'+x+'" cy="'+y+'" r="'+(r||4)+'"/>'; }
     switch(tab){
-      case "buscar": for(i=0;i<6;i++){ var a=(205+i*26)*Math.PI/180; x=(120+92*Math.cos(a)).toFixed(1); y=(140+92*Math.sin(a)).toFixed(1); h+=c(x,y,6)+l("M"+x+" "+y+"L120 140"); } h+=p(120,140,5); break;
-      case "lector": h+=l("M120 36Q86 26 40 32V132Q86 126 120 136")+l("M120 36Q154 26 200 32V132Q154 126 120 136")+l("M120 36V136");
-        for(i=0;i<5;i++){ y=52+i*16; h+=l("M52 "+(y-2)+"Q84 "+(y-8)+" 110 "+(y-1))+l("M130 "+(y-1)+"Q156 "+(y-8)+" 188 "+(y-2)); } h+=p(120,18); break;
-      case "ramas": h+=c(87,80,12)+l("M109.8 54.7A34 34 0 0 1 109.8 105.3")+l("M124.5 38.4A56 56 0 0 1 124.5 121.6")+l("M139.2 22A78 78 0 0 1 139.2 138")+p(87,80,4); break;
-      case "calculos": h+=l("M44 34H196V138H44Z"); [58,86,114].forEach(function(y){ h+=l("M44 "+y+"H76")+l("M92 "+y+"H112")+l("M128 "+y+"H148")+l("M164 "+y+"H196")+c(84,y,8)+c(120,y,8)+c(156,y,8); }); h+=p(120,20,5); break;
-      case "verificar": h+=c(120,82,58)+c(120,82,44)+l("M120 24V38")+l("M120 126V140")+l("M62 82H76")+l("M164 82H178")+p(120,82,6); break;
-      case "herramientas": h+=l("M70 40H170V132H70Z")+l("M82 28H158V40")+l("M94 16H146V28")+l("M90 64H150")+l("M90 84H150")+l("M100 104H140")+p(120,8,4); break;
+    case "buscar":   // la consulta sale a las seis bases, en abanico
+      for(i=0;i<6;i++){ a=(-62.5+i*25)*Math.PI/180; x=(120+100*Math.sin(a)).toFixed(1); y=(142-100*Math.cos(a)).toFixed(1);
+        h+=c(x,y,7)+l("M120 142L"+(120+86*Math.sin(a)).toFixed(1)+" "+(142-86*Math.cos(a)).toFixed(1)); }
+      h+=p(120,142,5); break;
+    case "comparar": // cinco barras en pirámide
+      h+=l("M30 146H210");
+      [[48,34],[84,66],[120,100],[156,66],[192,34]].forEach(function(b){ h+=l("M"+b[0]+" 146V"+(146-b[1])); });
+      h+=p(120,32,4.5); break;
+    case "ramas":    // una voz: un círculo y tres arcos que salen de él
+      h+=c(87,80,12)+l("M109.8 54.7A34 34 0 0 1 109.8 105.3")+l("M124.5 38.4A56 56 0 0 1 124.5 121.6")+l("M139.2 22A78 78 0 0 1 139.2 138")+p(87,80,4); break;
+    case "requisitos": // la lista de control: tres filas, espejadas
+      h+=l("M56 24H184V144H56Z");
+      [52,84,116].forEach(function(yy){ h+=c(84,yy,8)+l("M104 "+yy+"H136")+c(156,yy,8); });
+      h+=p(120,24,4.5); break;
+    case "norma":    // el templo
+      h+=l("M64 30H176")+l("M72 40H168")+l("M84 40V128")+l("M102 40V128")+l("M120 40V128")+l("M138 40V128")+l("M156 40V128")+l("M72 128H168")+l("M60 140H180");
+      h+=p(120,18,4.5); break;
+    case "lector":   // el libro abierto
+      h+=l("M120 36Q86 26 40 32V132Q86 126 120 136")+l("M120 36Q154 26 200 32V132Q154 126 120 136")+l("M120 36V136");
+      for(i=0;i<5;i++){ y=52+i*16; h+=l("M52 "+(y-2)+"Q84 "+(y-8)+" 110 "+(y-1))+l("M188 "+(y-2)+"Q156 "+(y-8)+" 130 "+(y-1)); }
+      h+=p(120,20,4.5); break;
+    case "citas":    // las comillas, abriendo y cerrando
+      h+=l("M72 52L54 70L72 88")+l("M90 52L72 70L90 88")+l("M168 52L186 70L168 88")+l("M150 52L168 70L150 88");
+      h+=l("M84 118H156")+l("M100 134H140");
+      h+=p(120,70,5); break;
+    case "verificar": // el sello con su tilde
+      h+=c(120,84,58)+c(120,84,44)+l("M98 86L114 102L144 68");
+      h+=p(120,22,4.5); break;
+    case "fuentes":  // la señal: arcos concéntricos que salen de un punto
+      [30,58,86].forEach(function(r){
+        a=56*Math.PI/180;
+        h+=l("M"+(120-r*Math.sin(a)).toFixed(1)+" "+(138-r*Math.cos(a)).toFixed(1)+"A"+r+" "+r+" 0 0 1 "+(120+r*Math.sin(a)).toFixed(1)+" "+(138-r*Math.cos(a)).toFixed(1));
+      });
+      h+=l("M120 138V152")+p(120,138,5.5); break;
+    case "guardados": // fichas apiladas
+      h+=l("M50 144V104H190V144Z")+l("M64 104V80H176V104")+l("M78 80V56H162V80")+l("M104 124H136")+l("M112 92H128");
+      h+=p(120,68,4.5); break;
+    case "cuenta":   // la cerradura
+      h+=c(120,84,56)+c(120,72,13)+l("M112 84L106 118H134L128 84");
+      h+=p(120,72,3.5); break;
+    case "calculos": // el ábaco: tres hileras de tres cuentas, centradas
+      h+=l("M44 34H196V138H44Z"); [58,86,114].forEach(function(y){ h+=l("M44 "+y+"H76")+l("M92 "+y+"H112")+l("M128 "+y+"H148")+l("M164 "+y+"H196")+c(84,y,8)+c(120,y,8)+c(156,y,8); }); h+=p(120,20,5); break;
+    case "plazos":   // el calendario y el día que vence
+      h+=l("M40 34H200V140H40Z")+l("M40 54H200")+l("M76 26V42")+l("M164 26V42");
+      for(y=0;y<4;y++) for(x=0;x<7;x++){ if(!(x===3&&y===2)) h+='<circle class="dp" cx="'+(57+x*21)+'" cy="'+(72+y*18)+'" r="1.8"/>'; }
+      h+=c(120,108,8)+p(120,108,3.5); break;
+    case "herramientas": // páginas que se juntan en un solo cuerpo
+      h+=l("M70 40H170V132H70Z")+l("M82 28H182V40")+l("M94 16H194V28")+l("M90 64H150")+l("M90 84H150")+l("M90 104H128");
+      h+=p(170,40,4); break;
+    case "glosario": // la V romana del logo
+      h+=l("M62 34H92")+l("M148 34H178")+l("M77 34L120 134")+l("M120 134L163 34")+l("M40 146H200");
+      h+=p(120,62,5.5); break;
     }
     return '<svg class="dib" viewBox="0 0 240 160" aria-hidden="true">'+h+'</svg>';
   }
@@ -38,13 +83,13 @@
     o=o||{};var ctx=cv.getContext("2d"),W=1,H=1,D=Math.min(devicePixelRatio||1,2),P={x:0,y:0},P0={x:0,y:0},Y=[],puls=[],last=0,tm=0,out=[],cum=[],total=0,
       ox=0,oy=0,ang=0,tmx=0,tmy=0,mpx=0,mpy=0,vivo=0,vel=0,lmx=0,lmy=0;   /* interacción con el puntero (o.mouse) */
     var cs=getComputedStyle(document.documentElement),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
-    var B=OFERTAS.map(function(f,i){var n=["MZA","MZA LEGAL","TSJ","CSJN","SAIJ","DIALNET"][i],h=cs.getPropertyValue(f.c).trim();
+    var B=OFERTAS.map(function(f,i){var n=["SCJM","MZA LEGAL","TSJ","CSJN","SAIJ","DIALNET"][i],h=cs.getPropertyValue(f.c).trim();
       return {n:n,c:[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)],next:i*.5};});
     var ORO=[217,163,27],CLARO=[255,226,150];
     function medir(){
       W=cv.clientWidth;H=cv.clientHeight;cv.width=W*D;cv.height=H*D;
-      var m=W<700,band=o.band||[.34,.66];
-      P0.x=W*(typeof o.px==="function"?o.px(W):(o.px||.54));P0.y=H*(o.cy||.5);
+      var m=W<700,band=typeof o.band==="function"?o.band(W,H):(o.band||[.34,.66]);
+      P0.x=W*(typeof o.px==="function"?o.px(W):(o.px||.54));P0.y=H*(typeof o.cy==="function"?o.cy(W,H):(o.cy||.5));
       Y=B.map(function(_,i){return H*(band[0]+i*(band[1]-band[0])/5);});
       mpx=P0.x;mpy=P0.y;calc();
     }
