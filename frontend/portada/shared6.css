@@ -1,9 +1,13 @@
 /* v6 · La portada es el prisma; lo que sigue cambia en cada propuesta. Se apoya en ../p.css y ../v4/shared.css. */
 .hero6{position:relative;height:100svh;min-height:560px;overflow:hidden}
 .hero6 canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.h6t{position:absolute;left:50%;top:clamp(86px,12vh,120px);transform:translateX(-50%);width:min(92vw,880px);text-align:center;z-index:5}
-.h6t .acc{justify-content:center;margin-top:clamp(22px,3.4vh,34px)}
-@media (max-width:640px){.h6t{top:84px}}
+.h6t{position:absolute;left:50%;top:clamp(108px,17vh,170px);transform:translateX(-50%);width:min(92vw,880px);text-align:center;z-index:5}
+.h6d{position:absolute;left:0;right:0;z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px;padding-left:.2em;pointer-events:none;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.h6d i{display:block;width:1px;height:22px;background:linear-gradient(var(--gold),transparent);animation:cae 2s var(--ease) infinite}
+.cab .acts{margin-left:auto;display:flex;gap:10px;align-items:center}
+.cab .acts .btn{margin-left:0}
+@media (max-width:900px){.cab .acts .btn.sec{display:none}}
+@media (max-width:640px){.h6t{top:104px}}
 
 /* títulos de sección comunes */
 .sec6{position:relative;padding:clamp(70px,11vw,150px) var(--pad)}
