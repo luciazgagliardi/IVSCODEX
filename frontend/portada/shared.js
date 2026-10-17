@@ -145,6 +145,7 @@
       ctx.globalCompositeOperation="lighter";ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       B.forEach(function(b,i){ctx.fillStyle=rgba(b.c,.95);ctx.fillText(b.n.split("").join(String.fromCharCode(8202)),W<700?14:32,Y[i]-12);});
+      if(o.rotulo){ctx.textAlign="right";ctx.fillStyle=rgba(ORO,.95);ctx.fillText(o.rotulo.split("").join(String.fromCharCode(8202)),W-(W<700?14:32),P.y-12);ctx.textAlign="left";}
       if(!quieto)requestAnimationFrame(frame);
     }
     medir();addEventListener("resize",medir);

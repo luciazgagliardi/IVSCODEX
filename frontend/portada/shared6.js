@@ -12,11 +12,11 @@
         '<div class="h6t" id="h6t"><h1 class="t">'+S.TITULO+'</h1></div>'+
         '<div class="h6d" id="h6d" aria-hidden="true">Desplace<i></i></div></section></main>');
       /* el prisma va en el centro de la pantalla; «Desplace», centrado debajo, a la misma distancia del gráfico y de «Laboratorivm» */
-      var d=document.getElementById("h6d"),mp=function(){return Math.min(120,Math.max(60,innerWidth*.09));};
-      function banda(W,H){return Math.max(40,Math.min(H*.13,H*.5-110));}
+      var d=document.getElementById("h6d"),mp=function(){return Math.min(80,Math.max(44,innerWidth*.06));};
+      function banda(W,H){return Math.max(40,Math.min(H*.115,H*.5-110));}
       function colocar(){var H=document.getElementById("hero6").offsetHeight,W=innerWidth,fondo=H*.5+banda(W,H);
         d.style.top=((fondo+H+mp())/2-d.offsetHeight/2)+"px";}
-      var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:.5,
+      var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:.5,rotulo:"UNA CONSULTA",
         band:function(W,H){var h=banda(W,H);return [.5-h/H,.5+h/H];},
         out:function(P,w,h){return [[w,P.y]];}});
       colocar();addEventListener("resize",colocar);
