@@ -106,3 +106,8 @@ export async function buscarPorId(id) {
   const usuario = Object.values(dato).find((u) => u.id === id);
   return sinPassword(usuario);
 }
+export async function buscarPorEmail(email) {
+  const correo = normalizarEmail(email);
+  const dato = await leerTodos();
+  const usuario = Object.prototype.hasOwnProperty.call(dato, correo)
+}

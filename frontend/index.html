@@ -2468,7 +2468,7 @@ function nuevoIndices(){
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
-      fragmentos:{},fragCargando:false,parcial:false,revisados:0,totalFuente:null,aflojado:false,desdeNavegador:false,
+      fragmentos:{},fragErr:{},fragCargando:false,parcial:false,revisados:0,totalFuente:null,aflojado:false,desdeNavegador:false,
       // Dónde arranca cada página, en filas del SITIO: {1:0, 2:22, 3:43...}.
       // Numerar no alcanza cuando el filtro corre del lado del servidor —la
       // página 2 de resultados no es la fila 20 del sitio— así que cada
@@ -4253,6 +4253,10 @@ function fichaDesdeIndice(slug,r){
   return {tipo:slug==="mendoza"?"scjm":"cam",car:r.caratula,trib:r.tribunal,
           fecha:fecha||r.fecha,exp:r.expediente};
 }
+/* La dirección de la que se saca el pasaje cuando el resultado no trae sumario. */
+function urlFragmento(slug,r){
+  return r.linkFallo||(slug==="dialnet"?r.linkFicha:null)||null;
+}
 function fichaIndice(f,r){
   var q=estado.q;
   var im=estado.indices[f.slug];
@@ -4268,8 +4272,17 @@ function fichaIndice(f,r){
     : '';
   // El pasaje puede venir con el resultado (Mendoza manda el sumario) o
   // haberse sacado del documento después (CABA — ver traerFragmentos).
-  var pasaje=r.sumario||(r.linkFallo?im.fragmentos[r.linkFallo]:"");
-  var esperando=!pasaje&&r.linkFallo&&im.fragCargando&&!im.fragmentos.hasOwnProperty(r.linkFallo);
+  // De dónde sale el pasaje si el resultado no lo trae: del documento (PDF)
+  // o, en Dialnet, del resumen de la ficha.
+  var uf=urlFragmento(f.slug,r);
+  var pasaje=r.sumario||(uf?im.fragmentos[uf]:"");
+  var esperando=!pasaje&&uf&&im.fragCargando&&!im.fragmentos.hasOwnProperty(uf);
+  // Si se intentó y no se pudo, se dice por qué en vez de dejar la ficha sin nada.
+  var sinPasaje=!pasaje&&uf&&im.fragmentos.hasOwnProperty(uf)&&!esperando
+    ? (f.slug==="dialnet"
+        ? "Dialnet no publica un resumen de este artículo."
+        : "No se pudo traer el texto de este documento desde el servidor. Use «Descargar y abrir en el Lector» para leerlo.")
+    : "";
   return '<div class="fuente">'+
     '<div class="f-top"><span class="cod '+f.clase+'">'+esc(f.cod)+'</span>'+
       (metaEnc?'<span class="f-enc">'+metaEnc+'</span>':'')+
@@ -4277,6 +4290,7 @@ function fichaIndice(f,r){
     '<h3 class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</h3>'+
     (pasaje?'<p class="f-nota">'+resaltarSimple(pasaje,q)+'</p>':'')+
     (esperando?'<p class="f-nota" style="opacity:.55;font-style:italic">Buscando el pasaje en el documento…</p>':'')+
+    (sinPasaje?'<p class="f-nota" style="opacity:.55;font-style:italic">'+esc(sinPasaje)+'</p>':'')+
     (r.voces&&r.voces.length?'<div class="voces">'+r.voces.slice(0,6).map(function(v){
       return '<span class="voz" style="cursor:default">'+esc(v)+'</span>';}).join("")+'</div>':"")+
     '<div class="f-acc" style="margin-top:8px">'+
@@ -4317,8 +4331,9 @@ function traerFragmentos(slug,pedido){
   // guardado como cadena vacía, y con truthiness volvía a entrar en la
   // tanda siguiente para siempre — un bucle infinito contra el servidor.
   var faltan=im.resultados.filter(function(r){
-    return r.linkFallo && !r.sumario && !im.fragmentos.hasOwnProperty(r.linkFallo);
-  }).map(function(r){ return r.linkFallo; });
+    var u=urlFragmento(slug,r);
+    return u && !r.sumario && !im.fragmentos.hasOwnProperty(u);
+  }).map(function(r){ return urlFragmento(slug,r); });
   if(!faltan.length){ im.fragCargando=false; render(); return; }
 
   var tanda=faltan.slice(0,6);
@@ -4635,7 +4650,7 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   // cursor para que el paginador no ofrezca un "Siguiente" que no existe.
   if(typeof d.siguienteDesde==="number") imBusco.cursores[pagina+1]=d.siguienteDesde;
   else delete imBusco.cursores[pagina+1];
-  imBusco.fragmentos={};
+  imBusco.fragmentos={}; imBusco.fragErr={};
   render();
   // Los resultados ya están en pantalla; los pasajes que esta fuente no
   // manda se van completando atrás, sin hacer esperar a nadie.

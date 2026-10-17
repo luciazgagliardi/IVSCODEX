@@ -99,6 +99,20 @@ export const CORS_ORIGENES = (
 /** Milisegundos maximos que esperamos a que el sitio de origen responda. */
 export const TIMEOUT_MS = Number(process.env.TIMEOUT_MS || 25000);
 
+/**
+ * Relevo para sitios que le niegan la conexión al datacenter publicado.
+ *
+ * El TSJ de CABA (www.tsjbaires.gov.ar) está detrás de Cloudflare, que le
+ * responde 403 a las IP de los centros de datos (Azure): por eso, en el
+ * sitio publicado, sus PDF no se pueden leer y los resultados de CABA salen
+ * sin pasaje. Una conexión doméstica o un Worker de Cloudflare sí pasan.
+ * RELE_URL es la dirección de un Worker propio (ver relay/cloudflare-worker.js)
+ * y RELE_CLAVE la clave compartida con él, para que nadie más lo use.
+ * Sin RELE_URL no cambia nada.
+ */
+export const RELE_URL = process.env.RELE_URL || '';
+export const RELE_CLAVE = process.env.RELE_CLAVE || '';
+
 /** API key del proxy usado por el buscador del TSJ CABA. */
 export const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY || '';
 

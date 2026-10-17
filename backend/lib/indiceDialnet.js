@@ -24,7 +24,7 @@
 
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { esperarTurno, descargar } from './descargador.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
 
@@ -246,4 +246,29 @@ export async function buscarDialnet({ q, modo = 'todas', excluir = '', pagina = 
     porPagina: POR_PAGINA_DIALNET,
     resultados,
   };
+}
+
+
+/**
+ * El resumen de un artículo de Dialnet.
+ *
+ * Vive en una página aparte (la misma ficha con "&info=resumen"), una por
+ * artículo, por eso se pide solo cuando hace falta (ver /fragmentos en
+ * routes/indice.js). No todos los artículos lo tienen: cuando Dialnet no lo
+ * publica, la página trae solo el título y los autores, y se devuelve ''.
+ */
+export async function resumenDeArticulo(urlFicha) {
+  let u;
+  try { u = new URL(urlFicha); } catch { return ''; }
+  if (u.hostname !== 'dialnet.unirioja.es' || !/\/servlet\/articulo/.test(u.pathname)) return '';
+  u.searchParams.set('info', 'resumen');
+  const { buffer } = await descargar(u.toString());
+  const consolaMuda = new VirtualConsole();
+  consolaMuda.on('jsdomError', () => {});
+  const doc = new JSDOM(buffer.toString('utf8'), { virtualConsole: consolaMuda }).window.document;
+  const caja = doc.querySelector('#resumenDeArticulo');
+  if (!caja) return '';
+  caja.querySelectorAll('h2, .autores').forEach((n) => n.remove());
+  const texto = (caja.textContent || '').replace(/\s+/g, ' ').trim();
+  return texto.length >= 60 ? texto : '';
 }

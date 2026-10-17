@@ -50,7 +50,15 @@
  * directo, como siempre.
  */
 
-import { SCRAPER_API_KEY } from '../config.js';
+import { SCRAPER_API_KEY, RELE_URL, RELE_CLAVE } from '../config.js';
+
+/** Dominios que se piden a través del relevo propio (ver RELE_URL en config.js). */
+const SUFIJOS_VIA_RELE = ['tsjbaires.gov.ar'];
+
+function dominioVaPorRele(host) {
+  const h = String(host || '').toLowerCase().replace(/\.$/, '');
+  return SUFIJOS_VIA_RELE.some((s) => h === s || h.endsWith('.' + s));
+}
 
 /** Dominios que se sabe que le niegan la conexión al datacenter publicado. */
 const SUFIJOS_VIA_PROXY = [];
@@ -78,6 +86,11 @@ function urlProxy(destino) {
  * hace falta.
  */
 export function urlParaPedir(destino, host) {
+  // El relevo propio: el Worker pide el documento desde otra red y devuelve la
+  // respuesta tal cual (también las redirecciones, que se siguen a mano).
+  if (RELE_URL && dominioVaPorRele(host)) {
+    return `${RELE_URL}${RELE_URL.includes('?') ? '&' : '?'}k=${encodeURIComponent(RELE_CLAVE)}&url=${encodeURIComponent(destino)}`;
+  }
   if (!SCRAPER_API_KEY || !dominioNecesitaProxy(host)) return destino;
   return urlProxy(destino);
 }
@@ -89,6 +102,7 @@ export function urlParaPedir(destino, host) {
  * sus propios errores de red, y esa URL trae la key puesta.
  */
 export function sinClave(texto) {
-  const t = String(texto ?? '');
+  let t = String(texto ?? '');
+  if (RELE_CLAVE) t = t.split(RELE_CLAVE).join('[clave-oculta]');
   return SCRAPER_API_KEY ? t.split(SCRAPER_API_KEY).join('[clave-oculta]') : t;
 }
