@@ -122,6 +122,8 @@
         var g=ctx.createLinearGradient(0,0,P.x,0);g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
         ctx.strokeStyle=g;ctx.lineWidth=1.3;ctx.stroke();ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();
+        if(o.espejo){var g2=ctx.createLinearGradient(P.x,0,W,0);g2.addColorStop(0,rgba(b.c,.5));g2.addColorStop(.75,rgba(b.c,.18));g2.addColorStop(1,rgba(b.c,0));
+          ctx.beginPath();ctx.moveTo(P.x,P.y);ctx.quadraticCurveTo(W-P.x*.55,Y[i],W,Y[i]);ctx.strokeStyle=g2;ctx.lineWidth=1.1;ctx.stroke();ctx.strokeStyle=rgba(b.c,.05);ctx.lineWidth=8;ctx.stroke();}
         if(!quieto){b.next-=dt;if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}}
       });
       ctx.beginPath();out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});

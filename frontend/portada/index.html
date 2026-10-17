@@ -6,7 +6,7 @@
 <style>
 /* LA MESA DE TRABAJO — el prisma, y debajo la plataforma funcionando: siete instrumentos que se pueden usar ahí mismo.
    Los cálculos son los mismos de la aplicación (calculos.js se copió de ella). Nada se envía a ningún servidor. */
-.mesa{padding:clamp(44px,6vw,80px) var(--pad) 0}
+.mesa{padding:clamp(60px,9vw,120px) var(--pad) 0;margin-top:-18svh;position:relative;z-index:6}
 .lab{display:grid;grid-template-columns:minmax(200px,3fr) minmax(0,9fr);gap:clamp(18px,3vw,44px);margin-top:clamp(26px,4vw,50px);align-items:start}
 .tabs{display:flex;flex-direction:column;gap:8px;position:sticky;top:96px}
 .tab{display:flex;align-items:center;gap:12px;padding:12px 18px 11px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);text-align:left;font-size:14.5px;cursor:pointer;transition:all .3s}
@@ -65,8 +65,9 @@
 .legal .ct{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 26px}
 @media (max-width:900px){.lab{grid-template-columns:1fr}.tabs{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px;margin:0 calc(var(--pad) * -1);padding-left:var(--pad);padding-right:var(--pad);scrollbar-width:none}.tab{flex:none;white-space:nowrap}.ofr .rej{grid-template-columns:repeat(2,minmax(0,1fr))}.legal{grid-template-columns:1fr}}
 @media (max-width:560px){.ofr .rej{grid-template-columns:1fr}}
-/* sin grano en la portada */
-.grano{display:none!important}
+/* grano muy leve */
+.grano{opacity:.4!important}
+@media (max-width:760px){.grano{opacity:.3!important}}
 </style></head><body>
 <script src="shared.js"></script><script src="shared6.js"></script><script src="calculos.js"></script>
 <script>
