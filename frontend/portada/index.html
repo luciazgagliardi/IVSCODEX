@@ -65,10 +65,11 @@
 .legal .ct{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 26px}
 @media (max-width:900px){.lab{grid-template-columns:1fr}.tabs{position:static;flex-direction:row;overflow-x:auto;padding-bottom:6px;margin:0 calc(var(--pad) * -1);padding-left:var(--pad);padding-right:var(--pad);scrollbar-width:none}.tab{flex:none;white-space:nowrap}.ofr .rej{grid-template-columns:repeat(2,minmax(0,1fr))}.legal{grid-template-columns:1fr}}
 @media (max-width:560px){.ofr .rej{grid-template-columns:1fr}}
-/* con barra de desplazamiento visible, que el contenido siga centrado en la ventana */
-html{scrollbar-gutter:stable both-edges}
+/* sin barra de desplazamiento visible: el contenido queda centrado y el grano cubre toda la ventana (se sigue desplazando con la rueda, el dedo y el teclado) */
+html{scrollbar-width:none}
+html::-webkit-scrollbar{display:none}
 /* grano muy leve */
-.grano{opacity:.4!important}
+.grano{opacity:.4!important;z-index:200!important}   /* el grano cubre toda la pantalla, también la barra de arriba */
 @media (max-width:760px){.grano{opacity:.3!important}}
 </style></head><body>
 <script src="shared.js"></script><script src="shared6.js"></script><script src="calculos.js"></script>
