@@ -38,7 +38,7 @@
     o=o||{};var ctx=cv.getContext("2d"),W=1,H=1,D=Math.min(devicePixelRatio||1,2),P={x:0,y:0},P0={x:0,y:0},Y=[],puls=[],last=0,tm=0,out=[],cum=[],total=0,
       ox=0,oy=0,ang=0,tmx=0,tmy=0,mpx=0,mpy=0,vivo=0,vel=0,lmx=0,lmy=0;   /* interacción con el puntero (o.mouse) */
     var cs=getComputedStyle(document.documentElement),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
-    var B=OFERTAS.map(function(f,i){var n=["MZA","MZA LEGAL","TSJ","CSJN","SAIJ","DIALNET"][i],h=cs.getPropertyValue(f.c).trim();
+    var B=OFERTAS.map(function(f,i){var n=["SCJM","MZA LEGAL","TSJ","CSJN","SAIJ","DIALNET"][i],h=cs.getPropertyValue(f.c).trim();
       return {n:n,c:[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)],next:i*.5};});
     var ORO=[217,163,27],CLARO=[255,226,150];
     function medir(){

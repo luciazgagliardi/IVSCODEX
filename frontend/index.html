@@ -302,8 +302,8 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 /* el riel: las fuentes en vivo y las ramas */
 .rail{position:sticky;top:96px;min-width:0}
 .rail h2{margin:0 0 12px;font-size:13px;font-weight:400;color:var(--mute)}
-.rail-fuentes{display:flex;flex-direction:column;margin-bottom:36px;border-top:1px solid var(--line)}
-.rail-fuente{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-2);font-size:13.5px;color:var(--tinta2);line-height:1.3}
+.rail-fuentes{display:flex;flex-direction:column;margin-bottom:36px}
+.rail-fuente{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:13.5px;color:var(--tinta2);line-height:1.3}
 .rail-fuente .rf-punto{width:6px;height:6px;border-radius:50%;flex:none;background:var(--punto,var(--humo))}
 .rail-fuente .rf-nom{flex:1 1 auto;min-width:0;font:500 12.5px/1.2 var(--caps);letter-spacing:.14em}
 .rail-fuente .rf-n{flex:none;font-size:13px;color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
@@ -1288,7 +1288,7 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
     window.addEventListener("message",function(e){
       if(e.origin!==location.origin||!e.data||e.data.ivs!=="abrir") return;
       var tab=String(e.data.tab||"");
-      if(["buscar","fuentes","verificar","cuenta"].indexOf(tab)===-1) return;
+      if(["buscar","lector","ramas","requisitos","comparar","norma","fuentes","citas","verificar","guardados","cuenta","calculos","plazos","glosario","herramientas"].indexOf(tab)===-1) return;
       var b=document.createElement("button"); b.type="button"; b.setAttribute("data-tab",tab); b.hidden=true;
       entrada.appendChild(b); b.click(); b.remove();
     });
@@ -2416,7 +2416,7 @@ var AMB={
    2.1 Índices propios — buscadores oficiales con robot detrás
    ============================================================ */
 var FUENTES_INDICE=[
- {slug:"mendoza",cod:"MZA",clase:"mza",boton:"el buscador de Mendoza",
+ {slug:"mendoza",cod:"SCJM",clase:"mza",boton:"el buscador de Mendoza",
   nombre:"Poder Judicial de Mendoza",nota:"Fallos, autos y resoluciones integrales de la Suprema Corte de Justicia de Mendoza y tribunales provinciales en todas las instancias y fueros.",
   tribunales:[
     {v:"SC",n:"Suprema Corte"},
@@ -2426,7 +2426,7 @@ var FUENTES_INDICE=[
  {slug:"mendozalegal",cod:"MZA LEGAL",clase:"mza",boton:"Mendoza Legal",
   nombre:"Mendoza Legal · jurisprudencia seleccionada",
   nota:"Selección curada de jurisprudencia provincial relevante, con sumarios procesales y doctrina de aplicación práctica local."},
- {slug:"caba",cod:"CABA",clase:"prov",boton:"el TSJ de CABA",
+ {slug:"caba",cod:"TSJ",clase:"prov",boton:"el TSJ de CABA",
   nombre:"Tribunal Superior de Justicia de la Ciudad de Buenos Aires",
   nota:"Sentencias del máximo tribunal porteño en materia contencioso-administrativa, tributaria, penal, contravencional y electoral."},
  {slug:"csjn",cod:"CSJN",clase:"nac",boton:"la Corte Suprema",
@@ -5173,7 +5173,7 @@ var NORMAS_UI=[
 var GRUPOS_COMPARAR=[
   ["Mendoza",  ["mendoza","mendozalegal"]],
   ["Nación",   ["csjn","saij"]],
-  ["CABA",     ["caba"]],
+  ["TSJ",      ["caba"]],
   ["Doctrina", ["dialnet"]]
 ];
 
