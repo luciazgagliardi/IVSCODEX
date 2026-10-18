@@ -4585,6 +4585,7 @@ function buscarSaijNavegador(cuerpo,slug){
                                                :(Math.max(1,cuerpo.pagina||1)-1)*porPedido;
   var cursor=arranque;
 
+  var tandasMax=({exacta:8,todas:5,alguna:3})[cuerpo.modo]||3;
   function pedir(i){
     var p=new URLSearchParams({q:cuerpo.q,o:String(cursor),p:String(porPedido),f:faceta});
     return fetch(SAIJ_URL+"?"+p.toString(),{headers:{Accept:"application/json"}})
@@ -4613,7 +4614,9 @@ function buscarSaijNavegador(cuerpo,slug){
         var parcial=saijFiltrar(revisados,cuerpo.q,cuerpo.modo,cuerpo.excluir);
         if(parcial.lista.length>=porPagina) return null;
         if(cursor>=totalCrudo){ agotado=true; return null; }
-        return i<2?pedir(i+1):null;
+        // Mismas tandas que el servidor (TANDAS_POR_MODO en lib/indiceSaij.js):
+        // más para frase exacta y «todas», donde lo buscado suele ser raro.
+        return i<tandasMax-1?pedir(i+1):null;
       });
   }
 

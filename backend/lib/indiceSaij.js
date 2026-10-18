@@ -482,7 +482,14 @@ function cerrarRegistros(registros) {
  *   tribunal es cuál de los TIPOS mirar ("sumarios" por defecto).
  */
 /** Cuántas páginas de 100 se revisan antes de darse por vencido. */
-const PAGINAS_A_REVISAR = 3;
+// Cuántas tandas de cien filas se revisan, como máximo, para llenar una página.
+// Se corta apenas se juntan los 20 resultados, así que sólo cuesta tiempo
+// cuando lo buscado es raro. Medido con "daño extrapatrimonial" en sumarios
+// (SAIJ ignora las comillas y trae 40.776 por cualquiera de las dos palabras,
+// la frase exacta está en una fracción): con 3 tandas salían 6 resultados, con
+// 6 salían 13 (8,5 s) y con 10 salían 18 (14 s). Cada tanda cuesta ~1,4 s.
+const TANDAS_POR_MODO = { exacta: 8, todas: 5, alguna: 3 };
+const PAGINAS_A_REVISAR = 3; // por defecto, y para legislación y doctrina (ver esTexto)
 const POR_PEDIDO = 100;
 
 export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false, desde = null, anioDesde = null, anioHasta = null }) {
@@ -545,7 +552,7 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
     excluir,
     anioDesde,
     anioHasta,
-    maxTandas: PAGINAS_A_REVISAR,
+    maxTandas: esTexto ? PAGINAS_A_REVISAR : (TANDAS_POR_MODO[modo] || PAGINAS_A_REVISAR),
   });
 
   if (!totalCrudo) return { total: 0, totalFuente: 0, siguienteDesde: null, revisados: 0, pagina, porPagina, resultados: [] };
