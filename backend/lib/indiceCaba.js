@@ -402,12 +402,17 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
   const resultados = await traerDesde(arranque);
   if (!totalSitio) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
-  // Su contador ES el total: totalFuente y total coinciden siempre.
+  // Su contador suele sumar uno de más: dice 4 y dibuja 3, dice 7 y dibuja 6
+  // (medido en vivo; ni invirtiendo el orden ni pidiendo de a una por página
+  // aparece el faltante, así que no existe). Una página con menos filas que
+  // el tamaño pedido es la última de verdad: ahí el total real es lo que se
+  // vio, y no se ofrece una página siguiente que saldría vacía.
   const hasta = arranque + resultados.length;
+  const ultima = resultados.length < porPagina;
   return {
-    total: totalSitio,
+    total: ultima ? hasta : totalSitio,
     totalFuente: totalSitio,
-    siguienteDesde: hasta < totalSitio ? hasta : null,
+    siguienteDesde: !ultima && hasta < totalSitio ? hasta : null,
     pagina,
     porPagina,
     resultados,
