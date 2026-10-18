@@ -192,6 +192,8 @@ router.get('/salud', (_req, res) => {
     modoAbierto: PERMITIR_CUALQUIER_DOMINIO,
     dominiosPermitidos: DOMINIOS_PERMITIDOS.length,
     ocrHabilitado: OCR_HABILITADO,
+    // Solo un sí o un no (nunca la dirección ni la clave): sirve para saber si el relevo del TSJ está activo.
+    releConfigurado: Boolean(process.env.RELE_URL && process.env.RELE_CLAVE),
   });
 });
 

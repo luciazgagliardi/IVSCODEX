@@ -267,12 +267,14 @@ export async function descargar(urlInicial) {
     const control = new AbortController();
     const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
 
-    let respuesta;
+    let respuesta, viaRele = false;
     try {
       // Algunos hosts le niegan la conexión al datacenter publicado (ver
       // lib/proxyOrigen.js); se recalcula en cada salto porque una
       // redirección puede cambiar de host (ej. a un subdominio "-test").
-      respuesta = await fetch(urlParaPedir(actual.toString(), actual.hostname), {
+      const pedida = urlParaPedir(actual.toString(), actual.hostname);
+      viaRele = pedida !== actual.toString() && !/api\.scraperapi\.com/.test(pedida);
+      respuesta = await fetch(pedida, {
         redirect: 'manual', // las seguimos nosotros para poder revalidar
         signal: control.signal,
         headers: {
@@ -303,7 +305,9 @@ export async function descargar(urlInicial) {
     }
 
     if (!respuesta.ok) {
-      throw errores.respuestaNoOk(respuesta.status, actual.hostname, new URL(saltos[0]).hostname);
+      const e = errores.respuestaNoOk(respuesta.status, actual.hostname, new URL(saltos[0]).hostname);
+      if (viaRele) e.message += ' (el pedido pasó por el relevo y el sitio igual lo rechazó)';
+      throw e;
     }
 
     const buffer = await leerConTope(respuesta, MAX_BYTES);
