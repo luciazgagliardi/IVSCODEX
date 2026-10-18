@@ -73,6 +73,7 @@
   --f-csjn:#c95836;
   --f-saij:#b03b42;
   --f-dialnet:#8a3853;
+  --f-corteidh:#5f7f9a;
 
   --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -325,6 +326,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .f-csjn{--punto:var(--f-csjn)}
 .f-saij{--punto:var(--f-saij)}
 .f-dialnet{--punto:var(--f-dialnet)}
+.f-corteidh{--punto:var(--f-corteidh)}
 
 /* ---------- sin cajas: un filete arriba y aire ---------- */
 .panel,.blk,.rama,.aviso{
@@ -388,7 +390,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 @media (max-width:1180px){ .brief{grid-template-columns:minmax(0,1fr)} .brief__summary{position:static} }
 
 /* ---------- resultados en vivo: cada base con su sello de procedencia ---------- */
-.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet{
+.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet,.panel.f-corteidh{
   margin:0 0 64px;padding:0;border-top:0
 }
 .rotulo-fuente{
@@ -2445,7 +2447,10 @@ var FUENTES_INDICE=[
   ]},
  {slug:"dialnet",cod:"DIALNET",clase:"doc",boton:"Dialnet",
   nombre:"Dialnet · doctrina jurídica en español",
-  nota:"Repositorio académico de la Universidad de La Rioja (España). Reúne una extensa producción de artículos de investigación, doctrina jurídica profundizada y revistas especializadas en español, con una nutrida representación de autores argentinos."}
+  nota:"Repositorio académico de la Universidad de La Rioja (España). Reúne una extensa producción de artículos de investigación, doctrina jurídica profundizada y revistas especializadas en español, con una nutrida representación de autores argentinos."},
+ {slug:"corteidh",cod:"CORTE IDH",clase:"int",boton:"la Corte Interamericana",
+  nombre:"Corte Interamericana de Derechos Humanos",
+  nota:"Sentencias, opiniones consultivas, medidas provisionales y supervisiones de cumplimiento del tribunal del sistema interamericano, con enlace al PDF oficial. El buscador del sitio trabaja por frase: «todas las palabras» y «alguna palabra» se resuelven consultando cada palabra por separado."}
 ];
 
 /* El sitio de CABA no filtra por secretaría en el pedido (ver nota en
@@ -3668,7 +3673,7 @@ var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos
 var PRINCIPALES=["buscar","lector","ramas","calculos","fuentes","verificar"];
 var GRUPOS_NAV=["Investigar","Leer y citar","Calcular","Preparar","Fuentes","Archivo personal"];
 var SECCIONES={
-  buscar:["QVAESTIO","Investigar","Las seis bases a la vez"],
+  buscar:["QVAESTIO","Investigar","Las siete bases a la vez"],
   comparar:["COLLATIO","Investigar","Una consulta, por jurisdicción"],
   ramas:["MATERIAE","Investigar","Las ramas del derecho y sus voces"],
   requisitos:["REQVISITA","Investigar","Lo que exige cada trámite"],
@@ -5243,6 +5248,7 @@ var GRUPOS_COMPARAR=[
   ["Mendoza",  ["mendoza","mendozalegal"]],
   ["Nación",   ["csjn","saij"]],
   ["TSJ",      ["caba"]],
+  ["Internacional", ["corteidh"]],
   ["Doctrina", ["dialnet"]]
 ];
 
@@ -5367,7 +5373,7 @@ function vistaComparar(){
     '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></div>'+
     '<div class="acciones" style="margin:0;padding:0;border:0">'+
       '<button class="btn" data-act="comparar"'+(c.corriendo?" disabled":"")+'>'+
-        (c.corriendo?"Consultando las seis…":"Comparar las seis fuentes")+'</button>'+
+        (c.corriendo?"Consultando las siete…":"Comparar las siete fuentes")+'</button>'+
     '</div></div>';
 
   if(!c.corriendo&&!c.hecho) return html;
