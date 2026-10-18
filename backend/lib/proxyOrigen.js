@@ -53,7 +53,10 @@
 import { SCRAPER_API_KEY, RELE_URL, RELE_CLAVE } from '../config.js';
 
 /** Dominios que se piden a través del relevo propio (ver RELE_URL en config.js). */
-const SUFIJOS_VIA_RELE = ['tsjbaires.gov.ar'];
+// Vacío a propósito: el TSJ contesta con el desafío de Cloudflare también a los
+// pedidos que pasan por el Worker (medido en vivo). Ese dominio se resuelve con
+// un navegador de verdad: ver lib/navegadorCf.js.
+const SUFIJOS_VIA_RELE = [];
 
 function dominioVaPorRele(host) {
   const h = String(host || '').toLowerCase().replace(/\.$/, '');

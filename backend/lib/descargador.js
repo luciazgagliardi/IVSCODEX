@@ -18,6 +18,7 @@
 import dns from 'node:dns/promises';
 import net from 'node:net';
 import iconv from 'iconv-lite';
+import { dominioConNavegador, traerConNavegador } from './navegadorCf.js';
 
 import {
   DOMINIOS_PERMITIDOS,
@@ -305,6 +306,26 @@ export async function descargar(urlInicial) {
     }
 
     if (!respuesta.ok) {
+      // Cloudflare pide "demostrar que es una persona" (cf-mitigated:
+      // challenge): un fetch() no puede, un navegador sí. Para los sitios
+      // autorizados se lo hace con Chrome (lib/navegadorCf.js) y, si baja el
+      // documento, sigue como si el pedido directo hubiera andado.
+      if (
+        respuesta.status === 403 &&
+        respuesta.headers.get('cf-mitigated') === 'challenge' &&
+        dominioConNavegador(actual.hostname)
+      ) {
+        try {
+          const n = await traerConNavegador(actual.toString());
+          if (n.estado >= 200 && n.estado < 300 && n.buffer.length) {
+            if (n.buffer.length > MAX_BYTES) throw errores.demasiadoGrande(MAX_BYTES);
+            return { buffer: n.buffer, contentType: n.contentType, urlFinal: actual.toString(), saltos };
+          }
+        } catch (err) {
+          if (err instanceof ErrorApp) throw err;
+          // Sin navegador (o sin poder pasar el desafío): sigue el aviso de siempre.
+        }
+      }
       const e = errores.respuestaNoOk(respuesta.status, actual.hostname, new URL(saltos[0]).hostname);
       if (viaRele) e.message += ' (el pedido pasó por el relevo y el sitio igual lo rechazó)';
       throw e;
