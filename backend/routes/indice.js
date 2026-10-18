@@ -19,10 +19,6 @@ import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
 import { errores, ErrorApp } from '../lib/errores.js';
-import { RELE_URL, USER_AGENT } from '../config.js';
-import { urlParaPedir, sinClave } from '../lib/proxyOrigen.js';
-import { traerConNavegador, estadoNavegador } from '../lib/navegadorCf.js';
-import os from 'node:os';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
 import { NORMAS, articuloDe, rubricaDe } from '../lib/legislacion.js';
 
@@ -444,51 +440,6 @@ for (const { slug, buscar } of FUENTES) {
  * El frontend lo usa para mostrar o esconder el botón, así que sin esto
  * tendría que ofrecer algo que después falla.
  */
-/* TEMPORAL — diagnóstico del bloqueo del TSJ; se retira apenas se lea el resultado. */
-router.get('/diag-tsj', async (_req, res) => {
-  const PDF = '/components/com_expedientes/expedientes_download_EJE.php?expediente=101719&anio=2025&incidente=0&movimiento=2399437';
-  const pruebas = {
-    directo_www: `https://www.tsjbaires.gov.ar${PDF}`,
-    directo_wwwtest: `https://www-test.tsjbaires.gov.ar${PDF}`,
-  };
-  const salida = {};
-  const ver = async (nombre, url, cabeceras = {}) => {
-    try {
-      const r = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(20000), headers: { 'User-Agent': USER_AGENT, ...cabeceras } });
-      const cuerpo = (await r.text()).slice(0, 600).replace(/\s+/g, ' ');
-      salida[nombre] = {
-        estado: r.status,
-        server: r.headers.get('server'),
-        mitigated: r.headers.get('cf-mitigated'),
-        tipo: r.headers.get('content-type'),
-        cuerpo: /pdf/i.test(r.headers.get('content-type') || '') ? '(pdf)' : cuerpo,
-      };
-    } catch (e) {
-      salida[nombre] = { error: String(e?.cause?.code || e?.message) };
-    }
-  };
-  await ver('ip', 'https://ipinfo.io/json');
-  for (const [k, u] of Object.entries(pruebas)) await ver(k, u);
-  await ver('wwwtest_ua_navegador', pruebas.directo_wwwtest, {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-    'Accept-Language': 'es-AR,es;q=0.9',
-    Referer: 'https://www.tsjbaires.gov.ar/',
-  });
-  if (RELE_URL) await ver('via_rele', urlParaPedir(pruebas.directo_wwwtest, 'www-test.tsjbaires.gov.ar'));
-  salida.entorno = { version: 'nav2', node: process.version, plataforma: `${process.platform}/${process.arch}`, memLibreMB: Math.round(os.freemem() / 1e6), memTotalMB: Math.round(os.totalmem() / 1e6) };
-  if (_req.query.navegador) {
-    const informe = {};
-    const t0 = Date.now();
-    try {
-      const r = await traerConNavegador(pruebas.directo_wwwtest, informe);
-      salida.navegador = { ...informe, estado: r.estado, tipo: r.contentType, bytes: r.buffer.length, inicio: r.buffer.subarray(0, 5).toString('latin1'), ms: Date.now() - t0 };
-    } catch (e) {
-      salida.navegador = { ...informe, error: String(e?.message || e).slice(0, 300), ms: Date.now() - t0, estado: estadoNavegador() };
-    }
-  }
-  res.json(JSON.parse(sinClave(JSON.stringify(salida))));
-});
-
 router.get('/tesauro/estado', (_req, res) => {
   res.json({ ok: true, disponible: hayModelo() });
 });
