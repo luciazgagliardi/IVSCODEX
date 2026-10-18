@@ -5088,6 +5088,13 @@ function panelIndice(f){
     // se puede saltar directo a cualquier página, como en cualquier buscador.
     paginadorIndice(f,im)+
     (im.desdeNavegador?'<div class="aviso" style="margin:0 0 10px">Esta búsqueda la hizo <b>su computadora</b>, no el servidor: SAIJ no atiende pedidos desde donde está publicada la web, pero sí desde un navegador común. Por eso estos resultados no quedan guardados en el índice local.</div>':'')+
+    // «Frase exacta» es el modo por defecto y es el más estricto: sólo cuentan
+    // los documentos con las palabras juntas y en ese orden. Cuando deja poco,
+    // se ofrece el modo siguiente con un clic (con «daño extrapatrimonial» el TSJ
+    // da 3 por frase y 6 por todas las palabras: se vio en uso real).
+    (estado.modo==="exacta"&&!local&&(im.total||0)<=12&&String(estado.q||"").trim().split(/\s+/).length>1
+      ?'<div class="aviso" style="margin:0 0 10px">Con «frase exacta» el resultado es corto: sólo cuentan los documentos que traen las palabras juntas y en ese orden. <button type="button" class="mini" data-act="modo-y-buscar" data-modo="todas" data-fuente="'+esc(f.slug)+'">Probar con «todas las palabras»</button></div>'
+      :'')+
     (im.aflojado?'<div class="aviso" style="margin:0 0 10px">Ningún resultado tiene <b>todas</b> las palabras buscadas. Estos coinciden solo con la más específica, así que revíselos con cuidado: puede que no sean del tema buscado.</div>':'')+
     // El sitio de CABA no manda un resumen del fallo con cada resultado
     // como hace Mendoza: los pasajes se sacan del documento en sí, de a
@@ -7309,6 +7316,11 @@ document.addEventListener("click",function(ev){
     render(); return;
   }
   if(act==="buscar-indice"){
+    buscarEnFuente(b.getAttribute("data-fuente"));
+    return;
+  }
+  if(act==="modo-y-buscar"){ // cambia cómo se combinan las palabras y repite la búsqueda de esa fuente
+    estado.modo=b.getAttribute("data-modo");
     buscarEnFuente(b.getAttribute("data-fuente"));
     return;
   }
