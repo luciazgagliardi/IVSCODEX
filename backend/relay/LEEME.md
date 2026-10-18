@@ -17,3 +17,12 @@ lo resuelve, gratis, con un Worker de Cloudflare.
 
 Si el TSJ también bloqueara a Cloudflare, el resultado seguirá sin texto y la
 aplicación lo avisa; en ese caso queda el botón «Descargar y abrir en el Lector».
+
+## Resultado de la prueba (18/10/2026)
+Se instaló y se probó: el servidor publicado envía el pedido al Worker, el Worker
+acepta la clave y llega al TSJ, pero el TSJ (www-test.tsjbaires.gov.ar) responde
+403 también a Cloudflare. Es probable que ese sitio solo atienda conexiones
+desde Argentina o de redes domésticas. Por lo tanto este relevo NO resuelve el
+TSJ, y se puede quitar `RELE_URL` y `RELE_CLAVE` de Azure sin consecuencias.
+Se conserva por si el TSJ cambia su política o si se consigue un relevo con
+salida desde Argentina.
