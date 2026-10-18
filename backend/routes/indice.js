@@ -46,6 +46,8 @@ const hostDe = (u) => { try { return new URL(u).hostname; } catch { return ''; }
 
 /** Cuántos documentos como mucho se traen en un mismo pedido de fragmentos. */
 const MAX_FRAGMENTOS = 6;
+/** Cuánto se trabaja en una tanda de fragmentos antes de devolver lo que haya (ms). */
+const PRESUPUESTO_MS = 22_000;
 /** Caracteres a cada lado de la coincidencia en el pasaje devuelto. */
 const VENTANA = 160;
 
@@ -389,7 +391,17 @@ for (const { slug, buscar } of FUENTES) {
       const pedidas = urls.filter((u) => typeof u === 'string' && u && u.length <= 2048).slice(0, MAX_FRAGMENTOS);
 
       const fragmentos = [];
-      for (const url of pedidas) {
+      let pendientes = [];
+      for (let i = 0; i < pedidas.length; i++) {
+        const url = pedidas[i];
+        // Los documentos largos (sentencias de la Corte IDH, de varios MB) pueden
+        // sumar más de lo que el navegador espera por una tanda (40 s). Pasado el
+        // presupuesto se devuelve lo ya leído y se avisa cuáles faltan, para que la
+        // pantalla los pida en la tanda siguiente. El primero siempre se procesa.
+        if (i > 0 && Date.now() - arranque > PRESUPUESTO_MS) {
+          pendientes = pedidas.slice(i);
+          break;
+        }
         try {
           // Dialnet: lo útil es el resumen del artículo (otra página de la misma ficha).
           if (/^https?:\/\/dialnet\.unirioja\.es\/servlet\/articulo/i.test(url)) {
@@ -417,7 +429,7 @@ for (const { slug, buscar } of FUENTES) {
         }
       }
 
-      res.json({ ok: true, fragmentos, ms: Date.now() - arranque });
+      res.json({ ok: true, fragmentos, ...(pendientes.length ? { pendientes } : {}), ms: Date.now() - arranque });
     } catch (e) {
       next(e instanceof ErrorApp ? e : errores.indiceFuenteFalla(slug, e?.message));
     }

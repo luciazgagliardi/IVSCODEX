@@ -2505,7 +2505,7 @@ function preguntarPorElModelo(){
 }
 
 function nuevoEstado(){
-  return {tab:"buscar",q:"",modo:"exacta",excluir:"",desde:"",hasta:"",
+  return {tab:"buscar",q:"",modo:"todas",excluir:"",desde:"",hasta:"",
           rama:"",buscarRama:"",
           // Voces que el intérprete propuso para lo último que se escribió
           // en lenguaje natural. Se guardan aparte de q para que tocar una
@@ -4395,8 +4395,11 @@ function traerFragmentos(slug,pedido){
       // Todo lo que se pidió queda marcado como intentado, haya vuelto o
       // no: si el servidor frenó por límite de peticiones, la tanda
       // siguiente pediría lo mismo y no terminaría nunca.
+      // Salvo los que el servidor dijo que dejó para después (se le acabó el
+      // tiempo de la tanda): esos se piden de nuevo en la que sigue.
+      var despues=(d&&d.pendientes)||[];
       tanda.forEach(function(u){
-        if(!im.fragmentos.hasOwnProperty(u)) im.fragmentos[u]="";
+        if(!im.fragmentos.hasOwnProperty(u)&&despues.indexOf(u)===-1) im.fragmentos[u]="";
       });
       if(d&&d.ok===false){ im.fragCargando=false; render(); return; }
       render();
@@ -7459,7 +7462,7 @@ document.addEventListener("click",function(ev){
   if(act==="cerrar-sugeridas"){ estado.sugeridas=[]; estado.sugeridaRama=""; render(); return; }
   if(act==="copiar-cadena"){ copiar(cadena()); return; }
   if(act==="limpiar"){
-    estado.q="";estado.excluir="";estado.desde="";estado.hasta="";estado.rama="";estado.modo="exacta";
+    estado.q="";estado.excluir="";estado.desde="";estado.hasta="";estado.rama="";estado.modo="todas";
     render(); return;
   }
   // ---- cálculos, plazos y calendario ----
