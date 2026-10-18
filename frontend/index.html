@@ -4286,7 +4286,24 @@ function fichaIndice(f,r){
   // CABA no publica sumario, pero cada fallo trae los temas con que el propio
   // tribunal lo clasifica (tesauro). Se muestran siempre: son lo que queda
   // cuando el PDF no se puede leer desde el servidor, y orientan igual cuando sí.
-  var temas=(f.slug==="caba"&&r.voces&&r.voces.length)?r.voces.slice(0,14).join(" · "):"";
+  var temas="";
+  if(f.slug==="caba"&&r.voces&&r.voces.length){
+    // Primero los temas que contienen lo que se buscó: son los que dicen por
+    // qué apareció este fallo.
+    var claves=palabrasResaltables(q).map(function(w){
+      return w.replace(/["'()]/g,"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+    });
+    var coincide=function(v){
+      var n=v.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+      return claves.some(function(k){ return n.indexOf(k)>-1; });
+    };
+    var ordenados=r.voces.filter(coincide).concat(r.voces.filter(function(v){ return !coincide(v); }));
+    temas=ordenados.slice(0,14).join(" · ");
+    // Con los temas a la vista la ficha no queda vacía: no se muestra ni el
+    // "buscando…" ni el aviso de que el PDF no se pudo leer. Si el pasaje
+    // llega, aparece arriba; si no, el botón del Lector sigue estando.
+    esperando=false; sinPasaje="";
+  }
   return '<div class="fuente">'+
     '<div class="f-top"><span class="cod '+f.clase+'">'+esc(f.cod)+'</span>'+
       (metaEnc?'<span class="f-enc">'+metaEnc+'</span>':'')+
@@ -4301,7 +4318,7 @@ function fichaIndice(f,r){
     '<div class="f-acc" style="margin-top:8px">'+
       (r.linkFicha?'<a class="mini" href="'+esc(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
       marcaTema+
-      (r.linkFallo?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>':"")+
+      (r.linkFallo&&!(f.slug==="caba"&&uf&&im.fragmentos.hasOwnProperty(uf)&&!im.fragmentos[uf])?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>':"")+
       // Si el documento se puede traer, también se puede abrir donde vive:
       // el enlace al sitio oficial es lo que hace citable al resultado.
       //
