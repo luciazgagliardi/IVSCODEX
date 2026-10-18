@@ -475,7 +475,7 @@ router.get('/diag-tsj', async (_req, res) => {
     Referer: 'https://www.tsjbaires.gov.ar/',
   });
   if (RELE_URL) await ver('via_rele', urlParaPedir(pruebas.directo_wwwtest, 'www-test.tsjbaires.gov.ar'));
-  salida.entorno = { node: process.version, plataforma: `${process.platform}/${process.arch}`, memLibreMB: Math.round(os.freemem() / 1e6), memTotalMB: Math.round(os.totalmem() / 1e6) };
+  salida.entorno = { version: 'nav2', node: process.version, plataforma: `${process.platform}/${process.arch}`, memLibreMB: Math.round(os.freemem() / 1e6), memTotalMB: Math.round(os.totalmem() / 1e6) };
   if (_req.query.navegador) {
     const informe = {};
     const t0 = Date.now();
