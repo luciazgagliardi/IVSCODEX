@@ -2438,7 +2438,10 @@ var FUENTES_INDICE=[
   nota:"Jurisprudencia, legislación y doctrina unificada de fueros federales, nacionales y provinciales de toda la Argentina.",
   tribunales:[
     {v:"sumarios",n:"Sumarios (con doctrina)"},
-    {v:"fallos",n:"Fallos (ficha del expediente)"}
+    {v:"fallos",n:"Fallos (ficha del expediente)"},
+    {v:"legislacion",n:"Legislación (con el artículo)"},
+    {v:"doctrina",n:"Doctrina (con extracto)"},
+    {v:"dictamenes",n:"Dictámenes del Ministerio Público Fiscal"}
   ]},
  {slug:"dialnet",cod:"DIALNET",clase:"doc",boton:"Dialnet",
   nombre:"Dialnet · doctrina jurídica en español",
@@ -4425,7 +4428,10 @@ function traerFragmentos(slug,pedido){
 var SAIJ_URL="https://www.saij.gob.ar/busqueda";
 var SAIJ_TIPOS={
   sumarios:"Total|Tipo de Documento/Jurisprudencia/Sumario",
-  fallos:"Total|Tipo de Documento/Jurisprudencia/Fallo"
+  fallos:"Total|Tipo de Documento/Jurisprudencia/Fallo",
+  legislacion:"Total|Tipo de Documento/Legislación",
+  doctrina:"Total|Tipo de Documento/Doctrina",
+  dictamenes:"Total|Tipo de Documento/Dictamen"
 };
 /* La Corte Suprema sale de SAIJ filtrando por su faceta de tribunal. Solo
    los fallos traen ese campo, así que va siempre por fallos (ver la nota en
@@ -4479,10 +4485,32 @@ function saijARegistro(bruto){
   try{ doc=JSON.parse(bruto.documentAbstract).document; }catch(e){ return null; }
   var c=(doc&&doc.content)||{}, uuid=doc&&doc.metadata&&doc.metadata.uuid;
   if(!uuid) return null;
-  var esSumario=doc.metadata["document-content-type"]==="sumario";
+  var clase=doc.metadata["document-content-type"]||(doc.metadata.document_type==="Dictamen"?"dictamen":"");
+  var esSumario=clase==="sumario";
   var partes=[c.actor,c.demandado].filter(Boolean).join(" c/ ")+(c.sobre?" s/ "+c.sobre:"");
   var voces=[].concat((c.descriptores&&c.descriptores.descriptor)||[])
     .map(function(d){ return d&&d.elegido&&d.elegido.termino; }).filter(Boolean);
+  /* Legislación, doctrina y dictámenes: este camino sólo ve lo que trae la
+     búsqueda (título y temas); el artículo o extracto donde está la
+     coincidencia lo agrega el servidor (lib/indiceSaij.js). */
+  if(clase==="legislacion"||clase==="doctrina"||clase==="dictamen"){
+    var tipoN=(c["tipo-norma"]&&c["tipo-norma"].texto)||"";
+    return {
+      id:"saij_"+uuid,
+      expediente:clase==="legislacion"?[tipoN,c["numero-norma"]].filter(Boolean).join(" ")
+        :(clase==="doctrina"?(c["numero-doctrina"]||""):(c.numero_dictamen?"Dictamen "+c.numero_dictamen:"")),
+      caratula:(clase==="legislacion"?saijLimpiar(c["titulo-norma"]||c["nombre-coloquial"]||c.sumario)
+        :(clase==="doctrina"?saijLimpiar(c["titulo-doctrina"]):saijLimpiar(c.partes||c.titulo)))||"(sin título)",
+      sumario:saijLimpiar(c.sumario||c.titulo),
+      voces:voces,
+      fecha:saijFecha(c.fecha||c["fecha-publicacion"]),
+      tribunal:clase==="legislacion"?[c.provincia,c.estado].filter(Boolean).join(" · ")
+        :(clase==="doctrina"?saijLimpiar(c.publicacion):saijLimpiar(c.emisor&&c.emisor.descripcion)),
+      magistrados:clase==="doctrina"?saijLimpiar(c["autor-doctrina"]&&c["autor-doctrina"].autor):"",
+      linkFicha:"https://www.saij.gob.ar/"+uuid,
+      linkFallo:null
+    };
+  }
   return {
     id:"saij_"+uuid,
     expediente:c["numero-interno"]||c["id-infojus"]||"",

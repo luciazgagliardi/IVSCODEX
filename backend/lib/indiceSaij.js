@@ -36,6 +36,7 @@ import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
+import { raicesDe } from './relevancia.js';
 
 const HOST = 'www.saij.gob.ar';
 const URL_BUSQUEDA = `https://${HOST}/busqueda`;
@@ -49,6 +50,11 @@ const TIPOS = {
   sumarios: 'Total|Tipo de Documento/Jurisprudencia/Sumario',
   fallos: 'Total|Tipo de Documento/Jurisprudencia/Fallo',
   todo: 'Total|Tipo de Documento/Jurisprudencia',
+  // No son jurisprudencia pero SAIJ las ofrece con el mismo motor (verificado:
+  // "daño moral" da 4.165 normas, 1.907 artículos de doctrina y 358 dictámenes).
+  legislacion: 'Total|Tipo de Documento/Legislación',
+  doctrina: 'Total|Tipo de Documento/Doctrina',
+  dictamenes: 'Total|Tipo de Documento/Dictamen',
 };
 
 /**
@@ -158,7 +164,13 @@ function aRegistro(bruto) {
   const uuid = doc?.metadata?.uuid;
   if (!uuid) return null;
 
-  const esSumario = doc?.metadata?.['document-content-type'] === 'sumario';
+  const clase =
+    doc?.metadata?.['document-content-type'] || (doc?.metadata?.document_type === 'Dictamen' ? 'dictamen' : '');
+  if (clase === 'legislacion' || clase === 'doctrina' || clase === 'dictamen') {
+    return aRegistroNoJuris(clase, doc, c, uuid);
+  }
+
+  const esSumario = clase === 'sumario';
   // En un fallo la carátula se arma con las partes; en un sumario el título
   // ya viene armado con los descriptores.
   const caratula = esSumario
@@ -182,6 +194,61 @@ function aRegistro(bruto) {
     // que traerla al lector no daría texto: se ofrece solo como enlace.
     linkFicha: `https://${HOST}/${uuid}`,
     linkFallo: null,
+  };
+}
+
+/**
+ * Legislación, doctrina y dictámenes: la ficha de búsqueda trae el título y
+ * una línea de temas, no el texto donde está la coincidencia. Ese texto se
+ * pide después, por documento (ver enriquecerDocumentos), y mientras tanto
+ * la línea de temas hace de sumario para que la ficha no quede vacía.
+ */
+function aRegistroNoJuris(clase, doc, c, uuid) {
+  const base = {
+    id: `saij_${uuid}`,
+    voces: sacarVoces(c.descriptores),
+    linkFicha: `https://${HOST}/${uuid}`,
+    linkFallo: null,
+    _guid: null,
+    _clase: clase,
+  };
+  if (clase === 'legislacion') {
+    const tipo = c['tipo-norma']?.texto || '';
+    const numero = c['numero-norma'] ?? '';
+    const titulo = limpiarTexto(c['titulo-norma'] || c['nombre-coloquial']);
+    return {
+      ...base,
+      expediente: [tipo, numero].filter(Boolean).join(' '),
+      caratula: titulo || limpiarTexto(c.sumario) || [tipo, numero].filter(Boolean).join(' ') || '(sin título)',
+      sumario: limpiarTexto(c.sumario),
+      fecha: fechaLegible(c.fecha),
+      tribunal: [c.provincia, c.estado].filter(Boolean).join(' · '),
+      magistrados: '',
+      _guid: uuid,
+    };
+  }
+  if (clase === 'doctrina') {
+    return {
+      ...base,
+      expediente: c['numero-doctrina'] || '',
+      caratula: limpiarTexto(c['titulo-doctrina']) || '(sin título)',
+      sumario: limpiarTexto(c.sumario),
+      fecha: fechaLegible(c['fecha-publicacion']),
+      tribunal: limpiarTexto(c.publicacion),
+      magistrados: limpiarTexto(c['autor-doctrina']?.autor),
+      _guid: uuid,
+    };
+  }
+  // Dictamen: el sumario del dictamen ya viene en la búsqueda, no hace falta pedir nada más.
+  return {
+    ...base,
+    expediente: c.numero_dictamen ? `Dictamen ${c.numero_dictamen}` : '',
+    caratula: limpiarTexto(c.partes) || limpiarTexto(c.titulo) || '(sin título)',
+    sumario: limpiarTexto(c.sumario) || limpiarTexto(c.titulo),
+    fecha: fechaLegible(c.fecha),
+    tribunal: limpiarTexto(c.emisor?.descripcion),
+    magistrados: '',
+    _tema: limpiarTexto(c.titulo),
   };
 }
 
@@ -271,6 +338,129 @@ async function enriquecerConSumarios(registros, q) {
   }
 }
 
+/*
+ * Legislación y doctrina: el texto vive en view-document, y la coincidencia se
+ * muestra con el artículo (en una ley) o el extracto (en doctrina) donde
+ * aparecen las palabras buscadas. El texto completo de una ley puede pesar
+ * cientos de KB, así que NO se guarda: sólo el pasaje ya recortado.
+ */
+const CACHE_PASAJES = new Map();
+const MAX_CACHE_PASAJES = 600;
+
+async function contenidoDe(guid, senal) {
+  try {
+    const resp = await fetch(`https://${HOST}/view-document?guid=${encodeURIComponent(guid)}`, {
+      signal: senal,
+      headers: {
+        'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`,
+        Accept: 'application/json, text/plain, */*',
+        'Accept-Language': 'es-AR,es;q=0.9',
+        Referer: `https://${HOST}/`,
+      },
+    });
+    if (!resp.ok) return null;
+    const j = await resp.json();
+    return j?.data ? JSON.parse(j.data)?.document?.content || null : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Los artículos de una norma, aplanando el árbol de títulos y capítulos. */
+function articulosDe(nodo, salida = []) {
+  if (Array.isArray(nodo)) {
+    for (const n of nodo) articulosDe(n, salida);
+  } else if (nodo && typeof nodo === 'object') {
+    if (typeof nodo.texto === 'string' && 'numero-articulo' in nodo) {
+      salida.push(limpiarTexto(nodo.texto));
+    } else {
+      for (const v of Object.values(nodo)) if (v && typeof v === 'object') articulosDe(v, salida);
+    }
+  }
+  return salida;
+}
+
+/**
+ * De una lista de textos (los artículos de una ley, o el extracto y el sumario
+ * de una nota de doctrina), el que mejor responde a la consulta. Devuelve
+ * también qué cumple, para poder exigir lo que pidió el modo de búsqueda:
+ * todas las palabras juntas, la frase entera, o al menos una.
+ */
+function mejorTexto(textos, raices, q) {
+  const frase = sinAcentos(q).replace(/[^a-z0-9ñ\s]+/g, ' ').replace(/\s+/g, ' ').trim();
+  let mejor = null;
+  for (const t of textos) {
+    const plano = sinAcentos(t).replace(/\s+/g, ' ');
+    const cuenta = raices.reduce((n, r) => n + (plano.includes(r) ? 1 : 0), 0);
+    if (!cuenta) continue;
+    const todas = cuenta === raices.length;
+    const conFrase = Boolean(frase) && plano.includes(frase);
+    const puntaje = cuenta + (todas ? raices.length : 0) + (conFrase ? raices.length * 2 : 0);
+    if (!mejor || puntaje > mejor.puntaje) mejor = { texto: t, puntaje, todas, conFrase };
+  }
+  return mejor;
+}
+
+const cumpleModo = (m, modo) => Boolean(m) && (modo === 'exacta' ? m.conFrase : modo === 'todas' ? m.todas : true);
+
+/**
+ * Para legislación y doctrina: pide el texto de cada documento y deja como
+ * sumario el pasaje donde está la coincidencia. Un documento cuyo texto no
+ * cumple lo que pide el modo queda marcado con `_descartar`: la búsqueda de
+ * SAIJ es un OR sobre todo el texto y sin esto aparecerían normas que no dicen
+ * lo buscado en ningún artículo. Si el texto no se pudo traer (red, tiempo),
+ * NO se descarta: queda con su línea de temas.
+ */
+async function enriquecerDocumentos(registros, q, modo = 'todas') {
+  const raices = raicesDe(q);
+  if (!raices.length) return;
+  // El sumario de un dictamen ya viene entero en la búsqueda: sólo se lo recorta alrededor de lo buscado.
+  for (const r of registros) {
+    if (r?._clase === 'dictamen' && r.sumario) r.sumario = recorteAlrededor(r.sumario, raices);
+  }
+  const pendientes = registros.filter((r) => r && r._guid);
+  if (!pendientes.length) return;
+  const control = new AbortController();
+  const tope = setTimeout(() => control.abort(), 9000); // mejor esfuerzo, como con los sumarios
+  let i = 0;
+  async function uno() {
+    while (i < pendientes.length) {
+      const r = pendientes[i++];
+      const clave = `${r._guid}|${raices.join(' ')}|${modo}`;
+      let hecho = CACHE_PASAJES.get(clave);
+      if (!hecho) {
+        const c = await contenidoDe(r._guid, control.signal);
+        if (!c) continue; // sin red o cortado: queda la línea de temas y se reintenta la próxima vez
+        let textos;
+        if (r._clase === 'legislacion') {
+          // Las normas largas traen los artículos dentro de títulos y capítulos
+          // (segmento); las cortas los traen sueltos en el nivel de arriba (articulo).
+          textos = articulosDe([c.segmento, c.articulo]);
+          if (!textos.length && typeof c.texto === 'string') textos = [limpiarTexto(c.texto)];
+        } else {
+          textos = [limpiarTexto(c.texto), limpiarTexto(c.sumario)].filter(Boolean);
+        }
+        const m = mejorTexto(textos, raices, q);
+        hecho = {
+          ok: cumpleModo(m, modo),
+          pasaje: m ? recorteAlrededor(m.texto, raices) : '',
+          titulo: r._clase === 'legislacion' ? limpiarTexto(c['titulo-norma'] || c['nombre-coloquial']) : '',
+        };
+        if (CACHE_PASAJES.size >= MAX_CACHE_PASAJES) CACHE_PASAJES.clear();
+        CACHE_PASAJES.set(clave, hecho);
+      }
+      if (hecho.pasaje) r.sumario = hecho.pasaje;
+      if (hecho.titulo && r.caratula === '(sin título)') r.caratula = hecho.titulo;
+      if (!hecho.ok) r._descartar = true;
+    }
+  }
+  try {
+    await Promise.all(Array.from({ length: 6 }, uno));
+  } finally {
+    clearTimeout(tope);
+  }
+}
+
 /** Lo que no se pudo traer queda con el tema del fallo, que también describe de qué trata. */
 function cerrarRegistros(registros) {
   for (const r of registros) {
@@ -278,6 +468,9 @@ function cerrarRegistros(registros) {
     if (!r.sumario && r._tema) r.sumario = r._tema;
     delete r._rel;
     delete r._tema;
+    delete r._guid;
+    delete r._clase;
+    delete r._descartar;
   }
 }
 
@@ -297,6 +490,9 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
   if (!termino) throw errores.consultaVacia();
 
   const faceta = soloCsjn ? FACETA_CSJN : (TIPOS[tribunal] || TIPOS.sumarios);
+  // Legislación y doctrina se filtran mirando el texto del documento (ver
+  // enriquecerDocumentos), no su título: el modo se aplica ahí.
+  const esTexto = !soloCsjn && (tribunal === 'legislacion' || tribunal === 'doctrina');
   // SAIJ toma un offset de fila directo ("o"), así que el cursor viaja tal
   // cual. El cálculo por número de página queda solo para quien todavía
   // llame sin cursor (lib/verificarCita.js pide siempre la primera).
@@ -320,7 +516,9 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
     const parametros = new URLSearchParams({
       q: termino,
       o: String(offset),
-      p: String(POR_PEDIDO),
+      // Legislación y doctrina piden el texto de CADA documento para mostrar la
+      // coincidencia, así que se trae de a una página y no de a cien.
+      p: String(esTexto ? Math.min(POR_PEDIDO, porPagina) : POR_PEDIDO),
       f: faceta,
     });
     const datos = await pedirBusqueda(parametros.toString());
@@ -329,7 +527,10 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
     // Sin filtrar los null: cada documento que mandó SAIJ ocupa su posición
     // aunque no se haya podido leer, porque el cursor cuenta filas del
     // sitio. Ver la nota de traer() en lib/paginarFiltrado.js.
-    return crudos.map(aRegistro);
+    const registros = crudos.map(aRegistro);
+    if (!esTexto) return registros;
+    await enriquecerDocumentos(registros, termino, modo);
+    return registros.map((r) => (r && r._descartar ? null : r));
   };
 
   const { resultados, revisados, siguienteDesde, aflojado } = await paginarFiltrado({
@@ -340,7 +541,7 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
     total: () => totalCrudo,
     porPagina,
     q: termino,
-    modo,
+    modo: esTexto ? 'alguna' : modo, // el modo real ya se aplicó sobre el texto completo
     excluir,
     anioDesde,
     anioHasta,
@@ -350,6 +551,7 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
   if (!totalCrudo) return { total: 0, totalFuente: 0, siguienteDesde: null, revisados: 0, pagina, porPagina, resultados: [] };
 
   await enriquecerConSumarios(resultados, termino);
+  await enriquecerDocumentos(resultados, termino, modo); // dictámenes; legislación y doctrina ya pasaron por traer()
   cerrarRegistros(resultados);
 
   return {
