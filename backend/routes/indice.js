@@ -33,6 +33,17 @@ function anioValido(v) {
 /** Los modos de búsqueda que entiende la API. Cualquier otro se ignora. */
 const MODOS = new Set(['exacta', 'todas', 'alguna']);
 
+/**
+ * Sitios que le cerraron la puerta a este servidor (401/403). Si el TSJ de
+ * CABA rechaza el primer PDF, rechaza todos: insistir con los otros cinco de
+ * la tanda, y con las tandas siguientes, sólo demora la pantalla. Se recuerda
+ * el rechazo unos minutos y los demás documentos del mismo sitio vuelven al
+ * instante con el mismo aviso.
+ */
+const SITIOS_CERRADOS = new Map(); // host -> { hasta, mensaje }
+const MINUTOS_CERRADO = 10;
+const hostDe = (u) => { try { return new URL(u).hostname; } catch { return ''; } };
+
 /** Cuántos documentos como mucho se traen en un mismo pedido de fragmentos. */
 const MAX_FRAGMENTOS = 6;
 /** Caracteres a cada lado de la coincidencia en el pasaje devuelto. */
@@ -390,14 +401,19 @@ for (const { slug, buscar } of FUENTES) {
             });
             continue;
           }
+          const cerrado = SITIOS_CERRADOS.get(hostDe(url));
+          if (cerrado && cerrado.hasta > Date.now()) {
+            fragmentos.push({ url, fragmento: '', error: cerrado.mensaje });
+            continue;
+          }
           const doc = await obtenerDocumento(url);
           fragmentos.push({ url, fragmento: recortarPasaje(doc.texto, q), error: null });
         } catch (e) {
-          fragmentos.push({
-            url,
-            fragmento: '',
-            error: e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.',
-          });
+          const mensaje = e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.';
+          if (e?.codigo === 'RESPUESTA_NO_OK' && [401, 403].includes(e.extra?.estadoOrigen)) {
+            SITIOS_CERRADOS.set(hostDe(url), { hasta: Date.now() + MINUTOS_CERRADO * 60_000, mensaje });
+          }
+          fragmentos.push({ url, fragmento: '', error: mensaje });
         }
       }
 

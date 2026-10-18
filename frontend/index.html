@@ -4283,15 +4283,20 @@ function fichaIndice(f,r){
         ? "Dialnet no publica un resumen de este artículo."
         : "No se pudo traer el texto de este documento desde el servidor. Use «Descargar y abrir en el Lector» para leerlo.")
     : "";
+  // CABA no publica sumario, pero cada fallo trae los temas con que el propio
+  // tribunal lo clasifica (tesauro). Se muestran siempre: son lo que queda
+  // cuando el PDF no se puede leer desde el servidor, y orientan igual cuando sí.
+  var temas=(f.slug==="caba"&&r.voces&&r.voces.length)?r.voces.slice(0,14).join(" · "):"";
   return '<div class="fuente">'+
     '<div class="f-top"><span class="cod '+f.clase+'">'+esc(f.cod)+'</span>'+
       (metaEnc?'<span class="f-enc">'+metaEnc+'</span>':'')+
       (fechaEnc?'<span class="f-fecha">'+fechaEnc+'</span>':'')+'</div>'+
     '<h3 class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</h3>'+
     (pasaje?'<p class="f-nota">'+resaltarSimple(pasaje,q)+'</p>':'')+
+    (temas?'<p class="f-nota"><span style="opacity:.6">Temas que el TSJ asigna a este fallo: </span>'+resaltarSimple(temas,q)+'</p>':'')+
     (esperando?'<p class="f-nota" style="opacity:.55;font-style:italic">Buscando el pasaje en el documento…</p>':'')+
     (sinPasaje?'<p class="f-nota" style="opacity:.55;font-style:italic">'+esc(sinPasaje)+'</p>':'')+
-    (r.voces&&r.voces.length?'<div class="voces">'+r.voces.slice(0,6).map(function(v){
+    (f.slug!=="caba"&&r.voces&&r.voces.length?'<div class="voces">'+r.voces.slice(0,6).map(function(v){
       return '<span class="voz" style="cursor:default">'+esc(v)+'</span>';}).join("")+'</div>':"")+
     '<div class="f-acc" style="margin-top:8px">'+
       (r.linkFicha?'<a class="mini" href="'+esc(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
