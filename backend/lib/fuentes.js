@@ -34,6 +34,7 @@ import { buscarCaba } from './indiceCaba.js';
 import { buscarSaij } from './indiceSaij.js';
 import { buscarDialnet } from './indiceDialnet.js';
 import { buscarMendozaLegal } from './indiceMendozaLegal.js';
+import { buscarCorteidh } from './indiceCorteidh.js';
 
 /**
  * Cómo pedirle a cada buscador los fallos que citan un artículo.
@@ -124,6 +125,15 @@ export const FUENTES = [
     nombre: 'Mendoza Legal · jurisprudencia seleccionada',
     tribunalPorDefecto: null,
     buscar: (args) => buscarMendozaLegal(args),
+  },
+  // Internacional: sentencias, opiniones consultivas y resoluciones de la Corte
+  // Interamericana. Como Dialnet y Mendoza Legal, no sirve para confirmar que un
+  // expediente nacional existe: el verificador de citas no la elige (ver arriba).
+  {
+    slug: 'corteidh',
+    nombre: 'Corte Interamericana de Derechos Humanos',
+    tribunalPorDefecto: null,
+    buscar: (args) => buscarCorteidh(args),
   },
 ];
 
