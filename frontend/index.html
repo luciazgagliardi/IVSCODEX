@@ -223,10 +223,9 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
  * ================================================================== */
 .top{
   position:sticky;top:0;z-index:50;padding-top:env(safe-area-inset-top,0px);
-  background:rgba(16,14,11,.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line)
-}
-.nav-wrap{display:flex;align-items:center;gap:24px;padding:22px clamp(18px,3.2vw,48px) 21px}   /* las medidas de la barra de la portada (la línea de abajo suma el píxel que falta) */
+  background:rgba(16,14,11,.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)
+}   /* sin línea separadora debajo, en ninguna sección */
+.nav-wrap{display:flex;align-items:center;gap:24px;padding:22px clamp(18px,3.2vw,48px) 22px}   /* las medidas de la barra de la portada */
 /* Las medidas son las de sigillvm.com: la marca ocupa 180 × 44 px, el
    símbolo mide 24 px y la palabra va 12 px a su derecha. */
 .marca-app{display:inline-flex;align-items:center;flex:none;width:auto;height:auto;padding:0;border:0;background:none;color:var(--fg)}
@@ -775,7 +774,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   padding:calc(22px + env(safe-area-inset-top,0px)) var(--pad) 18px;border-bottom:1px solid transparent;
   transition:background .5s,border-color .5s,padding .5s
 }
-.pt-hdr.is-solid{padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:14px;background:rgba(16,14,11,.84);border-bottom-color:var(--line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.pt-hdr.is-solid{padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:14px;background:rgba(16,14,11,.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .pt-brand{position:relative;display:block;width:180px;height:44px;flex:none}
 .pt-brand__tag,.pt-brand__name{position:absolute;left:0;top:50%;transition:opacity .45s,transform .45s var(--ease)}
 .pt-brand__tag{transform:translateY(-50%);font-size:15px;line-height:1.35;white-space:nowrap}
