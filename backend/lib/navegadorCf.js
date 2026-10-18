@@ -68,7 +68,19 @@ async function abrirNavegador() {
   let executablePath = process.env.CHROME_PATH || '';
   let args = ['--no-sandbox', '--disable-setuid-sandbox', '--lang=es-AR', '--window-size=1366,768'];
   if (!executablePath) {
-    const { default: chromium } = await import('@sparticuz/chromium');
+    // El paquete trae las librerías del sistema que Chrome necesita (libnspr4,
+    // libnss3...) pero solo las activa si cree estar en AWS Lambda; el Linux de
+    // Azure App Service no las tiene (visto en vivo: "libnspr4.so: cannot open
+    // shared object file"). Se le avisa que sí, sólo durante la carga.
+    const previo = process.env.AWS_EXECUTION_ENV;
+    process.env.AWS_EXECUTION_ENV = previo || 'AWS_Lambda_nodejs24.x';
+    let chromium;
+    try {
+      ({ default: chromium } = await import('@sparticuz/chromium'));
+    } finally {
+      if (previo === undefined) delete process.env.AWS_EXECUTION_ENV;
+      else process.env.AWS_EXECUTION_ENV = previo;
+    }
     executablePath = await chromium.executablePath();
     args = [...chromium.args, '--lang=es-AR', '--window-size=1366,768'];
   }
