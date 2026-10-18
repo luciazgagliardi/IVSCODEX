@@ -21,6 +21,8 @@ import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js'
 import { errores, ErrorApp } from '../lib/errores.js';
 import { RELE_URL, USER_AGENT } from '../config.js';
 import { urlParaPedir, sinClave } from '../lib/proxyOrigen.js';
+import { traerConNavegador, estadoNavegador } from '../lib/navegadorCf.js';
+import os from 'node:os';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
 import { NORMAS, articuloDe, rubricaDe } from '../lib/legislacion.js';
 
@@ -473,6 +475,17 @@ router.get('/diag-tsj', async (_req, res) => {
     Referer: 'https://www.tsjbaires.gov.ar/',
   });
   if (RELE_URL) await ver('via_rele', urlParaPedir(pruebas.directo_wwwtest, 'www-test.tsjbaires.gov.ar'));
+  salida.entorno = { node: process.version, plataforma: `${process.platform}/${process.arch}`, memLibreMB: Math.round(os.freemem() / 1e6), memTotalMB: Math.round(os.totalmem() / 1e6) };
+  if (_req.query.navegador) {
+    const informe = {};
+    const t0 = Date.now();
+    try {
+      const r = await traerConNavegador(pruebas.directo_wwwtest, informe);
+      salida.navegador = { ...informe, estado: r.estado, tipo: r.contentType, bytes: r.buffer.length, inicio: r.buffer.subarray(0, 5).toString('latin1'), ms: Date.now() - t0 };
+    } catch (e) {
+      salida.navegador = { ...informe, error: String(e?.message || e).slice(0, 300), ms: Date.now() - t0, estado: estadoNavegador() };
+    }
+  }
   res.json(JSON.parse(sinClave(JSON.stringify(salida))));
 });
 
