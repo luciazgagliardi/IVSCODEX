@@ -103,7 +103,7 @@ async function pedirBusqueda(parametros) {
     // en UTF-8: normaliza la codificación de este lado.
     if (porProxy) return await resp.text();
     const buffer = Buffer.from(await resp.arrayBuffer());
-    return iconv.decode(buffer, 'win1252');
+    return decodificarWin1252(buffer);
   } catch (e) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e; // ya es un ErrorApp
@@ -131,6 +131,56 @@ function urlPdf(origen, expediente, incidente, movimiento, anio) {
   const p = new URLSearchParams({ expediente, anio, incidente, movimiento });
   return `${base}?${p.toString()}`;
 }
+
+/**
+ * Algunas carátulas del TSJ están guardadas en su base ya mal codificadas
+ * (UTF-8 leído como windows-1252 y vuelto a guardar): "N°" queda "NÂ°" y
+ * "PREVENCIÓN" queda "PREVENCIÃ“N". No es algo de este cliente: llega así
+ * del sitio. Como "Ã" y "Â" no existen en castellano jurídico, cada par que
+ * empieza con una de ellas se reinterpreta y se deja el resto del texto como
+ * está; lo que no se pueda desarmar queda igual.
+ */
+const CONTINUACION =
+  '[\\u0022\\u0027\\u0080-\\u00BF\\u0152\\u0153\\u0160\\u0161\\u0178\\u017D\\u017E\\u0192\\u02C6\\u02DC\\u2013\\u2014\\u2018-\\u201E\\u2020-\\u2022\\u2026\\u2030\\u2039\\u203A\\u20AC\\u2122]';
+const PAR_ROTO = new RegExp(`[\u00C2\u00C3]${CONTINUACION}`, 'g');
+const UTF8_ESTRICTO = new TextDecoder('utf-8', { fatal: true });
+/** El byte que originó cada carácter: tal cual hasta 0xFF, por la tabla de windows-1252 más allá. */
+const aBytes = (par) =>
+  Buffer.from([...par].map((c) => {
+    // El sitio a veces aplana las comillas curvas a rectas: "Ó" (C3 93) llega
+    // como Ã" y "Ñ" (C3 91) como Ã'.
+    if (c === '"') return 0x93;
+    if (c === "'") return 0x91;
+    const n = c.codePointAt(0);
+    return n < 0x100 ? n : iconv.encode(c, 'win1252')[0];
+  }));
+export function arreglarCodificacion(texto) {
+  return String(texto ?? '').replace(PAR_ROTO, (par) => {
+    try {
+      return UTF8_ESTRICTO.decode(aBytes(par));
+    } catch {
+      return par;
+    }
+  });
+}
+
+/**
+ * windows-1252 dejando pasar los cinco bytes que esa tabla no define (0x81,
+ * 0x8D, 0x8F, 0x90 y 0x9D). iconv-lite los convierte en "�" y ahí se pierde
+ * qué letra era: en una carátula mal codificada, "Á" e "Í" son justamente
+ * esos bytes (C3 81 y C3 8D). Pasan como el carácter de control del mismo
+ * número, que es lo que arreglarCodificacion sabe volver a armar.
+ */
+const TABLA_C1 = (() => {
+  const t = {};
+  for (let b = 0x80; b <= 0x9f; b++) {
+    const c = iconv.decode(Buffer.from([b]), 'win1252');
+    if (c !== '\uFFFD') t[String.fromCharCode(b)] = c;
+  }
+  return t;
+})();
+const decodificarWin1252 = (buffer) =>
+  buffer.toString('latin1').replace(/[\u0080-\u009F]/g, (c) => TABLA_C1[c] ?? c);
 
 function parsearFilas(html) {
   const consolaMuda = new VirtualConsole();
@@ -167,7 +217,21 @@ function parsearFilas(html) {
 
     const fila = a.closest('tr');
     const celdas = fila ? fila.querySelectorAll('td') : [];
-    const texto = (i) => (celdas[i]?.textContent || '').trim();
+    const texto = (i) => arreglarCodificacion((celdas[i]?.textContent || '').trim());
+
+    // Debajo de cada fila el sitio agrega otra con los «Tesauro asociados»:
+    // los temas con que el propio tribunal clasifica el fallo (por ejemplo
+    // «INDEMNIZACION POR INCAPACIDAD», «INDICE RIPTE»). Es lo más parecido a
+    // un sumario que publica la búsqueda, y viene en la misma respuesta, así
+    // que sirve aunque el PDF no se pueda bajar desde el servidor.
+    const voces = [];
+    for (let sig = fila?.nextElementSibling; sig; sig = sig.nextElementSibling) {
+      if (sig.querySelector('a[onclick^="downloadPDF"]:not(.linkExpOcultar)')) break;
+      sig.querySelectorAll('a[onclick^="busqPorTerminoTesauro"]').forEach((t) => {
+        const v = arreglarCodificacion((t.textContent || '').replace(/\s+/g, ' ').trim());
+        if (v && !voces.includes(v)) voces.push(v);
+      });
+    }
 
     registros.push({
       id,
@@ -175,6 +239,7 @@ function parsearFilas(html) {
       caratula: texto(2),
       secretaria: texto(3),
       fecha: texto(4),
+      voces,
       linkFallo: urlPdf(origen, expediente, incidente, movimiento, anio),
       linkFicha: null, // acá el documento y la ficha son la misma cosa: el PDF
       // Este endpoint manda "Content-Disposition: attachment" (verificado en
