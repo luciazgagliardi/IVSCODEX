@@ -10,6 +10,7 @@
  *   DELETE /api/cache                                 -> vacia el cache
  */
 
+import { estadoCorpus } from '../lib/corpusCorteidh.js';
 import express from 'express';
 import crypto from 'node:crypto';
 import { dominioHabilitado } from '../lib/descargador.js';
@@ -194,6 +195,8 @@ router.get('/salud', (_req, res) => {
     ocrHabilitado: OCR_HABILITADO,
     // Solo un sí o un no (nunca la dirección ni la clave): sirve para saber si el relevo del TSJ está activo.
     releConfigurado: Boolean(process.env.RELE_URL && process.env.RELE_CLAVE),
+    // Avance del índice de texto de la Corte IDH (lib/corpusCorteidh.js).
+    corpusCorteidh: estadoCorpus(),
   });
 });
 

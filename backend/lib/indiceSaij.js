@@ -74,6 +74,22 @@ const TRIBUNAL_CSJN = 'CORTE SUPREMA DE JUSTICIA DE LA NACION';
 // peor que no tenerla.
 const FACETA_CSJN = `Total|Tipo de Documento/Jurisprudencia/Fallo|Tribunal/${TRIBUNAL_CSJN}`;
 
+/*
+ * Pero la FICHA de un fallo de la Corte no tiene texto: SAIJ indexa partes, tema
+ * y voces. Buscar "daño extrapatrimonial" ahí da 58 fichas y ninguna lo dice en
+ * su carátula, así que el filtro por modo las descartaba todas (lo vio una
+ * usuaria con fallos que sí usan el término). El texto de la Corte está en sus
+ * SUMARIOS. Los sumarios no traen faceta de tribunal, pero los de la Corte se
+ * reconocen: jurisdicción Federal y número que empieza con "A" (medido: los 180
+ * sumarios relacionados de 40 fallos de la Corte empiezan todos con "A"; los de
+ * cámaras federales con "D", los de tribunales locales con otras letras), y su
+ * ficha completa trae la carátula del fallo. Buscar usa este camino; el
+ * verificador de citas sigue pidiendo fichas ("fallos"), que es lo que necesita
+ * para confirmar que un expediente existe.
+ */
+const FACETA_CSJN_SUMARIOS = 'Total|Tipo de Documento/Jurisprudencia/Sumario|Jurisdicción/Federal';
+const esSumarioDeLaCorte = (r) => Boolean(r) && /^A\d/i.test(r._numero || '');
+
 async function pedirBusqueda(parametros) {
   await esperarTurno(HOST);
 
@@ -186,6 +202,7 @@ function aRegistro(bruto) {
     sumario: esSumario ? limpiarTexto(c.texto) : '',
     _rel: esSumario ? [] : [].concat(c['sumarios-relacionados']?.['sumario-relacionado'] || []),
     _tema: esSumario ? '' : limpiarTexto(c.sobre),
+    _numero: esSumario ? String(c['numero-sumario'] || '') : '',
     voces: sacarVoces(c.descriptores),
     fecha: fechaLegible(c.fecha),
     tribunal: sacarTribunal(c),
@@ -461,6 +478,41 @@ async function enriquecerDocumentos(registros, q, modo = 'todas') {
   }
 }
 
+/** Para los sumarios de la Corte: la carátula y la fecha del fallo, de la ficha completa. */
+const CACHE_CARATULAS = new Map();
+async function caratulasDeLaCorte(registros) {
+  const pendientes = registros.filter((r) => r && r._numero);
+  if (!pendientes.length) return;
+  const control = new AbortController();
+  const tope = setTimeout(() => control.abort(), 9000);
+  let i = 0;
+  async function uno() {
+    while (i < pendientes.length) {
+      const r = pendientes[i++];
+      const guid = r.id.replace(/^saij_/, '');
+      let dato = CACHE_CARATULAS.get(guid);
+      if (!dato) {
+        const c = await contenidoDe(guid, control.signal);
+        if (!c) continue;
+        dato = { caratula: limpiarTexto(c.caratula), fecha: fechaLegible(c.fecha) };
+        if (CACHE_CARATULAS.size >= 2000) CACHE_CARATULAS.clear();
+        CACHE_CARATULAS.set(guid, dato);
+      }
+      if (dato.caratula) r.caratula = dato.caratula;
+      if (dato.fecha) r.fecha = dato.fecha;
+    }
+  }
+  try {
+    await Promise.all(Array.from({ length: 6 }, uno));
+  } finally {
+    clearTimeout(tope);
+  }
+  for (const r of pendientes) {
+    r.tribunal = 'Corte Suprema de Justicia de la Nación';
+    r.expediente = `Sumario ${r._numero}`;
+  }
+}
+
 /** Lo que no se pudo traer queda con el tema del fallo, que también describe de qué trata. */
 function cerrarRegistros(registros) {
   for (const r of registros) {
@@ -471,7 +523,32 @@ function cerrarRegistros(registros) {
     delete r._guid;
     delete r._clase;
     delete r._descartar;
+    delete r._numero;
   }
+}
+
+/**
+ * Qué se le pregunta a SAIJ. Su buscador es un OR y ordena por relevancia, así
+ * que con "daño extrapatrimonial" trae 40.776 sumarios encabezados por los que
+ * más dicen "daño", y la frase queda enterrada más allá de lo que se revisa.
+ * Para frase exacta y "todas las palabras" alcanza con pedirle la palabra más
+ * específica (la más larga): todo documento que cumpla el modo la contiene, el
+ * conjunto es mucho menor ("extrapatrimonial": 6.655) y el resto se exige acá.
+ * Si la consulta trae un número (búsqueda por artículo) se manda entera: el
+ * número es lo más específico y la palabra más larga sería "artículo".
+ */
+function consultaParaElSitio(termino, modo) {
+  if (modo !== 'exacta' && modo !== 'todas') return termino;
+  const palabras = termino.split(/\s+/).map((p) => p.replace(/[^\p{L}\p{N}]/gu, '')).filter(Boolean);
+  if (palabras.some((p) => /\d/.test(p))) return termino;
+  const utiles = palabras.filter((p) => p.length >= 4);
+  if (utiles.length < 2) return termino;
+  const larga = utiles.reduce((a, b) => (b.length > a.length ? b : a));
+  // Con "todas las palabras", sólo si la palabra es de verdad específica: con
+  // "daño moral", pedir sólo "moral" trae leyes de personas apellidadas Morales
+  // y el OR original (que premia a los que tienen las dos) rinde más.
+  if (modo === 'todas' && larga.length < 10) return termino;
+  return larga;
 }
 
 /**
@@ -496,10 +573,16 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
-  const faceta = soloCsjn ? FACETA_CSJN : (TIPOS[tribunal] || TIPOS.sumarios);
+  // La Corte en Buscar: sus sumarios (con texto). Con tribunal "fallos", las fichas
+  // (el verificador de citas las pide así: ver lib/fuentes.js).
+  const csjnSumarios = soloCsjn && tribunal !== 'fallos';
+  const faceta = csjnSumarios ? FACETA_CSJN_SUMARIOS : soloCsjn ? FACETA_CSJN : (TIPOS[tribunal] || TIPOS.sumarios);
   // Legislación y doctrina se filtran mirando el texto del documento (ver
   // enriquecerDocumentos), no su título: el modo se aplica ahí.
   const esTexto = !soloCsjn && (tribunal === 'legislacion' || tribunal === 'doctrina');
+  // Legislación y doctrina se revisan de a 20 (cada una pide su texto): ahí el
+  // orden del OR original, que premia a los que tienen todas las palabras, vale más.
+  const qSitio = esTexto ? termino : consultaParaElSitio(termino, modo);
   // SAIJ toma un offset de fila directo ("o"), así que el cursor viaja tal
   // cual. El cálculo por número de página queda solo para quien todavía
   // llame sin cursor (lib/verificarCita.js pide siempre la primera).
@@ -521,7 +604,7 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
    */
   const traer = async (offset) => {
     const parametros = new URLSearchParams({
-      q: termino,
+      q: qSitio,
       o: String(offset),
       // Legislación y doctrina piden el texto de CADA documento para mostrar la
       // coincidencia, así que se trae de a una página y no de a cien.
@@ -535,6 +618,9 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
     // aunque no se haya podido leer, porque el cursor cuenta filas del
     // sitio. Ver la nota de traer() en lib/paginarFiltrado.js.
     const registros = crudos.map(aRegistro);
+    // Los sumarios federales que no son de la Corte ocupan su fila igual (null):
+    // el cursor cuenta filas del sitio.
+    if (csjnSumarios) return registros.map((r) => (esSumarioDeLaCorte(r) ? r : null));
     if (!esTexto) return registros;
     await enriquecerDocumentos(registros, termino, modo);
     return registros.map((r) => (r && r._descartar ? null : r));
@@ -557,6 +643,7 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
 
   if (!totalCrudo) return { total: 0, totalFuente: 0, siguienteDesde: null, revisados: 0, pagina, porPagina, resultados: [] };
 
+  if (csjnSumarios) await caratulasDeLaCorte(resultados);
   await enriquecerConSumarios(resultados, termino);
   await enriquecerDocumentos(resultados, termino, modo); // dictámenes; legislación y doctrina ya pasaron por traer()
   cerrarRegistros(resultados);

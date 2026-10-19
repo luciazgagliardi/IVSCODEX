@@ -9,6 +9,8 @@ node_modules/
 cache/
 indice/
 ocr-cache/
+# índice de texto de la Corte IDH (lib/corpusCorteidh.js), se arma solo
+corteidh/
 
 # Cuentas de usuario: datos de personas reales, nunca al repo
 usuarios/

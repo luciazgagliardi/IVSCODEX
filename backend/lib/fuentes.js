@@ -108,7 +108,9 @@ export const FUENTES = [
   {
     slug: 'csjn',
     nombre: 'Corte Suprema de Justicia de la Nación (vía SAIJ)',
-    tribunalPorDefecto: null,
+    // Sólo lo usa el verificador de citas: necesita las fichas de los fallos.
+    // Buscar no manda tribunal y recibe los sumarios, que son los que tienen texto.
+    tribunalPorDefecto: 'fallos',
     buscar: (args) => buscarSaij({ ...args, soloCsjn: true }),
   },
   {
