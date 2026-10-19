@@ -22,7 +22,6 @@
  * Como el sitio devuelve todo junto, la paginación es de este lado.
  */
 
-import { JSDOM, VirtualConsole } from 'jsdom';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
@@ -50,33 +49,45 @@ function fechaDelTitulo(texto) {
 
 const https = (u) => String(u || '').replace(/^http:\/\//i, 'https://');
 
+const ENTIDADES = {
+  nbsp: ' ', amp: '&', lt: '<', gt: '>', quot: '"', apos: "'",
+  aacute: 'á', eacute: 'é', iacute: 'í', oacute: 'ó', uacute: 'ú', ntilde: 'ñ', uuml: 'ü',
+  Aacute: 'Á', Eacute: 'É', Iacute: 'Í', Oacute: 'Ó', Uacute: 'Ú', Ntilde: 'Ñ', Uuml: 'Ü',
+  ordm: 'º', ordf: 'ª', iquest: '¿', iexcl: '¡', laquo: '«', raquo: '»', ldquo: '“', rdquo: '”', lsquo: '‘', rsquo: '’',
+};
+function texto(html) {
+  return String(html || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m, e) => {
+      if (e[0] === '#') return String.fromCodePoint(e[1].toLowerCase() === 'x' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10));
+      return ENTIDADES[e] ?? m;
+    })
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Lee el fragmento HTML de resultados. Sin JSDOM a propósito: una lista de
+ * cientos de filas son varios MB y armar el DOM entero consumía la poca memoria
+ * libre del servidor publicado; el formato es regular y alcanza con recortar.
+ */
 function parsear(html) {
-  const consola = new VirtualConsole();
-  consola.on('jsdomError', () => {});
-  let dom;
-  try {
-    dom = new JSDOM(`<body><ul>${html}</ul></body>`, { virtualConsole: consola });
-  } catch {
-    throw errores.indiceFuenteFalla('corteidh', 'no se pudo leer el HTML de resultados');
-  }
   const registros = [];
   const vistos = new Set();
-  for (const li of dom.window.document.querySelectorAll('li.search-result')) {
-    const idMatch = /tbl_multimedia_(\d+)/.exec(li.innerHTML);
-    const id = idMatch ? idMatch[1] : '';
+  for (const bloque of String(html).split(/<li class="[^"]*search-result[^"]*">/).slice(1)) {
+    const id = /tbl_multimedia_(\d+)/.exec(bloque)?.[1];
     if (!id || vistos.has(id)) continue;
     vistos.add(id);
 
-    const tipo = (li.querySelector('.title')?.textContent || '').replace(/\s+/g, ' ').trim();
-    // El título del documento es el texto suelto del bloque, antes de la tabla de enlaces.
-    const bloque = li.querySelector('div.col-12') || li;
-    const copia = bloque.cloneNode(true);
-    copia.querySelectorAll('.title, table, script').forEach((n) => n.remove());
-    const titulo = copia.textContent.replace(/\s+/g, ' ').trim();
+    const tipoM = /<span class="title">([\s\S]*?)<\/span>/.exec(bloque);
+    const tipo = texto(tipoM?.[1]);
+    // El título del documento es el texto suelto entre el rótulo del tipo y el primer <br>.
+    const despues = tipoM ? bloque.slice(tipoM.index + tipoM[0].length) : bloque;
+    const titulo = texto(/^([\s\S]*?)<br/i.exec(despues)?.[1]);
 
-    const pdf = li.querySelector('a[href*=".pdf"]')?.getAttribute('href') || '';
-    const ficha = li.querySelector('a.ver_ficha')?.getAttribute('id_row') || '';
-    const expediente = /nId_expediente=(\d+)/.exec(li.innerHTML)?.[1] || '';
+    const pdf = /href="([^"]*\.pdf[^"]*)"/i.exec(bloque)?.[1] || '';
+    const ficha = /ver_ficha_tecnica\.cfm\?nId_Ficha=(\d+)/.exec(bloque)?.[1] || '';
+    const expediente = /nId_expediente=(\d+)/.exec(bloque)?.[1] || '';
 
     registros.push({
       id: `corteidh_${id}`,
@@ -157,7 +168,7 @@ function palabrasDe(q) {
 // cuando hay filtros que el sitio no sabe hacer (años, exclusión). Una palabra
 // con más documentos que esto no discrimina (en la Corte IDH "derecho" está en
 // casi 2.700): bajar su lista entera son 7 MB y más de 10 s, y no sirve para acotar.
-const MAX_POR_PALABRA = 800;
+const MAX_POR_PALABRA = 500;
 const VENTANA_CON_FILTROS = 600;
 
 const CACHE = new Map(); // clave -> { hasta, valor }
@@ -184,19 +195,21 @@ function conCache(clave, hacer) {
  *    traen sus MAX_POR_PALABRA más recientes y se avisa que es parcial.
  */
 async function listaPorPalabras(palabras, modo, frase) {
-  const conteos = [];
-  for (const p of palabras) conteos.push({ p, n: (await pedir(p, 1)).total });
+  // En paralelo: la espera de cortesía (esperarTurno) escalona los pedidos, pero
+  // las descargas se superponen, así que tarda lo de la más lenta y no la suma.
+  const conteos = await Promise.all(palabras.map(async (p) => ({ p, n: (await pedir(p, 1)).total })));
   conteos.sort((a, b) => a.n - b.n);
 
   if (modo === 'alguna') {
+    const con = conteos.filter((c) => c.n > 0);
+    const listas = await Promise.all(con.map((c) => pedir(c.p, MAX_POR_PALABRA)));
     const vistos = new Set();
     const lista = [];
-    let parcial = false;
-    for (const { p, n } of conteos.filter((c) => c.n > 0)) {
-      if (n > MAX_POR_PALABRA) parcial = true;
-      for (const r of (await pedir(p, MAX_POR_PALABRA)).registros) if (!vistos.has(r.id)) { vistos.add(r.id); lista.push(r); }
-    }
-    return { lista, parcial };
+    for (const l of listas) for (const r of l.registros) if (!vistos.has(r.id)) { vistos.add(r.id); lista.push(r); }
+    // por fecha, de la más reciente a la más vieja, como muestra el propio sitio
+    const clave = (r) => r.fecha.split('/').reverse().join('');
+    lista.sort((a, b) => clave(b).localeCompare(clave(a)));
+    return { lista, parcial: con.some((c) => c.n > MAX_POR_PALABRA) };
   }
 
   // todas
@@ -207,8 +220,7 @@ async function listaPorPalabras(palabras, modo, frase) {
     const { registros, total } = await pedir(frase, MAX_POR_PALABRA);
     return { lista: registros, parcial: total > MAX_POR_PALABRA };
   }
-  const listas = [];
-  for (const { p } of selectivas) listas.push((await pedir(p, MAX_POR_PALABRA)).registros);
+  const listas = (await Promise.all(selectivas.map(({ p }) => pedir(p, MAX_POR_PALABRA)))).map((l) => l.registros);
   const comunes = listas.map((l) => new Set(l.map((r) => r.id))).reduce((a, b) => new Set([...a].filter((x) => b.has(x))));
   return { lista: listas[0].filter((r) => comunes.has(r.id)), parcial: false };
 }
