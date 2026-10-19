@@ -6206,8 +6206,8 @@ function dibujoSeccion(tab){
      que hay de un lado, hay igual del otro. El único punto dorado, el del
      logo, va sobre el eje. */
   switch(tab){
-    case "buscar":   // la consulta sale a las seis bases, en abanico
-      for(i=0;i<6;i++){ a=(-62.5+i*25)*Math.PI/180; x=(120+100*Math.sin(a)).toFixed(1); y=(142-100*Math.cos(a)).toFixed(1);
+    case "buscar":   // la consulta sale a las siete bases, en abanico
+      for(i=0;i<7;i++){ a=(-62.5+i*125/6)*Math.PI/180; x=(120+100*Math.sin(a)).toFixed(1); y=(142-100*Math.cos(a)).toFixed(1);
         h+=c(x,y,7)+l("M120 142L"+(120+86*Math.sin(a)).toFixed(1)+" "+(142-86*Math.cos(a)).toFixed(1)); }
       h+=p(120,142,5); break;
     case "comparar": // cinco barras en pirámide

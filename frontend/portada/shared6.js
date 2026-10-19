@@ -1,7 +1,7 @@
 /* v6 · Pieza común: el héroe del prisma (idéntico al de la versión 4) y el cierre. */
 (function(){
   var S=IVS4;
-  var BASES=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"]];
+  var BASES=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"],["CORTE IDH","--c-idh"]];
   var CAB='<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#" data-tab="buscar">Consulta</a><a href="#" data-tab="fuentes">Fuentes</a><a href="#" data-tab="verificar">Verificación</a><a href="#" data-tab="cuenta">Cuenta</a></nav><div class="acts"><a class="btn sec" href="#" data-tab="fuentes">Ver el catálogo de fuentes</a><a class="btn" href="#" data-tab="buscar">Iniciar la consulta</a></div></header>';
   window.IVS6={
     BASES:BASES,
@@ -23,7 +23,7 @@
       if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){pr.medir();colocar();});
       return document.getElementById("m6");
     },
-    /* el cierre común: las seis bases, la advertencia y la llamada a la acción */
+    /* el cierre común: las siete bases, la advertencia y la llamada a la acción */
     cierre:function(host){
       var s=document.createElement("section");s.className="cierre";
       s.innerHTML='<div class="bs">'+BASES.map(function(b){return '<span style="--c:var('+b[1]+')"><i></i>'+b[0]+'</span>';}).join("")+'</div>'+
@@ -33,7 +33,7 @@
       host.appendChild(s);return s;
     },
     PRINC:[["FONS","La fuente","Todo resultado remite al documento del organismo que lo dictó. Lo que se lee nunca es una versión propia."],
-           ["ORDO","El orden","Los resultados de las seis bases se presentan juntos, con la misma forma y la procedencia a la vista."],
+           ["ORDO","El orden","Los resultados de las siete bases se presentan juntos, con la misma forma y la procedencia a la vista."],
            ["FIDES","La fe","Una cita se contrasta con la base oficial antes de presentarse. Ante su ausencia, el antecedente se presume inexistente."]]
   };
 })();
