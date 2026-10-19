@@ -2,7 +2,7 @@
 (function(){
   var NS="http://www.w3.org/2000/svg";
   var OFERTAS=[
-    {k:"buscar",lat:"QVAESTIO",t:"Consulta",d:"Se arma con los operadores de cada buscador oficial y se envía a las seis bases a la vez.",c:"--c-mza"},
+    {k:"buscar",lat:"QVAESTIO",t:"Consulta",d:"Se arma con los operadores de cada buscador oficial y se envía a las siete bases a la vez.",c:"--c-mza"},
     {k:"lector",lat:"LECTIO",t:"Lector",d:"El fallo con su búsqueda destacada, los pasajes recortados y la cita preparada para copiar.",c:"--c-mzl"},
     {k:"ramas",lat:"MATERIAE",t:"Ramas y voces",d:"Los descriptores técnicos con que indexan los buscadores judiciales, ordenados por rama del derecho.",c:"--c-caba"},
     {k:"calculos",lat:"CALCVLVS",t:"Cálculos y plazos",d:"Intereses, índices, despido, incapacidad, honorarios, plazos procesales y calendario judicial.",c:"--c-csjn"},
@@ -16,8 +16,8 @@
     function c(x,y,r){ return '<circle class="dl" style="--i:'+(k++)+'" pathLength="1" cx="'+x+'" cy="'+y+'" r="'+r+'"/>'; }
     function p(x,y,r){ return '<circle class="dd" cx="'+x+'" cy="'+y+'" r="'+(r||4)+'"/>'; }
     switch(tab){
-    case "buscar":   // la consulta sale a las seis bases, en abanico
-      for(i=0;i<6;i++){ a=(-62.5+i*25)*Math.PI/180; x=(120+100*Math.sin(a)).toFixed(1); y=(142-100*Math.cos(a)).toFixed(1);
+    case "buscar":   // la consulta sale a las siete bases, en abanico
+      for(i=0;i<7;i++){ a=(-62.5+i*125/6)*Math.PI/180; x=(120+100*Math.sin(a)).toFixed(1); y=(142-100*Math.cos(a)).toFixed(1);
         h+=c(x,y,7)+l("M120 142L"+(120+86*Math.sin(a)).toFixed(1)+" "+(142-86*Math.cos(a)).toFixed(1)); }
       h+=p(120,142,5); break;
     case "comparar": // cinco barras en pirámide
@@ -78,19 +78,21 @@
 
   /* ---------- PRISMA ----------
      o.px  posición horizontal del prisma (fracción del ancho)   o.cy  altura del eje (fracción del alto)
-     o.band  [alto,bajo] de las seis entradas (fracciones)       o.out(P,W,H) -> puntos del haz de salida */
+     o.band  [alto,bajo] de las entradas (fracciones)       o.out(P,W,H) -> puntos del haz de salida */
   window.IVSPrisma=function(cv,o){
     o=o||{};var ctx=cv.getContext("2d"),W=1,H=1,D=Math.min(devicePixelRatio||1,2),P={x:0,y:0},P0={x:0,y:0},Y=[],puls=[],last=0,tm=0,out=[],cum=[],total=0,
       ox=0,oy=0,ang=0,tmx=0,tmy=0,mpx=0,mpy=0,vivo=0,vel=0,lmx=0,lmy=0;   /* interacción con el puntero (o.mouse) */
     var cs=getComputedStyle(document.documentElement),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
-    var B=OFERTAS.map(function(f,i){var n=["SCJM","MZA LEGAL","TSJ","CSJN","SAIJ","DIALNET"][i],h=cs.getPropertyValue(f.c).trim();
+    /* las entradas del prisma son las bases consultadas (no las ofertas del libro, que son otras seis cosas) */
+    var BASES_PRISMA=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"],["CORTE IDH","--c-idh"]];
+    var B=BASES_PRISMA.map(function(f,i){var n=f[0],h=cs.getPropertyValue(f[1]).trim();
       return {n:n,c:[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)],next:i*.5};});
     var ORO=[217,163,27],CLARO=[255,226,150];
     function medir(){
       W=cv.clientWidth;H=cv.clientHeight;cv.width=W*D;cv.height=H*D;
       var m=W<700,band=typeof o.band==="function"?o.band(W,H):(o.band||[.34,.66]);
       P0.x=W*(typeof o.px==="function"?o.px(W):(o.px||.54));P0.y=H*(typeof o.cy==="function"?o.cy(W,H):(o.cy||.5));
-      Y=B.map(function(_,i){return H*(band[0]+i*(band[1]-band[0])/5);});
+      Y=B.map(function(_,i){return H*(band[0]+i*(band[1]-band[0])/(B.length-1));});
       mpx=P0.x;mpy=P0.y;calc();
     }
     /* posición del prisma y del haz de salida; con el puntero, el prisma se desplaza y se inclina, y el haz apunta hacia el cursor */

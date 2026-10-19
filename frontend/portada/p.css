@@ -4,7 +4,7 @@
   --bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.62);--dim:rgba(241,238,230,.36);--line:rgba(241,238,230,.15);
   --gold:#d9a31b;--caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;
   --ease:cubic-bezier(.16,.84,.24,1);--pad:clamp(18px,3.2vw,48px);
-  --c-mza:#d9a62a;--c-mzl:#b58640;--c-caba:#d5873f;--c-csjn:#c95836;--c-saij:#b03b42;--c-dial:#8a3853
+  --c-mza:#d9a62a;--c-mzl:#b58640;--c-caba:#d5873f;--c-csjn:#c95836;--c-saij:#b03b42;--c-dial:#8a3853;--c-idh:#5f7f9a
 }
 *{box-sizing:border-box}
 html{background:var(--bg);-webkit-text-size-adjust:100%}
