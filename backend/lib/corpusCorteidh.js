@@ -40,7 +40,6 @@ const ARCHIVO_MANIFIESTO = path.join(DIR, 'manifiesto.json');
 const ARCHIVO_INDICE = path.join(DIR, 'indice.json');
 
 const TIPOS_INDEXADOS = new Set(['Casos Contenciosos', 'Opiniones Consultivas']);
-const MAX_CANDIDATOS = 400; // documentos que se abren para verificar una búsqueda
 
 /** Estado en memoria: lista de documentos y, por palabra, sus posiciones en esa lista. */
 let docs = null; // [{ id, tipo, titulo, fecha, pdf, ficha, chars }]
@@ -151,61 +150,117 @@ function recorte(texto, indiceCoincidencia) {
 
 const clavefecha = (f) => String(f || '').split('/').reverse().join('');
 
+/*
+ * Los textos se leen del disco del servidor, que en Azure es de red y lento
+ * (medido: abrir 400 textos para una frase común tardaba 16-25 s). Por eso:
+ * se abren sólo los que hacen falta para la página pedida, y los ya leídos
+ * quedan en memoria, comprimidos, con un tope.
+ */
+const CACHE_GZ = new Map(); // id -> Buffer comprimido (orden de inserción = antigüedad)
+let bytesCache = 0;
+const MAX_BYTES_CACHE = 48 * 1024 * 1024;
+async function leerTexto(id) {
+  let gz = CACHE_GZ.get(id);
+  if (gz) {
+    CACHE_GZ.delete(id);
+    CACHE_GZ.set(id, gz); // pasa al final: recién usado
+  } else {
+    gz = await fs.readFile(path.join(DIR_TEXTOS, `${id}.txt.gz`));
+    CACHE_GZ.set(id, gz);
+    bytesCache += gz.length;
+    for (const [k, v] of CACHE_GZ) {
+      if (bytesCache <= MAX_BYTES_CACHE) break;
+      CACHE_GZ.delete(k);
+      bytesCache -= v.length;
+    }
+  }
+  return (await gunzip(gz)).toString('utf8');
+}
+
+// Lo verificado de una frase exacta, para que la página siguiente siga donde quedó.
+const VERIFICADAS = new Map(); // clave -> { hasta, estado: (string|null|undefined)[], siguiente }
+const VIDA_VERIF_MS = 10 * 60_000;
+
 /**
  * Busca en el texto de las sentencias indexadas. Devuelve null si todavía no
- * hay índice (primer arranque), o { resultados, indexados }.
- * Cada resultado trae ya el pasaje de la coincidencia en `sumario`.
+ * hay índice (primer arranque), o:
+ *   { resultados, total, parcial, ids, indexados }
+ * `resultados` es sólo la ventana [desde, desde+cuantos), con el pasaje de la
+ * coincidencia en `sumario`. `ids` son todos los documentos que coinciden (o
+ * los verificados hasta ahora, con frase exacta), para no repetirlos después.
+ * `filtro(doc)` deja afuera documentos por fecha o carátula antes de abrirlos.
  */
-export async function buscarEnCorpus(q, modo = 'todas') {
+export async function buscarEnCorpus(q, modo = 'todas', { desde = 0, cuantos = 20, filtro = null, presupuestoMs = 8000 } = {}) {
   await cargar();
   if (!docs.length) return null;
   const palabras = [...new Set(palabrasDe(q))];
-  if (!palabras.length) return { resultados: [], indexados: docs.length };
+  const vacio = { resultados: [], total: 0, parcial: false, ids: new Set(), indexados: docs.length };
+  if (!palabras.length) return vacio;
 
-  // Candidatos por el índice: todas las palabras (todas / frase) o alguna.
   const listas = palabras.map((p) => indice.get(p) || []);
   let candidatos;
   if (modo === 'alguna') {
     candidatos = [...new Set(listas.flat())];
   } else {
-    if (listas.some((l) => !l.length)) return { resultados: [], indexados: docs.length };
+    if (listas.some((l) => !l.length)) return vacio;
     const [primera, ...resto] = [...listas].sort((a, b) => a.length - b.length);
     const conjuntos = resto.map((l) => new Set(l));
     candidatos = primera.filter((n) => conjuntos.every((c) => c.has(n)));
   }
-  // los más recientes primero, y un tope de documentos a abrir
+  if (filtro) candidatos = candidatos.filter((n) => filtro(docs[n]));
   candidatos.sort((a, b) => clavefecha(docs[b].fecha).localeCompare(clavefecha(docs[a].fecha)));
-  candidatos = candidatos.slice(0, MAX_CANDIDATOS);
 
   const crudas = String(q).trim().split(/\s+/).filter(Boolean);
   const reFrase = new RegExp(crudas.map(patron).join('[\\s,;:]+'), 'iu');
-  // para ubicar el pasaje en "todas"/"alguna": la palabra más larga (la más específica)
   const larga = palabras.reduce((a, b) => (b.length > a.length ? b : a));
   const reLarga = new RegExp(patron(larga), 'iu');
-
-  const resultados = [];
-  for (const n of candidatos) {
+  const aRegistro = (n, pasaje) => {
     const d = docs[n];
-    let texto;
-    try {
-      texto = (await gunzip(await fs.readFile(path.join(DIR_TEXTOS, `${d.id}.txt.gz`)))).toString('utf8');
-    } catch {
-      continue;
+    return { id: d.id, expediente: d.tipo, caratula: d.titulo, tribunal: 'Corte IDH', fecha: d.fecha, sumario: pasaje, voces: [], linkFicha: d.ficha || null, linkFallo: d.pdf };
+  };
+
+  if (modo !== 'exacta') {
+    // Todas las palabras (o alguna) ya lo garantiza el índice: el total es exacto
+    // y sólo se abren los textos de esta página, para recortar el pasaje.
+    const ventana = candidatos.slice(desde, desde + cuantos);
+    const resultados = [];
+    for (const n of ventana) {
+      let texto = '';
+      try { texto = await leerTexto(docs[n].id); } catch { /* sin texto: va sin pasaje */ }
+      const m = reFrase.exec(texto) || reLarga.exec(texto);
+      resultados.push(aRegistro(n, m ? recorte(texto, m.index) : ''));
     }
-    let m = reFrase.exec(texto);
-    if (modo === 'exacta' && !m) continue;
-    if (!m) m = reLarga.exec(texto);
-    resultados.push({
-      id: d.id,
-      expediente: d.tipo,
-      caratula: d.titulo,
-      tribunal: 'Corte IDH',
-      fecha: d.fecha,
-      sumario: m ? recorte(texto, m.index) : '',
-      voces: [],
-      linkFicha: d.ficha || null,
-      linkFallo: d.pdf,
-    });
+    return { resultados, total: candidatos.length, parcial: false, ids: new Set(candidatos.map((n) => docs[n].id)), indexados: docs.length };
   }
-  return { resultados, indexados: docs.length };
+
+  // Frase exacta: hay que abrir cada candidato para ver si la trae. Se verifica
+  // en orden hasta llenar la página (o agotar el tiempo) y se recuerda lo hecho.
+  const clave = `${plegar(q)}|${filtro ? 'f' : ''}|${candidatos.length}`;
+  let v = VERIFICADAS.get(clave);
+  if (!v || v.hasta < Date.now()) {
+    v = { hasta: Date.now() + VIDA_VERIF_MS, estado: new Array(candidatos.length), siguiente: 0 };
+    if (VERIFICADAS.size > 50) VERIFICADAS.clear();
+    VERIFICADAS.set(clave, v);
+  }
+  const necesarios = desde + cuantos;
+  const encontrados = () => v.estado.filter((x) => typeof x === 'string').length;
+  const t0 = Date.now();
+  while (v.siguiente < candidatos.length && encontrados() < necesarios && Date.now() - t0 < presupuestoMs) {
+    const n = candidatos[v.siguiente];
+    let texto = '';
+    try { texto = await leerTexto(docs[n].id); } catch { /* ilegible: no cuenta */ }
+    const m = reFrase.exec(texto);
+    v.estado[v.siguiente] = m ? recorte(texto, m.index) : null;
+    v.siguiente++;
+  }
+  const coinciden = [];
+  v.estado.forEach((x, i) => { if (typeof x === 'string') coinciden.push([candidatos[i], x]); });
+  const parcial = v.siguiente < candidatos.length;
+  return {
+    resultados: coinciden.slice(desde, desde + cuantos).map(([n, pasaje]) => aRegistro(n, pasaje)),
+    total: coinciden.length,
+    parcial,
+    ids: new Set(coinciden.map(([n]) => docs[n].id)),
+    indexados: docs.length,
+  };
 }
