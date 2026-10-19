@@ -3768,7 +3768,10 @@ function pintarRail(){
   // "requisitos" también queda sin riel: el filtro de ahí es por RAMA, y acá
   // el listado es por TRÁMITE — mostrarlo daría un control que no filtra nada.
   var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos"||estado.tab==="norma"||estado.tab==="comparar"||
-    estado.tab==="calculos"||estado.tab==="plazos"||estado.tab==="glosario"||estado.tab==="herramientas");
+    estado.tab==="calculos"||estado.tab==="plazos"||estado.tab==="glosario"||estado.tab==="herramientas"||
+    // El catálogo de Fuentes y los Guardados no dependen de la rama elegida: la
+    // columna de ramas ahí no filtraba nada, sólo confundía.
+    estado.tab==="fuentes"||estado.tab==="guardados");
   if(w) w.classList.toggle("sin-rail",sinRail);
   if(sinRail){ r.innerHTML=""; return; }
   // Las fuentes sólo en Buscar: en las otras solapas no hay una búsqueda en
@@ -5444,8 +5447,7 @@ function vistaFuentes(){
     return AMB[k].n+": "+F.filter(function(f){return f.a===k;}).length;
   }).join(" · ");
   return '<div class="aviso"><span class="av-tit">Catálogo completo de fuentes</span>'+
-    'Acceso a '+F.length+' bases de datos y buscadores públicos, verificados e identificados individualmente. '+
-    'Los filtros del panel lateral y la selección de ámbitos se mantendrán activos al retornar a la pestaña <em>«Buscar»</em>.</div>'+
+    'Acceso a '+F.length+' bases de datos y buscadores públicos, verificados e identificados individualmente.</div>'+
     '<p class="conteo">'+todas.length+' fuentes en el catálogo</p>'+
     listaPorAmbito(todas);
 }
