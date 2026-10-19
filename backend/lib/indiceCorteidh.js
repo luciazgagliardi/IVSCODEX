@@ -244,36 +244,55 @@ export async function listarTodo() {
 export async function buscarCorteidh(args) {
   const termino = String(args?.q || '').trim();
   if (!termino) throw errores.consultaVacia();
-  const { modo = 'todas', pagina = 1, porPagina = 20, desde = null } = args;
+  const { modo = 'todas', pagina = 1, porPagina = 20, desde = null, excluir = '', anioDesde = null, anioHasta = null } = args;
   const arranque = desde === null ? (Math.max(1, pagina) - 1) * porPagina : Math.max(0, desde);
 
-  let enTexto = [];
-  try {
-    const r = await buscarEnCorpus(termino, modo);
-    enTexto = r ? filtrosDe(args)(r.resultados) : [];
-  } catch {
-    enTexto = []; // sin índice todavía, o un archivo ilegible: sigue el buscador del sitio
-  }
-  if (!enTexto.length) return buscarEnSitio(args);
+  // Exclusión y años se aplican antes de abrir textos (fecha y carátula ya están en el índice).
+  const fuera = palabrasDe(excluir).map(plegar);
+  const filtro = fuera.length || anioDesde || anioHasta
+    ? (d) => {
+        if (fuera.some((w) => plegar(d.titulo).includes(w))) return false;
+        const a = anioDe(d.fecha);
+        return !(anioDesde || anioHasta) || (a && (!anioDesde || a >= anioDesde) && (!anioHasta || a <= anioHasta));
+      }
+    : null;
 
-  const ids = new Set(enTexto.map((r) => r.id));
-  const faltan = Math.max(0, arranque + porPagina - enTexto.length);
-  let delSitio = [], totalSitio = 0, parcial = false;
+  let corp = null;
   try {
-    // Desde el principio y con margen: algunos de los del sitio ya están entre los del texto.
-    const s = await buscarEnSitio({ ...args, pagina: 1, desde: 0, porPagina: Math.min(3000, faltan + enTexto.length || porPagina) });
-    const vistos = s.resultados.filter((r) => ids.has(r.id)).length;
-    delSitio = s.resultados.filter((r) => !ids.has(r.id));
-    totalSitio = Math.max(0, s.total - vistos);
-    parcial = Boolean(s.totalParcial);
+    corp = await buscarEnCorpus(termino, modo, { desde: arranque, cuantos: porPagina, filtro });
+  } catch {
+    corp = null; // sin índice todavía, o un archivo ilegible: sigue el buscador del sitio
+  }
+  if (!corp || !corp.total) return buscarEnSitio(args);
+
+  const faltan = porPagina - corp.resultados.length;
+  const desdeSitio = Math.max(0, arranque - corp.total);
+  let delSitio = [], extraSitio = 0, parcial = corp.parcial;
+  try {
+    // Del sitio se pide desde el principio, con margen para descontar los que ya
+    // salieron por el texto; si la página ya se llenó con el texto, sólo hace
+    // falta su total.
+    const cuantos = faltan > 0 ? desdeSitio + faltan + Math.min(corp.ids.size, 300) : 20;
+    const s = await buscarEnSitio({ ...args, pagina: 1, desde: 0, porPagina: Math.min(3000, cuantos) });
+    const nuevos = s.resultados.filter((r) => !corp.ids.has(r.id));
+    extraSitio = Math.max(0, s.total - (s.resultados.length - nuevos.length));
+    if (faltan > 0) delSitio = nuevos.slice(desdeSitio, desdeSitio + faltan);
+    parcial = parcial || Boolean(s.totalParcial);
   } catch {
     // el sitio no respondió: quedan los del texto
   }
-  const lista = [...enTexto, ...delSitio];
-  const total = enTexto.length + totalSitio;
-  const resultados = lista.slice(arranque, arranque + porPagina);
+  const resultados = [...corp.resultados, ...delSitio];
+  const total = corp.total + extraSitio;
   const hasta = arranque + resultados.length;
-  return { total, totalFuente: total, totalParcial: parcial, enTexto: enTexto.length, siguienteDesde: hasta < total ? hasta : null, pagina, porPagina, resultados };
+  return {
+    total,
+    totalFuente: total,
+    totalParcial: parcial,
+    siguienteDesde: hasta < total || corp.parcial ? hasta : null,
+    pagina,
+    porPagina,
+    resultados,
+  };
 }
 
 /** Exclusión y rango de años, que el sitio no sabe hacer: se aplican de este lado. */

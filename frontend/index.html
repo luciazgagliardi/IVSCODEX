@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" href="./favicon.png?v=16">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=Cormorant+SC:wght@300;400;500&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 /* ------------------------------------------------------------------ *
    IVS CODEX con el lenguaje de sigillvm.com (rumbo A · Afiche).
@@ -130,7 +130,7 @@ strong,b{font-weight:500}
 }
 
 /* la marca escrita, con el punto redondo del logo y no el "·" de la fuente */
-.marca{font-family:var(--caps);white-space:nowrap}
+.marca{font-family:"Cinzel","Trajan Pro",var(--caps);font-weight:500;white-space:nowrap}
 .marca .v{color:var(--gold)}
 .marca{--ls:.3em}
 /* El punto va exactamente a mitad de camino entre la S y la C, medido sobre
@@ -139,7 +139,7 @@ strong,b{font-weight:500}
    del cuerpo); a la derecha, lo que sobra a la izquierda de la C (4,9 %).
    Con margen izquierdo cero, el derecho tiene que ser --ls + 0,5 %. El
    alto: la mitad de las mayúsculas (cuerpo 65 %) menos la mitad del punto. */
-.m-punto{display:inline-block;width:.17em;height:.17em;border-radius:50%;background:var(--gold);vertical-align:.24em;margin:0 calc(var(--ls) + .005em) 0 0}
+.m-punto{display:inline-block;width:.17em;height:.17em;border-radius:50%;background:var(--gold);vertical-align:.265em;margin:0 calc(var(--ls) + .005em) 0 0}
 
 /* ================================================================== *
    BOTONES — cápsulas
@@ -228,8 +228,9 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .nav-wrap{display:flex;align-items:center;gap:24px;padding:22px clamp(18px,3.2vw,48px) 22px}   /* las medidas de la barra de la portada */
 /* Las medidas son las de sigillvm.com: la marca ocupa 180 × 44 px, el
    símbolo mide 24 px y la palabra va 12 px a su derecha. */
+.marca-sello{display:block;width:36px;height:36px;border-radius:50%;flex:none;margin-right:14px;box-shadow:0 0 0 1px rgba(241,238,230,.24)}
 .marca-app{display:inline-flex;align-items:center;flex:none;width:auto;height:auto;padding:0;border:0;background:none;color:var(--fg)}
-.marca-app .marca{font-size:17px;font-weight:500;letter-spacing:.3em;line-height:1.55;padding-right:.3em}
+.marca-app .marca{font-size:15.5px;font-weight:500;letter-spacing:.26em;--ls:.26em;line-height:1.55;padding-right:.26em;position:relative;top:.4px}
 .nav{display:flex;align-items:center;gap:clamp(16px,2vw,30px);min-width:0;margin-left:clamp(20px,4vw,72px)}
 .nav button{
   padding:0;border:0;background:none;line-height:1.55;
@@ -247,6 +248,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 @media (max-width:520px){
   .nav-wrap{gap:12px}
   .marca-app .marca{letter-spacing:.2em;--ls:.2em}
+  .marca-sello{width:30px;height:30px;margin-right:10px}
   .btn-menu{padding:10px 18px 9px;font-size:13.5px}
   .btn-menu .txt{font-size:0}
   .btn-menu .txt::after{content:"Secciones";font-size:13.5px}
@@ -779,7 +781,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-brand__tag,.pt-brand__name{position:absolute;left:0;top:50%;transition:opacity .45s,transform .45s var(--ease)}
 .pt-brand__tag{transform:translateY(-50%);font-size:15px;line-height:1.35;white-space:nowrap}
 .pt-brand__name{display:inline-flex;align-items:center;gap:12px;opacity:0;transform:translateY(-20%)}
-.pt-brand__name .marca{font-size:18px;font-weight:500;letter-spacing:.3em;line-height:18px}
+.pt-brand__name .marca{font-size:15px;font-weight:500;letter-spacing:.26em;--ls:.26em;line-height:18px}
 .pt-hdr.is-solid .pt-brand__tag{opacity:0;transform:translateY(-80%)}
 .pt-hdr.is-solid .pt-brand__name{opacity:1;transform:translateY(-50%)}
 .pt-nav{display:flex;gap:clamp(18px,2vw,30px)}
@@ -894,7 +896,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-cierre__txt{margin:0;max-width:18ch;font:400 clamp(36px,5.4vw,92px)/1.02 var(--sans);letter-spacing:-.03em}
 .pt-cierre__txt em{font-style:normal;color:var(--gold)}
 .pt-ftr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px;padding:34px var(--pad) calc(40px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);font-size:13px;color:var(--mute-2)}
-.pt-ftr .marca{font-size:14px;letter-spacing:.3em;color:var(--fg)}
+.pt-ftr .marca{font-size:12.5px;letter-spacing:.26em;--ls:.26em;color:var(--fg)}
 /* aparecer al entrar en pantalla (solo en la portada) */
 .entrada [data-reveal]{opacity:0;transform:translateY(22px)}
 .entrada [data-reveal].is-in{opacity:1;transform:none;transition:opacity 1s var(--ease) var(--d,0s),transform 1.1s var(--ease) var(--d,0s)}
@@ -965,7 +967,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 <header class="top">
   <div class="nav-wrap">
-    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
+    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><img class="marca-sello" src="./favicon.png?v=16" alt="" width="36" height="36"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
     <div class="nav-fin"><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
@@ -5003,7 +5005,9 @@ function conteoIndice(im,local){
   var n=function(x){ return '<b>'+(x||0).toLocaleString("es-AR")+'</b>'; };
   if(local) return n(im.total)+' resultado(s) guardados';
   // Sin revisados, el filtro lo hizo el propio sitio: su contador es el total.
-  if(!im.revisados) return n(im.total)+' coincidencia(s) en total';
+  // Si la fuente avisa que el conteo todavía no está cerrado (la Corte IDH
+  // verifica la frase exacta de a tandas), se dice «al menos».
+  if(!im.revisados) return im.parcial?'al menos '+n(im.total)+' coincidencia(s); pase de página para ver más':n(im.total)+' coincidencia(s) en total';
   if(im.totalFuente===null) return 'coincidencias entre lo revisado hasta acá';
   return 'el sitio devuelve '+n(im.totalFuente)+' filas para esta consulta'+
     (im.parcial
