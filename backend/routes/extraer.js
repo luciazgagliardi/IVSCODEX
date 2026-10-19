@@ -10,6 +10,7 @@
  *   DELETE /api/cache                                 -> vacia el cache
  */
 
+import os from 'node:os';
 import { estadoCorpus } from '../lib/corpusCorteidh.js';
 import express from 'express';
 import crypto from 'node:crypto';
@@ -197,6 +198,8 @@ router.get('/salud', (_req, res) => {
     releConfigurado: Boolean(process.env.RELE_URL && process.env.RELE_CLAVE),
     // Avance del índice de texto de la Corte IDH (lib/corpusCorteidh.js).
     corpusCorteidh: estadoCorpus(),
+    // Para vigilar que el índice de texto y Chrome no aprieten la memoria del plan.
+    memoriaMB: { proceso: Math.round(process.memoryUsage().rss / 1e6), libreEquipo: Math.round(os.freemem() / 1e6) },
   });
 });
 

@@ -208,7 +208,10 @@ export async function buscarEnCorpus(q, modo = 'todas', { desde = 0, cuantos = 2
     candidatos = primera.filter((n) => conjuntos.every((c) => c.has(n)));
   }
   if (filtro) candidatos = candidatos.filter((n) => filtro(docs[n]));
-  candidatos.sort((a, b) => clavefecha(docs[b].fecha).localeCompare(clavefecha(docs[a].fecha)));
+  // Primero los documentos cuyo TÍTULO trae lo buscado (buscar "Maldonado Vargas"
+  // tiene que dar el caso, no las sentencias que lo citan); después, por fecha.
+  const enTitulo = (n) => palabras.every((p) => plegar(docs[n].titulo).includes(p));
+  candidatos.sort((a, b) => (enTitulo(b) - enTitulo(a)) || clavefecha(docs[b].fecha).localeCompare(clavefecha(docs[a].fecha)));
 
   const crudas = String(q).trim().split(/\s+/).filter(Boolean);
   const reFrase = new RegExp(crudas.map(patron).join('[\\s,;:]+'), 'iu');
