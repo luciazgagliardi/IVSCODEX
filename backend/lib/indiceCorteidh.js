@@ -99,7 +99,13 @@ function parsear(html) {
   return registros;
 }
 
-async function pedir(texto) {
+/**
+ * Pide las primeras `filas` filas de una búsqueda. El sitio no pagina de verdad
+ * (probado: ni startrow, ni page, ni start cambian nada) pero sí respeta
+ * page_rows, así que la página N se arma pidiendo N×20 filas y recortando.
+ * Devuelve también el total que declara el sitio.
+ */
+async function pedir(texto, filas = 20) {
   await esperarTurno(HOST);
   const control = new AbortController();
   const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
@@ -118,15 +124,17 @@ async function pedir(texto) {
         Texto_busqueda_TXT: texto,
         Texto_busqueda_TXT2: '',
         search_param: 'name',
-        page_rows: '3000',
+        page_rows: String(Math.max(1, Math.min(3000, filas))),
         lang: 'es',
         id: '0',
       }).toString(),
     });
     if (!resp.ok) throw errores.indiceFuenteFalla('corteidh', `respuesta ${resp.status}`);
     const cuerpo = await resp.text();
-    if (cuerpo.trim() === '-1' || !cuerpo.trim()) return [];
-    return parsear(cuerpo);
+    if (cuerpo.trim() === '-1' || !cuerpo.trim()) return { total: 0, registros: [] };
+    const total = Number(/id="recordcount"[^>]*value="(\d+)"|value="(\d+)"[^>]*id="recordcount"/.exec(cuerpo)?.slice(1).find(Boolean)) || 0;
+    const registros = filas <= 1 ? [] : parsear(cuerpo); // con filas=1 sólo interesa el total
+    return { total: total || registros.length, registros };
   } catch (e) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e;
@@ -145,35 +153,64 @@ function palabrasDe(q) {
     .slice(0, MAX_PALABRAS);
 }
 
-// El sitio devuelve todo junto: para la página 2 no hace falta volver a preguntarle.
-const CACHE = new Map(); // clave -> { hasta, lista }
+// Tope de filas que se bajan por palabra al combinar palabras, y de la ventana
+// cuando hay filtros que el sitio no sabe hacer (años, exclusión). Una palabra
+// con más documentos que esto no discrimina (en la Corte IDH "derecho" está en
+// casi 2.700): bajar su lista entera son 7 MB y más de 10 s, y no sirve para acotar.
+const MAX_POR_PALABRA = 800;
+const VENTANA_CON_FILTROS = 600;
+
+const CACHE = new Map(); // clave -> { hasta, valor }
 const VIDA_MS = 5 * 60_000;
-const MAX_CACHE = 50;
-
-async function listaCompleta(q, modo) {
-  const clave = `${modo}|${plegar(q)}`;
-  const guardada = CACHE.get(clave);
-  if (guardada && guardada.hasta > Date.now()) return guardada.lista;
-
-  const palabras = palabrasDe(q);
-  let lista;
-  if (modo === 'exacta' || palabras.length <= 1) {
-    lista = await pedir(palabras.length === 1 && modo !== 'exacta' ? palabras[0] : q.trim());
-  } else {
-    const porPalabra = [];
-    for (const p of palabras) porPalabra.push(await pedir(p)); // de a una: esperarTurno ya espacia los pedidos
-    if (modo === 'alguna') {
-      const vistos = new Set();
-      lista = porPalabra.flat().filter((r) => !vistos.has(r.id) && vistos.add(r.id));
-    } else {
-      // todas: lo que aparece en la búsqueda de cada una de las palabras
-      const comunes = porPalabra.map((l) => new Set(l.map((r) => r.id))).reduce((a, b) => new Set([...a].filter((x) => b.has(x))));
-      lista = porPalabra[0].filter((r) => comunes.has(r.id));
-    }
-  }
+const MAX_CACHE = 60;
+function conCache(clave, hacer) {
+  const g = CACHE.get(clave);
+  if (g && g.hasta > Date.now()) return g.valor;
+  const valor = hacer();
   if (CACHE.size >= MAX_CACHE) CACHE.clear();
-  CACHE.set(clave, { hasta: Date.now() + VIDA_MS, lista });
-  return lista;
+  CACHE.set(clave, { hasta: Date.now() + VIDA_MS, valor });
+  valor.catch(() => CACHE.delete(clave)); // un pedido fallido no se recuerda
+  return valor;
+}
+
+/**
+ * "todas las palabras" y "alguna palabra": el sitio sólo busca frases, así que
+ * se cuentan los documentos de cada palabra (una consulta de una fila, rápida)
+ * y se bajan las listas de las que discriminan. Devuelve { lista, parcial }.
+ *
+ *  - todas: se intersectan las listas de las (hasta dos) palabras más raras; las
+ *    palabras muy comunes no se exigen, porque casi no acotan.
+ *  - alguna: se unen las listas; si alguna palabra tiene más del tope sólo se
+ *    traen sus MAX_POR_PALABRA más recientes y se avisa que es parcial.
+ */
+async function listaPorPalabras(palabras, modo, frase) {
+  const conteos = [];
+  for (const p of palabras) conteos.push({ p, n: (await pedir(p, 1)).total });
+  conteos.sort((a, b) => a.n - b.n);
+
+  if (modo === 'alguna') {
+    const vistos = new Set();
+    const lista = [];
+    let parcial = false;
+    for (const { p, n } of conteos.filter((c) => c.n > 0)) {
+      if (n > MAX_POR_PALABRA) parcial = true;
+      for (const r of (await pedir(p, MAX_POR_PALABRA)).registros) if (!vistos.has(r.id)) { vistos.add(r.id); lista.push(r); }
+    }
+    return { lista, parcial };
+  }
+
+  // todas
+  if (conteos.some((c) => c.n === 0)) return { lista: [], parcial: false };
+  const selectivas = conteos.filter((c) => c.n <= MAX_POR_PALABRA).slice(0, 2);
+  if (!selectivas.length) {
+    // todas son muy comunes: lo único acotado es la frase entera
+    const { registros, total } = await pedir(frase, MAX_POR_PALABRA);
+    return { lista: registros, parcial: total > MAX_POR_PALABRA };
+  }
+  const listas = [];
+  for (const { p } of selectivas) listas.push((await pedir(p, MAX_POR_PALABRA)).registros);
+  const comunes = listas.map((l) => new Set(l.map((r) => r.id))).reduce((a, b) => new Set([...a].filter((x) => b.has(x))));
+  return { lista: listas[0].filter((r) => comunes.has(r.id)), parcial: false };
 }
 
 const anioDe = (fecha) => Number(String(fecha || '').slice(-4)) || null;
@@ -186,23 +223,43 @@ export async function buscarCorteidh({ q, modo = 'todas', excluir = '', pagina =
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
-  let lista = await listaCompleta(termino, modo);
-
+  const palabras = palabrasDe(termino);
   const fuera = palabrasDe(excluir).map(plegar);
-  if (fuera.length) lista = lista.filter((r) => !fuera.some((w) => plegar(r.caratula).includes(w)));
-  if (anioDesde || anioHasta) {
-    lista = lista.filter((r) => {
-      const a = anioDe(r.fecha);
-      return a && (!anioDesde || a >= anioDesde) && (!anioHasta || a <= anioHasta);
-    });
+  const conFiltros = Boolean(fuera.length || anioDesde || anioHasta);
+  const arranque = desde === null ? (Math.max(1, pagina) - 1) * porPagina : Math.max(0, desde);
+  const filtrar = (lista) =>
+    lista
+      .filter((r) => !fuera.some((w) => plegar(r.caratula).includes(w)))
+      .filter((r) => {
+        if (!anioDesde && !anioHasta) return true;
+        const a = anioDe(r.fecha);
+        return a && (!anioDesde || a >= anioDesde) && (!anioHasta || a <= anioHasta);
+      });
+
+  let lista, totalSitio, parcial = false, ventana = false;
+  if (modo === 'exacta' || palabras.length <= 1) {
+    const texto = modo === 'exacta' ? termino : palabras[0] || termino;
+    if (!conFiltros) {
+      // camino rápido: sólo las filas que hacen falta para esta página
+      const { total, registros } = await conCache(`v|${plegar(texto)}|${arranque + porPagina}`, () => pedir(texto, arranque + porPagina));
+      const resultados = registros.slice(arranque, arranque + porPagina);
+      const hasta = arranque + resultados.length;
+      return { total, totalFuente: total, siguienteDesde: hasta < total ? hasta : null, pagina, porPagina, resultados };
+    }
+    const r = await conCache(`f|${plegar(texto)}`, () => pedir(texto, VENTANA_CON_FILTROS));
+    lista = r.registros; totalSitio = r.total; ventana = r.total > VENTANA_CON_FILTROS; parcial = ventana;
+  } else {
+    const r = await conCache(`m|${modo}|${palabras.map(plegar).join(' ')}`, () => listaPorPalabras(palabras, modo, termino));
+    lista = r.lista; totalSitio = lista.length; parcial = r.parcial;
   }
 
-  const arranque = desde === null ? (Math.max(1, pagina) - 1) * porPagina : Math.max(0, desde);
+  lista = filtrar(lista);
   const resultados = lista.slice(arranque, arranque + porPagina);
   const hasta = arranque + resultados.length;
   return {
     total: lista.length,
-    totalFuente: lista.length,
+    totalFuente: parcial ? totalSitio : lista.length,
+    totalParcial: parcial,
     siguienteDesde: hasta < lista.length ? hasta : null,
     pagina,
     porPagina,
