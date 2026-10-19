@@ -231,6 +231,8 @@ app.use(manejadorErrores);
  * ------------------------------------------------------------------ */
 
 import { mudarDatosSiHaceFalta } from './lib/mudarDatos.js';
+import { actualizarCorpus } from './lib/corpusCorteidh.js';
+import { listarTodo } from './lib/indiceCorteidh.js';
 
 // Antes de atender a nadie: rescatar lo que haya quedado en el lugar viejo.
 // Es de una sola vez y no pisa nada; si falla, se avisa y se sigue.
@@ -253,6 +255,18 @@ const servidor = app.listen(PUERTO, () => {
   console.log('  Ctrl+C para cortar.');
   console.log('');
 });
+
+// Índice de texto de la Corte IDH (lib/corpusCorteidh.js): en el servidor
+// publicado, donde los datos sobreviven a los despliegues. Arranca un rato
+// después de levantar, para no competir con el arranque, y se repite una vez por
+// día para sumar las sentencias nuevas. En una máquina local no corre salvo que
+// se pida con CORPUS_CORTEIDH=1 (son cientos de PDF).
+if (process.env.CORPUS_CORTEIDH === '1' || (DATOS_PERSISTEN && process.env.CORPUS_CORTEIDH !== '0')) {
+  const correr = () =>
+    actualizarCorpus(listarTodo, { log: (m) => console.log(m) }).catch((e) => console.error('[corteidh] falló la actualización:', e.message));
+  setTimeout(correr, 90_000).unref();
+  setInterval(correr, 24 * 60 * 60_000).unref();
+}
 
 // Apagado ordenado: dejamos que terminen las peticiones en curso.
 for (const senal of ['SIGINT', 'SIGTERM']) {

@@ -26,6 +26,7 @@ import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
 import { plegar, VACIAS } from './relevancia.js';
+import { buscarEnCorpus } from './corpusCorteidh.js';
 
 const HOST = 'www.corteidh.or.cr';
 const URL_BUSQUEDA = `https://${HOST}/get_jurisprudencia_search.cfm`;
@@ -227,19 +228,58 @@ async function listaPorPalabras(palabras, modo, frase) {
 
 const anioDe = (fecha) => Number(String(fecha || '').slice(-4)) || null;
 
+/** Todos los documentos del sitio (para armar el índice de texto, ver lib/corpusCorteidh.js). */
+export async function listarTodo() {
+  return (await pedir('', 3000)).registros;
+}
+
 /**
  * Busca en la Corte IDH. Misma forma de entrada y de salida que los otros
  * clientes (ver lib/fuentes.js).
+ *
+ * Primero van los documentos donde lo buscado está EN EL TEXTO (índice propio,
+ * con el pasaje ya recortado: lib/corpusCorteidh.js) y después lo que encuentra
+ * el buscador del sitio, que sólo mira nombres y palabras clave, sin repetir.
  */
-export async function buscarCorteidh({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
-  const termino = String(q || '').trim();
+export async function buscarCorteidh(args) {
+  const termino = String(args?.q || '').trim();
   if (!termino) throw errores.consultaVacia();
-
-  const palabras = palabrasDe(termino);
-  const fuera = palabrasDe(excluir).map(plegar);
-  const conFiltros = Boolean(fuera.length || anioDesde || anioHasta);
+  const { modo = 'todas', pagina = 1, porPagina = 20, desde = null } = args;
   const arranque = desde === null ? (Math.max(1, pagina) - 1) * porPagina : Math.max(0, desde);
-  const filtrar = (lista) =>
+
+  let enTexto = [];
+  try {
+    const r = await buscarEnCorpus(termino, modo);
+    enTexto = r ? filtrosDe(args)(r.resultados) : [];
+  } catch {
+    enTexto = []; // sin índice todavía, o un archivo ilegible: sigue el buscador del sitio
+  }
+  if (!enTexto.length) return buscarEnSitio(args);
+
+  const ids = new Set(enTexto.map((r) => r.id));
+  const faltan = Math.max(0, arranque + porPagina - enTexto.length);
+  let delSitio = [], totalSitio = 0, parcial = false;
+  try {
+    // Desde el principio y con margen: algunos de los del sitio ya están entre los del texto.
+    const s = await buscarEnSitio({ ...args, pagina: 1, desde: 0, porPagina: Math.min(3000, faltan + enTexto.length || porPagina) });
+    const vistos = s.resultados.filter((r) => ids.has(r.id)).length;
+    delSitio = s.resultados.filter((r) => !ids.has(r.id));
+    totalSitio = Math.max(0, s.total - vistos);
+    parcial = Boolean(s.totalParcial);
+  } catch {
+    // el sitio no respondió: quedan los del texto
+  }
+  const lista = [...enTexto, ...delSitio];
+  const total = enTexto.length + totalSitio;
+  const resultados = lista.slice(arranque, arranque + porPagina);
+  const hasta = arranque + resultados.length;
+  return { total, totalFuente: total, totalParcial: parcial, enTexto: enTexto.length, siguienteDesde: hasta < total ? hasta : null, pagina, porPagina, resultados };
+}
+
+/** Exclusión y rango de años, que el sitio no sabe hacer: se aplican de este lado. */
+function filtrosDe({ excluir = '', anioDesde = null, anioHasta = null }) {
+  const fuera = palabrasDe(excluir).map(plegar);
+  return (lista) =>
     lista
       .filter((r) => !fuera.some((w) => plegar(r.caratula).includes(w)))
       .filter((r) => {
@@ -247,6 +287,18 @@ export async function buscarCorteidh({ q, modo = 'todas', excluir = '', pagina =
         const a = anioDe(r.fecha);
         return a && (!anioDesde || a >= anioDesde) && (!anioHasta || a <= anioHasta);
       });
+}
+
+/** Sólo el buscador del sitio. */
+async function buscarEnSitio({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
+  const termino = String(q || '').trim();
+  if (!termino) throw errores.consultaVacia();
+
+  const palabras = palabrasDe(termino);
+  const fuera = palabrasDe(excluir).map(plegar);
+  const conFiltros = Boolean(fuera.length || anioDesde || anioHasta);
+  const arranque = desde === null ? (Math.max(1, pagina) - 1) * porPagina : Math.max(0, desde);
+  const filtrar = filtrosDe({ excluir, anioDesde, anioHasta });
 
   let lista, totalSitio, parcial = false, ventana = false;
   if (modo === 'exacta' || palabras.length <= 1) {
