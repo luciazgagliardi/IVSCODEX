@@ -33,15 +33,7 @@ function anioValido(v) {
 /** Los modos de búsqueda que entiende la API. Cualquier otro se ignora. */
 const MODOS = new Set(['exacta', 'todas', 'alguna']);
 
-/**
- * Sitios que le cerraron la puerta a este servidor (401/403). Si el TSJ de
- * CABA rechaza el primer PDF, rechaza todos: insistir con los otros cinco de
- * la tanda, y con las tandas siguientes, sólo demora la pantalla. Se recuerda
- * el rechazo unos minutos y los demás documentos del mismo sitio vuelven al
- * instante con el mismo aviso.
- */
-const SITIOS_CERRADOS = new Map(); // host -> { hasta, mensaje }
-const MINUTOS_CERRADO = 10;
+/** El host de una URL, o '' si no se puede leer. */
 const hostDe = (u) => { try { return new URL(u).hostname; } catch { return ''; } };
 
 /** Cuántos documentos como mucho se traen en un mismo pedido de fragmentos. */
@@ -379,7 +371,7 @@ for (const { slug, buscar } of FUENTES) {
 
       const guardados = desdeIndiceLocal
         ? (await estadoIndice(slug)).guardados
-        : await upsertRegistros(slug, resultados);
+        : await upsertRegistros(slug, resultados.map(({ variante, ...r }) => r)); // la marca de variante es de esta búsqueda, no del documento
 
       res.json({
         ok: true,
@@ -435,6 +427,12 @@ for (const { slug, buscar } of FUENTES) {
 
       const fragmentos = [];
       let pendientes = [];
+      // Si un sitio rechaza un documento de la tanda (401/403), los demás de ese
+      // sitio en la MISMA tanda vuelven con el mismo aviso sin reintentar. No se
+      // recuerda entre tandas: ahora que Chrome resuelve el desafío de Cloudflare,
+      // un 403 puede ser un tropiezo de un momento y no tiene que dejar a todos
+      // sin pasajes durante minutos.
+      const SITIOS_CERRADOS = new Map(); // host -> { mensaje }
       for (let i = 0; i < pedidas.length; i++) {
         const url = pedidas[i];
         // Los documentos largos (sentencias de la Corte IDH, de varios MB) pueden
@@ -457,7 +455,7 @@ for (const { slug, buscar } of FUENTES) {
             continue;
           }
           const cerrado = SITIOS_CERRADOS.get(hostDe(url));
-          if (cerrado && cerrado.hasta > Date.now()) {
+          if (cerrado) {
             fragmentos.push({ url, fragmento: '', error: cerrado.mensaje });
             continue;
           }
@@ -466,7 +464,7 @@ for (const { slug, buscar } of FUENTES) {
         } catch (e) {
           const mensaje = e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.';
           if (e?.codigo === 'RESPUESTA_NO_OK' && [401, 403].includes(e.extra?.estadoOrigen)) {
-            SITIOS_CERRADOS.set(hostDe(url), { hasta: Date.now() + MINUTOS_CERRADO * 60_000, mensaje });
+            SITIOS_CERRADOS.set(hostDe(url), { mensaje });
           }
           fragmentos.push({ url, fragmento: '', error: mensaje });
         }

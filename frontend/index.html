@@ -4479,7 +4479,10 @@ var SAIJ_TIPOS={
 /* La Corte Suprema sale de SAIJ filtrando por su faceta de tribunal. Solo
    los fallos traen ese campo, así que va siempre por fallos (ver la nota en
    lib/indiceSaij.js del servidor). */
-var SAIJ_FACETA_CSJN="Total|Tipo de Documento/Jurisprudencia/Fallo|Tribunal/CORTE SUPREMA DE JUSTICIA DE LA NACION";
+/* Igual que el servidor (lib/indiceSaij.js): la Corte se busca en el texto de
+   sus SUMARIOS, que son federales y llevan número con "A"; las fichas de fallos
+   no tienen texto y el filtro por modo las descartaba todas. */
+var SAIJ_FACETA_CSJN="Total|Tipo de Documento/Jurisprudencia/Sumario|Jurisdicción/Federal";
 
 function saijPlegar(s){
   try{ return String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase(); }
@@ -4558,6 +4561,7 @@ function saijARegistro(bruto){
     id:"saij_"+uuid,
     expediente:c["numero-interno"]||c["id-infojus"]||"",
     caratula:(esSumario?(c.titulo||saijLimpiar(c.sumario)):partes)||"(sin carátula)",
+    numero:String(c["numero-sumario"]||""),
     sumario:esSumario?saijLimpiar(c.texto):"",
     voces:voces,
     fecha:saijFecha(c.fecha),
@@ -4652,6 +4656,7 @@ function buscarSaijNavegador(cuerpo,slug){
         for(var k=0;k<crudos.length;k++){
           var reg=saijARegistro(crudos[k]);
           if(!reg) continue;
+          if(slug==="csjn"&&!/^A\d/i.test(reg.numero||"")) continue; // sumario federal que no es de la Corte
           filaDe.push(cursor+k);
           revisados.push(reg);
         }

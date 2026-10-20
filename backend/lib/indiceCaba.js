@@ -408,7 +408,9 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
   // el tamaño pedido es la última de verdad: ahí el total real es lo que se
   // vio, y no se ofrece una página siguiente que saldría vacía.
   const hasta = arranque + resultados.length;
-  const ultima = resultados.length < porPagina;
+  // Con un cursor que no cae al principio de una página del sitio, las filas
+  // esperadas son las que quedan de esa página, no la página entera.
+  const ultima = resultados.length < porPagina - (arranque % porPagina);
   return {
     total: ultima ? hasta : totalSitio,
     totalFuente: totalSitio,
