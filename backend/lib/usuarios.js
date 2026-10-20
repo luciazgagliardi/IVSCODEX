@@ -73,8 +73,14 @@ function sinPassword(u) {
   return resto;
 }
 
+/** Limpia los datos de perfil: cadenas cortas sin saltos de línea; la casilla, un booleano. */
+export function limpiarPerfil({ nombre, especialidad, actualizaciones } = {}) {
+  const texto = (v, max) => String(typeof v === 'string' ? v : '').replace(/\s+/g, ' ').trim().slice(0, max);
+  return { nombre: texto(nombre, 60), especialidad: texto(especialidad, 80), actualizaciones: actualizaciones === true };
+}
+
 /** Crea un usuario nuevo. Tira EMAIL_YA_REGISTRADO si el correo ya existe. */
-export async function crearUsuario({ email, password }) {
+export async function crearUsuario({ email, password, nombre, especialidad, actualizaciones }) {
   const correo = normalizarEmail(email);
   const passwordHash = await hashearPassword(password);
   // Lectura + escritura en cola: dos registros simultáneos no se pisan.
@@ -85,7 +91,10 @@ export async function crearUsuario({ email, password }) {
       e.codigo = 'EMAIL_YA_REGISTRADO';
       throw e;
     }
-    const usuario = { id: crypto.randomUUID(), email: correo, passwordHash, creadoEn: Date.now() };
+    const usuario = {
+      id: crypto.randomUUID(), email: correo, passwordHash, creadoEn: Date.now(),
+      ...limpiarPerfil({ nombre, especialidad, actualizaciones }),
+    };
     dato[correo] = usuario;
     await escribirJsonAtomico(ARCHIVO, dato);
     return sinPassword(usuario);
@@ -101,8 +110,22 @@ export async function verificarCredenciales(email, password) {
   return usuario && coincide ? sinPassword(usuario) : null;
 }
 
+/** Cambia nombre, especialidad y la casilla de novedades de una cuenta. Devuelve el usuario (sin el hash). */
+export async function actualizarPerfil(id, datos) {
+  const nuevo = limpiarPerfil(datos);
+  return enCola(ARCHIVO, async () => {
+    const dato = await leerTodos();
+    const clave = Object.keys(dato).find((k) => dato[k].id === id);
+    if (!clave) return null;
+    dato[clave] = { ...dato[clave], ...nuevo };
+    await escribirJsonAtomico(ARCHIVO, dato);
+    return sinPassword(dato[clave]);
+  });
+}
+
 export async function buscarPorId(id) {
   const dato = await leerTodos();
   const usuario = Object.values(dato).find((u) => u.id === id);
   return sinPassword(usuario);
 }
+

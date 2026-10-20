@@ -203,6 +203,8 @@ strong,b{font-weight:500}
 /* ---------- campos: solo la línea de abajo, como el formulario de sigillvm ---------- */
 .campo{display:block;margin-bottom:22px;min-width:0}
 .campo span{display:block;margin-bottom:10px;font-size:14px;color:var(--mute)}
+.campo-check{display:flex;align-items:flex-start;gap:10px;margin:0 0 22px;font-size:14px;color:var(--mute);cursor:pointer}
+.campo-check input{margin-top:3px;accent-color:var(--gold)}
 input[type=text],input[type=number],input[type=email],input[type=password],input[type=date],select{
   display:block;width:100%;padding:8px 0 12px;border:0;border-bottom:1px solid var(--line);border-radius:0;
   background:transparent;color:var(--fg);font:400 17px/1.5 var(--sans);transition:border-color .3s
@@ -238,7 +240,9 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 }
 .nav button:hover,.nav button:active{color:var(--gold)}
 .nav button[aria-current="page"]{color:var(--gold)}
-.nav-fin{margin-left:auto}
+.nav-fin{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn-perfil{padding:10px 18px 9px;font-size:13.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-perfil[aria-current="page"]{border-color:var(--gold);color:var(--gold)}
 .btn-menu{padding:10px 18px 9px;font-size:13.5px}
 .btn-menu .fl{display:inline-block;transition:transform .4s var(--ease)}
 .btn-menu[aria-expanded="true"] .fl{transform:rotate(180deg)}
@@ -246,6 +250,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 /* En el teléfono el nombre y el botón del índice tienen que entrar juntos:
    el rótulo se acorta a "Secciones" y el nombre se aprieta un poco. */
 @media (max-width:520px){
+  .btn-perfil{display:none}
   .nav-wrap{gap:12px}
   .marca-app .marca{letter-spacing:.2em;--ls:.2em}
   .btn-menu{padding:10px 18px 9px;font-size:13.5px}
@@ -277,7 +282,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 @media (max-width:560px){ .menu__grid{grid-template-columns:minmax(0,1fr)} }
 
 /* ---------- la cabecera de cada sección ---------- */
-.cab{padding:clamp(56px,9vh,110px) var(--pad) 0}
+.cab{padding:clamp(18px,3vh,30px) var(--pad) 0}
 .cab>*{animation:entra .9s var(--ease) both}
 .cab>*:nth-child(2){animation-delay:.07s}.cab>*:nth-child(3){animation-delay:.14s}.cab>*:nth-child(4){animation-delay:.21s}
 .cab__saludo{margin:0 0 22px;font-size:15px;color:var(--mute)}
@@ -971,7 +976,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   <div class="nav-wrap">
     <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
-    <div class="nav-fin"><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
+    <div class="nav-fin"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-tab="cuenta">Mi perfil</button><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
 </header>
 
@@ -2533,7 +2538,7 @@ function nuevoEstado(){
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
           api:null,cargando:false,cargandoOcr:false,errorLink:null,infoDoc:null,fichaConocida:null,
-          token:null,usuario:null,authModo:"registro",authEmail:"",authError:null,authCargando:false,
+          token:null,usuario:null,authModo:"registro",authEmail:"",authNombre:"",authEsp:"",authAct:false,perfilCargando:false,perfilAviso:"",authError:null,authCargando:false,
           sincronizando:false,sincronizadoEn:null,
           // Verificador de citas (solapa Verificar): el texto pegado, si hay
           // un pedido en vuelo y lo último que contestó el servidor.
@@ -2659,11 +2664,19 @@ function enviarAuth(ruta){
   var email=(document.getElementById("auth-email")||{}).value||"";
   var password=(document.getElementById("auth-password")||{}).value||"";
   estado.authEmail=email;
+  var envio={email:email,password:password};
+  if(ruta==="registro"){
+    var gv=function(id){ return ((document.getElementById(id)||{}).value||"").trim(); };
+    estado.authNombre=gv("auth-nombre"); estado.authEsp=gv("auth-esp");
+    var ca=document.getElementById("auth-act"); if(ca) estado.authAct=!!ca.checked;
+    if(!estado.authNombre){ estado.authError="Escriba su nombre."; render(); return; }
+    envio.nombre=estado.authNombre; envio.especialidad=estado.authEsp; envio.actualizaciones=estado.authAct;
+  }
   if(!email||!password){ estado.authError="Complete el correo y la contraseña."; render(); return; }
   estado.authCargando=true; estado.authError=null; render();
   fetch(estado.api+"/auth/"+ruta,{
     method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({email:email,password:password})
+    body:JSON.stringify(envio)
   }).then(function(r){ return r.json(); })
     .then(function(d){
       estado.authCargando=false;
@@ -3696,6 +3709,11 @@ var SECCIONES={
   herramientas:["INSTRVMENTA","Preparar","PDF listos para presentar"]
 };
 function pintarNav(){
+  var pf=document.getElementById("mi-perfil");
+  if(pf){
+    pf.textContent=(estado.usuario&&nombreDe(estado.usuario))||"Mi perfil";
+    if(estado.tab==="cuenta") pf.setAttribute("aria-current","page"); else pf.removeAttribute("aria-current");
+  }
   var n=document.getElementById("nav");
   n.innerHTML=PRINCIPALES.map(function(id){
     var t=TABS.filter(function(x){return x[0]===id;})[0];
@@ -3738,6 +3756,8 @@ document.addEventListener("keydown",function(ev){ if(ev.key==="Escape") menuAbie
    guardan el correo, así que el nombre sale de lo que va antes de la arroba
    (sin números ni signos, con mayúscula inicial). */
 function nombreDe(u){
+  var dado=String(u&&u.nombre||"").trim().split(/\s+/)[0];
+  if(dado) return dado;
   var e=String(u&&u.email||"").split("@")[0].replace(/[._\-+]+/g," ").replace(/[0-9]+/g,"").trim().split(/\s+/)[0]||"";
   return e?e.charAt(0).toUpperCase()+e.slice(1).toLowerCase():"";
 }
@@ -6200,6 +6220,23 @@ function vistaGuardados(){
   return h;
 }
 
+var ESPECIALIDADES=["Derecho civil","Derecho comercial","Derecho penal","Derecho laboral","Derecho de familia","Derecho administrativo","Derecho constitucional","Derecho tributario","Derecho ambiental","Propiedad intelectual","Docencia e investigación","Estudiante"];
+function espsLista(){
+  return '<datalist id="esps">'+ESPECIALIDADES.map(function(e){ return '<option value="'+esc(e)+'">'; }).join("")+'</datalist>';
+}
+/* El perfil de quien tiene sesión: lo mismo que se pide al crear la cuenta,
+   para que también lo completen quienes se registraron antes. */
+function formPerfil(){
+  var u=estado.usuario;
+  return '<label class="campo"><span>Nombre</span>'+
+      '<input type="text" id="perfil-nombre" value="'+esc(u.nombre||"")+'" maxlength="60" autocomplete="given-name" placeholder="Cómo quiere que le digamos"></label>'+
+    '<label class="campo"><span>A qué se dedica o en qué se especializa</span>'+
+      '<input type="text" id="perfil-esp" list="esps" value="'+esc(u.especialidad||"")+'" maxlength="80" placeholder="Por ejemplo, Derecho laboral">'+espsLista()+'</label>'+
+    '<label class="campo-check"><input type="checkbox" id="perfil-act"'+(u.actualizaciones?" checked":"")+'> Quiero recibir novedades y actualizaciones de IVS CODEX.</label>'+
+    '<div class="acciones" style="margin-bottom:22px"><button class="btn" data-act="perfil-guardar"'+(estado.perfilCargando?" disabled":"")+'>'+
+      (estado.perfilCargando?"Guardando…":"Guardar perfil")+'</button>'+
+      (estado.perfilAviso?'<span style="font-size:13px;color:var(--mute)">'+esc(estado.perfilAviso)+'</span>':'')+'</div>';
+}
 function vistaCuenta(){
   if(estado.usuario){
     var nFav=Object.keys(estado.fav).filter(function(k){return estado.fav[k];}).length;
@@ -6209,6 +6246,7 @@ function vistaCuenta(){
       '<div class="panel">'+
         '<label class="campo"><span>Correo electrónico</span>'+
           '<div style="font-family:var(--serif);font-size:17px">'+esc(estado.usuario.email)+'</div></label>'+
+        formPerfil()+
         '<div class="chips" style="margin-bottom:16px">'+
           '<span class="chip" style="cursor:default">'+nFav+' fuente'+(nFav===1?'':'s')+' guardada'+(nFav===1?'':'s')+'</span>'+
           '<span class="chip" style="cursor:default">'+estado.hist.length+' búsqueda'+(estado.hist.length===1?'':'s')+' recordada'+(estado.hist.length===1?'':'s')+'</span>'+
@@ -6237,11 +6275,18 @@ function vistaCuenta(){
         '<button class="chip" data-act="auth-modo" data-modo="login" aria-pressed="'+(!esRegistro?"true":"false")+'">Ya tengo cuenta</button>'+
       '</div>'+
       (estado.authError?'<div class="aviso" style="margin-bottom:14px"><strong>No se pudo.</strong> '+esc(estado.authError)+'</div>':'')+
+      (esRegistro?
+        '<label class="campo"><span>Nombre</span>'+
+          '<input type="text" id="auth-nombre" value="'+esc(estado.authNombre)+'" maxlength="60" autocomplete="given-name" placeholder="Cómo quiere que le digamos"></label>':'')+
       '<label class="campo"><span>Correo electrónico</span>'+
         '<input type="email" id="auth-email" value="'+esc(estado.authEmail)+'" autocomplete="username" placeholder="nombre@ejemplo.com"></label>'+
       '<label class="campo"><span>Contraseña</span>'+
         '<input type="password" id="auth-password" autocomplete="'+(esRegistro?"new-password":"current-password")+
         '" placeholder="'+(esRegistro?"Mínimo 8 caracteres":"Su contraseña")+'"></label>'+
+      (esRegistro?
+        '<label class="campo"><span>A qué se dedica o en qué se especializa <em style="font-style:normal;color:var(--mute-2)">(opcional)</em></span>'+
+          '<input type="text" id="auth-esp" list="esps" value="'+esc(estado.authEsp)+'" maxlength="80" placeholder="Por ejemplo, Derecho laboral">'+espsLista()+'</label>'+
+        '<label class="campo-check"><input type="checkbox" id="auth-act"'+(estado.authAct?" checked":"")+'> Quiero recibir novedades y actualizaciones de IVS CODEX.</label>':'')+
       '<div class="acciones">'+
         '<button class="btn" data-act="'+(esRegistro?"auth-registro":"auth-login")+'"'+(estado.authCargando?" disabled":"")+'>'+
           (estado.authCargando?"Un momento…":(esRegistro?"Crear cuenta":"Iniciar sesión"))+'</button>'+
@@ -7337,6 +7382,21 @@ document.addEventListener("click",function(ev){
     enviarAuth(act==="auth-registro"?"registro":"login");
     return;
   }
+  if(act==="perfil-guardar"){
+    if(!estado.api||!estado.token){ flash("El servidor no está disponible ahora"); return; }
+    var gp=function(id){ return ((document.getElementById(id)||{}).value||"").trim(); };
+    var datosPerfil={nombre:gp("perfil-nombre"),especialidad:gp("perfil-esp"),actualizaciones:!!(document.getElementById("perfil-act")||{}).checked};
+    estado.perfilCargando=true; estado.perfilAviso=""; render();
+    fetch(estado.api+"/auth/perfil",{method:"PUT",headers:{"Content-Type":"application/json",authorization:"Bearer "+estado.token},
+      body:JSON.stringify(datosPerfil)})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        estado.perfilCargando=false;
+        if(d&&d.ok){ estado.usuario=d.usuario; estado.perfilAviso="Guardado."; } else estado.perfilAviso=(d&&d.mensaje)||"No se pudo guardar.";
+        render();
+      })["catch"](function(){ estado.perfilCargando=false; estado.perfilAviso="Se cortó la comunicación con el servidor."; render(); });
+    return;
+  }
   if(act==="auth-logout"){
     var tok=estado.token;
     estado.authCargando=true; render();
@@ -7792,6 +7852,9 @@ document.addEventListener("input",function(ev){
     if(lr) lr.innerHTML=listaRamasHTML();
   }
   else if(id==="auth-email"){estado.authEmail=ev.target.value;}
+  else if(id==="auth-nombre"){estado.authNombre=ev.target.value;}
+  else if(id==="auth-esp"){estado.authEsp=ev.target.value;}
+  else if(id==="auth-act"){estado.authAct=!!ev.target.checked;}
   // Se guarda sin repintar: un render() acá le sacaría el foco al textarea
   // en mitad de la frase. El repintado llega solo cuando se toca "Verificar".
   else if(id==="cita-in"){estado.cita.texto=ev.target.value;}
