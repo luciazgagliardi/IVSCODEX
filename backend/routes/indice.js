@@ -251,7 +251,7 @@ for (const { slug, buscar } of FUENTES) {
   router.post(`/indice/${slug}/buscar`, async (req, res, next) => {
     try {
       const cuerpo = req.body || {};
-      const { pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo, norma, provincia } = cuerpo;
+      const { pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo, norma, provincia, variantes } = cuerpo;
       // La consulta es solo texto y de largo acotado: un objeto o un texto de
       // megabytes no debe llegar a los buscadores oficiales.
       const q = typeof cuerpo.q === 'string' ? cuerpo.q.trim().slice(0, MAX_CONSULTA) : '';
@@ -333,6 +333,47 @@ for (const { slug, buscar } of FUENTES) {
           revisados = locales.length;
           desdeIndiceLocal = true;
           avisoFalla = 'La fuente CABA no devolvió coincidencias; muestro resultados guardados localmente, que pueden estar desactualizados.';
+        }
+      }
+
+      // Formas equivalentes del término (el anillo del tesauro: "daño moral",
+      // "daño extrapatrimonial", "daño inmaterial"…). Cada tribunal escribe una
+      // distinta y buscar sólo una deja fallos afuera. Sólo en la primera página:
+      // se agregan hasta 10 resultados nuevos por variante, marcados con la forma
+      // que los encontró, y no tocan la paginación de la búsqueda principal.
+      const listaVariantes = Array.isArray(variantes)
+        ? [...new Set(variantes.filter((v) => typeof v === 'string' && v.trim() && v.length <= 100).map((v) => v.trim()))]
+            .filter((v) => v.toLowerCase() !== consulta.toLowerCase()).slice(0, 4)
+        : [];
+      const primeraPagina = !(Number(desde) > 0) && !(Number(pagina) > 1);
+      if (listaVariantes.length && primeraPagina && !desdeIndiceLocal) {
+        const vistos = new Set(resultados.map((r) => r.id));
+        const extras = [];
+        const tope = new Promise((ok) => setTimeout(ok, 20_000)); // las variantes no demoran la respuesta más que esto
+        const tareas = listaVariantes.map(async (v) => {
+          try {
+            const r = await buscar({
+              q: v, pagina: 1, porPagina: 10,
+              ...(MODOS.has(modo) ? { modo } : {}),
+              ...(excluir ? { excluir: String(excluir) } : {}),
+              ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}),
+              ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}),
+              ...(tribunal ? { tribunal } : {}),
+              ...(typeof provincia === 'string' && provincia.length <= 60 ? { provincia } : {}),
+            });
+            for (const x of (r.resultados || []).slice(0, 10)) {
+              if (!x || vistos.has(x.id)) continue;
+              vistos.add(x.id);
+              extras.push({ ...x, variante: v });
+            }
+          } catch {
+            // una variante que falla no arruina la búsqueda principal
+          }
+        });
+        await Promise.race([Promise.all(tareas), tope]);
+        if (extras.length) {
+          resultados = resultados.concat(extras);
+          total = (total || 0) + extras.length;
         }
       }
 
