@@ -259,11 +259,15 @@ export async function buscarCorteidh(args) {
 
   let corp = null;
   try {
-    corp = await buscarEnCorpus(termino, modo, { desde: arranque, cuantos: porPagina, filtro });
+    const claveFiltro = filtro ? `${fuera.join(' ')}|${anioDesde || ''}|${anioHasta || ''}` : '';
+    corp = await buscarEnCorpus(termino, modo, { desde: arranque, cuantos: porPagina, filtro, claveFiltro });
   } catch {
     corp = null; // sin índice todavía, o un archivo ilegible: sigue el buscador del sitio
   }
-  if (!corp || !corp.total) return buscarEnSitio(args);
+  // Sin coincidencias en el texto (y sin nada por verificar), sólo el sitio. Si
+  // la frase exacta todavía se está verificando, se sigue: las del texto pueden
+  // aparecer en la página siguiente.
+  if (!corp || (!corp.total && !corp.parcial)) return buscarEnSitio(args);
 
   const faltan = porPagina - corp.resultados.length;
   const desdeSitio = Math.max(0, arranque - corp.total);

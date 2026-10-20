@@ -182,7 +182,7 @@ function parsear(html) {
 export async function buscarScba({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
-  const arranque = desde === null ? (Math.max(1, pagina) - 1) * POR_PAGINA_SITIO : Math.max(0, desde);
+  const arranque = desde === null ? (Math.max(1, pagina) - 1) * porPagina : Math.max(0, desde);
 
   let totalSitio = 0;
   const traer = async (offset) => {

@@ -116,8 +116,13 @@ export async function actualizarCorpus(listar, { log = () => {} } = {}) {
         }
         estadoConstruccion.hechos = docs.length;
       } catch (e) {
-        fallidos[r.id] = String(e?.message || e).slice(0, 160);
-        estadoConstruccion.ultimoError = fallidos[r.id];
+        const motivo = String(e?.message || e).slice(0, 160);
+        estadoConstruccion.ultimoError = motivo;
+        // Sólo se descarta para siempre lo que no va a cambiar (archivo enorme,
+        // escaneo sin texto, formato raro). Un corte de red o un 5xx se
+        // reintenta en la próxima actualización.
+        const permanente = ['DEMASIADO_GRANDE', 'PDF_ESCANEADO', 'TIPO_NO_SOPORTADO'].includes(e?.codigo) || /no trae texto/.test(motivo);
+        if (permanente) fallidos[r.id] = motivo;
       }
       if (++desdeGuardado >= 20) {
         desdeGuardado = 0;
@@ -190,7 +195,7 @@ const VIDA_VERIF_MS = 10 * 60_000;
  * los verificados hasta ahora, con frase exacta), para no repetirlos después.
  * `filtro(doc)` deja afuera documentos por fecha o carátula antes de abrirlos.
  */
-export async function buscarEnCorpus(q, modo = 'todas', { desde = 0, cuantos = 20, filtro = null, presupuestoMs = 8000 } = {}) {
+export async function buscarEnCorpus(q, modo = 'todas', { desde = 0, cuantos = 20, filtro = null, claveFiltro = '', presupuestoMs = 8000 } = {}) {
   await cargar();
   if (!docs.length) return null;
   const palabras = [...new Set(palabrasDe(q))];
@@ -238,7 +243,9 @@ export async function buscarEnCorpus(q, modo = 'todas', { desde = 0, cuantos = 2
 
   // Frase exacta: hay que abrir cada candidato para ver si la trae. Se verifica
   // en orden hasta llenar la página (o agotar el tiempo) y se recuerda lo hecho.
-  const clave = `${plegar(q)}|${filtro ? 'f' : ''}|${candidatos.length}`;
+  // La clave lleva el filtro concreto: con otro rango de años la lista de
+  // candidatos es otra aunque tenga el mismo largo.
+  const clave = `${plegar(q)}|${claveFiltro}|${candidatos.length}`;
   let v = VERIFICADAS.get(clave);
   if (!v || v.hasta < Date.now()) {
     v = { hasta: Date.now() + VIDA_VERIF_MS, estado: new Array(candidatos.length), siguiente: 0 };
