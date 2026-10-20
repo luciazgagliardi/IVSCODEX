@@ -205,6 +205,57 @@ strong,b{font-weight:500}
 .campo span{display:block;margin-bottom:10px;font-size:14px;color:var(--mute)}
 
 
+
+/* ---------- Buscar: barra compacta, riel de bases y lista ---------- */
+.bq{display:block;position:relative;margin-bottom:16px}
+.bq-barra{display:flex;align-items:center;gap:10px}
+.cq{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 22px;background:rgba(241,238,230,.03);transition:border-color .3s}
+.cq:focus-within{border-color:var(--gold)}
+.cq input[type=text]{flex:1;min-width:0;width:auto;border:0;padding:8px 0;font-size:18px;background:transparent}
+.cq .btn{flex:none;padding:11px 24px}
+.bq-barra>.chip{flex:none;padding:11px 18px}
+.fsb-n{display:inline-block;min-width:18px;padding:1px 6px;border-radius:999px;background:var(--gold);color:var(--bg);font-size:11.5px;text-align:center}
+.bq-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:10px 4px 0;font-size:13px;color:var(--mute)}
+.bq-cuenta{margin-left:auto;color:var(--mute-2)}.bq-cuenta b{color:var(--fg);font-weight:500}
+.bq-drawer{display:none;position:absolute;left:0;right:0;top:calc(100% - 4px);z-index:30;padding:18px 20px 16px;border:1px solid var(--line);border-radius:18px;background:#15120e;box-shadow:0 30px 80px rgba(0,0,0,.65);max-height:min(72vh,640px);overflow:auto}
+.bq-drawer.is-on{display:block}
+.bq-sug{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+.bq-drawer .bq-pie{margin-top:16px}
+.bq-acc .btn{padding:6px 16px 5px;font-size:12.5px}
+.bz{display:grid;grid-template-columns:236px minmax(0,1fr);gap:clamp(20px,3vw,44px);align-items:start;margin-top:22px}
+.bz-riel{position:sticky;top:92px;display:flex;flex-direction:column}
+.bz-fila{display:flex;align-items:center;gap:9px;padding:9px 10px;margin:0 -10px;border-radius:12px;cursor:pointer;transition:background .25s;font-size:13.5px}
+.bz-fila:hover{background:rgba(241,238,230,.04)}
+.bz-fila.on{background:rgba(241,238,230,.08)}
+.bz-fila .rf-nom{flex:1 1 auto;min-width:0;font:500 12.5px/1.2 var(--caps);letter-spacing:.14em;white-space:nowrap}
+.bz-fila .rf-punto{width:7px;height:7px;border-radius:50%;flex:none;background:var(--punto,var(--humo))}
+.bz-fila.sin-buscar .rf-punto{background:var(--line)}
+.bz-fila.consultando .rf-punto{animation:parpadeo 1s ease-in-out infinite alternate}
+.bz-fila.consultando .rf-t{color:var(--gold)}
+.bz-fila.con-error .rf-punto{background:var(--rojo)}.bz-fila.con-error .rf-t{color:var(--rojo)}
+.bz-fila .rf-n{font:500 13px/1 var(--sans);color:var(--fg);font-variant-numeric:tabular-nums}
+.bz-fila .rf-t{font-size:11.5px;color:var(--mute-2);white-space:nowrap}
+.bz-lista{min-width:0}
+.rz-cab{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:0 0 10px;margin-bottom:4px;border-bottom:1px solid var(--line-2);font-size:14px}
+.rz-cab b{font-weight:500}
+.rz-ord{margin-left:auto;display:flex;flex-wrap:wrap;gap:6px}
+.rz-ord .chip{padding:5px 12px;font-size:12.5px}
+.rz{padding:12px 12px;margin:0 -12px;border-bottom:1px solid var(--line-2);border-radius:12px;cursor:pointer;transition:background .25s}
+.rz:hover{background:rgba(241,238,230,.04)}
+.rz-t{display:flex;align-items:baseline;gap:9px;font-size:15px;font-weight:500;line-height:1.35}
+.rz-t .rf-punto{width:7px;height:7px;border-radius:50%;flex:none;background:var(--punto,var(--humo));transform:translateY(-1px)}
+.rz-m{margin:2px 0 0 16px;font-size:12px;color:var(--mute-2)}
+.rz-m b{font:500 11.5px/1 var(--caps);letter-spacing:.12em;color:var(--mute)}
+.rz p{margin:5px 0 0 16px;font-size:13.5px;line-height:1.5;color:var(--mute);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rz-abierta{padding:6px 0 14px;border-bottom:1px solid var(--line-2)}
+.rz-aviso{margin:14px 0;font-size:12.5px;color:var(--mute-2)}
+@media (max-width:860px){
+  .bz{grid-template-columns:1fr}
+  .bz-riel{position:static;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;gap:6px;padding-bottom:6px}
+  .bz-fila{flex:none;margin:0;border:1px solid var(--line);border-radius:999px;padding:7px 12px}
+  .bz-fila .rf-buscar,.rf-todas{display:none}
+  .bq-barra{flex-wrap:wrap}
+}
 /* ---------- Buscar en columnas ---------- */
 .bq{display:grid;gap:14px;margin-bottom:22px}
 .bq-fila{display:flex;align-items:flex-end;gap:14px}
@@ -280,6 +331,10 @@ strong,b{font-weight:500}
 .asist__m{max-width:88%;padding:11px 15px;border-radius:18px;font-size:14.5px;line-height:1.5;white-space:pre-line}
 .asist__m.bot{align-self:flex-start;background:rgba(241,238,230,.07);color:var(--fg)}
 .asist__m.yo{align-self:flex-end;background:var(--fg);color:var(--bg)}
+.asist__tipea{display:flex;gap:5px;align-items:center;padding:14px 16px}
+.asist__tipea i{width:6px;height:6px;border-radius:50%;background:var(--mute-2);animation:asistPunto 1s infinite ease-in-out}
+.asist__tipea i:nth-child(2){animation-delay:.15s}.asist__tipea i:nth-child(3){animation-delay:.3s}
+@keyframes asistPunto{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
 .asist__ops{display:flex;flex-wrap:wrap;gap:8px;margin-top:-2px}
 .asist__ops button{appearance:none;padding:9px 15px;border-radius:999px;border:1px solid var(--gold-55);background:transparent;color:var(--gold);font:400 13.5px/1.2 var(--sans);cursor:pointer;text-align:left}
 .asist__ops button:hover{background:rgba(217,163,27,.1);border-color:var(--gold)}
@@ -2628,7 +2683,7 @@ function nuevoEstado(){
           // cuenta como los pasajes: se escriben una vez y sirven desde
           // cualquier computadora.
           anillos:[],nuevoAnillo:{canonico:"",equivalentes:"",relacionados:"",nota:""},
-          ambitos:{mza:true,nac:true,prov:true,int:true,doc:true},provSel:"",fuentesOff:{},provAbierto:false,colChica:{},masFiltros:false,
+          ambitos:{mza:true,nac:true,prov:true,int:true,doc:true},provSel:"",verBase:"",orden:"inter",drawer:false,filasAbiertas:{},fuentesOff:{},provAbierto:false,colChica:{},masFiltros:false,
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
           api:null,cargando:false,cargandoOcr:false,errorLink:null,infoDoc:null,fichaConocida:null,
@@ -4205,18 +4260,83 @@ function estadoBase(f){
   if(im.busco) return {c:"",t:'<span class="rf-n">'+(im.total||im.resultados.length)+'</span>'+(im.ms?'<span class="rf-t">'+(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+' s</span>':'')};
   return {c:" sin-buscar",t:'<span class="rf-t">en espera</span>'};
 }
-function columnasBuscar(){
+/* Buscar, en dos zonas: a la izquierda las bases (punto, estado, conteo y su
+   botón) y a la derecha los resultados, intercalados de todas o los de una
+   base. Arriba, una barra de una línea; los filtros y las sugerencias se
+   abren en un panel que se superpone y no empuja los resultados. */
+function fechaNum(r){
+  var m=String(r.fecha||"").match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  return m?(+m[3])*10000+(+m[2])*100+(+m[1]):0;
+}
+function resultadosDe(f){
+  var im=estado.indices[f.slug]||{};
+  return (im.busco&&!im.error&&im.resultados)?im.resultados:[];
+}
+function pasajeDe(f,r){
+  var im=estado.indices[f.slug]||{}, uf=urlFragmento(f.slug,r);
+  return r.sumario||(uf&&im.fragmentos?im.fragmentos[uf]:"")||"";
+}
+function filaIndice(f,r,k){
+  var abierta=!!estado.filasAbiertas[k];
+  if(abierta) return '<div class="rz-abierta f-'+f.slug+'">'+fichaIndice(f,r)+
+    '<button type="button" class="mini" data-act="abrir-fila" data-k="'+esc(k)+'">Cerrar</button></div>';
+  var pas=pasajeDe(f,r), meta=[r.tribunal,r.fecha].filter(Boolean).map(esc).join(" · ");
+  return '<article class="rz f-'+f.slug+'" data-act="abrir-fila" data-k="'+esc(k)+'" tabindex="0">'+
+    '<div class="rz-t"><span class="rf-punto"></span><span>'+esc(r.caratula||r.expediente||"(sin carátula)")+'</span></div>'+
+    '<div class="rz-m"><b>'+esc(f.cod)+'</b>'+(meta?' · '+meta:'')+'</div>'+
+    (pas?'<p>'+resaltarSimple(pas,estado.q)+'</p>':'')+'</article>';
+}
+function listaTodas(vis){
+  var grupos=vis.map(function(f){ return resultadosDe(f).map(function(r,i){ return {f:f,r:r,k:f.slug+":"+i,i:i}; }); });
+  var a=[];
+  if(estado.orden==="inter"){
+    var k=0,hay=true;
+    while(hay){ hay=false; grupos.forEach(function(g){ if(g[k]){ a.push(g[k]); hay=true; } }); k++; }
+  }else{
+    grupos.forEach(function(g){ g.forEach(function(x){ a.push(x); }); });
+    if(estado.orden==="fecha") a.sort(function(x,y){ return fechaNum(y.r)-fechaNum(x.r); });
+  }
+  return a;
+}
+function estadoLista(vis){
+  var buscando=vis.filter(function(f){ return (estado.indices[f.slug]||{}).cargando; });
+  var fallaron=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
+  var h="";
+  if(buscando.length) h+='<p class="rz-aviso"><span class="rf-t" style="color:var(--gold)">buscando…</span> '+buscando.map(function(f){return esc(f.cod);}).join(", ")+' (los sistemas oficiales pueden tardar hasta 30 segundos)</p>';
+  if(fallaron.length) h+='<p class="rz-aviso">Sin respuesta: '+fallaron.map(function(f){return esc(f.cod);}).join(", ")+'. <button class="mini" data-act="buscar-todas">Reintentar</button></p>';
+  return h;
+}
+function bloqueResultados(vis){
   if(!estado.api) return '<p class="fsb-nota" style="margin:18px 0">El buscador en vivo no está disponible ahora.</p>';
-  var vis=basesVisibles();
   if(!vis.length) return '<div class="vacio">Ninguna base coincide con estos filtros. <button class="mini" data-act="limpiar-filtros">Limpiar filtros</button></div>';
-  return '<div class="colsb" id="colsb">'+vis.map(function(f){
-    var im=estado.indices[f.slug]||{}, e=estadoBase(f), chica=!!estado.colChica[f.slug];
-    return '<section class="colb f-'+f.slug+e.c+(chica?" chica":"")+'" id="col-'+f.slug+'" aria-label="'+esc(f.nombre)+'">'+
-      '<header class="colb-cab"><span class="rf-punto"></span><span class="rf-nom" title="'+esc(f.nombre)+'">'+esc(f.cod)+'</span>'+e.t+
-        '<button type="button" class="rf-buscar" data-act="buscar-indice" data-fuente="'+f.slug+'"'+(im.cargando?' disabled':'')+' title="Buscar sólo en '+esc(f.nombre)+'">'+(im.busco?"Repetir":"Buscar")+'</button>'+
-        '<button type="button" class="colb-x" data-act="col-plegar" data-fuente="'+f.slug+'" title="'+(chica?"Abrir":"Plegar")+'" aria-label="'+(chica?"Abrir":"Plegar")+' '+esc(f.cod)+'">'+(chica?"+":"✕")+'</button></header>'+
-      '<div class="colb-cuerpo">'+panelIndice(f)+'</div></section>';
-  }).join("")+'</div>';
+  var base=estado.verBase?vis.filter(function(f){return f.slug===estado.verBase;})[0]:null;
+  if(base){
+    var im=estado.indices[base.slug]||{}, e=estadoBase(base);
+    return '<div class="rz-cab"><b>'+esc(base.nombre)+'</b><span class="rz-ord">'+e.t+'</span>'+
+      '<button class="mini" data-act="ver-base" data-fuente="">← Todas las bases</button></div>'+panelIndice(base);
+  }
+  var lista=listaTodas(vis), buscadas=vis.filter(function(f){ return (estado.indices[f.slug]||{}).busco; }).length;
+  var h=estadoLista(vis);
+  if(!lista.length){
+    return h+(buscadas?'<div class="vacio">Sin resultados en las bases que respondieron. Pruebe con menos palabras, o cambie «Cómo combinar».</div>'
+      :'<div class="vacio">Escriba su consulta y toque <b>Buscar</b>: se consulta a la vez en las bases marcadas y los resultados aparecen acá.</div>');
+  }
+  h+='<div class="rz-cab"><b>Todas las bases</b>'+
+    '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"]].map(function(o){
+      return '<button class="chip" data-act="orden" data-v="'+o[0]+'" aria-pressed="'+(estado.orden===o[0]?"true":"false")+'">'+o[1]+'</button>'; }).join("")+'</span></div>';
+  h+=lista.map(function(x){ return filaIndice(x.f,x.r,x.k); }).join("");
+  h+='<p class="rz-aviso">Se muestran los primeros resultados de cada base. Para ver todos, filtrar por tribunal o cambiar de página, elija la base en la columna de la izquierda.</p>';
+  return h;
+}
+function rielBuscar(vis){
+  var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?(im.total||(im.resultados||[]).length):0); },0);
+  var h='<div class="bz-fila'+(!estado.verBase?" on":"")+'" data-act="ver-base" data-fuente=""><span class="rf-nom">TODAS</span><span class="rf-n">'+(tot||"")+'</span></div>';
+  h+=vis.map(function(f){
+    var im=estado.indices[f.slug]||{}, e=estadoBase(f);
+    return '<div class="bz-fila f-'+f.slug+e.c+(estado.verBase===f.slug?" on":"")+'" data-act="ver-base" data-fuente="'+f.slug+'" title="'+esc(f.nombre)+'"><span class="rf-punto"></span><span class="rf-nom">'+esc(f.cod)+'</span>'+e.t+
+      '<button type="button" class="rf-buscar" data-act="buscar-indice" data-fuente="'+f.slug+'"'+(im.cargando?' disabled':'')+' title="Buscar sólo en '+esc(f.nombre)+'">'+(im.busco?"Repetir":"Buscar")+'</button></div>';
+  }).join("");
+  return h+'<button type="button" class="rf-todas" data-act="buscar-todas">Buscar en todas</button>';
 }
 function vistaBuscar(){
   var sug="";
@@ -4225,20 +4345,26 @@ function vistaBuscar(){
     if(R) sug='<div class="panel"><h2 class="voces-tit">Voces sugeridas <span class="punto">·</span> <span class="rama-nom">'+esc(comoTitulo(R.n))+'</span></h2>'+
       '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(comoTitulo(v))+'</button>';}).join("")+'</div></div>';
   }
-  var nVis=basesVisibles().length;
+  var vis=basesVisibles();
+  if(estado.verBase&&!vis.some(function(f){return f.slug===estado.verBase;})) estado.verBase="";
+  var ac=filtrosActivos(), sugs=tiraSugerencias()+tiraEquivalentes()+tiraProponer();
+  var tieneSug=!!(sug||sugs);
+  var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?(im.total||(im.resultados||[]).length):0); },0);
+  var resp=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; }).length;
   return '<div class="bq" id="panel-buscar-form">'+
-      sug+
-      '<div class="bq-fila"><label class="campo campo--q"><span>¿Qué desea consultar?</span>'+
-        '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off"></label>'+
-        '<button class="btn" data-act="buscar-todas">Buscar en '+(nVis===FUENTES_INDICE.length?"todas":nVis+(nVis===1?" base":" bases"))+'</button></div>'+
-      tiraSugerencias()+tiraEquivalentes()+tiraProponer()+
-      franjaBuscar()+
-      '<div class="bq-pie"><span class="bq-cad"><span>Consulta</span> <code id="cadena" aria-live="polite"></code></span>'+
+      '<div class="bq-barra"><label class="cq"><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
+        '<button class="btn" data-act="buscar-todas">Buscar</button></label>'+
+        '<button class="chip" data-act="tog-drawer" aria-pressed="'+(estado.drawer?"true":"false")+'">Filtros'+(ac.length?' <span class="fsb-n">'+ac.length+'</span>':'')+(tieneSug?' · sugerencias':'')+' '+(estado.drawer?"▴":"▾")+'</button></div>'+
+      '<div class="bq-sum">'+(ac.length?ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join(""):'<span>Todas las bases · cualquier jurisdicción y año</span>')+
+        '<span class="bq-cuenta">'+(resp?'<b>'+tot.toLocaleString("es-AR")+'</b> resultados · '+resp+' de '+vis.length+' bases respondieron':'')+'</span></div>'+
+      '<div class="bq-drawer'+(estado.drawer?" is-on":"")+'">'+(tieneSug?'<div class="bq-sug">'+sug+sugs+'</div>':'')+franjaBuscar()+
+        '<div class="bq-pie"><span class="bq-cad"><span>Consulta</span> <code id="cadena" aria-live="polite"></code></span>'+
         '<span class="bq-acc"><button class="mini" data-act="copiar-cadena">Copiar</button>'+botonCompartir()+
-        '<button class="mini" data-act="barrido">Buscar con Google</button><button class="mini" data-act="limpiar">Empezar de nuevo</button></span></div>'+
+        '<button class="mini" data-act="barrido">Buscar con Google</button><button class="mini" data-act="limpiar-filtros">Limpiar filtros</button><button class="mini" data-act="limpiar">Empezar de nuevo</button>'+
+        '<button class="btn" data-act="tog-drawer">Listo</button></span></div></div>'+
     '</div>'+
     (estado.api?avisoServidor():"")+
-    columnasBuscar();
+    '<div class="bz" id="bz"><aside class="bz-riel" aria-label="Bases">'+rielBuscar(vis)+'</aside><div class="bz-lista">'+bloqueResultados(vis)+'</div></div>';
 }
 
 /* Buscar en todas las bases a la vez, dentro de la propia página: lanza la
@@ -4259,7 +4385,7 @@ function buscarEnTodas(){
   }
   basesVisibles().forEach(function(f){ buscarEnFuente(f.slug); });
   setTimeout(function(){
-    var c=document.getElementById("colsb");
+    var c=document.getElementById("bz");
     if(c&&c.scrollIntoView) c.scrollIntoView({behavior:"smooth",block:"start"});
   },350);
 }
@@ -6396,15 +6522,15 @@ function formPerfil(){
    Vive fuera de render(): su conversación no se pierde al cambiar de
    sección. */
 var AYUDA_SECCION={
-  buscar:"Escriba el tema con sus palabras y toque «Buscar»: se consulta a la vez en todas las bases oficiales y abajo aparecen los resultados, cada uno con el pasaje donde está lo que busca. Si quiere afinar (frase exacta, años, excluir palabras), abra «Ajustar la búsqueda».",
-  lector:"Acá se lee un fallo con su búsqueda marcada. Pegue el texto o traiga el fallo por su enlace, escriba qué busca y el lector le salta de coincidencia en coincidencia.",
-  ramas:"Las ramas del derecho con sus términos. Elija una rama y toque un término para buscarlo.",
+  buscar:"Escriba el tema y toque «Buscar»: se consulta a la vez en las bases marcadas. A la izquierda ve cuál respondió y cuántos resultados trajo; en «Filtros» elige jurisdicción, provincia, fuente, años y más.",
+  lector:"Acá se lee un fallo con su búsqueda marcada. Pegue el texto o traiga el fallo por su enlace y salte de coincidencia en coincidencia.",
+  ramas:"Las ramas del derecho con sus términos: elija una y toque un término para buscarlo.",
   plazos:"Calcula plazos procesales: elija el tipo de plazo y la fecha de inicio.",
   calculos:"Calculadoras de uso frecuente: intereses, actualizaciones y otras cuentas.",
-  fuentes:"El catálogo de las bases oficiales que se consultan, con qué tiene cada una.",
+  fuentes:"El catálogo de las bases oficiales, con qué tiene cada una.",
   verificar:"Pegue una cita (por ejemplo «CSJN, Fallos 330:1234») y se comprueba si existe.",
-  glosario:"Significado en palabras simples de los términos jurídicos.",
-  cuenta:"Su perfil y su cuenta: lo que guarda se sincroniza entre dispositivos."
+  glosario:"El significado, en palabras simples, de los términos jurídicos y las expresiones latinas.",
+  cuenta:"Su perfil: nombre, especialidad y novedades. Lo que guarda se sincroniza entre dispositivos."
 };
 function montarAsistente(){
   if(document.getElementById("asist")) return;
@@ -6414,93 +6540,334 @@ function montarAsistente(){
     '<section class="asist__panel" role="dialog" aria-label="Lexia, la asistente de IVS CODEX">'+
       '<div class="asist__cab"><b><i></i>Lexia <span style="font-weight:400;color:var(--mute-2);font-size:12.5px">asistente virtual</span></b><button type="button" class="asist__x" id="asist-cerrar" aria-label="Cerrar a Lexia">✕</button></div>'+
       '<div class="asist__log" id="asist-log" aria-live="polite"></div>'+
-      '<form class="asist__form" id="asist-form" autocomplete="off"><input type="text" id="asist-in" maxlength="300" placeholder="Cuénteme qué necesita…" aria-label="Escriba su consulta a Lexia"><button type="submit">Enviar</button></form>'+
+      '<form class="asist__form" id="asist-form" autocomplete="off"><input type="text" id="asist-in" maxlength="300" placeholder="Escríbame lo que necesita…" aria-label="Escriba su consulta a Lexia"><button type="submit">Enviar</button></form>'+
       '<p class="asist__pie">Orientación automática. No reemplaza el consejo de un abogado.</p>'+
     '</section>';
   document.body.appendChild(el);
   var log=document.getElementById("asist-log"), entrada=document.getElementById("asist-in"), arranco=false;
+  var ctx={tema:"",propuesta:null,pendiente:"",ultimo:"",usado:{},espera:0};
 
+  /* ---- salida: burbujas cortas, con «escribiendo…» y de a una ---- */
+  var cola=[], corriendo=false;
   function ir(){ log.scrollTop=log.scrollHeight; }
-  function dice(txt,ops){
-    var m=document.createElement("div"); m.className="asist__m bot"; m.textContent=txt; log.appendChild(m);
-    if(ops&&ops.length){
-      var o=document.createElement("div"); o.className="asist__ops";
-      ops.forEach(function(op){
-        var b=document.createElement("button"); b.type="button"; b.textContent=op.t;
-        if(op.suave) b.className="suave";
-        b.addEventListener("click",function(){ o.remove(); dijo(op.t); op.f(); });
-        o.appendChild(b);
+  function siguiente(){ var fn=cola.shift(); if(!fn){ corriendo=false; return; } corriendo=true; fn(siguiente); }
+  function encolar(fn){ cola.push(fn); if(!corriendo) siguiente(); }
+  function pick(clave,arr){
+    var i=Math.floor(Math.random()*arr.length);
+    if(arr.length>1&&i===ctx.usado[clave]) i=(i+1)%arr.length;
+    ctx.usado[clave]=i; return arr[i];
+  }
+  function sinOpciones(){ [].forEach.call(log.querySelectorAll(".asist__ops"),function(o){ o.remove(); }); }
+  function dice(partes,ops){
+    if(typeof partes==="string") partes=[partes];
+    partes.forEach(function(txt,i){
+      encolar(function(next){
+        var t=document.createElement("div"); t.className="asist__m bot asist__tipea"; t.innerHTML="<i></i><i></i><i></i>"; log.appendChild(t); ir();
+        setTimeout(function(){
+          t.className="asist__m bot"; t.textContent=txt;
+          if(i===partes.length-1&&ops&&ops.length){
+            var o=document.createElement("div"); o.className="asist__ops";
+            ops.forEach(function(op){
+              var b=document.createElement("button"); b.type="button"; b.textContent=op.t; if(op.suave) b.className="suave";
+              b.addEventListener("click",function(){ sinOpciones(); dijo(op.t); ctx.propuesta=null; op.f(); });
+              o.appendChild(b);
+            });
+            log.appendChild(o);
+          }
+          ir(); next();
+        },Math.min(950,300+txt.length*8));
       });
-      log.appendChild(o);
-    }
-    ir();
+    });
   }
   function dijo(txt){ var m=document.createElement("div"); m.className="asist__m yo"; m.textContent=txt; log.appendChild(m); ir(); }
-  function seccion(tab){ estado.tab=tab; render(); window.scrollTo(0,0); }
-  function buscarAhora(q,modo){
-    estado.q=q; estado.modo=modo||"todas"; estado.marca=0; estado.articulo="";
+  function irA(tab){ estado.tab=tab; render(); window.scrollTo(0,0); }
+
+  /* ---- lectura de lo que pide ---- */
+  function norm(x){ return sinTildes(x).replace(/[¿?¡!]/g," ").replace(/\s+/g," ").trim(); }
+  var ALIAS_PROV=[
+    ["ciudad autonoma de buenos aires","Ciudad Autónoma de Buenos Aires"],["ciudad de buenos aires","Ciudad Autónoma de Buenos Aires"],["capital federal","Ciudad Autónoma de Buenos Aires"],["caba","Ciudad Autónoma de Buenos Aires"],
+    ["provincia de buenos aires","Buenos Aires"],["pba","Buenos Aires"],["bs as","Buenos Aires"]];
+  function leer(txt){
+    var orig=txt.replace(/[¿?¡!]/g," "), t=sinTildes(orig), r={prov:"",ambs:[],desde:"",hasta:"",modo:"",excluir:"",limpiar:false};
+    function cortar(re,fn){
+      var m=re.exec(t); if(!m) return false;
+      if(fn) fn(m);
+      var blanco=new Array(m[0].length+1).join(" ");
+      t=t.slice(0,m.index)+blanco+t.slice(m.index+m[0].length);
+      orig=orig.slice(0,m.index)+blanco+orig.slice(m.index+m[0].length);
+      return true;
+    }
+    var anioOk=function(y){ y=+y; return y>=1863&&y<=2100?String(y):""; };
+    cortar(/\b(?:sin filtros|de cero|desde cero|borra(?:r)? los filtros|limpiar filtros)\b/,function(){ r.limpiar=true; });
+    cortar(/\bentre(?: el)?(?: ano)? (\d{4}) y(?: el)?(?: ano)? (\d{4})\b/,function(m){ r.desde=anioOk(m[1]); r.hasta=anioOk(m[2]); });
+    cortar(/\bultimos? (\d{1,2}) anos\b/,function(m){ r.desde=String(new Date().getFullYear()-(+m[1])); });
+    cortar(/\bdesde(?: el)?(?: ano)? (\d{4})\b/,function(m){ r.desde=anioOk(m[1]); });
+    cortar(/\bhasta(?: el)?(?: ano)? (\d{4})\b/,function(m){ r.hasta=anioOk(m[1]); });
+    cortar(/\b(?:del|de|en el|durante el) ano (\d{4})\b/,function(m){ r.desde=r.hasta=anioOk(m[1]); });
+    cortar(/\b(?:excluyendo|excluir|que no (?:diga|mencione|hable de)) ([a-z ]{3,40})/,function(m){ r.excluir=m[1].trim(); });
+    cortar(/\b(?:frase exacta|textual(?:mente)?|exactamente)\b/,function(){ r.modo="exacta"; });
+    cortar(/\b(?:cualquiera de las palabras|alguna de las palabras)\b/,function(){ r.modo="alguna"; });
+    ALIAS_PROV.forEach(function(a){ cortar(new RegExp("\\b"+a[0]+"\\b"),function(){ r.prov=a[1]; }); });
+    PROVINCIAS_SAIJ.forEach(function(p){
+      var n=sinTildes(p); if(n.indexOf("ciudad")===0) return;
+      cortar(new RegExp("\\b(?:en |de |la provincia de )?"+n+"\\b"),function(){ r.prov=p; });
+    });
+    cortar(/\b(?:internacional(?:es)?|interamericana|cidh|corte idh|derechos humanos)\b/,function(){ r.ambs.push("int"); });
+    cortar(/\b(?:doctrina|doctrinal|articulos? de doctrina|revistas?)\b/,function(){ r.ambs.push("doc"); });
+    cortar(/\b(?:nacional(?:es)?|federal(?:es)?|csjn|corte suprema|saij)\b/,function(){ r.ambs.push("nac"); });
+    r.rest=orig;
+    return r;
+  }
+  var RUIDO=/\b(?:hola|buenas|buen dia|buenos dias|buenas tardes|buenas noches|por favor|porfa|quiero|quisiera|necesito|necesitaria|me gustaria|puedo|podes|podrias|podria|ayudame|ayudarme|busca(?:me|r|rme)?|encontra(?:me|r)?|mostra(?:me|r)?|averigua(?:r|me)?|investiga(?:r|me)?|consulta(?:r|me)?|dame|traeme|fijate|jurisprudencia|fallos?|sentencias?|casos?|antecedentes|precedentes|resoluciones|algo|todo|todos|todas|lo que|sobre|acerca de)\b/gi;
+  var CONECT={de:1,del:1,la:1,las:1,el:1,los:1,un:1,una:1,unos:1,unas:1,en:1,con:1,para:1,que:1,y:1,e:1,o:1,por:1,a:1,al:1,me:1,se:1,mi:1,lo:1};
+  function tema(rest){
+    var x=rest.replace(/[,;:.]+/g," ").replace(RUIDO," ").replace(/\s+/g," ").trim().split(" ");
+    while(x.length&&CONECT[sinTildes(x[0])]) x.shift();
+    while(x.length&&CONECT[sinTildes(x[x.length-1])]) x.pop();
+    var out=x.join(" ").trim();
+    return out.length>=3?out:"";
+  }
+  function dondeTexto(l){
+    var p=[];
+    if(l.prov) p.push(l.prov);
+    l.ambs.forEach(function(k){ p.push({nac:"la Nación",int:"el ámbito internacional",doc:"doctrina"}[k]); });
+    return p.length?" en "+p.join(" y "):"";
+  }
+  function filtrosTexto(l){
+    var x=dondeTexto(l);
+    if(l.desde&&l.hasta&&l.desde===l.hasta) x+=", del "+l.desde;
+    else{ if(l.desde) x+=", desde "+l.desde; if(l.hasta) x+=", hasta "+l.hasta; }
+    if(l.excluir) x+=", sin «"+l.excluir+"»";
+    if(l.modo==="exacta") x+=", con la frase exacta";
+    if(l.modo==="alguna") x+=", con cualquiera de las palabras";
+    return x;
+  }
+  function hayEntidades(l){ return !!(l.prov||l.ambs.length||l.desde||l.hasta||l.excluir||l.modo||l.limpiar); }
+  function aplicar(l){
+    if(l.limpiar||(l.prov||l.ambs.length)){
+      Object.keys(AMB).forEach(function(k){ estado.ambitos[k]=true; }); estado.provSel=""; estado.indices.saij.provincia="";
+      estado.desde=""; estado.hasta=""; estado.excluir=""; estado.fuentesOff={}; estado.verBase="";
+    }
+    if(l.ambs.length){ Object.keys(AMB).forEach(function(k){ estado.ambitos[k]=l.ambs.indexOf(k)>-1; }); }
+    if(l.prov){
+      estado.provSel=l.prov; estado.indices.saij.provincia=l.prov; estado.ambitos.nac=true;
+      FUENTES_INDICE.forEach(function(f){ if(PROV_DE[f.slug]===l.prov) estado.ambitos[f.clase]=true; });
+    }
+    if(l.desde) estado.desde=l.desde; if(l.hasta) estado.hasta=l.hasta;
+    if(l.excluir) estado.excluir=l.excluir;
+    if(l.modo) estado.modo=l.modo;
+  }
+  function buscarAhora(q,l,modo){
+    ctx.tema=q; ctx.propuesta=null; ctx.pendiente="";
+    if(l) aplicar(l);
+    estado.q=q; estado.modo=modo||l&&l.modo||estado.modo||"todas"; estado.marca=0; estado.articulo=""; estado.verBase="";
     recalcularSugeridas(); estado.tab="buscar"; render(); window.scrollTo(0,0);
-    setTimeout(buscarEnTodas,120);
-    dice("Listo: estoy buscando «"+q+"» en todas las bases. Los resultados aparecen en la página, de a uno por base.");
+    setTimeout(buscarEnTodas,150);
+    setTimeout(vigilar,1500);
   }
-  function inicio(){
-    var n=estado.usuario?nombreDe(estado.usuario):"";
-    dice((n?"Hola, "+n+". ":"Hola. ")+"Soy Lexia, la asistente virtual de IVS CODEX. Cuénteme con sus palabras qué necesita y le muestro por dónde empezar, o elija una opción.",[
-      {t:"Buscar jurisprudencia sobre un tema",f:pedirTema},
-      {t:"Comprobar si una cita es real",f:function(){ seccion("verificar"); dice(AYUDA_SECCION.verificar); }},
-      {t:"Leer un fallo que ya tengo",f:function(){ seccion("lector"); dice(AYUDA_SECCION.lector); }},
-      {t:"Calcular un plazo",f:function(){ seccion("plazos"); dice(AYUDA_SECCION.plazos); }},
-      {t:"Entender un término jurídico",f:function(){ seccion("glosario"); dice(AYUDA_SECCION.glosario); }},
-      {t:"¿Qué hago en esta pantalla?",suave:true,f:ayudaAqui}
-    ]);
+  /* cuando terminan de responder las bases, Lexia comenta qué pasó */
+  var vig=0;
+  function vigilar(){
+    var id=++vig, n=0;
+    (function mirar(){
+      if(id!==vig) return;
+      var vis=basesVisibles(), pend=vis.filter(function(f){ return (estado.indices[f.slug]||{}).cargando; }).length;
+      if(pend&&n++<40) return setTimeout(mirar,1000);
+      if(!el.classList.contains("is-on")&&!log.children.length) return;
+      var ok=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; });
+      var tot=ok.reduce(function(a,f){ var im=estado.indices[f.slug]; return a+(im.total||im.resultados.length); },0);
+      var mal=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
+      if(!ok.length){ dice(pick("sinresp",["Ninguna base respondió todavía. Los sistemas oficiales a veces se cuelgan; ¿reintento?","No hubo respuesta de las bases. Suele pasar en horario de tribunales; ¿lo intento de nuevo?"]),[{t:"Reintentar",f:buscarEnTodas}]); return; }
+      if(tot===0){ dice(pick("cero",["Respondieron "+ok.length+" bases pero sin coincidencias. Probemos aflojar la búsqueda.","Nada con esas palabras. Puedo probar con «alguna palabra» o quitar filtros."]),
+        [{t:"Probar con alguna palabra",f:function(){ estado.modo="alguna"; buscarEnTodas(); render(); }},{t:"Quitar filtros",f:function(){ aplicar({limpiar:true,ambs:[]}); render(); buscarEnTodas(); }}]); return; }
+      var txt=pick("fin",[
+        "Respondieron "+ok.length+" de "+vis.length+" bases, con "+tot.toLocaleString("es-AR")+" resultados.",
+        "Ya están: "+tot.toLocaleString("es-AR")+" resultados en "+ok.length+" bases.",
+        "Listo, "+ok.length+" bases respondieron y sumaron "+tot.toLocaleString("es-AR")+" resultados."])+(mal.length?" "+mal.map(function(f){return f.cod;}).join(", ")+" no contestó.":"");
+      dice(tot>300?[txt,pick("muchos",["Son bastantes. ¿Acoto por año o por provincia?","Es mucho material. Le puedo acotar por fecha o jurisdicción."])]:txt,
+        tot>300?[{t:"Desde 2020",f:function(){ estado.desde="2020"; buscarEnTodas(); render(); dice("Hecho, sólo desde 2020."); }},{t:"Frase exacta",f:function(){ estado.modo="exacta"; buscarEnTodas(); render(); dice("Listo, ahora con la frase exacta."); }},{t:"Elegir provincia",f:function(){ estado.drawer=true; estado.provAbierto=true; render(); }}]:null);
+    })();
   }
-  function pedirTema(){
-    dice("Cuénteme el tema como se lo explicaría a un colega, por ejemplo: «me despidieron sin causa» o «mi vecino no paga el alquiler». Yo lo traduzco a los términos que usan los tribunales.");
+  function pedirTema(l){
+    ctx.pendiente="tema"; ctx.pendL=l||null;
+    dice(pick("pedir",["¿Sobre qué tema? Puede decirlo con sus palabras.","Dígame el tema y lo busco. Por ejemplo: «despido sin causa».","¿Qué tema le interesa? Con una frase alcanza."]));
     entrada.focus();
+  }
+
+  /* ---- respuestas por intención ---- */
+  function glosa(t){
+    var m=t.match(/(?:que (?:significa|es|quiere decir)|significado de|definicion de|que quiere decir|a que se refiere)\s+(?:el |la |lo |un |una )?(.+)$/);
+    if(!m) return null;
+    var q=m[1].trim().replace(/\s+/g," ");
+    var hit=GLOSARIO.filter(function(g){ var k=sinTildes(g[0]); return k===q||q.indexOf(k)===0||k.indexOf(q)===0; })[0];
+    return {q:q,hit:hit};
+  }
+  var FILTROS={
+    provincia:["Para una provincia: en «Filtros», fila «Dónde», toque «Una provincia» y elija. Mendoza, Buenos Aires y CABA tienen base propia; las demás se buscan por SAIJ.","Elija la provincia en «Filtros → Dónde → Una provincia». También puede escribirme «jurisprudencia de Córdoba» y lo hago yo."],
+    fuente:["«Fuente» es cada base: SCJM, TSJ, CSJN, etc. En «Filtros» las marca o desmarca, y sólo se busca en las marcadas.","En la fila «Fuente» de los filtros toca una base para dejarla afuera. Las desmarcadas se ven tachadas."],
+    anios:["Los años van en «Filtros → Cómo», con «Desde» y «Hasta». O dígame «desde 2018» y lo pongo.","En «Filtros» hay dos casilleros de años. Si prefiere, escriba «entre 2015 y 2020» y lo cargo yo."],
+    excluir:["«Excluir» saca los resultados que traigan una palabra. Está en «Filtros → Cómo». Ejemplo: excluir «seguro laboral».","Para descartar una palabra use «Excluir» (en «Filtros»), o dígame «excluyendo X»."],
+    modo:["Frase exacta: las palabras juntas y en ese orden (pocos resultados, precisos). Todas las palabras: aparecen todas, aunque separadas. Alguna: basta una (muchos, menos precisos).","Tres modos: frase exacta (la más estricta), todas las palabras (el punto medio) y alguna palabra (la más amplia)."],
+    tribunal:["Tribunal, fuero o instancia todavía no son filtros: cada base los maneja distinto. Mendoza permite elegir cámara dentro de su columna, y SAIJ elige provincia.","Esos filtros finos los ofrece cada base: al elegir una en la lista de la izquierda aparecen los suyos (cámaras de Mendoza, provincia de SAIJ)."]
+  };
+  function abrirFiltros(){ estado.tab="buscar"; estado.drawer=true; render(); window.scrollTo(0,0); }
+
+  var VOCAB=["jurisprudencia","sentencia","sentencias","antecedentes","precedentes","vencimiento","prescripcion","caducidad","filtros","provincia","provincias","glosario","significa","verificar","calcular","calculo","intereses","honorarios","indemnizacion","guardados","historial","contrasena","internacional","interamericana","doctrina","nacional","federal","buscar","busqueda","resultados","explicame","plazo","plazos","citas","cordoba","mendoza","tucuman","santa fe","neuquen","chubut","misiones","corrientes","formosa","catamarca","jujuy","salta"];
+  function distancia(a,b){
+    var m=a.length,n=b.length,d=[],i,j;
+    for(i=0;i<=m;i++){ d[i]=[i]; }
+    for(j=1;j<=n;j++) d[0][j]=j;
+    for(i=1;i<=m;i++) for(j=1;j<=n;j++) d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a.charAt(i-1)===b.charAt(j-1)?0:1));
+    return d[m][n];
+  }
+  /* «juriprudencia» → «jurisprudencia»: se corrigen sólo palabras largas, a una o dos letras de una conocida */
+  function corregir(txt){
+    var cambios=[], palabras=txt.split(/(\s+)/);
+    var out=palabras.map(function(w){
+      var n=sinTildes(w).replace(/[^a-zñ]/g,"");
+      if(n.length<6||VOCAB.indexOf(n)>-1) return w;
+      var mejor=null,dm=9;
+      VOCAB.forEach(function(v){ var d=distancia(n,v); if(d<dm){ dm=d; mejor=v; } });
+      if(mejor&&dm<=(n.length>=9?2:1)&&Math.abs(n.length-mejor.length)<=2){ cambios.push([w,mejor]); return mejor; }
+      return w;
+    }).join("");
+    return cambios.length?{texto:out,cambios:cambios}:null;
+  }
+  function ejemplos(){
+    var ej=["daño moral en Mendoza desde 2018","despido sin causa, Córdoba","qué significa cosa juzgada","cómo filtro por provincia"];
+    dice(["Con gusto. Puede escribirme de estas formas; toque una para probarla:"],ej.map(function(e){ return {t:e,f:function(){ entender(e); }}; }));
+  }
+  function entender(txt,reintento){
+    var corr=reintento?null:corregir(txt);
+    if(corr) txt=corr.texto;
+    var prevFallos=ctx.fallos||0; ctx.fallos=0;
+    var t=norm(txt), l=leer(txt), palabras=t.split(" ").filter(Boolean).length;
+    sinOpciones(); vig++;
+    var corto=/^(si|sii|dale|ok|okey|bueno|claro|por favor|hacelo|hacelo nomas|adelante|listo|de una|perfecto)$/.test(t);
+    var neg=/^(no|nop|nada|no gracias|dejalo|dejalo asi|mejor no)$/.test(t);
+    if(corto){ if(ctx.propuesta){ var f=ctx.propuesta; ctx.propuesta=null; f(); return; } return dice(pick("corto",["Dígame qué necesita y lo hago.","Cuénteme el tema o la herramienta que busca."]),opcionesInicio()); }
+    if(neg){ ctx.propuesta=null; return dice(pick("neg",["Sin problema. Si necesita algo, acá estoy.","Perfecto. Cuando quiera, me escribe."])); }
+    if(ctx.pendiente==="tema"&&!/^(cancelar|nada|olvidalo)$/.test(t)){
+      var tm=tema(l.rest)||txt.trim(), l0=ctx.pendL; ctx.pendiente="";
+      var ll=hayEntidades(l)?l:(l0||l);
+      dice(pick("ok",["Perfecto, busco «"+tm+"»"+filtrosTexto(ll)+".","Dale: «"+tm+"»"+filtrosTexto(ll)+"."])); return buscarAhora(tm,ll);
+    }
+    if(/^(hola|holaa+|buenas|buen dia|buenos dias|buenas tardes|buenas noches|que tal|hey|ey)( colega| lexia)?$/.test(t))
+      return dice(pick("hola",["Hola, colega. ¿En qué puedo ayudarle?","¡Hola! ¿Qué anda buscando?","Hola, un gusto. Cuénteme qué necesita."]),opcionesInicio());
+    if(/\b(gracias|muchas gracias|genial|buenisimo|excelente|joya|barbaro)\b/.test(t)&&palabras<=5)
+      return dice(pick("gracias",["¡De nada! Si hay algo más, avíseme.","Un gusto. Acá sigo por si necesita otra cosa.","Para eso estoy."]));
+    if(/\b(chau|adios|hasta luego|nos vemos)\b/.test(t)) return dice(pick("chau",["Hasta luego, colega. Éxitos con el caso.","Chau. Cuando me necesite, acá estoy."]));
+    if(/\b(quien sos|como te llamas|que sos|sos una ia|sos humana|sos un robot|quien eres)\b/.test(t))
+      return dice(["Soy Lexia, la asistente virtual de IVS CODEX. No soy una persona ni un abogado.","Entiendo lo que me pide con reglas simples, y puedo buscar por usted, ajustar filtros y llevarlo a cada herramienta."],opcionesInicio());
+    if(/\b(que (podes|puedes|haces|sabes)|en que (me )?(ayudas|podes ayudar)|que ofreces|para que servis)\b/.test(t))
+      return dice("Puedo buscar jurisprudencia con filtros (por ejemplo «daño moral en Mendoza desde 2018»), explicarle cómo funciona cada filtro, definir términos, y llevarlo a plazos, cálculos o verificación de citas.",opcionesInicio());
+    if(/\b(guardas|guardan|privacidad|datos personales|quien ve|me espian)\b/.test(t))
+      return dice("Lo que me escribe se procesa en su navegador y no lo guardo. La cuenta, en cambio, sólo guarda su perfil y lo que usted marque.");
+    var g=glosa(t);
+    if(g){
+      if(g.hit) return dice([g.hit[0]+": «"+g.hit[1]+"». "+g.hit[2]],[{t:"Ver el glosario",suave:true,f:function(){ estado.buscarGlosario=g.hit[0]; irA("glosario"); }}]);
+      return dice(pick("noglos",["No tengo «"+g.q+"» en el glosario de latinismos. ¿Quiere que lo busque como tema en las bases?","«"+g.q+"» no figura en mi glosario. Puedo buscarlo en la jurisprudencia, si le sirve."]),[{t:"Buscarlo como tema",f:function(){ buscarAhora(g.q,null,"todas"); }},{t:"No, gracias",suave:true,f:function(){}}]);
+    }
+    if(/fallos?\s*\d{2,3}\s*[:\/]\s*\d+|\b(csjn|cscn)\b[^.]{0,40}\d{3,}|\bverific(ar|a)\b|es real (el|la|esta)|existe (el|la|esta) (fallo|cita)|\bcomprobar (una |la )?cita|\bcitas?\b.*\b(real|existe|verdader)/.test(t)){
+      var cita=/\d{2,3}\s*[:\/]\s*\d+|\d{3,}/.test(t);
+      return dice(cita?["Parece una cita. Se la paso a «Verificar» para comprobar si existe."]:[pick("verif",["Para eso está «Verificar»: pega la cita y se comprueba.","Vamos a «Verificar»: ahí pega la cita completa y le digo si existe."])],
+        [{t:"Abrir Verificar",f:function(){ if(cita){ estado.cita=estado.cita||{}; estado.cita.texto=txt.trim(); } irA("verificar"); }}]);
+    }
+    if(/\b(plazo|plazos|vence|vencimiento|vencio|prescri\w+|caduc\w+|feria|dias habiles|contar dias)\b/.test(t))
+      return dice(pick("plazos",["Para plazos, «Plazos» cuenta días hábiles y feriados. ¿Lo abro?","Eso se calcula en «Plazos»: elige el tipo y la fecha de inicio."]),[{t:"Abrir Plazos",f:function(){ irA("plazos"); }},{t:"Ahora no",suave:true,f:function(){}}]);
+    if(/\b(calcul\w+|interes(es)?|tasa|actualiz\w+|honorarios?|liquidacion|indemnizacion por despido)\b/.test(t)&&!/\b(buscar|jurisprudencia|fallos)\b/.test(t))
+      return dice(pick("calculos",["Las cuentas (intereses, actualizaciones) están en «Cálculos».","Para eso use «Cálculos»; ahí están las calculadoras más usadas."]),[{t:"Abrir Cálculos",f:function(){ irA("calculos"); }}]);
+    if(/\b(sinonimos?|equivalentes?|otras formas|tesauro|buscando tambien)\b/.test(t))
+      return dice(["Cuando escribe un tema, la plataforma propone otras formas en que los tribunales lo nombran (por ejemplo «daño moral» → «consecuencias no patrimoniales»).","Se ven en «Filtros y sugerencias». Con un clic se busca también por esas formas."],[{t:"Ver sugerencias",f:abrirFiltros}]);
+    if(/\b(lector|leer (un )?fallo|pegar (un )?fallo|texto del fallo)\b/.test(t))
+      return dice(pick("lector",["El «Lector» resalta su búsqueda dentro de un fallo. Pegue el texto o un enlace.","Para leer un fallo con la búsqueda marcada, vamos al «Lector»."]),[{t:"Abrir el Lector",f:function(){ irA("lector"); }}]);
+    if(/\b(guardados?|historial|favoritos?|mis busquedas)\b/.test(t)) return dice("Lo que guardó y sus búsquedas recientes están en «Guardados».",[{t:"Abrir Guardados",f:function(){ irA("guardados"); }}]);
+    if(/\b(mi perfil|mi cuenta|contrasena|clave|cerrar sesion|iniciar sesion|registr\w+|especialidad)\b/.test(t))
+      return dice(estado.usuario?"Su perfil está en «Cuenta»: nombre, especialidad y si quiere novedades.":"Para crear su cuenta o iniciar sesión vamos a «Cuenta».",[{t:"Abrir Cuenta",f:function(){ irA("cuenta"); }}]);
+    if(/\b(ley|articulo|art\.?)\s*\d+|\bcodigo (civil|penal|procesal)\b/.test(t)&&!/\b(buscar|jurisprudencia|fallos)\b/.test(t))
+      return dice("Para el texto de una norma está «Norma» (desde InfoLeg). Si quiere los fallos que citan un artículo, dígame «fallos sobre el art. 1710».",[{t:"Abrir Norma",f:function(){ irA("norma"); }}]);
+    if(/\b(no entiendo|sin entender|estoy perdid[oa]|me perdi|no se usar|no se como usar|me confund\w+)\b/.test(t)&&!/\bfiltros?\b/.test(t))
+      return dice(["Disculpe la confusión, vamos paso a paso.","¿Qué parte le resulta más difícil?"],[
+        {t:"Cómo se busca",f:function(){ dice(AYUDA_SECCION.buscar); }},
+        {t:"Los filtros",f:function(){ dice(["Los filtros están en el botón «Filtros», junto a la barra de búsqueda. Sirven para acotar: dónde (nación, provincias), qué fuentes, cómo combinar las palabras, años y excluir.","Si prefiere, dígame lo que necesita, por ejemplo «sólo Córdoba, desde 2019», y los pongo yo."],[{t:"Abrir los filtros",f:abrirFiltros}]); }},
+        {t:"Los resultados",f:function(){ dice(["A la izquierda están las bases, con su estado y cuántos resultados trajo cada una. En el centro, los resultados mezclados.","Toque uno para ver el pasaje completo; si elige una base a la izquierda, ve todos los suyos y puede pasar de página."]); }}]);
+    /* explicación de filtros */
+    var ayudaF=/\b(como|donde|que es|para que|que significa|explicame|no entiendo)\b/.test(t);
+    if(ayudaF||/\bfiltros?\b/.test(t)){
+      var clave=/\bprovincia|jurisdiccion|dondes?\b/.test(t)?"provincia":/\bfuentes?\b|\bbases?\b/.test(t)?"fuente":/\b(anos?|fechas?)\b/.test(t)?"anios":/\bexcluir|descartar|sacar\b/.test(t)?"excluir":/\b(frase exacta|todas las palabras|alguna palabra|combinar|modo)\b/.test(t)?"modo":/\b(tribunal|fuero|instancia|camara)\b/.test(t)?"tribunal":"";
+      if(clave) return dice([pick("f_"+clave,FILTROS[clave])],[{t:"Abrir los filtros",f:abrirFiltros},{t:"Gracias",suave:true,f:function(){}}]);
+      if(/\bfiltros?\b/.test(t)) return dice(["Los filtros están en el botón «Filtros», al lado de la barra de búsqueda. Dejan elegir dónde buscar (nación, provincias, internacional), qué fuentes, cómo combinar las palabras, años y más.","¿Cuál le interesa?"],
+        [{t:"Provincia",f:function(){ dice(pick("f_provincia",FILTROS.provincia)); }},{t:"Fuente",f:function(){ dice(pick("f_fuente",FILTROS.fuente)); }},{t:"Años",f:function(){ dice(pick("f_anios",FILTROS.anios)); }},{t:"Abrir los filtros",f:abrirFiltros}]);
+    }
+    /* resultados: pocos, muchos, lentos */
+    var vis0=basesVisibles(), huboBusqueda=vis0.some(function(f){ return (estado.indices[f.slug]||{}).busco; });
+    if(/\b(no (me )?(sale|aparece|encuentro|trae|hay)|sin resultados|pocos resultados|no encontro)\b/.test(t)&&palabras<=9){
+      if(!huboBusqueda) return dice("Todavía no hay una búsqueda hecha. Dígame el tema y la lanzo.",null),pedirTema();
+      return dice([pick("pocos",["Probemos aflojarla. Lo más efectivo suele ser pasar a «alguna palabra» o quitar filtros.","Si salen pocos, conviene ampliar: menos palabras, sin filtros o con cualquiera de ellas."])],
+        [{t:"Alguna palabra",f:function(){ estado.modo="alguna"; render(); buscarEnTodas(); vigilar(); }},{t:"Quitar filtros",f:function(){ aplicar({limpiar:true,ambs:[]}); render(); buscarEnTodas(); vigilar(); }},{t:"Ver sinónimos",suave:true,f:abrirFiltros}]);
+    }
+    if(/\b(demasiad\w+|muchisim\w+|muchos resultados|son muchos|mucho material)\b/.test(t))
+      return dice(pick("muchos2",["Para acotar: frase exacta, un rango de años o una provincia. ¿Cuál prueba?","Se achica rápido con la frase exacta o con «desde 2020». Elija."]),
+        [{t:"Frase exacta",f:function(){ estado.modo="exacta"; render(); buscarEnTodas(); vigilar(); }},{t:"Desde 2020",f:function(){ estado.desde="2020"; render(); buscarEnTodas(); vigilar(); }},{t:"Elegir provincia",f:function(){ estado.provAbierto=true; abrirFiltros(); }}]);
+    if(/\b(lent[oa]|tarda\w*|demora\w*|se colg\w+|no carga|no responde|sin respuesta)\b/.test(t))
+      return dice(["Los buscadores oficiales son sistemas viejos y a veces tardan hasta 30 segundos; CABA y la Corte son los más lentos.","Si alguna base figura «sin respuesta», puedo reintentar sólo esa."],[{t:"Reintentar",f:function(){ buscarEnTodas(); vigilar(); }},{t:"Esperar",suave:true,f:function(){}}]);
+    if(/\b(ayuda|ayudame|que hago|por donde empiezo|como empiezo|no se (como|que)|como (uso|funciona))\b/.test(t)&&palabras<=8)
+      return ayudaAqui();
+    /* acción sobre lo ya buscado: «y en Córdoba», «solo desde 2019» */
+    if(!tema(l.rest)&&hayEntidades(l)){
+      if(ctx.tema){
+        dice(pick("sobre",["Va, sigo con «"+ctx.tema+"»"+filtrosTexto(l)+".","Entendido: «"+ctx.tema+"»"+filtrosTexto(l)+"."])); return buscarAhora(ctx.tema,l);
+      }
+      aplicar(l); render(); return dice(["Anotado"+filtrosTexto(l)+". ¿Sobre qué tema busco?"]),pedirTemaSilencioso(l);
+    }
+    /* búsqueda: con tema y/o filtros */
+    var tm2=tema(l.rest), verbo=/\b(buscar|busca|buscame|busque|encontra\w*|jurisprudencia|fallos?|sentencias?|casos?|antecedentes|precedentes|investigar|averiguar|quiero saber|necesito saber)\b/.test(t);
+    var leido=tm2?interpretarConsulta(tm2):{voces:[],ramas:[]};
+    var sinTema=!verbo&&!leido.voces.length&&!leido.ramas.length, esPregunta=/\?\s*$|^(como|que|cuando|donde|por que|cual|cuales|puedo|se puede|hay)\b/.test(t);
+    if(tm2&&sinTema&&!esPregunta&&palabras<=6){
+      return dice([pick("dudatema",["No reconozco un tema jurídico en «"+tm2+"». Puedo buscarlo tal cual en las bases.","«"+tm2+"» no lo asocio a una materia. ¿Lo busco tal cual?"]),
+        "Si es otra cosa, cuénteme con otras palabras o mire los ejemplos."],
+        [{t:"Sí, buscarlo",f:function(){ buscarAhora(tm2,l,"todas"); }},{t:"Ver ejemplos",f:ejemplos},{t:"No, otra cosa",suave:true,f:function(){ dice("Con gusto. Cuénteme qué necesita."); }}]);
+    }
+    if(tm2&&!(sinTema&&(esPregunta||palabras>6))){
+      var vz=leido.voces.slice(0,2);
+      var fz=filtrosTexto(l);
+      if(vz.length&&sinTildes(vz[0].voz)!==sinTildes(tm2)){
+        return dice([pick("entendi",["Entiendo que se refiere a «"+comoTitulo(vz[0].voz)+"»"+(fz?fz:"")+".","Eso suena a «"+comoTitulo(vz[0].voz)+"»"+(fz?fz:"")+"."]),"Los tribunales lo escriben así. ¿Busco con ese término o con sus palabras?"],
+          [{t:"Con «"+comoTitulo(vz[0].voz)+"»",f:function(){ dice("Perfecto, voy con el término técnico."); buscarAhora(vz[0].voz,l,"exacta"); }}].concat(vz[1]?[{t:"Con «"+comoTitulo(vz[1].voz)+"»",f:function(){ buscarAhora(vz[1].voz,l,"exacta"); }}]:[]).concat([{t:"Con mis palabras",suave:true,f:function(){ buscarAhora(tm2,l,"todas"); }}]));
+      }
+      var previos=!hayEntidades(l)&&filtrosActivos().length?" Ojo: tiene filtros activos ("+filtrosActivos().map(function(x){return x[1];}).join(", ")+").":"";
+      dice(pick("busco",["Con gusto: busco «"+tm2+"»"+(fz||" en todas las bases")+".","Por supuesto, «"+tm2+"»"+fz+". Consulto las bases.","Enseguida: «"+tm2+"»"+fz+"."])+previos);
+      ctx.propuesta=null; return buscarAhora(tm2,l);
+    }
+    /* no entendí: ayudar de verdad, cada vez de un modo distinto y sin repetir */
+    ctx.propuesta=null; ctx.fallos=prevFallos+1;
+    var pregunta=/\?\s*$/.test(txt.trim());
+    if(ctx.fallos===1) return dice([pick("disc1",pregunta?["Disculpe, esa pregunta no la tengo resuelta.","Perdone, no sé responderle eso."]:["Disculpe, no terminé de entender.","Perdone, no lo capté del todo."]),
+      "Para ayudarle bien, ¿cuál de estas se parece más a lo que necesita?"],opcionesInicio().concat([{t:"Ver ejemplos",suave:true,f:ejemplos}]));
+    if(ctx.fallos===2) return dice([pick("disc2",["Sigo sin captarlo, perdone.","Lo lamento, todavía no lo entiendo."]),
+      "Pruebe con una frase corta: el tema y, si quiere, la provincia o el año. Por ejemplo: «alquiler, Salta, desde 2020»."],[{t:"Ver ejemplos",f:ejemplos},{t:"Ver las ramas",suave:true,f:function(){ irA("ramas"); }}]);
+    return dice(["Lamento no poder entenderlo todavía.","Puede escribir una sola palabra clave (por ejemplo «despido»), recorrer las ramas del derecho o ver los ejemplos."],
+      [{t:"Ver las ramas",f:function(){ irA("ramas"); }},{t:"Ver ejemplos",f:ejemplos},{t:"Empezar de nuevo",suave:true,f:function(){ ctx.fallos=0; inicio(); }}]);
+  }
+  function pedirTemaSilencioso(l){ ctx.pendiente="tema"; ctx.pendL=l; entrada.focus(); }
+  function opcionesInicio(){
+    return [
+      {t:"Buscar un tema",f:function(){ pedirTema(); }},
+      {t:"Entender los filtros",f:function(){ entender("como funcionan los filtros"); }},
+      {t:"Comprobar una cita",f:function(){ entender("verificar una cita"); }},
+      {t:"Calcular un plazo",f:function(){ entender("calcular un plazo"); }}
+    ];
   }
   function ayudaAqui(){
     var t=estado.tab, s=SECCIONES[t]||[];
-    dice((AYUDA_SECCION[t]||("Esta sección es «"+(s[1]||t)+"». "+(s[2]||"")))+"\n\nSi le sirve, puedo llevarlo a otra parte.",[
-      {t:"Ir a Buscar",f:function(){ seccion("buscar"); }},
-      {t:"Otra cosa",suave:true,f:inicio}
-    ]);
+    dice(AYUDA_SECCION[t]||("Esta sección es «"+(s[1]||t)+"». "+(s[2]||"")),t==="buscar"?[{t:"Abrir los filtros",f:abrirFiltros}]:[{t:"Ir a Buscar",f:function(){ irA("buscar"); }}]);
   }
-  function entender(txt){
-    var t=" "+sinTildes(txt)+" ";
-    var rutas=[
-      [/plazo|vence|venci|prescrib|prescrip|caduc|feria|dias habiles/,"plazos","Parece que necesita calcular un plazo."],
-      [/\bcita\b|citas|verific|existe el fallo|es real|es verdadero|fallos? \d/,"verificar","Para comprobar si una cita existe, sirve «Verificar»."],
-      [/calcul|interes|tasa|honorario|actualiz|indemnizacion/,"calculos","Para cuentas e intereses están los «Cálculos»."],
-      [/glosario|significa|que es |que quiere decir|definicion|termino juridico/,"glosario","Para entender un término está el «Glosario»."],
-      [/guardad|historial|favorit/,"guardados","Lo que guardó está en «Guardados»."],
-      [/perfil|mi cuenta|contrasena|cerrar sesion|iniciar sesion/,"cuenta","Su perfil y su cuenta están en «Cuenta»."],
-      [/ayuda|como (uso|funciona)|que hago|no entiendo|por donde empiezo/,null,null]
-    ];
-    for(var i=0;i<rutas.length;i++){
-      if(rutas[i][0].test(t)){
-        if(!rutas[i][1]){ ayudaAqui(); return; }
-        var tab=rutas[i][1];
-        dice(rutas[i][2],[{t:"Llevarme ahí",f:function(){ seccion(tab); dice(AYUDA_SECCION[tab]||""); }},{t:"No, es otra cosa",suave:true,f:inicio}]);
-        return;
-      }
-    }
-    var leido=interpretarConsulta(txt), voces=leido.voces.slice(0,3), ops=[];
-    voces.forEach(function(v){ ops.push({t:"Buscar «"+comoTitulo(v.voz)+"»",f:function(){ buscarAhora(v.voz,"exacta"); }}); });
-    if(voces.length){
-      dice("Entendí que el tema es «"+comoTitulo(voces[0].voz)+"»"+(voces.length>1?" o algo cercano":"")+". Los tribunales lo escriben así, y buscar con esos términos da mejores resultados. ¿Cuál busco?",
-        ops.concat([{t:"Buscar tal como lo escribí",suave:true,f:function(){ buscarAhora(txt,"todas"); }}]));
-    }else if(leido.ramas.length){
-      var rn=comoTitulo(nombreRama(leido.ramas[0]));
-      dice("No encontré un término exacto, pero el tema cae en «"+rn+"». Puedo buscar lo que escribió, o mostrarle los términos de esa rama para que elija.",[
-        {t:"Buscar tal como lo escribí",f:function(){ buscarAhora(txt,"todas"); }},
-        {t:"Ver términos de "+rn,f:function(){ estado.rama=leido.ramas[0]; seccion("ramas"); }}
-      ]);
-    }else{
-      dice("No reconocí un tema jurídico puntual. Puedo buscar sus palabras tal cual en todas las bases; si no aparece lo que espera, pruebe con una o dos palabras clave, por ejemplo «despido» o «alquiler».",[
-        {t:"Buscar «"+txt+"»",f:function(){ buscarAhora(txt,"todas"); }},
-        {t:"Otra cosa",suave:true,f:inicio}
-      ]);
-    }
+  function inicio(){
+    var n=estado.usuario?nombreDe(estado.usuario):"";
+    dice([n?"Hola, "+n+". Soy Lexia.":"Hola, colega. Soy Lexia.",
+      "Puedo buscar jurisprudencia por usted, explicarle los filtros o llevarlo a la herramienta que necesite. Pruebe con algo como «daño moral en Mendoza desde 2018».",
+      "¿Qué anda buscando?"],opcionesInicio());
   }
   function abrir(on){
     el.classList.toggle("is-on",on);
@@ -6513,7 +6880,8 @@ function montarAsistente(){
   document.getElementById("asist-form").addEventListener("submit",function(ev){
     ev.preventDefault();
     var txt=entrada.value.trim(); if(!txt) return;
-    entrada.value=""; dijo(txt); entender(txt);
+    entrada.value=""; dijo(txt);
+    try{ entender(txt); }catch(e){ dice("Se me enredó algo. ¿Me lo repite de otra forma?"); }
   });
 }
 
@@ -7744,7 +8112,11 @@ document.addEventListener("click",function(ev){
     traerDocEnLector(linkIdx,{fichaConocida:fichaIdx?fichaDesdeIndice(slugIdx,fichaIdx):null});
     return;
   }
-  if(act==="buscar-todas"){ buscarEnTodas(); return; }
+  if(act==="buscar-todas"){ estado.drawer=false; buscarEnTodas(); return; }
+  if(act==="tog-drawer"){ estado.drawer=!estado.drawer; render(); return; }
+  if(act==="ver-base"){ estado.verBase=b.getAttribute("data-fuente")||""; render(); return; }
+  if(act==="orden"){ estado.orden=b.getAttribute("data-v"); render(); return; }
+  if(act==="abrir-fila"){ var kf=b.getAttribute("data-k"); estado.filasAbiertas[kf]=!estado.filasAbiertas[kf]; render(); return; }
   if(act==="donde-todas"){ Object.keys(AMB).forEach(function(k){ estado.ambitos[k]=true; }); estado.provSel=""; estado.indices.saij.provincia=""; render(); return; }
   if(act==="donde"){
     var kd=b.getAttribute("data-amb");
@@ -7768,7 +8140,7 @@ document.addEventListener("click",function(ev){
     return;
   }
   if(act==="tog-mas"){ estado.masFiltros=!estado.masFiltros; render(); return; }
-  if(act==="col-plegar"){ var sp=b.getAttribute("data-fuente"); estado.colChica[sp]=!estado.colChica[sp]; render(); return; }
+  
   if(act==="limpiar-filtros"||act==="quitar-filtro"){
     var kq=act==="quitar-filtro"?b.getAttribute("data-k"):"todo", vq=b.getAttribute("data-v");
     var todoAmb=function(){ Object.keys(AMB).forEach(function(x){ estado.ambitos[x]=true; }); };

@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Buscar, después de buscar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=Cormorant:ital,wght@0,400;1,400&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#100e0b;--bg2:#15120e;--fg:#f1eee6;--mute:rgba(241,238,230,.6);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.14);--line2:rgba(241,238,230,.08);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif;--ease:cubic-bezier(.16,.84,.24,1)}
+*{box-sizing:border-box}
+body{margin:0;background:#1a1712;color:var(--fg);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+.w{max-width:1320px;margin:0 auto;padding:clamp(24px,4vw,56px) clamp(14px,3vw,40px) 90px}
+h1{margin:0 0 12px;font:400 clamp(32px,4.6vw,60px)/1 Cormorant,serif;letter-spacing:-.02em}
+h1 em{color:var(--dim)}
+.lead{max-width:78ch;color:var(--mute);margin:0 0 14px}
+.diag{max-width:78ch;margin:0 0 40px;padding:16px 20px;border:1px solid var(--line);border-radius:16px;color:var(--mute);font-size:14px}
+.diag b{color:var(--fg);font-weight:500}
+.diag ul{margin:8px 0 0;padding-left:18px}
+.op{border-top:1px solid var(--line);padding:34px 0 44px}
+.op h2{margin:0 0 6px;font:400 clamp(24px,2.4vw,34px)/1.1 Cormorant,serif}
+.op h2 span{color:var(--dim);margin-right:12px}
+.op>p{margin:0 0 6px;max-width:80ch;color:var(--mute)}
+.op>small{display:block;margin:0 0 20px;max-width:80ch;color:var(--dim);font-size:13px}
+.nota{margin-top:40px;padding-top:22px;border-top:1px solid var(--line);color:var(--dim);font-size:13.5px;max-width:80ch}
+
+.mock{background:var(--bg);border:1px solid var(--line);border-radius:16px;overflow:hidden;height:700px;display:flex;flex-direction:column;position:relative}
+.m-bar{display:flex;align-items:center;gap:20px;padding:10px 18px;border-bottom:1px solid var(--line);flex:none}
+.m-nom{font:500 13px/1 Cinzel,serif;letter-spacing:.26em;white-space:nowrap}
+.m-nom i{display:inline-block;width:.17em;height:.17em;border-radius:50%;background:var(--gold);vertical-align:.265em;margin:0 .265em 0 .265em}
+.m-nom b{color:var(--gold);font-weight:500}
+.m-nav{display:flex;gap:18px;font-size:13px;color:var(--mute)}
+.m-nav b{font-weight:400}.m-nav b.on{color:var(--gold)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--c);flex:none;display:inline-block}
+.sig{font:500 11.5px/1 Cinzel,serif;letter-spacing:.12em}
+.st{font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap}
+.st.busc{color:var(--gold)}.st.busc::after{content:"…"}
+.st.err{color:#dba196}.st.ok{color:var(--fg)}
+.pill{appearance:none;border:1px solid var(--line);background:transparent;border-radius:999px;padding:7px 14px;font-size:13px;color:var(--fg);cursor:pointer;transition:all .25s;white-space:nowrap}
+.pill:hover{border-color:var(--gold)}
+.pill.on{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.pill.gold{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:500}
+.pill.gold:hover{background:var(--fg);border-color:var(--fg)}
+.pill .n{color:var(--gold);margin-left:5px}.pill.on .n{color:var(--bg)}
+.mini{appearance:none;border:1px solid var(--line);background:transparent;border-radius:999px;padding:4px 11px 3px;font-size:11.5px;color:var(--fg);cursor:pointer;transition:all .25s;white-space:nowrap}
+.mini:hover{border-color:var(--gold);color:var(--gold)}.mini:disabled{opacity:.4;cursor:default}
+.scroll{overflow:auto;min-height:0}
+.vacio{padding:40px 20px;text-align:center;color:var(--dim);font-size:14px}
+mark{background:rgba(217,163,27,.28);color:var(--fg);border-radius:3px;padding:0 2px}
+
+/* ===== barra compacta (igual en las cinco) ===== */
+.cbar{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);flex:none;position:relative;z-index:5}
+.cq{flex:1;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:4px 4px 4px 18px;background:var(--bg2);min-width:0}
+.cq:focus-within{border-color:var(--gold)}
+.cq input{flex:1;min-width:0;border:0;background:none;outline:none;font-size:15px;padding:5px 0}
+.cq .pill{padding:6px 14px}
+.csum{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;padding:8px 16px;border-bottom:1px solid var(--line2);font-size:12.5px;color:var(--mute);flex:none}
+.csum .cuenta{margin-left:auto;color:var(--dim)}
+.tk{display:inline-flex;align-items:center;gap:7px;padding:2px 4px 2px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--mute)}
+.tk b{font-weight:500;color:var(--fg)}
+.tk button{appearance:none;border:0;background:none;color:var(--dim);cursor:pointer;padding:0 5px;font-size:13px}
+.tk button:hover{color:var(--gold)}
+.drawer{position:absolute;left:0;right:0;top:100%;z-index:20;background:#15120e;border-bottom:1px solid var(--line);box-shadow:0 30px 60px rgba(0,0,0,.6);padding:14px 16px 16px;max-height:420px;overflow:auto;display:none}
+.drawer.on{display:block}
+.drawer .pie{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line2)}
+.fs{display:grid;gap:8px;font-size:13px;color:var(--mute)}
+.fs .fila{display:flex;flex-wrap:wrap;align-items:center;gap:7px 8px}
+.fs .rot{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);min-width:56px}
+.fs .pill{padding:5px 12px;font-size:12.5px}
+.fs input{padding:5px 12px;border:1px solid var(--line);border-radius:999px;background:none;outline:none;font-size:12.5px;width:78px}
+.fs input.ex{width:150px}.fs input:focus{border-color:var(--gold)}
+.fs .provbox{border:1px solid var(--line);border-radius:14px;padding:10px 12px;display:grid;gap:8px}
+.fs .provs{display:flex;flex-wrap:wrap;gap:6px;max-height:84px;overflow:auto}
+.fs .provs .pill{padding:4px 10px;font-size:12px}
+.fs .pq{width:100%;max-width:260px}
+.fs .fp{display:inline-flex;align-items:center;gap:7px}.fs .fp .sig{font-size:11px}
+.fs .fp.off{opacity:.5;text-decoration:line-through}
+
+/* ===== resultado compacto ===== */
+.r{padding:10px 0;border-bottom:1px solid var(--line2);cursor:pointer}
+.r:hover .r-t{color:var(--gold)}
+.r-t{display:flex;align-items:baseline;gap:8px;font-size:14px;font-weight:500;line-height:1.35}
+.r-t span:last-child{overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.r-m{margin:1px 0 0 15px;font-size:11.5px;color:var(--dim);display:flex;flex-wrap:wrap;gap:2px 10px}
+.r p{margin:4px 0 0 15px;font-size:13px;color:var(--mute);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.r.act{background:rgba(241,238,230,.05);margin:0 -12px;padding:10px 12px;border-radius:12px}
+
+/* ===== 1 · riel + lista ===== */
+.M1 .cuerpo{flex:1;min-height:0;display:grid;grid-template-columns:210px minmax(0,1fr)}
+.M1 .riel{border-right:1px solid var(--line);padding:10px 14px;overflow:auto}
+.M1 .fb{display:flex;align-items:center;gap:8px;padding:8px 8px;margin:0 -8px;border-radius:10px;cursor:pointer;font-size:13px}
+.M1 .fb:hover{background:rgba(241,238,230,.04)}.M1 .fb.on{background:rgba(241,238,230,.08)}
+.M1 .fb .st{margin-left:auto}
+.M1 .lista{padding:0 22px 16px}
+.M1 .cab{display:flex;align-items:center;gap:12px;padding:12px 0 6px;font-size:13px;color:var(--mute)}
+
+/* ===== 2 · maestro / detalle ===== */
+.M2 .cuerpo{flex:1;min-height:0;display:grid;grid-template-columns:400px minmax(0,1fr)}
+.M2 .izq{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.M2 .chipsb{display:flex;gap:6px;padding:10px 14px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line2);flex:none}
+.M2 .chipsb .pill{padding:4px 11px;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.M2 .izq .lista{padding:0 16px 12px;flex:1;min-height:0;overflow:auto}
+.M2 .der{padding:24px 30px;overflow:auto}
+.M2 .der h3{margin:0 0 6px;font:400 24px/1.25 Cormorant,serif}
+.M2 .der .meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--dim);margin-bottom:18px}
+.M2 .der .texto{font-size:15px;line-height:1.75;color:var(--mute);max-width:64ch}
+.M2 .der .texto p{margin:0 0 12px}
+.M2 .der .acc{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0}
+
+/* ===== 3 · tablero -> detalle ===== */
+.M3 .tab{flex:1;min-height:0;overflow:auto;padding:16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-content:start}
+.M3 .t{border:1px solid var(--line);border-top:2px solid var(--c);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.M3 .t header{display:flex;align-items:center;gap:8px}
+.M3 .t .num{font:400 34px/1 Cormorant,serif;letter-spacing:-.02em}
+.M3 .t .tops{display:grid;gap:5px;font-size:12.5px;color:var(--mute)}
+.M3 .t .tops div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.M3 .t footer{display:flex;gap:8px;margin-top:auto}
+.M3 .det{flex:1;min-height:0;display:flex;flex-direction:column}
+.M3 .det .ch{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--line2);flex:none}
+.M3 .det .lista{padding:0 22px 16px;flex:1;min-height:0;overflow:auto;max-width:900px}
+
+/* ===== 4 · acordeón horizontal ===== */
+.M4 .acor{flex:1;min-height:0;display:flex;gap:8px;padding:12px 16px}
+.M4 .c{border:1px solid var(--line);border-top:2px solid var(--c);border-radius:14px;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden;transition:flex-basis .4s var(--ease)}
+.M4 .c.cerr{flex:0 0 54px;cursor:pointer;align-items:center;padding:12px 0;gap:12px}
+.M4 .c.cerr:hover{border-color:var(--c)}
+.M4 .c.cerr .vert{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font:500 12px/1 Cinzel,serif;letter-spacing:.14em}
+.M4 .c.cerr .n{font-size:13px;font-variant-numeric:tabular-nums}
+.M4 .c.abi{flex:1 1 0}
+.M4 .c header{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line2);flex:none}
+.M4 .c header .st{margin-left:auto}
+.M4 .c .body{padding:0 16px 12px;overflow:auto;flex:1;min-height:0}
+
+/* ===== 5 · tabla ===== */
+.M5 .filtros{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line2);flex:none}
+.M5 .filtros .pill{padding:4px 11px;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.M5 .tbl{flex:1;min-height:0;overflow:auto}
+.M5 table{width:100%;border-collapse:collapse;font-size:13px}
+.M5 th{position:sticky;top:0;background:var(--bg);text-align:left;font:500 11px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;white-space:nowrap;z-index:2}
+.M5 th:hover{color:var(--gold)}
+.M5 td{padding:9px 12px;border-bottom:1px solid var(--line2);vertical-align:top}
+.M5 tr.f{cursor:pointer}.M5 tr.f:hover td{background:rgba(241,238,230,.04)}
+.M5 td.c1{white-space:nowrap;width:110px}
+.M5 td.c2{font-weight:500;max-width:340px}
+.M5 td.c3,.M5 td.c4{color:var(--dim);font-size:12px;white-space:nowrap}
+.M5 td.c5{color:var(--mute);max-width:380px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.M5 tr.ex td{background:rgba(241,238,230,.04);padding:12px 16px 16px 130px;color:var(--mute);line-height:1.6}
+
+@media(max-width:1000px){.M1 .cuerpo,.M2 .cuerpo{grid-template-columns:1fr}.M1 .riel,.M2 .izq{display:none}.M3 .tab{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body><div class="w">
+<h1>Buscar, <em>después de buscar.</em></h1>
+<p class="lead">Probé la búsqueda real y el problema se ve cuando hay resultados. Estas cinco maquetas muestran justamente ese estado: la consulta ya hecha, los resultados en pantalla.</p>
+<div class="diag"><b>Qué está mal hoy</b>
+<ul>
+<li>La consulta, las sugerencias y cuatro filas de filtros ocupan casi toda la primera pantalla: los resultados quedan debajo y hay que bajar para ver el primero.</li>
+<li>Cada columna muestra uno o dos resultados a la vez, con títulos enormes, y la mitad de la columna son controles (tribunales, páginas, avisos).</li>
+<li>Sólo se ven tres bases; las otras cinco quedan escondidas hacia la derecha.</li>
+<li>Los filtros y los resultados compiten por el mismo espacio.</li>
+</ul>
+<br><b>Qué cambian las cinco</b>: la consulta y los filtros pasan a una <b>barra compacta de una línea</b> (con el resumen de lo filtrado) y los filtros completos se abren en un panel que <b>no empuja</b> los resultados. Todo lo demás es la ordenación de los resultados: pruebe «Filtros» en cualquiera de ellas.</div>
+
+<section class="op"><h2><span>1</span>Riel y lista</h2>
+<p>A la izquierda, las ocho bases en una columna angosta con su punto, su estado y su conteo: tocar una filtra la lista. En el centro, un solo listado mezclado, con una línea de título, una de datos y dos de pasaje. Todo cabe en una pantalla.</p>
+<small>Lo más parecido a como se usa una base jurídica profesional. Se ve el estado de todas las bases sin desplazarse.</small>
+<div class="mock M1" id="m1"></div></section>
+
+<section class="op"><h2><span>2</span>Lista y lector</h2>
+<p>La pantalla se parte en dos: a la izquierda la lista compacta (con las bases como fichas arriba) y a la derecha el resultado elegido, ya abierto, con el pasaje destacado y las acciones (abrir en el Lector, guardar, copiar cita). Con las flechas ↑ ↓ se recorre sin soltar el teclado.</p>
+<small>Evita abrir y cerrar cada resultado: se lee mientras se recorre. Ideal para quien revisa muchos fallos.</small>
+<div class="mock M2" id="m2"></div></section>
+
+<section class="op"><h2><span>3</span>Resumen por base</h2>
+<p>Primero un tablero de ocho fichas: cada base con su conteo grande, su estado y sus dos mejores resultados. Se ve de un golpe cuál respondió y cuánto. Al tocar «Ver todos» se entra a esa base a pantalla completa, con un botón para volver.</p>
+<small>Responde la primera pregunta de quien busca: «¿dónde hay algo?». Después se profundiza.</small>
+<div class="mock M3" id="m3"></div></section>
+
+<section class="op"><h2><span>4</span>Acordeón horizontal</h2>
+<p>Las ocho bases en columnas, pero sólo una abierta: las demás quedan como tiras angostas de 54 px con su punto, su sigla en vertical y su conteo. Al tocar una tira, esa columna se abre y la anterior se cierra. Se ven las ocho bases siempre y no hay desplazamiento horizontal.</p>
+<small>Mantiene la idea de columnas por base, pero sin esconder ninguna y con la columna abierta a buen ancho.</small>
+<div class="mock M4" id="m4"></div></section>
+
+<section class="op"><h2><span>5</span>Tabla</h2>
+<p>Una tabla de una fila por resultado: base (con su punto), carátula, tribunal, fecha y el comienzo del pasaje. Se ordena tocando el título de cada columna; al tocar una fila se despliega el pasaje completo debajo. Arriba, fichas por base para filtrar.</p>
+<small>La más densa: caben unas 14 filas por pantalla. Pensada para escanear y comparar fechas y tribunales.</small>
+<div class="mock M5" id="m5"></div></section>
+
+<p class="nota">Datos de ejemplo inventados, no fallos reales. No modifica el sitio: la opción elegida se aplica a la sección Buscar, que conserva el Lector, el historial y las sugerencias del tesauro (que pasarían a un renglón plegable bajo la barra).</p>
+</div>
+<script>
+"use strict";
+/* ---------- datos de ejemplo ---------- */
+var P="daño moral";
+function M(t){return t.replace(/daño moral/gi,function(x){return "<mark>"+x+"</mark>";});}
+var BASES=[
+ {s:"SCJM",n:"Poder Judicial de Mendoza",c:"#d9a62a",st:"ok",r:[
+  ["Pérez c/ Constructora del Sur s/ daños y perjuicios","Suprema Corte · Sala I · 14/03/2022","Se reconoce el daño moral por la frustración de la vivienda, cuantificado con criterio prudencial atendiendo a la entidad del padecimiento."],
+  ["Gómez c/ Banco Andino s/ incumplimiento","Cámara Civil · 2ª · 02/09/2020","El incumplimiento contractual no genera por sí solo daño moral; debe probarse la afectación espiritual."],
+  ["Suárez, M. s/ acción de amparo","Suprema Corte · Sala II · 21/11/2019","La reparación del daño moral exige ponderar las circunstancias del caso y la entidad de la lesión."],
+  ["Ríos c/ Empresa de Transporte s/ accidente","Cámara Civil · 1ª · 05/06/2018","Procede el daño moral en el accidente de tránsito con lesiones, por las secuelas y la incertidumbre del tratamiento."]],t:12},
+ {s:"MZA LEGAL",n:"Mendoza Legal",c:"#b58640",st:"ok",r:[
+  ["Fernández c/ Aseguradora Cuyo s/ cobro","Sumario · Mendoza · 18/04/2021","Daño moral: su resarcimiento no depende de la existencia de daño patrimonial."],
+  ["Torres c/ Clínica del Valle s/ mala praxis","Sumario · Mendoza · 09/10/2017","En la mala praxis médica, el daño moral se presume por la gravedad de la lesión."]],t:8},
+ {s:"TSJ",n:"Tribunal Superior de Justicia CABA",c:"#d5873f",st:"ok",r:[
+  ["Ledesma c/ GCBA s/ daños y perjuicios","TSJ · Sala Contencioso · 30/05/2023","La responsabilidad del Estado alcanza al daño moral cuando hay un obrar irregular verificado."],
+  ["Acosta, R. s/ queja por denegado","TSJ · 11/12/2019","El monto del daño moral no habilita la instancia extraordinaria por tratarse de una cuestión de hecho."]],t:5},
+ {s:"CSJN",n:"Corte Suprema de Justicia de la Nación",c:"#c95836",st:"ok",r:[
+  ["Ramírez c/ Provincia s/ daños y perjuicios","CSJN · 07/08/2021","El daño moral debe ser reparado con criterio de razonabilidad; no es una sanción."],
+  ["Delgado c/ Ferrocarriles s/ accidente","CSJN · 19/02/2020","La indemnización del daño moral no puede ser meramente simbólica."],
+  ["Navarro c/ Nación s/ indemnización","CSJN · 26/10/2016","Se confirma la sentencia que reconoció daño moral por la privación ilegítima de la libertad."]],t:20},
+ {s:"SAIJ",n:"SAIJ · Ministerio de Justicia",c:"#b03b42",st:"ok",r:[
+  ["Bravo c/ Telefónica s/ ordinario","Cám. Nac. Civil · Sala D · 12/01/2022","Cuantificación del daño moral: valoración de la satisfacción sustitutiva que permita mitigar el padecimiento."],
+  ["Molina c/ Hospital s/ daños","Cám. Nac. Civil · Sala F · 03/07/2019","Corresponde elevar el monto del daño moral atendiendo a la edad y a las secuelas del damnificado."],
+  ["Quiroga, L. s/ sucesión","Juzgado Civil 45 · 22/03/2018","Legitimación para reclamar daño moral: herederos forzosos."]],t:31},
+ {s:"DIALNET",n:"Dialnet · doctrina",c:"#8a3853",st:"espera",r:[
+  ["El daño moral en el Código Civil y Comercial","Revista de Derecho Privado · 2020","Se analiza la categoría de «consecuencias no patrimoniales» y su relación con el daño moral clásico."],
+  ["Cuantificación del daño extrapatrimonial","Revista Jurídica · 2018","Criterios de cuantificación del daño moral y su evolución jurisprudencial."]],t:9},
+ {s:"SCBA",n:"Suprema Corte de Buenos Aires",c:"#7a6f9b",st:"ok",r:[
+  ["Sosa c/ Municipalidad s/ daños","SCBA · C. 123456 · 16/05/2021","El daño moral no requiere prueba específica cuando surge in re ipsa del hecho generador."],
+  ["Herrera c/ Línea 60 s/ daños","SCBA · 28/09/2018","Fijación del daño moral: facultad de los jueces de grado, salvo absurdo."]],t:14},
+ {s:"CORTE IDH",n:"Corte Interamericana de DD. HH.",c:"#5f7f9a",st:"err",r:[
+  ["Caso Ejemplo vs. Estado · Sentencia","Corte IDH · 2020","El daño inmaterial comprende los sufrimientos y aflicciones causados a la víctima directa y a sus allegados."]],t:4}
+];
+BASES.forEach(function(b){ b.r=b.r.map(function(x){ return {t:x[0],m:x[1],p:M(x[2]),b:b}; }); });
+var PROV=["Buenos Aires","Catamarca","Chaco","Chubut","Ciudad de Buenos Aires","Córdoba","Corrientes","Entre Ríos","Formosa","Jujuy","La Pampa","La Rioja","Mendoza","Misiones","Neuquén","Río Negro","Salta","San Juan","San Luis","Santa Cruz","Santa Fe","Santiago del Estero","Tierra del Fuego","Tucumán"];
+var BASEJ={"SCJM":"Mendoza","MZA LEGAL":"Mendoza","TSJ":"Ciudad de Buenos Aires","CSJN":"Nacional","SAIJ":"Nacional","DIALNET":"Doctrina","SCBA":"Buenos Aires","CORTE IDH":"Internacional"};
+var OVJ={"Quiroga":"Ciudad de Buenos Aires"};
+var OVF={"Navarro":"Penal","Ledesma":"Contencioso administrativo","Acosta":"Contencioso administrativo","Ramírez":"Contencioso administrativo","Caso Ejemplo":"Derechos humanos","El daño moral en":"Doctrina","Cuantificación del daño":"Doctrina"};
+BASES.forEach(function(b){ b.r.forEach(function(r){
+  var ym=r.m.match(/(19|20)\d\d/g); r.y=ym?+ym[ym.length-1]:0;
+  r.j=BASEJ[b.s]; Object.keys(OVJ).forEach(function(k){ if(r.t.indexOf(k)===0) r.j=OVJ[k]; });
+  r.f="Civil y comercial"; Object.keys(OVF).forEach(function(k){ if(r.t.indexOf(k)===0) r.f=OVF[k]; });
+  r.tipo=b.s==="DIALNET"?"Doctrina":b.s==="MZA LEGAL"?"Sumario":"Sentencia";
+  r.inst=/Cám/.test(r.m)?"Cámara":/Juzgado/.test(r.m)?"Primera instancia":/Revista|Sumario/.test(r.m)?"—":"Corte o tribunal superior";
+}); });
+var E={tipo:"todas",desde:"2015",hasta:"2026",ex:""};
+var MODOS={exacta:"Frase exacta",todas:"Todas las palabras",alguna:"Alguna palabra"};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+
+var MODOS={exacta:"Frase exacta",todas:"Todas las palabras",alguna:"Alguna palabra"};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function barra(){return '<div class="m-bar"><span class="m-nom">I<b>V</b>S<i></i>CODE<b>X</b></span><span class="m-nav"><b class="on">Buscar</b><b>Lector</b><b>Ramas</b><b>Cálculos</b><b>Fuentes</b></span></div>';}
+var F={mas:false,bases:{},j:{},tipo:{},f:{},inst:{},desde:"",hasta:"",ex:"",modo:"todas",cerr:{inst:1,tipo:1},provQ:""};
+var JUR=["Nacional y federal","Provincias","Internacional","Doctrina"];
+function jKey(j){return j==="Nacional"?"Nacional y federal":(j==="Internacional"||j==="Doctrina")?j:"Provincias";}
+function pasa(r,omit){
+  if(omit!=="bases"&&F.bases[r.b.s]) return false;
+  if(omit!=="j"){
+    var js=Object.keys(F.j); if(js.length){
+      var ok=js.some(function(k){ return k===jKey(r.j)&&k!=="Provincias" || (F.j[k]==="prov"&&r.j===k); });
+      if(!ok) return false;
+    }
+  }
+  if(omit!=="tipo"&&Object.keys(F.tipo).length&&!F.tipo[r.tipo]) return false;
+  if(omit!=="f"&&Object.keys(F.f).length&&!F.f[r.f]) return false;
+  if(omit!=="inst"&&Object.keys(F.inst).length&&!F.inst[r.inst]) return false;
+  if(F.desde&&r.y&&r.y<+F.desde) return false;
+  if(F.hasta&&r.y&&r.y>+F.hasta) return false;
+  if(F.ex&&(r.t+" "+r.p).toLowerCase().indexOf(F.ex.toLowerCase())>-1) return false;
+  return true;
+}
+function cuenta(fn,omit){ var n={}; todosLos().forEach(function(r){ if(pasa(r,omit)){ var k=fn(r); n[k]=(n[k]||0)+1; } }); return n; }
+function todosLos(){var a=[];BASES.forEach(function(b){ b.r.forEach(function(r){a.push(r);}); });return a;}
+function activos(){
+  var t=[];
+  BASES.forEach(function(b){ if(F.bases[b.s]) t.push(["Sin "+b.s,"bases",b.s]); });
+  Object.keys(F.j).forEach(function(k){ t.push(["Jurisdicción",F.j[k]==="prov"?k:k,"j",k]); });
+  Object.keys(F.tipo).forEach(function(k){ t.push(["Tipo",k,"tipo",k]); });
+  Object.keys(F.f).forEach(function(k){ t.push(["Fuero",k,"f",k]); });
+  Object.keys(F.inst).forEach(function(k){ t.push(["Instancia",k,"inst",k]); });
+  if(F.desde||F.hasta) t.push(["Años",(F.desde||"…")+"–"+(F.hasta||"…"),"anios"]);
+  if(F.ex) t.push(["Excluir",F.ex,"ex"]);
+  return t;
+}
+
+function rsb(b){ return b.r.filter(function(r){return pasa(r);}); }
+function hayF(){ return activos().length>0; }
+function cnt(b){ return hayF()?rsb(b).length:b.t; }
+function stTxt(b){
+  return b.st==="busc"?'<span class="st busc">buscando</span>':b.st==="espera"?'<span class="st">en espera</span>':b.st==="err"?'<span class="st err">sin respuesta</span>':'<span class="st ok">'+cnt(b)+'</span>';
+}
+function todos(){
+  var a=[],k=0,hay=true, L=BASES.map(function(b){return b.st==="ok"?rsb(b):[];});
+  while(hay){ hay=false; L.forEach(function(l){ if(l[k]){ a.push(l[k]); hay=true; } }); k++; }
+  return a;
+}
+function total(){return BASES.reduce(function(n,b){return n+(b.st==="ok"?cnt(b):0);},0);}
+function nOk(){return BASES.filter(function(b){return b.st==="ok";}).length;}
+
+/* franja completa (va dentro del panel) */
+function franja(){
+  var nProv=Object.keys(F.j).filter(function(k){return F.j[k]==="prov"&&k!=="Mendoza";}).length;
+  var pl=function(on,a,extra,txt,n){return '<button class="pill'+(on?" on":"")+'" data-a="'+a+'" '+extra+'>'+txt+(n?'<span class="n">'+n+'</span>':'')+'</button>';};
+  var h='<div class="fs"><div class="fila"><span class="rot">Dónde</span>'+
+     pl(!Object.keys(F.j).length,"fJtodas","","Todas")+pl(F.j["Nacional y federal"],"fJ",'data-v="Nacional y federal"',"Nacional y federal")+
+     pl(F.j["Mendoza"],"fProv",'data-v="Mendoza" data-cerrado="1"',"Mendoza")+pl(nProv||F.provAbierto,"fJ",'data-v="Provincias"',"Otras provincias ▾",nProv)+
+     pl(F.j["Internacional"],"fJ",'data-v="Internacional"',"Internacional")+pl(F.j["Doctrina"],"fJ",'data-v="Doctrina"',"Doctrina")+'</div>';
+  if(F.provAbierto) h+='<div class="provbox"><input class="pq" placeholder="Buscar provincia…" aria-label="Buscar provincia"><div class="provs">'+
+     PROV.map(function(o){return '<button class="pill'+(F.j[o]==="prov"?" on":"")+'" data-a="fProv" data-v="'+esc(o)+'" data-n="'+esc(o.toLowerCase())+'">'+esc(o)+'</button>';}).join("")+'</div></div>';
+  h+='<div class="fila"><span class="rot">Fuente</span>'+BASES.map(function(b){return '<button class="pill fp'+(F.bases[b.s]?" off":"")+'" style="--c:'+b.c+'" data-a="fBase" data-s="'+esc(b.s)+'"><span class="dot"></span><span class="sig">'+esc(b.s)+'</span></button>';}).join("")+'</div>'+
+     '<div class="fila"><span class="rot">Cómo</span>'+Object.keys(MODOS).map(function(k){return pl(F.modo===k,"modoF",'data-v="'+k+'"',MODOS[k]);}).join("")+
+     '<span style="margin-left:6px">Años</span><input data-c="desde" value="'+F.desde+'" placeholder="Desde"><span>–</span><input data-c="hasta" value="'+F.hasta+'" placeholder="Hasta">'+
+     '<span style="margin-left:6px">Excluir</span><input class="ex" data-c="ex" value="'+esc(F.ex)+'" placeholder="palabras"></div>'+
+     '<div class="fila"><span class="rot">Más</span>'+["Corte o tribunal superior","Cámara","Primera instancia"].map(function(o){return pl(F.inst[o],"fOpt",'data-k="inst" data-v="'+o+'"',o);}).join("")+
+     '<span style="width:8px"></span>'+["Civil y comercial","Contencioso administrativo","Penal","Derechos humanos"].map(function(o){return pl(F.f[o],"fOpt",'data-k="f" data-v="'+o+'"',o);}).join("")+
+     '<span style="width:8px"></span>'+["Sentencia","Sumario","Doctrina"].map(function(o){return pl(F.tipo[o],"fOpt",'data-k="tipo" data-v="'+o+'"',o);}).join("")+'</div></div>';
+  return h;
+}
+/* barra compacta + resumen */
+var abierto={};
+function cbar(id){
+  var ac=activos(), n=ac.length;
+  return '<div class="cbar"><div class="cq"><input value="'+P+'" aria-label="Consulta" spellcheck="false"><button class="pill gold" data-a="todas">Buscar</button></div>'+
+    '<button class="pill'+(abierto[id]?" on":"")+'" data-a="drawer" data-m="'+id+'">Filtros'+(n?'<span class="n">'+n+'</span>':'')+' '+(abierto[id]?"▴":"▾")+'</button>'+
+    '<div class="drawer'+(abierto[id]?" on":"")+'">'+franja()+'<div class="pie"><button class="mini" data-a="limpiarF">Limpiar filtros</button><button class="pill gold" data-a="drawer" data-m="'+id+'" style="padding:5px 16px">Ver '+total()+' resultados</button></div></div></div>'+
+    '<div class="csum">'+(n?activos().map(function(t){return '<span class="tk">'+t[0]+' <b>'+esc(t[1])+'</b><button data-a="quitarF" data-k="'+t[2]+'" data-v="'+esc(t[3]||t[1])+'" aria-label="Quitar">✕</button></span>';}).join(""):'<span>Todas las bases · cualquier jurisdicción y año</span>')+
+    '<span class="cuenta"><b style="color:var(--fg);font-weight:500">'+total()+'</b> resultados · '+nOk()+' de '+BASES.length+' bases respondieron'+(BASES.some(function(b){return b.st==="busc";})?' · <span class="st busc">buscando</span>':'')+'</span></div>';
+}
+function r(x,i,cls){
+  return '<article class="r'+(cls||"")+'" style="--c:'+x.b.c+'" data-a="abrir" data-i="'+i+'"><div class="r-t"><span class="dot"></span><span>'+esc(x.t)+'</span></div><div class="r-m"><span>'+esc(x.b.s)+'</span><span>'+esc(x.m.replace(/^[A-Z ]+ · /,""))+'</span></div><p>'+x.p+'</p></article>';
+}
+function vacioF(){return '<div class="vacio">Ningún resultado con estos filtros.<br><button class="mini" style="margin-top:12px" data-a="limpiarF">Quitar los filtros</button></div>';}
+
+/* ---------- 1 · riel + lista ---------- */
+var s1=null;
+function d1(){
+  var l=(s1?rsb(BASES.filter(function(b){return b.s===s1;})[0]):todos());
+  return barra()+cbar("m1")+'<div class="cuerpo"><div class="riel"><div class="fb'+(!s1?" on":"")+'" data-a="sel1" data-s=""><span class="sig">TODAS</span><span class="st ok" style="margin-left:auto">'+total()+'</span></div>'+
+    BASES.map(function(b){return '<div class="fb'+(s1===b.s?" on":"")+'" style="--c:'+b.c+'" data-a="sel1" data-s="'+esc(b.s)+'"><span class="dot"></span><span class="sig">'+esc(b.s)+'</span>'+stTxt(b)+'</div>';}).join("")+
+    '<div style="margin-top:12px;display:grid;gap:8px"><button class="mini" data-a="todas">Buscar en todas</button><button class="mini" data-a="solo-esperan">Sólo las que faltan</button></div></div>'+
+    '<div class="lista scroll"><div class="cab">'+(s1?'<b style="color:var(--fg);font-weight:500">'+esc(s1)+'</b>':'<b style="color:var(--fg);font-weight:500">Todas las bases</b>')+'<span>por relevancia</span></div>'+(l.length?l.map(function(x,i){return r(x,i);}).join(""):vacioF())+'</div></div>';
+}
+/* ---------- 2 · lista y lector ---------- */
+var s2="", i2=0;
+function d2(){
+  var l=s2?rsb(BASES.filter(function(b){return b.s===s2;})[0]):todos(), x=l[Math.min(i2,l.length-1)];
+  return barra()+cbar("m2")+'<div class="cuerpo"><div class="izq"><div class="chipsb"><button class="pill'+(!s2?" on":"")+'" data-a="sel2" data-s="">Todas <span class="n">'+total()+'</span></button>'+
+    BASES.map(function(b){return '<button class="pill'+(s2===b.s?" on":"")+'" style="--c:'+b.c+'" data-a="sel2" data-s="'+esc(b.s)+'"><span class="dot"></span>'+esc(b.s)+(b.st==="ok"?'<span class="n">'+cnt(b)+'</span>':'')+'</button>';}).join("")+'</div>'+
+    '<div class="lista">'+(l.length?l.map(function(y,i){return r(y,i,i===Math.min(i2,l.length-1)?" act":"");}).join(""):vacioF())+'</div></div>'+
+    '<div class="der scroll">'+(x?'<div style="--c:'+x.b.c+';display:flex;align-items:center;gap:8px;margin-bottom:10px"><span class="dot"></span><span class="sig">'+esc(x.b.s)+'</span></div><h3>'+esc(x.t)+'</h3><div class="meta"><span>'+esc(x.m)+'</span><span>'+esc(x.j)+'</span><span>'+esc(x.f)+'</span></div>'+
+      '<div class="texto"><p>…'+x.p+'</p><p style="color:var(--dim)">Los restantes considerandos fundan el monto en la entidad del padecimiento y en las constancias de autos, con remisión a los precedentes del Tribunal sobre la materia.</p></div>'+
+      '<div class="acc"><button class="pill gold">Abrir en el Lector</button><button class="pill">Guardar el pasaje</button><button class="pill">Copiar cita</button><button class="pill">Ir a la fuente ↗</button></div>':vacioF())+'</div></div>';
+}
+/* ---------- 3 · resumen por base -> detalle ---------- */
+var s3=null;
+function d3(){
+  if(s3){
+    var b=BASES.filter(function(x){return x.s===s3;})[0], l=rsb(b);
+    return barra()+cbar("m3")+'<div class="det"><div class="ch" style="--c:'+b.c+'"><button class="mini" data-a="sel3" data-s="">← Todas las bases</button><span class="dot"></span><b style="font-weight:500">'+esc(b.n)+'</b>'+stTxt(b)+'<span style="margin-left:auto"><button class="mini" data-a="buscar" data-s="'+esc(b.s)+'">Repetir</button></span></div><div class="lista">'+(l.length?l.map(function(y,i){return r(y,i);}).join(""):vacioF())+'</div></div>';
+  }
+  return barra()+cbar("m3")+'<div class="tab">'+BASES.map(function(b){
+    var l=rsb(b);
+    return '<div class="t" style="--c:'+b.c+'"><header><span class="dot"></span><span class="sig">'+esc(b.s)+'</span><span style="margin-left:auto">'+(b.st==="ok"?"":stTxt(b))+'</span></header>'+
+      '<div class="num">'+(b.st==="ok"?cnt(b):b.st==="busc"?"…":"—")+'</div>'+
+      '<div class="tops">'+(b.st==="ok"?(l.slice(0,2).map(function(x){return '<div>'+esc(x.t)+'</div>';}).join("")||'<div style="color:var(--dim)">Sin resultados con estos filtros</div>'):'<div style="color:var(--dim)">'+(b.st==="busc"?"Consultando…":b.st==="err"?"No respondió":"Todavía no se consultó")+'</div>')+'</div>'+
+      '<footer>'+(b.st==="ok"&&l.length?'<button class="mini" data-a="sel3" data-s="'+esc(b.s)+'">Ver todos</button>':'')+'<button class="mini" data-a="buscar" data-s="'+esc(b.s)+'"'+(b.st==="busc"?" disabled":"")+'>'+(b.st==="ok"?"Repetir":"Buscar")+'</button></footer></div>';}).join("")+'</div>';
+}
+/* ---------- 4 · acordeón horizontal ---------- */
+var s4="SCJM", ex4=null;
+function d4(){
+  return barra()+cbar("m4")+'<div class="acor">'+BASES.map(function(b){
+    var l=rsb(b);
+    if(b.s!==s4) return '<div class="c cerr" style="--c:'+b.c+'" data-a="sel4" data-s="'+esc(b.s)+'" title="'+esc(b.n)+'"><span class="dot"></span><span class="vert">'+esc(b.s)+'</span><span class="n">'+(b.st==="ok"?cnt(b):b.st==="busc"?"…":"–")+'</span></div>';
+    return '<div class="c abi" style="--c:'+b.c+'"><header><span class="dot"></span><span class="sig">'+esc(b.s)+'</span><b style="font-weight:400;font-size:13px;color:var(--mute)">'+esc(b.n)+'</b>'+stTxt(b)+'<button class="mini" data-a="buscar" data-s="'+esc(b.s)+'"'+(b.st==="busc"?" disabled":"")+'>'+(b.st==="ok"?"Repetir":"Buscar")+'</button></header><div class="body">'+
+      (b.st==="ok"?(l.length?l.map(function(y,i){return r(y,i);}).join(""):vacioF()):'<div class="vacio">'+(b.st==="busc"?"Consultando…":b.st==="err"?"No respondió.":"Todavía no se consultó.")+'</div>')+'</div></div>';}).join("")+'</div>';
+}
+/* ---------- 5 · tabla ---------- */
+var s5="", ord5="rel", ex5=-1;
+function d5(){
+  var l=s5?rsb(BASES.filter(function(b){return b.s===s5;})[0]):todos();
+  l=l.slice();
+  if(ord5==="fecha") l.sort(function(a,b){return b.y-a.y;}); else if(ord5==="base") l.sort(function(a,b){return a.b.s<b.b.s?-1:1;}); else if(ord5==="tit") l.sort(function(a,b){return a.t<b.t?-1:1;});
+  return barra()+cbar("m5")+'<div class="filtros"><button class="pill'+(!s5?" on":"")+'" data-a="sel5" data-s="">Todas <span class="n">'+total()+'</span></button>'+
+    BASES.map(function(b){return '<button class="pill'+(s5===b.s?" on":"")+'" style="--c:'+b.c+'" data-a="sel5" data-s="'+esc(b.s)+'"><span class="dot"></span>'+esc(b.s)+(b.st==="ok"?'<span class="n">'+cnt(b)+'</span>':'')+'</button>';}).join("")+'</div>'+
+    '<div class="tbl scroll"><table><thead><tr><th data-a="ord5" data-v="base">Base</th><th data-a="ord5" data-v="tit">Carátula</th><th>Tribunal</th><th data-a="ord5" data-v="fecha">Fecha</th><th>Pasaje</th></tr></thead><tbody>'+
+    (l.length?l.map(function(x,i){
+      var partes=x.m.split(" · "), fecha=partes[partes.length-1], trib=partes.slice(0,-1).join(" · ").replace(/^[A-Z ]+ · /,"")||x.j;
+      return '<tr class="f" style="--c:'+x.b.c+'" data-a="ex5" data-i="'+i+'"><td class="c1"><span class="dot"></span> <span class="sig">'+esc(x.b.s)+'</span></td><td class="c2">'+esc(x.t)+'</td><td class="c3">'+esc(trib)+'</td><td class="c4">'+esc(fecha)+'</td><td class="c5">'+x.p.replace(/<\/?mark>/g,"")+'</td></tr>'+
+        (ex5===i?'<tr class="ex" style="--c:'+x.b.c+'"><td colspan="5">'+x.p+' Los restantes considerandos fundan el monto en la entidad del padecimiento y en las constancias de autos. <div style="margin-top:10px;display:flex;gap:8px"><button class="pill gold" style="padding:5px 14px">Abrir en el Lector</button><button class="pill" style="padding:5px 14px">Guardar</button><button class="pill" style="padding:5px 14px">Copiar cita</button></div></td></tr>':'');
+    }).join(""):'<tr><td colspan="5">'+vacioF()+'</td></tr>')+'</tbody></table></div>';
+}
+
+var DRAW={m1:d1,m2:d2,m3:d3,m4:d4,m5:d5};
+function pintar(){
+  Object.keys(DRAW).forEach(function(id){
+    var el=document.getElementById(id), q=".scroll,.riel,.lista,.body,.tab,.tbl,.der,.chipsb,.filtros,.drawer", sc=[].map.call(el.querySelectorAll(q),function(n){return [n.scrollTop,n.scrollLeft];});
+    el.innerHTML=DRAW[id]();
+    [].forEach.call(el.querySelectorAll(q),function(n,i){ if(sc[i]){ n.scrollTop=sc[i][0]; n.scrollLeft=sc[i][1]; } });
+  });
+}
+function buscar(b){ b.st="busc"; pintar(); setTimeout(function(){ b.st="ok"; pintar(); },900+Math.random()*900); }
+document.addEventListener("click",function(ev){
+  var t=ev.target.closest("[data-a]"); if(!t) return;
+  var a=t.getAttribute("data-a"), s=t.getAttribute("data-s"), i=t.getAttribute("data-i");
+  var b=s?BASES.filter(function(x){return x.s===s;})[0]:null;
+  if(a==="buscar"&&b) buscar(b);
+  else if(a==="todas"){ BASES.forEach(function(x,k){ x.st="busc"; setTimeout(function(){ x.st=(x.s==="CORTE IDH"&&Math.random()<.5)?"err":"ok"; pintar(); },700+k*260); }); pintar(); }
+  else if(a==="solo-esperan") BASES.filter(function(x){return x.st!=="ok";}).forEach(buscar);
+  else if(a==="drawer"){ var m=t.getAttribute("data-m"); abierto[m]=!abierto[m]; pintar(); }
+  else if(a==="sel1"){ s1=s||null; pintar(); }
+  else if(a==="sel2"){ s2=s; i2=0; pintar(); }
+  else if(a==="sel3"){ s3=s||null; pintar(); }
+  else if(a==="sel4"){ s4=s; pintar(); }
+  else if(a==="sel5"){ s5=s; ex5=-1; pintar(); }
+  else if(a==="ord5"){ ord5=t.getAttribute("data-v"); pintar(); }
+  else if(a==="ex5"){ ex5=ex5===+i?-1:+i; pintar(); }
+  else if(a==="abrir"){ if(t.closest("#m2")){ i2=+i; pintar(); } }
+  else if(a==="plegarF"){ pintar(); }
+  else if(a==="fJtodas"){ F.j={}; pintar(); }
+  else if(a==="fBase"){ if(F.bases[s]) delete F.bases[s]; else F.bases[s]=1; pintar(); }
+  else if(a==="fOpt"){ var kk=t.getAttribute("data-k"), vv=t.getAttribute("data-v"); if(F[kk][vv]) delete F[kk][vv]; else F[kk][vv]=1; pintar(); }
+  else if(a==="fJ"){ var v1=t.getAttribute("data-v"); if(v1==="Provincias"){ F.provAbierto=!F.provAbierto; pintar(); } else { if(F.j[v1]) delete F.j[v1]; else F.j[v1]=1; pintar(); } }
+  else if(a==="fProv"){ var v2=t.getAttribute("data-v"); if(F.j[v2]) delete F.j[v2]; else F.j[v2]="prov"; if(!t.getAttribute("data-cerrado")) F.provAbierto=true; pintar(); }
+  else if(a==="modoF"){ F.modo=t.getAttribute("data-v"); pintar(); }
+  else if(a==="limpiarF"){ F.bases={};F.j={};F.tipo={};F.f={};F.inst={};F.desde="";F.hasta="";F.ex=""; pintar(); }
+  else if(a==="quitarF"){ var k2=t.getAttribute("data-k"), v3=t.getAttribute("data-v"); if(k2==="bases") delete F.bases[v3]; else if(k2==="anios"){F.desde="";F.hasta="";} else if(k2==="ex") F.ex=""; else delete F[k2][v3]; pintar(); }
+});
+document.addEventListener("change",function(ev){ var c=ev.target.getAttribute&&ev.target.getAttribute("data-c"); if(!c) return; F[c]=ev.target.value.trim(); pintar(); });
+document.addEventListener("input",function(ev){ if(!ev.target.classList||!ev.target.classList.contains("pq")) return;
+  var q=ev.target.value.toLowerCase().trim();
+  [].forEach.call(ev.target.parentNode.querySelectorAll(".provs [data-n]"),function(f){ f.style.display=(!q||f.getAttribute("data-n").indexOf(q)>-1)?"":"none"; }); });
+pintar();
+</script>
+</body>
+</html>
