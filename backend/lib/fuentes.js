@@ -35,6 +35,7 @@ import { buscarSaij } from './indiceSaij.js';
 import { buscarDialnet } from './indiceDialnet.js';
 import { buscarMendozaLegal } from './indiceMendozaLegal.js';
 import { buscarCorteidh } from './indiceCorteidh.js';
+import { buscarScba } from './indiceScba.js';
 
 /**
  * Cómo pedirle a cada buscador los fallos que citan un artículo.
@@ -136,6 +137,14 @@ export const FUENTES = [
     nombre: 'Corte Interamericana de Derechos Humanos',
     tribunalPorDefecto: null,
     buscar: (args) => buscarCorteidh(args),
+  },
+  // JUBA: sumarios de la Suprema Corte y las cámaras de la Provincia de Buenos
+  // Aires, con su texto y el enlace al fallo completo. Ver lib/indiceScba.js.
+  {
+    slug: 'scba',
+    nombre: 'Suprema Corte de la Provincia de Buenos Aires (JUBA)',
+    tribunalPorDefecto: null,
+    buscar: (args) => buscarScba(args),
   },
 ];
 

@@ -4,7 +4,7 @@
   --bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.62);--dim:rgba(241,238,230,.36);--line:rgba(241,238,230,.15);
   --gold:#d9a31b;--caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;
   --ease:cubic-bezier(.16,.84,.24,1);--pad:clamp(18px,3.2vw,48px);
-  --c-mza:#d9a62a;--c-mzl:#b58640;--c-caba:#d5873f;--c-csjn:#c95836;--c-saij:#b03b42;--c-dial:#8a3853;--c-idh:#5f7f9a
+  --c-mza:#d9a62a;--c-mzl:#b58640;--c-caba:#d5873f;--c-csjn:#c95836;--c-saij:#b03b42;--c-dial:#8a3853;--c-idh:#5f7f9a;--c-scba:#c06a2c
 }
 *{box-sizing:border-box}
 html{background:var(--bg);-webkit-text-size-adjust:100%}
@@ -23,16 +23,16 @@ button,input{font:inherit;color:inherit}
 .btn.sec:hover{border-color:var(--gold);color:var(--gold);background:none}
 
 /* la marca: V, punto y X en oro */
-.marca{font-family:var(--caps);font-weight:500;letter-spacing:.3em;white-space:nowrap}
+.marca{font-family:"Cinzel","Trajan Pro",var(--caps);font-weight:500;letter-spacing:.26em;white-space:nowrap}
 .marca .v{background:linear-gradient(170deg,#f0c75a 8%,#d9a31b 46%,#a77a0c 92%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
-.marca .d{display:inline-block;width:.17em;height:.17em;margin:0 calc(.3em + .005em) 0 0;border-radius:50%;background:var(--gold);vertical-align:.24em}
+.marca .d{display:inline-block;width:.17em;height:.17em;margin:0 calc(.26em + .005em) 0 0;border-radius:50%;background:var(--gold);vertical-align:.265em}
 .marca-g{font:300 1em/.86 var(--caps);letter-spacing:.02em;white-space:nowrap}
 .marca-g .v{background:linear-gradient(170deg,#f0c75a 8%,#d9a31b 46%,#a77a0c 92%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .marca-g .d{display:inline-block;width:.17em;height:.17em;margin:0 .091em 0 .066em;border-radius:50%;background:linear-gradient(170deg,#f0c75a,#d9a31b 50%,#a77a0c);vertical-align:.24em}
 
 /* cabecera mínima */
 .cab{display:flex;align-items:center;gap:24px;padding:22px var(--pad)}
-.cab .marca{font-size:17px}
+.cab .marca{font-size:15.5px;position:relative;top:.4px}   /* las mayúsculas miden lo mismo que las del menú (0,72 em de Instrument Sans = 0,70 em de Cinzel a 15,5 px) y comparten su línea de base */
 .cab nav{display:flex;gap:clamp(16px,2vw,30px);font-size:15px;color:var(--mute);margin-left:clamp(20px,4vw,72px)}
 .cab nav a:hover{color:var(--gold)}
 .cab .btn{margin-left:auto;padding:10px 18px 9px;font-size:13.5px}
