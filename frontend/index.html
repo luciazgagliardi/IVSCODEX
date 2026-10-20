@@ -203,6 +203,90 @@ strong,b{font-weight:500}
 /* ---------- campos: solo la línea de abajo, como el formulario de sigillvm ---------- */
 .campo{display:block;margin-bottom:22px;min-width:0}
 .campo span{display:block;margin-bottom:10px;font-size:14px;color:var(--mute)}
+
+
+/* ---------- Buscar en columnas ---------- */
+.bq{display:grid;gap:14px;margin-bottom:22px}
+.bq-fila{display:flex;align-items:flex-end;gap:14px}
+.bq-fila .campo{flex:1;min-width:0;margin:0}
+.bq-fila .btn{flex:none;margin-bottom:6px}
+.fsb{display:grid;gap:10px;font-size:13.5px;color:var(--mute)}
+.fsb-fila{display:flex;flex-wrap:wrap;align-items:center;gap:8px 8px}
+.fsb-rot{min-width:56px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute-2)}
+.fsb .chip{padding:6px 13px;font-size:13px}
+.fsb-c{display:inline-flex;align-items:center;gap:8px;margin-left:8px;font-size:13px}
+.fsb .fsb-c input[type=number],.fsb .fsb-c input[type=text],.fsb .fsb-c select,.fsb-prov input[type=text]{padding:6px 14px;border:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:999px;background-color:transparent;color:var(--fg);font:400 13px/1.2 var(--sans);outline:none;width:96px;min-height:0;height:auto}
+.fsb .fsb-c input.ex{width:160px}
+.fsb .fsb-c select{width:auto;max-width:270px;background-color:var(--bg);padding-right:32px}
+.fsb .fsb-c input:focus,.fsb .fsb-c select:focus,.fsb-prov input[type=text]:focus{border-color:var(--gold)}
+.fsb-prov{display:grid;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:16px}
+.fsb-prov input[type=text]{max-width:280px;width:100%}
+.fsb-provs{display:flex;flex-wrap:wrap;gap:6px;max-height:96px;overflow:auto}
+.fsb-provs .chip{padding:5px 11px;font-size:12.5px}
+.fsb-nota{font-size:12px;color:var(--mute-2)}
+.fsb-tk{display:inline-flex;align-items:center;gap:7px;padding:3px 5px 3px 12px;border:1px solid var(--line);border-radius:999px;font-size:12.5px;color:var(--mute)}
+.fsb-tk b{font-weight:500;color:var(--fg)}
+.fsb-tk button{appearance:none;border:0;background:none;color:var(--mute-2);cursor:pointer;padding:0 6px;font-size:13px}
+.fsb-tk button:hover{color:var(--gold)}
+.bq-pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 18px;padding-top:12px;border-top:1px solid var(--line-2)}
+.bq-cad{min-width:0;font-size:12.5px;color:var(--mute-2)}
+.bq-cad code{color:var(--fg-82);word-break:break-word}
+.bq-acc{display:flex;flex-wrap:wrap;gap:8px}
+.bq-acc .btn,.bq-acc .mini{padding:5px 12px 4px;font-size:12px;border-radius:999px}
+/* en Buscar el trabajo va primero: la cabecera de la sección se compacta */
+.cab[data-tab="buscar"] .cab__intro,.cab[data-tab="buscar"] .cab__dibujo{display:none}
+.cab[data-tab="buscar"] h1{font-size:clamp(30px,3.2vw,44px);margin-top:10px}
+.colsb{display:flex;gap:14px;align-items:stretch;overflow-x:auto;padding:4px 2px 18px;height:clamp(480px,76vh,820px);scroll-snap-type:x proximity}
+.colb{flex:0 0 clamp(310px,27vw,400px);display:flex;flex-direction:column;min-height:0;border:1px solid var(--line);border-top:2px solid var(--punto,var(--line));border-radius:16px;scroll-snap-align:start;background:rgba(241,238,230,.015)}
+.colb.chica{flex-basis:96px}
+.colb-cab{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line-2);flex:none}
+.colb-cab .rf-punto{width:7px;height:7px;border-radius:50%;flex:none;background:var(--punto,var(--humo))}
+.colb-cab .rf-nom{flex:0 1 auto;font:500 12.5px/1.2 var(--caps);letter-spacing:.14em;white-space:nowrap}
+.colb-cab .rf-n{font:500 13px/1 var(--sans);color:var(--fg);font-variant-numeric:tabular-nums}
+.colb-cab .rf-t{font-size:11.5px;color:var(--mute-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.colb-cab .rf-nom{flex:0 1 auto}
+.colb-cab .rf-buscar{margin-left:auto}
+.colb-x{appearance:none;border:0;background:none;color:var(--mute-2);cursor:pointer;font-size:14px;padding:0 2px}
+.colb-x:hover{color:var(--gold)}
+.colb.chica .colb-cuerpo,.colb.chica .colb-cab .rf-t,.colb.chica .colb-cab .rf-n,.colb.chica .colb-cab .rf-buscar{display:none}
+.colb-cuerpo{flex:1;min-height:0;overflow:auto;padding:0 14px 14px}
+.colb-cuerpo .panel.vivo{border:0;background:none;padding:12px 0 0;margin:0;box-shadow:none}
+.colb-cuerpo .rotulo-fuente{display:none}
+.colb.consultando .rf-punto{animation:parpadeo 1s ease-in-out infinite alternate}
+.colb.consultando .rf-t{color:var(--gold)}
+.colb.con-error .rf-punto{background:var(--rojo)}
+.colb.con-error .rf-t{color:var(--rojo)}
+.colb.sin-buscar .rf-punto{background:var(--line)}
+@media (max-width:860px){.bq-fila{flex-wrap:wrap}.colb{flex-basis:86vw}}
+/* ---------- el asistente ---------- */
+.asist{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:60;font-family:var(--sans)}
+.asist__fab{display:inline-flex;align-items:center;gap:10px;padding:13px 20px 12px;border:1px solid var(--gold);border-radius:999px;background:var(--bg);color:var(--fg);font:500 14.5px/1 var(--sans);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:background .3s,color .3s}
+.asist__fab i{width:8px;height:8px;border-radius:50%;background:var(--gold);flex:none}
+.asist__fab:hover{background:var(--gold);color:var(--bg)}
+.asist__fab:hover i{background:var(--bg)}
+.asist.is-on .asist__fab{display:none}
+.asist__panel{display:none;flex-direction:column;width:min(380px,calc(100vw - 32px));height:min(560px,calc(100vh - 110px));background:#15120e;border:1px solid var(--line);border-radius:22px;box-shadow:0 24px 70px rgba(0,0,0,.65);overflow:hidden}
+.asist.is-on .asist__panel{display:flex}
+.asist__cab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px 14px;border-bottom:1px solid var(--line)}
+.asist__cab b{display:flex;align-items:center;gap:10px;font-weight:500;font-size:15px}
+.asist__cab b i{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.asist__x{appearance:none;border:1px solid var(--line);background:none;color:var(--mute);width:30px;height:30px;border-radius:50%;font-size:16px;line-height:1;cursor:pointer}
+.asist__x:hover{border-color:var(--gold);color:var(--gold)}
+.asist__log{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
+.asist__m{max-width:88%;padding:11px 15px;border-radius:18px;font-size:14.5px;line-height:1.5;white-space:pre-line}
+.asist__m.bot{align-self:flex-start;background:rgba(241,238,230,.07);color:var(--fg)}
+.asist__m.yo{align-self:flex-end;background:var(--fg);color:var(--bg)}
+.asist__ops{display:flex;flex-wrap:wrap;gap:8px;margin-top:-2px}
+.asist__ops button{appearance:none;padding:9px 15px;border-radius:999px;border:1px solid var(--gold-55);background:transparent;color:var(--gold);font:400 13.5px/1.2 var(--sans);cursor:pointer;text-align:left}
+.asist__ops button:hover{background:rgba(217,163,27,.1);border-color:var(--gold)}
+.asist__ops button.suave{border-color:var(--line);color:var(--fg-82)}
+.asist__form{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.asist .asist__form input[type=text]{flex:1;min-width:0;padding:11px 16px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--fg);font:400 14.5px/1.2 var(--sans)}
+.asist .asist__form input[type=text]:focus{outline:none;border-color:var(--gold)}
+.asist__form button{appearance:none;padding:11px 18px;border-radius:999px;border:0;background:var(--gold);color:var(--bg);font:500 14px/1 var(--sans);cursor:pointer}
+.asist__pie{margin:0;padding:0 18px 12px;font-size:11.5px;color:var(--mute-2)}
+@media (max-width:520px){.asist__panel{height:min(78vh,560px)}}
+@media (prefers-reduced-motion:no-preference){.asist__panel{animation:asistEntra .28s var(--ease) both}@keyframes asistEntra{from{opacity:0;transform:translateY(10px)}}}
 .campo-check{display:flex;align-items:flex-start;gap:10px;margin:0 0 22px;font-size:14px;color:var(--mute);cursor:pointer}
 .campo-check input{margin-top:3px;accent-color:var(--gold)}
 input[type=text],input[type=number],input[type=email],input[type=password],input[type=date],select{
@@ -301,7 +385,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 
 /* ---------- estructura ---------- */
 .wrap{
-  display:grid;grid-template-columns:220px minmax(0,1fr);gap:clamp(28px,4vw,64px);align-items:start;
+  display:grid;grid-template-columns:268px minmax(0,1fr);gap:clamp(28px,4vw,56px);align-items:start;
   padding:clamp(44px,5.5vw,72px) var(--pad) 110px
 }
 .wrap.sin-rail{grid-template-columns:minmax(0,1fr)}
@@ -311,8 +395,14 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 /* el riel: las fuentes en vivo y las ramas */
 .rail{position:sticky;top:96px;min-width:0}
 .rail h2{margin:0 0 12px;font-size:13px;font-weight:400;color:var(--mute)}
-.rail-fuentes{display:flex;flex-direction:column;margin-bottom:36px}
-.rail-fuente{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:13.5px;color:var(--tinta2);line-height:1.3}
+.rail-fuentes{display:flex;flex-direction:column}
+.rail-fuente{display:flex;align-items:center;gap:10px;padding:7px 0;font-size:13.5px;color:var(--tinta2);line-height:1.3;cursor:pointer;border-bottom:1px solid var(--line-2)}
+.rail-fuente:hover .rf-nom{color:var(--gold)}
+.rf-buscar{appearance:none;flex:none;padding:5px 11px 4px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--fg-82);font:400 11.5px/1.2 var(--sans);cursor:pointer;transition:border-color .3s,color .3s,background .3s}
+.rf-buscar:hover{border-color:var(--gold);color:var(--gold)}
+.rf-buscar:disabled{opacity:.45;cursor:default}
+.rf-todas{appearance:none;width:100%;margin:16px 0 36px;padding:10px 16px 9px;border:1px solid var(--gold);border-radius:999px;background:var(--gold);color:var(--bg);font:500 13.5px/1.2 var(--sans);cursor:pointer}
+.rf-todas:hover{background:var(--fg);border-color:var(--fg)}
 .rail-fuente .rf-punto{width:6px;height:6px;border-radius:50%;flex:none;background:var(--punto,var(--humo))}
 .rail-fuente .rf-nom{flex:1 1 auto;min-width:0;font:500 12.5px/1.2 var(--caps);letter-spacing:.14em}
 .rail-fuente .rf-n{flex:none;font-size:13px;color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
@@ -2534,7 +2624,7 @@ function nuevoEstado(){
           // cuenta como los pasajes: se escriben una vez y sirven desde
           // cualquier computadora.
           anillos:[],nuevoAnillo:{canonico:"",equivalentes:"",relacionados:"",nota:""},
-          ambitos:{mza:true,nac:true,prov:false,int:true,doc:true},
+          ambitos:{mza:true,nac:true,prov:true,int:true,doc:true},provSel:"",provAbierto:false,colChica:{},masFiltros:false,
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
           api:null,cargando:false,cargandoOcr:false,errorLink:null,infoDoc:null,fichaConocida:null,
@@ -3805,7 +3895,7 @@ function pintarRail(){
   var w=document.getElementById("wrap");
   // "requisitos" también queda sin riel: el filtro de ahí es por RAMA, y acá
   // el listado es por TRÁMITE — mostrarlo daría un control que no filtra nada.
-  var sinRail=(estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos"||estado.tab==="norma"||estado.tab==="comparar"||
+  var sinRail=(estado.tab==="buscar"||estado.tab==="citas"||estado.tab==="verificar"||estado.tab==="lector"||estado.tab==="cuenta"||estado.tab==="requisitos"||estado.tab==="norma"||estado.tab==="comparar"||
     estado.tab==="calculos"||estado.tab==="plazos"||estado.tab==="glosario"||estado.tab==="herramientas"||
     // El catálogo de Fuentes y los Guardados no dependen de la rama elegida: la
     // columna de ramas ahí no filtraba nada, sólo confundía.
@@ -3826,7 +3916,7 @@ function pintarRail(){
       var im=estado.indices[f.slug]||{};
       var clase="",der="";
       if(im.cargando){
-        clase=" consultando"; der='<span class="rf-t">consultando…</span>'; consultadas++;
+        clase=" consultando"; der='<span class="rf-t">buscando…</span>'; consultadas++;
       }else if(im.busco&&im.error){
         clase=" con-error"; der='<span class="rf-t">sin respuesta</span>'; consultadas++;
       }else if(im.busco){
@@ -3839,14 +3929,17 @@ function pintarRail(){
       // La sigla y no el nombre largo: en el riel "Tribunal Superior de
       // Justicia de la Ciudad de Buenos Aires" parte en dos renglones. Es
       // además la misma sigla que lleva el sello de sus resultados.
-      return '<div class="rail-fuente f-'+f.slug+clase+'"><span class="rf-punto"></span>'+
-        '<span class="rf-nom">'+esc(f.cod)+'</span>'+der+'</div>';
+      var boton='<button type="button" class="rf-buscar" data-act="buscar-indice" data-fuente="'+f.slug+'" title="Buscar sólo en '+esc(f.nombre)+'"'+
+        (im.cargando?' disabled':'')+'>'+(im.busco?'Repetir':'Buscar')+'</button>';
+      return '<div class="rail-fuente f-'+f.slug+clase+'" data-act="ir-fuente" data-fuente="'+f.slug+'" title="'+esc(f.nombre)+'"><span class="rf-punto"></span>'+
+        '<span class="rf-nom">'+esc(f.cod)+'</span>'+der+boton+'</div>';
     }).join("");
     var servidor=estado.api?'Servidor en línea':(estado.api===false?'Servidor sin conexión':'Comprobando el servidor…');
     fuentes='<h2>Estado de las bases</h2>'+
       '<p class="rail-resumen"><span class="rf-srv'+(estado.api?' ok':'')+'"></span>'+servidor+
         (consultadas?' · '+respondieron+' de '+FUENTES_INDICE.length+' respondieron':'')+'</p>'+
-      '<div class="rail-fuentes">'+filas+'</div>';
+      '<div class="rail-fuentes">'+filas+'</div>'+
+      '<button type="button" class="rf-todas" data-act="buscar-todas">Buscar en todas</button>';
   }
   r.innerHTML=fuentes+
     '<h2>Ramas del derecho</h2>'+
@@ -4045,77 +4138,120 @@ function tiraProponer(){
     '<div class="chips"><button class="chip voz-sug" data-act="pedir-propuesta">Buscar cómo se escribe de otras formas</button></div></div>';
 }
 
+/* Buscar, ordenado en columnas: arriba la consulta y los filtros; abajo una
+   columna por base, cada una con su punto de color, su estado, su botón
+   para buscar sólo ahí y sus resultados. */
+var PROV_DE={mendoza:"Mendoza",mendozalegal:"Mendoza",caba:"Ciudad Autónoma de Buenos Aires",scba:"Buenos Aires"};
+function basesVisibles(){
+  return FUENTES_INDICE.filter(function(f){
+    if(!estado.ambitos[f.clase]) return false;
+    if(estado.provSel) return PROV_DE[f.slug]===estado.provSel||f.slug==="saij";
+    return true;
+  });
+}
+function todosLosAmbitos(){ return Object.keys(AMB).every(function(k){ return estado.ambitos[k]; }); }
+function filtrosActivos(){
+  var t=[];
+  if(!todosLosAmbitos()) Object.keys(AMB).forEach(function(k){ if(estado.ambitos[k]) t.push(["Dónde",AMB[k].n,"amb",k]); });
+  if(estado.provSel) t.push(["Provincia",estado.provSel,"prov",""]);
+  if(estado.rama) t.push(["Rama",comoTitulo(nombreRama(estado.rama)),"rama",""]);
+  if(estado.desde||estado.hasta) t.push(["Años",(estado.desde||"…")+"–"+(estado.hasta||"…"),"anios",""]);
+  if(estado.excluir.trim()) t.push(["Excluir",estado.excluir.trim(),"excluir",""]);
+  return t;
+}
+function franjaBuscar(){
+  var pl=function(on,act,attrs,txt){ return '<button class="chip" data-act="'+act+'" '+attrs+' aria-pressed="'+(on?"true":"false")+'">'+esc(txt)+'</button>'; };
+  var todas=todosLosAmbitos();
+  var h='<div class="fsb">'+
+   '<div class="fsb-fila"><span class="fsb-rot">Dónde</span>'+
+     pl(todas&&!estado.provSel,"donde-todas","","Todas")+
+     ["nac","mza","prov","int","doc"].map(function(k){ return pl(!todas&&estado.ambitos[k]&&!estado.provSel,"donde",'data-amb="'+k+'"',AMB[k].n); }).join("")+
+     pl(!!estado.provSel||estado.provAbierto,"prov-abrir","",estado.provSel?estado.provSel:"Una provincia ▾")+
+   '</div>';
+  if(estado.provAbierto) h+='<div class="fsb-prov"><input type="text" id="prov-q" placeholder="Buscar provincia…" aria-label="Buscar provincia" autocomplete="off">'+
+     '<div class="fsb-provs">'+pl(!estado.provSel,"prov",'data-p=""',"Todo el país")+
+     PROVINCIAS_SAIJ.map(function(p){ return '<button class="chip" data-act="prov" data-p="'+esc(p)+'" data-n="'+esc(sinTildes(p))+'" aria-pressed="'+(estado.provSel===p?"true":"false")+'">'+esc(p)+'</button>'; }).join("")+'</div>'+
+     '<span class="fsb-nota">Con base propia: Mendoza, Buenos Aires y Ciudad de Buenos Aires. Las demás provincias se buscan a través de SAIJ.</span></div>';
+  h+='<div class="fsb-fila"><span class="fsb-rot">Cómo</span>'+
+     [["exacta","Frase exacta"],["todas","Todas las palabras"],["alguna","Alguna palabra"]].map(function(m){ return pl(estado.modo===m[0],"modo",'data-modo="'+m[0]+'"',m[1]); }).join("")+
+     '<label class="fsb-c"><span>Años</span><input type="number" id="desde" value="'+esc(estado.desde)+'" min="1863" max="2100" placeholder="Desde" aria-label="Año desde"><span>–</span><input type="number" id="hasta" value="'+esc(estado.hasta)+'" min="1863" max="2100" placeholder="Hasta" aria-label="Año hasta"></label>'+
+     '<label class="fsb-c"><span>Excluir</span><input type="text" id="excluir" class="ex" value="'+esc(estado.excluir)+'" placeholder="seguro laboral" autocomplete="off"></label>'+
+     pl(estado.masFiltros,"tog-mas","","Más filtros "+(estado.masFiltros?"▴":"▾"))+
+   '</div>';
+  if(estado.masFiltros) h+='<div class="fsb-fila"><span class="fsb-rot">Más</span>'+
+     '<label class="fsb-c"><span>Rama del derecho</span><select id="rama-sel"><option value="">Todas las ramas</option>'+
+       RAMAS.map(function(r){ return '<option value="'+esc(r.id)+'"'+(estado.rama===r.id?" selected":"")+'>'+esc(comoTitulo(r.n))+'</option>'; }).join("")+'</select></label>'+
+     pl(estado.resaltarFuente,"tog-frag","","Resaltar la frase en la página que se abre")+'</div>';
+  var ac=filtrosActivos();
+  if(ac.length) h+='<div class="fsb-fila">'+ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join("")+
+     '<button class="mini" data-act="limpiar-filtros">Limpiar filtros</button></div>';
+  return h+'</div>';
+}
+function estadoBase(f){
+  var im=estado.indices[f.slug]||{};
+  if(im.cargando) return {c:" consultando",t:'<span class="rf-t">buscando…</span>'};
+  if(im.busco&&im.error) return {c:" con-error",t:'<span class="rf-t">sin respuesta</span>'};
+  if(im.busco) return {c:"",t:'<span class="rf-n">'+(im.total||im.resultados.length)+'</span>'+(im.ms?'<span class="rf-t">'+(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+' s</span>':'')};
+  return {c:" sin-buscar",t:'<span class="rf-t">en espera</span>'};
+}
+function columnasBuscar(){
+  if(!estado.api) return '<p class="fsb-nota" style="margin:18px 0">El buscador en vivo no está disponible ahora.</p>';
+  var vis=basesVisibles();
+  if(!vis.length) return '<div class="vacio">Ninguna base coincide con estos filtros. <button class="mini" data-act="limpiar-filtros">Limpiar filtros</button></div>';
+  return '<div class="colsb" id="colsb">'+vis.map(function(f){
+    var im=estado.indices[f.slug]||{}, e=estadoBase(f), chica=!!estado.colChica[f.slug];
+    return '<section class="colb f-'+f.slug+e.c+(chica?" chica":"")+'" id="col-'+f.slug+'" aria-label="'+esc(f.nombre)+'">'+
+      '<header class="colb-cab"><span class="rf-punto"></span><span class="rf-nom" title="'+esc(f.nombre)+'">'+esc(f.cod)+'</span>'+e.t+
+        '<button type="button" class="rf-buscar" data-act="buscar-indice" data-fuente="'+f.slug+'"'+(im.cargando?' disabled':'')+' title="Buscar sólo en '+esc(f.nombre)+'">'+(im.busco?"Repetir":"Buscar")+'</button>'+
+        '<button type="button" class="colb-x" data-act="col-plegar" data-fuente="'+f.slug+'" title="'+(chica?"Abrir":"Plegar")+'" aria-label="'+(chica?"Abrir":"Plegar")+' '+esc(f.cod)+'">'+(chica?"+":"✕")+'</button></header>'+
+      '<div class="colb-cuerpo">'+panelIndice(f)+'</div></section>';
+  }).join("")+'</div>';
+}
 function vistaBuscar(){
-  var ambChips=Object.keys(AMB).map(function(k){
-    return '<button class="chip amb" data-act="amb" data-amb="'+k+'" aria-pressed="'+(estado.ambitos[k]?"true":"false")+'">'+esc(AMB[k].n)+'</button>';
-  }).join("");
-  var modos=[["exacta","Frase exacta"],["todas","Todas las palabras"],["alguna","Alguna palabra"]].map(function(m){
-    return '<button class="chip" data-act="modo" data-modo="'+m[0]+'" aria-pressed="'+(estado.modo===m[0]?"true":"false")+'">'+esc(m[1])+'</button>';
-  }).join("");
-
   var sug="";
   if(estado.rama){
     var R=RAMAS.filter(function(x){return x.id===estado.rama;})[0];
     if(R) sug='<div class="panel"><h2 class="voces-tit">Voces sugeridas <span class="punto">·</span> <span class="rama-nom">'+esc(comoTitulo(R.n))+'</span></h2>'+
       '<div class="voces">'+R.v.map(function(v){return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(comoTitulo(v))+'</button>';}).join("")+'</div></div>';
   }
-
-  // La consulta como el formulario de presupuesto de sigillvm.com: a la
-  // izquierda lo que se completa, a la derecha el resumen fijo con la
-  // consulta ya armada y los botones para lanzarla. El resumen acompaña el
-  // scroll, así que la cadena se ve mientras se tocan los filtros de abajo.
-  // Los textos de los rótulos y los botones son los de siempre; lo único
-  // nuevo son los títulos del resumen.
-  // El id panel-buscar-form sigue siendo el ancla de ajustarAlturaRail():
-  // ahora marca la columna del formulario.
-  return '<div class="brief">'+
-    '<div class="brief__form" id="panel-buscar-form">'+
+  var nVis=basesVisibles().length;
+  return '<div class="bq" id="panel-buscar-form">'+
       sug+
-      '<label class="campo campo--q"><span>¿Qué desea consultar?</span>'+
+      '<div class="bq-fila"><label class="campo campo--q"><span>¿Qué desea consultar?</span>'+
         '<input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off"></label>'+
-      tiraSugerencias()+
-      tiraEquivalentes()+
-      tiraProponer()+
-      '<div class="busq-grupo"><span class="busq-rotulo">Cómo combinar las palabras</span><div class="chips">'+modos+'</div></div>'+
-      '<div class="busq-grupo"><span class="busq-rotulo">Dónde buscar</span><div class="chips">'+ambChips+'</div></div>'+
-      '<div class="fila">'+
-        '<label class="campo"><span>Excluir palabras</span><input type="text" id="excluir" value="'+esc(estado.excluir)+'" placeholder="seguro laboral" autocomplete="off"></label>'+
-        '<label class="campo"><span>Año desde</span><input type="number" id="desde" value="'+esc(estado.desde)+'" min="1863" max="2100" placeholder="2015"></label>'+
-        '<label class="campo"><span>Año hasta</span><input type="number" id="hasta" value="'+esc(estado.hasta)+'" min="1863" max="2100" placeholder="2026"></label>'+
-      '</div>'+
-      '<div class="campo"><span>Al abrir la fuente</span><div class="chips">'+
-        '<button class="chip" data-act="tog-frag" aria-pressed="'+(estado.resaltarFuente?"true":"false")+'">'+
-        'Resaltar la frase en la página que se abre</button></div></div>'+
+        '<button class="btn" data-act="buscar-todas">Buscar en '+(nVis===FUENTES_INDICE.length?"todas":nVis+(nVis===1?" base":" bases"))+'</button></div>'+
+      tiraSugerencias()+tiraEquivalentes()+tiraProponer()+
+      franjaBuscar()+
+      '<div class="bq-pie"><span class="bq-cad"><span>Consulta</span> <code id="cadena" aria-live="polite"></code></span>'+
+        '<span class="bq-acc"><button class="mini" data-act="copiar-cadena">Copiar</button>'+botonCompartir()+
+        '<button class="mini" data-act="barrido">Buscar con Google</button><button class="mini" data-act="limpiar">Empezar de nuevo</button></span></div>'+
     '</div>'+
-    '<aside class="brief__summary" aria-label="Resumen de su consulta">'+
-      '<h2 class="brief__title">Resumen de su consulta</h2>'+
-      '<dl class="brief__list"><div><dt>Consulta</dt><dd><code id="cadena" aria-live="polite"></code></dd></div></dl>'+
-      '<div class="acciones">'+
-        '<button class="mini" data-act="copiar-cadena">Copiar</button>'+
-        '<button class="mini" data-act="limpiar">Limpiar</button>'+
-      '</div>'+
-      '<button class="btn btn--ancho" data-act="barrido">Buscar en todas a la vez</button>'+
-      (estado.api?'<p class="brief__sub">O en una sola base:</p><div class="acciones">'+
-        FUENTES_INDICE.map(function(f){
-          return '<button class="btn sec" data-act="buscar-indice" data-fuente="'+f.slug+'">Buscar en '+esc(f.boton)+'</button>';
-        }).join("")+'</div>':'')+
-      '<div class="acciones" style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">'+
-        '<button class="btn sec" data-act="copiar-cadena">Copiar la consulta</button>'+
-        botonCompartir()+
-        '<button class="btn sec" data-act="limpiar">Empezar de nuevo</button>'+
-      '</div>'+
-    '</aside>'+
-  '</div>'+
-
-    // Qué servidor está atendiendo. Importa saberlo: el publicado corre en un
-    // datacenter al que el TSJ de CABA no le entrega los PDF (le responde 403),
-    // así que ahí "Traer texto completo" de CABA no funciona aunque la búsqueda
-    // sí. Con el servidor propio corriendo, todo anda. Sin este cartel parecía
-    // que la app fallaba a veces sí y a veces no, sin motivo visible.
     (estado.api?avisoServidor():"")+
-    (estado.api?FUENTES_INDICE.map(panelIndice).join(""):"");
+    columnasBuscar();
 }
 
+/* Buscar en todas las bases a la vez, dentro de la propia página: lanza la
+   misma búsqueda en vivo de cada base (cada una con su propio pedido, así
+   que no se pisan) y lleva la vista a los resultados. Sin servidor, cae a
+   la búsqueda con Google sobre los sitios oficiales. */
+function buscarEnTodas(){
+  if(!String(estado.q||"").trim()){
+    flash("Escriba primero qué quiere averiguar");
+    var qi=document.getElementById("q"); if(qi) qi.focus();
+    return;
+  }
+  if(!estado.api){
+    var g=document.querySelector('[data-act="barrido"]');
+    flash("El buscador en vivo no está disponible ahora: se abre la búsqueda con Google");
+    if(g) g.click();
+    return;
+  }
+  basesVisibles().forEach(function(f){ buscarEnFuente(f.slug); });
+  setTimeout(function(){
+    var c=document.getElementById("colsb");
+    if(c&&c.scrollIntoView) c.scrollIntoView({behavior:"smooth",block:"start"});
+  },350);
+}
 function avisoServidor(){
   var local=/localhost|127\.0\.0\.1/.test(String(estado.api||""))||String(estado.api||"").charAt(0)==="/";
   if(local) return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el propio</b> · todo disponible, incluido el texto completo de los fallos de CABA.</p>';
@@ -5089,7 +5225,7 @@ function panelIndice(f){
   // El borde izquierdo dorado del caso "local" se mantiene: no es decoración
   // sino un aviso —estos resultados salieron de la copia guardada, no del
   // sitio— y sigue siendo UN borde, con un lado marcado.
-  var out='<div class="panel vivo f-'+f.slug+'"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
+  var out='<div class="panel vivo f-'+f.slug+'" id="panel-'+f.slug+'"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
     '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0">'+esc(f.nombre)+(local?' · desde su índice local':' · en vivo')+'</div>';
 
   if(f.slug==="saij"){
@@ -6237,6 +6373,139 @@ function formPerfil(){
       (estado.perfilCargando?"Guardando…":"Guardar perfil")+'</button>'+
       (estado.perfilAviso?'<span style="font-size:13px;color:var(--mute)">'+esc(estado.perfilAviso)+'</span>':'')+'</div>';
 }
+
+/* ============================================================
+   El asistente
+   ============================================================
+   Una ayuda para quien no sabe por dónde empezar. No es una inteligencia
+   artificial ni da asesoramiento: orienta con reglas simples. Para un tema
+   usa el mismo intérprete que la barra de búsqueda (interpretarConsulta:
+   de las palabras de cada día a los términos que usan los tribunales); para
+   lo demás reconoce unas pocas intenciones y lleva a la sección que sirve.
+   Vive fuera de render(): su conversación no se pierde al cambiar de
+   sección. */
+var AYUDA_SECCION={
+  buscar:"Escriba el tema con sus palabras y toque «Buscar»: se consulta a la vez en todas las bases oficiales y abajo aparecen los resultados, cada uno con el pasaje donde está lo que busca. Si quiere afinar (frase exacta, años, excluir palabras), abra «Ajustar la búsqueda».",
+  lector:"Acá se lee un fallo con su búsqueda marcada. Pegue el texto o traiga el fallo por su enlace, escriba qué busca y el lector le salta de coincidencia en coincidencia.",
+  ramas:"Las ramas del derecho con sus términos. Elija una rama y toque un término para buscarlo.",
+  plazos:"Calcula plazos procesales: elija el tipo de plazo y la fecha de inicio.",
+  calculos:"Calculadoras de uso frecuente: intereses, actualizaciones y otras cuentas.",
+  fuentes:"El catálogo de las bases oficiales que se consultan, con qué tiene cada una.",
+  verificar:"Pegue una cita (por ejemplo «CSJN, Fallos 330:1234») y se comprueba si existe.",
+  glosario:"Significado en palabras simples de los términos jurídicos.",
+  cuenta:"Su perfil y su cuenta: lo que guarda se sincroniza entre dispositivos."
+};
+function montarAsistente(){
+  if(document.getElementById("asist")) return;
+  var el=document.createElement("div");
+  el.id="asist"; el.className="asist";
+  el.innerHTML='<button type="button" class="asist__fab" id="asist-abrir" aria-haspopup="dialog"><i></i>Lexia</button>'+
+    '<section class="asist__panel" role="dialog" aria-label="Lexia, la asistente de IVS CODEX">'+
+      '<div class="asist__cab"><b><i></i>Lexia <span style="font-weight:400;color:var(--mute-2);font-size:12.5px">asistente virtual</span></b><button type="button" class="asist__x" id="asist-cerrar" aria-label="Cerrar a Lexia">✕</button></div>'+
+      '<div class="asist__log" id="asist-log" aria-live="polite"></div>'+
+      '<form class="asist__form" id="asist-form" autocomplete="off"><input type="text" id="asist-in" maxlength="300" placeholder="Cuénteme qué necesita…" aria-label="Escriba su consulta a Lexia"><button type="submit">Enviar</button></form>'+
+      '<p class="asist__pie">Orientación automática. No reemplaza el consejo de un abogado.</p>'+
+    '</section>';
+  document.body.appendChild(el);
+  var log=document.getElementById("asist-log"), entrada=document.getElementById("asist-in"), arranco=false;
+
+  function ir(){ log.scrollTop=log.scrollHeight; }
+  function dice(txt,ops){
+    var m=document.createElement("div"); m.className="asist__m bot"; m.textContent=txt; log.appendChild(m);
+    if(ops&&ops.length){
+      var o=document.createElement("div"); o.className="asist__ops";
+      ops.forEach(function(op){
+        var b=document.createElement("button"); b.type="button"; b.textContent=op.t;
+        if(op.suave) b.className="suave";
+        b.addEventListener("click",function(){ o.remove(); dijo(op.t); op.f(); });
+        o.appendChild(b);
+      });
+      log.appendChild(o);
+    }
+    ir();
+  }
+  function dijo(txt){ var m=document.createElement("div"); m.className="asist__m yo"; m.textContent=txt; log.appendChild(m); ir(); }
+  function seccion(tab){ estado.tab=tab; render(); window.scrollTo(0,0); }
+  function buscarAhora(q,modo){
+    estado.q=q; estado.modo=modo||"todas"; estado.marca=0; estado.articulo="";
+    recalcularSugeridas(); estado.tab="buscar"; render(); window.scrollTo(0,0);
+    setTimeout(buscarEnTodas,120);
+    dice("Listo: estoy buscando «"+q+"» en todas las bases. Los resultados aparecen en la página, de a uno por base.");
+  }
+  function inicio(){
+    var n=estado.usuario?nombreDe(estado.usuario):"";
+    dice((n?"Hola, "+n+". ":"Hola. ")+"Soy Lexia, la asistente virtual de IVS CODEX. Cuénteme con sus palabras qué necesita y le muestro por dónde empezar, o elija una opción.",[
+      {t:"Buscar jurisprudencia sobre un tema",f:pedirTema},
+      {t:"Comprobar si una cita es real",f:function(){ seccion("verificar"); dice(AYUDA_SECCION.verificar); }},
+      {t:"Leer un fallo que ya tengo",f:function(){ seccion("lector"); dice(AYUDA_SECCION.lector); }},
+      {t:"Calcular un plazo",f:function(){ seccion("plazos"); dice(AYUDA_SECCION.plazos); }},
+      {t:"Entender un término jurídico",f:function(){ seccion("glosario"); dice(AYUDA_SECCION.glosario); }},
+      {t:"¿Qué hago en esta pantalla?",suave:true,f:ayudaAqui}
+    ]);
+  }
+  function pedirTema(){
+    dice("Cuénteme el tema como se lo explicaría a un colega, por ejemplo: «me despidieron sin causa» o «mi vecino no paga el alquiler». Yo lo traduzco a los términos que usan los tribunales.");
+    entrada.focus();
+  }
+  function ayudaAqui(){
+    var t=estado.tab, s=SECCIONES[t]||[];
+    dice((AYUDA_SECCION[t]||("Esta sección es «"+(s[1]||t)+"». "+(s[2]||"")))+"\n\nSi le sirve, puedo llevarlo a otra parte.",[
+      {t:"Ir a Buscar",f:function(){ seccion("buscar"); }},
+      {t:"Otra cosa",suave:true,f:inicio}
+    ]);
+  }
+  function entender(txt){
+    var t=" "+sinTildes(txt)+" ";
+    var rutas=[
+      [/plazo|vence|venci|prescrib|prescrip|caduc|feria|dias habiles/,"plazos","Parece que necesita calcular un plazo."],
+      [/\bcita\b|citas|verific|existe el fallo|es real|es verdadero|fallos? \d/,"verificar","Para comprobar si una cita existe, sirve «Verificar»."],
+      [/calcul|interes|tasa|honorario|actualiz|indemnizacion/,"calculos","Para cuentas e intereses están los «Cálculos»."],
+      [/glosario|significa|que es |que quiere decir|definicion|termino juridico/,"glosario","Para entender un término está el «Glosario»."],
+      [/guardad|historial|favorit/,"guardados","Lo que guardó está en «Guardados»."],
+      [/perfil|mi cuenta|contrasena|cerrar sesion|iniciar sesion/,"cuenta","Su perfil y su cuenta están en «Cuenta»."],
+      [/ayuda|como (uso|funciona)|que hago|no entiendo|por donde empiezo/,null,null]
+    ];
+    for(var i=0;i<rutas.length;i++){
+      if(rutas[i][0].test(t)){
+        if(!rutas[i][1]){ ayudaAqui(); return; }
+        var tab=rutas[i][1];
+        dice(rutas[i][2],[{t:"Llevarme ahí",f:function(){ seccion(tab); dice(AYUDA_SECCION[tab]||""); }},{t:"No, es otra cosa",suave:true,f:inicio}]);
+        return;
+      }
+    }
+    var leido=interpretarConsulta(txt), voces=leido.voces.slice(0,3), ops=[];
+    voces.forEach(function(v){ ops.push({t:"Buscar «"+comoTitulo(v.voz)+"»",f:function(){ buscarAhora(v.voz,"exacta"); }}); });
+    if(voces.length){
+      dice("Entendí que el tema es «"+comoTitulo(voces[0].voz)+"»"+(voces.length>1?" o algo cercano":"")+". Los tribunales lo escriben así, y buscar con esos términos da mejores resultados. ¿Cuál busco?",
+        ops.concat([{t:"Buscar tal como lo escribí",suave:true,f:function(){ buscarAhora(txt,"todas"); }}]));
+    }else if(leido.ramas.length){
+      var rn=comoTitulo(nombreRama(leido.ramas[0]));
+      dice("No encontré un término exacto, pero el tema cae en «"+rn+"». Puedo buscar lo que escribió, o mostrarle los términos de esa rama para que elija.",[
+        {t:"Buscar tal como lo escribí",f:function(){ buscarAhora(txt,"todas"); }},
+        {t:"Ver términos de "+rn,f:function(){ estado.rama=leido.ramas[0]; seccion("ramas"); }}
+      ]);
+    }else{
+      dice("No reconocí un tema jurídico puntual. Puedo buscar sus palabras tal cual en todas las bases; si no aparece lo que espera, pruebe con una o dos palabras clave, por ejemplo «despido» o «alquiler».",[
+        {t:"Buscar «"+txt+"»",f:function(){ buscarAhora(txt,"todas"); }},
+        {t:"Otra cosa",suave:true,f:inicio}
+      ]);
+    }
+  }
+  function abrir(on){
+    el.classList.toggle("is-on",on);
+    if(on){ if(!arranco){ arranco=true; inicio(); } setTimeout(function(){ entrada.focus(); },60); }
+    else document.getElementById("asist-abrir").focus();
+  }
+  document.getElementById("asist-abrir").addEventListener("click",function(){ abrir(true); });
+  document.getElementById("asist-cerrar").addEventListener("click",function(){ abrir(false); });
+  document.addEventListener("keydown",function(ev){ if(ev.key==="Escape"&&el.classList.contains("is-on")) abrir(false); });
+  document.getElementById("asist-form").addEventListener("submit",function(ev){
+    ev.preventDefault();
+    var txt=entrada.value.trim(); if(!txt) return;
+    entrada.value=""; dijo(txt); entender(txt);
+  });
+}
+
 function vistaCuenta(){
   if(estado.usuario){
     var nFav=Object.keys(estado.fav).filter(function(k){return estado.fav[k];}).length;
@@ -7464,6 +7733,40 @@ document.addEventListener("click",function(ev){
     traerDocEnLector(linkIdx,{fichaConocida:fichaIdx?fichaDesdeIndice(slugIdx,fichaIdx):null});
     return;
   }
+  if(act==="buscar-todas"){ buscarEnTodas(); return; }
+  if(act==="donde-todas"){ Object.keys(AMB).forEach(function(k){ estado.ambitos[k]=true; }); estado.provSel=""; estado.indices.saij.provincia=""; render(); return; }
+  if(act==="donde"){
+    var kd=b.getAttribute("data-amb");
+    if(todosLosAmbitos()||estado.provSel){ Object.keys(AMB).forEach(function(x){ estado.ambitos[x]=(x===kd); }); estado.provSel=""; estado.indices.saij.provincia=""; }
+    else{ estado.ambitos[kd]=!estado.ambitos[kd]; if(!Object.keys(AMB).some(function(x){return estado.ambitos[x];})) Object.keys(AMB).forEach(function(x){ estado.ambitos[x]=true; }); }
+    render(); return;
+  }
+  if(act==="prov-abrir"){ estado.provAbierto=!estado.provAbierto; render(); return; }
+  if(act==="prov"){
+    var pv=b.getAttribute("data-p")||"";
+    estado.provSel=pv; estado.indices.saij.provincia=pv;
+    if(pv){ estado.ambitos.nac=true; FUENTES_INDICE.forEach(function(f){ if(PROV_DE[f.slug]===pv) estado.ambitos[f.clase]=true; }); }
+    var imS=estado.indices.saij;
+    if(imS.busco&&String(estado.q||"").trim()){ render(); buscarEnFuente("saij"); } else render();
+    return;
+  }
+  if(act==="tog-mas"){ estado.masFiltros=!estado.masFiltros; render(); return; }
+  if(act==="col-plegar"){ var sp=b.getAttribute("data-fuente"); estado.colChica[sp]=!estado.colChica[sp]; render(); return; }
+  if(act==="limpiar-filtros"||act==="quitar-filtro"){
+    var kq=act==="quitar-filtro"?b.getAttribute("data-k"):"todo", vq=b.getAttribute("data-v");
+    var todoAmb=function(){ Object.keys(AMB).forEach(function(x){ estado.ambitos[x]=true; }); };
+    if(kq==="todo"||kq==="amb") todoAmb();
+    if(kq==="todo"||kq==="prov"){ estado.provSel=""; estado.indices.saij.provincia=""; }
+    if(kq==="todo"||kq==="rama") estado.rama="";
+    if(kq==="todo"||kq==="anios"){ estado.desde=""; estado.hasta=""; }
+    if(kq==="todo"||kq==="excluir") estado.excluir="";
+    render(); return;
+  }
+  if(act==="ir-fuente"){
+    var pf=document.getElementById("panel-"+b.getAttribute("data-fuente"));
+    if(pf&&pf.scrollIntoView) pf.scrollIntoView({behavior:"smooth",block:"start"});
+    return;
+  }
   if(act==="barrido"){
     var q=cadena();
     if(!q){ flash("Escriba algo en «¿Qué desea consultar?» primero"); return; }
@@ -7815,6 +8118,7 @@ document.addEventListener("click",function(ev){
 
 /* Provincia de SAIJ: cambiarla repite la búsqueda, como los chips de tribunal. */
 document.addEventListener("change",function(ev){
+  if(ev.target.id==="rama-sel"){ estado.rama=ev.target.value; render(); return; }
   if(ev.target.id!=="provSaij") return;
   var im=estado.indices.saij;
   im.provincia=ev.target.value;
@@ -7824,6 +8128,11 @@ document.addEventListener("change",function(ev){
 /* inputs */
 document.addEventListener("input",function(ev){
   var id=ev.target.id;
+  if(id==="prov-q"){
+    var qp=sinTildes(ev.target.value).trim();
+    [].forEach.call(document.querySelectorAll(".fsb-provs [data-n]"),function(c){ c.style.display=(!qp||c.getAttribute("data-n").indexOf(qp)>-1)?"":"none"; });
+    return;
+  }
   if(id==="q"){
     // Escribir a mano en el campo deja de ser "los fallos que citan el
     // artículo N" y pasa a ser una búsqueda común: lo que se ve es lo que se
@@ -7913,7 +8222,7 @@ document.addEventListener("change",function(ev){
 document.addEventListener("keydown",function(ev){
   if(ev.key==="Enter"&&ev.target&&ev.target.id==="q"){
     ev.preventDefault();
-    var sel=estado.tab==="lector"?'[data-act="marca-sig"]':'[data-act="barrido"]';
+    var sel=estado.tab==="lector"?'[data-act="marca-sig"]':'[data-act="buscar-todas"]';
     var btn=document.querySelector(sel);
     if(btn) btn.click();
   }
@@ -7978,6 +8287,7 @@ function armarCita(){
 
 leerDeURL();
 render();
+montarAsistente();
 detectarServidor();
 store.get("jedj:fav",function(v){
   if(!v||typeof v!=="object") return;
