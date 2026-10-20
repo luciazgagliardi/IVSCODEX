@@ -74,6 +74,7 @@
   --f-saij:#b03b42;
   --f-dialnet:#8a3853;
   --f-corteidh:#5f7f9a;
+  --f-scba:#c06a2c;
 
   --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -225,10 +226,9 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
   position:sticky;top:0;z-index:50;padding-top:env(safe-area-inset-top,0px);
   background:rgba(16,14,11,.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)
 }   /* sin línea separadora debajo, en ninguna sección */
-.nav-wrap{display:flex;align-items:center;gap:24px;padding:22px clamp(18px,3.2vw,48px) 22px}   /* las medidas de la barra de la portada */
+.nav-wrap{display:flex;align-items:center;gap:24px;padding:22px var(--pad)}   /* mismo margen izquierdo que el contenido: el nombre queda sobre el mismo borde que el título */
 /* Las medidas son las de sigillvm.com: la marca ocupa 180 × 44 px, el
    símbolo mide 24 px y la palabra va 12 px a su derecha. */
-.marca-sello{display:block;width:36px;height:36px;border-radius:50%;flex:none;margin-right:14px;box-shadow:0 0 0 1px rgba(241,238,230,.24)}
 .marca-app{display:inline-flex;align-items:center;flex:none;width:auto;height:auto;padding:0;border:0;background:none;color:var(--fg)}
 .marca-app .marca{font-size:15.5px;font-weight:500;letter-spacing:.26em;--ls:.26em;line-height:1.55;padding-right:.26em;position:relative;top:.4px}
 .nav{display:flex;align-items:center;gap:clamp(16px,2vw,30px);min-width:0;margin-left:clamp(20px,4vw,72px)}
@@ -248,7 +248,6 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 @media (max-width:520px){
   .nav-wrap{gap:12px}
   .marca-app .marca{letter-spacing:.2em;--ls:.2em}
-  .marca-sello{width:30px;height:30px;margin-right:10px}
   .btn-menu{padding:10px 18px 9px;font-size:13.5px}
   .btn-menu .txt{font-size:0}
   .btn-menu .txt::after{content:"Secciones";font-size:13.5px}
@@ -281,6 +280,8 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .cab{padding:clamp(56px,9vh,110px) var(--pad) 0}
 .cab>*{animation:entra .9s var(--ease) both}
 .cab>*:nth-child(2){animation-delay:.07s}.cab>*:nth-child(3){animation-delay:.14s}.cab>*:nth-child(4){animation-delay:.21s}
+.cab__saludo{margin:0 0 22px;font-size:15px;color:var(--mute)}
+.cab__saludo b{font-weight:400;color:var(--fg)}
 .cab__ojo{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0;font-size:14px;color:var(--mute)}
 .cab__lat{font:500 15px/1 var(--caps);letter-spacing:.24em;color:var(--gold)}
 .cab h1{margin:18px 0 0;font:500 clamp(36px,4.4vw,68px)/1.02 var(--sans);letter-spacing:-.035em}
@@ -328,6 +329,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .f-saij{--punto:var(--f-saij)}
 .f-dialnet{--punto:var(--f-dialnet)}
 .f-corteidh{--punto:var(--f-corteidh)}
+.f-scba{--punto:var(--f-scba)}
 
 /* ---------- sin cajas: un filete arriba y aire ---------- */
 .panel,.blk,.rama,.aviso{
@@ -391,7 +393,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 @media (max-width:1180px){ .brief{grid-template-columns:minmax(0,1fr)} .brief__summary{position:static} }
 
 /* ---------- resultados en vivo: cada base con su sello de procedencia ---------- */
-.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet,.panel.f-corteidh{
+.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet,.panel.f-corteidh,.panel.f-scba{
   margin:0 0 64px;padding:0;border-top:0
 }
 .rotulo-fuente{
@@ -967,7 +969,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 <header class="top">
   <div class="nav-wrap">
-    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><img class="marca-sello" src="./favicon.png?v=16" alt="" width="36" height="36"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
+    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
     <div class="nav-fin"><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
@@ -2449,6 +2451,9 @@ var FUENTES_INDICE=[
  {slug:"dialnet",cod:"DIALNET",clase:"doc",boton:"Dialnet",
   nombre:"Dialnet · doctrina jurídica en español",
   nota:"Repositorio académico de la Universidad de La Rioja (España). Reúne una extensa producción de artículos de investigación, doctrina jurídica profundizada y revistas especializadas en español, con una nutrida representación de autores argentinos."},
+ {slug:"scba",cod:"SCBA",clase:"prov",boton:"la Suprema Corte de Buenos Aires",
+  nombre:"Suprema Corte de la Provincia de Buenos Aires (JUBA)",
+  nota:"Sumarios de la Suprema Corte y de las cámaras bonaerenses, con su texto, voces, normas citadas, carátula y enlace al fallo completo. Es la base provincial más grande del país."},
  {slug:"corteidh",cod:"CORTE IDH",clase:"int",boton:"la Corte Interamericana",
   nombre:"Corte Interamericana de Derechos Humanos",
   nota:"Sentencias, opiniones consultivas, medidas provisionales y supervisiones de cumplimiento del tribunal del sistema interamericano, con enlace al PDF oficial. El buscador del sitio trabaja por frase: «todas las palabras» y «alguna palabra» se resuelven consultando cada palabra por separado."}
@@ -3674,7 +3679,7 @@ var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos
 var PRINCIPALES=["buscar","lector","ramas","calculos","fuentes","verificar"];
 var GRUPOS_NAV=["Investigar","Leer y citar","Calcular","Preparar","Fuentes","Archivo personal"];
 var SECCIONES={
-  buscar:["QVAESTIO","Investigar","Las siete bases a la vez"],
+  buscar:["QVAESTIO","Investigar","Las ocho bases a la vez"],
   comparar:["COLLATIO","Investigar","Una consulta, por jurisdicción"],
   ramas:["MATERIAE","Investigar","Las ramas del derecho y sus voces"],
   requisitos:["REQVISITA","Investigar","Lo que exige cada trámite"],
@@ -3729,6 +3734,17 @@ document.addEventListener("keydown",function(ev){ if(ev.key==="Escape") menuAbie
    que sin caja. Las notas sueltas que lo acompañan suben con él.
    La animación de entrada corre solo al cambiar de solapa: render() se
    llama a cada tecla, y repetirla ahí haría parpadear el título. */
+/* «Bienvenido, colega» sin sesión; con sesión, el nombre. Las cuentas solo
+   guardan el correo, así que el nombre sale de lo que va antes de la arroba
+   (sin números ni signos, con mayúscula inicial). */
+function nombreDe(u){
+  var e=String(u&&u.email||"").split("@")[0].replace(/[._\-+]+/g," ").replace(/[0-9]+/g,"").trim().split(/\s+/)[0]||"";
+  return e?e.charAt(0).toUpperCase()+e.slice(1).toLowerCase():"";
+}
+function saludoHTML(){
+  var n=estado.usuario?nombreDe(estado.usuario):"";
+  return '<p class="cab__saludo">Bienvenido, <b>'+esc(n||"colega")+'</b>.</p>';
+}
 function pintarCabecera(v){
   var c=document.getElementById("cab");
   if(!c) return;
@@ -3736,7 +3752,7 @@ function pintarCabecera(v){
   var s=SECCIONES[t[0]];
   c.classList.toggle("quieta",c.getAttribute("data-tab")===t[0]);
   c.setAttribute("data-tab",t[0]);
-  c.innerHTML=dibujoSeccion(t[0])+'<p class="cab__ojo"><span class="cab__lat">'+s[0]+'</span>'+esc(s[1])+'</p>'+
+  c.innerHTML=dibujoSeccion(t[0])+saludoHTML()+'<p class="cab__ojo"><span class="cab__lat">'+s[0]+'</span>'+esc(s[1])+'</p>'+
     '<h1>'+esc(t[1])+'.</h1>'+
     (t[0]==="buscar"?'<p class="cab__intro">La plataforma interroga de forma simultánea los repositorios oficiales integrados, '+
       'extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, '+
@@ -5296,6 +5312,7 @@ var GRUPOS_COMPARAR=[
   ["Mendoza",  ["mendoza","mendozalegal"]],
   ["Nación",   ["csjn","saij"]],
   ["TSJ",      ["caba"]],
+  ["Buenos Aires", ["scba"]],
   ["Internacional", ["corteidh"]],
   ["Doctrina", ["dialnet"]]
 ];
@@ -5421,7 +5438,7 @@ function vistaComparar(){
     '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></div>'+
     '<div class="acciones" style="margin:0;padding:0;border:0">'+
       '<button class="btn" data-act="comparar"'+(c.corriendo?" disabled":"")+'>'+
-        (c.corriendo?"Consultando las siete…":"Comparar las siete fuentes")+'</button>'+
+        (c.corriendo?"Consultando las ocho…":"Comparar las ocho fuentes")+'</button>'+
     '</div></div>';
 
   if(!c.corriendo&&!c.hecho) return html;
@@ -6242,8 +6259,8 @@ function dibujoSeccion(tab){
      que hay de un lado, hay igual del otro. El único punto dorado, el del
      logo, va sobre el eje. */
   switch(tab){
-    case "buscar":   // la consulta sale a las siete bases, en abanico
-      for(i=0;i<7;i++){ a=(-62.5+i*125/6)*Math.PI/180; x=(120+100*Math.sin(a)).toFixed(1); y=(142-100*Math.cos(a)).toFixed(1);
+    case "buscar":   // la consulta sale a las ocho bases, en abanico
+      for(i=0;i<8;i++){ a=(-62.5+i*125/7)*Math.PI/180; x=(120+100*Math.sin(a)).toFixed(1); y=(142-100*Math.cos(a)).toFixed(1);
         h+=c(x,y,7)+l("M120 142L"+(120+86*Math.sin(a)).toFixed(1)+" "+(142-86*Math.cos(a)).toFixed(1)); }
       h+=p(120,142,5); break;
     case "comparar": // cinco barras en pirámide
