@@ -219,7 +219,8 @@ strong,b{font-weight:500}
 .bq-cuenta{margin-left:auto;color:var(--mute-2)}.bq-cuenta b{color:var(--fg);font-weight:500}
 .bq-drawer{display:none;position:absolute;left:0;right:0;top:calc(100% - 4px);z-index:30;padding:18px 20px 16px;border:1px solid var(--line);border-radius:18px;background:#15120e;box-shadow:0 30px 80px rgba(0,0,0,.65);max-height:min(72vh,640px);overflow:auto}
 .bq-drawer.is-on{display:block}
-.bq-sug{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line-2)}
+.bq-sug--abajo{margin:12px 0 0}
+.bq-sug--abajo .sugeridas,.bq-sug--abajo .panel{margin-top:0}
 .bq-drawer .bq-pie{margin-top:16px}
 .bq-acc .btn{padding:6px 16px 5px;font-size:12.5px}
 .bz{display:grid;grid-template-columns:236px minmax(0,1fr);gap:clamp(20px,3vw,44px);align-items:start;margin-top:22px}
@@ -4372,10 +4373,11 @@ function vistaBuscar(){
   return '<div class="bq" id="panel-buscar-form">'+
       '<div class="bq-barra"><label class="cq"><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
         '<button class="btn" data-act="buscar-todas">Buscar</button></label>'+
-        '<button class="chip" data-act="tog-drawer" aria-pressed="'+(estado.drawer?"true":"false")+'">Filtros'+(ac.length?' <span class="fsb-n">'+ac.length+'</span>':'')+(tieneSug?' · sugerencias':'')+' '+(estado.drawer?"▴":"▾")+'</button></div>'+
+        '<button class="chip" data-act="tog-drawer" aria-pressed="'+(estado.drawer?"true":"false")+'">Filtros'+(ac.length?' <span class="fsb-n">'+ac.length+'</span>':'')+''+' '+(estado.drawer?"▴":"▾")+'</button></div>'+
+      (tieneSug?'<div class="bq-sug bq-sug--abajo">'+sug+sugs+'</div>':'')+
       '<div class="bq-sum">'+(ac.length?ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join(""):'<span>Todas las bases · cualquier jurisdicción y año</span>')+
         '<span class="bq-cuenta">'+(resp?'<b>'+tot.toLocaleString("es-AR")+'</b> resultados · '+resp+' de '+vis.length+' bases respondieron':'')+'</span></div>'+
-      '<div class="bq-drawer'+(estado.drawer?" is-on":"")+'">'+(tieneSug?'<div class="bq-sug">'+sug+sugs+'</div>':'')+franjaBuscar()+
+      '<div class="bq-drawer'+(estado.drawer?" is-on":"")+'">'+franjaBuscar()+
         '<div class="bq-pie"><span class="bq-cad"><span>Consulta</span> <code id="cadena" aria-live="polite"></code></span>'+
         '<span class="bq-acc"><button class="mini" data-act="copiar-cadena">Copiar</button>'+botonCompartir()+
         '<button class="mini" data-act="barrido">Buscar con Google</button><button class="mini" data-act="limpiar-filtros">Limpiar filtros</button><button class="mini" data-act="limpiar">Empezar de nuevo</button>'+
