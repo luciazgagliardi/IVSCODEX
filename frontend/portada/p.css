@@ -31,7 +31,7 @@ button,input{font:inherit;color:inherit}
 .marca-g .d{display:inline-block;width:.17em;height:.17em;margin:0 .091em 0 .066em;border-radius:50%;background:linear-gradient(170deg,#f0c75a,#d9a31b 50%,#a77a0c);vertical-align:.24em}
 
 /* cabecera mínima */
-.cab{display:flex;align-items:center;gap:24px;padding:22px var(--pad)}
+.cab{display:flex;align-items:center;gap:24px;padding:22px clamp(18px,3vw,44px)}   /* el mismo margen que la barra de la aplicación: el nombre no se corre al entrar */
 .cab .marca{font-size:15.5px;position:relative;top:.4px}   /* las mayúsculas miden lo mismo que las del menú (0,72 em de Instrument Sans = 0,70 em de Cinzel a 15,5 px) y comparten su línea de base */
 .cab nav{display:flex;gap:clamp(16px,2vw,30px);font-size:15px;color:var(--mute);margin-left:clamp(20px,4vw,72px)}
 .cab nav a:hover{color:var(--gold)}

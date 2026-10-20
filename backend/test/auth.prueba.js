@@ -171,6 +171,21 @@ console.log('\n--- anillos propios del tesauro ---');
   await guardar([]); // se deja limpio para no ensuciar las pruebas de abajo
 }
 
+console.log('\n--- perfil ---');
+{
+  const rp = await post('/registro', { email:'colega@test.com', password:'contrasenia123', nombre:'  Ana   María  ', especialidad:'Derecho laboral', actualizaciones:true });
+  chk('el registro guarda nombre (sin espacios de más), especialidad y novedades', rp.cuerpo.usuario.nombre==='Ana María' && rp.cuerpo.usuario.especialidad==='Derecho laboral' && rp.cuerpo.usuario.actualizaciones===true, JSON.stringify(rp.cuerpo.usuario));
+  const sin = await post('/registro', { email:'sin@test.com', password:'contrasenia123', actualizaciones:'si' });
+  chk('sin datos de perfil el registro anda y novedades queda en falso', sin.cuerpo.ok && sin.cuerpo.usuario.nombre==='' && sin.cuerpo.usuario.actualizaciones===false, JSON.stringify(sin.cuerpo.usuario));
+  const put = await fetch(B+'/perfil', { method:'PUT', headers:{'content-type':'application/json', authorization:'Bearer '+rp.cuerpo.token}, body: JSON.stringify({ nombre:'x'.repeat(200), especialidad:{a:1}, actualizaciones:false }) });
+  const pj = await put.json();
+  chk('el perfil se edita y se acota el largo', pj.ok && pj.usuario.nombre.length===60 && pj.usuario.especialidad==='' && pj.usuario.actualizaciones===false, JSON.stringify(pj.usuario));
+  const y2 = await yo(rp.cuerpo.token);
+  chk('«quién soy» devuelve el perfil guardado', y2.cuerpo.usuario.nombre.length===60);
+  const noAut = await fetch(B+'/perfil', { method:'PUT', headers:{'content-type':'application/json'}, body:'{}' });
+  chk('editar el perfil exige sesión', noAut.status===401, String(noAut.status));
+}
+
 console.log(`\nOK ${OK.length} · fallas ${MAL.length}`);
 if(MAL.length) 
 

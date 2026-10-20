@@ -1,7 +1,8 @@
 /**
  * Cuentas de usuario: registro, login, logout y "quién soy".
  *
- *   POST /api/auth/registro  { email, password } -> crea la cuenta y ya deja logueado
+ *   POST /api/auth/registro  { email, password, nombre?, especialidad?, actualizaciones? } -> crea la cuenta y ya deja logueado
+ *   PUT  /api/auth/perfil    { nombre, especialidad, actualizaciones } -> cambia los datos del perfil
  *   POST /api/auth/login     { email, password } -> nueva sesión
  *   POST /api/auth/logout                        -> cierra la sesión del token enviado
  *   GET  /api/auth/yo                             -> quién está logueado, si alguien
@@ -14,7 +15,7 @@
  */
 
 import express from 'express';
-import { crearUsuario, verificarCredenciales, buscarPorId } from '../lib/usuarios.js';
+import { crearUsuario, verificarCredenciales, buscarPorId, actualizarPerfil } from '../lib/usuarios.js';
 import { crearSesion, usuarioDeToken, borrarSesion } from '../lib/sesiones.js';
 import { leerDatos, guardarDatos, fusionarDatos } from '../lib/datosUsuario.js';
 import { errores, ErrorApp } from '../lib/errores.js';
@@ -89,11 +90,11 @@ export async function requiereSesion(req, res, next) {
 
 router.post('/auth/registro', async (req, res, next) => {
   try {
-    const { email, password } = req.body || {};
+    const { email, password, nombre, especialidad, actualizaciones } = req.body || {};
     validarEmailYPassword(email, password);
     let usuario;
     try {
-      usuario = await crearUsuario({ email, password });
+      usuario = await crearUsuario({ email, password, nombre, especialidad, actualizaciones });
     } catch (e) {
       if (e && e.codigo === 'EMAIL_YA_REGISTRADO') throw errores.emailYaRegistrado();
       throw e;
@@ -130,6 +131,16 @@ router.post('/auth/logout', async (req, res, next) => {
     res.json({ ok: true });
   } catch (e) {
     next(e);
+  }
+});
+
+router.put('/auth/perfil', requiereSesion, async (req, res, next) => {
+  try {
+    const usuario = await actualizarPerfil(req.usuarioId, req.body || {});
+    if (!usuario) throw errores.noAutenticado();
+    res.json({ ok: true, usuario });
+  } catch (e) {
+    next(e instanceof ErrorApp ? e : errores.noAutenticado());
   }
 });
 
