@@ -4438,6 +4438,9 @@ function traerFragmentos(slug,pedido){
    tres afuera de la versión publicada. */
 
 var SAIJ_URL="https://www.saij.gob.ar/busqueda";
+var PROVINCIAS_SAIJ=["Buenos Aires","Ciudad Autónoma de Buenos Aires","Catamarca","Chaco","Chubut","Córdoba",
+  "Corrientes","Entre Ríos","Formosa","Jujuy","La Pampa","La Rioja","Mendoza","Misiones","Neuquén","Río Negro",
+  "Salta","San Juan","San Luis","Santa Cruz","Santa Fe","Santiago del Estero","Tierra del Fuego","Tucumán"];
 var SAIJ_TIPOS={
   sumarios:"Total|Tipo de Documento/Jurisprudencia/Sumario",
   fallos:"Total|Tipo de Documento/Jurisprudencia/Fallo",
@@ -4584,6 +4587,8 @@ function buscarSaijNavegador(cuerpo,slug){
   }
 
   var faceta=slug==="csjn"?SAIJ_FACETA_CSJN:(SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios);
+  if(slug==="saij"&&PROVINCIAS_SAIJ.indexOf(cuerpo.provincia)!==-1&&cuerpo.tribunal!=="doctrina"&&cuerpo.tribunal!=="dictamenes")
+    faceta+="|Jurisdicción/Local/"+cuerpo.provincia;
   var porPagina=20, porPedido=100;
   // Espejo de backend/lib/paginarFiltrado.js, y tiene que seguir siéndolo:
   // este camino se usa justo donde MÁS importa, el servidor publicado, al
@@ -4841,6 +4846,7 @@ function buscarEnFuente(slug,pagina){
   if(/^\d{4}$/.test(estado.desde)) cuerpo.anioDesde=Number(estado.desde);
   if(/^\d{4}$/.test(estado.hasta)) cuerpo.anioHasta=Number(estado.hasta);
   if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
+  if(slug==="saij"&&imBusco.provincia) cuerpo.provincia=imBusco.provincia;
   var promesaBusco=fetch(estado.api+"/indice/"+slug+"/buscar",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(cuerpo)
@@ -5027,6 +5033,14 @@ function panelIndice(f){
   var out='<div class="panel vivo f-'+f.slug+'"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
     '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0">'+esc(f.nombre)+(local?' · desde su índice local':' · en vivo')+'</div>';
 
+  if(f.slug==="saij"){
+    // SAIJ indexa la jurisprudencia y la legislación de las 24 jurisdicciones:
+    // elegir una la convierte en el buscador de esa provincia.
+    out+='<label class="campo" style="max-width:340px;margin:0 0 12px"><span>Provincia</span>'+
+      '<select id="provSaij"><option value="">Todo el país</option>'+PROVINCIAS_SAIJ.map(function(p){
+        return '<option'+(im.provincia===p?' selected':'')+'>'+esc(p)+'</option>';
+      }).join("")+'</select></label>';
+  }
   if(f.tribunales){
     out+='<div class="chips" style="margin-bottom:10px">'+f.tribunales.map(function(t){
       return '<button class="chip" data-act="indice-tribunal" data-fuente="'+f.slug+'" data-tribunal="'+t.v+
@@ -7697,6 +7711,14 @@ document.addEventListener("click",function(ev){
   }
   if(act==="tog-frag"){ estado.resaltarFuente=!estado.resaltarFuente; render(); return; }
 },false);
+
+/* Provincia de SAIJ: cambiarla repite la búsqueda, como los chips de tribunal. */
+document.addEventListener("change",function(ev){
+  if(ev.target.id!=="provSaij") return;
+  var im=estado.indices.saij;
+  im.provincia=ev.target.value;
+  if(im.busco&&estado.q.trim()) buscarEnFuente("saij"); else render();
+});
 
 /* inputs */
 document.addEventListener("input",function(ev){
