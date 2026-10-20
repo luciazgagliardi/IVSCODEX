@@ -335,6 +335,22 @@ strong,b{font-weight:500}
 .asist__tipea i{width:6px;height:6px;border-radius:50%;background:var(--mute-2);animation:asistPunto 1s infinite ease-in-out}
 .asist__tipea i:nth-child(2){animation-delay:.15s}.asist__tipea i:nth-child(3){animation-delay:.3s}
 @keyframes asistPunto{0%,80%,100%{opacity:.3;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+
+.asist__cabr{display:flex;align-items:center;gap:8px}
+.asist__tut{appearance:none;border:1px solid var(--gold-55);background:transparent;color:var(--gold);border-radius:999px;padding:5px 12px 4px;font:400 12px/1.2 var(--sans);cursor:pointer}
+.asist__tut:hover{background:rgba(217,163,27,.1);border-color:var(--gold)}
+.tour-ov{position:fixed;inset:0;z-index:300}
+.tour-foco{position:fixed;border-radius:16px;box-shadow:0 0 0 9999px rgba(8,7,5,.8),0 0 0 2px var(--gold);pointer-events:none;transition:left .4s var(--ease),top .4s var(--ease),width .4s var(--ease),height .4s var(--ease)}
+.tour-card{position:fixed;padding:18px 20px 16px;background:#17140f;border:1px solid var(--gold-55);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.7);transition:left .4s var(--ease),top .4s var(--ease)}
+.tour-card h4{margin:2px 0 6px;font:500 17px/1.3 var(--sans);color:var(--fg)}
+.tour-card p{margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--mute)}
+.tour-n{font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.tour-bt{display:flex;flex-wrap:wrap;gap:8px}
+.tour-b{appearance:none;padding:8px 16px 7px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);font:400 13.5px/1.2 var(--sans);cursor:pointer}
+.tour-b:hover{border-color:var(--gold)}
+.tour-b.prim{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:500}
+.tour-b.prim:hover{background:var(--fg);border-color:var(--fg)}
+.tour-b.suave{border-color:transparent;color:var(--mute-2);margin-left:auto}
 .asist__ops{display:flex;flex-wrap:wrap;gap:8px;margin-top:-2px}
 .asist__ops button{appearance:none;padding:9px 15px;border-radius:999px;border:1px solid var(--gold-55);background:transparent;color:var(--gold);font:400 13.5px/1.2 var(--sans);cursor:pointer;text-align:left}
 .asist__ops button:hover{background:rgba(217,163,27,.1);border-color:var(--gold)}
@@ -1125,7 +1141,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   <div class="nav-wrap">
     <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
-    <div class="nav-fin"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-tab="cuenta">Mi perfil</button><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
+    <div class="nav-fin"><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-tab="cuenta">Mi perfil</button><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
 </header>
 
@@ -6538,7 +6554,7 @@ function montarAsistente(){
   el.id="asist"; el.className="asist";
   el.innerHTML='<button type="button" class="asist__fab" id="asist-abrir" aria-haspopup="dialog"><i></i>Lexia</button>'+
     '<section class="asist__panel" role="dialog" aria-label="Lexia, la asistente de IVS CODEX">'+
-      '<div class="asist__cab"><b><i></i>Lexia <span style="font-weight:400;color:var(--mute-2);font-size:12.5px">asistente virtual</span></b><button type="button" class="asist__x" id="asist-cerrar" aria-label="Cerrar a Lexia">✕</button></div>'+
+      '<div class="asist__cab"><b><i></i>Lexia <span style="font-weight:400;color:var(--mute-2);font-size:12.5px">asistente virtual</span></b><span class="asist__cabr"><button type="button" class="asist__tut" data-tour>Tutorial</button><button type="button" class="asist__x" id="asist-cerrar" aria-label="Cerrar a Lexia">✕</button></span></div>'+
       '<div class="asist__log" id="asist-log" aria-live="polite"></div>'+
       '<form class="asist__form" id="asist-form" autocomplete="off"><input type="text" id="asist-in" maxlength="300" placeholder="Escríbame lo que necesita…" aria-label="Escriba su consulta a Lexia"><button type="submit">Enviar</button></form>'+
       '<p class="asist__pie">Orientación automática. No reemplaza el consejo de un abogado.</p>'+
@@ -6733,6 +6749,13 @@ function montarAsistente(){
     }).join("");
     return cambios.length?{texto:out,cambios:cambios}:null;
   }
+  function explicarEscrito(){
+    dice("Claro. ¿Qué parte le resulta más difícil?",[
+        {t:"Cómo se busca",f:function(){ dice(AYUDA_SECCION.buscar); }},
+        {t:"Los filtros",f:function(){ dice(["Los filtros están en el botón «Filtros», junto a la barra de búsqueda. Sirven para acotar: dónde (nación, provincias), qué fuentes, cómo combinar las palabras, años y excluir.","Si prefiere, dígame lo que necesita, por ejemplo «sólo Córdoba, desde 2019», y los pongo yo."],[{t:"Abrir los filtros",f:abrirFiltros}]); }},
+        {t:"Los resultados",f:function(){ dice(["A la izquierda están las bases, con su estado y cuántos resultados trajo cada una. En el centro, los resultados mezclados.","Toque uno para ver el pasaje completo; si elige una base a la izquierda, ve todos los suyos y puede pasar de página."]); }},
+        {t:"Mejor, la guía en pantalla",suave:true,f:iniciarRecorrido}]);
+  }
   function ejemplos(){
     var ej=["daño moral en Mendoza desde 2018","despido sin causa, Córdoba","qué significa cosa juzgada","cómo filtro por provincia"];
     dice(["Con gusto. Puede escribirme de estas formas; toque una para probarla:"],ej.map(function(e){ return {t:e,f:function(){ entender(e); }}; }));
@@ -6786,11 +6809,14 @@ function montarAsistente(){
       return dice(estado.usuario?"Su perfil está en «Cuenta»: nombre, especialidad y si quiere novedades.":"Para crear su cuenta o iniciar sesión vamos a «Cuenta».",[{t:"Abrir Cuenta",f:function(){ irA("cuenta"); }}]);
     if(/\b(ley|articulo|art\.?)\s*\d+|\bcodigo (civil|penal|procesal)\b/.test(t)&&!/\b(buscar|jurisprudencia|fallos)\b/.test(t))
       return dice("Para el texto de una norma está «Norma» (desde InfoLeg). Si quiere los fallos que citan un artículo, dígame «fallos sobre el art. 1710».",[{t:"Abrir Norma",f:function(){ irA("norma"); }}]);
-    if(/\b(no entiendo|sin entender|estoy perdid[oa]|me perdi|no se usar|no se como usar|me confund\w+)\b/.test(t)&&!/\bfiltros?\b/.test(t))
-      return dice(["Disculpe la confusión, vamos paso a paso.","¿Qué parte le resulta más difícil?"],[
-        {t:"Cómo se busca",f:function(){ dice(AYUDA_SECCION.buscar); }},
-        {t:"Los filtros",f:function(){ dice(["Los filtros están en el botón «Filtros», junto a la barra de búsqueda. Sirven para acotar: dónde (nación, provincias), qué fuentes, cómo combinar las palabras, años y excluir.","Si prefiere, dígame lo que necesita, por ejemplo «sólo Córdoba, desde 2019», y los pongo yo."],[{t:"Abrir los filtros",f:abrirFiltros}]); }},
-        {t:"Los resultados",f:function(){ dice(["A la izquierda están las bases, con su estado y cuántos resultados trajo cada una. En el centro, los resultados mezclados.","Toque uno para ver el pasaje completo; si elige una base a la izquierda, ve todos los suyos y puede pasar de página."]); }}]);
+    if(/\b(tutorial|recorrido|guiame|guiarme|guiado|ensename|explicame todo|explicame la pagina|explicame como se usa|como se usa|como (lo )?uso|como usar|como funciona (esto|la pagina|la plataforma|el sitio)|paso a paso|primera vez|no entiendo (nada|todo)|nada de esto|estoy perdid[oa]|me perdi|no se usar|no se como usar|no se por donde)\b/.test(t)&&!/\bfiltros?\b/.test(t))
+      return dice([pick("tour",["Con gusto. Puedo guiarlo por toda la página, señalando cada parte en pantalla. Son unos diez pasos y lo maneja usted.","Por supuesto. Le hago un recorrido por la página: le voy señalando cada parte y explicando para qué sirve."]),"¿Empezamos?"],[
+        {t:"Sí, guíeme",f:iniciarRecorrido},
+        {t:"Prefiero que me explique por escrito",suave:true,f:explicarEscrito}]);
+    if(/\b(no entiendo|sin entender|me confund\w+)\b/.test(t)&&!/\bfiltros?\b/.test(t))
+      return dice(["Disculpe la confusión, vamos paso a paso.","¿Quiere que le muestre la página en pantalla, o prefiere que le explique por escrito una parte?"],[
+        {t:"Guíeme por la página",f:iniciarRecorrido},
+        {t:"Explicar por escrito",suave:true,f:explicarEscrito}]);
     /* explicación de filtros */
     var ayudaF=/\b(como|donde|que es|para que|que significa|explicame|no entiendo)\b/.test(t);
     if(ayudaF||/\bfiltros?\b/.test(t)){
@@ -6846,29 +6872,112 @@ function montarAsistente(){
     if(ctx.fallos===1) return dice([pick("disc1",pregunta?["Disculpe, esa pregunta no la tengo resuelta.","Perdone, no sé responderle eso."]:["Disculpe, no terminé de entender.","Perdone, no lo capté del todo."]),
       "Para ayudarle bien, ¿cuál de estas se parece más a lo que necesita?"],opcionesInicio().concat([{t:"Ver ejemplos",suave:true,f:ejemplos}]));
     if(ctx.fallos===2) return dice([pick("disc2",["Sigo sin captarlo, perdone.","Lo lamento, todavía no lo entiendo."]),
-      "Pruebe con una frase corta: el tema y, si quiere, la provincia o el año. Por ejemplo: «alquiler, Salta, desde 2020»."],[{t:"Ver ejemplos",f:ejemplos},{t:"Ver las ramas",suave:true,f:function(){ irA("ramas"); }}]);
+      "Pruebe con una frase corta: el tema y, si quiere, la provincia o el año. Por ejemplo: «alquiler, Salta, desde 2020»."],[{t:"Guiarme por la página",f:iniciarRecorrido},{t:"Ver ejemplos",f:ejemplos},{t:"Ver las ramas",suave:true,f:function(){ irA("ramas"); }}]);
     return dice(["Lamento no poder entenderlo todavía.","Puede escribir una sola palabra clave (por ejemplo «despido»), recorrer las ramas del derecho o ver los ejemplos."],
-      [{t:"Ver las ramas",f:function(){ irA("ramas"); }},{t:"Ver ejemplos",f:ejemplos},{t:"Empezar de nuevo",suave:true,f:function(){ ctx.fallos=0; inicio(); }}]);
+      [{t:"Guiarme por la página",f:iniciarRecorrido},{t:"Ver las ramas",f:function(){ irA("ramas"); }},{t:"Ver ejemplos",f:ejemplos},{t:"Empezar de nuevo",suave:true,f:function(){ ctx.fallos=0; inicio(); }}]);
   }
   function pedirTemaSilencioso(l){ ctx.pendiente="tema"; ctx.pendL=l; entrada.focus(); }
   function opcionesInicio(){
     return [
+      {t:"Guiarme por la página",f:iniciarRecorrido},
       {t:"Buscar un tema",f:function(){ pedirTema(); }},
       {t:"Entender los filtros",f:function(){ entender("como funcionan los filtros"); }},
-      {t:"Comprobar una cita",f:function(){ entender("verificar una cita"); }},
-      {t:"Calcular un plazo",f:function(){ entender("calcular un plazo"); }}
+      {t:"Comprobar una cita",suave:true,f:function(){ entender("verificar una cita"); }},
+      {t:"Calcular un plazo",suave:true,f:function(){ entender("calcular un plazo"); }}
     ];
   }
   function ayudaAqui(){
     var t=estado.tab, s=SECCIONES[t]||[];
-    dice(AYUDA_SECCION[t]||("Esta sección es «"+(s[1]||t)+"». "+(s[2]||"")),t==="buscar"?[{t:"Abrir los filtros",f:abrirFiltros}]:[{t:"Ir a Buscar",f:function(){ irA("buscar"); }}]);
+    dice(AYUDA_SECCION[t]||("Esta sección es «"+(s[1]||t)+"». "+(s[2]||"")),(t==="buscar"?[{t:"Abrir los filtros",f:abrirFiltros}]:[{t:"Ir a Buscar",f:function(){ irA("buscar"); }}]).concat([{t:"Recorrido guiado",suave:true,f:iniciarRecorrido}]));
   }
   function inicio(){
     var n=estado.usuario?nombreDe(estado.usuario):"";
     dice([n?"Hola, "+n+". Soy Lexia.":"Hola, colega. Soy Lexia.",
-      "Puedo buscar jurisprudencia por usted, explicarle los filtros o llevarlo a la herramienta que necesite. Pruebe con algo como «daño moral en Mendoza desde 2018».",
+      "Puedo buscar jurisprudencia por usted, explicarle los filtros o guiarlo por la página paso a paso. Pruebe con algo como «daño moral en Mendoza desde 2018».",
       "¿Qué anda buscando?"],opcionesInicio());
   }
+
+  /* ---- recorrido guiado: señala cada parte de la página, paso a paso ---- */
+  var rec={ov:null,foco:null,card:null,i:0,pasos:[],tecla:null,reubicar:null};
+  function pasosRecorrido(){
+    var enBuscar=function(){ if(estado.tab!=="buscar"){ estado.tab="buscar"; render(); } estado.drawer=false; };
+    return [
+      {sel:".marca-app",t:"Bienvenido a IVS CODEX",x:"Busca a la vez en las bases judiciales oficiales y le muestra los resultados con el pasaje donde está lo que busca. Le voy señalando cada parte.",antes:enBuscar},
+      {sel:"#nav",t:"Las secciones principales",x:"Buscar jurisprudencia, leer un fallo (Lector), recorrer las ramas del derecho, hacer Cálculos, ver las Fuentes y Verificar una cita."},
+      {sel:"#abrir-menu",t:"Todas las secciones",x:"Acá están las quince secciones, agrupadas por lo que se hace en cada una: Plazos, Glosario, Guardados y más."},
+      {sel:"#mi-perfil",t:"Su perfil",x:"Su cuenta: nombre, especialidad y novedades. Con la sesión iniciada, lo que guarda se sincroniza entre sus dispositivos."},
+      {sel:".cq",t:"La consulta",x:"Escriba el tema con sus palabras (por ejemplo «daño moral por incumplimiento»). Con Enter o «Buscar» se consulta a la vez en todas las bases marcadas."},
+      {sel:".bq-barra [data-act=\"tog-drawer\"]",t:"Filtros y sugerencias",x:"Acá afina la búsqueda y ve las sugerencias de términos. Se abre como un panel sin mover los resultados."},
+      {sel:".bq-drawer .fsb",t:"Qué se puede filtrar",x:"«Dónde»: nación, Mendoza, otras provincias o internacional. «Fuente»: marque o desmarque cada base. «Cómo»: frase exacta, todas o alguna palabra, años y palabras a excluir.",antes:function(){ enBuscar(); estado.drawer=true; render(); }},
+      {sel:".bz-riel",t:"Las bases",x:"Cada base con su punto de color, su estado (buscando, cuántos resultados trajo, en cuánto tiempo) y su botón. Toque una para ver sólo esa, con sus propios controles.",antes:function(){ estado.drawer=false; render(); }},
+      {sel:".bz-lista",t:"Los resultados",x:"Aparecen mezclados, uno por base. Toque cualquiera para ver el pasaje completo y sus acciones. Arriba puede ordenarlos por fecha o por base."},
+      {sel:"#asist-abrir",t:"Y si se pierde…",x:"Estoy acá. Puede pedirme búsquedas con filtros («jurisprudencia de Córdoba desde 2019»), que le explique algo o repetir este recorrido cuando quiera con «Cómo usar»."}
+    ];
+  }
+  function cerrarRecorrido(terminado){
+    if(rec.ov){ rec.ov.remove(); rec.ov=null; }
+    document.removeEventListener("keydown",rec.tecla,true); window.removeEventListener("resize",rec.reubicar); window.removeEventListener("scroll",rec.reubicar,true);
+    estado.drawer=false; render();
+    abrir(true);
+    dice(terminado?["Eso es todo el recorrido.","¿Le quedó alguna duda? Puedo repetirlo o explicarle una parte en particular."]:"Cuando quiera lo retomamos.",
+      [{t:"Repetir el recorrido",f:iniciarRecorrido},{t:"Estoy bien, gracias",suave:true,f:function(){ dice("Un gusto. Éxitos con el caso."); }}]);
+  }
+  function mostrarPaso(dir){
+    var p=rec.pasos[rec.i];
+    if(!p) return cerrarRecorrido(true);
+    if(p.antes) p.antes();
+    var e=document.querySelector(p.sel);
+    if(!e||!e.getBoundingClientRect().width||getComputedStyle(e).display==="none"){
+      rec.i+=dir; if(rec.i<0) rec.i=0; if(rec.i>=rec.pasos.length) return cerrarRecorrido(true);
+      return mostrarPaso(dir);
+    }
+    e.scrollIntoView({block:"center",behavior:"auto"});
+    var n=rec.pasos.length;
+    rec.card.innerHTML='<div class="tour-n">Paso '+(rec.i+1)+' de '+n+'</div><h4>'+esc(p.t)+'</h4><p>'+esc(p.x)+'</p>'+
+      '<div class="tour-bt">'+(rec.i>0?'<button type="button" class="tour-b" data-t="ant">Anterior</button>':'')+
+      '<button type="button" class="tour-b prim" data-t="sig">'+(rec.i===n-1?"Terminar":"Siguiente")+'</button>'+
+      '<button type="button" class="tour-b suave" data-t="fin">Salir</button></div>';
+    rec.sel=p.sel; ubicar();
+    var b=rec.card.querySelector(".prim"); if(b) b.focus({preventScroll:true});
+  }
+  function ubicar(){
+    var e=rec.sel&&document.querySelector(rec.sel); if(!e||!rec.ov) return;
+    var r=e.getBoundingClientRect(), pad=8, vw=innerWidth, vh=innerHeight;
+    var f=rec.foco.style;
+    f.left=(r.left-pad)+"px"; f.top=(r.top-pad)+"px"; f.width=(r.width+pad*2)+"px"; f.height=(r.height+pad*2)+"px";
+    var cw=Math.min(350,vw-24), ch=rec.card.offsetHeight||190;
+    var abajo=r.bottom+pad+14, top=(abajo+ch<=vh-12)?abajo:Math.max(12,r.top-pad-14-ch);
+    if(abajo+ch>vh-12&&r.top-pad-14-ch<12) top=Math.max(12,Math.min(vh-ch-12,(vh-ch)/2));
+    var left=Math.max(12,Math.min(r.left,vw-cw-12));
+    var c=rec.card.style; c.width=cw+"px"; c.left=left+"px"; c.top=top+"px";
+  }
+  function iniciarRecorrido(){
+    if(rec.ov) return;
+    abrir(false); vig++;
+    rec.pasos=pasosRecorrido(); rec.i=0;
+    var ov=document.createElement("div"); ov.className="tour-ov"; ov.setAttribute("role","dialog"); ov.setAttribute("aria-label","Recorrido guiado");
+    ov.innerHTML='<div class="tour-foco"></div><div class="tour-card" aria-live="polite"></div>';
+    document.body.appendChild(ov); rec.ov=ov; rec.foco=ov.querySelector(".tour-foco"); rec.card=ov.querySelector(".tour-card");
+    ov.addEventListener("click",function(ev){
+      var t=ev.target.closest&&ev.target.closest("[data-t]"); if(!t) return;
+      var a=t.getAttribute("data-t");
+      if(a==="sig"){ rec.i++; if(rec.i>=rec.pasos.length) return cerrarRecorrido(true); mostrarPaso(1); }
+      else if(a==="ant"){ rec.i=Math.max(0,rec.i-1); mostrarPaso(-1); }
+      else cerrarRecorrido(false);
+    });
+    rec.tecla=function(ev){
+      if(ev.key==="Escape"){ ev.preventDefault(); cerrarRecorrido(false); }
+      else if(ev.key==="ArrowRight"||ev.key==="Enter"){ ev.preventDefault(); rec.i++; if(rec.i>=rec.pasos.length) cerrarRecorrido(true); else mostrarPaso(1); }
+      else if(ev.key==="ArrowLeft"){ ev.preventDefault(); rec.i=Math.max(0,rec.i-1); mostrarPaso(-1); }
+    };
+    rec.reubicar=function(){ ubicar(); };
+    document.addEventListener("keydown",rec.tecla,true); window.addEventListener("resize",rec.reubicar); window.addEventListener("scroll",rec.reubicar,true);
+    mostrarPaso(1);
+  }
+  document.addEventListener("click",function(ev){
+    var t=ev.target.closest&&ev.target.closest("[data-tour]"); if(!t||rec.ov) return;
+    ev.preventDefault(); iniciarRecorrido();
+  });
   function abrir(on){
     el.classList.toggle("is-on",on);
     if(on){ if(!arranco){ arranco=true; inicio(); } setTimeout(function(){ entrada.focus(); },60); }
