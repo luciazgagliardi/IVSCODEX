@@ -219,6 +219,10 @@ strong,b{font-weight:500}
 .fsb .fsb-c input.ex{width:160px}
 .fsb .fsb-c select{width:auto;max-width:270px;background-color:var(--bg);padding-right:32px}
 .fsb .fsb-c input:focus,.fsb .fsb-c select:focus,.fsb-prov input[type=text]:focus{border-color:var(--gold)}
+.chip-f{display:inline-flex;align-items:center;gap:7px;font-family:var(--caps);letter-spacing:.1em;font-size:12.5px!important}
+.chip-f .pd{width:7px;height:7px;border-radius:50%;background:var(--punto,var(--humo));flex:none}
+.chip-f[aria-pressed="false"]{opacity:.5;text-decoration:line-through;text-decoration-color:var(--mute-2)}
+.chip-f[aria-pressed="true"]{background:transparent;color:var(--fg);border-color:var(--punto,var(--line))}
 .fsb-prov{display:grid;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:16px}
 .fsb-prov input[type=text]{max-width:280px;width:100%}
 .fsb-provs{display:flex;flex-wrap:wrap;gap:6px;max-height:96px;overflow:auto}
@@ -2624,7 +2628,7 @@ function nuevoEstado(){
           // cuenta como los pasajes: se escriben una vez y sirven desde
           // cualquier computadora.
           anillos:[],nuevoAnillo:{canonico:"",equivalentes:"",relacionados:"",nota:""},
-          ambitos:{mza:true,nac:true,prov:true,int:true,doc:true},provSel:"",provAbierto:false,colChica:{},masFiltros:false,
+          ambitos:{mza:true,nac:true,prov:true,int:true,doc:true},provSel:"",fuentesOff:{},provAbierto:false,colChica:{},masFiltros:false,
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
           api:null,cargando:false,cargandoOcr:false,errorLink:null,infoDoc:null,fichaConocida:null,
@@ -4145,6 +4149,7 @@ var PROV_DE={mendoza:"Mendoza",mendozalegal:"Mendoza",caba:"Ciudad Autónoma de 
 function basesVisibles(){
   return FUENTES_INDICE.filter(function(f){
     if(!estado.ambitos[f.clase]) return false;
+    if(estado.fuentesOff[f.slug]) return false;
     if(estado.provSel) return PROV_DE[f.slug]===estado.provSel||f.slug==="saij";
     return true;
   });
@@ -4154,6 +4159,8 @@ function filtrosActivos(){
   var t=[];
   if(!todosLosAmbitos()) Object.keys(AMB).forEach(function(k){ if(estado.ambitos[k]) t.push(["Dónde",AMB[k].n,"amb",k]); });
   if(estado.provSel) t.push(["Provincia",estado.provSel,"prov",""]);
+  var off=FUENTES_INDICE.filter(function(f){ return estado.fuentesOff[f.slug]; });
+  if(off.length) t.push(["Sin",off.map(function(f){return f.cod;}).join(", "),"fuente",""]);
   if(estado.rama) t.push(["Rama",comoTitulo(nombreRama(estado.rama)),"rama",""]);
   if(estado.desde||estado.hasta) t.push(["Años",(estado.desde||"…")+"–"+(estado.hasta||"…"),"anios",""]);
   if(estado.excluir.trim()) t.push(["Excluir",estado.excluir.trim(),"excluir",""]);
@@ -4167,6 +4174,10 @@ function franjaBuscar(){
      pl(todas&&!estado.provSel,"donde-todas","","Todas")+
      ["nac","mza","prov","int","doc"].map(function(k){ return pl(!todas&&estado.ambitos[k]&&!estado.provSel,"donde",'data-amb="'+k+'"',AMB[k].n); }).join("")+
      pl(!!estado.provSel||estado.provAbierto,"prov-abrir","",estado.provSel?estado.provSel:"Una provincia ▾")+
+   '</div>';
+  h+='<div class="fsb-fila"><span class="fsb-rot">Fuente</span>'+
+     pl(!Object.keys(estado.fuentesOff).some(function(k){return estado.fuentesOff[k];}),"fuente-todas","","Todas")+
+     FUENTES_INDICE.map(function(f){ return '<button class="chip chip-f f-'+f.slug+'" data-act="fuente" data-fuente="'+f.slug+'" title="'+esc(f.nombre)+'" aria-pressed="'+(estado.fuentesOff[f.slug]?"false":"true")+'"><i class="pd"></i>'+esc(f.cod)+'</button>'; }).join("")+
    '</div>';
   if(estado.provAbierto) h+='<div class="fsb-prov"><input type="text" id="prov-q" placeholder="Buscar provincia…" aria-label="Buscar provincia" autocomplete="off">'+
      '<div class="fsb-provs">'+pl(!estado.provSel,"prov",'data-p=""',"Todo el país")+
@@ -7741,6 +7752,12 @@ document.addEventListener("click",function(ev){
     else{ estado.ambitos[kd]=!estado.ambitos[kd]; if(!Object.keys(AMB).some(function(x){return estado.ambitos[x];})) Object.keys(AMB).forEach(function(x){ estado.ambitos[x]=true; }); }
     render(); return;
   }
+  if(act==="fuente-todas"){ estado.fuentesOff={}; render(); return; }
+  if(act==="fuente"){
+    var sf=b.getAttribute("data-fuente"); estado.fuentesOff[sf]=!estado.fuentesOff[sf];
+    if(FUENTES_INDICE.every(function(f){ return estado.fuentesOff[f.slug]; })) estado.fuentesOff={};
+    render(); return;
+  }
   if(act==="prov-abrir"){ estado.provAbierto=!estado.provAbierto; render(); return; }
   if(act==="prov"){
     var pv=b.getAttribute("data-p")||"";
@@ -7756,6 +7773,7 @@ document.addEventListener("click",function(ev){
     var kq=act==="quitar-filtro"?b.getAttribute("data-k"):"todo", vq=b.getAttribute("data-v");
     var todoAmb=function(){ Object.keys(AMB).forEach(function(x){ estado.ambitos[x]=true; }); };
     if(kq==="todo"||kq==="amb") todoAmb();
+    if(kq==="todo"||kq==="fuente") estado.fuentesOff={};
     if(kq==="todo"||kq==="prov"){ estado.provSel=""; estado.indices.saij.provincia=""; }
     if(kq==="todo"||kq==="rama") estado.rama="";
     if(kq==="todo"||kq==="anios"){ estado.desde=""; estado.hasta=""; }
