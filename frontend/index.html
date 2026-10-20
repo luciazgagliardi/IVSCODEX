@@ -2506,7 +2506,7 @@ function preguntarPorElModelo(){
 }
 
 function nuevoEstado(){
-  return {tab:"buscar",q:"",modo:"todas",excluir:"",desde:"",hasta:"",
+  return {tab:"buscar",q:"",modo:"todas",conEquivalentes:true,excluir:"",desde:"",hasta:"",
           rama:"",buscarRama:"",
           // Voces que el intérprete propuso para lo último que se escribió
           // en lenguaje natural. Se guardan aparte de q para que tocar una
@@ -3936,6 +3936,13 @@ function tiraSugerencias(){
    Los equivalentes y los cercanos van en grupos separados y rotulados
    distinto — mezclarlos sería exactamente el error que el tesauro existe
    para evitar (ver la nota grande de TESAURO). */
+/* Las otras formas de decir lo mismo (no las "cercanas"), según el tesauro. */
+function equivalentesDe(q){
+  var e=expandir(String(q||"").trim());
+  if(!e||!e.variantes) return [];
+  return e.variantes.filter(function(v){ return v.rel==="canonico"||v.rel==="equivalente"; })
+    .map(function(v){ return v.t; }).slice(0,4);
+}
 function tiraEquivalentes(){
   if(estado.tab!=="buscar") return "";
   var e=expandir(String(estado.q||"").trim());
@@ -3950,7 +3957,9 @@ function tiraEquivalentes(){
   if(!eq&&!cer) return "";
   return '<div class="sugeridas">'+
     (eq?'<p class="sug-nota"><b>Los tribunales escriben esto mismo de otras formas</b>, y cada una devuelve fallos '+
-        'distintos: buscar sólo una deja material afuera.</p><div class="chips">'+eq+'</div>':'')+
+        'distintos: buscar sólo una deja material afuera.</p><div class="chips">'+eq+'</div>'+
+        '<div class="chips" style="margin-top:8px"><button class="chip" data-act="tog-equivalentes" aria-pressed="'+(estado.conEquivalentes?"true":"false")+'">'+
+        (estado.conEquivalentes?'Buscando también estas formas':'Buscar también estas formas')+'</button></div>':'')+
     (cer?'<p class="sug-nota" style="margin-top:10px">Cercanos, <b>pero no lo mismo</b> — cambian los presupuestos, '+
         'revíselos antes de citarlos.</p><div class="chips">'+cer+'</div>':'')+
     (e.anillo.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(e.anillo.nota)+'</p>':'')+
@@ -4279,6 +4288,9 @@ function fichaIndice(f,r){
   // quién apareció por el tema del artículo (su rúbrica). No es un detalle:
   // citar como "aplica el art. 1710" un fallo que sólo habla de prevención
   // del daño sería poner en boca del tribunal algo que no dijo.
+  var marcaVariante=r.variante
+    ? '<span class="tag" style="border-color:var(--gold-55);color:var(--gold)">encontrado como «'+esc(r.variante)+'»</span>'
+    : '';
   var marcaTema=(r.citaElNumero===false)
     ? '<span class="tag" style="border-color:var(--lacre2);color:var(--lacre2)">por el tema, no cita el número</span>'
     : '';
@@ -4329,7 +4341,7 @@ function fichaIndice(f,r){
       return '<span class="voz" style="cursor:default">'+esc(v)+'</span>';}).join("")+'</div>':"")+
     '<div class="f-acc" style="margin-top:8px">'+
       (r.linkFicha?'<a class="mini" href="'+esc(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
-      marcaTema+
+      marcaTema+marcaVariante+
       (r.linkFallo&&!(f.slug==="caba"&&uf&&im.fragmentos.hasOwnProperty(uf)&&!im.fragmentos[uf])?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>':"")+
       // Si el documento se puede traer, también se puede abrir donde vive:
       // el enlace al sitio oficial es lo que hace citable al resultado.
@@ -4847,6 +4859,12 @@ function buscarEnFuente(slug,pagina){
   if(/^\d{4}$/.test(estado.hasta)) cuerpo.anioHasta=Number(estado.hasta);
   if(imBusco.tribunal) cuerpo.tribunal=imBusco.tribunal;
   if(slug==="saij"&&imBusco.provincia) cuerpo.provincia=imBusco.provincia;
+  // Las formas equivalentes del término (tesauro): el servidor las busca también
+  // y suma, en la primera página, lo que encuentre con cada una.
+  if(estado.conEquivalentes&&!estado.articulo){
+    var eqs=equivalentesDe(qi);
+    if(eqs.length) cuerpo.variantes=eqs;
+  }
   var promesaBusco=fetch(estado.api+"/indice/"+slug+"/buscar",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(cuerpo)
@@ -7341,6 +7359,7 @@ document.addEventListener("click",function(ev){
     buscarEnFuente(b.getAttribute("data-fuente"));
     return;
   }
+  if(act==="tog-equivalentes"){ estado.conEquivalentes=!estado.conEquivalentes; render(); return; }
   if(act==="modo-y-buscar"){ // cambia cómo se combinan las palabras y repite la búsqueda de esa fuente
     estado.modo=b.getAttribute("data-modo");
     buscarEnFuente(b.getAttribute("data-fuente"));
