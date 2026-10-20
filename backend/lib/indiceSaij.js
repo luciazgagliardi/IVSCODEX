@@ -87,6 +87,20 @@ const FACETA_CSJN = `Total|Tipo de Documento/Jurisprudencia/Fallo|Tribunal/${TRI
  * verificador de citas sigue pidiendo fichas ("fallos"), que es lo que necesita
  * para confirmar que un expediente existe.
  */
+/**
+ * Las 24 jurisdicciones locales que SAIJ reconoce como faceta (Jurisdicción /
+ * Local / provincia), con nombre exacto: es lo que convierte a SAIJ en el
+ * buscador de jurisprudencia de cada provincia sin tener que integrar 24 sitios.
+ * Medido en octubre de 2026 con "derecho": de Buenos Aires (38.511 documentos)
+ * a San Luis (398).
+ */
+export const PROVINCIAS_SAIJ = [
+  'Buenos Aires', 'Ciudad Autónoma de Buenos Aires', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba',
+  'Corrientes', 'Entre Ríos', 'Formosa', 'Jujuy', 'La Pampa', 'La Rioja', 'Mendoza', 'Misiones',
+  'Neuquén', 'Río Negro', 'Salta', 'San Juan', 'San Luis', 'Santa Cruz', 'Santa Fe',
+  'Santiago del Estero', 'Tierra del Fuego', 'Tucumán',
+];
+
 const FACETA_CSJN_SUMARIOS = 'Total|Tipo de Documento/Jurisprudencia/Sumario|Jurisdicción/Federal';
 const esSumarioDeLaCorte = (r) => Boolean(r) && /^A\d/i.test(r._numero || '');
 
@@ -569,14 +583,16 @@ const TANDAS_POR_MODO = { exacta: 8, todas: 5, alguna: 3 };
 const PAGINAS_A_REVISAR = 3; // por defecto, y para legislación y doctrina (ver esTexto)
 const POR_PEDIDO = 100;
 
-export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false, desde = null, anioDesde = null, anioHasta = null }) {
+export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false, desde = null, anioDesde = null, anioHasta = null, provincia = '' }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
   // La Corte en Buscar: sus sumarios (con texto). Con tribunal "fallos", las fichas
   // (el verificador de citas las pide así: ver lib/fuentes.js).
   const csjnSumarios = soloCsjn && tribunal !== 'fallos';
-  const faceta = csjnSumarios ? FACETA_CSJN_SUMARIOS : soloCsjn ? FACETA_CSJN : (TIPOS[tribunal] || TIPOS.sumarios);
+  const conProvincia = !soloCsjn && PROVINCIAS_SAIJ.includes(provincia) && tribunal !== 'doctrina' && tribunal !== 'dictamenes';
+  const faceta = (csjnSumarios ? FACETA_CSJN_SUMARIOS : soloCsjn ? FACETA_CSJN : (TIPOS[tribunal] || TIPOS.sumarios)) +
+    (conProvincia ? `|Jurisdicción/Local/${provincia}` : '');
   // Legislación y doctrina se filtran mirando el texto del documento (ver
   // enriquecerDocumentos), no su título: el modo se aplica ahí.
   const esTexto = !soloCsjn && (tribunal === 'legislacion' || tribunal === 'doctrina');
@@ -644,6 +660,8 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
   if (!totalCrudo) return { total: 0, totalFuente: 0, siguienteDesde: null, revisados: 0, pagina, porPagina, resultados: [] };
 
   if (csjnSumarios) await caratulasDeLaCorte(resultados);
+  // Con provincia elegida, "Local" (lo que trae el sumario) se reemplaza por su nombre.
+  if (conProvincia) for (const r of resultados) if (r && (!r.tribunal || /^local$/i.test(r.tribunal))) r.tribunal = provincia;
   await enriquecerConSumarios(resultados, termino);
   await enriquecerDocumentos(resultados, termino, modo); // dictámenes; legislación y doctrina ya pasaron por traer()
   cerrarRegistros(resultados);

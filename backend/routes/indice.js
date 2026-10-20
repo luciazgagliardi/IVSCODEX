@@ -251,7 +251,7 @@ for (const { slug, buscar } of FUENTES) {
   router.post(`/indice/${slug}/buscar`, async (req, res, next) => {
     try {
       const cuerpo = req.body || {};
-      const { pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo, norma } = cuerpo;
+      const { pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo, norma, provincia } = cuerpo;
       // La consulta es solo texto y de largo acotado: un objeto o un texto de
       // megabytes no debe llegar a los buscadores oficiales.
       const q = typeof cuerpo.q === 'string' ? cuerpo.q.trim().slice(0, MAX_CONSULTA) : '';
@@ -294,6 +294,8 @@ for (const { slug, buscar } of FUENTES) {
           ...(MODOS.has(modo) ? { modo } : {}),
           ...(excluir ? { excluir: String(excluir) } : {}),
           ...(tribunal ? { tribunal } : {}),
+          // Sólo SAIJ: filtra por provincia (las demás fuentes lo ignoran).
+          ...(typeof provincia === 'string' && provincia.length <= 60 ? { provincia } : {}),
         }));
       } catch (e) {
         // El sitio de origen no respondió o cambió de forma —no dejamos a
