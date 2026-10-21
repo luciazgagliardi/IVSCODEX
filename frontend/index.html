@@ -6757,7 +6757,7 @@ function montarAsistente(){
         "Ya están: "+tot.toLocaleString("es-AR")+" resultados en "+ok.length+" bases.",
         "Listo, "+ok.length+" bases respondieron y sumaron "+tot.toLocaleString("es-AR")+" resultados."])+(mal.length?" "+mal.map(function(f){return f.cod;}).join(", ")+" no contestó.":"");
       dice(tot>300?[txt,pick("muchos",["Son bastantes. ¿Acoto por año o por provincia?","Es mucho material. Le puedo acotar por fecha o jurisdicción."])]:txt,
-        tot>300?[{t:"Desde 2020",f:function(){ estado.desde="2020"; buscarEnTodas(); render(); dice("Hecho, sólo desde 2020."); }},{t:"Frase exacta",f:function(){ estado.modo="exacta"; buscarEnTodas(); render(); dice("Listo, ahora con la frase exacta."); }},{t:"Elegir provincia",f:function(){ estado.drawer=true; estado.provAbierto=true; render(); }}]:null);
+        tot>300?[{t:"Desde 2020",f:function(){ estado.desde="2020"; buscarEnTodas(); render(); dice("Hecho, sólo desde 2020."); }},{t:"Frase exacta",f:function(){ estado.modo="exacta"; buscarEnTodas(); render(); dice("Listo, ahora con la frase exacta."); }},{t:"Más recientes primero",f:function(){ estado.orden="fecha"; estado.verBase=""; render(); dice("Listo, los más recientes primero."); }},{t:"Resumen por base",suave:true,f:function(){ entender("resumen"); }}]:[{t:"Resumen por base",suave:true,f:function(){ entender("resumen"); }},{t:"Más recientes primero",suave:true,f:function(){ estado.orden="fecha"; estado.verBase=""; render(); dice("Listo, los más recientes primero."); }}]);
     })();
   }
   function pedirTema(l){
@@ -6799,8 +6799,8 @@ function montarAsistente(){
       var n=sinTildes(w).replace(/[^a-zñ]/g,"");
       if(n.length<6||VOCAB.indexOf(n)>-1) return w;
       var mejor=null,dm=9;
-      VOCAB.forEach(function(v){ var d=distancia(n,v); if(d<dm){ dm=d; mejor=v; } });
-      if(mejor&&dm<=(n.length>=9?2:1)&&Math.abs(n.length-mejor.length)<=2){ cambios.push([w,mejor]); return mejor; }
+      VOCAB.forEach(function(v){ if(n.indexOf(v)===0||v.indexOf(n)===0) { dm=-1; return; } var d=distancia(n,v); if(dm>=0&&d<dm){ dm=d; mejor=v; } });
+      if(mejor&&dm>=0&&dm<=(n.length>=9?2:1)&&Math.abs(n.length-mejor.length)<=2){ cambios.push([w,mejor]); return mejor; }
       return w;
     }).join("");
     return cambios.length?{texto:out,cambios:cambios}:null;
@@ -6840,7 +6840,7 @@ function montarAsistente(){
     if(/\b(quien sos|como te llamas|que sos|sos una ia|sos humana|sos un robot|quien eres)\b/.test(t))
       return dice(["Soy Lexia, la asistente virtual de IVS CODEX. No soy una persona ni un abogado.","Entiendo lo que me pide con reglas simples, y puedo buscar por usted, ajustar filtros y llevarlo a cada herramienta."],opcionesInicio());
     if(/\b(que (podes|puedes|haces|sabes)|en que (me )?(ayudas|podes ayudar)|que ofreces|para que servis)\b/.test(t))
-      return dice("Puedo buscar jurisprudencia con filtros (por ejemplo «daño moral en Mendoza desde 2018»), explicarle cómo funciona cada filtro, definir términos, y llevarlo a plazos, cálculos o verificación de citas.",opcionesInicio());
+      return dice(["Puedo buscar jurisprudencia con filtros («daño moral en Mendoza desde 2018»), ordenar y filtrar lo que ya buscó («sólo la Corte», «ordená por fecha»), resumirle qué base trajo qué, repetir sus últimas búsquedas y copiarle la consulta.","También le traigo el texto de un artículo («art 1741 CCyC»), le defino términos («qué significa cosa juzgada»), le doy ideas de voces por rama y lo guío por la página, entera o por partes."],opcionesInicio());
     if(/\b(guardas|guardan|privacidad|datos personales|quien ve|me espian)\b/.test(t))
       return dice("Lo que me escribe se procesa en su navegador y no lo guardo. La cuenta, en cambio, sólo guarda su perfil y lo que usted marque.");
     /* cualquier sección por su nombre: explicar en una línea y ofrecer hacerla juntos */
@@ -6853,6 +6853,73 @@ function montarAsistente(){
           return dice([AYUDA_SECCION[tabS]||SECCIONES[tabS][2],"Si quiere, la recorremos juntos."],[{t:"Hagámoslo juntos",f:function(){ iniciarRecorrido("s-"+tabS); }},{t:"Gracias",suave:true,f:function(){}}]);
         }
       }
+    }
+    /* ---- acciones y preguntas sobre lo que hay en pantalla ---- */
+    var BASEAL=[["mendozalegal",/\b(mza legal|mendoza legal)\b/],["mendoza",/\b(scjm|suprema corte de mendoza|poder judicial de mendoza)\b/],["caba",/\b(tsj|tribunal superior de justicia)\b/],["csjn",/\b(csjn|corte suprema de justicia|corte suprema)\b/],["saij",/\bsaij\b/],["dialnet",/\bdialnet\b/],["scba",/\b(scba|juba|suprema corte de buenos aires)\b/],["corteidh",/\b(corte idh|cidh|interamericana)\b/]];
+    var basesDe=function(txt){ var r=[]; for(var q=0;q<BASEAL.length;q++){ if(BASEAL[q][1].test(txt)){ var f=FUENTES_INDICE.filter(function(x){return x.slug===BASEAL[q][0];})[0]; if(f) r.push(f); } } return r; };
+    var baseDe=function(txt){ return basesDe(txt)[0]||null; };
+    var vis1=basesVisibles(), hizoBusqueda=vis1.some(function(f){ return (estado.indices[f.slug]||{}).busco; });
+    if(/\b(ultimas|recientes|anteriores|previas) busquedas\b|\bhistorial de busquedas\b|\bque (busque|buscaba) (antes|recien|ayer)\b|\bmis busquedas\b/.test(t)){
+      var hs=(estado.hist||[]).slice(0,6);
+      if(!hs.length) return dice("Todavía no hay búsquedas recientes. Apenas haga una, queda acá.");
+      return dice("Estas son sus últimas búsquedas. Toque una para repetirla:",hs.map(function(q){ return {t:q,f:function(){ dice("Va de nuevo."); buscarAhora(q,null,"exacta"); }}; }));
+    }
+    if(/\b(repeti|repite|repetir|volve a buscar|vuelve a buscar|otra vez la busqueda|busca de nuevo|buscala de nuevo)\b/.test(t)&&!/\b(recorrido|tutorial)\b/.test(t)){
+      if(!String(estado.q||"").trim()) return dice("Todavía no hay una búsqueda para repetir. Dígame el tema."),pedirTema();
+      dice("Repito «"+estado.q+"» en las bases marcadas."); estado.tab="buscar"; render(); setTimeout(buscarEnTodas,150); setTimeout(vigilar,1500); return;
+    }
+    if(/\b(copi\w+|pasame|dame)\b.*\b(consulta|busqueda|cadena)\b/.test(t)){
+      if(!String(estado.q||"").trim()) return dice("Todavía no hay una consulta para copiar. Dígame el tema y la armo.");
+      var cd=cadena(); copiar(cd); return dice(["Copiada.","«"+(cd.length>90?cd.slice(0,90)+"…":cd)+"»"]);
+    }
+    if(/\b(compart\w+|enlace|link)\b.*\b(busqueda|consulta|resultados?)\b|\bcomo comparto\b/.test(t)){
+      if(!String(estado.q||"").trim()) return dice("Primero hagamos una búsqueda y después le copio el enlace.");
+      copiar(location.href); return dice(["Copié el enlace de esta búsqueda.","Quien lo abra verá la misma consulta con sus filtros."]);
+    }
+    if(/\b(orden\w+)\b.*\b(fecha|recientes?|nuevos?|base|intercal\w+)\b/.test(t)){
+      var ord=/\b(fecha|recientes?|nuevos?)\b/.test(t)?"fecha":/\bbase\b/.test(t)?"base":"inter";
+      estado.orden=ord; estado.verBase=""; estado.tab="buscar"; render();
+      return dice(ord==="fecha"?"Listo: los más recientes primero.":ord==="base"?"Listo: agrupados por base.":"Listo: intercalados, uno por base.");
+    }
+    if(/\b(limpi\w+|borr\w+|sac\w+|quit\w+|resete\w+)\b.*\bfiltros?\b|\bsin filtros\b$/.test(t)){
+      aplicar({limpiar:true,ambs:[]}); estado.q=estado.q; render();
+      return dice("Listo, sin filtros: se busca en todas las bases, de cualquier jurisdicción y año.",hizoBusqueda?[{t:"Buscar de nuevo",f:function(){ buscarEnTodas(); setTimeout(vigilar,1500); }}]:null);
+    }
+    var bs=baseDe(t);
+    if(bs&&/\b(solo|solamente|unicamente|nada mas que)\b/.test(t)&&!/\bque es\b/.test(t)){
+      var dejar=basesDe(t).map(function(f){return f.slug;});
+      FUENTES_INDICE.forEach(function(f){ estado.fuentesOff[f.slug]=(dejar.indexOf(f.slug)<0); }); estado.verBase=""; estado.tab="buscar"; render();
+      return dice("Listo, sólo "+basesDe(t).map(function(f){return f.cod;}).join(" y ")+".",[{t:"Buscar ahora",f:function(){ buscarEnTodas(); setTimeout(vigilar,1500); }},{t:"Volver a todas",suave:true,f:function(){ estado.fuentesOff={}; render(); }}]);
+    }
+    if(bs&&/\b(saca\w*|quita\w*|sin|excluy\w*|descarta\w*|dejala? afuera|no quiero)\b/.test(t)&&!/\bque es\b/.test(t)){
+      var fuera=basesDe(t); fuera.forEach(function(f){ estado.fuentesOff[f.slug]=true; });
+      if(FUENTES_INDICE.every(function(f){return estado.fuentesOff[f.slug];})) estado.fuentesOff={};
+      estado.tab="buscar"; render();
+      return dice("Hecho, "+fuera.map(function(f){return f.cod;}).join(" y ")+(fuera.length>1?" quedan afuera.":" queda afuera."),[{t:"Buscar de nuevo",f:function(){ buscarEnTodas(); setTimeout(vigilar,1500); }},{t:"Volver a marcar",suave:true,f:function(){ fuera.forEach(function(f){ delete estado.fuentesOff[f.slug]; }); render(); }}]);
+    }
+    if(bs&&/\b(que es|que son|que tiene|que hay en|que contiene|de que (es|trata)|para que sirve|explicame)\b/.test(t))
+      return dice([bs.nombre+".",bs.nota||""].filter(Boolean),[{t:"Buscar sólo ahí",f:function(){ FUENTES_INDICE.forEach(function(f){ estado.fuentesOff[f.slug]=(f.slug!==bs.slug); }); estado.tab="buscar"; render(); }},{t:"Gracias",suave:true,f:function(){}}]);
+    if(/\b(resumen|resumime|resumi|cuantos resultados|cuantos hay|que base (trajo|respondio|tuvo)|cual (base|fuente) (trajo|respondio|tuvo)|como (me )?(fue|salio)|que paso con la busqueda|ya termino)\b/.test(t)){
+      if(!hizoBusqueda) return dice("Todavía no hay una búsqueda hecha. Dígame el tema y la lanzo.",null),pedirTema();
+      var filas=vis1.map(function(f){ var im=estado.indices[f.slug]||{}; return {f:f,im:im,n:(im.busco&&!im.error)?(im.total||(im.resultados||[]).length):-1}; });
+      var cargando=filas.filter(function(x){return x.im.cargando;}).length, ok=filas.filter(function(x){return x.n>=0;}).sort(function(a,b){return b.n-a.n;});
+      var rap=ok.filter(function(x){return x.im.ms;}).sort(function(a,b){return a.im.ms-b.im.ms;})[0], mal=filas.filter(function(x){return x.im.busco&&x.im.error;});
+      var l1=ok.length?"Respondieron "+ok.length+" de "+vis1.length+" bases. La que más trajo fue "+ok[0].f.cod+" ("+ok[0].n.toLocaleString("es-AR")+")"+(ok[1]?", después "+ok[1].f.cod+" ("+ok[1].n.toLocaleString("es-AR")+")":"")+".":"Todavía no respondió ninguna base.";
+      var partes=[l1];
+      if(rap) partes.push("La más rápida fue "+rap.f.cod+" ("+(rap.im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+" s)."+(mal.length?" Sin respuesta: "+mal.map(function(x){return x.f.cod;}).join(", ")+".":"")+(cargando?" Siguen buscando "+cargando+".":""));
+      else if(cargando) partes.push("Siguen buscando "+cargando+" bases.");
+      return dice(partes,[{t:"Ordenar por fecha",f:function(){ estado.orden="fecha"; estado.verBase=""; render(); }},{t:"Ver sólo la que más trajo",suave:true,f:function(){ if(ok[0]){ estado.verBase=ok[0].f.slug; render(); } }}]);
+    }
+    if(/\b(es gratis|es gratuito|cuesta|cuanto sale|precio|hay que pagar|es paga)\b/.test(t))
+      return dice(["Las bases que se consultan son públicas. En «Fuentes», cada ficha indica si es libre, mixta o por suscripción.","Si una fuente es paga, se abre en su sitio y allí usted ingresa con lo suyo."],[{t:"Ver las fuentes",f:function(){ irA("fuentes"); }}]);
+    if(/\b(es oficial|son oficiales|es confiable|son confiables|puedo citar|puedo presentar|es valido|tiene validez|de donde (sale|salen|vienen))\b/.test(t))
+      return dice(["Los resultados salen de los sitios oficiales de cada tribunal, y cada uno trae su enlace a la fuente.","Antes de citar o presentar, verifique siempre en la fuente: esta plataforma orienta, no reemplaza el original."],[{t:"Verificar una cita",f:function(){ irA("verificar"); }}]);
+    if(/\b(consejo|tip|truco|recomendacion|recomendas|como busco mejor|mejorar (la |mi )?busqueda|buscar mejor)\b/.test(t))
+      return dice(pick("tip",["Pruebe con los términos que usan los tribunales (ej. «consecuencias no patrimoniales» en vez de «daño moral»): las sugerencias bajo la barra se los proponen.","Si salen demasiados resultados, use «frase exacta» o acote por años; si salen pocos, «alguna palabra» o quite filtros.","Para comparar jurisdicciones, deje marcadas varias bases y use «Por base» en el orden de los resultados.","Con una provincia elegida, la búsqueda se acota a su base propia y a SAIJ, que cubre todo el país.","Guarde los pasajes importantes en el Lector: quedan en «Guardados» con su cita y su fecha de consulta."]),[{t:"Otro consejo",suave:true,f:function(){ entender("dame otro consejo"); }}]);
+    var ramaPed=t.match(/\b(?:voces|terminos|temas|palabras clave)\s+(?:de|del|sobre|para)\s+(?:derecho\s+)?(.+)$/);
+    if(ramaPed){
+      var rq=ramaPed[1].trim(), rh=RAMAS.filter(function(r){ var n=sinTildes(r.n); return n.indexOf(rq)>-1||rq.indexOf(n.split(" ")[0])>-1&&n.split(" ")[0].length>4; })[0];
+      if(rh) return dice(["Algunas voces de «"+comoTitulo(rh.n)+"»:","Toque una para buscarla."],rh.v.slice(0,6).map(function(v){ return {t:comoTitulo(v),f:function(){ buscarAhora(v,null,"exacta"); }}; }).concat([{t:"Ver toda la rama",suave:true,f:function(){ estado.rama=rh.id; irA("ramas"); }}]));
     }
     var g=glosa(t);
     if(g){
@@ -6876,7 +6943,16 @@ function montarAsistente(){
     if(/\b(mi perfil|mi cuenta|contrasena|clave|cerrar sesion|iniciar sesion|registr\w+|especialidad)\b/.test(t))
       return dice(estado.usuario?"Su perfil está en «Cuenta»: nombre, especialidad y si quiere novedades.":"Para crear su cuenta o iniciar sesión vamos a «Cuenta».",[{t:"Abrir Cuenta",f:function(){ irA("cuenta"); }}]);
     if(/\b(ley|articulo|art\.?)\s*\d+|\bcodigo (civil|penal|procesal)\b/.test(t)&&!/\b(buscar|jurisprudencia|fallos)\b/.test(t))
-      return dice("Para el texto de una norma está «Norma» (desde InfoLeg). Si quiere los fallos que citan un artículo, dígame «fallos sobre el art. 1710».",[{t:"Abrir Norma",f:function(){ irA("norma"); }}]);
+      {
+        var refN=parsearReferencia(txt.trim());
+        if(refN&&refN.art&&estado.api){
+          dice(["Se lo busco: artículo "+refN.art+(refN.clave?"":" (elija la norma si hace falta)")+"."]);
+          estado.norma.art=txt.trim(); estado.tab="norma"; render(); window.scrollTo(0,0);
+          setTimeout(function(){ var bt=document.querySelector('[data-act="ver-articulo"]'); if(bt) bt.click(); },200);
+          return;
+        }
+        return dice("Para el texto de una norma está «Norma» (desde InfoLeg). Si quiere los fallos que citan un artículo, dígame «fallos sobre el art. 1710».",[{t:"Abrir Norma",f:function(){ irA("norma"); }}]);
+      }
     if(/\b(tutorial|recorrido|guiame|guiarme|guiado|ensename|explicame todo|explicame la pagina|explicame como se usa|como se usa|como (lo )?uso|como usar|como funciona (esto|la pagina|la plataforma|el sitio)|paso a paso|primera vez|no entiendo (nada|todo)|nada de esto|estoy perdid[oa]|me perdi|no se usar|no se como usar|no se por donde)\b/.test(t)&&!/\bfiltros?\b/.test(t))
       return dice([pick("tour",["Con gusto. Puedo guiarlo por toda la página, señalando cada parte en pantalla. Son unos diez pasos y lo maneja usted.","Por supuesto. Le hago un recorrido por la página: le voy señalando cada parte y explicando para qué sirve."]),"¿Empezamos?"],[
         {t:"Sí, guíeme por toda la página",f:function(){ iniciarRecorrido("completo"); }},
