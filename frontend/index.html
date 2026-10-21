@@ -850,6 +850,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .lx-tags{display:flex;flex-wrap:wrap;gap:6px}
 .lx-tags .meta-tag{background:none;cursor:pointer}
 .lx-nada{color:var(--mute-2)!important}
+.lx-r .lx-nota{margin-top:10px;font-size:12px;color:var(--mute-2)}
 .lx-monto{margin:10px 0 2px!important}
 .lx-chip{display:none}
 .lector-acciones{display:none}
@@ -3737,6 +3738,7 @@ function lxRecorte(texto,i,antes,largo){
   return {t:(a>0?"… ":"")+texto.slice(a,b).replace(/\s+/g," ").trim()+(b<texto.length?" …":""),a:a,crudo:texto.slice(i,Math.min(texto.length,i+90))};
 }
 var LX_INTENCIONES=[
+  ["resumen",/explic|resum|sintesis|de que (se )?trata|que (paso|dice el fallo|dice este fallo)|contame|cuenta(me)? el fallo|en pocas palabras|de que va|analiz|que es este fallo|que resolvio y por que/],
   ["decision",/resolv|decidi|gano|perdio|fallo final|parte dispositiva|resultado|hizo lugar|hace lugar|rechaz|confirm|revoc|que dispuso|como termino/],
   ["montos",/cuanto|monto|indemniz|suma|pesos|\$|dinero|plata|importe|condena(ron)? a pagar/],
   ["votos",/voto|votaron|disiden|jueces|jueza|juez|magistrad|ministr|quien(es)? firm|unanim/],
@@ -3808,6 +3810,65 @@ function lxPorPalabras(texto,pregunta){
   }).filter(function(x){ return x.s>0; }).sort(function(a,b){ return b.s-a.s; }).slice(0,3);
   return res.map(function(x){ return {t:x.p.t.replace(/\s+/g," ").trim().slice(0,700)+(x.p.t.length>700?" …":""),a:x.p.a,crudo:x.p.t.slice(0,90)}; });
 }
+
+/* Explicación del fallo, armada con sus propias partes (extractiva):
+   antecedentes, agravios, los fundamentos más centrales y la resolución. */
+function lxPrimeroQue(texto,re,desde,hasta){
+  var t=texto.slice(desde||0,hasta||texto.length),m=re.exec(t);
+  return m?(desde||0)+m.index:-1;
+}
+function lxFundamentos(texto,n){
+  var ini=Math.floor(texto.length*.18),fin=Math.floor(texto.length*.88);
+  var cuerpo=texto.slice(ini,fin);
+  var ors=[],re=/[^.;]{60,420}[.;]/g,m;
+  while((m=re.exec(cuerpo))) ors.push({t:m[0].trim(),a:ini+m.index});
+  if(!ors.length) return [];
+  var frec={};
+  ors.forEach(function(o){ lxPlano(o.t).split(/[^a-zñ]+/).forEach(function(w){ if(w.length>4&&!VACIAS[w]) frec[w]=(frec[w]||0)+1; }); });
+  var CLAVES=/\b(corresponde|cabe|considero|entiendo|estimo|debe|deben|por ello|en consecuencia|resulta|surge|toda vez que|habida cuenta|no obstante|por lo tanto|de modo que)\b/;
+  ors.forEach(function(o){
+    var ws=lxPlano(o.t).split(/[^a-zñ]+/).filter(function(w){ return w.length>4&&!VACIAS[w]; });
+    var sc=ws.reduce(function(a,w){ return a+Math.log(1+(frec[w]||0)); },0)/Math.sqrt(ws.length+4);
+    if(CLAVES.test(lxPlano(o.t))) sc*=1.6;
+    if(/^\s*(\d+|[ivx]+)[\.\)]\s/i.test(o.t)||/fs\.|fojas|art\.\s*\d+\s*(?:y|,)\s*\d+/i.test(o.t)) sc*=.8;
+    o.s=sc;
+  });
+  var top=ors.slice().sort(function(a,b){ return b.s-a.s; }),el=[];
+  for(var i=0;i<top.length&&el.length<(n||3);i++){
+    if(el.every(function(x){ return Math.abs(x.a-top[i].a)>600; })) el.push(top[i]);
+  }
+  // una oración que arranca en minúscula o número quedó cortada en una
+  // abreviatura («art. 52 bis…», «fs. 3…»): se retrocede hasta el punto de verdad
+  var ABREV=/(?:^|\s)(?:arts?|incs?|fs|dr|dra|dres|nro|n|cfr|conf|cit|ss|p|pág|pags?|ley|ap|apart|cap|sres?|sra|ib|op|vid|v|etc|cc|ccyc|cpcc|cn|s\.a|s\.r\.l)\.?$/i;
+  function inicioReal(a){
+    var k=a;
+    for(var vueltas=0;vueltas<6;vueltas++){
+      var j=texto.lastIndexOf(".",k-2); if(j<0||a-j>700) return a;
+      if(ABREV.test(texto.slice(Math.max(0,j-8),j).trim())){ k=j; continue; }
+      return j+1;
+    }
+    return a;
+  }
+  return el.sort(function(a,b){ return a.a-b.a; }).map(function(o){
+    var a=/^[a-z0-9]/.test(o.t)?inicioReal(o.a):o.a, t=texto.slice(a,o.a+o.t.length).trim();
+    return {t:t.replace(/\s+/g," "),a:a,crudo:texto.slice(a,a+90).trim()};
+  });
+}
+function lxResumen(texto,d,pas,fila){
+  var h='<p>Le explico el fallo con sus propias palabras, en partes:</p><div class="lx-ficha">'+
+    fila("Carátula",d.car)+fila("Tribunal",[d.trib,d.sala].filter(Boolean).join(" · "))+fila("Fecha",d.fecha)+'</div>';
+  var iAnt=lxPrimeroQue(texto,/\b(ANTECEDENTES|Antecedentes|RESULTA|Resulta|I\.\s*Antecedentes|Los hechos|LOS HECHOS|El caso|EL CASO)\b/);
+  if(iAnt<0) iAnt=lxPrimeroQue(texto,/(promovi[oó]|interpuso|dedujo|demand[oó]|se present[oó])/i,0,Math.floor(texto.length*.5));
+  if(iAnt>=0) h+='<h4>Qué se discutía</h4>'+pas(lxRecorte(texto,iAnt,0,560));
+  var iAgr=lxPrimeroQue(texto,/(agravi|se queja|cuestiona|critica la sentencia|recurso de)/i,Math.floor(texto.length*.08));
+  if(iAgr>=0&&Math.abs(iAgr-iAnt)>400) h+='<h4>Qué se planteó</h4>'+pas(lxRecorte(texto,iAgr,120,520));
+  var fu=lxFundamentos(texto,3);
+  if(fu.length) h+='<h4>Fundamentos principales</h4>'+fu.map(pas).join("");
+  var de=lxDecision(texto);
+  h+='<h4>Qué se resolvió'+(de&&de.sintesis.length?' · <span class="lx-sint">'+esc(de.sintesis.join(", "))+'</span>':'')+'</h4>'+
+    (de?pas(de.pasaje):'<p class="lx-nada">No encontré la parte resolutiva con las fórmulas habituales.</p>');
+  return h+'<p class="lx-nota">Esta explicación junta partes textuales del fallo; no es una interpretación. Léala en contexto con «Ver en el fallo».</p>';
+}
 /* Arma la respuesta (HTML) a una pregunta, o la ficha completa si p === null. */
 function lxResponder(p){
   var texto=estado.texto||"",d=datosDoc(texto),it=p===null?"ficha":lxIntencion(p),h="";
@@ -3829,6 +3890,7 @@ function lxResponder(p){
     if(vo.disidencia) h+='<h4>Disidencia</h4>'+pas(vo.disidencia);
     return h;
   }
+  if(it==="resumen") return lxResumen(texto,d,pas,fila);
   if(it==="decision"){ var de=lxDecision(texto); return de?'<p>La parte resolutiva'+(de.sintesis.length?' <b>'+esc(de.sintesis.join(", "))+'</b>':"")+'. Dice así:</p>'+pas(de.pasaje):'<p class="lx-nada">No encontré la parte resolutiva con las fórmulas habituales («Resuelve», «Falla», «Por ello»). Pruebe preguntando con otras palabras.</p>'; }
   if(it==="montos"){ var mo=lxMontos(texto); return mo.length?'<p>Encontré <b>'+mo.length+'</b> monto'+(mo.length>1?"s":"")+' en el fallo:</p>'+mo.slice(0,5).map(function(x){ return '<p class="lx-monto"><b>'+esc(x.monto)+'</b></p>'+pas(x.pasaje); }).join(""):'<p class="lx-nada">No encontré montos en pesos ni dólares en el texto.</p>'; }
   if(it==="votos"){ var v=lxVotos(texto); return (v.nombres.length?'<p>Magistrados que aparecen: <b>'+esc(v.nombres.join(", "))+'</b>.</p>':'')+
@@ -3839,7 +3901,9 @@ function lxResponder(p){
   if(it==="fecha"&&d.fecha) return '<p>Fecha del fallo: <b>'+esc(d.fecha)+'</b>.</p>';
   if(it==="tribunal"&&d.trib) return '<p>Lo dictó: <b>'+esc([d.trib,d.sala].filter(Boolean).join(" · "))+'</b>.</p>'+pas(lxPrimerPasaje(texto,d.trib.split(" ").slice(0,3).join(" ")));
   var ps=lxPorPalabras(texto,p);
-  return ps.length?'<p>Estos son los pasajes del fallo que mejor responden:</p>'+ps.map(pas).join(""):'<p class="lx-nada">No encontré en el fallo nada que hable de eso. Pruebe con otras palabras, o con «¿qué se resolvió?», «¿cuánto?», «¿qué normas?».</p>';
+  if(ps.length) return '<p>Estos son los pasajes del fallo que mejor responden:</p>'+ps.map(pas).join("");
+  // nada específico: en vez de un «no encontré», la explicación del fallo
+  return '<p class="lx-nada">No encontré un pasaje que hable puntualmente de eso. Le dejo la explicación general del fallo:</p>'+lxResumen(texto,d,pas,fila);
 }
 /* Ir al pasaje dentro del texto ya dibujado y dejarlo seleccionado. */
 function lxIrA(s){
@@ -3877,7 +3941,7 @@ function lxPanel(){
     '<div class="lx-cab"><span class="lx-punto"></span><b>Lexia</b><span>sobre este fallo</span></div>'+
     '<p class="lx-nota">Lee el fallo en su navegador: no se envía a ningún lado ni tiene costo.</p>'+
     '<div class="lx-sug"><button type="button" class="chip" data-act="lx-identificar">Identificar lo importante</button>'+
-      ['¿Qué se resolvió?','¿Cuánto se indemnizó?','¿Hubo disidencias?','¿Qué normas aplica?'].map(function(s){ return '<button type="button" class="chip" data-act="lx-pregunta" data-p="'+esc(s)+'">'+esc(s)+'</button>'; }).join("")+'</div>'+
+      ['Explicame el fallo','¿Qué se resolvió?','¿Cuánto se indemnizó?','¿Hubo disidencias?','¿Qué normas aplica?'].map(function(s){ return '<button type="button" class="chip" data-act="lx-pregunta" data-p="'+esc(s)+'">'+esc(s)+'</button>'; }).join("")+'</div>'+
     '<div class="lx-form"><input type="text" id="lx-q" placeholder="Pregúntele algo sobre este fallo…" autocomplete="off" aria-label="Pregunta a Lexia sobre este fallo">'+
       '<button type="button" class="btn" data-act="lx-pregunta">Preguntar</button></div>'+
     '<div id="lx-resp">'+lxRespuestasHTML()+'</div></section>';
