@@ -7034,6 +7034,7 @@ function montarAsistente(){
 
   /* un recorrido por cada sección, y el completo que las pasa a todas */
   var en=function(tab){ return function(){ if(estado.tab!==tab){ estado.tab=tab; estado.drawer=false; render(); window.scrollTo(0,0); } }; };
+  var CABSEL=[".cab__ojo",".cab h1",".cab__intro","#cab > .aviso"]; /* del rótulo dorado hasta donde explica */
   var SEC={
     lector:[["#cab","Lector","Para leer un fallo con su búsqueda destacada. Hay tres maneras de traerlo: por enlace, desde un archivo o pegando el texto."],
       ["#doc-url","Opción 1: el enlace","Pegue acá el enlace del fallo (de los sitios oficiales) y toque «Traer el fallo».",{hazlo:1}],
@@ -7092,7 +7093,7 @@ function montarAsistente(){
   };
   Object.keys(SEC).forEach(function(tab){
     TOURS["s-"+tab]={n:NOMBRES_SECCION[tab],tab:tab,pasos:function(){
-      return SEC[tab].map(function(x){ var o=x[3]||{}; return {sel:x[0],t:x[1],x:x[2],hazlo:!!o.hazlo,opcional:!!o.opc,antes:en(tab)}; });
+      return SEC[tab].map(function(x){ var o=x[3]||{}; return {sel:x[0]==="#cab"?CABSEL:x[0],t:x[1],x:x[2],hazlo:!!o.hazlo,opcional:!!o.opc,antes:en(tab)}; });
     }};
   });
   /* el completo: la barra, Buscar a fondo y un paso por cada una de las otras secciones */
@@ -7110,11 +7111,26 @@ function montarAsistente(){
     var ord=["lector","ramas","requisitos","comparar","norma","fuentes","citas","verificar","guardados","cuenta","calculos","plazos","glosario","herramientas"];
     var resto=ord.map(function(tab){
       var x=SEC[tab][0];
-      return {sel:"#cab",t:NOMBRES_SECCION[tab],x:x[2]+" Para verla en detalle, elija «"+NOMBRES_SECCION[tab]+"» en «Cómo usar».",antes:en(tab)};
+      return {sel:CABSEL,t:NOMBRES_SECCION[tab],x:x[2]+" Para verla en detalle, elija «"+NOMBRES_SECCION[tab]+"» en «Cómo usar».",antes:en(tab)};
     });
     var fin=[{sel:"#asist-abrir",t:"Y si se pierde…",x:"Estoy acá. Puedo hacer búsquedas con filtros, explicarle una parte o hacerla juntos con usted con «Cómo usar».",antes:function(){ enBuscar(); }}];
     return base.concat(resto,fin);
   };
+  /* el rectángulo que une a uno o varios elementos (para iluminar desde el rótulo hasta la bajada) */
+  function rectDe(sel){
+    var sels=Array.isArray(sel)?sel:[sel], L=1e9,T=1e9,R=-1e9,B=-1e9,primero=null;
+    sels.forEach(function(x){
+      var els=x.indexOf("#cab >")===0?[].slice.call(document.querySelectorAll(x)):[document.querySelector(x)];
+      els.forEach(function(e){
+        if(!e) return;
+        var cs=getComputedStyle(e); if(cs.display==="none"||cs.visibility==="hidden") return;
+        var r=e.getBoundingClientRect(); if(!r.width&&!r.height) return;
+        if(!primero) primero=e;
+        L=Math.min(L,r.left); T=Math.min(T,r.top); R=Math.max(R,r.right); B=Math.max(B,r.bottom);
+      });
+    });
+    return primero?{left:L,top:T,right:R,bottom:B,width:R-L,height:B-T,el:primero}:null;
+  }
   function limpiarEspera(){ if(rec.espera){ document.removeEventListener("click",rec.espera,true); rec.espera=null; } }
   function cerrarRecorrido(terminado){
     limpiarEspera();
@@ -7137,14 +7153,19 @@ function montarAsistente(){
     var p=rec.pasos[rec.i];
     if(!p) return cerrarRecorrido(true);
     if(p.antes) p.antes();
-    var e=document.querySelector(p.sel);
-    if(!e||!e.getBoundingClientRect().width||getComputedStyle(e).display==="none"){
+    var rr=rectDe(p.sel);
+    if(!rr||!rr.width){
       /* un paso que no se puede mostrar se salta; si es la única forma de seguir, se avisa */
       if(!p.opcional&&!p.espera&&rec.i===0&&(dir>0)){ return cerrarSinMostrar(); }
       if(p.espera&&dir>0){ setTimeout(function(){ if(rec.ov&&rec.pasos[rec.i]===p) mostrarPaso(dir); },900); return; }
       return sigPaso(dir||1);
     }
-    e.scrollIntoView({block:"center",behavior:"auto"});
+    rr.el.scrollIntoView({block:"center",behavior:"auto"});
+    rr=rectDe(p.sel)||rr;
+    var m=22, vh0=innerHeight; /* que lo iluminado quede entero y con aire: si es más alto que la pantalla, arriba */
+    if(rr.height+2*m>=vh0) window.scrollBy(0,rr.top-m);
+    else if(rr.top<m) window.scrollBy(0,rr.top-m);
+    else if(rr.bottom>vh0-m) window.scrollBy(0,rr.bottom-(vh0-m));
     var n=rec.pasos.length, ult=rec.i===n-1;
     rec.hazlo=!!p.hazlo; rec.sel=p.sel;
     rec.card.innerHTML='<div class="tour-n">Paso '+(rec.i+1)+' de '+n+(p.hazlo?' · pruébelo usted':'')+'</div><h4>'+esc(p.t)+'</h4><p>'+esc(p.x)+'</p>'+
@@ -7152,6 +7173,7 @@ function montarAsistente(){
       '<button type="button" class="tour-b prim" data-t="sig">'+(ult?"Terminar":"Siguiente")+'</button>'+
       '<button type="button" class="tour-b suave" data-t="fin">Salir</button></div>';
     ubicar();
+    setTimeout(function(){ if(rec.ov&&rec.pasos[rec.i]===p) ubicar(); },1000);
     if(p.alTocar){
       rec.espera=function(ev){
         var d=document.querySelector(p.sel);
@@ -7171,10 +7193,11 @@ function montarAsistente(){
     else dice("No pude ubicar esa parte en la pantalla. Pruebe con el recorrido completo.",[{t:"Recorrido completo",f:function(){ iniciarRecorrido("completo"); }}]);
   }
   function ubicar(){
-    var e=rec.sel&&document.querySelector(rec.sel); if(!e||!rec.ov) return;
-    var r=e.getBoundingClientRect(), pad=8, vw=innerWidth, vh=innerHeight;
-    var L=Math.max(0,r.left-pad), T=Math.max(0,r.top-pad), R=Math.min(vw,r.right+pad), B=Math.min(vh,r.bottom+pad);
-    var f=rec.foco.style; f.left=L+"px"; f.top=T+"px"; f.width=(R-L)+"px"; f.height=(B-T)+"px";
+    var r=rec.sel&&rectDe(rec.sel); if(!r||!rec.ov) return;
+    var pad=8, vw=innerWidth, vh=innerHeight;
+    var fL=r.left-pad, fT=r.top-pad, fR=r.right+pad, fB=r.bottom+pad;
+    var L=Math.max(0,fL), T=Math.max(0,fT), R=Math.min(vw,fR), B=Math.min(vh,fB);
+    var f=rec.foco.style; f.left=fL+"px"; f.top=fT+"px"; f.width=(fR-fL)+"px"; f.height=(fB-fT)+"px";
     var v=rec.vel; // cuatro paneles alrededor del hueco: tapan y bloquean todo lo demás
     v[0].style.cssText="left:0;top:0;width:100%;height:"+T+"px";
     v[1].style.cssText="left:0;top:"+B+"px;width:100%;height:"+Math.max(0,vh-B)+"px";
