@@ -3753,8 +3753,15 @@ function lxMontos(texto){
   return out;
 }
 function lxVotos(texto){
-  var re=/\b(?:Dr|Dra|Dres|Dras)\.\s*((?:[A-ZÁÉÍÓÚÑ][\wáéíóúñü'\-]+\.?\s?){1,4})/g,m,n={};
-  while((m=re.exec(texto))){ var nom=m[1].replace(/\s+/g," ").trim(); if(nom.length>3&&!/^(?:En|El|La|Los|Que)\b/.test(nom)) n[nom]=(n[nom]||0)+1; }
+  // «Dr. Pérez», «el señor juez doctor LÓPEZ MURO», «la jueza doctora Gómez», «Ministro Rosatti»
+  var re=/\b(?:Dr|Dra|Dres|Dras)\.\s*((?:[A-ZÁÉÍÓÚÑ][\wáéíóúñü'\-]+\.?\s?){1,4})|\b(?:doctor|doctora|juez|jueza|ministro|ministra|vocal|conjuez)\s+(?:doctor\s+|doctora\s+)?((?:[A-ZÁÉÍÓÚÑ][\wáéíóúñüÁÉÍÓÚÑ'\-]+\s?){1,4})/g,m,n={};
+  while((m=re.exec(texto))){
+    var nom=(m[1]||m[2]||"").replace(/\s+/g," ").trim().replace(/\s+(?:y|por|en|de|del|que|dijo|votó|vota)$/i,"");
+    if(nom.length>3&&!/^(?:En|El|La|Los|Que|Doctor|Doctora)\b/.test(nom)){
+      nom=nom.replace(/\b([A-ZÁÉÍÓÚÑ])([A-ZÁÉÍÓÚÑ]+)\b/g,function(_,a,b){ return a+b.toLowerCase(); }); // LÓPEZ MURO -> López Muro
+      n[nom]=(n[nom]||0)+1;
+    }
+  }
   var nombres=Object.keys(n).sort(function(a,b){return n[b]-n[a];}).slice(0,10);
   var d=null,md=/en disidencia|disidencia (?:parcial|total)?|vot[oó] en disidencia/i.exec(texto);
   if(md) d=lxRecorte(texto,md.index,200,520);
