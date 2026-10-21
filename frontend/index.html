@@ -237,7 +237,10 @@ strong,b{font-weight:500}
 .bz-fila .rf-n{font:500 13px/1 var(--sans);color:var(--fg);font-variant-numeric:tabular-nums}
 .bz-fila .rf-t{font-size:11.5px;color:var(--mute-2);white-space:nowrap}
 .bz-lista{min-width:0}
-.rz-cab{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:0 0 10px;margin-bottom:4px;border-bottom:1px solid var(--line-2);font-size:14px}
+.rz-cab{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:0 0 12px;margin-bottom:0;font-size:14px}
+.en-vivo{display:inline-flex;align-items:center;gap:8px;margin-left:14px;font:400 13px/1 var(--sans);letter-spacing:0;color:var(--mute);white-space:nowrap;vertical-align:middle}
+.en-vivo::before{content:"";width:8px;height:8px;border-radius:50%;background:#5fd07f;box-shadow:0 0 0 3px rgba(95,208,127,.18);flex:none}
+.en-vivo.local::before{background:var(--gold);box-shadow:0 0 0 3px rgba(217,163,27,.18)}
 .rz-cab b{font-weight:500}
 .rz-ord{margin-left:auto;display:flex;flex-wrap:wrap;gap:6px}
 .rz-ord .chip{padding:5px 12px;font-size:12.5px}
@@ -587,7 +590,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
   margin:0 0 64px;padding:0;border-top:0
 }
 .rotulo-fuente{
-  display:flex;align-items:center;gap:18px;margin:0 0 18px;padding:0 0 18px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:18px;margin:0 0 6px;padding:0;border-bottom:0;
   font:500 18px/1.3 var(--sans);letter-spacing:-.01em;color:var(--fg);min-width:0;overflow-wrap:anywhere
 }
 /* el sello: la sigla de la base en un aro doble, del tono de esa base */
@@ -2353,7 +2356,7 @@ var F=[
 {id:"m27",n:"Asociación de Magistrados de Mendoza",o:"AMJM",a:"mza",t:"gremial",c:"libre",
  u:"https://magistradosmza.com.ar/",dom:"magistradosmza.com.ar",r:"*",
  nota:"Publicaciones y jornadas del ámbito judicial provincial."},
-{id:"m28",n:"Mendoza Legal — jurisprudencia seleccionada",o:"Mendoza Legal",a:"mza",t:"doctrina",c:"libre",
+{id:"m28",n:"Mendoza Legal — Jurisprudencia Seleccionada",o:"Mendoza Legal",a:"mza",t:"doctrina",c:"libre",
  u:"https://mendozalegal.com/category/jurisprudencia/",dom:"mendozalegal.com",r:"*",
  nota:"Fallos provinciales y nacionales elegidos por su interés local. Publica los boletines de la Cámara Federal de Mendoza."},
 {id:"m29",n:"Guía de búsqueda de jurisprudencia de Mendoza",o:"Facultad de Derecho, UNCuyo",a:"mza",t:"doctrina",c:"libre",
@@ -2620,7 +2623,7 @@ var FUENTES_INDICE=[
     {v:"CT",n:"Cámaras del Trabajo"}
   ]},
  {slug:"mendozalegal",cod:"MZA LEGAL",clase:"mza",boton:"Mendoza Legal",
-  nombre:"Mendoza Legal · jurisprudencia seleccionada",
+  nombre:"Mendoza Legal · Jurisprudencia Seleccionada",
   nota:"Selección curada de jurisprudencia provincial relevante, con sumarios procesales y doctrina de aplicación práctica local."},
  {slug:"caba",cod:"TSJ",clase:"prov",boton:"el TSJ de CABA",
   nombre:"Tribunal Superior de Justicia de la Ciudad de Buenos Aires",
@@ -2639,7 +2642,7 @@ var FUENTES_INDICE=[
     {v:"dictamenes",n:"Dictámenes del Ministerio Público Fiscal"}
   ]},
  {slug:"dialnet",cod:"DIALNET",clase:"doc",boton:"Dialnet",
-  nombre:"Dialnet · doctrina jurídica en español",
+  nombre:"Dialnet · Doctrina Jurídica en Español",
   nota:"Repositorio académico de la Universidad de La Rioja (España). Reúne una extensa producción de artículos de investigación, doctrina jurídica profundizada y revistas especializadas en español, con una nutrida representación de autores argentinos."},
  {slug:"scba",cod:"SCBA",clase:"prov",boton:"la Suprema Corte de Buenos Aires",
   nombre:"Suprema Corte de la Provincia de Buenos Aires (JUBA)",
@@ -5424,7 +5427,7 @@ function panelIndice(f){
   // sino un aviso —estos resultados salieron de la copia guardada, no del
   // sitio— y sigue siendo UN borde, con un lado marcado.
   var out='<div class="panel vivo f-'+f.slug+'" id="panel-'+f.slug+'"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
-    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0">'+esc(f.nombre)+(local?' · desde su índice local':' · en vivo')+'</div>';
+    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+' <span class="en-vivo'+(local?' local':'')+'">'+(local?'Desde su índice local':'En vivo')+'</span></span></div>';
 
   if(f.slug==="saij"){
     // SAIJ indexa la jurisprudencia y la legislación de las 24 jurisdicciones:
@@ -6591,8 +6594,15 @@ var AYUDA_SECCION={
   fuentes:"El catálogo de las bases oficiales, con qué tiene cada una.",
   verificar:"Pegue una cita (por ejemplo «CSJN, Fallos 330:1234») y se comprueba si existe.",
   glosario:"El significado, en palabras simples, de los términos jurídicos y las expresiones latinas.",
-  cuenta:"Su perfil: nombre, especialidad y novedades. Lo que guarda se sincroniza entre dispositivos."
+  cuenta:"Su perfil: nombre, especialidad y novedades. Lo que guarda se sincroniza entre dispositivos.",
+  requisitos:"Lo que exige la norma para cada trámite (divorcio, adopción, cuota alimentaria…), con su artículo, y un botón para buscar fallos sobre eso.",
+  comparar:"Una misma consulta en las ocho fuentes, para ver cómo resuelve cada jurisdicción.",
+  norma:"El texto oficial de un artículo (desde InfoLeg): escriba «art 1741 CCyC» o elija la norma.",
+  citas:"Arma la cita de un fallo con el formato correcto, y la copia lista para pegar.",
+  guardados:"Sus pasajes guardados, fuentes marcadas con la estrella, búsquedas recientes y sus propios términos equivalentes.",
+  herramientas:"Preparar archivos para presentar: unir, dividir, foliar, reducir el tamaño y reconocer el texto (OCR)."
 };
+var NOMBRES_SECCION={lector:"Lector",ramas:"Ramas",requisitos:"Requisitos",comparar:"Comparar",norma:"Norma",fuentes:"Fuentes",citas:"Citar",verificar:"Verificar",guardados:"Guardados",cuenta:"Cuenta",calculos:"Cálculos",plazos:"Plazos",glosario:"Glosario",herramientas:"Herramientas"};
 function montarAsistente(){
   if(document.getElementById("asist")) return;
   var el=document.createElement("div");
@@ -6833,6 +6843,17 @@ function montarAsistente(){
       return dice("Puedo buscar jurisprudencia con filtros (por ejemplo «daño moral en Mendoza desde 2018»), explicarle cómo funciona cada filtro, definir términos, y llevarlo a plazos, cálculos o verificación de citas.",opcionesInicio());
     if(/\b(guardas|guardan|privacidad|datos personales|quien ve|me espian)\b/.test(t))
       return dice("Lo que me escribe se procesa en su navegador y no lo guardo. La cuenta, en cambio, sólo guarda su perfil y lo que usted marque.");
+    /* cualquier sección por su nombre: explicar en una línea y ofrecer hacerla juntos */
+    var SECW=[["lector",/\blector\b/],["ramas",/\b(ramas?|voces)\b/],["requisitos",/\b(requisitos|tramites?)\b/],["comparar",/\bcompar\w+/],["norma",/\b(norma|infoleg)\b/],["fuentes",/\b(fuentes|catalogo)\b/],["citas",/\b(citar|formateador|armar (una )?cita)\b/],["verificar",/\bverificad\w+|\bverificar\b/],["guardados",/\b(guardados|historial)\b/],["cuenta",/\b(cuenta|registr\w+)\b/],["calculos",/\b(calculos?|calculadora|calcular)\b/],["plazos",/\b(plazos?|vencimientos?|calendario judicial)\b/],["glosario",/\b(glosario|latin|brocardos?)\b/],["herramientas",/\b(herramientas|unir pdf|dividir pdf|foliar|ocr)\b/]];
+    var pideAyuda=/\b(no entiendo|como (uso|funciona|se usa|hago)|explicame|ayuda|ayudame|que (es|hace|son)|para que (sirve|es)|guiame|hagamoslo|tutorial|recorrido|enseñame|ensename)\b/.test(t);
+    if(pideAyuda&&!/\b(filtros?|resultados?)\b/.test(t)){
+      for(var si=0;si<SECW.length;si++){
+        if(SECW[si][1].test(t)){
+          var tabS=SECW[si][0];
+          return dice([AYUDA_SECCION[tabS]||SECCIONES[tabS][2],"Si quiere, la recorremos juntos."],[{t:"Hagámoslo juntos",f:function(){ iniciarRecorrido("s-"+tabS); }},{t:"Gracias",suave:true,f:function(){}}]);
+        }
+      }
+    }
     var g=glosa(t);
     if(g){
       if(g.hit) return dice([g.hit[0]+": «"+g.hit[1]+"». "+g.hit[2]],[{t:"Ver el glosario",suave:true,f:function(){ estado.buscarGlosario=g.hit[0]; irA("glosario"); }}]);
@@ -7010,6 +7031,90 @@ function montarAsistente(){
       {sel:"#perfil-menu",t:"Todo lo suyo, en un lugar",x:"Su cuenta, las fuentes y pasajes que guardó, y sus últimas búsquedas: toque una para repetirla. Con la sesión iniciada también puede cerrarla desde acá.",antes:function(){ if(!estado.perfilMenu){ estado.perfilMenu=true; pintarNav(); } }}
     ]; }}
   };
+
+  /* un recorrido por cada sección, y el completo que las pasa a todas */
+  var en=function(tab){ return function(){ if(estado.tab!==tab){ estado.tab=tab; estado.drawer=false; render(); window.scrollTo(0,0); } }; };
+  var SEC={
+    lector:[["#cab","Lector","Para leer un fallo con su búsqueda destacada. Hay tres maneras de traerlo: por enlace, desde un archivo o pegando el texto."],
+      ["#doc-url","Opción 1: el enlace","Pegue acá el enlace del fallo (de los sitios oficiales) y toque «Traer el fallo».",{hazlo:1}],
+      ["[data-act=\"elegir-archivo\"]","Opción 2: un archivo","Suba un PDF o un Word desde su computadora.",{opc:1}],
+      ["#doc-in","Opción 3: pegar el texto","Si ya tiene el texto del fallo, pégalo acá.",{hazlo:1}],
+      ["[data-act=\"analizar\"]","Analizar el fallo","Reconoce tribunal, fecha, partes y pasajes clave, y marca su búsqueda dentro del texto.",{opc:1}]],
+    ramas:[["#cab","Ramas","Las ramas del derecho con los términos (voces) con que los tribunales las nombran."],
+      ["#buscarRama","Buscar una rama","Escriba para encontrar una rama en la lista de la izquierda, o toque una.",{hazlo:1,opc:1}],
+      [".rama .voces","Las voces","Cada voz es un término técnico. Tóquela y se busca en las bases.",{opc:1}],
+      ["[data-act=\"ir-rama\"]","Ver esas fuentes","Muestra las fuentes que cubren esa rama.",{opc:1}]],
+    requisitos:[["#cab","Requisitos","Lo que exige la norma para cada trámite, con su artículo, como punto de partida para buscar."],
+      ["#buscarReq","Buscar un trámite","Escriba «divorcio», «adopción» o «cuota alimentaria» para encontrarlo.",{hazlo:1}],
+      [".grupo","Qué exige la norma","Cada trámite lista sus requisitos con el artículo que los fundamenta. Tóquelos para tildar lo que ya cumplió.",{opc:1}],
+      ["[data-act=\"tramite\"]","Buscar fallos sobre esto","Arma la consulta de ese trámite y lo lleva a Buscar.",{opc:1}]],
+    comparar:[["#cab","Comparar","Una consulta, ocho fuentes: sirve para ver cómo resuelve cada jurisdicción."],
+      ["#q","La consulta","Escriba el tema que quiere comparar.",{hazlo:1}],
+      ["[data-act=\"comparar\"]","Comparar","Lanza la misma consulta en las ocho fuentes y ordena los resultados por jurisdicción.",{hazlo:1}]],
+    norma:[["#cab","Norma","El texto oficial de un artículo, traído desde InfoLeg."],
+      ["#norma-art","El artículo","Escriba, por ejemplo, «art 1741 CCyC» o «artículo 70 de la ley 24.522».",{hazlo:1}],
+      ["#norma-clave","O elija la norma","También puede elegir el código o la ley de la lista.",{opc:1}],
+      ["[data-act=\"ver-articulo\"]","Ver el artículo","Trae el texto vigente y le ofrece buscar los fallos que lo citan.",{hazlo:1}]],
+    fuentes:[["#cab","Fuentes","El catálogo de las bases y buscadores oficiales, agrupado por ámbito."],
+      [".grupo","Por ámbito","Mendoza, Nacional, Otras provincias, Internacional y Doctrina. Cada ficha dice qué contiene y si es libre o paga."],
+      ["[data-act=\"fav\"]","La estrella","Guarda esa fuente en Guardados para tenerla a mano.",{hazlo:1}],
+      ["[data-act=\"google\"]","Buscar en el sitio","Abre el buscador de esa fuente con su consulta ya armada.",{opc:1}]],
+    citas:[["#cab","Citar","Arma la cita de un fallo con el formato correcto."],
+      ["#c-tipo","El tipo de cita","Elija qué está citando (fallo de la Corte, de una cámara…).",{hazlo:1}],
+      ["#c-car","Los datos","Complete la carátula, el tribunal, la fecha y lo que corresponda.",{hazlo:1}],
+      ["[data-act=\"armar-cita\"]","Armar la cita","Genera la cita lista para pegar en su escrito.",{hazlo:1,opc:1}]],
+    verificar:[["#cab","Verificar","Comprueba si una cita de jurisprudencia existe de verdad, antes de presentarla."],
+      ["#cita-in","Pegue la cita","Por ejemplo: «CSJN, Halabi, Ernesto c/ P.E.N. (2009)».",{hazlo:1}],
+      ["[data-act=\"verificar-cita\"]","Verificar la cita","Se busca en las bases oficiales y se le dice si aparece o no.",{hazlo:1}],
+      [".aviso","Sus límites","Sólo verifica que exista; no garantiza que diga lo que usted le atribuye. Siempre revise la fuente.",{opc:1}]],
+    guardados:[["#cab","Guardados","Todo lo que usted fue reuniendo."],
+      ["#vista .blk:nth-child(1)","Pasajes guardados","Los pasajes que guarda en el Lector, con su cita y fecha. Puede copiarlos o exportarlos a Word.",{opc:1}],
+      ["#vista .blk:nth-child(2)","Fuentes guardadas","Las fuentes que marcó con la estrella.",{opc:1}],
+      ["#vista .blk:nth-child(3)","Búsquedas de esta sesión","Toque una para repetirla.",{opc:1}],
+      ["#an-canonico","Sus propios términos","Enséñele sinónimos a la plataforma: su búsqueda los usará.",{opc:1}]],
+    cuenta:[["#cab","Cuenta","Su perfil, y lo que se guarda en su cuenta."],
+      ["#auth-email","Crear una cuenta","Con su correo y una clave puede guardar fuentes y búsquedas y verlas desde cualquier dispositivo.",{opc:1}],
+      ["#perfil-nombre","Su perfil","Su nombre, su especialidad y si quiere recibir novedades.",{opc:1}]],
+    calculos:[["#cab","Cálculos","Las cuentas más usadas, con la fórmula a la vista."],
+      [".calc-sel","Elija la calculadora","Intereses, actualización, despido, incapacidad, honorarios y tasa de justicia, liquidación…",{hazlo:1}],
+      [".brief","Los datos","Complete los montos y fechas; el resultado se actualiza.",{hazlo:1}],
+      [".brief__summary","El resultado","Con el detalle del cálculo y para copiarlo.",{opc:1}]],
+    plazos:[["#cab","Plazos","Cuenta plazos procesales, prescripción y el calendario judicial."],
+      [".calc-sel","Qué calcular","Plazos procesales, prescripción o calendario judicial.",{hazlo:1}],
+      [".brief","Los datos","Elija días hábiles o corridos, la jurisdicción y la fecha de inicio.",{hazlo:1}],
+      [".brief__summary","El vencimiento","Le muestra cuándo vence, descontando feriados y ferias.",{opc:1}]],
+    glosario:[["#cab","Glosario","Latín jurídico: brocardos y expresiones con su traducción y su sentido."],
+      ["#buscarGlosario","Buscar","Escriba «cosa juzgada», «cautelar»… y se filtra la lista.",{hazlo:1}],
+      [".glos-letras","Por letra","O vaya directo a la inicial.",{opc:1}]],
+    herramientas:[["#cab","Herramientas","Para preparar archivos antes de presentarlos."],
+      [".her","Una herramienta por tarjeta","Unir y dividir PDF, numerar fojas, reducir el tamaño, reconocer el texto (OCR) y convertir a PDF/A.",{}],
+      ["#her-unir-in","Elegir archivos","Cada herramienta empieza eligiendo los archivos de su computadora.",{hazlo:1,opc:1}]]
+  };
+  Object.keys(SEC).forEach(function(tab){
+    TOURS["s-"+tab]={n:NOMBRES_SECCION[tab],tab:tab,pasos:function(){
+      return SEC[tab].map(function(x){ var o=x[3]||{}; return {sel:x[0],t:x[1],x:x[2],hazlo:!!o.hazlo,opcional:!!o.opc,antes:en(tab)}; });
+    }};
+  });
+  /* el completo: la barra, Buscar a fondo y un paso por cada una de las otras secciones */
+  TOURS.completo.pasos=function(){
+    var bq=TOURS.consulta.pasos().slice(0,1), base=[
+      {sel:".marca-app",t:"Bienvenido a IVS CODEX",x:"Busca a la vez en las bases judiciales oficiales y le muestra los resultados con el pasaje donde está lo que busca. Voy a recorrer con usted todas las funciones, una por una.",antes:function(){ enBuscar(); cierraPanel(); }},
+      {sel:"#nav",t:"Las secciones principales",x:"Buscar, Lector, Ramas, Cálculos, Fuentes y Verificar, a un toque."},
+      {sel:"#abrir-menu",t:"Todas las secciones",x:"Acá están las quince, agrupadas por lo que se hace en cada una."},
+      {sel:"#mi-perfil",t:"Mi perfil",x:"Su cuenta y todo lo que guardó: fuentes, pasajes y búsquedas recientes, que puede repetir con un toque."},
+      {sel:".cq",t:"Buscar: la consulta",x:"Escriba el tema con sus palabras. Con Enter o «Buscar» se consulta a la vez en todas las bases marcadas.",antes:function(){ enBuscar(); cierraPanel(); }},
+      {sel:".bq-barra [data-act=\"tog-drawer\"]",t:"Buscar: filtros",x:"Dónde (nación, provincias), fuentes, cómo combinar las palabras, años y excluir."},
+      {sel:".bz-riel",t:"Buscar: las bases",x:"Cada base con su punto de color, su estado y su botón para buscar sólo ahí.",antes:cierraPanel},
+      {sel:".bz-lista",t:"Buscar: los resultados",x:"Mezclados, uno por base. Toque uno para ver el pasaje completo."}
+    ];
+    var ord=["lector","ramas","requisitos","comparar","norma","fuentes","citas","verificar","guardados","cuenta","calculos","plazos","glosario","herramientas"];
+    var resto=ord.map(function(tab){
+      var x=SEC[tab][0];
+      return {sel:"#cab",t:NOMBRES_SECCION[tab],x:x[2]+" Para verla en detalle, elija «"+NOMBRES_SECCION[tab]+"» en «Cómo usar».",antes:en(tab)};
+    });
+    var fin=[{sel:"#asist-abrir",t:"Y si se pierde…",x:"Estoy acá. Puedo hacer búsquedas con filtros, explicarle una parte o hacerla juntos con usted con «Cómo usar».",antes:function(){ enBuscar(); }}];
+    return base.concat(resto,fin);
+  };
   function limpiarEspera(){ if(rec.espera){ document.removeEventListener("click",rec.espera,true); rec.espera=null; } }
   function cerrarRecorrido(terminado){
     limpiarEspera();
@@ -7113,14 +7218,23 @@ function montarAsistente(){
   }
   function elegirRecorrido(){
     abrir(true);
-    dice(["Con gusto. Puedo guiarlo por toda la página, o hacer juntos sólo la parte que le cuesta.","¿Cuál prefiere?"],[
+    dice(["Con gusto. Puedo guiarlo por todas las funciones de la página, o hacer juntos sólo la parte que le cuesta.","¿Qué prefiere?"],[
       {t:"Recorrido completo",f:function(){ iniciarRecorrido("completo"); }},
+      {t:"Una parte de Buscar",f:menuBuscar},
+      {t:"Otra sección",f:menuSecciones},
+      {t:"Mi perfil y lo guardado",suave:true,f:function(){ iniciarRecorrido("perfil"); }}]);
+  }
+  function menuBuscar(){
+    dice("¿Qué parte de Buscar?",[
       {t:"Hacer una búsqueda juntos",f:function(){ iniciarRecorrido("consulta"); }},
-      {t:"Usar los filtros juntos",f:function(){ iniciarRecorrido("filtros"); }},
+      {t:"Usar los filtros",f:function(){ iniciarRecorrido("filtros"); }},
       {t:"Entender las bases",f:function(){ iniciarRecorrido("bases"); }},
       {t:"Leer los resultados",f:function(){ iniciarRecorrido("resultados"); }},
-      {t:"Mi perfil y lo guardado",f:function(){ iniciarRecorrido("perfil"); }},
-      {t:"Las otras formas de decirlo",suave:true,f:function(){ iniciarRecorrido("sugerencias"); }}]);
+      {t:"Las otras formas de decirlo",f:function(){ iniciarRecorrido("sugerencias"); }},
+      {t:"Volver",suave:true,f:elegirRecorrido}]);
+  }
+  function menuSecciones(){
+    dice("¿Cuál sección?",Object.keys(SEC).map(function(tab){ return {t:NOMBRES_SECCION[tab],f:function(){ iniciarRecorrido("s-"+tab); }}; }).concat([{t:"Volver",suave:true,f:elegirRecorrido}]));
   }
   document.addEventListener("click",function(ev){
     var t=ev.target.closest&&ev.target.closest("[data-tour]"); if(!t||rec.ov) return;
