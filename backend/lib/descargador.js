@@ -16,7 +16,9 @@
  */
 
 import dns from 'node:dns/promises';
+import { lookup as dnsLookup } from 'node:dns';
 import net from 'node:net';
+import { Agent, fetch as fetchSeguro } from 'undici';
 import iconv from 'iconv-lite';
 import { dominioConNavegador, traerConNavegador } from './navegadorCf.js';
 
@@ -54,38 +56,30 @@ export function dominioHabilitado(host) {
  * 2. Deteccion de direcciones internas
  * ------------------------------------------------------------------ */
 
-function ipv4EsPrivada(ip) {
-  const p = ip.split('.').map(Number);
-  if (p.length !== 4 || p.some((n) => Number.isNaN(n))) return true;
-  const [a, b] = p;
-  if (a === 0) return true;                          // 0.0.0.0/8
-  if (a === 10) return true;                         // 10/8
-  if (a === 127) return true;                        // loopback
-  if (a === 100 && b >= 64 && b <= 127) return true; // CGNAT 100.64/10
-  if (a === 169 && b === 254) return true;           // link-local y metadatos
-  if (a === 172 && b >= 16 && b <= 31) return true;  // 172.16/12
-  if (a === 192 && b === 168) return true;           // 192.168/16
-  if (a === 192 && b === 0) return true;             // 192.0.0/24
-  if (a === 198 && (b === 18 || b === 19)) return true; // benchmark
-  if (a >= 224) return true;                         // multicast y reservado
-  return false;
-}
-
-function ipv6EsPrivada(ip) {
-  const x = ip.toLowerCase();
-  if (x === '::' || x === '::1') return true;
-  if (x.startsWith('fe80') || x.startsWith('fc') || x.startsWith('fd')) return true;
-  // IPv4 embebida: ::ffff:127.0.0.1
-  const m = x.match(/::ffff:(\d+\.\d+\.\d+\.\d+)$/);
-  if (m) return ipv4EsPrivada(m[1]);
-  return false;
-}
+/**
+ * Rangos que nunca se descargan, comparados con net.BlockList (CIDR de verdad,
+ * en lugar de adivinar con prefijos de texto). Cubre lo que un ataque SSRF
+ * suele usar: loopback, redes privadas, enlace local y metadatos de la nube
+ * (169.254.0.0/16), CGNAT, documentación, multicast y reservado, y en IPv6
+ * además las formas que envuelven una IPv4 (::ffff:a.b.c.d y su variante
+ * hexadecimal, NAT64 y 6to4), que con un chequeo por texto se escapan.
+ */
+const BLOQUEADAS = new net.BlockList();
+for (const [red, bits] of [
+  ['0.0.0.0', 8], ['10.0.0.0', 8], ['100.64.0.0', 10], ['127.0.0.0', 8], ['169.254.0.0', 16],
+  ['172.16.0.0', 12], ['192.0.0.0', 24], ['192.0.2.0', 24], ['192.88.99.0', 24], ['192.168.0.0', 16],
+  ['198.18.0.0', 15], ['198.51.100.0', 24], ['203.0.113.0', 24], ['224.0.0.0', 4], ['240.0.0.0', 4],
+]) BLOQUEADAS.addSubnet(red, bits, 'ipv4');
+for (const [red, bits] of [
+  ['::', 96], ['64:ff9b::', 96], ['64:ff9b:1::', 48],
+  ['100::', 64], ['2001::', 32], ['2001:db8::', 32], ['2002::', 16], ['fc00::', 7], ['fe80::', 10],
+  ['fec0::', 10], ['ff00::', 8],
+]) BLOQUEADAS.addSubnet(red, bits, 'ipv6');
 
 export function ipEsPrivada(ip) {
   const v = net.isIP(ip);
-  if (v === 4) return ipv4EsPrivada(ip);
-  if (v === 6) return ipv6EsPrivada(ip);
-  return true; // si no es una IP valida, la tratamos como sospechosa
+  if (!v) return true; // si no es una IP valida, la tratamos como sospechosa
+  return BLOQUEADAS.check(ip, v === 4 ? 'ipv4' : 'ipv6');
 }
 
 /** True solo para 127.0.0.0/8 y ::1. */
@@ -106,9 +100,10 @@ function esLoopback(ip) {
  * son justamente los objetivos de un ataque SSRF y no hay motivo legitimo
  * para que este extractor los toque.
  */
+const permitida = (ip) => !ipEsPrivada(ip) || (PERMITIR_RED_PRIVADA && esLoopback(ip));
+
 async function verificarDNS(host) {
-  const permitida = (ip) =>
-    !ipEsPrivada(ip) || (PERMITIR_RED_PRIVADA && esLoopback(ip));
+  host = String(host).replace(/^\[|\]$/g, ''); // los literales IPv6 llegan entre corchetes: [::1]
 
   if (net.isIP(host)) {
     if (!permitida(host)) throw errores.redPrivada(host, host);
@@ -125,6 +120,30 @@ async function verificarDNS(host) {
     if (!permitida(d.address)) throw errores.redPrivada(host, d.address);
   }
 }
+
+/**
+ * El agente de red que usa TODA descarga: valida la dirección en el momento
+ * exacto de conectar. Chequear el DNS antes y dejar que fetch lo resuelva de
+ * nuevo después deja una ventana (DNS rebinding: un dominio que contesta una
+ * IP pública para el chequeo y 127.0.0.1 para la conexión). Acá la IP que se
+ * valida es la misma a la que se conecta.
+ */
+const agenteSeguro = new Agent({
+  connect: {
+    lookup(host, opciones, cb) {
+      dnsLookup(host, { ...opciones, all: true }, (err, direcciones) => {
+        if (err) return cb(err);
+        if (!direcciones.length || direcciones.some((d) => !permitida(d.address))) {
+          const e = new Error('dirección no permitida');
+          e.code = 'ERR_RED_PRIVADA';
+          return cb(e);
+        }
+        if (opciones && opciones.all) return cb(null, direcciones);
+        cb(null, direcciones[0].address, direcciones[0].family);
+      });
+    },
+  },
+});
 
 /* ------------------------------------------------------------------ *
  * 3. Cortesia con el sitio de origen
@@ -275,7 +294,8 @@ export async function descargar(urlInicial) {
       // redirección puede cambiar de host (ej. a un subdominio "-test").
       const pedida = urlParaPedir(actual.toString(), actual.hostname);
       viaRele = pedida !== actual.toString() && !/api\.scraperapi\.com/.test(pedida);
-      respuesta = await fetch(pedida, {
+      respuesta = await fetchSeguro(pedida, {
+        dispatcher: agenteSeguro,
         redirect: 'manual', // las seguimos nosotros para poder revalidar
         signal: control.signal,
         headers: {
@@ -290,6 +310,7 @@ export async function descargar(urlInicial) {
       clearTimeout(reloj);
       if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
       if (e instanceof ErrorApp) throw e;
+      if (e?.cause?.code === 'ERR_RED_PRIVADA' || e?.code === 'ERR_RED_PRIVADA') throw errores.redPrivada(actual.hostname, 'resuelta al conectar');
       throw errores.redInalcanzable(actual.hostname, sinClave(e?.cause?.code || e?.code || e?.message));
     } finally {
       clearTimeout(reloj);

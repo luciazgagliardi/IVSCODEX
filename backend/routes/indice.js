@@ -284,8 +284,8 @@ for (const { slug, buscar } of FUENTES) {
           // el propio sitio, Mendoza y SAIJ lo filtran despues. Ver
           // lib/relevancia.js.
           ...(MODOS.has(modo) ? { modo } : {}),
-          ...(excluir ? { excluir: String(excluir) } : {}),
-          ...(tribunal ? { tribunal } : {}),
+          ...(typeof excluir === 'string' && excluir.trim() ? { excluir: excluir.slice(0, 200) } : {}),
+          ...(typeof tribunal === 'string' && /^[A-Za-z0-9_-]{1,30}$/.test(tribunal) ? { tribunal } : {}),
           // Sólo SAIJ: filtra por provincia (las demás fuentes lo ignoran).
           ...(typeof provincia === 'string' && provincia.length <= 60 ? { provincia } : {}),
         }));
