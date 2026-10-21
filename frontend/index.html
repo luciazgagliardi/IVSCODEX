@@ -260,6 +260,105 @@ strong,b{font-weight:500}
   .bz-fila .rf-buscar,.rf-todas{display:none}
   .bq-barra{flex-wrap:wrap}
 }
+
+/* ============================================================
+   Teléfono (hasta 760 px): navegación abajo, buscador compacto,
+   filtros como hoja desde abajo, Lexia y perfil como hojas.
+   ============================================================ */
+.botnav{display:none}
+.perfil-hoja{display:none}
+.rz-mas{padding:18px 0 6px;text-align:center}
+.rz-mas-n{color:var(--mute-2);margin-left:4px}
+@media (max-width:760px){
+  body{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+  /* arriba: sólo el nombre y «Cómo usar» */
+  .nav-wrap{padding:12px var(--pad);gap:10px}
+  .nav-fin{margin-left:auto}
+  #abrir-menu,#mi-perfil{display:none}
+  #como-usar{display:inline-flex;padding:8px 16px 7px;font-size:13px}
+  .perfil-wrap .perfil-menu{display:none}
+  /* barra de abajo */
+  .botnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:55;
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));background:rgba(16,14,11,.94);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+  .bn{appearance:none;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 5px;
+    color:var(--mute-2);font:400 11px/1.1 var(--sans);cursor:pointer;border-radius:14px;-webkit-tap-highlight-color:transparent}
+  .bn svg{width:23px;height:23px}
+  .bn[aria-current="page"],.bn.on{color:var(--gold)}
+  .bn:active{background:rgba(241,238,230,.06)}
+  .menu__grid{padding-bottom:110px;row-gap:22px}
+  .menu__item b{font-size:20px}
+  .menu__item span{font-size:13px}
+  .menu__grupo h2{margin-bottom:6px}
+  /* hoja del perfil */
+  .perfil-hoja.perfil-menu{display:block;position:fixed;left:10px;right:10px;bottom:calc(78px + env(safe-area-inset-bottom,0px));top:auto;width:auto;max-height:68vh;overflow:auto;z-index:70}
+  .perfil-hoja[hidden]{display:none}
+  .pm-it{padding:13px 14px;font-size:15px}
+  /* cabecera de la sección, más corta */
+  .cab{padding-top:10px}
+  .cab__saludo{margin:0 0 6px;font-size:13.5px}
+  .cab h1,.cab[data-tab="buscar"] h1{font-size:32px;margin-top:6px}
+  .cab__ojo{font-size:13px}
+  .cab>.aviso{margin-top:10px;font-size:14.5px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+  .cab>.aviso.abierto{display:block;-webkit-line-clamp:unset}
+  .wrap{padding-top:18px;padding-bottom:40px}
+  .wrap.en-buscar{padding-top:12px}
+  /* buscar */
+  .bq-barra{flex-wrap:wrap;gap:8px}
+  .cq{flex:1 1 100%;padding:4px 4px 4px 16px}
+  .cq input[type=text]{font-size:16px;padding:9px 0}
+  .cq .btn{padding:10px 20px}
+  .bq-barra>.chip{padding:8px 14px;font-size:13px}
+  .bq-sum{padding:8px 2px 0;font-size:12.5px}
+  .bq-cuenta{margin-left:0;width:100%}
+  .aviso-srv{display:none}
+  .bq-sug--abajo{margin-top:10px}
+  .bq-sug--abajo .panel{padding:0}
+  /* filtros: hoja que sube desde abajo */
+  .bq-drawer{position:fixed;left:0;right:0;top:auto;bottom:0;max-height:84vh;border-radius:22px 22px 0 0;border-bottom:0;z-index:80;
+    padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 0 0 100vmax rgba(8,7,5,.62)}
+  .fsb-fila{gap:7px}
+  .fsb-rot{min-width:100%;margin-bottom:-2px}
+  .fsb .chip{padding:9px 14px;font-size:13.5px}
+  .fsb-c{margin-left:0;width:100%;justify-content:space-between}
+  .fsb-c input[type=number],.fsb-c input[type=text],.fsb-c select{font-size:16px;width:46%}
+  .fsb-c input.ex{width:70%}
+  .fsb-provs{max-height:150px}
+  .bq-pie{flex-direction:column;align-items:stretch}
+  .bq-acc{justify-content:flex-start}
+  .bq-acc .btn{width:100%;padding:12px 16px;font-size:14px;order:9}
+  /* bases como fichas que se deslizan y quedan fijas arriba */
+  .bz{margin-top:14px;gap:10px}
+  .bz-riel{position:sticky;top:calc(58px + env(safe-area-inset-top,0px));z-index:30;background:rgba(16,14,11,.96);margin:0 calc(var(--pad) * -1);padding:8px var(--pad);
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid var(--line-2)}
+  .bz-riel::-webkit-scrollbar{display:none}
+  .bz-fila{padding:8px 14px;gap:8px}
+  .bz-fila .rf-t{display:none}
+  .bz-fila.consultando .rf-t{display:inline}
+  /* resultados más livianos */
+  .rz{padding:11px 10px;margin:0 -10px}
+  .rz-t{font-size:14.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .rz-m{margin-left:0;font-size:11.5px}
+  .rz p{margin-left:0;font-size:13.5px}
+  .rz-cab{font-size:13px}
+  .rz-ord .chip{padding:7px 12px;font-size:12.5px}
+  .rz-abierta .fuente{padding:14px 0}
+  .rz-aviso{font-size:12px}
+  /* avisos y atajos */
+  #flash{left:14px;right:14px;transform:none;width:auto;bottom:calc(86px + env(safe-area-inset-bottom,0px));max-width:none;font-size:13px;padding:10px 16px 9px;border-radius:16px;text-align:center}
+  /* Lexia: botón sobre la barra, panel como hoja */
+  .asist{right:12px;bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  .asist__fab{padding:11px 16px 10px;font-size:14px}
+  .asist.is-on{right:0;left:0;bottom:0}
+  .asist.is-on .asist__panel{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));width:auto;height:min(86vh,680px);z-index:90;border-radius:22px}
+  .asist__m{font-size:15px;max-width:92%}
+  .asist__ops button{padding:11px 16px;font-size:14px}
+  .asist .asist__form input[type=text]{font-size:16px}
+  /* recorrido */
+  .tour-card{left:10px!important;right:10px!important;width:auto!important}
+  /* pie y menú */
+  .pie{padding-bottom:20px}
+}
 /* ---------- Buscar en columnas ---------- */
 .bq{display:grid;gap:14px;margin-bottom:22px}
 .bq-fila{display:flex;align-items:flex-end;gap:14px}
@@ -1168,6 +1267,14 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   </div>
 </header>
 
+<nav class="botnav" id="botnav" aria-label="Navegación">
+  <button type="button" class="bn" data-tab="buscar"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><span>Buscar</span></button>
+  <button type="button" class="bn" data-tab="lector"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h8l4 4V20a.5.5 0 0 1-.5.5h-11A.5.5 0 0 1 6 20z"/><path d="M14 3.5V8h4M9 12.5h6M9 16h6"/></svg><span>Lector</span></button>
+  <button type="button" class="bn" data-tab="calculos"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg><span>Cálculos</span></button>
+  <button type="button" class="bn" data-act="tog-perfil" id="bn-perfil"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.6-3.6 3.4-5.6 7-5.6s6.4 2 7 5.6"/></svg><span>Perfil</span></button>
+  <button type="button" class="bn" id="abrir-menu-m" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg><span>Más</span></button>
+</nav>
+<div class="perfil-menu perfil-hoja" id="perfil-hoja" role="menu" hidden></div>
 <div class="menu" id="menu" aria-label="Índice de secciones"><div class="menu__grid" id="menu-grid"></div></div>
 
 <div class="cab" id="cab"></div>
@@ -3909,6 +4016,7 @@ function perfilMenuHTML(){
     (hist.length?hist.map(function(q){ return '<button type="button" class="pm-it pm-q" role="menuitem" data-act="rehacer" data-v="'+esc(q)+'" title="'+esc(q)+'"><span>'+esc(q)+'</span></button>'; }).join(""):'<div class="pm-vacio">Todavía no hay búsquedas.</div>')+
     '<div class="pm-sep"></div>'+
     it('data-tab="guardados"','Ver todo lo guardado →')+
+    it('data-tour','Cómo usar la página')+
     (u?it('data-act="auth-logout"','Cerrar sesión'):'');
 }
 function pintarNav(){
@@ -3918,6 +4026,12 @@ function pintarNav(){
     pf.setAttribute("aria-expanded",String(!!estado.perfilMenu));
   }
   if(pm){ pm.hidden=!estado.perfilMenu; if(estado.perfilMenu) pm.innerHTML=perfilMenuHTML(); }
+  var ph=document.getElementById("perfil-hoja");
+  if(ph){ ph.hidden=!estado.perfilMenu; if(estado.perfilMenu) ph.innerHTML=perfilMenuHTML(); }
+  [].forEach.call(document.querySelectorAll("#botnav .bn[data-tab]"),function(b){
+    if(b.getAttribute("data-tab")===estado.tab) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current");
+  });
+  var bp=document.getElementById("bn-perfil"); if(bp) bp.classList.toggle("on",!!estado.perfilMenu||estado.tab==="cuenta"||estado.tab==="guardados");
   var n=document.getElementById("nav");
   n.innerHTML=PRINCIPALES.map(function(id){
     var t=TABS.filter(function(x){return x[0]===id;})[0];
@@ -3940,21 +4054,26 @@ function menuAbierto(on){
   m.classList.toggle("is-on",on);
   b.setAttribute("aria-expanded",String(on));
   b.querySelector(".txt").textContent=on?"Cerrar":"Todas las secciones";
+  var bm=document.getElementById("abrir-menu-m"); if(bm){ bm.setAttribute("aria-expanded",String(on)); bm.classList.toggle("on",on); }
   document.documentElement.style.overflow=on?"hidden":"";
 }
 document.addEventListener("click",function(ev){
   var t=ev.target;
   if(!t.closest) return;
-  if(t.closest("#abrir-menu")){ menuAbierto(!document.getElementById("menu").classList.contains("is-on")); return; }
+  if(t.closest("#abrir-menu,#abrir-menu-m")){ menuAbierto(!document.getElementById("menu").classList.contains("is-on")); return; }
   if(t.closest("#menu [data-tab]")||t.closest("[data-portada]")) menuAbierto(false);
 });
 document.addEventListener("keydown",function(ev){ if(ev.key==="Escape"){ menuAbierto(false); if(estado.perfilMenu){ estado.perfilMenu=false; pintarNav(); } } });
 /* el menú de perfil se cierra al tocar afuera o al elegir algo (en captura: antes de que la acción repinte) */
 document.addEventListener("click",function(ev){
+  var av=ev.target&&ev.target.closest&&ev.target.closest("#cab > .aviso"); if(av) av.classList.toggle("abierto");
+});
+document.addEventListener("click",function(ev){
   if(!estado.perfilMenu) return;
   var t=ev.target; if(!t||!t.closest) return;
   if(t.closest(".tour-ov")) return;
-  if(!t.closest(".perfil-wrap")||t.closest(".perfil-menu button")){ estado.perfilMenu=false; pintarNav(); }
+  if(t.closest("#bn-perfil")) return;
+  if(!t.closest(".perfil-wrap,.perfil-hoja")||t.closest(".perfil-menu button")){ estado.perfilMenu=false; pintarNav(); }
 },true);
 
 /* La cabecera de cada sección: palabra latina, grupo y título. El primer
@@ -4387,7 +4506,9 @@ function bloqueResultados(vis){
   h+='<div class="rz-cab"><b>Todas las bases</b>'+
     '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"]].map(function(o){
       return '<button class="chip" data-act="orden" data-v="'+o[0]+'" aria-pressed="'+(estado.orden===o[0]?"true":"false")+'">'+o[1]+'</button>'; }).join("")+'</span></div>';
-  h+=lista.map(function(x){ return filaIndice(x.f,x.r,x.k); }).join("");
+  var lim=estado.limFilas||40;
+  h+=lista.slice(0,lim).map(function(x){ return filaIndice(x.f,x.r,x.k); }).join("");
+  if(lista.length>lim) h+='<div class="rz-mas"><button class="btn sec" data-act="mas-filas">Mostrar 40 más <span class="rz-mas-n">(quedan '+(lista.length-lim)+')</span></button></div>';
   h+='<p class="rz-aviso">Se muestran los primeros resultados de cada base. Para ver todos, filtrar por tribunal o cambiar de página, elija la base en la columna de la izquierda.</p>';
   return h;
 }
@@ -4447,6 +4568,7 @@ function buscarEnTodas(){
     if(g) g.click();
     return;
   }
+  estado.limFilas=40;
   basesVisibles().forEach(function(f){ buscarEnFuente(f.slug); });
   setTimeout(function(){
     var c=document.getElementById("bz");
@@ -4455,10 +4577,10 @@ function buscarEnTodas(){
 }
 function avisoServidor(){
   var local=/localhost|127\.0\.0\.1/.test(String(estado.api||""))||String(estado.api||"").charAt(0)==="/";
-  if(local) return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el propio</b> · todo disponible, incluido el texto completo de los fallos de CABA.</p>';
+  if(local) return '<p class="aviso-srv" style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el propio</b> · todo disponible, incluido el texto completo de los fallos de CABA.</p>';
   // Sin número acá adentro: decía "las cuatro búsquedas andan" y ya iban
   // seis. El conteo sale de FUENTES_INDICE, que es donde se agregan.
-  return '<p style="font-size:12px;color:var(--humo);margin:0 0 12px">Para procesar el texto completo de un fallo de CABA, '+
+  return '<p class="aviso-srv" style="font-size:12px;color:var(--humo);margin:0 0 12px">Para procesar el texto completo de un fallo de CABA, '+
     'es necesario descargarlo previamente e introducirlo de manera directa en el Lector.</p>';
 }
 
@@ -8584,6 +8706,7 @@ document.addEventListener("click",function(ev){
   }
   if(act==="tog-perfil"){ estado.perfilMenu=!estado.perfilMenu; pintarNav(); return; }
   if(act==="buscar-todas"){ estado.drawer=false; buscarEnTodas(); return; }
+  if(act==="mas-filas"){ estado.limFilas=(estado.limFilas||40)+40; render(); return; }
   if(act==="tog-drawer"){ estado.drawer=!estado.drawer; render(); return; }
   if(act==="ver-base"){ estado.verBase=b.getAttribute("data-fuente")||""; render(); return; }
   if(act==="orden"){ estado.orden=b.getAttribute("data-v"); render(); return; }
