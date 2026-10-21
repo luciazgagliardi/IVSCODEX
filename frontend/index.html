@@ -644,6 +644,20 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .rotulo{display:block;margin:16px 0 10px;font-size:13px;color:var(--mute)}
 .rotulo strong{font-weight:500;color:var(--fg)}
 .conteo{margin:0 0 18px;font-size:13px;color:var(--mute-2)}
+.rail-grupo{display:block;margin:16px 0 4px;padding:0 9px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.rail-grupo:first-child{margin-top:4px}
+.rail-sub{display:block;margin:8px 0 2px;padding:0 9px;font-size:12px;color:var(--mute-2);font-style:italic}
+.ramas-indice{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 36px}
+.ramas-indice a{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--line);border-radius:999px;color:var(--fg);text-decoration:none;font-size:14px;transition:border-color .3s,color .3s}
+.ramas-indice a:hover{border-color:var(--gold);color:var(--gold)}
+.ramas-indice a span{color:var(--mute-2);font-size:12.5px}
+.rama-grupo{margin:0 0 28px;padding-top:40px;border-top:1px solid var(--line);scroll-margin-top:90px}
+.rama-grupo:first-of-type{padding-top:8px;border-top:0}
+.rama-grupo h2{margin:0 0 6px;font:400 clamp(26px,2.6vw,36px)/1.15 var(--sans);letter-spacing:-.025em;color:var(--fg)}
+.rama-grupo p{margin:0;max-width:62ch;font-size:15px;color:var(--mute)}
+.col.v-ramas>.ramas-indice,.col.v-ramas>.rama-grupo,.col.v-ramas>.rama-sub,.col.v-ramas>.conteo,.col.v-ramas>.aviso{grid-column:1/-1}
+.rama-sub{margin:0 0 18px;font:500 12px/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+
 .vacio{padding:32px 24px;border:1px dashed var(--line);color:var(--mute);text-align:center;font-size:15px}
 .out{
   padding:22px 24px;border:0;border-left:1px solid var(--gold);background:var(--ficha);
@@ -1690,6 +1704,44 @@ var RAMAS=[
  {id:"elec",n:"Electoral y partidos",d:"Candidaturas, listas, financiamiento, competencia de la justicia electoral.",
   v:["oficialización de listas","paridad de género en listas","financiamiento de campañas","reconocimiento de partido político","competencia electoral","boleta única","impugnación de candidatura"]}
 ];
+
+/* La clasificación de las ramas, a la manera tradicional de las facultades de
+   Derecho argentinas: derecho público, derecho privado (con el civil, el
+   comercial y el internacional privado), derecho social (el trabajo y la
+   seguridad social) y las ramas de los bienes colectivos y recursos
+   naturales. Cambia solo cómo se ordenan y se nombran: los id y las voces
+   de cada rama son los de siempre, porque los puentes del intérprete y las
+   fuentes (campo r) apuntan a ellos. */
+var GRUPOS_RAMAS=[
+  {id:"pub",n:"Derecho público",d:"El Estado y las personas frente a él: la Constitución, la administración, los impuestos, el castigo y el proceso.",
+   ramas:["const","adm","trib","pen","proc_pen","ejec","proc_civ","ddhh","elec"]},
+  {id:"priv",n:"Derecho privado",d:"Las relaciones entre particulares: personas, familia, obligaciones, bienes, sucesiones y empresa.",
+   subs:[{n:"Derecho civil",ramas:["civ","dan","rea","fam","nna","gen","suc"]},
+         {n:"Derecho comercial y de la empresa",ramas:["com","cyq","seg","cons","pi"]},
+         {n:"Derecho internacional privado",ramas:["dipr"]}]},
+  {id:"soc",n:"Derecho social",d:"El trabajo y la seguridad social.",ramas:["lab","sind","art","prev"]},
+  {id:"esp",n:"Ambiente, aguas y minería",d:"Ramas de los bienes colectivos y los recursos naturales.",ramas:["amb","agua"]}
+];
+(function(){
+  var NOMBRES={const:"Derecho constitucional y amparo",adm:"Derecho administrativo",trib:"Derecho tributario",pen:"Derecho penal",
+    proc_pen:"Derecho procesal penal",ejec:"Ejecución penal",proc_civ:"Derecho procesal civil y comercial",
+    ddhh:"Derecho internacional público y derechos humanos",elec:"Derecho electoral y político",
+    civ:"Obligaciones y contratos",dan:"Daños y responsabilidad civil",rea:"Derechos reales",fam:"Derecho de familia",
+    nna:"Niñez y adolescencia",gen:"Género y violencia",suc:"Derecho de las sucesiones",
+    com:"Derecho comercial y societario",cyq:"Concursos y quiebras",seg:"Derecho de seguros",cons:"Derecho del consumidor",
+    pi:"Propiedad intelectual y datos",dipr:"Derecho internacional privado",
+    lab:"Derecho del trabajo: relaciones individuales",sind:"Derecho del trabajo: relaciones colectivas",
+    art:"Riesgos del trabajo",prev:"Previsión y seguridad social",amb:"Derecho ambiental",agua:"Derecho de aguas y minería"};
+  var orden=[];
+  GRUPOS_RAMAS.forEach(function(g){
+    var tanda=function(ids,sub){ ids.forEach(function(id){ var r=null; for(var i=0;i<RAMAS.length;i++) if(RAMAS[i].id===id) r=RAMAS[i]; if(r){ r.g=g.id; r.s=sub||""; if(NOMBRES[id]) r.n=NOMBRES[id]; orden.push(r); } }); };
+    if(g.subs) g.subs.forEach(function(sg){ tanda(sg.ramas,sg.n); }); else tanda(g.ramas,"");
+  });
+  /* alguna rama nueva sin grupo: va al final, sin perderse */
+  RAMAS.forEach(function(r){ if(orden.indexOf(r)<0){ r.g="esp"; r.s=""; orden.push(r); } });
+  orden.forEach(function(r,i){ RAMAS[i]=r; });
+})();
+
 
 /* ============================================================
    5.bis Intérprete de consulta — lo que dice el abogado, traducido
@@ -4120,14 +4172,19 @@ function ramasFiltradas(){
   if(!q) return RAMAS;
   return RAMAS.filter(function(x){ return x.n.toLowerCase().indexOf(q)!==-1; });
 }
+function nombreGrupoRama(id){ for(var i=0;i<GRUPOS_RAMAS.length;i++) if(GRUPOS_RAMAS[i].id===id) return GRUPOS_RAMAS[i].n; return ""; }
 function listaRamasHTML(){
   var fs=ramasFiltradas();
   // El botón "Todas las ramas" solo tiene sentido como reset en la
   // solapa Ramas; en Buscar sobra, ahí ya alcanza con vaciar el campo.
   var todas=estado.tab==="buscar"?"":
     '<button data-rama="" aria-pressed="'+(estado.rama===""?"true":"false")+'">Todas las ramas</button>';
+  var ultimoG="",ultimoS="";
   return todas+(fs.length?fs.map(function(x){
-      return '<button data-rama="'+x.id+'" aria-pressed="'+(estado.rama===x.id?"true":"false")+'">'+esc(comoTitulo(x.n))+'</button>';
+      var cab="";
+      if(x.g!==ultimoG){ ultimoG=x.g; ultimoS=""; cab+='<span class="rail-grupo">'+esc(nombreGrupoRama(x.g))+'</span>'; }
+      if(x.s&&x.s!==ultimoS){ ultimoS=x.s; cab+='<span class="rail-sub">'+esc(x.s)+'</span>'; }
+      return cab+'<button data-rama="'+x.id+'" aria-pressed="'+(estado.rama===x.id?"true":"false")+'">'+esc(comoTitulo(x.n))+'</button>';
     }).join(""):'<span style="display:block;padding:6px 9px;font-size:12px;color:var(--humo);font-style:italic">Sin resultados</span>');
 }
 function pintarRail(){
@@ -4428,7 +4485,7 @@ function franjaBuscar(){
    '</div>';
   if(estado.masFiltros) h+='<div class="fsb-fila"><span class="fsb-rot">Más</span>'+
      '<label class="fsb-c"><span>Rama del derecho</span><select id="rama-sel"><option value="">Todas las ramas</option>'+
-       RAMAS.map(function(r){ return '<option value="'+esc(r.id)+'"'+(estado.rama===r.id?" selected":"")+'>'+esc(comoTitulo(r.n))+'</option>'; }).join("")+'</select></label>'+
+       GRUPOS_RAMAS.map(function(g){ return '<optgroup label="'+esc(g.n)+'">'+RAMAS.filter(function(r){return r.g===g.id;}).map(function(r){ return '<option value="'+esc(r.id)+'"'+(estado.rama===r.id?" selected":"")+'>'+esc(comoTitulo(r.n))+'</option>'; }).join("")+'</optgroup>'; }).join("")+'</select></label>'+
      pl(estado.resaltarFuente,"tog-frag","","Resaltar la frase en la página que se abre")+'</div>';
   var ac=filtrosActivos();
   if(ac.length) h+='<div class="fsb-fila">'+ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join("")+
@@ -5657,9 +5714,16 @@ function vistaRamas(){
   // Sin ninguna elegida sigue diciendo "28 de 28", que ya estaba bien.
   var cuales=RAMAS.map(function(x){return x.id;}).indexOf(estado.rama);
   html+='<p class="conteo">'+(cuales>=0?cuales+1:RAMAS.length)+' de '+RAMAS.length+' ramas</p>';
+  var ultG="",ultS="";
+  if(!estado.rama) html+='<nav class="ramas-indice" aria-label="Grandes divisiones">'+GRUPOS_RAMAS.map(function(g){
+    return '<a href="#grupo-'+g.id+'">'+esc(g.n)+' <span>'+RAMAS.filter(function(r){return r.g===g.id;}).length+'</span></a>'; }).join("")+'</nav>';
   html+=lista.map(function(x){
-    var n=F.filter(function(f){return f.r==="*"||f.r.split(",").indexOf(x.id)!==-1;}).length;
-    return '<div class="rama"><h3>'+esc(comoTitulo(x.n))+'</h3><p>'+esc(x.d)+'</p>'+
+    var n=F.filter(function(f){return f.r==="*"||f.r.split(",").indexOf(x.id)!==-1;}).length, cab="";
+    if(!estado.rama&&x.g!==ultG){ ultG=x.g; ultS="";
+      var gr=GRUPOS_RAMAS.filter(function(g){return g.id===x.g;})[0]||{};
+      cab+='<div class="rama-grupo" id="grupo-'+esc(x.g)+'"><h2>'+esc(gr.n||"")+'</h2><p>'+esc(gr.d||"")+'</p></div>'; }
+    if(!estado.rama&&x.s&&x.s!==ultS){ ultS=x.s; cab+='<h4 class="rama-sub">'+esc(x.s)+'</h4>'; }
+    return cab+'<div class="rama"><h3>'+esc(comoTitulo(x.n))+'</h3><p>'+esc(x.d)+'</p>'+
       '<div class="rotulo">Voces para buscar</div>'+
       '<div class="voces">'+x.v.map(function(v){
         return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(comoTitulo(v))+'</button>';}).join("")+'</div>'+
