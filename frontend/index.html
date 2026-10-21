@@ -802,7 +802,29 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .blk .sin-items p:hover{color:var(--fg)}
 
 
+
+/* ---------- tesauro con fallos cargados ---------- */
+.tes-acc{display:flex;flex-wrap:wrap;gap:8px}
+.tes-btn[aria-expanded="true"]{border-color:var(--gold-55);color:var(--gold)}
+.tes-panel{margin-top:14px;padding-top:6px;border-top:1px solid var(--line)}
+.tes-nota{margin:8px 0 10px;font-size:12.5px;color:var(--mute-2)}
+.tes-voz{border-bottom:1px solid var(--line)}
+.tes-voz summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:46px;cursor:pointer;list-style:none;font-size:15px}
+.tes-voz summary::-webkit-details-marker{display:none}
+.tes-voz summary::after{content:"▾";color:var(--mute-2);font-size:12px;transition:transform .3s}
+.tes-voz[open] summary::after{transform:rotate(180deg)}
+.tes-voz summary small{margin-left:auto;color:var(--mute-2);font-size:12.5px}
+.tes-fallo{padding:12px 0;border-top:1px solid var(--line)}
+.tes-meta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:12px;color:var(--mute-2);margin-bottom:6px}
+.tes-fallo h4{margin:0 0 6px;font:500 14.5px/1.35 var(--sans)}
+.tes-fallo p{margin:0 0 8px;font-size:14px;line-height:1.55;color:var(--mute)}
+.tes-mas{margin:10px 0 14px}
 /* ---------- Lexia sobre el fallo (local) ---------- */
+.lector-lado{position:sticky;top:170px;max-height:calc(100vh - 200px);overflow:auto;overflow-x:hidden;padding:0 6px 0 0}
+.lector-lado .meta{position:static;max-height:none;overflow:visible;padding:0}
+.lector-lado .lx-fallo{margin:0 0 20px;padding:16px}
+.lector-lado .lx-fila{grid-template-columns:78px minmax(0,1fr)}
+.lx-mini{border-color:var(--gold-55);color:var(--gold)}
 .lx-fallo{margin:28px 0 8px;padding:20px;border:1px solid var(--gold-55);border-radius:24px;background:rgba(217,163,27,.035);scroll-margin-top:150px}
 .lx-cab{display:flex;align-items:center;gap:10px;font-size:16px}
 .lx-cab b{font-weight:500}
@@ -864,7 +886,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
   body.en-lector .barra-doc .campo span{display:none}
   body.en-lector .barra-doc .campo input{font-size:16px;padding:4px 0 6px}
   body.en-lector .lector-grid{display:flex;flex-direction:column}
-  body.en-lector .lector-grid>.meta{order:2;position:static;max-height:none;margin-top:18px}
+  body.en-lector .lector-grid>.lector-lado{order:2;position:static;max-height:none;overflow:visible;margin-top:18px}
   body.en-lector .doc{font-size:16px;line-height:1.7}
   .lx-fallo{padding:16px;margin-left:-2px;margin-right:-2px}
   .lx-fila{grid-template-columns:82px minmax(0,1fr)}
@@ -881,7 +903,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .barra-doc .campo{flex:1 1 260px;margin:0}
 .barra-doc .campo span{margin-bottom:2px;font-size:12.5px}
 .barra-doc .campo input{padding:2px 0 8px;font-size:18px}
-.lector-grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:clamp(24px,3vw,48px);align-items:start;margin-bottom:12px}
+.lector-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:clamp(24px,3vw,48px);align-items:start;margin-bottom:12px}
 .meta{position:sticky;top:170px;max-height:calc(100vh - 200px);overflow:auto;overflow-x:hidden;padding:0 6px 0 0;border:0;background:none}
 .meta-top{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)}
 .meta-car{margin:0 0 10px;font:500 16px/1.4 var(--sans);color:var(--fg)}
@@ -915,7 +937,7 @@ mark.actual{background:var(--gold);color:var(--bg)}
 .pasaje .txt{margin-bottom:14px;font:400 15.5px/1.65 var(--sans);color:var(--fg-82)}
 .pasaje .acc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .pasaje .pos{font-size:12px;color:var(--mute-2)}
-@media (max-width:980px){ .lector-grid{grid-template-columns:minmax(0,1fr)} .meta{position:static;max-height:none} }
+@media (max-width:980px){ .lector-grid{grid-template-columns:minmax(0,1fr)} .meta,.lector-lado{position:static;max-height:none;overflow:visible} }
 
 /* ---------- estado de las bases (riel de Buscar) ---------- */
 .rail-resumen{display:flex;align-items:center;gap:8px;margin:-2px 0 12px;font-size:12.5px;color:var(--mute-2)}
@@ -5146,7 +5168,8 @@ function fichaIndice(f,r){
     '<div class="f-acc" style="margin-top:8px">'+
       (r.linkFicha?'<a class="mini" href="'+escU(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
       marcaTema+marcaVariante+
-      (r.linkFallo&&!(f.slug==="caba"&&uf&&im.fragmentos.hasOwnProperty(uf)&&!im.fragmentos[uf])?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>':"")+
+      (r.linkFallo&&!(f.slug==="caba"&&uf&&im.fragmentos.hasOwnProperty(uf)&&!im.fragmentos[uf])?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>'+
+        '<button class="mini lx-mini" data-act="traer-indice-fallo" data-lexia="1" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Preguntarle a Lexia</button>':"")+
       // Si el documento se puede traer, también se puede abrir donde vive:
       // el enlace al sitio oficial es lo que hace citable al resultado.
       //
@@ -5955,6 +5978,53 @@ function panelIndice(f){
   return out;
 }
 
+
+/* ============================================================
+   Tesauro con fallos cargados
+   ============================================================
+   Por cada voz de cada rama, los fallos principales ya guardados en
+   datos/tesauro/<rama>.json (los arma backend/scripts/armarTesauroFallos.mjs
+   desde los sumarios oficiales de SAIJ, la Corte Suprema, la SCBA y la Suprema
+   Corte de Mendoza). Se abren al instante, sin costo y aunque los sitios
+   oficiales no respondan; para lo más nuevo, «Buscar más» va a las bases en vivo. */
+var TES={}; // rama -> {cargando, error, datos}
+function tesCargar(id){
+  if(TES[id]&&(TES[id].datos||TES[id].cargando)) return;
+  TES[id]={cargando:true};
+  fetch("datos/tesauro/"+encodeURIComponent(id)+".json",{cache:"default"})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(d){ TES[id]={datos:d}; render(); })
+    ["catch"](function(){ TES[id]={error:true}; render(); });
+}
+function tesPanel(rama){
+  var t=TES[rama.id];
+  if(!t||t.cargando) return '<div class="tes-panel"><p class="tes-nota">Cargando los fallos de esta rama…</p></div>';
+  if(t.error||!t.datos) return '<div class="tes-panel"><p class="tes-nota">Todavía no hay fallos cargados para esta rama.</p></div>';
+  var voces=t.datos.voces||{};
+  var conFallos=rama.v.filter(function(v){ return (voces[v]||[]).length; });
+  return '<div class="tes-panel">'+
+    '<p class="tes-nota">Fallos guardados de fuentes oficiales, al '+esc((t.datos.generado||"").split("-").reverse().join("/"))+
+      '. Toque una voz para verlos; para lo más reciente, «Buscar más».</p>'+
+    conFallos.map(function(v){
+      var fs=voces[v];
+      return '<details class="tes-voz"><summary><span>'+esc(comoTitulo(v))+'</span><small>'+fs.length+' fallo'+(fs.length>1?"s":"")+'</small></summary>'+
+        fs.map(function(f){
+          var leer=f.link&&(f.f==="scba"||f.f==="mendoza")
+            ?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.f)+'" data-url="'+esc(f.link)+'">Leer acá</button>':'';
+          return '<article class="tes-fallo"><div class="tes-meta"><span class="cod">'+esc(f.cod)+'</span>'+
+              (f.trib?'<span>'+esc(f.trib)+'</span>':'')+(f.fecha?'<span>'+esc(f.fecha)+'</span>':'')+'</div>'+
+            (f.car?'<h4>'+esc(f.car)+'</h4>':'')+
+            '<p>'+resaltarSimple(f.txt,v)+'</p>'+
+            '<div class="f-acc">'+leer+
+              (f.link?'<a class="mini" href="'+esc(f.link)+'" target="_blank" rel="noopener noreferrer">Ver en la fuente</a>':'')+
+            '</div></article>';
+        }).join("")+
+        '<button class="mini tes-mas" data-act="voz" data-v="'+esc(v)+'">Buscar más sobre «'+esc(comoTitulo(v))+'» en las bases</button>'+
+      '</details>';
+    }).join("")+
+    (conFallos.length<rama.v.length?'<p class="tes-nota">'+(rama.v.length-conFallos.length)+' voces de esta rama todavía no tienen fallos cargados.</p>':'')+
+  '</div>';
+}
 function vistaRamas(){
   var html='<div class="aviso"><span class="av-tit">Las voces optimizan la búsqueda</span>'+
     'Los buscadores judiciales argentinos indexan mediante descriptores técnicos y no por lenguaje natural. '+
@@ -5980,7 +6050,10 @@ function vistaRamas(){
       '<div class="voces">'+x.v.map(function(v){
         return '<button class="voz" data-act="voz" data-v="'+esc(v)+'">'+esc(comoTitulo(v))+'</button>';}).join("")+'</div>'+
       '<div class="rotulo" style="margin-top:10px">'+n+' fuentes cubren esta rama</div>'+
-      '<button class="mini" data-act="ir-rama" data-rama="'+esc(x.id)+'">Ver esas fuentes</button>'+
+      '<div class="tes-acc"><button class="mini" data-act="ir-rama" data-rama="'+esc(x.id)+'">Ver esas fuentes</button>'+
+      '<button class="mini tes-btn" data-act="tes-abrir" data-tes="'+esc(x.id)+'" aria-expanded="'+(estado.tesAbierta===x.id?"true":"false")+'">'+
+        (estado.tesAbierta===x.id?"Ocultar los fallos cargados":"Fallos cargados")+'</button></div>'+
+      (estado.tesAbierta===x.id?tesPanel(x):'')+
       '</div>';
   }).join("");
   return html;
@@ -6430,11 +6503,10 @@ function vistaLector(){
       '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></label>'+
     '</div>'+
     '<div class="lector-grid">'+
-      '<div class="meta" id="doc-meta"></div>'+
+      '<div class="lector-lado">'+lxPanel()+'<div class="meta" id="doc-meta"></div></div>'+
       '<div class="doc-marco"><div class="doc" id="doc"></div>'+
         '<div class="minimapa" id="minimapa" aria-label="Mapa de coincidencias del fallo"></div></div>'+
     '</div>'+
-    lxPanel()+
     '<nav class="lector-acciones" aria-label="Acciones del fallo">'+
       '<button type="button" data-tab="buscar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Volver</button>'+
       '<button type="button" data-act="ir-pasajes"><svg viewBox="0 0 24 24"><path d="M7 7h4v4H8c0 2 1 3 3 3M14 7h4v4h-3c0 2 1 3 3 3"/></svg>Citar</button>'+
@@ -6483,6 +6555,11 @@ function rangoDeFuente(label){
 
 function pintarLector(){
   if(estado.tab!=="lector"||!estado.texto) return;
+  if(estado.lxFoco){
+    estado.lxFoco=false;
+    setTimeout(function(){ var lq=document.getElementById("lx-q"), sec=document.getElementById("lx-fallo");
+      if(sec) sec.scrollIntoView({behavior:"smooth",block:"start"}); if(lq) lq.focus({preventScroll:true}); },350);
+  }
   var texto=estado.texto,cs=coincidencias(texto),d=datosDoc(texto);
   if(estado.marca>=cs.length) estado.marca=0;
   conteoLector(cs);
@@ -9025,6 +9102,7 @@ document.addEventListener("click",function(ev){
     // nuevo con detectar() sobre el texto crudo (ver datosDoc()).
     var imIdx=estado.indices[slugIdx];
     var fichaIdx=(imIdx&&imIdx.resultados||[]).filter(function(x){return x.linkFallo===linkIdx;})[0];
+    if(b.getAttribute("data-lexia")) estado.lxFoco=true; // al abrir, ir directo a Lexia
     traerDocEnLector(linkIdx,{fichaConocida:fichaIdx?fichaDesdeIndice(slugIdx,fichaIdx):null});
     return;
   }
@@ -9354,6 +9432,12 @@ document.addEventListener("click",function(ev){
     if(txt.length>2000000){ txt=txt.slice(0,2000000); flash("El fallo era enorme: se cargaron los primeros 2 millones de caracteres"); }
     estado.texto=txt; estado.fuenteDe=de?de.value.trim():""; estado.marca=0; estado.fichaConocida=null;
     render(); window.scrollTo(0,0); return;
+  }
+  if(act==="tes-abrir"){
+    var rid=b.getAttribute("data-tes");
+    estado.tesAbierta=estado.tesAbierta===rid?"":rid;
+    if(estado.tesAbierta) tesCargar(rid);
+    render(); return;
   }
   if(act==="abrir-lexia"){ var fab=document.getElementById("asist-abrir"); if(fab) fab.click(); return; }
   if(act==="lx-identificar"){ lxPreguntar(null); return; }
