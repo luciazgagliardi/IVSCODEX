@@ -801,6 +801,75 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .blk .sin-items p{margin:0;padding:12px 0;border-top:1px solid var(--line-2);font-size:15.5px;color:var(--mute);transition:color .3s}
 .blk .sin-items p:hover{color:var(--fg)}
 
+
+/* ---------- Lexia sobre el fallo (local) ---------- */
+.lx-fallo{margin:28px 0 8px;padding:20px;border:1px solid var(--gold-55);border-radius:24px;background:rgba(217,163,27,.035);scroll-margin-top:150px}
+.lx-cab{display:flex;align-items:center;gap:10px;font-size:16px}
+.lx-cab b{font-weight:500}
+.lx-cab span:last-child{color:var(--mute-2);font-size:13.5px}
+.lx-punto{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(217,163,27,.16)}
+.lx-nota{margin:6px 0 14px;font-size:12.5px;color:var(--mute-2)}
+.lx-sug{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.lx-sug .chip{padding:8px 14px 7px;font-size:13px}
+.lx-form{display:flex;gap:8px;align-items:center;padding:5px 5px 5px 16px;border:1px solid var(--line-2,var(--line));border-radius:999px;background:rgba(241,238,230,.03)}
+.lx-form input{flex:1;min-width:0;border:0!important;background:none!important;padding:8px 0!important;font-size:15px;outline:none}
+.lx-form .btn{padding:9px 16px 8px;font-size:13.5px}
+#lx-resp{display:grid;gap:14px;margin-top:16px}
+.lx-r{padding-top:14px;border-top:1px solid var(--line)}
+.lx-q{margin:0 0 8px;font-size:13px;color:var(--gold)}
+.lx-r p{margin:0 0 8px;font-size:14.5px;line-height:1.55;color:var(--fg-82,var(--fg))}
+.lx-r h4{margin:14px 0 6px;font-size:13px;font-weight:500;color:var(--mute)}
+.lx-r .lx-sint{color:var(--gold);font-weight:500}
+.lx-pas{margin:4px 0 6px;padding:2px 0 2px 12px;border-left:2px solid var(--gold-55);font-size:14px;line-height:1.6;color:var(--mute)}
+.lx-r .mini{margin-bottom:6px}
+.lx-ficha{display:grid;gap:6px;margin-bottom:6px}
+.lx-fila{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;font-size:14px}
+.lx-fila b{font-weight:400;color:var(--mute-2);font-size:12.5px}
+.lx-tags{display:flex;flex-wrap:wrap;gap:6px}
+.lx-tags .meta-tag{background:none;cursor:pointer}
+.lx-nada{color:var(--mute-2)!important}
+.lx-monto{margin:10px 0 2px!important}
+.lx-chip{display:none}
+.lector-acciones{display:none}
+@media (max-width:760px){
+  /* Lexia vive en el buscador: sin botón flotante que tape la barra */
+  .asist__fab{display:none!important}
+  .lx-chip{display:inline-flex;flex:none;align-items:center;gap:6px;margin-right:4px;padding:7px 11px 6px;border:0;border-radius:999px;background:rgba(217,163,27,.14);color:var(--gold);font:500 12.5px/1 var(--sans)}
+  .lx-chip i{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+  .bq-barra .cq{display:flex;align-items:center;min-width:0;max-width:100%;box-sizing:border-box}
+  .bq-barra{min-width:0}
+  .bq-barra .cq input{flex:1 1 0;min-width:0;width:0}
+  .bq-barra .cq .btn{flex:none}
+  /* el fallo a pantalla completa: sin la barra de secciones, con acciones propias */
+  body.en-lector .botnav{display:none}
+  body.en-lector .lector-acciones{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:56;
+    padding:6px 6px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(16,14,11,.96);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+  .lector-acciones button{appearance:none;border:0;background:none;min-height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--mute);font:400 11.5px/1.1 var(--sans)}
+  .lector-acciones button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .lector-acciones button.lx{color:var(--gold)}
+  body.en-lector .barra-doc{top:calc(56px + env(safe-area-inset-top,0px));gap:8px;padding:10px 0;margin-bottom:14px}
+  body.en-lector .barra-doc .cnt{flex:1 1 100%;font-size:13px}
+  body.en-lector .barra-doc [data-act="tog-parcial"],body.en-lector .barra-doc [data-act="doc-otro"],body.en-lector .barra-doc [data-act="compartir-lector"]{display:none}
+  body.en-lector .barra-doc [data-act="marca-ant"],body.en-lector .barra-doc [data-act="marca-sig"]{min-height:40px;padding:0 16px}
+  /* diseño E: el fallo primero */
+  body.en-lector #cab{display:none}
+  body.en-lector .wrap{padding-top:0}
+  body.en-lector .barra-doc{flex-wrap:wrap;align-items:center}
+  body.en-lector .barra-doc .cnt{flex:1 1 0;order:1}
+  body.en-lector .barra-doc [data-act="marca-ant"],body.en-lector .barra-doc [data-act="marca-sig"]{order:2;width:40px;min-height:40px;padding:0;font-size:0;justify-content:center}
+  body.en-lector .barra-doc [data-act="marca-ant"]::before{content:"▲";font-size:13px}
+  body.en-lector .barra-doc [data-act="marca-sig"]::before{content:"▼";font-size:13px}
+  body.en-lector .barra-doc .campo{order:3;flex:1 1 100%}
+  body.en-lector .barra-doc .campo span{display:none}
+  body.en-lector .barra-doc .campo input{font-size:16px;padding:4px 0 6px}
+  body.en-lector .lector-grid{display:flex;flex-direction:column}
+  body.en-lector .lector-grid>.meta{order:2;position:static;max-height:none;margin-top:18px}
+  body.en-lector .doc{font-size:16px;line-height:1.7}
+  .lx-fallo{padding:16px;margin-left:-2px;margin-right:-2px}
+  .lx-fila{grid-template-columns:82px minmax(0,1fr)}
+}
+
 /* ---------- el lector ---------- */
 .barra-doc{
   position:sticky;top:calc(71px + env(safe-area-inset-top,0px));z-index:5;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;
@@ -3618,6 +3687,172 @@ function datosDoc(texto){
   }
   return d;
 }
+/* ============================================================
+   Lexia sobre el fallo abierto — local, sin IA externa ni costo.
+   ============================================================
+   Todo corre en este navegador: el fallo no se manda a ningún lado. Lexia
+   reconoce el tipo de pregunta (qué se resolvió, cuánto, qué normas, quién
+   votó, quiénes son las partes, fecha, tribunal) y busca la respuesta con
+   reglas sobre el texto; si la pregunta es otra, devuelve los párrafos que
+   mejor la responden. Cada respuesta trae el pasaje y «Ver en el fallo». */
+function lxPlano(s){ return sinTildes(s); }
+function lxParrafos(texto){
+  var out=[],re=/\n\s*\n+/g,ini=0,m;
+  function push(a,b){ var t=texto.slice(a,b); if(t.replace(/\s/g,"").length>=40) out.push({t:t,a:a}); }
+  while((m=re.exec(texto))){ push(ini,m.index); ini=m.index+m[0].length; }
+  push(ini,texto.length);
+  // un fallo pegado sin párrafos: se corta en tramos de ~5 oraciones
+  if(out.length<6){
+    out=[]; var ors=texto.match(/[^.;:]+(?:[.;:]+|$)/g)||[texto],acc="",a=0,pos=0;
+    ors.forEach(function(o){ var i=texto.indexOf(o,pos); if(!acc) a=i; acc+=(acc?" ":"")+o; pos=i+o.length;
+      if(acc.length>450){ out.push({t:acc,a:a}); acc=""; } });
+    if(acc) out.push({t:acc,a:a});
+  }
+  return out;
+}
+function lxRecorte(texto,i,antes,largo){
+  var a=Math.max(0,i-(antes==null?160:antes)),b=Math.min(texto.length,a+(largo||520));
+  return {t:(a>0?"… ":"")+texto.slice(a,b).replace(/\s+/g," ").trim()+(b<texto.length?" …":""),a:a,crudo:texto.slice(i,Math.min(texto.length,i+90))};
+}
+var LX_INTENCIONES=[
+  ["decision",/resolv|decidi|gano|perdio|fallo final|parte dispositiva|resultado|hizo lugar|hace lugar|rechaz|confirm|revoc|que dispuso|como termino/],
+  ["montos",/cuanto|monto|indemniz|suma|pesos|\$|dinero|plata|importe|condena(ron)? a pagar/],
+  ["votos",/voto|votaron|disiden|jueces|jueza|juez|magistrad|ministr|quien(es)? firm|unanim/],
+  ["precedentes",/precedente|jurisprudencia|fallos cita|que fallos|antecedente/],
+  ["normas",/norma|articulo|art\b|leyes|ley |codigo|que se aplic/],
+  ["partes",/partes|actor|actora|demandad|quien demand|contra quien|quienes son/],
+  ["fecha",/fecha|cuando|que dia|que ano/],
+  ["tribunal",/tribunal|que corte|que camara|quien lo dicto|quien dicto|que juzgado|sala/]
+];
+function lxIntencion(p){
+  var q=lxPlano(p);
+  for(var i=0;i<LX_INTENCIONES.length;i++) if(LX_INTENCIONES[i][1].test(q)) return LX_INTENCIONES[i][0];
+  return "";
+}
+function lxDecision(texto){
+  // La parte resolutiva está al final; si hay una fórmula en MAYÚSCULAS
+  // («POR ELLO», «RESUELVE», «FALLA», «S E N T E N C I A») la última manda:
+  // las de minúscula («Por ello, propongo…») suelen ser el cierre de un voto.
+  var desde=Math.floor(texto.length*.4),cola=texto.slice(desde),m,ultima=-1,fuerte=-1;
+  var re=/\b(RESUELV[EO]|FALL[AO]\s*:|SE RESUELVE|S\s?E\s?N\s?T\s?E\s?N\s?C\s?I\s?A|POR ELLO|Por ello|Por todo lo expuesto|Por las razones expuestas|Por los fundamentos expuestos|En consecuencia,? (?:corresponde|se resuelve)|se resuelve)/g;
+  while((m=re.exec(cola))){ ultima=m.index; if(m[0]===m[0].toUpperCase()&&/[A-Z]/.test(m[0])) fuerte=m.index; }
+  var i=fuerte>=0?fuerte:ultima;
+  if(i<0) return null;
+  var r=lxRecorte(texto,desde+i,0,1000);
+  var vs=[],pl=lxPlano(r.t);
+  [["hace lugar",/hac(e|er|iendo) lugar|admit(e|ir)/],["rechaza",/rechaz/],["confirma",/confirm/],["revoca",/revoc/],["modifica",/modific/],["eleva",/\seleva/],["reduce",/reduc/],["declara",/declar/],["condena",/conden/],["desestima",/desestim/],["absuelve",/absuelv|absolv/]]
+    .forEach(function(v){ if(v[1].test(pl)) vs.push(v[0]); });
+  return {pasaje:r,sintesis:vs};
+}
+function lxMontos(texto){
+  var re=/(?:\$|US\$|U\$S|USD)\s?\d[\d.]*(?:,\d+)?|\b\d{1,3}(?:\.\d{3})+(?:,\d+)?\s?(?:pesos|d[oó]lares)/gi,m,out=[],vistos={};
+  while((m=re.exec(texto))&&out.length<10){
+    var k=m[0].replace(/\s/g,""); if(vistos[k]) continue; vistos[k]=1;
+    out.push({monto:m[0].trim(),pasaje:lxRecorte(texto,m.index,140,320)});
+  }
+  return out;
+}
+function lxVotos(texto){
+  var re=/\b(?:Dr|Dra|Dres|Dras)\.\s*((?:[A-ZÁÉÍÓÚÑ][\wáéíóúñü'\-]+\.?\s?){1,4})/g,m,n={};
+  while((m=re.exec(texto))){ var nom=m[1].replace(/\s+/g," ").trim(); if(nom.length>3&&!/^(?:En|El|La|Los|Que)\b/.test(nom)) n[nom]=(n[nom]||0)+1; }
+  var nombres=Object.keys(n).sort(function(a,b){return n[b]-n[a];}).slice(0,10);
+  var d=null,md=/en disidencia|disidencia (?:parcial|total)?|vot[oó] en disidencia/i.exec(texto);
+  if(md) d=lxRecorte(texto,md.index,200,520);
+  var u=/por unanimidad|un[aá]nime/i.exec(texto);
+  return {nombres:nombres,disidencia:d,unanimidad:u?lxRecorte(texto,u.index,120,300):null};
+}
+function lxPrimerPasaje(texto,str){
+  if(!str) return null;
+  var i=texto.indexOf(str); if(i<0) i=lxPlano(texto).indexOf(lxPlano(str));
+  return i<0?null:lxRecorte(texto,i,120,360);
+}
+function lxPorPalabras(texto,pregunta){
+  var ps=lxParrafos(texto);
+  var raices=palabrasResaltables(pregunta).map(function(w){ return lxPlano(w).slice(0,6); }).filter(function(w){ return w.length>=3; });
+  if(!raices.length||!ps.length) return [];
+  var planos=ps.map(function(p){ return lxPlano(p.t); });
+  var df=raices.map(function(r){ return planos.filter(function(t){ return t.indexOf(r)!==-1; }).length; });
+  var res=ps.map(function(p,i){
+    var s=0,dist=0;
+    raices.forEach(function(r,k){ if(!df[k]) return; var c=planos[i].split(r).length-1; if(c){ dist++; s+=(1+Math.log(c))*Math.log(1+ps.length/df[k]); } });
+    return {p:p,s:s*dist};
+  }).filter(function(x){ return x.s>0; }).sort(function(a,b){ return b.s-a.s; }).slice(0,3);
+  return res.map(function(x){ return {t:x.p.t.replace(/\s+/g," ").trim().slice(0,700)+(x.p.t.length>700?" …":""),a:x.p.a,crudo:x.p.t.slice(0,90)}; });
+}
+/* Arma la respuesta (HTML) a una pregunta, o la ficha completa si p === null. */
+function lxResponder(p){
+  var texto=estado.texto||"",d=datosDoc(texto),it=p===null?"ficha":lxIntencion(p),h="";
+  function pas(r){ return r?'<blockquote class="lx-pas">'+resaltarSimple(r.t,p||"")+'</blockquote>'+
+    '<button type="button" class="mini" data-act="lx-ir" data-s="'+esc(r.crudo||r.t.replace(/^…\s*/,"").slice(0,80))+'">Ver en el fallo</button>':""; }
+  function fila(et,v){ return v?'<div class="lx-fila"><b>'+et+'</b><span>'+esc(v)+'</span></div>':""; }
+  if(it==="ficha"){
+    var dec=lxDecision(texto),mon=lxMontos(texto),vo=lxVotos(texto),car=d.car||"";
+    var partes=car.split(/\s+c\/\s+/i);
+    h+='<div class="lx-ficha">'+fila("Carátula",car)+
+      (partes.length>1?fila("Actora",partes[0])+fila("Demandada",partes[1].split(/\s+[sp]\/\s+/i)[0]):"")+
+      fila("Tribunal",[d.trib,d.sala].filter(Boolean).join(" · "))+fila("Fecha",d.fecha)+fila("Expediente",d.exp)+
+      fila("Votos",vo.disidencia?"Hay disidencia":(vo.unanimidad?"Por unanimidad":(vo.nombres.length?vo.nombres.slice(0,5).join(", "):"")))+'</div>';
+    if(dec){ h+='<h4>Qué se resolvió'+(dec.sintesis.length?' · <span class="lx-sint">'+esc(dec.sintesis.join(", "))+'</span>':"")+'</h4>'+pas(dec.pasaje); }
+    else h+='<h4>Qué se resolvió</h4><p class="lx-nada">No encontré la parte resolutiva («Resuelve», «Por ello»…). Puede estar con otra fórmula.</p>';
+    if(mon.length){ h+='<h4>Montos ('+mon.length+')</h4>'+mon.slice(0,4).map(function(x){ return '<p class="lx-monto"><b>'+esc(x.monto)+'</b></p>'+pas(x.pasaje); }).join(""); }
+    if(d.arts&&d.arts.length) h+='<h4>Normas citadas ('+d.arts.length+')</h4><div class="lx-tags">'+d.arts.slice(0,18).map(function(a){ return '<button type="button" class="meta-tag" data-act="lx-ir" data-s="'+esc(String(a).split(" ")[0]+" "+String(a).split(" ")[1])+'">'+esc(a)+'</button>'; }).join("")+'</div>';
+    if(d.citados&&d.citados.length) h+='<h4>Precedentes de la Corte citados</h4><div class="lx-tags">'+d.citados.slice(0,12).map(function(c){ return '<button type="button" class="meta-tag" data-act="lx-ir" data-s="'+esc(c)+'">'+esc(c)+'</button>'; }).join("")+'</div>';
+    if(vo.disidencia) h+='<h4>Disidencia</h4>'+pas(vo.disidencia);
+    return h;
+  }
+  if(it==="decision"){ var de=lxDecision(texto); return de?'<p>La parte resolutiva'+(de.sintesis.length?' <b>'+esc(de.sintesis.join(", "))+'</b>':"")+'. Dice así:</p>'+pas(de.pasaje):'<p class="lx-nada">No encontré la parte resolutiva con las fórmulas habituales («Resuelve», «Falla», «Por ello»). Pruebe preguntando con otras palabras.</p>'; }
+  if(it==="montos"){ var mo=lxMontos(texto); return mo.length?'<p>Encontré <b>'+mo.length+'</b> monto'+(mo.length>1?"s":"")+' en el fallo:</p>'+mo.slice(0,5).map(function(x){ return '<p class="lx-monto"><b>'+esc(x.monto)+'</b></p>'+pas(x.pasaje); }).join(""):'<p class="lx-nada">No encontré montos en pesos ni dólares en el texto.</p>'; }
+  if(it==="votos"){ var v=lxVotos(texto); return (v.nombres.length?'<p>Magistrados que aparecen: <b>'+esc(v.nombres.join(", "))+'</b>.</p>':'')+
+      (v.disidencia?'<p>Hay una <b>disidencia</b>:</p>'+pas(v.disidencia):(v.unanimidad?'<p>Se resolvió <b>por unanimidad</b>:</p>'+pas(v.unanimidad):'<p class="lx-nada">No aparece la palabra «disidencia» en el texto.</p>')); }
+  if(it==="normas"){ return d.arts&&d.arts.length?'<p>El fallo cita <b>'+d.arts.length+'</b> normas:</p><div class="lx-tags">'+d.arts.slice(0,30).map(function(a){ return '<span class="meta-tag">'+esc(a)+'</span>'; }).join("")+'</div>':'<p class="lx-nada">No reconocí normas citadas con su número.</p>'; }
+  if(it==="precedentes"){ return d.citados&&d.citados.length?'<p>Cita estos fallos de la Corte:</p><div class="lx-tags">'+d.citados.map(function(c){ return '<button type="button" class="meta-tag" data-act="lx-ir" data-s="'+esc(c)+'">'+esc(c)+'</button>'; }).join("")+'</div>':'<p class="lx-nada">No encontré citas con la forma «Fallos: tomo:página».</p>'; }
+  if(it==="partes"&&d.car){ var pp=d.car.split(/\s+c\/\s+/i); return '<p>Carátula: <b>'+esc(d.car)+'</b></p>'+(pp.length>1?'<div class="lx-ficha">'+fila("Actora",pp[0])+fila("Demandada",pp[1].split(/\s+[sp]\/\s+/i)[0])+'</div>':"")+pas(lxPrimerPasaje(texto,d.car)); }
+  if(it==="fecha"&&d.fecha) return '<p>Fecha del fallo: <b>'+esc(d.fecha)+'</b>.</p>';
+  if(it==="tribunal"&&d.trib) return '<p>Lo dictó: <b>'+esc([d.trib,d.sala].filter(Boolean).join(" · "))+'</b>.</p>'+pas(lxPrimerPasaje(texto,d.trib.split(" ").slice(0,3).join(" ")));
+  var ps=lxPorPalabras(texto,p);
+  return ps.length?'<p>Estos son los pasajes del fallo que mejor responden:</p>'+ps.map(pas).join(""):'<p class="lx-nada">No encontré en el fallo nada que hable de eso. Pruebe con otras palabras, o con «¿qué se resolvió?», «¿cuánto?», «¿qué normas?».</p>';
+}
+/* Ir al pasaje dentro del texto ya dibujado y dejarlo seleccionado. */
+function lxIrA(s){
+  var doc=document.getElementById("doc"); if(!doc||!s) return;
+  var limpio=String(s).replace(/^…\s*/,"").replace(/\s+/g," ").trim();
+  var nodos=[],w=document.createTreeWalker(doc,NodeFilter.SHOW_TEXT),n,todo="";
+  while((n=w.nextNode())){ nodos.push([n,todo.length]); todo+=n.nodeValue; }
+  var plano=todo.replace(/\s/g," "),buscado=limpio.slice(0,60),i=plano.indexOf(buscado);
+  if(i<0){ buscado=limpio.slice(0,28); i=plano.indexOf(buscado); }
+  if(i<0){ var pl=lxPlano(plano); buscado=lxPlano(limpio.slice(0,28)); i=pl.indexOf(buscado); }
+  if(i<0){ flash("No pude ubicar ese pasaje en el texto"); return; }
+  function ubicar(pos){ for(var k=nodos.length-1;k>=0;k--) if(nodos[k][1]<=pos) return [nodos[k][0],pos-nodos[k][1]]; return [nodos[0][0],0]; }
+  var a=ubicar(i),b=ubicar(Math.min(todo.length,i+buscado.length));
+  var r=document.createRange(); r.setStart(a[0],Math.min(a[1],a[0].nodeValue.length)); r.setEnd(b[0],Math.min(b[1],b[0].nodeValue.length));
+  var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  var el=a[0].parentElement; if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function lxPreguntar(p){
+  if(!estado.texto) return;
+  var pr=p===null?null:String(p||"").trim(); if(pr==="") return;
+  lxRespuestasHTML(); // reinicia si cambió el fallo
+  estado.lx=estado.lx||[];
+  estado.lx.unshift({p:pr===null?"Identificar lo importante":pr,h:lxResponder(pr)});
+  estado.lx=estado.lx.slice(0,6);
+  var caja=document.getElementById("lx-resp"); if(caja) caja.innerHTML=lxRespuestasHTML();
+  var sec=document.getElementById("lx-fallo"); if(sec) sec.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function lxRespuestasHTML(){
+  var clave=(estado.texto||"").length+":"+(estado.texto||"").slice(0,80);
+  if(estado.lxDe!==clave){ estado.lxDe=clave; estado.lx=[]; }
+  return (estado.lx||[]).map(function(x){ return '<article class="lx-r"><p class="lx-q">'+esc(x.p)+'</p>'+x.h+'</article>'; }).join("");
+}
+function lxPanel(){
+  return '<section class="lx-fallo" id="lx-fallo" aria-label="Lexia sobre este fallo">'+
+    '<div class="lx-cab"><span class="lx-punto"></span><b>Lexia</b><span>sobre este fallo</span></div>'+
+    '<p class="lx-nota">Lee el fallo en su navegador: no se envía a ningún lado ni tiene costo.</p>'+
+    '<div class="lx-sug"><button type="button" class="chip" data-act="lx-identificar">Identificar lo importante</button>'+
+      ['¿Qué se resolvió?','¿Cuánto se indemnizó?','¿Hubo disidencias?','¿Qué normas aplica?'].map(function(s){ return '<button type="button" class="chip" data-act="lx-pregunta" data-p="'+esc(s)+'">'+esc(s)+'</button>'; }).join("")+'</div>'+
+    '<div class="lx-form"><input type="text" id="lx-q" placeholder="Pregúntele algo sobre este fallo…" autocomplete="off" aria-label="Pregunta a Lexia sobre este fallo">'+
+      '<button type="button" class="btn" data-act="lx-pregunta">Preguntar</button></div>'+
+    '<div id="lx-resp">'+lxRespuestasHTML()+'</div></section>';
+}
 function hoy(){
   var f=new Date();
   return ("0"+f.getDate()).slice(-2)+"/"+("0"+(f.getMonth()+1)).slice(-2)+"/"+f.getFullYear();
@@ -4603,7 +4838,7 @@ function vistaBuscar(){
   var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?(im.total||(im.resultados||[]).length):0); },0);
   var resp=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; }).length;
   return '<div class="bq" id="panel-buscar-form">'+
-      '<div class="bq-barra"><label class="cq"><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
+      '<div class="bq-barra"><label class="cq"><button type="button" class="lx-chip" data-act="abrir-lexia" aria-label="Preguntarle a Lexia"><i></i>Lexia</button><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
         '<button class="btn" data-act="buscar-todas">Buscar</button></label>'+
         '<button class="chip" data-act="tog-drawer" aria-pressed="'+(estado.drawer?"true":"false")+'">Filtros'+(ac.length?' <span class="fsb-n">'+ac.length+'</span>':'')+''+' '+(estado.drawer?"▴":"▾")+'</button></div>'+
       (tieneSug?'<div class="bq-sug bq-sug--abajo">'+sug+sugs+'</div>':'')+
@@ -6192,6 +6427,13 @@ function vistaLector(){
       '<div class="doc-marco"><div class="doc" id="doc"></div>'+
         '<div class="minimapa" id="minimapa" aria-label="Mapa de coincidencias del fallo"></div></div>'+
     '</div>'+
+    lxPanel()+
+    '<nav class="lector-acciones" aria-label="Acciones del fallo">'+
+      '<button type="button" data-tab="buscar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Volver</button>'+
+      '<button type="button" data-act="ir-pasajes"><svg viewBox="0 0 24 24"><path d="M7 7h4v4H8c0 2 1 3 3 3M14 7h4v4h-3c0 2 1 3 3 3"/></svg>Citar</button>'+
+      '<button type="button" data-act="compartir-lector"><svg viewBox="0 0 24 24"><path d="M12 4v12M7 9l5-5 5 5M5 14v6h14v-6"/></svg>Compartir</button>'+
+      '<button type="button" class="lx" data-act="lx-abrir"><svg viewBox="0 0 24 24"><path d="M5 6h14v10H9l-4 3z"/></svg>Preguntar</button>'+
+    '</nav>'+
     '<h2 style="margin:20px 0 9px" class="conteo" id="doc-tit-pas">Pasajes</h2>'+
     '<div class="pas-export"><button class="mini" data-act="exportar-word-lector">Exportar los pasajes a Word</button></div>'+
     '<div id="pasajes"></div>';
@@ -8458,6 +8700,7 @@ function render(){
            herramientas:function(){ return window.vistaHerramientas?window.vistaHerramientas():'<div class="vacio">Cargando las herramientas…</div>'; }}[estado.tab]||vistaBuscar;
     v.className="col v-"+estado.tab;
     v.innerHTML=f();
+    document.body.classList.toggle("en-lector",estado.tab==="lector"&&!!estado.texto);
     pintarCabecera(v);
     if(estado.tab==="calculos"||estado.tab==="plazos") pintarSalidaC();
     if(estado.tab==="lector") pintarLector();
@@ -9105,6 +9348,17 @@ document.addEventListener("click",function(ev){
     estado.texto=txt; estado.fuenteDe=de?de.value.trim():""; estado.marca=0; estado.fichaConocida=null;
     render(); window.scrollTo(0,0); return;
   }
+  if(act==="abrir-lexia"){ var fab=document.getElementById("asist-abrir"); if(fab) fab.click(); return; }
+  if(act==="lx-identificar"){ lxPreguntar(null); return; }
+  if(act==="lx-pregunta"){
+    var lq=document.getElementById("lx-q");
+    var lp=b.getAttribute("data-p")||(lq?lq.value:"");
+    if(lq&&!b.getAttribute("data-p")) lq.value="";
+    lxPreguntar(lp); return;
+  }
+  if(act==="lx-ir"){ lxIrA(b.getAttribute("data-s")); return; }
+  if(act==="lx-abrir"){ var sec=document.getElementById("lx-fallo"); if(sec){ sec.scrollIntoView({behavior:"smooth",block:"start"}); var q2=document.getElementById("lx-q"); if(q2) setTimeout(function(){ q2.focus({preventScroll:true}); },400); } return; }
+  if(act==="ir-pasajes"){ var tp=document.getElementById("doc-tit-pas"); if(tp) tp.scrollIntoView({behavior:"smooth",block:"start"}); return; }
   if(act==="doc-otro"){ estado.texto=""; estado.fuenteDe=""; estado.marca=0; estado.infoDoc=null; estado.fichaConocida=null; estado.errorLink=null; render(); window.scrollTo(0,0); return; }
   if(act==="ir-marca"){
     estado.marca=parseInt(b.getAttribute("data-i"),10)||0;
@@ -9181,6 +9435,12 @@ document.addEventListener("change",function(ev){
   var im=estado.indices.saij;
   im.provincia=ev.target.value;
   if(im.busco&&estado.q.trim()) buscarEnFuente("saij"); else render();
+});
+
+/* Enter en la pregunta a Lexia sobre el fallo */
+document.addEventListener("keydown",function(ev){
+  if(ev.key!=="Enter"||!ev.target||ev.target.id!=="lx-q") return;
+  ev.preventDefault(); var v=ev.target.value; ev.target.value=""; lxPreguntar(v);
 });
 
 /* inputs */
