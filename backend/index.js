@@ -166,6 +166,21 @@ const limiteOcr = rateLimit({
 app.use('/api/ocr', limiteOcr);
 app.use('/api/ocr-archivo', limiteOcr);
 
+// Subir un archivo cuesta memoria (hasta MAX_BYTES por pedido) y proceso: un
+// límite propio evita que alguien agote el servidor con subidas en bucle.
+const limiteArchivos = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    codigo: 'DEMASIADAS_PETICIONES',
+    mensaje: 'Se subieron demasiados archivos seguidos. Espere unos minutos y vuelva a probar.',
+  },
+});
+app.use('/api/extraer-archivo', limiteArchivos);
+
 // El verificador de citas es liviano para este servidor —parsear un renglón
 // de texto— pero cada pedido dispara hasta dos búsquedas de verdad contra
 // buscadores oficiales. El límite no protege esta máquina: protege a esos

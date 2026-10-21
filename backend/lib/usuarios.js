@@ -75,7 +75,8 @@ function sinPassword(u) {
 
 /** Limpia los datos de perfil: cadenas cortas sin saltos de línea; la casilla, un booleano. */
 export function limpiarPerfil({ nombre, especialidad, actualizaciones } = {}) {
-  const texto = (v, max) => String(typeof v === 'string' ? v : '').replace(/\s+/g, ' ').trim().slice(0, max);
+  // Sin signos de marcado ni caracteres de control: el nombre es texto, nunca HTML (el frontend además lo escapa; esto es una segunda capa).
+  const texto = (v, max) => String(typeof v === 'string' ? v : '').replace(/[<>\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
   return { nombre: texto(nombre, 60), especialidad: texto(especialidad, 80), actualizaciones: actualizaciones === true };
 }
 

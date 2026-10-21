@@ -270,7 +270,7 @@ export const errores = {
   passwordDebil: () =>
     new ErrorApp(
       'PASSWORD_DEBIL',
-      'La contraseña debe tener entre 8 y 128 caracteres y no puede ser igual al correo.',
+      'La contraseña debe tener entre 8 y 128 caracteres, no puede parecerse al correo ni ser una de las más usadas (como «12345678» o «password»).',
       400
     ),
 

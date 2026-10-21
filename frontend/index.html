@@ -9,7 +9,7 @@
 <!-- Política de contenido: la página solo puede cargar scripts propios, hablar con su
      propio servidor (API), con el backend publicado, con SAIJ y con la API de
      series de datos.gob.ar, y nunca cargar plugins ni cambiar su base de enlaces. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:3000 https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net https://www.saij.gob.ar https://apis.datos.gob.ar; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:3000 https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net https://www.saij.gob.ar https://apis.datos.gob.ar; frame-src 'self'; worker-src 'self' blob:; media-src 'none'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <meta name="referrer" content="no-referrer">
 
 <link rel="preload" as="image" href="./grano.png" media="(min-width:761px)">
@@ -349,6 +349,7 @@ strong,b{font-weight:500}
   /* Lexia: botón sobre la barra, panel como hoja */
   .asist{right:12px;bottom:calc(88px + env(safe-area-inset-bottom,0px))}
   .asist__fab{padding:11px 16px 10px;font-size:14px}
+  .perfil-abierto .asist:not(.is-on){display:none}
   .asist.is-on{right:0;left:0;bottom:0}
   .asist.is-on .asist__panel{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));width:auto;height:min(86vh,680px);z-index:90;border-radius:22px}
   .asist__m{font-size:15px;max-width:92%}
@@ -3072,6 +3073,15 @@ function esc(s){
     return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
   });
 }
+/* Un enlace que viene de afuera (un resultado, una ficha) sólo se acepta si es
+   http o https: escapar el HTML no alcanza, porque href="javascript:…" corre
+   al tocarlo aunque esté bien escapado. */
+function urlSegura(u){
+  var t=String(u==null?"":u).trim();
+  try{ var x=new URL(t,location.href); if(x.protocol==="http:"||x.protocol==="https:") return t; }catch(e){}
+  return "#";
+}
+function escU(u){ return esc(urlSegura(u)); }
 function flash(msg){
   var f=document.getElementById("flash");
   f.textContent=msg;f.style.display="block";
@@ -4083,6 +4093,7 @@ function pintarNav(){
   [].forEach.call(document.querySelectorAll("#botnav .bn[data-tab]"),function(b){
     if(b.getAttribute("data-tab")===estado.tab) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current");
   });
+  document.documentElement.classList.toggle("perfil-abierto",!!estado.perfilMenu);
   var bp=document.getElementById("bn-perfil"); if(bp) bp.classList.toggle("on",!!estado.perfilMenu||estado.tab==="cuenta"||estado.tab==="guardados");
   var n=document.getElementById("nav");
   n.innerHTML=PRINCIPALES.map(function(id){
@@ -4260,7 +4271,7 @@ function fichaFuente(f){
     '</div>'+
     '<p class="f-nota">'+esc(f.nota)+'</p>'+
     '<div class="f-acc">'+
-      '<a class="mini" href="'+esc(urlFuente(f))+'" target="_blank" rel="noopener noreferrer">'+directo+'</a>'+
+      '<a class="mini" href="'+escU(urlFuente(f))+'" target="_blank" rel="noopener noreferrer">'+directo+'</a>'+
       '<button class="mini" data-act="google" data-dom="'+esc(f.dom)+'">Buscar en el sitio</button>'+
       cLab+
       '<button class="estrella" data-act="fav" data-id="'+esc(f.id)+'" aria-pressed="'+favOn+'" '+
@@ -4551,8 +4562,7 @@ function bloqueResultados(vis){
   var base=estado.verBase?vis.filter(function(f){return f.slug===estado.verBase;})[0]:null;
   if(base){
     var im=estado.indices[base.slug]||{}, e=estadoBase(base);
-    return '<div class="rz-cab"><b>'+esc(base.nombre)+'</b><span class="rz-ord">'+e.t+'</span>'+
-      '<button class="mini" data-act="ver-base" data-fuente="">← Todas las bases</button></div>'+panelIndice(base);
+    return '<div class="rz-cab"><button class="mini" data-act="ver-base" data-fuente="">← Todas las bases</button><span class="rz-ord">'+e.t+'</span></div>'+panelIndice(base);
   }
   var lista=listaTodas(vis), buscadas=vis.filter(function(f){ return (estado.indices[f.slug]||{}).busco; }).length;
   var h=estadoLista(vis);
@@ -4892,7 +4902,7 @@ function fichaIndice(f,r){
     (f.slug!=="caba"&&r.voces&&r.voces.length?'<div class="voces">'+r.voces.slice(0,6).map(function(v){
       return '<span class="voz" style="cursor:default">'+esc(v)+'</span>';}).join("")+'</div>':"")+
     '<div class="f-acc" style="margin-top:8px">'+
-      (r.linkFicha?'<a class="mini" href="'+esc(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
+      (r.linkFicha?'<a class="mini" href="'+escU(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
       marcaTema+marcaVariante+
       (r.linkFallo&&!(f.slug==="caba"&&uf&&im.fragmentos.hasOwnProperty(uf)&&!im.fragmentos[uf])?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>':"")+
       // Si el documento se puede traer, también se puede abrir donde vive:
@@ -4910,7 +4920,7 @@ function fichaIndice(f,r){
       // listo para elegir lo que se acaba de bajar.
       (r.linkFallo&&r.descarga
         ?'<button class="mini" data-act="descargar-y-lector" data-url="'+esc(r.linkFallo)+'">Descargar y abrir en el Lector</button>'
-        :(r.linkFallo?'<a class="mini" href="'+esc(r.linkFallo)+'" target="_blank" rel="noopener noreferrer">Abrir el original</a>':""))+
+        :(r.linkFallo?'<a class="mini" href="'+escU(r.linkFallo)+'" target="_blank" rel="noopener noreferrer">Abrir el original</a>':""))+
       '<button class="mini" data-act="compartir-fallo" data-fuente="'+esc(f.slug)+'" data-id="'+esc(r.id||"")+'">Compartir</button>'+
     '</div></div>';
 }
@@ -5792,7 +5802,7 @@ function fichaRequisito(x){
   }
   var fuente=x.norma
     ? '<div class="req-norma">'+esc(x.norma)+
-      (x.url?' · <a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">ver el texto oficial</a>':'')+
+      (x.url?' · <a href="'+escU(x.url)+'" target="_blank" rel="noopener noreferrer">ver el texto oficial</a>':'')+
       '</div>'
     : '';
   return '<div class="rama"><h3>'+esc(comoTitulo(x.n))+'</h3><p>'+esc(x.d)+'</p>'+
@@ -5954,7 +5964,7 @@ function tarjetaComparar(f){
     var enlace=x.linkFicha||x.linkFallo;
     var titulo=esc((x.caratula||x.expediente||"(sin carátula)").slice(0,150));
     return '<div class="comp-item">'+
-      (enlace?'<a href="'+esc(enlace)+'" target="_blank" rel="noopener noreferrer">'+titulo+'</a>':titulo)+
+      (enlace?'<a href="'+escU(enlace)+'" target="_blank" rel="noopener noreferrer">'+titulo+'</a>':titulo)+
       (x.fecha?'<span class="comp-fecha">'+esc(x.fecha)+'</span>':'')+
       '</div>';
   }).join("");
@@ -6020,7 +6030,7 @@ function vistaNorma(){
       (d.truncado?'<p class="req-aviso">El artículo sigue: se muestra el principio. Ábralo en InfoLeg para leerlo completo.</p>':"")+
       (d.aviso?'<p class="req-aviso">'+esc(d.aviso)+'</p>':"")+
       '<div class="req-norma">'+esc(d.norma)+' · art. '+esc(d.articulo)+
-        ' · <a href="'+esc(d.url)+'" target="_blank" rel="noopener noreferrer">ver en InfoLeg</a></div>'+
+        ' · <a href="'+escU(d.url)+'" target="_blank" rel="noopener noreferrer">ver en InfoLeg</a></div>'+
       '<div class="f-acc" style="margin-top:12px">'+
         '<button class="mini" data-act="fallos-del-articulo">Buscar fallos que lo citan</button>'+
       '</div></div>';
@@ -6092,7 +6102,7 @@ function avisoErrorLector(){
            ?'<button class="mini" data-act="aplicar-ocr"'+(estado.errorLink.url?' data-url="'+esc(estado.errorLink.url)+'"':'')+'>Aplicar OCR (tarda varios minutos)</button>'
            :'')+
          (estado.errorLink.url
-           ?'<a class="mini" href="'+esc(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">'+(esEscaneo?"Abrir el original":"1 · Abrir el original y guardarlo")+'</a>'
+           ?'<a class="mini" href="'+escU(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">'+(esEscaneo?"Abrir el original":"1 · Abrir el original y guardarlo")+'</a>'
            :'')+
          (esEscaneo||!estado.errorLink.url?'':'<button class="mini" data-act="elegir-archivo">2 · Subirlo acá</button>')+
        '</div>'
@@ -6523,7 +6533,7 @@ function fichaCandidato(c){
       return '<li>'+esc(p)+'</li>';}).join("")+'</ul>'+
     '<div class="f-acc">'+
       '<span class="tag">'+esc(FUERZA_CITA[c.fuerza]||c.fuerza)+'</span>'+
-      (c.link?'<a class="mini" href="'+esc(c.link)+'" target="_blank" rel="noopener noreferrer">Abrir en la fuente oficial</a>':
+      (c.link?'<a class="mini" href="'+escU(c.link)+'" target="_blank" rel="noopener noreferrer">Abrir en la fuente oficial</a>':
               '<span class="tag">sin enlace directo</span>')+
     '</div></div>';
 }
@@ -6568,7 +6578,7 @@ function constanciaCita(){
         fila("Bases consultadas",k.bases)+fila("Fecha de consulta",k.fecha)+'</dl>'+
       '<div class="acciones">'+
         '<button class="btn" data-act="copiar-constancia">Copiar la constancia</button>'+
-        (k.link?'<a class="mini" href="'+esc(k.link)+'" target="_blank" rel="noopener noreferrer">Abrir el documento oficial</a>':'')+
+        (k.link?'<a class="mini" href="'+escU(k.link)+'" target="_blank" rel="noopener noreferrer">Abrir el documento oficial</a>':'')+
       '</div>'+
       '<p class="constancia__nota">Acredita que la cita coincide con un registro oficial a la fecha indicada. No sustituye la lectura de los considerandos.</p>'+
     '</div></div>';
@@ -6720,7 +6730,7 @@ function vistaGuardados(){
          return '<div class="pasaje"><div class="txt" style="white-space:pre-wrap">'+esc(p.t)+'</div>'+
                 '<div class="acc"><span class="pos">búsqueda: '+esc(p.r||"—")+'</span>'+
                 (p.url
-                  ?'<a class="mini" href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer">Ver el original</a>'+
+                  ?'<a class="mini" href="'+escU(p.url)+'" target="_blank" rel="noopener noreferrer">Ver el original</a>'+
                    '<button class="mini" data-act="pasaje-a-lector" data-i="'+i+'">Abrir en el Lector</button>'
                   :'<span class="pos" style="opacity:.6">pegado a mano · sin enlace de origen</span>')+
                 '<button class="mini" data-act="compartir-pasaje" data-i="'+i+'">Compartir</button>'+
@@ -7068,7 +7078,7 @@ function montarAsistente(){
       return dice(ord==="fecha"?"Listo: los más recientes primero.":ord==="base"?"Listo: agrupados por base.":"Listo: intercalados, uno por base.");
     }
     if(/\b(limpi\w+|borr\w+|sac\w+|quit\w+|resete\w+)\b.*\bfiltros?\b|\bsin filtros\b$/.test(t)){
-      aplicar({limpiar:true,ambs:[]}); estado.q=estado.q; render();
+      aplicar({limpiar:true,ambs:[]}); render();
       return dice("Listo, sin filtros: se busca en todas las bases, de cualquier jurisdicción y año.",hizoBusqueda?[{t:"Buscar de nuevo",f:function(){ buscarEnTodas(); setTimeout(vigilar,1500); }}]:null);
     }
     var bs=baseDe(t);
@@ -7336,8 +7346,8 @@ function montarAsistente(){
       ["#vista .blk:nth-child(3)","Búsquedas de esta sesión","Toque una para repetirla.",{opc:1}],
       ["#an-canonico","Sus propios términos","Enséñele sinónimos a la plataforma: su búsqueda los usará.",{opc:1}]],
     cuenta:[["#cab","Cuenta","Su perfil, y lo que se guarda en su cuenta."],
-      ["#auth-email","Crear una cuenta","Con su correo y una clave puede guardar fuentes y búsquedas y verlas desde cualquier dispositivo.",{opc:1}],
-      ["#perfil-nombre","Su perfil","Su nombre, su especialidad y si quiere recibir novedades.",{opc:1}]],
+      ["#auth-email","Crear una cuenta","Con su correo y una clave puede guardar fuentes y búsquedas y verlas desde cualquier dispositivo.",{opc:1,sin:1}],
+      ["#perfil-nombre","Su perfil","Su nombre, su especialidad y si quiere recibir novedades. Con «Guardar perfil» se actualiza en su cuenta.",{opc:1,con:1}]],
     calculos:[["#cab","Cálculos","Las cuentas más usadas, con la fórmula a la vista."],
       [".calc-sel","Elija la calculadora","Intereses, actualización, despido, incapacidad, honorarios y tasa de justicia, liquidación…",{hazlo:1}],
       [".brief","Los datos","Complete los montos y fechas; el resultado se actualiza.",{hazlo:1}],
@@ -7355,7 +7365,7 @@ function montarAsistente(){
   };
   Object.keys(SEC).forEach(function(tab){
     TOURS["s-"+tab]={n:NOMBRES_SECCION[tab],tab:tab,pasos:function(){
-      return SEC[tab].map(function(x){ var o=x[3]||{}; return {sel:x[0]==="#cab"?CABSEL:x[0],t:x[1],x:x[2],hazlo:!!o.hazlo,opcional:!!o.opc,antes:en(tab)}; });
+      return SEC[tab].filter(function(x){ var o=x[3]||{}; return !(o.sin&&estado.usuario)&&!(o.con&&!estado.usuario); }).map(function(x){ var o=x[3]||{}; return {sel:x[0]==="#cab"?CABSEL:x[0],t:x[1],x:x[2],hazlo:!!o.hazlo,opcional:!!o.opc,antes:en(tab)}; });
     }};
   });
   /* el completo: la barra, Buscar a fondo y un paso por cada una de las otras secciones */
@@ -9066,7 +9076,7 @@ document.addEventListener("click",function(ev){
     // que esto dispara la descarga sola — no hace falta el atributo
     // "download" ni que este sitio toque el archivo para nada.
     var enlace=document.createElement("a");
-    enlace.href=urlBajar; enlace.target="_blank"; enlace.rel="noopener noreferrer";
+    enlace.href=urlSegura(urlBajar); enlace.target="_blank"; enlace.rel="noopener noreferrer";
     document.body.appendChild(enlace); enlace.click(); enlace.remove();
 
     // Un solo click de la persona, dos pasos para la app: primero la

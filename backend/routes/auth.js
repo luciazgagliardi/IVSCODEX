@@ -67,13 +67,26 @@ function tokenDe(req) {
   return m && m[1].trim().length <= 200 ? m[1].trim() : null;
 }
 
+// Las contraseñas más usadas: se rechazan aunque cumplan el largo mínimo, porque
+// son lo primero que prueba cualquier ataque de diccionario.
+const COMUNES = new Set([
+  '12345678', '123456789', '1234567890', '123123123', '11111111', '00000000', 'qwertyui', 'qwerty123',
+  'qwertyuiop', 'password', 'password1', 'password123', 'contrasena', 'contrasena1', 'contrasena123',
+  'abcd1234', 'abc12345', 'iloveyou', 'admin123', 'administrador', 'letmein1', 'welcome1', 'argentina',
+  'argentina1', 'argentina123', 'bocajuniors', 'riverplate', 'abogado123', 'abogada123', 'estudio123',
+  '87654321', 'asdfghjk', 'asdf1234', '1q2w3e4r', '1qaz2wsx', 'passw0rd', 'p@ssw0rd', 'mendoza123',
+]);
+const sinAdornos = (t) => String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
+
 function validarEmailYPassword(email, password) {
   // Solo cadenas: un objeto en el JSON ({"$ne":""}) no debe llegar más lejos.
   if (!email || typeof email !== 'string') throw errores.emailFaltante();
   const correo = email.trim();
   if (correo.length > MAX_EMAIL || !EMAIL_RE.test(correo)) throw errores.emailInvalido();
   if (typeof password !== 'string' || password.length < MIN_PASSWORD || password.length > MAX_PASSWORD
-      || password.toLowerCase() === correo.toLowerCase()) throw errores.passwordDebil();
+      || password.toLowerCase() === correo.toLowerCase()
+      || COMUNES.has(sinAdornos(password))
+      || sinAdornos(password) === sinAdornos(correo.split('@')[0])) throw errores.passwordDebil();
 }
 
 /** Middleware para rutas futuras que necesiten sesión. Deja req.usuarioId. */

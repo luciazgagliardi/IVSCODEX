@@ -184,7 +184,11 @@ router.post(
   }
 );
 
-router.get('/salud', (_req, res) => {
+router.get('/salud', (req, res) => {
+  // Cualquiera puede preguntar si el servidor está vivo (el frontend lo hace al
+  // abrir). El detalle —memoria, claves configuradas, avance de índices— es
+  // información para atacar y sólo se entrega a quien administra.
+  if (!puedeAdministrar(req)) return res.json({ ok: true, servicio: 'juris-et-de-jure' });
   res.json({
     ok: true,
     servicio: 'juris-et-de-jure',
