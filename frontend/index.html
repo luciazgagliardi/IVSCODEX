@@ -709,9 +709,9 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 }
 /* el sello: la sigla de la base en un aro doble, del tono de esa base */
 .rotulo-fuente::before{
-  content:attr(data-cod);flex:none;display:grid;place-items:center;width:78px;height:78px;padding:10px;border-radius:50%;
+  content:attr(data-cod);flex:none;display:grid;place-items:center;height:46px;padding:0 24px;border-radius:999px;
   border:1px solid var(--punto,var(--gold));box-shadow:inset 0 0 0 4px var(--bg),inset 0 0 0 5px var(--punto,var(--gold));
-  font:500 10px/1.15 var(--caps);letter-spacing:.1em;text-align:center;color:var(--fg);overflow:hidden;overflow-wrap:normal
+  font:500 12px/1 var(--caps);letter-spacing:.14em;text-align:center;white-space:nowrap;color:var(--fg);overflow-wrap:normal
 }
 .panel .fuente{padding:22px 0;margin:0;border:0;border-bottom:1px solid var(--line);background:none;transition:border-color .5s}
 .panel .fuente:hover{border-bottom-color:var(--gold-55)}
