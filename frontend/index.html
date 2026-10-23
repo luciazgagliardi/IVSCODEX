@@ -3525,19 +3525,19 @@ function lxOrdinal(c){ return {primera:"1.ª",segunda:"2.ª",tercera:"3.ª",cuar
 function lxMagistradoHTML(p,A){
   var partes=[],cu={};
   p.hechos.forEach(function(h){
-    if(!/^(voto|voto_principal|voto_propio|voto_concurrente|disidencia|disidencia_parcial|adhesion)$/.test(h.tipo)) return;
+    if(!/^(voto|voto_principal|voto_propio|voto_concurrente|voto_mayoria|disidencia|disidencia_parcial|adhesion)$/.test(h.tipo)) return;
     var k=h.tipo+(h.a?"|"+h.a:"")+(h.alcance==="parcial"?"|p":"");
     (cu[k]=cu[k]||{h:h,c:[]}).c.push(lxOrdinal(h.cuestion));
   });
   function nom(id){ var x=A.personas.filter(function(q){ return q.id===id; })[0]; return x?x.nombre:""; }
   Object.keys(cu).forEach(function(k){
     var h=cu[k].h,c=cu[k].c.filter(Boolean),t={voto_principal:"voto principal (preopinante)",voto:"voto",voto_propio:"voto con fundamentos propios",
-      voto_concurrente:"voto concurrente",disidencia:"voto en disidencia",disidencia_parcial:"disidencia parcial",adhesion:"adhiere"+(h.alcance==="parcial"?" en parte":"")+(h.a?" al voto de "+nom(h.a):" al voto que antecede")}[h.tipo];
+      voto_concurrente:"voto concurrente",voto_mayoria:"voto de la mayoría (deducido de las firmas)",disidencia:"voto en disidencia",disidencia_parcial:"disidencia parcial",adhesion:"adhiere"+(h.alcance==="parcial"?" en parte":"")+(h.a?" al voto de "+nom(h.a):" al voto que antecede")}[h.tipo];
     partes.push(t+(c.length?" ("+c.join(", ")+" cuestión)":""));
   });
   if(p.enOrdenDeEstudio) partes.push("orden de estudio: "+p.enOrdenDeEstudio+"°");
   partes.push({suscribe:"firma la sentencia",no_determinado:"firma: no determinada",no_suscribe_por_licencia:"no la firma: se encontraba de licencia",
-    no_suscribe:"no la firma (motivo no indicado)"}[p.suscripcion]||("no la firma: "+p.suscripcion.replace(/^no_suscribe_por_/,"").replace(/_/g," ")));
+    no_suscribe:p.motivoNoSuscribe?"no la firma ("+p.motivoNoSuscribe+")":"no la firma (el fallo no dice por qué)"}[p.suscripcion]||("no la firma: "+p.suscripcion.replace(/^no_suscribe_por_/,"").replace(/_/g," ")));
   return '<li><b>'+esc(p.nombre)+'</b> — '+esc(partes.join(" · "))+'</li>';
 }
 function lxVotosHTML(texto,A,pas){
@@ -3649,20 +3649,21 @@ function lxNormasHTML(texto,A,d){
   if(sinArt.length) h+='<p class="lx-nota">También menciona, sin un artículo puntual: '+esc(sinArt.join("; "))+'.</p>';
   return h;
 }
-var LX_TIPO_PREC={csjn:"Corte Suprema de Justicia de la Nación",provincial:"Tribunales provinciales (incluido el propio tribunal)",otro_tribunal:"Otros tribunales",doctrina:"Doctrina y obras",no_clasificable:"Citas que no pude clasificar con seguridad"};
+var LX_TIPO_PREC={csjn:"Corte Suprema de Justicia de la Nación",provincial:"Tribunales provinciales (incluido el propio tribunal)",otro_tribunal:"Otros tribunales",otra_decision:"Otras decisiones judiciales mencionadas",doctrina:"Doctrina y obras",no_clasificable:"Citas que no pude clasificar con seguridad"};
 function lxPrecedentesHTML(texto,A,pas){
   var P=A.precedentes;
   if(!P.length) return '<p class="lx-nada">No encontré citas de fallos ni de doctrina con un formato reconocible.</p>';
   var h="";
-  ["csjn","provincial","otro_tribunal","doctrina","no_clasificable"].forEach(function(t){
+  ["csjn","provincial","otro_tribunal","otra_decision","doctrina","no_clasificable"].forEach(function(t){
     var xs=P.filter(function(p){ return p.tipo===t; }); if(!xs.length) return;
     h+='<h4>'+esc(LX_TIPO_PREC[t])+' ('+xs.length+')</h4><ul class="lx-lista">'+xs.map(function(p){
-      var bits=[p.caratula?"«"+p.caratula+"»":(p.autor||null),p.tribunal&&t!=="csjn"&&t!=="provincial"?p.tribunal:null,p.fecha,p.expediente?"expte. "+p.expediente:null,p.publicacion].filter(Boolean);
+      var bits=t==="doctrina"?[p.autor,p.caratula?"«"+p.caratula+"»":null]:[p.caratula?"«"+p.caratula+"»":null,p.tribunal&&t!=="csjn"?p.tribunal:null,p.fecha,p.expediente?"expte. "+p.expediente:null,p.publicacion];
+      bits=bits.filter(Boolean);
       return '<li>'+esc(bits.join(" · ")||"(sin datos)")+(p.funcion&&p.funcion!=="citado"?' · <b>'+esc(p.funcion)+'</b>':'')+
         ' <button type="button" class="mini" data-act="lx-ir" data-s="'+esc(texto.slice(p.evidencia.ini,p.evidencia.ini+70))+'">Ver</button></li>';
     }).join("")+'</ul>';
   });
-  return h+'<p class="lx-nota">Lista armada por reglas sobre las formas de citar más comunes: puede no ser exhaustiva.</p>';
+  return h+'<p class="lx-nota">Cada cita sale de su unidad en el texto (paréntesis, «in re», «causa», colección o registro) y se puede ver en el fallo. «Se deduce» quiere decir que el fallo no nombra el tribunal.</p>';
 }
 function lxResumen(texto,d,pas,fila){
   var A=lxAnalisis(texto,d);

@@ -10,4 +10,5 @@ proyecto (`lib/documento.js`). Los usa `test/analisis.prueba.js`.
 | `tsj-distribuidora-pompeya.txt` | TSJ CABA | Dos votos en disidencia; el voto de la mayoría no lleva nombre. |
 | `tsj-caja-de-seguros.txt` | TSJ CABA | Votos «por su voto», una disidencia y una adhesión dividida entre dos votos. |
 | `tsj-rozen-2003.txt` | TSJ CABA, 02/07/2003 | Adhesiones parciales en primera persona («Adhiero a los apartados 1, 2, 3…»). |
-| `tsj-lopez-viviana.txt` | TSJ CABA | Carátula con «CONTRA» y «SOBRE»; artículos del CCAyT. |
+| `tsj-lopez-viviana.txt` | TSJ CABA | Carátula con «CONTRA» y «SOBRE»; artículos del CCAyT; varias citas en un mismo paréntesis. |
+| `tsj-federacion-patronal-firma-digital.txt` | TSJ CABA, 09/09/2026 | Firma digital «APELLIDO, NOMBRES / JUEZ/A», un juez de licencia, una disidencia y la mayoría sin autor. |
