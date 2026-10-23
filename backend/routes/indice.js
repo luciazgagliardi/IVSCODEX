@@ -21,6 +21,7 @@ import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js'
 import { errores, ErrorApp } from '../lib/errores.js';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
 import { NORMAS, articuloDe, rubricaDe } from '../lib/legislacion.js';
+import { serieOficial } from '../lib/series.js';
 
 export const router = express.Router();
 
@@ -519,6 +520,22 @@ router.post('/tesauro/proponer', async (req, res, next) => {
       : [];
 
     res.json({ ok: true, propuesta: await proponerAnillo(termino, { ramas, yaEnTesauro }) });
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * Una serie oficial que el navegador no puede leer directo (hoy, RIPTE):
+ * GET /api/series/ripte → { ok, datos: [[fecha, valor], …], fuente }.
+ * Ver lib/series.js.
+ */
+router.get('/series/:clave', async (req, res, next) => {
+  try {
+    if (!/^[a-z]{2,20}$/.test(req.params.clave)) throw errores.normaDesconocida(req.params.clave);
+    const s = await serieOficial(req.params.clave);
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.json({ ok: true, datos: s.datos, fuente: s.fuente, desactualizada: !!s.desactualizada });
   } catch (e) {
     next(e);
   }

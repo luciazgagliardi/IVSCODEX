@@ -9,7 +9,7 @@
 <!-- Política de contenido: la página solo puede cargar scripts propios, hablar con su
      propio servidor (API), con el backend publicado, con SAIJ y con la API de
      series de datos.gob.ar, y nunca cargar plugins ni cambiar su base de enlaces. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:3000 https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net https://www.saij.gob.ar https://apis.datos.gob.ar; frame-src 'self'; worker-src 'self' blob:; media-src 'none'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:3000 https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net https://www.saij.gob.ar https://apis.datos.gob.ar https://api.bcra.gob.ar; frame-src 'self'; worker-src 'self' blob:; media-src 'none'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <meta name="referrer" content="no-referrer">
 
 <link rel="preload" as="image" href="./grano.png" media="(min-width:761px)">
@@ -837,8 +837,23 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .lx-form input{flex:1;min-width:0;border:0!important;background:none!important;padding:8px 0!important;font-size:15px;outline:none}
 .lx-form .btn{padding:9px 16px 8px;font-size:13.5px}
 #lx-resp{display:grid;gap:14px;margin-top:16px}
-.lx-r{padding-top:14px;border-top:1px solid var(--line)}
+.lx-r{padding-top:14px;border-top:1px solid var(--line);scroll-margin-top:96px;border-radius:16px;transition:box-shadow .35s,background-color .35s,padding .2s}
+.lx-r:focus{outline:none}
+.lx-r:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+/* la respuesta que se acaba de pedir: cuadro dorado y la pregunta en dorado */
+.lx-r--ahora{padding:14px 14px 10px;margin:0 -14px;border-top-color:transparent;box-shadow:0 0 0 1.5px var(--gold),0 0 28px rgba(217,163,27,.18);background:rgba(217,163,27,.06)}
+.lx-r--ahora .lx-q{color:var(--gold);font-weight:600}
+@media (prefers-reduced-motion:reduce){ .lx-r{transition:none} }
 .lx-q{margin:0 0 8px;font-size:13px;color:var(--gold)}
+.lx-lista{margin:4px 0 10px;padding-left:18px;font-size:14px;line-height:1.55;color:var(--fg-82,var(--fg))}
+.lx-lista li{margin:0 0 5px}
+.lx-lista.lx-sec{color:var(--mute);font-size:13.5px}
+.lx-lista .mini{margin:0 0 0 4px;padding:2px 9px}
+.lx-estado{padding:8px 12px;border:1px solid var(--line);border-radius:14px}
+.lx-mas{margin:6px 0 8px;font-size:13.5px;color:var(--mute)}
+.lx-mas summary{cursor:pointer;color:var(--gold)}
+.lx-art{border:0;background:none;padding:0;color:inherit;font:inherit;text-decoration:underline dotted var(--gold-55);text-underline-offset:3px;cursor:pointer}
+.lx-nota-in{font-size:12px;color:var(--mute-2)}
 .lx-r p{margin:0 0 8px;font-size:14.5px;line-height:1.55;color:var(--fg-82,var(--fg))}
 .lx-r h4{margin:14px 0 6px;font-size:13px;font-weight:500;color:var(--mute)}
 .lx-r .lx-sint{color:var(--gold);font-weight:500}
@@ -1398,6 +1413,8 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 <div id="flash" role="status" aria-live="polite"></div>
 
+<script src="./analisis-fallo.js"></script>
+<script src="./calculos.js"></script>
 <script>
 "use strict";
 (function(){
@@ -3334,364 +3351,9 @@ function pasajesDe(texto,cs){
   });
 }
 
-/* Detección de datos de la sentencia. Es heurística: se ofrece
-   como propuesta para confirmar, nunca como dato cerrado. */
-var MESES={enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,
-           septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
-
-/* Los tribunales fechan la sentencia en letras ("a los quince días del mes
-   de julio del año dos mil veintiséis"), nunca en números: sin esto, la
-   fecha propia del fallo no se detecta y el analizador termina agarrando
-   la fecha de otro fallo citado más abajo en el texto. */
-function sinTildes(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,""); }
-
-var UNIDADES_0_9={cero:0,un:1,uno:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9};
-var ESPECIALES_10_29={
-  diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,
-  dieciocho:18,diecinueve:19,veinte:20,veintiun:21,veintiuno:21,veintidos:22,
-  veintitres:23,veinticuatro:24,veinticinco:25,veintiseis:26,veintisiete:27,
-  veintiocho:28,veintinueve:29
-};
-var DECENAS={treinta:30,cuarenta:40,cincuenta:50,sesenta:60,setenta:70,ochenta:80,noventa:90};
-
-/** "quince" -> 15, "treinta y uno" -> 31, "cuarenta y dos" -> 42. Nulo si no reconoce. */
-function numeroPalabras(frag){
-  var s=sinTildes(frag).replace(/\s+/g," ").trim();
-  var junto=s.replace(/\s/g,"");
-  if(ESPECIALES_10_29.hasOwnProperty(junto)) return ESPECIALES_10_29[junto];
-  if(UNIDADES_0_9.hasOwnProperty(s)) return UNIDADES_0_9[s];
-  if(DECENAS.hasOwnProperty(s)) return DECENAS[s];
-  var partes=s.split(" y ");
-  if(partes.length===2&&DECENAS.hasOwnProperty(partes[0])&&UNIDADES_0_9.hasOwnProperty(partes[1])){
-    return DECENAS[partes[0]]+UNIDADES_0_9[partes[1]];
-  }
-  return null;
-}
-/** "dos mil veintiséis" -> 2026, "mil novecientos noventa y ocho" -> 1998. */
-function anioPalabras(frag){
-  var s=sinTildes(frag).replace(/\s+/g," ").trim();
-  var m=s.match(/^(mil novecientos|dos mil)\s*(.*)$/);
-  if(!m) return null;
-  var base=m[1]==="dos mil"?2000:1900;
-  if(!m[2]) return base;
-  var resto=numeroPalabras(m[2]);
-  return resto===null?null:base+resto;
-}
-/** Busca la fórmula clásica de apertura ("a los N días del mes de MES de AÑO")
-    y devuelve la fecha ya armada, o null si no la encuentra. */
-function fechaDeFormulaApertura(ventana){
-  var re=/a\s+los?\s+([a-záéíóúñ]+)\s+d[ií]as?\s+(?:del?\s+mes\s+de\s+|de\s+)([a-záéíóúñ]+)\s+de(?:l)?\s+(?:año\s+)?([a-záéíóúñ\s]+?)(?:[,.;\n]|$)/i;
-  var m=ventana.match(re);
-  if(!m) return null;
-  var dia=numeroPalabras(m[1]),mes=MESES[sinTildes(m[2])],anio=anioPalabras(m[3]);
-  if(dia==null||!mes||anio==null) return null;
-  return ("0"+dia).slice(-2)+"/"+("0"+mes).slice(-2)+"/"+anio;
-}
-
-/* Jerarquía normativa: cada fuente detectada cae en una categoría fija,
-   de mayor a menor jerarquía, para que el lector se lea de arriba abajo
-   igual que se razona un caso. */
-var CATEGORIA_FUENTE={
-  "Constitución Nacional":"cn",
-  "CADH":"tratados","PIDCP":"tratados","PIDESC":"tratados",
-  "Protocolo Facultativo del PIDCP":"tratados",
-  "Declaración Americana de los Derechos y Deberes del Hombre":"tratados",
-  "Declaración Universal de Derechos Humanos":"tratados",
-  "Convención para la Prevención y la Sanción del Delito de Genocidio":"tratados",
-  "Convención sobre la Eliminación de Todas las Formas de Discriminación Racial":"tratados",
-  "Convención contra la Tortura":"tratados",
-  "Convención sobre los Derechos del Niño":"tratados",
-  "Convención Interamericana sobre Desaparición Forzada de Personas":"tratados",
-  "Convención sobre la Imprescriptibilidad de los Crímenes de Guerra y de Lesa Humanidad":"tratados",
-  "Convención de Belém do Pará":"tratados","CEDAW":"tratados",
-  "CCyC (vigente)":"fondo","Código Civil (derogado)":"fondo","Código de Comercio (derogado)":"fondo",
-  "Código Penal":"fondo","LCT":"fondo","LDC":"fondo","Ley de Seguros (LS)":"fondo",
-  "CPCCN":"provincial","CPC":"provincial","Código Procesal Penal":"provincial","Ley Arancelaria (LA)":"provincial"
-};
-function categoriaDeFuente(label,esProvincial){
-  if(CATEGORIA_FUENTE.hasOwnProperty(label)) return CATEGORIA_FUENTE[label];
-  if(/^(Decreto|Ordenanza|Resoluci[oó]n)\b/i.test(label)) return "local";
-  if(/^Ley\s/.test(label)) return esProvincial?"provincial":"leyes";
-  return "otras";
-}
-
-/* Base de leyes verificada contra fuente oficial (Boletín Oficial,
-   argentina.gob.ar/normativa, SAIJ, jusmendoza.gob.ar), nacional y de
-   Mendoza. Es un punto de partida — no pretende cubrir todo el
-   ordenamiento, sino las normas que más se citan en las ramas que ya
-   están mapeadas en RAMAS. Se amplía con el uso, a medida que aparecen
-   leyes nuevas en fallos reales. Clave = número de ley sin puntos. */
-var LEYES_BASE={
-  "11179":{nombre:"Código Penal",cat:"fondo",vigente:true},
-  "20744":{nombre:"Ley de Contrato de Trabajo (LCT)",cat:"fondo",vigente:true},
-  "24240":{nombre:"Ley de Defensa del Consumidor (LDC)",cat:"fondo",vigente:true},
-  "17418":{nombre:"Ley de Seguros",cat:"fondo",vigente:true},
-  "24557":{nombre:"Ley de Riesgos del Trabajo",cat:"fondo",vigente:true},
-  "19550":{nombre:"Ley General de Sociedades",cat:"fondo",vigente:true},
-  "24522":{nombre:"Ley de Concursos y Quiebras",cat:"fondo",vigente:true},
-  "26485":{nombre:"Ley de Protección Integral a las Mujeres",cat:"fondo",vigente:true},
-  "26994":{nombre:"Ley aprobatoria del Código Civil y Comercial",cat:"fondo",vigente:true},
-  "17454":{nombre:"Código Procesal Civil y Comercial de la Nación (CPCCN)",cat:"provincial",vigente:true},
-  "9001":{nombre:"Código Procesal Civil, Comercial y Tributario de Mendoza",cat:"provincial",vigente:true},
-  "9177":{nombre:"Modificatoria del Código Procesal Civil, Comercial y Tributario de Mendoza",cat:"provincial",vigente:true},
-  "6730":{nombre:"Código Procesal Penal de Mendoza",cat:"provincial",vigente:true},
-  "9608":{nombre:"Reforma 2025 al Código Procesal Penal de Mendoza",cat:"provincial",vigente:true},
-  "9003":{nombre:"Ley de Procedimiento Administrativo de Mendoza",cat:"provincial",vigente:true},
-  "3909":{nombre:"Ley de Procedimiento Administrativo de Mendoza (anterior a la ley 9.003)",cat:"provincial",vigente:false},
-  "4362":{nombre:"Código Fiscal de Mendoza",cat:"provincial",vigente:true},
-  "322":{nombre:"Organización del Departamento General de Irrigación",cat:"provincial",vigente:true},
-
-  /* Sumadas contra la Base SAIJ de Normativa Provincial (Ministerio de
-     Justicia, datos.gob.ar) y, para lo nacional, fuentes oficiales
-     (argentina.gob.ar/normativa, InfoLeg). Ver conversación del 10/8/2026. */
-  "26657":{nombre:"Ley de Salud Mental",cat:"fondo",vigente:true},
-  "25871":{nombre:"Ley de Migraciones",cat:"fondo",vigente:true},
-  "26618":{nombre:"Ley de Matrimonio Igualitario",cat:"fondo",vigente:true},
-  "26061":{nombre:"Ley de Protección Integral de los Derechos de Niñas, Niños y Adolescentes",cat:"fondo",vigente:true},
-  "25326":{nombre:"Ley de Protección de Datos Personales",cat:"fondo",vigente:true},
-  "24660":{nombre:"Ley de Ejecución de la Pena Privativa de la Libertad",cat:"fondo",vigente:true},
-  "26743":{nombre:"Ley de Identidad de Género",cat:"fondo",vigente:true},
-  "27610":{nombre:"Ley de Acceso a la Interrupción Voluntaria del Embarazo (IVE)",cat:"fondo",vigente:true},
-
-  "552":{nombre:"Ley Orgánica de Tribunales de Mendoza",cat:"provincial",vigente:true},
-  "8008":{nombre:"Ley Orgánica del Ministerio Público de Mendoza",cat:"provincial",vigente:true},
-  "9577":{nombre:"Ley Orgánica de la Dirección de Personas Jurídicas y Registro Público de Mendoza",cat:"provincial",vigente:true},
-  "9292":{nombre:"Ley Orgánica del Tribunal de Cuentas de Mendoza",cat:"provincial",vigente:true},
-  "1079":{nombre:"Ley Orgánica de Municipalidades de Mendoza",cat:"provincial",vigente:true},
-  "2144":{nombre:"Código Procesal Laboral de Mendoza",cat:"provincial",vigente:true},
-  "3918":{nombre:"Código Procesal Administrativo de Mendoza",cat:"provincial",vigente:true},
-  "9120":{nombre:"Código Procesal de Familia y Violencia Familiar de Mendoza",cat:"provincial",vigente:true},
-  "9099":{nombre:"Código de Contravenciones de la Provincia de Mendoza",cat:"provincial",vigente:true},
-  "8465":{nombre:"Código de Ejecución de la Pena Privativa de la Libertad de Mendoza",cat:"provincial",vigente:true},
-  "6913":{nombre:"Código de Procedimientos Mineros de Mendoza",cat:"provincial",vigente:true},
-  "9361":{nombre:"Código Tributario Municipal Armonizado de Mendoza",cat:"provincial",vigente:true},
-  "1920":{nombre:"Uso del Agua Pública para Agricultura (Mendoza)",cat:"provincial",vigente:true},
-  "5961":{nombre:"Ley de Preservación del Ambiente de Mendoza",cat:"provincial",vigente:true},
-  "8051":{nombre:"Ley de Ordenamiento Territorial y Usos del Suelo de Mendoza",cat:"provincial",vigente:true},
-  "9659":{nombre:"Ley de Gestión Integral de Residuos Sólidos Urbanos de Mendoza",cat:"provincial",vigente:true},
-  "6672":{nombre:"Ley de Violencia Familiar de Mendoza",cat:"provincial",vigente:true},
-  "9100":{nombre:"Ley de Paridad de Género en Materia Electoral de Mendoza",cat:"provincial",vigente:true},
-  "9314":{nombre:"Ley de Defensa del Consumidor de Mendoza",cat:"provincial",vigente:true},
-  "1447":{nombre:"Ley General de Expropiaciones de Mendoza",cat:"provincial",vigente:true},
-  "9070":{nombre:"Ley de Acceso a la Información Pública de Mendoza",cat:"provincial",vigente:true},
-  "560":{nombre:"Estatuto del Empleado Público de Mendoza",cat:"provincial",vigente:true},
-  "2551":{nombre:"Ley Electoral de la Provincia de Mendoza",cat:"provincial",vigente:true},
-  "9131":{nombre:"Aranceles de Abogados y Procuradores de Mendoza",cat:"provincial",vigente:true}
-};
-function soloDigitos(s){ return String(s).replace(/\./g,"").replace(/^0+(?=\d)/,""); }
-function detectar(texto){
-  var t=texto.slice(0,9000),d={},m;
-  // La identidad propia del fallo (caratula, fecha, tomo/pagina) vive casi
-  // siempre en el encabezado. Buscarla primero ahi evita el error mas comun:
-  // agarrar el dato de OTRO fallo citado mas abajo, en vez del que se esta
-  // analizando. Si no aparece cerca del encabezado, se busca en todo el
-  // texto como respaldo (salvo el tomo/pagina, ver mas abajo por que no).
-  var apertura=t.slice(0,900);
-
-  m=apertura.match(/["“']?\s*([A-ZÁÉÍÓÚÑ][^"“”\n]{4,120}?\s+c\/\s+[^"“”\n]{2,120}?\s+(?:s\/|p\/)\s+[^"“”\n]{2,90}?)\s*["”']?(?:\n|\.|$)/i)
-    ||t.match(/["“']?\s*([A-ZÁÉÍÓÚÑ][^"“”\n]{4,120}?\s+c\/\s+[^"“”\n]{2,120}?\s+(?:s\/|p\/)\s+[^"“”\n]{2,90}?)\s*["”']?(?:\n|\.|$)/i);
-  if(m) d.car=m[1].replace(/\s+/g," ").trim();
-
-  if(/corte\s+suprema\s+de\s+justicia\s+de\s+la\s+naci/i.test(t)){ d.trib="Corte Suprema de Justicia de la Nación"; d.tipo="csjn"; }
-  else if(/suprema\s+corte\s+de\s+justicia.{0,40}mendoza|\bS\.?C\.?J\.?M\b/i.test(t)){ d.trib="Suprema Corte de Justicia de Mendoza"; d.tipo="scjm"; }
-  else if(/corte\s+interamericana/i.test(t)){ d.trib="Corte Interamericana de Derechos Humanos"; d.tipo="cidh"; }
-  else if(/tribunal\s+europeo|european\s+court\s+of\s+human\s+rights/i.test(t)){ d.trib="Tribunal Europeo de Derechos Humanos"; d.tipo="tedh"; }
-  else{
-    m=t.match(/((?:Excma\.?\s+)?(?:C[áa]mara|Juzgado|Tribunal)[^\n.;]{5,90})/i);
-    if(m){ d.trib=m[1].replace(/\s+/g," ").trim(); d.tipo="cam"; }
-  }
-
-  // El "Fallos: tomo:pagina" es la forma en que la CSJN identifica sus
-  // propios fallos - ningun otro tribunal publica en esa coleccion. Si el
-  // documento no es de la CSJN, cualquier "Fallos: X:Y" que aparezca es casi
-  // seguro una cita a un fallo distinto citado como precedente: mejor no
-  // mostrar nada que mostrar el tomo de otra sentencia como si fuera esta.
-  if(d.tipo==="csjn"||!d.tipo){
-    m=apertura.match(/Fallos:?\s*(\d{2,3})\s*:\s*(\d{1,4})/i);
-    if(m){ d.tomo=m[1]; d.pag=m[2]; }
-  }
-
-  m=t.match(/(?:expte\.?|expediente|causa)\s*(?:n[°ºo.]?\s*)?[:\s]\s*([A-Z0-9][\w\-\/\.]{3,28})/i);
-  if(m) d.exp=m[1].replace(/[.,;]$/,"");
-
-  var fechaFormula=fechaDeFormulaApertura(apertura);
-  if(fechaFormula){
-    d.fecha=fechaFormula;
-  }else{
-    m=apertura.match(/(\d{1,2})\s+de\s+([a-záéíóú]+)\s+de\s+(\d{4})/i)
-      ||t.match(/(\d{1,2})\s+de\s+([a-záéíóú]+)\s+de\s+(\d{4})/i);
-    if(m&&MESES[sinTildes(m[2])]){
-      d.fecha=("0"+m[1]).slice(-2)+"/"+("0"+MESES[sinTildes(m[2])]).slice(-2)+"/"+m[3];
-    }else{
-      m=apertura.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\b/)
-        ||t.match(/\b(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\b/);
-      if(m) d.fecha=("0"+m[1]).slice(-2)+"/"+("0"+m[2]).slice(-2)+"/"+m[3];
-    }
-  }
-  m=t.match(/Sala\s+([IVXLC]+|\d+|[ÚU]nica|Primera|Segunda|Tercera|Cuarta)\b/i);
-  if(m) d.sala="Sala "+m[1];
-  var CODIGOS=[
-    [/c[oó]digo\s+civil\s+y\s+comercial(\s+de\s+la\s+naci[oó]n)?|\bccyc(?:n)?\b|\bcccn\b|\bc\.\s*c\.\s*y\s*c\.?(?:\s*n\.?)?\b/i,"CCyC (vigente)"],
-    [/c[oó]digo\s+civil\b|\bc\.\s*c\.(?!\s*y)/i,"Código Civil (derogado)"],
-    [/\bCC\b/,"Código Civil (derogado)"],
-    [/c[oó]digo\s+procesal\s+civil\s+y\s+comercial(\s+de\s+la\s+naci[oó]n)?|\bcpccn\b|\bc\.\s*p\.\s*c\.\s*c\.\s*n\.?\b/i,"CPCCN"],
-    [/c[oó]digo\s+procesal\s+civil\b|\bcpc\b|\bc\.\s*p\.\s*c\.(?!\s*c)/i,"CPC"],
-    [/c[oó]digo\s+penal\b|\bcp\b/i,"Código Penal"],
-    [/c[oó]digo\s+procesal\s+penal\b|\bcpp\b/i,"Código Procesal Penal"],
-    [/c[oó]digo\s+de\s+comercio\b/i,"Código de Comercio (derogado)"],
-    [/constituci[oó]n\s+nacional\b|\bcn\b/i,"Constitución Nacional"],
-    [/ley\s+de\s+contrato\s+de\s+trabajo|\blct\b/i,"LCT"],
-    [/ley\s+de\s+defensa\s+del\s+consumidor|\bldc\b/i,"LDC"],
-    [/\bley\s+de\s+seguros\b|\bL\.?\s*S\.?\b(?!\d)/,"Ley de Seguros (LS)"],
-    [/\bley\s+arancelaria\b|\bL\.?\s*A\.?\b(?!\d)/,"Ley Arancelaria (LA)"],
-    [/convenci[oó]n\s+americana\s+sobre\s+derechos\s+humanos|pacto\s+de\s+san\s+jos[ée]\s+de\s+costa\s+rica|\bcadh\b/i,"CADH"],
-    [/pacto\s+internacional\s+de\s+derechos\s+civiles\s+y\s+pol[ií]ticos|\bpidcp\b/i,"PIDCP"],
-    [/pacto\s+internacional\s+de\s+derechos\s+econ[oó]micos,?\s+sociales\s+y\s+culturales|\bpidesc\b/i,"PIDESC"],
-    [/convenci[oó]n\s+sobre\s+los\s+derechos\s+del\s+ni[ñn]o|\bcdn\b/i,"Convención sobre los Derechos del Niño"],
-    [/convenci[oó]n\s+interamericana\s+para\s+prevenir,?\s+sancionar\s+y\s+erradicar\s+la\s+violencia\s+contra\s+la\s+mujer|convenci[oó]n\s+de\s+bel[ée]m\s+do\s+par[áa]/i,"Convención de Belém do Pará"],
-    [/convenci[oó]n\s+sobre\s+la\s+eliminaci[oó]n\s+de\s+todas\s+las\s+formas\s+de\s+discriminaci[oó]n\s+contra\s+la\s+mujer|\bcedaw\b/i,"CEDAW"],
-    [/declaraci[oó]n\s+universal\s+de\s+derechos\s+humanos|\bdudh\b/i,"Declaración Universal de Derechos Humanos"],
-    [/declaraci[oó]n\s+americana\s+de\s+los\s+derechos\s+y\s+deberes\s+del\s+hombre/i,"Declaración Americana de los Derechos y Deberes del Hombre"],
-    [/protocolo\s+facultativo\s+del\s+pacto\s+internacional\s+de\s+derechos\s+civiles\s+y\s+pol[ií]ticos/i,"Protocolo Facultativo del PIDCP"],
-    [/convenci[oó]n\s+(?:para\s+la\s+prevenci[oó]n\s+y\s+la?\s+sanci[oó]n\s+del\s+delito\s+de\s+genocidio|contra\s+el\s+genocidio)/i,"Convención para la Prevención y la Sanción del Delito de Genocidio"],
-    [/convenci[oó]n\s+internacional\s+sobre\s+la\s+eliminaci[oó]n\s+de\s+todas\s+las\s+formas\s+de\s+discriminaci[oó]n\s+racial|\bcerd\b/i,"Convención sobre la Eliminación de Todas las Formas de Discriminación Racial"],
-    [/convenci[oó]n\s+contra\s+la\s+tortura(\s+y\s+otros\s+tratos)?/i,"Convención contra la Tortura"],
-    [/convenci[oó]n\s+interamericana\s+sobre\s+desaparici[oó]n\s+forzada\s+de\s+personas/i,"Convención Interamericana sobre Desaparición Forzada de Personas"],
-    [/convenci[oó]n\s+sobre\s+la\s+imprescriptibilidad\s+de\s+los\s+cr[ií]menes\s+de\s+guerra\s+y\s+de\s+lesa\s+humanidad/i,"Convención sobre la Imprescriptibilidad de los Crímenes de Guerra y de Lesa Humanidad"]
-  ];
-  function formatLeyNum(s){
-    var n=soloDigitos(s);
-    return n.length>3?n.replace(/\B(?=(\d{3})+(?!\d))/g,"."):n;
-  }
-  function capitalizar(s){ return s.charAt(0).toUpperCase()+s.slice(1).toLowerCase(); }
-  var reLeyAdelante=/^(?:\s*(?:,|del|de\s+la)?\s*){0,3}\s*ley\s*(?:provincial\s+|nacional\s+|federal\s+)?(?:n[°ºo.]?\s*)?(\d[\d\.]{2,7})/i;
-  var reLeyAtras=/ley\s*(?:provincial\s+|nacional\s+|federal\s+)?(?:n[°ºo.]?\s*)?(\d[\d\.]{2,7})\s*(?:,|del|de\s+la)?\s*(?:en\s+sus?\s*)?$/i;
-  var reDecAdelante=/^(?:\s*(?:,|del|de\s+la)?\s*){0,3}\s*(decreto|ordenanza|resoluci[oó]n)\s*(?:reglamentario\s+)?(?:n[°ºo.]?\s*)?(\d[\d\.]{1,6}(?:\/\d{2,4})?)/i;
-  var reDecAtras=/(decreto|ordenanza|resoluci[oó]n)\s*(?:n[°ºo.]?\s*)?(\d[\d\.]{1,6}(?:\/\d{2,4})?)\s*(?:,|del|de\s+la)?\s*$/i;
-  function ultimoQueTermineCerca(regex,ventana,margen){
-    var re=new RegExp(regex.source,"gi"),m,ultimo=null;
-    while((m=re.exec(ventana))) ultimo=m;
-    if(!ultimo) return null;
-    if(ventana.length-(ultimo.index+ultimo[0].length)>margen) return null;
-    return ultimo;
-  }
-  function codigoMasCercaAdelante(ventana){
-    var mejorLabel=null,mejorPos=Infinity;
-    for(var i=0;i<CODIGOS.length;i++){
-      var re=new RegExp(CODIGOS[i][0].source,CODIGOS[i][0].flags.replace("g","")+"g");
-      var mm=re.exec(ventana);
-      if(mm&&mm.index<mejorPos){ mejorPos=mm.index; mejorLabel=CODIGOS[i][1]; }
-    }
-    return mejorLabel;
-  }
-  function codigoMasCercaAtras(ventana,margen){
-    var mejorLabel=null,mejorDist=Infinity;
-    for(var i=0;i<CODIGOS.length;i++){
-      var re=new RegExp(CODIGOS[i][0].source,CODIGOS[i][0].flags.replace("g","")+"g"),m,ultimo=null;
-      while((m=re.exec(ventana))) ultimo=m;
-      if(ultimo){
-        var dist=ventana.length-(ultimo.index+ultimo[0].length);
-        if(dist<=margen&&dist<mejorDist){ mejorDist=dist; mejorLabel=CODIGOS[i][1]; }
-      }
-    }
-    return mejorLabel;
-  }
-  function fuenteDe(adelante,atras){
-    var m=adelante.match(reLeyAdelante);
-    if(m){ fuenteEraProvincial=/provincial/i.test(m[0]); return "Ley "+formatLeyNum(m[1]); }
-    m=adelante.match(reDecAdelante);
-    if(m){ fuenteEraProvincial=false; return capitalizar(m[1])+" "+m[2]; }
-    var lbl=codigoMasCercaAdelante(adelante);
-    if(lbl){ fuenteEraProvincial=false; return lbl; }
-    m=ultimoQueTermineCerca(reLeyAtras,atras,0);
-    if(m){ fuenteEraProvincial=/provincial/i.test(m[0]); return "Ley "+formatLeyNum(m[1]); }
-    m=ultimoQueTermineCerca(reDecAtras,atras,0);
-    if(m){ fuenteEraProvincial=false; return capitalizar(m[1])+" "+m[2]; }
-    lbl=codigoMasCercaAtras(atras,25);
-    if(lbl){ fuenteEraProvincial=false; return lbl; }
-    fuenteEraProvincial=false;
-    return "Sin ley identificada";
-  }
-  var NUM_ART="\\d{1,4}(?:\\.\\d{3})?";
-  var grupos={},ordenGrupos=[],catDeGrupo={},fuenteEraProvincial=false,
-    reArt=new RegExp("\\bart(?:\\.|s\\.?|[íi]culos?)?\\s*(?:n[°ºo]\\.?\\s*)?((?:"+NUM_ART+"(?:\\s*(?:bis|ter|qu[áa]ter))?(?:\\s*(?:,|y|e|a)\\s*)?)+)","gi"),
-    reNumArt=new RegExp(NUM_ART+"(?:\\s*(?:bis|ter|qu[áa]ter))?","gi"),mArt;
-  while((mArt=reArt.exec(texto))){
-    var numsArt=mArt[1].match(reNumArt)||[];
-    var fin=mArt.index+mArt[0].length;
-    var ventAd=texto.slice(fin,fin+80),ventAt=texto.slice(Math.max(0,mArt.index-60),mArt.index);
-    var fuente=fuenteDe(ventAd,ventAt);
-    if(!grupos[fuente]){
-      grupos[fuente]=[]; ordenGrupos.push(fuente);
-      catDeGrupo[fuente]=categoriaDeFuente(fuente,fuenteEraProvincial);
-    }
-    numsArt.forEach(function(n){
-      var a="art. "+n.replace(/\s+/g," ").replace(/\.(\d{3})/,"$1").toLowerCase();
-      if(grupos[fuente].indexOf(a)===-1) grupos[fuente].push(a);
-    });
-  }
-  if(grupos["Sin ley identificada"]){
-    grupos["Sin ley identificada"]=grupos["Sin ley identificada"].filter(function(a){
-      for(var k in grupos){ if(k!=="Sin ley identificada"&&grupos[k].indexOf(a)!==-1) return false; }
-      return true;
-    });
-    if(!grupos["Sin ley identificada"].length){
-      ordenGrupos=ordenGrupos.filter(function(k){ return k!=="Sin ley identificada"; });
-      delete grupos["Sin ley identificada"];
-    }
-  }
-  /* Si el número coincide con una ley de LEYES_BASE, cambiamos el rótulo
-     genérico "Ley N" por el nombre real y la categoría verificada — la
-     tabla manda por sobre la adivinanza por proximidad. */
-  function etiquetaBase(n){
-    var b=LEYES_BASE[soloDigitos(n)];
-    return b?"Ley "+formatLeyNum(n)+" — "+b.nombre+(b.vigente===false?" (derogada)":""):null;
-  }
-  var reLeyBase=/^Ley\s+([\d.]+)$/;
-  var grupos2={},ordenGrupos2=[],catDeGrupo2={};
-  ordenGrupos.forEach(function(k){
-    var mm=k.match(reLeyBase),destino=k,catOverride=null;
-    if(mm){
-      var b=LEYES_BASE[soloDigitos(mm[1])];
-      if(b){ destino=etiquetaBase(mm[1]); catOverride=b.cat; }
-    }
-    if(!grupos2[destino]){
-      grupos2[destino]=[]; ordenGrupos2.push(destino);
-      catDeGrupo2[destino]=catOverride||catDeGrupo[k];
-    }
-    grupos[k].forEach(function(a){ if(grupos2[destino].indexOf(a)===-1) grupos2[destino].push(a); });
-  });
-  grupos=grupos2; ordenGrupos=ordenGrupos2; catDeGrupo=catDeGrupo2;
-  /* Segunda pasada: toda ley nombrada en el texto, tenga o no un artículo
-     puntual cerca (esta regex no exige "art." al lado, solo "ley N"). Antes
-     las que no tenían artículo se listaban aparte, como una etiqueta suelta
-     al mismo nivel visual que un número de artículo — confuso, porque una
-     ley entera y un artículo puntual no son lo mismo. Ahora entran al mismo
-     agrupador que las demás: siempre título de ley + sus artículos (aunque
-     la lista de artículos quede vacía), nunca una etiqueta sin más. */
-  var leyes={},reLey=/\bley(?:es)?\s*(?:provincial(?:es)?\s+|nacional(?:es)?\s+|federal(?:es)?\s+)?(?:n[°ºo.]?\s*)?((?:\d[\d\.]{2,7}(?:\s*(?:,|y|e)\s*(?:n[°ºo.]?\s*)?)?)+)/gi,mLey;
-  while((mLey=reLey.exec(texto))){
-    var esProv=/provincial/i.test(mLey[0]);
-    var numsLey=mLey[1].match(/\d[\d\.]{2,7}/g)||[];
-    numsLey.forEach(function(n){
-      var etiqueta=etiquetaBase(n)||("Ley "+formatLeyNum(n));
-      if(!leyes.hasOwnProperty(etiqueta)){
-        var b=LEYES_BASE[soloDigitos(n)];
-        leyes[etiqueta]=b?b.cat:(esProv?"provincial":"leyes");
-      }
-    });
-  }
-  Object.keys(leyes).forEach(function(k){
-    if(grupos[k]) return; // ya tiene su propio grupo con artículos detectados
-    grupos[k]=[]; ordenGrupos.push(k); catDeGrupo[k]=leyes[k];
-  });
-  d.artsPorFuente=ordenGrupos.map(function(k){ return [k,grupos[k],catDeGrupo[k]]; });
-  d.arts=[].concat.apply([],ordenGrupos.map(function(k){ return grupos[k]; }));
-  var cit={},cs2=texto.match(/Fallos:?\s*\d{2,3}\s*:\s*\d{1,4}/gi)||[];
-  cs2.forEach(function(a){ cit[a.replace(/\s+/g," ")]=1; });
-  d.citados=Object.keys(cit);
-  return d;
-}
+/* La detección de datos del fallo (detectar(), las tablas de normas y el
+   análisis estructurado IVSAnalisis) vive en analisis-fallo.js, que se carga
+   antes que este script: así las pruebas de backend/test/ la corren en Node. */
 /* Cuando el fallo llegó desde un buscador con robot propio (SCJM, CABA),
    ya sabemos la carátula, el tribunal, el expediente y la fecha de la
    fuente oficial: son mejores que cualquier adivinanza por regex sobre
@@ -3738,13 +3400,16 @@ function lxRecorte(texto,i,antes,largo){
   return {t:(a>0?"… ":"")+texto.slice(a,b).replace(/\s+/g," ").trim()+(b<texto.length?" …":""),a:a,crudo:texto.slice(i,Math.min(texto.length,i+90))};
 }
 var LX_INTENCIONES=[
+  ["votos",/disiden|unanim|voto|votaron|jueces|jueza|juez|magistrad|ministr|quien(es)? firm|quien(es)? (lo )?(fallaron|resolvieron|dictaron)|integr/],
+  ["honorarios",/honorario|regul(o|aron|acion)|cuanto (cobr|se le pag)|perito/],
+  ["incapacidad",/incapacidad|balthazar|capacidad restante|porcentaje/],
+  ["agravios",/agravi|que (se )?(planteo|cuestiono|pidio) (el|la) recurrente|que se cuestiona/],
   ["resumen",/explic|resum|sintesis|de que (se )?trata|que (paso|dice el fallo|dice este fallo)|contame|cuenta(me)? el fallo|en pocas palabras|de que va|analiz|que es este fallo|que resolvio y por que/],
   ["decision",/resolv|decidi|gano|perdio|fallo final|parte dispositiva|resultado|hizo lugar|hace lugar|rechaz|confirm|revoc|que dispuso|como termino/],
   ["montos",/cuanto|monto|indemniz|suma|pesos|\$|dinero|plata|importe|condena(ron)? a pagar/],
-  ["votos",/voto|votaron|disiden|jueces|jueza|juez|magistrad|ministr|quien(es)? firm|unanim/],
   ["precedentes",/precedente|jurisprudencia|fallos cita|que fallos|antecedente/],
   ["normas",/norma|articulo|art\b|leyes|ley |codigo|que se aplic/],
-  ["partes",/partes|actor|actora|demandad|quien demand|contra quien|quienes son/],
+  ["partes",/partes|actor|actora|demandad|quien demand|contra quien|quienes son|recurrente|recurrido|aseguradora|citad[ao] en garantia/],
   ["fecha",/fecha|cuando|que dia|que ano/],
   ["tribunal",/tribunal|que corte|que camara|quien lo dicto|quien dicto|que juzgado|sala/]
 ];
@@ -3767,30 +3432,6 @@ function lxDecision(texto){
   [["hace lugar",/hac(e|er|iendo) lugar|admit(e|ir)/],["rechaza",/rechaz/],["confirma",/confirm/],["revoca",/revoc/],["modifica",/modific/],["eleva",/\seleva/],["reduce",/reduc/],["declara",/declar/],["condena",/conden/],["desestima",/desestim/],["absuelve",/absuelv|absolv/]]
     .forEach(function(v){ if(v[1].test(pl)) vs.push(v[0]); });
   return {pasaje:r,sintesis:vs};
-}
-function lxMontos(texto){
-  var re=/(?:\$|US\$|U\$S|USD)\s?\d[\d.]*(?:,\d+)?|\b\d{1,3}(?:\.\d{3})+(?:,\d+)?\s?(?:pesos|d[oó]lares)/gi,m,out=[],vistos={};
-  while((m=re.exec(texto))&&out.length<10){
-    var k=m[0].replace(/\s/g,""); if(vistos[k]) continue; vistos[k]=1;
-    out.push({monto:m[0].trim(),pasaje:lxRecorte(texto,m.index,140,320)});
-  }
-  return out;
-}
-function lxVotos(texto){
-  // «Dr. Pérez», «el señor juez doctor LÓPEZ MURO», «la jueza doctora Gómez», «Ministro Rosatti»
-  var re=/\b(?:Dr|Dra|Dres|Dras)\.\s*((?:[A-ZÁÉÍÓÚÑ][\wáéíóúñü'\-]+\.?\s?){1,4})|\b(?:doctor|doctora|juez|jueza|ministro|ministra|vocal|conjuez)\s+(?:doctor\s+|doctora\s+)?((?:[A-ZÁÉÍÓÚÑ][\wáéíóúñüÁÉÍÓÚÑ'\-]+\s?){1,4})/g,m,n={};
-  while((m=re.exec(texto))){
-    var nom=(m[1]||m[2]||"").replace(/\s+/g," ").trim().replace(/\s+(?:y|por|en|de|del|que|dijo|votó|vota)$/i,"");
-    if(nom.length>3&&!/^(?:En|El|La|Los|Que|Doctor|Doctora)\b/.test(nom)){
-      nom=nom.replace(/\b([A-ZÁÉÍÓÚÑ])([A-ZÁÉÍÓÚÑ]+)\b/g,function(_,a,b){ return a+b.toLowerCase(); }); // LÓPEZ MURO -> López Muro
-      n[nom]=(n[nom]||0)+1;
-    }
-  }
-  var nombres=Object.keys(n).sort(function(a,b){return n[b]-n[a];}).slice(0,10);
-  var d=null,md=/en disidencia|disidencia (?:parcial|total)?|vot[oó] en disidencia/i.exec(texto);
-  if(md) d=lxRecorte(texto,md.index,200,520);
-  var u=/por unanimidad|un[aá]nime/i.exec(texto);
-  return {nombres:nombres,disidencia:d,unanimidad:u?lxRecorte(texto,u.index,120,300):null};
 }
 function lxPrimerPasaje(texto,str){
   if(!str) return null;
@@ -3854,87 +3495,310 @@ function lxFundamentos(texto,n){
     return {t:t.replace(/\s+/g," "),a:a,crudo:texto.slice(a,a+90).trim()};
   });
 }
+/* ---------- Lexia sobre datos estructurados (analisis-fallo.js) ----------
+   Las respuestas de magistrados, votos, partes, montos, normas, precedentes
+   y resultado salen del análisis estructurado, no de buscar palabras: cada
+   afirmación lleva su fragmento y «Ver en el fallo». Si el análisis no
+   encontró evidencia, Lexia lo dice en vez de completar. */
+function lxAnalisis(texto,d){ return IVSAnalisis.analizar(texto,{car:d.car,tipo:d.tipo}); }
+function lxEv(texto,ev){ return ev?{t:ev.texto,crudo:texto.slice(ev.ini,Math.min(texto.length,ev.ini+90))}:null; }
+function lxPesos(x){ return x.moneda==="USD"?"US$ "+x.valor.toLocaleString("es-AR",{minimumFractionDigits:0,maximumFractionDigits:2}):"$ "+x.valor.toLocaleString("es-AR",{minimumFractionDigits:x.valor%1?2:0,maximumFractionDigits:2}); }
+var LX_ESTADO_VOT={
+  disidencia_identificada:"Disidencia identificada",
+  voto_concurrente_identificado:"Voto concurrente identificado",
+  sin_disidencia_en_estructura:"No se identifica disidencia en la estructura revisada",
+  informacion_insuficiente:"Información insuficiente para determinarlo"
+};
+var LX_FUNCION_MONTO={
+  reclamado:"reclamado",concedido:"concedido",concedido_y_confirmado:"concedido y confirmado por la alzada",
+  fijado_por_este_tribunal:"fijado por este tribunal",condena_total:"condena total",honorarios_regulados:"honorarios regulados",
+  parametro_de_calculo:"parámetro del cálculo",argumento_de_parte:"cifra invocada por una parte",deposito_o_transferencia:"depósito o transferencia",mencionado:"mencionado"
+};
+var LX_ETAPA={demanda:"en la demanda",alegatos:"en los alegatos",primera_instancia:"en primera instancia",alzada:"en la alzada",
+  instancia_actual:"en esta instancia",instancia_extraordinaria:"en la instancia extraordinaria",parte_resolutiva:"en la parte resolutiva",
+  "parte_resolutiva (texto modificado)":"en la parte resolutiva (texto de la sentencia modificada)"};
+var LX_ROL={profesional_con_honorarios:"Profesionales con honorarios regulados (rol por confirmar: letrados o representantes)",
+  perito:"Peritos",abogado_o_representante:"Abogados y representantes",ministerio_publico:"Ministerio Público",
+  magistrado_mencionado:"Magistrados de otros votos o mencionados",juez_mencionado:"Jueces mencionados (no necesariamente de este tribunal)",
+  secretario:"Secretaría",persona_mencionada:"Personas mencionadas (rol por confirmar)"};
+function lxOrdinal(c){ return {primera:"1.ª",segunda:"2.ª",tercera:"3.ª",cuarta:"4.ª",quinta:"5.ª"}[c]||""; }
+function lxMagistradoHTML(p,A){
+  var partes=[],cu={};
+  p.hechos.forEach(function(h){
+    if(!/^(voto|voto_principal|voto_propio|voto_concurrente|disidencia|disidencia_parcial|adhesion)$/.test(h.tipo)) return;
+    var k=h.tipo+(h.a?"|"+h.a:"")+(h.alcance==="parcial"?"|p":"");
+    (cu[k]=cu[k]||{h:h,c:[]}).c.push(lxOrdinal(h.cuestion));
+  });
+  function nom(id){ var x=A.personas.filter(function(q){ return q.id===id; })[0]; return x?x.nombre:""; }
+  Object.keys(cu).forEach(function(k){
+    var h=cu[k].h,c=cu[k].c.filter(Boolean),t={voto_principal:"voto principal (preopinante)",voto:"voto",voto_propio:"voto con fundamentos propios",
+      voto_concurrente:"voto concurrente",disidencia:"voto en disidencia",disidencia_parcial:"disidencia parcial",adhesion:"adhiere"+(h.alcance==="parcial"?" en parte":"")+(h.a?" al voto de "+nom(h.a):" al voto que antecede")}[h.tipo];
+    partes.push(t+(c.length?" ("+c.join(", ")+" cuestión)":""));
+  });
+  if(p.enOrdenDeEstudio) partes.push("orden de estudio: "+p.enOrdenDeEstudio+"°");
+  partes.push({suscribe:"firma la sentencia",no_determinado:"firma: no determinada",no_suscribe_por_licencia:"no la firma: se encontraba de licencia",
+    no_suscribe:"no la firma (motivo no indicado)"}[p.suscripcion]||("no la firma: "+p.suscripcion.replace(/^no_suscribe_por_/,"").replace(/_/g," ")));
+  return '<li><b>'+esc(p.nombre)+'</b> — '+esc(partes.join(" · "))+'</li>';
+}
+function lxVotosHTML(texto,A,pas){
+  var mags=A.personas.filter(function(p){ return p.esMagistrado; }),v=A.votacion,h="";
+  h+='<p class="lx-estado"><b>¿Hubo disidencia?</b> '+esc(LX_ESTADO_VOT[v.estado])+'.</p>';
+  if(mags.length) h+='<h4>Integración del tribunal y votos</h4><ul class="lx-lista">'+mags.map(function(p){ return lxMagistradoHTML(p,A); }).join("")+'</ul>';
+  else h+='<p class="lx-nada">No identifiqué magistrados por el orden de estudio, los encabezados de voto, las adhesiones ni las firmas.</p>';
+  if(v.detalle.length) h+='<ul class="lx-lista lx-sec">'+v.detalle.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul>';
+  var evs=[];
+  A.votos.slice(0,2).forEach(function(x){ evs.push(x.evidencia); });
+  A.adhesiones.slice(0,1).forEach(function(x){ evs.push(x.evidencia); });
+  v.evidencia.slice(0,2).forEach(function(x){ if(evs.indexOf(x)<0) evs.push(x); });
+  if(evs.length) h+='<h4>Dónde lo dice el fallo</h4>'+evs.map(function(e){ return pas(lxEv(texto,e)); }).join("");
+  var otros=A.personas.filter(function(p){ return !p.esMagistrado; }),grupos={};
+  otros.forEach(function(p){ (grupos[p.rol]=grupos[p.rol]||[]).push(p.nombre); });
+  var orden=["abogado_o_representante","profesional_con_honorarios","perito","ministerio_publico","magistrado_mencionado","juez_mencionado","secretario","persona_mencionada"];
+  var gh=orden.filter(function(k){ return grupos[k]; }).map(function(k){ return '<li><b>'+esc(LX_ROL[k])+':</b> '+esc(grupos[k].join(", "))+'</li>'; }).join("");
+  if(gh) h+='<h4>Otras personas que aparecen (no integran el tribunal)</h4><ul class="lx-lista lx-sec">'+gh+'</ul>';
+  return h;
+}
+function lxMontoHTML(x){
+  var t=LX_FUNCION_MONTO[x.funcion]+(x.etapa&&LX_ETAPA[x.etapa]&&x.funcion!=="concedido_y_confirmado"?" "+LX_ETAPA[x.etapa]:"");
+  return '<li><b>'+esc(lxPesos(x))+'</b> — '+esc(t)+(x.concepto?' · '+esc(x.concepto):'')+(x.sujeto?' · '+esc(x.sujeto):'')+
+    (x.intereses==="aparte"?' · <span class="lx-sint">con más los intereses (no incluidos en la cifra)</span>':x.intereses==="incluidos"?' · incluye intereses':'')+
+    (x.nota?' · '+esc(x.nota):'')+'</li>';
+}
+function lxIncapacidadHTML(I){
+  if(!I||I.corregido==null) return "";
+  var f=function(n){ return String(n).replace(".",","); };
+  return '<h4>Incapacidad: método de Balthazard (capacidad restante)</h4><p>'+
+    (I.parciales?'Incapacidades parciales: '+f(I.parciales[0])+' % y '+f(I.parciales[1])+' %. Capacidad restante: 100 − '+f(I.parciales[0])+' = '+f(I.capacidadRestante)+' %; '+f(I.parciales[1])+' % de '+f(I.capacidadRestante)+' = '+f(+(I.capacidadRestante*I.parciales[1]/100).toFixed(2))+' %. ':'')+
+    'Incapacidad combinada: <b>'+f(I.corregido)+' %</b>'+(I.anterior!=null?' (reemplaza el '+f(I.anterior)+' % de la suma lineal)':'')+'.'+
+    (I.verificado===true?' El cálculo coincide con el del fallo.':I.verificado===false?' <b>Ojo:</b> mi cálculo ('+f(I.calculado)+' %) no coincide con el del fallo.':'')+'</p>';
+}
+function lxMontosHTML(texto,A,pas){
+  var M=A.montos;
+  if(!M.length) return '<p class="lx-nada">No encontré importes en pesos ni en dólares escritos con cifras.</p>';
+  var pri=M.filter(function(x){ return x.principal; }),resto=M.filter(function(x){ return !x.principal; });
+  var h=pri.length?'<p>Los importes principales, por lo que representa cada uno:</p><ul class="lx-lista">'+pri.map(lxMontoHTML).join("")+'</ul>':'<p class="lx-nada">No identifiqué con certeza importes reclamados o concedidos.</p>';
+  h+=lxIncapacidadHTML(A.incapacidad);
+  var clave=pri.filter(function(x){ return /condena_total|fijado_por_este_tribunal/.test(x.funcion); }).slice(-2);
+  if(clave.length) h+='<h4>Dónde lo dice el fallo</h4>'+clave.map(function(x){ return pas(lxEv(texto,x.evidencia)); }).join("");
+  if(resto.length) h+='<details class="lx-mas"><summary>Otros importes ('+resto.length+'): honorarios, parámetros del cálculo y otros</summary><ul class="lx-lista lx-sec">'+resto.map(lxMontoHTML).join("")+'</ul></details>';
+  h+='<p class="lx-nota">Cada cifra se clasifica por su contexto: lo reclamado, lo concedido y la condena total no son lo mismo, y no se suman.</p>';
+  return h;
+}
+function lxPartesHTML(texto,A,d,pas){
+  var P=A.partes,h='<div class="lx-ficha">'+(d.car?'<div class="lx-fila"><b>Carátula</b><span>'+esc(d.car)+'</span></div>':'')+'</div>';
+  function lista(xs,extra){ return xs.map(function(x){ return esc(x.nombre)+(extra?extra(x):""); }).join("; "); }
+  if(P.instancia){
+    h+='<h4>En esta instancia</h4><ul class="lx-lista">'+
+      '<li><b>Recurrente:</b> '+lista(P.instancia.recurrentes,function(x){ return x.tambien?" ("+esc(x.tambien)+")":""; })+(P.instancia.tipoRecurso?' · '+esc(P.instancia.tipoRecurso.toLowerCase()):'')+'</li>'+
+      (P.instancia.recurridos.length?'<li><b>Recurrido:</b> '+lista(P.instancia.recurridos)+' <span class="lx-nota-in">(deducido: es la contraparte de la recurrente)</span></li>':'<li><b>Recurrido:</b> no confirmado</li>')+'</ul>';
+  }
+  if(P.origen){
+    h+='<h4>En el proceso de origen</h4><ul class="lx-lista">'+
+      '<li><b>Actor:</b> '+lista(P.origen.actor)+'</li>'+
+      '<li><b>Demandado'+(P.origen.demandados.length>1?'s':'')+':</b> '+lista(P.origen.demandados,function(x){ return x.funcion?" ("+esc(x.funcion)+")":""; })+(P.origen.otros?" y otros":"")+'</li>'+
+      (P.origen.citadosEnGarantia.length?'<li><b>Citada en garantía:</b> '+lista(P.origen.citadosEnGarantia)+'</li>':'')+
+      (P.origen.objeto?'<li><b>Objeto:</b> '+esc(P.origen.objeto)+'</li>':'')+'</ul>';
+    var ev=(P.origen.actor[0]||{}).evidencia; if(ev) h+=pas(lxEv(texto,ev));
+  }
+  if(!P.instancia&&!P.origen) h+='<p class="lx-nada">La carátula no sigue un formato que pueda separar en partes.</p>';
+  P.notas.forEach(function(n){ h+='<p class="lx-nota">'+esc(n)+'</p>'; });
+  return h;
+}
+var LX_ESTADO_AGR={admitido:"admitido",rechazado:"rechazado",admitido_parcialmente:"admitido en parte",no_tratado_en_el_fondo:"no tratado en el fondo",no_determinado:"resultado no determinado"};
+function lxDecisionHTML(texto,A,pas){
+  var D=A.decision,h="";
+  if(D.global){
+    var vb=D.global.verbos,frase=vb.length?vb[0]+(D.global.objeto?" el "+D.global.objeto.toLowerCase():"")+(vb.length>1?" y "+vb.slice(1).join(" y "):""):"";
+    h+='<p>Resultado'+(frase?': <b>'+esc(frase)+'</b>':'')+'. Dice la parte resolutiva:</p>'+pas(lxEv(texto,D.global.evidencia));
+  }else h+='<p class="lx-nada">No encontré la parte resolutiva con las fórmulas habituales («Resuelve», «Falla», «Sentencia»).</p>';
+  if(D.agravios.length){
+    h+='<h4>Agravios, uno por uno</h4><ul class="lx-lista">'+D.agravios.map(function(a){
+      return '<li><b>'+esc(LX_ESTADO_AGR[a.estado])+'</b> — '+esc(a.titulo)+' <button type="button" class="mini" data-act="lx-ir" data-s="'+esc(texto.slice(a.evidencia.ini,a.evidencia.ini+80))+'">Ver</button></li>';
+    }).join("")+'</ul>';
+  }
+  if(D.modificaciones.length) h+='<h4>Qué se modifica</h4><ul class="lx-lista">'+D.modificaciones.map(function(m){ return '<li>'+esc(m.texto)+'</li>'; }).join("")+'</ul>';
+  h+=lxIncapacidadHTML(A.incapacidad);
+  var mf=A.montos.filter(function(x){ return /fijado_por_este_tribunal|condena_total/.test(x.funcion); });
+  if(mf.length) h+='<h4>Importes que fija</h4><ul class="lx-lista">'+mf.map(lxMontoHTML).join("")+'</ul>';
+  D.notas.forEach(function(n){ h+='<p class="lx-nota">'+esc(n)+'</p>'; });
+  return h;
+}
+/* Normas: cada artículo con su norma, y aparte las que el fallo cita sólo
+   al regular honorarios o imponer costas (no fundan la decisión). */
+function lxNormasHTML(texto,A,d){
+  var citas=d.citas||[];
+  if(!citas.length&&!(d.artsPorFuente||[]).length) return '<p class="lx-nada">No reconocí artículos citados con su número.</p>';
+  var fund={},acc={},orden=[],dondeEsta={};
+  citas.forEach(function(c){
+    var ctx=A.contextoDe(c.pos),dest=(ctx==="honorarios"||ctx==="costas")?acc:fund;
+    if(!dondeEsta[c.f+"|"+c.l]) dondeEsta[c.f+"|"+c.l]=c.pos;
+    if(!dest[c.f]){ dest[c.f]=[]; if(orden.indexOf(c.f)<0) orden.push(c.f); }
+    if(dest[c.f].indexOf(c.l)<0) dest[c.f].push(c.l);
+  });
+  // un artículo que también aparece en los fundamentos no se repite abajo
+  Object.keys(acc).forEach(function(k){ if(fund[k]) acc[k]=acc[k].filter(function(a){ return fund[k].indexOf(a)<0; }); if(!acc[k].length) delete acc[k]; });
+  function bloque(g){
+    return '<ul class="lx-lista lx-normas">'+orden.filter(function(k){ return g[k]&&k!=="Sin ley identificada"; }).map(function(k){
+      return '<li><b>'+esc(k)+':</b> '+g[k].slice().sort(ordenArt).map(function(a){ var ps=dondeEsta[k+"|"+a]; return '<button type="button" class="lx-art" data-act="lx-ir" data-s="'+esc(ps!=null?texto.slice(ps,ps+60):a)+'" title="Ver dónde lo cita">'+esc(a)+'</button>'; }).join(", ")+'</li>';
+    }).join("")+'</ul>';
+  }
+  var h='<p>Normas que cita el fallo, cada artículo con la norma a la que pertenece:</p>'+bloque(fund);
+  if(fund["Sin ley identificada"]) h+='<p class="lx-nota">Sin norma identificada en el texto: '+esc(fund["Sin ley identificada"].join(", "))+'.</p>';
+  if(Object.keys(acc).some(function(k){ return k!=="Sin ley identificada"; })) h+='<h4>Citadas sólo al regular honorarios o imponer costas</h4>'+bloque(acc);
+  var sinArt=(d.artsPorFuente||[]).filter(function(g){ return !g[1].length; }).map(function(g){ return g[0]; });
+  if(sinArt.length) h+='<p class="lx-nota">También menciona, sin un artículo puntual: '+esc(sinArt.join("; "))+'.</p>';
+  return h;
+}
+var LX_TIPO_PREC={csjn:"Corte Suprema de Justicia de la Nación",provincial:"Tribunales provinciales (incluido el propio tribunal)",otro_tribunal:"Otros tribunales",doctrina:"Doctrina y obras",no_clasificable:"Citas que no pude clasificar con seguridad"};
+function lxPrecedentesHTML(texto,A,pas){
+  var P=A.precedentes;
+  if(!P.length) return '<p class="lx-nada">No encontré citas de fallos ni de doctrina con un formato reconocible.</p>';
+  var h="";
+  ["csjn","provincial","otro_tribunal","doctrina","no_clasificable"].forEach(function(t){
+    var xs=P.filter(function(p){ return p.tipo===t; }); if(!xs.length) return;
+    h+='<h4>'+esc(LX_TIPO_PREC[t])+' ('+xs.length+')</h4><ul class="lx-lista">'+xs.map(function(p){
+      var bits=[p.caratula?"«"+p.caratula+"»":(p.autor||null),p.tribunal&&t!=="csjn"&&t!=="provincial"?p.tribunal:null,p.fecha,p.expediente?"expte. "+p.expediente:null,p.publicacion].filter(Boolean);
+      return '<li>'+esc(bits.join(" · ")||"(sin datos)")+(p.funcion&&p.funcion!=="citado"?' · <b>'+esc(p.funcion)+'</b>':'')+
+        ' <button type="button" class="mini" data-act="lx-ir" data-s="'+esc(texto.slice(p.evidencia.ini,p.evidencia.ini+70))+'">Ver</button></li>';
+    }).join("")+'</ul>';
+  });
+  return h+'<p class="lx-nota">Lista armada por reglas sobre las formas de citar más comunes: puede no ser exhaustiva.</p>';
+}
 function lxResumen(texto,d,pas,fila){
+  var A=lxAnalisis(texto,d);
   var h='<p>Le explico el fallo con sus propias palabras, en partes:</p><div class="lx-ficha">'+
     fila("Carátula",d.car)+fila("Tribunal",[d.trib,d.sala].filter(Boolean).join(" · "))+fila("Fecha",d.fecha)+'</div>';
-  var iAnt=lxPrimeroQue(texto,/\b(ANTECEDENTES|Antecedentes|RESULTA|Resulta|I\.\s*Antecedentes|Los hechos|LOS HECHOS|El caso|EL CASO)\b/);
+  var iAnt=lxPrimeroQue(texto,/\b(ANTECEDENTES|Antecedentes|RELATO DE LA CAUSA|RESULTA|Resulta|I\.\s*Antecedentes|Los hechos|LOS HECHOS|El caso|EL CASO)\b/);
   if(iAnt<0) iAnt=lxPrimeroQue(texto,/(promovi[oó]|interpuso|dedujo|demand[oó]|se present[oó])/i,0,Math.floor(texto.length*.5));
   if(iAnt>=0) h+='<h4>Qué se discutía</h4>'+pas(lxRecorte(texto,iAnt,0,560));
-  var iAgr=lxPrimeroQue(texto,/(agravi|se queja|cuestiona|critica la sentencia|recurso de)/i,Math.floor(texto.length*.08));
-  if(iAgr>=0&&Math.abs(iAgr-iAnt)>400) h+='<h4>Qué se planteó</h4>'+pas(lxRecorte(texto,iAgr,120,520));
+  if(A.decision.agravios.length) h+='<h4>Qué se planteó y cómo se resolvió cada punto</h4><ul class="lx-lista">'+A.decision.agravios.map(function(a){ return '<li><b>'+esc(LX_ESTADO_AGR[a.estado])+'</b> — '+esc(a.titulo)+'</li>'; }).join("")+'</ul>';
+  else{
+    var iAgr=lxPrimeroQue(texto,/(agravi|se queja|cuestiona|critica la sentencia|recurso de)/i,Math.floor(texto.length*.08));
+    if(iAgr>=0&&Math.abs(iAgr-iAnt)>400) h+='<h4>Qué se planteó</h4>'+pas(lxRecorte(texto,iAgr,120,520));
+  }
   var fu=lxFundamentos(texto,3);
   if(fu.length) h+='<h4>Fundamentos principales</h4>'+fu.map(pas).join("");
-  var de=lxDecision(texto);
-  h+='<h4>Qué se resolvió'+(de&&de.sintesis.length?' · <span class="lx-sint">'+esc(de.sintesis.join(", "))+'</span>':'')+'</h4>'+
-    (de?pas(de.pasaje):'<p class="lx-nada">No encontré la parte resolutiva con las fórmulas habituales.</p>');
-  return h+'<p class="lx-nota">Esta explicación junta partes textuales del fallo; no es una interpretación. Léala en contexto con «Ver en el fallo».</p>';
+  h+='<h4>Qué se resolvió</h4>'+lxDecisionHTML(texto,A,pas);
+  return h+'<p class="lx-nota">Esta explicación junta partes textuales del fallo y lo que se deduce de su estructura; no es una interpretación. Léala en contexto con «Ver en el fallo».</p>';
 }
 /* Arma la respuesta (HTML) a una pregunta, o la ficha completa si p === null. */
 function lxResponder(p){
-  var texto=estado.texto||"",d=datosDoc(texto),it=p===null?"ficha":lxIntencion(p),h="";
+  var texto=estado.texto||"",d=datosDoc(texto),it=p===null?"ficha":lxIntencion(p),h="",A=lxAnalisis(texto,d);
   function pas(r){ return r?'<blockquote class="lx-pas">'+resaltarSimple(r.t,p||"")+'</blockquote>'+
     '<button type="button" class="mini" data-act="lx-ir" data-s="'+esc(r.crudo||r.t.replace(/^…\s*/,"").slice(0,80))+'">Ver en el fallo</button>':""; }
   function fila(et,v){ return v?'<div class="lx-fila"><b>'+et+'</b><span>'+esc(v)+'</span></div>':""; }
   if(it==="ficha"){
-    var dec=lxDecision(texto),mon=lxMontos(texto),vo=lxVotos(texto),car=d.car||"";
-    var partes=car.split(/\s+c\/\s+/i);
-    h+='<div class="lx-ficha">'+fila("Carátula",car)+
-      (partes.length>1?fila("Actora",partes[0])+fila("Demandada",partes[1].split(/\s+[sp]\/\s+/i)[0]):"")+
+    var P=A.partes,mags=A.personas.filter(function(x){ return x.esMagistrado; });
+    h+='<div class="lx-ficha">'+fila("Carátula",d.car)+
+      (P.origen?fila("Actor",P.origen.actor.map(function(x){ return x.nombre; }).join("; "))+fila("Demandado",P.origen.demandados.map(function(x){ return x.nombre+(x.funcion?" ("+x.funcion+")":""); }).join("; ")):"")+
+      (P.instancia?fila("Recurrente",P.instancia.recurrentes.map(function(x){ return x.nombre; }).join("; ")):"")+
       fila("Tribunal",[d.trib,d.sala].filter(Boolean).join(" · "))+fila("Fecha",d.fecha)+fila("Expediente",d.exp)+
-      fila("Votos",vo.disidencia?"Hay disidencia":(vo.unanimidad?"Por unanimidad":(vo.nombres.length?vo.nombres.slice(0,5).join(", "):"")))+'</div>';
-    if(dec){ h+='<h4>Qué se resolvió'+(dec.sintesis.length?' · <span class="lx-sint">'+esc(dec.sintesis.join(", "))+'</span>':"")+'</h4>'+pas(dec.pasaje); }
-    else h+='<h4>Qué se resolvió</h4><p class="lx-nada">No encontré la parte resolutiva («Resuelve», «Por ello»…). Puede estar con otra fórmula.</p>';
-    if(mon.length){ h+='<h4>Montos ('+mon.length+')</h4>'+mon.slice(0,4).map(function(x){ return '<p class="lx-monto"><b>'+esc(x.monto)+'</b></p>'+pas(x.pasaje); }).join(""); }
-    if(d.arts&&d.arts.length) h+='<h4>Normas citadas ('+d.arts.length+')</h4><div class="lx-tags">'+d.arts.slice(0,18).map(function(a){ return '<button type="button" class="meta-tag" data-act="lx-ir" data-s="'+esc(String(a).split(" ")[0]+" "+String(a).split(" ")[1])+'">'+esc(a)+'</button>'; }).join("")+'</div>';
-    if(d.citados&&d.citados.length) h+='<h4>Precedentes de la Corte citados</h4><div class="lx-tags">'+d.citados.slice(0,12).map(function(c){ return '<button type="button" class="meta-tag" data-act="lx-ir" data-s="'+esc(c)+'">'+esc(c)+'</button>'; }).join("")+'</div>';
-    if(vo.disidencia) h+='<h4>Disidencia</h4>'+pas(vo.disidencia);
+      fila("Magistrados",mags.map(function(x){ return x.nombre; }).join(", "))+
+      fila("Disidencia",LX_ESTADO_VOT[A.votacion.estado])+'</div>';
+    h+='<h4>Qué se resolvió</h4>'+(A.decision.global?'<p><b>'+esc(A.decision.global.verbos.join(" y ")||"ver la parte resolutiva")+'</b></p>'+pas(lxEv(texto,A.decision.global.evidencia)):'<p class="lx-nada">No encontré la parte resolutiva con las fórmulas habituales.</p>');
+    var pri=A.montos.filter(function(x){ return x.principal; });
+    if(pri.length) h+='<h4>Importes principales</h4><ul class="lx-lista">'+pri.slice(0,6).map(lxMontoHTML).join("")+'</ul>';
+    if(d.citas&&d.citas.length) h+='<h4>Normas</h4>'+lxNormasHTML(texto,A,d);
+    var cs=A.precedentes.filter(function(x){ return x.tipo==="csjn"; });
+    if(cs.length) h+='<h4>Precedentes de la Corte Suprema</h4><ul class="lx-lista">'+cs.map(function(x){ return '<li>'+esc([x.caratula?"«"+x.caratula+"»":null,x.fecha,x.publicacion].filter(Boolean).join(" · "))+'</li>'; }).join("")+'</ul>';
     return h;
   }
   if(it==="resumen") return lxResumen(texto,d,pas,fila);
-  if(it==="decision"){ var de=lxDecision(texto); return de?'<p>La parte resolutiva'+(de.sintesis.length?' <b>'+esc(de.sintesis.join(", "))+'</b>':"")+'. Dice así:</p>'+pas(de.pasaje):'<p class="lx-nada">No encontré la parte resolutiva con las fórmulas habituales («Resuelve», «Falla», «Por ello»). Pruebe preguntando con otras palabras.</p>'; }
-  if(it==="montos"){ var mo=lxMontos(texto); return mo.length?'<p>Encontré <b>'+mo.length+'</b> monto'+(mo.length>1?"s":"")+' en el fallo:</p>'+mo.slice(0,5).map(function(x){ return '<p class="lx-monto"><b>'+esc(x.monto)+'</b></p>'+pas(x.pasaje); }).join(""):'<p class="lx-nada">No encontré montos en pesos ni dólares en el texto.</p>'; }
-  if(it==="votos"){ var v=lxVotos(texto); return (v.nombres.length?'<p>Magistrados que aparecen: <b>'+esc(v.nombres.join(", "))+'</b>.</p>':'')+
-      (v.disidencia?'<p>Hay una <b>disidencia</b>:</p>'+pas(v.disidencia):(v.unanimidad?'<p>Se resolvió <b>por unanimidad</b>:</p>'+pas(v.unanimidad):'<p class="lx-nada">No aparece la palabra «disidencia» en el texto.</p>')); }
-  if(it==="normas"){ return d.arts&&d.arts.length?'<p>El fallo cita <b>'+d.arts.length+'</b> normas:</p><div class="lx-tags">'+d.arts.slice(0,30).map(function(a){ return '<span class="meta-tag">'+esc(a)+'</span>'; }).join("")+'</div>':'<p class="lx-nada">No reconocí normas citadas con su número.</p>'; }
-  if(it==="precedentes"){ return d.citados&&d.citados.length?'<p>Cita estos fallos de la Corte:</p><div class="lx-tags">'+d.citados.map(function(c){ return '<button type="button" class="meta-tag" data-act="lx-ir" data-s="'+esc(c)+'">'+esc(c)+'</button>'; }).join("")+'</div>':'<p class="lx-nada">No encontré citas con la forma «Fallos: tomo:página».</p>'; }
-  if(it==="partes"&&d.car){ var pp=d.car.split(/\s+c\/\s+/i); return '<p>Carátula: <b>'+esc(d.car)+'</b></p>'+(pp.length>1?'<div class="lx-ficha">'+fila("Actora",pp[0])+fila("Demandada",pp[1].split(/\s+[sp]\/\s+/i)[0])+'</div>':"")+pas(lxPrimerPasaje(texto,d.car)); }
+  if(it==="decision"||it==="agravios") return lxDecisionHTML(texto,A,pas);
+  if(it==="incapacidad"){ var ih=lxIncapacidadHTML(A.incapacidad); if(ih) return ih+(A.incapacidad.evidenciaResultado?pas(lxEv(texto,A.incapacidad.evidenciaResultado)):""); }
+  if(it==="honorarios"){
+    var ho=A.montos.filter(function(x){ return x.funcion==="honorarios_regulados"; });
+    if(ho.length) return '<p>Honorarios regulados en el fallo:</p><ul class="lx-lista">'+ho.map(lxMontoHTML).join("")+'</ul>'+pas(lxEv(texto,ho[0].evidencia));
+  }
+  if(it==="montos") return lxMontosHTML(texto,A,pas);
+  if(it==="votos") return lxVotosHTML(texto,A,pas);
+  if(it==="normas") return lxNormasHTML(texto,A,d);
+  if(it==="precedentes") return lxPrecedentesHTML(texto,A,pas);
+  if(it==="partes") return lxPartesHTML(texto,A,d,pas);
   if(it==="fecha"&&d.fecha) return '<p>Fecha del fallo: <b>'+esc(d.fecha)+'</b>.</p>';
+  if(it==="fecha") return '<p class="lx-nada">No encontré la fecha propia de la sentencia (la fórmula de apertura o la del cierre). No tomo otra fecha del texto para no confundirla con la de un hecho o la de otro fallo citado.</p>';
   if(it==="tribunal"&&d.trib) return '<p>Lo dictó: <b>'+esc([d.trib,d.sala].filter(Boolean).join(" · "))+'</b>.</p>'+pas(lxPrimerPasaje(texto,d.trib.split(" ").slice(0,3).join(" ")));
   var ps=lxPorPalabras(texto,p);
   if(ps.length) return '<p>Estos son los pasajes del fallo que mejor responden:</p>'+ps.map(pas).join("");
   // nada específico: en vez de un «no encontré», la explicación del fallo
   return '<p class="lx-nada">No encontré un pasaje que hable puntualmente de eso. Le dejo la explicación general del fallo:</p>'+lxResumen(texto,d,pas,fila);
 }
-/* Ir al pasaje dentro del texto ya dibujado y dejarlo seleccionado. */
+/* Ir al pasaje dentro del texto ya dibujado y dejarlo seleccionado. Los
+   espacios se comparan colapsados: el texto del fallo trae saltos de línea
+   y espacios dobles que el fragmento citado no tiene. */
 function lxIrA(s){
   var doc=document.getElementById("doc"); if(!doc||!s) return;
-  var limpio=String(s).replace(/^…\s*/,"").replace(/\s+/g," ").trim();
+  var limpio=String(s).replace(/^…\s*/,"").replace(/\s*…$/,"").replace(/\s+/g," ").trim();
   var nodos=[],w=document.createTreeWalker(doc,NodeFilter.SHOW_TEXT),n,todo="";
   while((n=w.nextNode())){ nodos.push([n,todo.length]); todo+=n.nodeValue; }
-  var plano=todo.replace(/\s/g," "),buscado=limpio.slice(0,60),i=plano.indexOf(buscado);
-  if(i<0){ buscado=limpio.slice(0,28); i=plano.indexOf(buscado); }
-  if(i<0){ var pl=lxPlano(plano); buscado=lxPlano(limpio.slice(0,28)); i=pl.indexOf(buscado); }
+  // versión con espacios colapsados y un mapa a la posición real
+  var col="",mapa=[],enEsp=false;
+  for(var k=0;k<todo.length;k++){
+    var c=todo.charAt(k);
+    if(/\s/.test(c)){ if(enEsp) continue; enEsp=true; col+=" "; mapa.push(k); }
+    else{ enEsp=false; col+=c; mapa.push(k); }
+  }
+  var buscado=limpio.slice(0,60),i=col.indexOf(buscado);
+  if(i<0){ buscado=limpio.slice(0,28); i=col.indexOf(buscado); }
+  if(i<0){ var pl=lxPlano(col); buscado=lxPlano(limpio.slice(0,28)); i=pl.indexOf(buscado); }
   if(i<0){ flash("No pude ubicar ese pasaje en el texto"); return; }
-  function ubicar(pos){ for(var k=nodos.length-1;k>=0;k--) if(nodos[k][1]<=pos) return [nodos[k][0],pos-nodos[k][1]]; return [nodos[0][0],0]; }
-  var a=ubicar(i),b=ubicar(Math.min(todo.length,i+buscado.length));
+  var ri=mapa[i],rf=mapa[Math.min(mapa.length-1,i+buscado.length-1)]+1;
+  function ubicar(pos){ for(var k2=nodos.length-1;k2>=0;k2--) if(nodos[k2][1]<=pos) return [nodos[k2][0],pos-nodos[k2][1]]; return [nodos[0][0],0]; }
+  var a=ubicar(ri),b=ubicar(Math.min(todo.length,rf));
   var r=document.createRange(); r.setStart(a[0],Math.min(a[1],a[0].nodeValue.length)); r.setEnd(b[0],Math.min(b[1],b[0].nodeValue.length));
   var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
   var el=a[0].parentElement; if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
 }
+/* Al tocar una pregunta se va a SU respuesta y se la marca en dorado un
+   momento. Si ya estaba contestada para este fallo, no se repite: se
+   ubica la que ya está. */
+function lxClave(pr){ return pr===null?"ficha":(lxIntencion(pr)||lxPlano(pr).replace(/[^a-z0-9 ]/g,"").replace(/\s+/g," ").trim()); }
 function lxPreguntar(p){
   if(!estado.texto) return;
   var pr=p===null?null:String(p||"").trim(); if(pr==="") return;
   lxRespuestasHTML(); // reinicia si cambió el fallo
   estado.lx=estado.lx||[];
-  estado.lx.unshift({p:pr===null?"Identificar lo importante":pr,h:lxResponder(pr)});
-  estado.lx=estado.lx.slice(0,6);
-  var caja=document.getElementById("lx-resp"); if(caja) caja.innerHTML=lxRespuestasHTML();
-  var sec=document.getElementById("lx-fallo"); if(sec) sec.scrollIntoView({behavior:"smooth",block:"start"});
+  var k=lxClave(pr),ya=estado.lx.filter(function(x){ return x.k===k; })[0];
+  if(!ya){
+    estado.lx.unshift({k:k,p:pr===null?"Identificar lo importante":pr,h:lxResponder(pr)});
+    estado.lx=estado.lx.slice(0,6);
+    var caja=document.getElementById("lx-resp"); if(caja) caja.innerHTML=lxRespuestasHTML();
+  }
+  lxSenalar(k);
+}
+function lxSenalar(k){
+  var art=document.querySelector('#lx-resp .lx-r[data-k="'+(window.CSS&&CSS.escape?CSS.escape(k):k)+'"]');
+  if(!art) return;
+  Array.prototype.forEach.call(document.querySelectorAll("#lx-resp .lx-r.lx-r--ahora"),function(x){ x.classList.remove("lx-r--ahora"); });
+  void art.offsetWidth;
+  art.classList.add("lx-r--ahora");
+  var quieto=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches,modo=quieto?"auto":"smooth";
+  // Lo que tapa arriba: la cabecera fija y la barra del Lector, si están pegadas al borde.
+  var tapa=0;
+  Array.prototype.forEach.call(document.querySelectorAll(".top,.barra-doc"),function(el){
+    var cs=getComputedStyle(el),r=el.getBoundingClientRect();
+    // pegada arriba (su «top» actual es el de su regla sticky) y dentro del primer tercio de la pantalla
+    var pegada=cs.position==="fixed"||(cs.position==="sticky"&&Math.abs(r.top-(parseFloat(cs.top)||0))<3);
+    if(pegada&&r.height&&r.bottom>0&&r.top<window.innerHeight/3&&cs.display!=="none") tapa=Math.max(tapa,r.bottom);
+  });
+  var cont=art.closest(".lector-lado"),cc=cont&&getComputedStyle(cont);
+  if(cont&&/(auto|scroll)/.test(cc.overflowY)&&cont.scrollHeight>cont.clientHeight+4){
+    // la columna de Lexia tiene su propio desplazamiento (computadora)
+    // primero la columna a la vista, justo debajo de lo que tapa; después, dentro de ella, la respuesta arriba
+    // (dos desplazamientos suaves a la vez se cancelan: el de la columna va directo)
+    var rc=cont.getBoundingClientRect();
+    cont.scrollTop=cont.scrollTop+art.getBoundingClientRect().top-rc.top-6;
+    if(rc.top<tapa||rc.top>tapa+40) window.scrollTo({top:Math.max(0,window.scrollY+rc.top-tapa-8),behavior:modo});
+  }else{
+    window.scrollTo({top:window.scrollY+art.getBoundingClientRect().top-tapa-12,behavior:modo});
+  }
+  try{ art.focus({preventScroll:true}); }catch(e){ art.focus(); }
+  clearTimeout(art._t); art._t=setTimeout(function(){ art.classList.remove("lx-r--ahora"); },4000);
 }
 function lxRespuestasHTML(){
   var clave=(estado.texto||"").length+":"+(estado.texto||"").slice(0,80);
   if(estado.lxDe!==clave){ estado.lxDe=clave; estado.lx=[]; }
-  return (estado.lx||[]).map(function(x){ return '<article class="lx-r"><p class="lx-q">'+esc(x.p)+'</p>'+x.h+'</article>'; }).join("");
+  return (estado.lx||[]).map(function(x){ return '<article class="lx-r" tabindex="-1" data-k="'+esc(x.k||"")+'" aria-label="Respuesta: '+esc(x.p)+'"><p class="lx-q">'+esc(x.p)+'</p>'+x.h+'</article>'; }).join("");
 }
 function lxPanel(){
   return '<section class="lx-fallo" id="lx-fallo" aria-label="Lexia sobre este fallo">'+
@@ -6208,9 +6072,14 @@ function parsearReferencia(texto){
   var clave=null;
   // Se prueba de la pista más específica a la más genérica: "civil y
   // comercial" antes que "civil" suelto, que también aparece en otras.
-  if(/civil y comercial|ccyc|cccn|ccyn|c\.c\.c/.test(t)) clave="ccyc";
+  if(/procesal civil|cpccn|c\.p\.c\.c|17\.?454/.test(t)) clave="cpccn";
+  else if(/civil y comercial|ccyc|cccn|ccyn|c\.c\.c/.test(t)) clave="ccyc";
   else if(/constitucion|const\.|\bcn\b|carta magna/.test(t)) clave="cn";
+  else if(/riesgos del trabajo|\blrt\b|24\.?557/.test(t)) clave="lrt";
   else if(/contrato de trabajo|\blct\b|20\.?744|ley de trabajo/.test(t)) clave="lct";
+  else if(/consumidor|\bldc\b|24\.?240/.test(t)) clave="ldc";
+  else if(/sociedades|\blgs\b|\blsc\b|19\.?550/.test(t)) clave="lgs";
+  else if(/codigo penal|\bcp\b|11\.?179/.test(t)) clave="cp";
   else if(/concurso|quiebra|\blcq\b|24\.?522/.test(t)) clave="lcq";
   else if(/procedimiento administrativo|administrativ|\blpa\b|19\.?549/.test(t)) clave="lpa";
   else if(/amparo|16\.?986/.test(t)) clave="amparo";
@@ -6228,7 +6097,12 @@ var NORMAS_UI=[
  ["lct","Ley de Contrato de Trabajo (20.744)"],
  ["lcq","Ley de Concursos y Quiebras (24.522)"],
  ["lpa","Procedimientos Administrativos (19.549)"],
- ["amparo","Ley de Amparo (16.986)"]
+ ["amparo","Ley de Amparo (16.986)"],
+ ["ldc","Defensa del Consumidor (24.240)"],
+ ["cp","Código Penal"],
+ ["cpccn","Código Procesal Civil y Comercial de la Nación"],
+ ["lgs","Ley General de Sociedades (19.550)"],
+ ["lrt","Ley de Riesgos del Trabajo (24.557)"]
 ];
 
 /**
@@ -6610,8 +6484,9 @@ function ordenArt(a,b){
 }
 var RANGO_FUENTE={
   "CCyC (vigente)":10,"Código Civil (derogado)":11,"Código de Comercio (derogado)":12,"Código Penal":13,
-  "LCT":14,"LDC":15,"Ley de Seguros (LS)":16,
-  "CPCCN":30,"CPC":31,"Código Procesal Penal":32,"Ley Arancelaria (LA)":33
+  "Ley de Contrato de Trabajo (LCT)":14,"Ley de Defensa del Consumidor (LDC)":15,"Ley de Seguros (LS)":16,
+  "Ley General de Sociedades (LGS)":17,"Ley de Concursos y Quiebras (LCQ)":18,"Ley de Riesgos del Trabajo (LRT)":19,
+  "Constitución provincial":29,"CPCCN":30,"CPCCyT (Mendoza)":31,"CPC":32,"Código Procesal Penal":33,"Ley Arancelaria (LA)":34
 };
 function rangoDeFuente(label){
   return RANGO_FUENTE.hasOwnProperty(label)?RANGO_FUENTE[label]:99;
@@ -6652,7 +6527,21 @@ function pintarLector(){
       '</div>'
     ):"";
 
-    var porFuente=d.artsPorFuente||[];
+    var A=IVSAnalisis.analizar(texto,{car:d.car,tipo:d.tipo});
+    /* Los artículos que el fallo cita SÓLO al regular honorarios o imponer
+       costas (Ley 9131, art. 36 CPCCyT…) no fundan la decisión: van aparte. */
+    var soloAccesorio={},vistoFund={};
+    (d.citas||[]).forEach(function(c){
+      var k=c.f+"|"+c.l,ctx=A.contextoDe(c.pos);
+      if(ctx==="honorarios"||ctx==="costas"){ if(!vistoFund[k]) soloAccesorio[k]=true; }
+      else { vistoFund[k]=true; delete soloAccesorio[k]; }
+    });
+    var accesorios=[];
+    var porFuente=(d.artsPorFuente||[]).map(function(g){
+      var quedan=g[1].filter(function(a){ return !soloAccesorio[g[0]+"|"+a]; }),van=g[1].filter(function(a){ return soloAccesorio[g[0]+"|"+a]; });
+      if(van.length) accesorios.push([g[0],van,g[2]]);
+      return [g[0],quedan,g[2],van.length>0&&!quedan.length];
+    }).filter(function(g){ return !g[3]; });
     var pend=porFuente.filter(function(g){ return g[0]==="Sin ley identificada"; })[0];
     var porCat={cn:[],tratados:[],fondo:[],leyes:[],provincial:[],local:[]};
     porFuente.forEach(function(g){
@@ -6704,8 +6593,17 @@ function pintarLector(){
       bloques+='<div class="meta-cat">Normativa local y decretos</div>';
       porCat.local.forEach(function(g){ bloques+=bloqueNorma(g); });
     }
-    if(d.citados&&d.citados.length){
-      bloques+='<div class="meta-cat">Jurisprudencia citada</div>'+bloqueTags(d.citados);
+    if(accesorios.length){
+      bloques+='<div class="meta-cat">Citadas sólo al regular honorarios o costas</div>';
+      accesorios.forEach(function(g){ bloques+=bloqueNorma(g); });
+    }
+    // Precedentes: los de la Corte Suprema y los provinciales que se pudieron
+    // identificar (con carátula, fecha o registro), no sólo «Fallos: X:Y».
+    var precs=A.precedentes.filter(function(x){ return x.tipo==="csjn"||x.tipo==="provincial"||x.tipo==="otro_tribunal"; });
+    if(precs.length){
+      bloques+='<div class="meta-cat">Jurisprudencia citada</div>'+bloqueTags(precs.map(function(x){
+        return [x.caratula?"«"+x.caratula+"»":null,x.tipo==="csjn"?"CSJN":null,x.fecha,x.publicacion].filter(Boolean).join(" · ");
+      }))+'<div class="meta-bloque"><div class="txt" style="font-size:12px;color:var(--mute-2)">Detectada por reglas: puede no ser exhaustiva.</div></div>';
     }
     if(pend) bloques+='<div class="meta-bloque pendiente"><h3>Artículos pendientes de clasificación</h3>'+
       '<div class="meta-tags">'+pend[1].slice().sort(ordenArt).map(function(a){
@@ -8193,36 +8091,65 @@ function motivoInhabil(d,juris){
 }
 function siguienteHabil(d,juris){ var x=masDias(d,1); while(motivoInhabil(x,juris)) x=masDias(x,1); return x; }
 
-/* ---------- series oficiales de índices ---------- */
+/* ---------- series oficiales de índices ----------
+   CER y UVA: API de Estadísticas del Banco Central (api.bcra.gob.ar, v4.0,
+   variables 30 y 31). Antes se pedían a datos.gob.ar, cuya serie de CER
+   dejó de actualizarse el 04/10/2024: para cualquier fecha posterior el
+   código caía en «el último dato publicado» en las DOS puntas, y una
+   actualización del 01/01/2025 al 01/01/2026 daba coeficiente 1 con «CER
+   al 04/10/2024» en ambos extremos. IPC: Series de Tiempo de datos.gob.ar.
+   RIPTE: la misma API devuelve la serie vacía, así que se usa su archivo
+   oficial (infra.datos.gob.ar) a través del servidor, que no tiene la
+   restricción de origen del navegador. La regla para elegir el dato de cada
+   fecha está en IVSCalculos.elegirDato (calculos.js). */
 var SERIES={
-  cer:{id:"94.2_CD_D_0_0_10",nombre:"CER",diaria:true,
+  cer:{bcra:30,nombre:"CER",diaria:true,fuente:"API de Estadísticas del Banco Central (variable 30)",
        base:"Coeficiente de Estabilización de Referencia (art. 4 del Decreto 214/2002), que publica el Banco Central."},
-  uva:{id:"94.2_UVAD_D_0_0_10",nombre:"UVA",diaria:true,
+  uva:{bcra:31,nombre:"UVA",diaria:true,fuente:"API de Estadísticas del Banco Central (variable 31)",
        base:"Unidad de Valor Adquisitivo (Comunicación «A» 5945 del Banco Central y modificatorias), que se ajusta por CER."},
-  ipc:{id:"148.3_INIVELNAL_DICI_M_26",nombre:"IPC",diaria:false,
+  ipc:{id:"148.3_INIVELNAL_DICI_M_26",nombre:"IPC",diaria:false,fuente:"Series de Tiempo de datos.gob.ar (serie 148.3_INIVELNAL_DICI_M_26)",
        base:"Índice de Precios al Consumidor nacional del INDEC, nivel general, base diciembre de 2016. Serie mensual."},
-  ripte:{id:"158.1_REPTE_0_0_5",nombre:"RIPTE",diaria:false,
+  ripte:{id:"158.1_REPTE_0_0_5",respaldo:"ripte",nombre:"RIPTE",diaria:false,fuente:"Secretaría de Trabajo, serie 158.1 de datos.gob.ar",
        base:"Remuneración Imponible Promedio de los Trabajadores Estables (Ley 26.773, arts. 8 y 17, inc. 6, en materia de riesgos del trabajo). Serie mensual."}
 };
 var API_SERIES="https://apis.datos.gob.ar/series/api/series/";
-/* El valor de la serie en una fecha: el último dato publicado hasta ese día
-   (en las mensuales, el del mes). Si la fecha es posterior al último dato
-   disponible, devuelve ese último y lo avisa. */
-function valorSerie(clave,fechaIso){
+var API_BCRA="https://api.bcra.gob.ar/estadisticas/v4.0/monetarias/";
+function jsonDe(url){ return fetch(url).then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); }); }
+/* Las filas [fecha, valor] de la serie alrededor de una fecha, y el último
+   dato publicado (para saber si la fecha es posterior). */
+function filasSerie(clave,fechaIso){
   var s=SERIES[clave],f=fechaDe(fechaIso);
-  var desde=s.diaria?masDias(f,-45):masMeses(new Date(Date.UTC(f.getUTCFullYear(),f.getUTCMonth(),1)),-3);
-  var url=API_SERIES+"?ids="+s.id+"&start_date="+isoDe(desde)+"&end_date="+fechaIso+"&format=json&limit=1000";
-  return fetch(url).then(function(r){ return r.json(); }).then(function(d){
-    var filas=(d&&d.data||[]).filter(function(x){ return x[1]!=null; });
-    // "tardío": el último dato publicado es anterior a la fecha pedida (en
-    // las mensuales, de un mes anterior). Se usa igual, y se avisa.
-    function tarde(f){ return s.diaria?f<fechaIso:f.slice(0,7)<fechaIso.slice(0,7); }
-    if(filas.length){ var u=filas[filas.length-1]; return {fecha:u[0],valor:u[1],tardio:tarde(u[0])}; }
-    return fetch(API_SERIES+"?ids="+s.id+"&last=1&format=json").then(function(r){ return r.json(); }).then(function(d2){
-      var u=d2&&d2.data&&d2.data[0];
-      if(!u) throw new Error("sin datos");
-      return {fecha:u[0],valor:u[1],tardio:tarde(u[0])};
+  if(s.bcra){
+    // la API rechaza un «desde» posterior a hoy (400): para fechas futuras
+    // alcanza con el último dato publicado, que elegirDato usa avisando
+    var desde=isoDe(masDias(f,-15)),hoyIso=isoDe(hoyUTC());
+    return Promise.all([
+      desde>hoyIso?Promise.resolve(null):jsonDe(API_BCRA+s.bcra+"?desde="+desde+"&hasta="+fechaIso+"&limit=1000"),
+      jsonDe(API_BCRA+s.bcra+"?limit=1")
+    ]).then(function(v){
+      function filas(d){ return ((d&&d.results&&d.results[0]&&d.results[0].detalle)||[]).map(function(x){ return [x.fecha,x.valor]; }); }
+      return filas(v[0]).concat(filas(v[1]));
     });
+  }
+  var ini=isoDe(masMeses(new Date(Date.UTC(f.getUTCFullYear(),f.getUTCMonth(),1)),-3));
+  return Promise.all([
+    jsonDe(API_SERIES+"?ids="+s.id+"&start_date="+ini+"&end_date="+fechaIso+"&format=json&limit=1000"),
+    jsonDe(API_SERIES+"?ids="+s.id+"&last=1&format=json")
+  ]).then(function(v){
+    var filas=((v[0]&&v[0].data)||[]).concat((v[1]&&v[1].data)||[]).filter(function(x){ return x[1]!=null; });
+    if(filas.length||!s.respaldo) return filas;
+    if(!estado.api) throw new Error("La API de datos.gob.ar devuelve vacía la serie "+s.nombre+" y el servidor de la plataforma, que trae el archivo oficial, no está disponible en este momento.");
+    // la API de datos.gob.ar devuelve vacía la serie RIPTE: el archivo oficial, vía el servidor
+    return jsonDe(estado.api+"/series/"+s.respaldo).then(function(d){ return (d&&d.ok&&d.datos)||[]; });
+  });
+}
+/* El valor de la serie en una fecha, con la fecha del dato realmente usado. */
+function valorSerie(clave,fechaIso,esFinal){
+  var s=SERIES[clave];
+  return filasSerie(clave,fechaIso).then(function(filas){
+    var r=IVSCalculos.elegirDato(filas,fechaIso,s.diaria,esFinal);
+    if(r.error) throw new Error(r.error);
+    return r;
   });
 }
 
@@ -8261,22 +8188,16 @@ function resumenC(r){
 /* ================= INTERESES ================= */
 function calcIntereses(){
   var c=CALC.intereses,cap=num(c.capital);
-  if(!(cap>0)) return null;
-  var filas=[],total=0,dias=0,ok=false;
-  c.tramos.forEach(function(t,i){
-    var a=fechaDe(t.desde),b=fechaDe(t.hasta),tna=num(t.tna);
-    if(!a||!b||!(tna>=0)||b<=a) return;
-    var d=diasEntre(a,b),interes=cap*tna/100*d/365;
-    total+=interes;dias+=d;ok=true;
-    filas.push(["Tramo "+(i+1)+" · "+fechaCorta(a)+" al "+fechaCorta(b),
-      d+" días al "+porc(tna)+" anual · "+pesos(interes)]);
-  });
-  if(!ok) return null;
+  if(String(c.capital||"").trim()==="") return null;
+  var R=IVSCalculos.intereses(cap,c.tramos.map(function(t){ return {desde:fechaDe(t.desde),hasta:fechaDe(t.hasta),tna:String(t.tna||"").trim()===""?NaN:num(t.tna)}; }),365);
+  if(R.error) return {titulo:"Capital más intereses",total:"—",sub:esc(R.error)};
+  var total=R.intereses,dias=R.dias;
+  var filas=R.filas.map(function(f){ return ["Tramo "+f.tramo+" · "+fechaCorta(f.desde)+" al "+fechaCorta(f.hasta),f.dias+" días al "+porc(f.tna)+" anual · "+pesos(f.interes)]; });
   var nombreTasa={activa:"tasa activa del Banco de la Nación",pasiva:"tasa pasiva promedio del Banco Central",otra:"tasa fijada por el tribunal"}[c.tipo];
   return {titulo:"Capital más intereses",total:pesos(cap+total),
     sub:"Intereses: "+pesos(total)+" ("+porc(total/cap*100)+" del capital, "+dias+" días)",
     filas:[["Capital",pesos(cap)]].concat(filas),
-    avisos:["Interés simple sobre el capital, por días y sobre un año de 365, con la "+nombreTasa+" que se cargó para cada tramo."],
+    avisos:R.avisos.concat(["Interés simple sobre el capital, por días y sobre un año de 365, con la "+nombreTasa+" que se cargó para cada tramo. Los días se cuentan del «desde» al «hasta»: un tramo que empieza el día en que termina el anterior no repite ese día."]),
     base:"Art. 768 CCyC: a partir de su mora el deudor debe los intereses correspondientes; la tasa se determina por lo que acuerden las partes, por lo que dispongan las leyes especiales y, en subsidio, por las tasas que se fijen según las reglamentaciones del Banco Central. Art. 770 CCyC: no se deben intereses de los intereses, salvo las excepciones que prevé.",
     aLiquidacion:{capital:cap,intereses:total,desde:c.tramos[0].desde,hasta:c.tramos[c.tramos.length-1].hasta},
     texto:"Capital: "+pesos(cap)+"\n"+filas.map(function(f){return f[0]+": "+f[1];}).join("\n")+"\nIntereses: "+pesos(total)+"\nTotal: "+pesos(cap+total)};
@@ -8304,18 +8225,22 @@ function calcActualizacion(){
   if(c.error) return {titulo:"Monto actualizado",total:"—",sub:esc(c.error)};
   if(!r) return null;
   var m=num(c.monto);
-  if(!(m>0)) return null;
-  var coef=r.vf/r.vi;
+  if(!(m>0)) return {titulo:"Monto actualizado",total:"—",sub:"Ingrese un monto mayor que cero."};
+  var A=IVSCalculos.actualizar(m,{valor:r.vi},{valor:r.vf});
+  if(A.error) return {titulo:"Monto actualizado",total:"—",sub:esc(A.error)};
+  var coef=A.coeficiente;
   var avisos=["La actualización monetaria está prohibida con carácter general por los arts. 7 y 10 de la Ley 23.928 (texto según Ley 25.561): solo procede cuando una norma especial o una decisión judicial la admite. Verifique su procedencia en el caso."];
-  if(r.tardio) avisos.unshift("La serie publicada llega hasta el "+fechaCorta(fechaDe(r.ff))+": se usó ese último dato.");
-  return {titulo:"Monto actualizado por "+s.nombre,total:pesos(m*coef),
-    sub:"Variación: "+porc((coef-1)*100)+" · coeficiente "+coef.toLocaleString("es-AR",{maximumFractionDigits:6}),
+  if(r.tardio) avisos.unshift("La fecha final ("+fechaCorta(fechaDe(r.hasta))+") es posterior al último dato publicado: se usó el del "+fechaCorta(fechaDe(r.ff))+", el último disponible.");
+  // la fecha del dato usado, al lado de la pedida, cuando no coinciden
+  function rotulo(pedida,usada){ return s.diaria?(pedida===usada?fechaCorta(fechaDe(usada)):fechaCorta(fechaDe(usada))+" (pedido: "+fechaCorta(fechaDe(pedida))+")"):(usada.slice(0,7).split("-").reverse().join("/")+" (mes de "+fechaCorta(fechaDe(pedida))+")"); }
+  return {titulo:"Monto actualizado por "+s.nombre,total:pesos(A.monto),
+    sub:"Variación: "+porc(A.variacion,4)+" · coeficiente "+coef.toLocaleString("es-AR",{maximumFractionDigits:6}),
     filas:[["Monto original",pesos(m)],
-      [s.nombre+" al "+fechaCorta(fechaDe(r.fi)),r.vi.toLocaleString("es-AR",{maximumFractionDigits:4})],
-      [s.nombre+" al "+fechaCorta(fechaDe(r.ff)),r.vf.toLocaleString("es-AR",{maximumFractionDigits:4})],
-      ["Fuente",'Series de Tiempo de datos.gob.ar (serie '+esc(s.id)+')']],
+      [s.nombre+" al "+rotulo(r.desde,r.fi),r.vi.toLocaleString("es-AR",{maximumFractionDigits:4})],
+      [s.nombre+" al "+rotulo(r.hasta,r.ff),r.vf.toLocaleString("es-AR",{maximumFractionDigits:4})],
+      ["Fuente",esc(s.fuente)]],
     avisos:avisos,base:s.base,
-    texto:"Monto original: "+pesos(m)+"\nÍndice: "+s.nombre+" ("+r.fi+": "+r.vi+"; "+r.ff+": "+r.vf+")\nCoeficiente: "+coef+"\nMonto actualizado: "+pesos(m*coef)};
+    texto:"Monto original: "+pesos(m)+"\nÍndice: "+s.nombre+" ("+r.fi+": "+r.vi+"; "+r.ff+": "+r.vf+")\nCoeficiente: "+coef+"\nMonto actualizado: "+pesos(A.monto)+"\nFuente: "+s.fuente};
 }
 function formActualizacion(){
   var c=CALC.actualizacion;
@@ -8324,21 +8249,25 @@ function formActualizacion(){
       chipsC("actualizacion.indice",c.indice,[["cer","CER"],["uva","UVA"],["ipc","IPC (INDEC)"],["ripte","RIPTE"]])+'</fieldset>'+
     '<div class="fila">'+campoC("Desde","actualizacion.desde",c.desde,{tipo:"date"})+campoC("Hasta","actualizacion.hasta",c.hasta,{tipo:"date"})+'</div>'+
     '<div><button class="btn" data-act="calc-indices">Consultar la serie oficial</button></div>'+
-    '<p class="calc-nota">Los valores se toman de la serie oficial publicada en datos.gob.ar, el día del pedido. En las series mensuales (IPC y RIPTE) se usa el dato del mes de cada fecha.</p>';
+    '<p class="calc-nota">CER y UVA salen de la API del Banco Central; IPC y RIPTE, de las series oficiales de datos.gob.ar. En las series diarias se usa el dato de cada fecha (o el último anterior, dentro de los 10 días); en las mensuales, el del mes de cada fecha. Si la fecha final es posterior al último dato publicado se usa ese último y se avisa; la inicial, en cambio, tiene que tener dato. Debajo del resultado figura la fecha del dato realmente usado.</p>';
 }
 function pedirIndices(){
   var c=CALC.actualizacion;
-  if(!fechaDe(c.desde)||!fechaDe(c.hasta)){ flash("Complete las dos fechas"); return; }
-  if(c.hasta<=c.desde){ flash("La fecha final tiene que ser posterior a la inicial"); return; }
+  var mal=IVSCalculos.validarFechas(fechaDe(c.desde),fechaDe(c.hasta));
+  if(mal){ c.res=null; c.error=mal; pintarSalidaC(); flash(mal); return; }
+  if(!(num(c.monto)>0)){ c.res=null; c.error="Ingrese un monto mayor que cero."; pintarSalidaC(); return; }
   c.cargando=true;c.error="";c.res=null;pintarSalidaC();
-  var clave=c.indice;
-  Promise.all([valorSerie(clave,c.desde),valorSerie(clave,c.hasta)]).then(function(v){
-    if(CALC.actualizacion.indice!==clave) return;
+  var clave=c.indice,desde=c.desde,hasta=c.hasta;
+  Promise.all([valorSerie(clave,desde,false),valorSerie(clave,hasta,true)]).then(function(v){
+    if(CALC.actualizacion.indice!==clave||c.desde!==desde||c.hasta!==hasta) return;
     c.cargando=false;
-    c.res={vi:v[0].valor,fi:v[0].fecha,vf:v[1].valor,ff:v[1].fecha,tardio:v[1].tardio};
+    c.res={vi:v[0].valor,fi:v[0].fecha,vf:v[1].valor,ff:v[1].fecha,tardio:v[1].tardio,desde:desde,hasta:hasta};
     pintarSalidaC();
-  })["catch"](function(){
-    c.cargando=false;c.error="No se pudo consultar la serie oficial. Pruebe de nuevo en un momento.";pintarSalidaC();
+  })["catch"](function(e){
+    // nunca un dato viejo en silencio: si falla, no hay resultado y se dice por qué
+    c.cargando=false;c.res=null;
+    c.error=(e&&e.message&&!/^HTTP|Failed to fetch|NetworkError|Load failed/.test(e.message))?e.message:"No se pudo consultar la serie oficial ("+SERIES[clave].fuente+"). Pruebe de nuevo en un momento.";
+    pintarSalidaC();
   });
 }
 
@@ -8351,33 +8280,25 @@ function antiguedad(a,b){
 function diasVacaciones(anios){ return anios<5?14:anios<10?21:anios<20?28:35; }
 function calcDespido(){
   var c=CALC.despido,s=num(c.sueldo),a=fechaDe(c.ingreso),b=fechaDe(c.egreso);
-  if(!(s>0)||!a||!b||b<=a) return null;
-  var ant=antiguedad(a,b),computables=Math.max(1,ant.anios+(ant.masDeTres?1:0));
-  var tope=num(c.tope),base=s,notaTope="";
-  if(tope>0&&s>tope){
-    base=Math.max(tope,s*.67);
-    notaTope="La remuneración supera el tope del convenio: la base es "+pesos(base)+(base>tope?" (el 67 % de la remuneración, según la doctrina de la Corte en «Vizzoti», 2004)":" (el tope)")+".";
-  }
-  var dm=diasDelMes(b.getUTCFullYear(),b.getUTCMonth()),dia=b.getUTCDate();
+  if(String(c.sueldo||"").trim()===""||!c.ingreso||!c.egreso) return null;
+  // Antigüedad, art. 245, preaviso e integración: IVSCalculos.despidoComponentes
+  // (calculos.js), probado en backend/test/calculos.prueba.js.
+  var tope=num(c.tope);
+  var K=IVSCalculos.despidoComponentes(s,a,b,{tope:tope,sinPreaviso:c.sinPreaviso,integracion:c.integracion,prueba:c.prueba,sacRubros:c.sacRubros});
+  if(K.error) return {titulo:"Liquidación final por despido sin causa",total:"—",sub:esc(K.error)};
+  var ant=K.antiguedad,computables=K.computables,base=K.base,notaTope="";
+  if(base!==s) notaTope="La remuneración supera el tope del convenio: la base es "+pesos(base)+(base>tope?" (el 67 % de la remuneración, según la doctrina de la Corte en «Vizzoti», 2004)":" (el tope)")+".";
+  var dm=K.diasDelMes,dia=K.diasTrabajados;
   var rubros=[];
   function rubro(n,ley,v){ if(v>0) rubros.push([n,ley,v]); }
-  rubro("Indemnización por antigüedad ("+computables+(computables===1?" año":" años")+")","art. 245 LCT",base*computables);
-  var preaviso=0;
-  if(c.sinPreaviso){
-    // Art. 231: un mes si la antigüedad no excede de cinco años; dos meses
-    // si es superior. Cinco años justos todavía es un mes.
-    var masDeCinco=masMeses(a,60)<b;
-    preaviso=c.prueba?s/2:(masDeCinco?2*s:s);
-    rubro("Preaviso omitido ("+(c.prueba?"15 días, período de prueba":(masDeCinco?"2 meses":"1 mes"))+")","arts. 231 y 232 LCT",preaviso);
-    if(c.sacRubros) rubro("SAC sobre el preaviso","art. 121 LCT",preaviso/12);
-  }
-  var integ=0;
-  // Art. 233: no procede durante el período de prueba.
-  if(c.sinPreaviso&&c.integracion&&!c.prueba&&dia<dm){
-    integ=s/dm*(dm-dia);
-    rubro("Integración del mes de despido ("+(dm-dia)+" días)","art. 233 LCT",integ);
-    if(c.sacRubros) rubro("SAC sobre la integración","art. 121 LCT",integ/12);
-  }
+  rubro("Indemnización por antigüedad ("+computables+(computables===1?" año":" años")+")","art. 245 LCT",K.indemnizacion);
+  // Art. 231: un mes si la antigüedad no excede de cinco años; dos meses si
+  // es superior (cinco años justos todavía es un mes). Art. 233: la
+  // integración no procede durante el período de prueba.
+  if(K.preaviso) rubro("Preaviso omitido ("+(c.prueba?"15 días, período de prueba":(K.mesesPreaviso===2?"2 meses":"1 mes"))+")","arts. 231 y 232 LCT",K.preaviso);
+  if(K.sacPreaviso) rubro("SAC sobre el preaviso","art. 121 LCT",K.sacPreaviso);
+  if(K.integracion) rubro("Integración del mes de despido ("+K.diasIntegracion+" días)","art. 233 LCT",K.integracion);
+  if(K.sacIntegracion) rubro("SAC sobre la integración","art. 121 LCT",K.sacIntegracion);
   rubro("Remuneración de los días trabajados del mes ("+dia+")","art. 103 LCT",s/dm*dia);
   var ini=new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?0:6,1));
   if(ini<a) ini=a;
@@ -8420,14 +8341,13 @@ var FORMULAS={
   propia:{nombre:"Personalizada",edad:null,tasa:null,cita:"Edad límite y tasa de descuento elegidas por quien calcula"}
 };
 function calcIncapacidad(){
-  var c=CALC.incapacidad,ing=num(c.ingreso),p=num(c.porcentaje),e=num(c.edad),F=FORMULAS[c.formula];
-  if(!(ing>0)||!(p>0)||!(e>0)) return null;
-  var limite=F.edad||num(c.edadLimite),tasa=(F.tasa||num(c.tasa))/100;
-  if(!(limite>0)||!(tasa>0)) return null;
-  var n=limite-e;
-  if(n<=0) return {titulo:"Capital por incapacidad",total:pesos(0),sub:"La edad supera la edad límite de la fórmula ("+limite+" años)."};
-  var anual=ing*13,ajuste=(c.formula==="mendez"&&e<60)?60/e:1;
-  var A=anual*ajuste*p/100,vn=Math.pow(1+tasa,-n),C=A*(1-vn)/tasa;
+  var c=CALC.incapacidad,F=FORMULAS[c.formula];
+  if(![c.ingreso,c.porcentaje,c.edad].every(function(v){ return String(v||"").trim()!==""; })) return null;
+  var R=IVSCalculos.incapacidad(num(c.ingreso),num(c.porcentaje),num(c.edad),c.formula,c.formula==="propia"?{edad:num(c.edadLimite),tasa:num(c.tasa)}:null);
+  if(R.error) return {titulo:"Capital por incapacidad",total:"—",sub:esc(R.error)};
+  var p=num(c.porcentaje),e=num(c.edad),limite=R.limite,tasa=R.i,n=R.n;
+  if(R.nota) return {titulo:"Capital por incapacidad",total:pesos(0),sub:esc(R.nota)};
+  var anual=R.anual,ajuste=R.ajuste,A=R.A,C=R.capital;
   return {titulo:"Capital por incapacidad · fórmula "+F.nombre,total:pesos(C),
     sub:"C = A × (1 − Vⁿ) / i, con Vⁿ = 1 / (1 + i)ⁿ",
     filas:[["Ingreso anual (13 sueldos)",pesos(anual)],
@@ -8452,27 +8372,39 @@ function formIncapacidad(){
 }
 
 /* ================= HONORARIOS Y TASA DE JUSTICIA ================= */
-/* Ley 27.423, art. 21: escala por tramos del monto del proceso expresado en
-   UMA; el porcentaje se aplica sobre todo el monto, no por escalones. */
-var ESCALA_27423=[[15,22,33],[45,20,26],[90,18,24],[150,17,22],[450,15,20],[750,13,17],[Infinity,12,15]];
+/* Ley 27.423, art. 21: escala por cuantía en UMA, con la regla de
+   correlación del último párrafo (el honorario no puede ser inferior al
+   máximo del grado anterior más la alícuota del grado sobre el excedente).
+   El cálculo vive en calculos.js (IVSCalculos.honorariosNacion), con sus
+   pruebas en backend/test/calculos.prueba.js. */
 function calcHonorarios(){
   var c=CALC.honorarios,m=num(c.monto);
-  if(!(m>0)) return null;
+  if(String(c.monto||"").trim()==="") return null;
+  if(!(m>0)) return {titulo:"Honorarios",total:"—",sub:"El monto del proceso tiene que ser un número mayor que cero."};
   var filas=[],min,max,avisos=[],base;
   if(c.juris==="nacion"){
-    var uma=num(c.uma);
-    if(!(uma>0)) return {titulo:"Honorarios",total:"—",sub:"Cargue el valor vigente de la UMA para convertir el monto."};
-    var enUma=m/uma,t=ESCALA_27423.filter(function(x){return enUma<=x[0];})[0];
-    min=m*t[1]/100;max=m*t[2]/100;
-    filas.push(["Monto del proceso",pesos(m)+" · "+enUma.toLocaleString("es-AR",{maximumFractionDigits:2})+" UMA"]);
-    filas.push(["Tramo de la escala",(t[0]===Infinity?"más de 750 UMA":"hasta "+t[0]+" UMA")+" · del "+t[1]+" % al "+t[2]+" %"]);
-    base="Ley 27.423 de honorarios profesionales (Nación), art. 21: escala sobre el monto del proceso expresado en UMA. Los mínimos por tipo de proceso del art. 58 no se calculan acá. Tasa de justicia: Ley 23.898, art. 2.";
+    var h=IVSCalculos.honorariosNacion(m,num(c.uma));
+    if(h.error) return {titulo:"Honorarios",total:"—",sub:esc(h.error)};
+    var uU=function(x){ return x.toLocaleString("es-AR",{maximumFractionDigits:5}); };
+    min=h.min;max=h.max;
+    filas.push(["Monto del proceso",pesos(m)+" · "+uU(h.enUma)+" UMA"]);
+    filas.push(["Tramo de la escala",(h.limiteSuperior===Infinity?"más de 750 UMA":(h.limiteInferior?"más de "+h.limiteInferior+" y hasta ":"hasta ")+h.limiteSuperior+" UMA")+" · del "+h.pMin+" % al "+h.pMax+" %"]);
+    filas.push(["Porcentaje sobre todo el monto",pesos(h.directoMin)+" a "+pesos(h.directoMax)]);
+    if(h.piso){
+      filas.push(["Umbral del grado anterior ("+h.piso.umbralUma+" UMA)",pesos(h.piso.umbral)]);
+      filas.push(["Máximo del grado anterior ("+h.piso.pMaxAnterior+" % de "+h.piso.umbralUma+" UMA)",pesos(h.piso.maxAnterior)]);
+      filas.push(["Excedente sobre el umbral",pesos(h.piso.excedente)]);
+      filas.push(["Piso del art. 21 (máximo anterior + "+h.pMin+" % / "+h.pMax+" % del excedente)",pesos(h.piso.pisoMin)+" a "+pesos(h.piso.pisoMax)]);
+      if(h.aplicaPiso) avisos.push("Rige el piso del último párrafo del art. 21: el porcentaje del tramo sobre todo el monto ("+pesos(h.directoMin)+") queda por debajo del máximo del grado anterior más el excedente.");
+      if(h.alternativa) avisos.push("Punto pendiente de verificación jurídica: otra lectura del último párrafo del art. 21 toma como «máximo del grado inmediato anterior» el honorario máximo que resulta de aplicar la misma regla en ese grado (escala acumulativa). Con esa lectura el rango sería de "+pesos(h.alternativa.min)+" a "+pesos(h.alternativa.max)+". Verifique el criterio del tribunal.");
+    }
+    base="Ley 27.423 de honorarios profesionales (Nación), art. 21: escala por cuantía en UMA y, en su último párrafo, «en ningún caso los honorarios podrán ser inferiores al máximo del grado inmediato anterior de la escala, con más el incremento por aplicación al excedente de la alícuota que corresponde al grado siguiente». Los mínimos por tipo de proceso (art. 58), el litisconsorcio, la instancia y el resultado no se calculan acá. Tasa de justicia: Ley 23.898, art. 2.";
   }else{
     // Ley 9131 de Mendoza, art. 2: escala por tramos del monto del proceso
     // expresado en JUS. Se aplica por tramos acumulativos: cada porcentaje
     // alcanza solo a la porción del monto que cae en su tramo.
     var jus=num(c.jus);
-    if(!(jus>0)) return {titulo:"Honorarios",total:"—",sub:"Cargue el valor vigente del JUS: lo fija la Suprema Corte de Mendoza por acordada y la ley no lo contiene."};
+    if(!(jus>0)) return {titulo:"Honorarios",total:"—",sub:"Cargue el valor vigente del JUS (mayor que cero): lo fija la Suprema Corte de Mendoza por acordada y la ley no lo contiene."};
     var enJus=m/jus,TR=[[0,20,20],[20,50,16],[50,Infinity,12]],bruto=0;
     TR.forEach(function(t){
       var porcion=Math.max(0,Math.min(enJus,t[1])-t[0]);
@@ -8493,13 +8425,14 @@ function calcHonorarios(){
     base="Ley 9131 de Mendoza (aranceles de abogados y procuradores): art. 2 (escala: hasta 20 JUS, 20 %; más de 20 y hasta 50 JUS, 16 %; más de 50 JUS, 12 %; aumento de hasta 30 % por mérito), art. 3 (parte perdedora, 70 %), art. 7 (monitorio sin oposición, reducción del 25 %), art. 8 (sucesiones, reducción del 30 %) y art. 31 (procurador, 50 % en primera instancia y 30 % en las demás). El valor del JUS lo fija la Suprema Corte. Los mínimos por tipo de proceso (arts. 9 a 19), los honorarios de segunda instancia (art. 15) y los incidentes (art. 14) no se calculan acá.";
     avisos.push("La escala se aplica por tramos acumulativos; verifique ese criterio con la regulación del juzgado.");
   }
-  if(min===max) filas.push(["Honorarios",pesos(min)+(c.iva?" + IVA "+pesos(min*.21):"")]);
+  // El IVA va sólo sobre los honorarios, nunca sobre el monto del proceso ni sobre la tasa de justicia.
+  if(min===max) filas.push(["Honorarios",pesos(min)+(c.iva?" + IVA "+pesos(IVSCalculos.iva(min,true)):"")]);
   else{
-    filas.push(["Honorarios mínimos",pesos(min)+(c.iva?" + IVA "+pesos(min*.21):"")]);
-    filas.push(["Honorarios máximos",pesos(max)+(c.iva?" + IVA "+pesos(max*.21):"")]);
+    filas.push(["Honorarios mínimos",pesos(min)+(c.iva?" + IVA "+pesos(IVSCalculos.iva(min,true)):"")]);
+    filas.push(["Honorarios máximos",pesos(max)+(c.iva?" + IVA "+pesos(IVSCalculos.iva(max,true)):"")]);
   }
   var tp=num(c.tasaPct);
-  if(tp>0) filas.push(["Tasa de justicia ("+porc(tp)+")",pesos(m*tp/100)]);
+  if(tp>0) filas.push(["Tasa de justicia ("+porc(tp)+", sin IVA)",pesos(IVSCalculos.tasaDeJusticia(m,tp))]);
   avisos.push("El monto definitivo lo regula el juez dentro de la escala, según la labor, el resultado y la complejidad.");
   return {titulo:"Honorarios según la escala",total:(min===max?pesos(min):pesos(min)+" a "+pesos(max)),sub:c.iva?"Más IVA (21 %) por ser responsable inscripto":"",
     filas:filas,avisos:avisos,base:base,aLiquidacion:{honorarios:max,iva:c.iva,tasa:tp>0?m*tp/100:0},
@@ -8528,8 +8461,11 @@ function formHonorarios(){
 /* ================= LIQUIDACIÓN DE SENTENCIA ================= */
 function calcLiquidacion(){
   var c=CALC.liquidacion,cap=num(c.capital);
-  if(!(cap>0)) return null;
-  var it=num(c.intereses)||0,h=num(c.honorarios)||0,iva=c.iva?h*.21:0,t=num(c.tasa)||0,o=num(c.otros)||0;
+  if(String(c.capital||"").trim()==="") return null;
+  var vacio=function(v){ return String(v||"").trim()===""?0:num(v); };
+  var L=IVSCalculos.liquidacion({capital:cap,intereses:vacio(c.intereses),honorarios:vacio(c.honorarios),tasa:vacio(c.tasa),otros:vacio(c.otros),iva:c.iva});
+  if(L.error) return {titulo:"Planilla de liquidación",total:"—",sub:esc(L.error)};
+  var it=L.intereses,h=L.honorarios,iva=L.iva,t=L.tasa,o=L.otros;
   var d=fechaDe(c.desde),hh=fechaDe(c.hasta);
   var filas=[["Capital",pesos(cap)]];
   if(it) filas.push(["Intereses"+(d&&hh?" (del "+fechaCorta(d)+" al "+fechaCorta(hh)+")":""),pesos(it)]);
@@ -8538,7 +8474,7 @@ function calcLiquidacion(){
   if(iva) filas.push(["IVA sobre honorarios (21 %)",pesos(iva)]);
   if(t) filas.push(["Tasa de justicia",pesos(t)]);
   if(o) filas.push(["Otros rubros",pesos(o)]);
-  var total=cap+it+h+iva+t+o;
+  var total=L.total;
   var ancho=46;
   var texto="PLANILLA DE LIQUIDACIÓN\n\n"+filas.map(function(f){
     var a=f[0]+" ",b=" "+f[1];return a+new Array(Math.max(2,ancho-a.length-b.length)).join(".")+b;
