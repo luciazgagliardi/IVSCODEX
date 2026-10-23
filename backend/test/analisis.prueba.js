@@ -175,23 +175,20 @@ test('normas: cada artículo con su norma, sin concatenar y sin atribuir por el 
   assert.ok(ctx('art. 1746').every((c) => c === 'fundamentos'));
 });
 
-test('precedentes: Ontiveros (Fallos 340:1038) además de Barrientos, y los provinciales', () => {
+test('precedentes: Ontiveros (Fallos 340:1038) además de Barrientos, con sus datos y su función', () => {
   const P = RU.a.precedentes;
-  const ont = P.find((p) => p.publicacion === 'Fallos 340:1038');
+  const ont = P.find((p) => (p.publicacion || '').includes('Fallos 340:1038'));
   assert.ok(ont, 'detecta Ontiveros');
   assert.equal(ont.tipo, 'csjn');
   assert.match(ont.caratula, /^Ontiveros, Stella Maris/);
   assert.equal(ont.fecha, '10/08/2017');
-  const bar = P.find((p) => p.publicacion === 'Fallos 347:1446');
+  const bar = P.find((p) => (p.publicacion || '').includes('Fallos 347:1446'));
   assert.match(bar.caratula, /^Barrientos/);
   assert.match(bar.funcion, /distinguido/, 'la Corte de Mendoza dice que Barrientos no se aplica');
-  const prov = P.filter((p) => p.tipo === 'provincial');
-  assert.ok(prov.length >= 8);
-  assert.ok(prov.some((p) => p.caratula === 'Lucero' && p.fecha === '21/08/2025'));
-  assert.ok(prov.some((p) => /^Bustos/.test(p.caratula || '') && p.publicacion === 'LS631-023'));
-  assert.ok(P.some((p) => p.tipo === 'doctrina' && /Baremo general para el fuero civil/.test(p.caratula || '')));
-  // un pasaje entre comillas no es un precedente
-  assert.ok(!P.some((p) => /^Si la sentencia fijó/.test(p.caratula || '')));
+  assert.ok(P.some((p) => p.caratula === 'Cabrera Isaac Damian' && p.fecha === '19/08/2025'), 'cita sin comillas');
+  assert.ok(P.some((p) => /^Triunfo en j° Uribe/.test(p.caratula || '') && p.expediente === '13-00708149-3/1' && /LS 564-187/.test(p.publicacion)), 'cita sin comilla de apertura');
+  assert.ok(!P.some((p) => /^Si la sentencia fijó|en más o en menos/.test(p.caratula || '')), 'un pasaje entre comillas no es un precedente');
+  assert.ok(!P.some((p) => /CAMPOS/.test(p.caratula || '')), 'el propio expediente de origen no es un precedente');
 });
 
 /* ---- otras estructuras ---- */
@@ -267,4 +264,109 @@ test('CSJN (texto sintético con las fórmulas de la Corte): votos y disidencias
   ]);
   assert.equal(a.partes.instancia.recurrentes[0].comoEnCaratula, 'la actora');
   assert.equal(a.partes.origen.demandados[0].comoEnCaratula, 'ART S.A.');
+});
+
+/* ---- precedentes: TODAS las citas de cada fallo, y ninguna de más ----
+   Listas armadas leyendo cada fallo de punta a punta. Cada entrada es
+   [tipo, comienzo de la carátula (o publicación si no tiene), fecha]. */
+const CITAS = {
+  'scjm-rio-uruguay-2026-05-08.txt': [
+    ['provincial', 'LL 145-398', ''], ['provincial', 'LS 418-235', ''], ['provincial', 'LA 84-83', ''], ['provincial', 'LS 281-483', ''],
+    ['provincial', 'Lucero', '21/08/2025'], ['provincial', 'Triunfo en j° Uribe', '31/07/2018'], ['provincial', 'La Mercantil Andina', '23/11/2023'],
+    ['provincial', 'Allende, María Alejandra', '22/09/2022'], ['provincial', 'Arriga, Sandra', '08/02/2019'], ['csjn', 'Ontiveros, Stella Maris', '10/08/2017'],
+    ['provincial', 'LS 579-204', ''], ['provincial', 'Bustos, Enrique', '07/06/2021'], ['provincial', 'Cabrera Isaac Damian', '19/08/2025'],
+    ['doctrina', 'Baremo general', ''], ['doctrina', '', ''], ['doctrina', 'Intereses: cuando', ''],
+    ['provincial', 'Lezama', '09/12/2024'], ['provincial', 'LS 265-78', ''], ['provincial', 'Aseguradora Federal Argentina', '01/04/2014'],
+    ['no_clasificable', 'L.L 1991-D-462', ''], ['provincial', 'LS 282-133', ''], ['provincial', 'Cinquemani', '20/03/2018'],
+    ['provincial', 'Sosa', '25/09/2023'], ['csjn', 'Barrientos, Gabriel Alexandra', '15/10/2024'], ['provincial', 'Chogris', ''], ['provincial', 'MEDINA', ''],
+  ],
+  'scjm-berro-2026-08-12.txt': [
+    ['provincial', 'Reynals Castillo', '10/05/2022'], ['provincial', 'Chialvo', '25/08/2025'], ['provincial', 'Nabors Internacional Argentina SRL', '07/07/2021'],
+    ['csjn', 'Pellicori', ''], ['csjn', 'Sisnero', ''], ['csjn', 'Varela', ''], ['provincial', 'Velardez', '01/02/2021'], ['provincial', 'Parra', '13/03/2018'],
+    ['provincial', 'Acarti en j: García', '11/05/2016'], ['provincial', 'LS 522-068', ''], ['provincial', 'Agroveterinaria en j: Ortega', '24/08/2016'],
+    ['csjn', 'Carinadu SA', '02/03/2016'],
+  ],
+  'tsj-distribuidora-pompeya.txt': [
+    ['csjn', 'Gómez, Ricardo c/ Consorcio', ''], ['provincial', 'Federación de Box', '25/08/1999'], ['otro_tribunal', 'Couto de Capa', '05/06/2009'],
+  ],
+  'tsj-caja-de-seguros.txt': [
+    ['provincial', 'PARANA S.A. DE SEGUROS', '03/12/2025'], ['csjn', 'Barrientos', ''], ['provincial', 'Empresa Distribuidora Sur', '01/07/2020'],
+    ['provincial', 'GCBA s/ queja', '28/09/2022'],
+  ],
+  'tsj-rozen-2003.txt': [
+    ['provincial', 'Carrefour Argentina', '23/02/2000'], ['otra_decision', 'Nicolosi', ''], ['provincial', 'Federación Argentina de Box', '25/08/1999'],
+    ['otro_tribunal', 'Cáfaro', '13/08/1986'],
+  ],
+  'tsj-lopez-viviana.txt': [
+    ['provincial', 'GCBA s/ queja', '15/03/2023'], ['provincial', 'GCBA s/ queja', '29/03/2023'], ['csjn', 'Fallos 334:1821', ''], ['csjn', 'Fallos 332:2159', ''],
+    ['csjn', 'Fallos 330:563', ''], ['provincial', 'Guglielmone, María Dolores', '22/03/2000'], ['provincial', 'Fantuzzi, José Roberto', '09/04/2001'],
+  ],
+};
+for (const [archivo, esperadas] of Object.entries(CITAS)) {
+  test(`precedentes completos: ${archivo}`, () => {
+    const { a } = cargar(archivo);
+    const halladas = a.precedentes.map((p) => [p.tipo, p.caratula || p.publicacion || '', p.fecha || '']);
+    assert.equal(halladas.length, esperadas.length, `cantidad: ${JSON.stringify(halladas)}`);
+    esperadas.forEach(([tipo, inicio, fecha], i) => {
+      assert.equal(halladas[i][0], tipo, `${i}: ${halladas[i][1]}`);
+      assert.ok(halladas[i][1].startsWith(inicio), `${i}: «${halladas[i][1]}» empieza con «${inicio}»`);
+      assert.equal(halladas[i][2], fecha, `${i}: fecha de ${halladas[i][1]}`);
+    });
+    for (const p of a.precedentes) assert.ok(p.evidencia && p.evidencia.texto.length > 5 && p.regla, 'cada cita trae su fragmento y su regla');
+  });
+}
+
+test('precedentes: otras formas de citar (texto armado con formas reales de distintos tribunales)', () => {
+  // SINTÉTICO: no es un fallo; reúne formas de cita que no están en el corpus.
+  const t = 'SUPREMA CORTE DE JUSTICIA - PODER JUDICIAL MENDOZA. ANTECEDENTES: bla bla.\n' +
+    'Conforme lo resuelto por esta Sala in re Pérez, Juan c/ López, Ana s/ daños (12/03/2019), y en GÓMEZ MARÍA ELENA 05/06/2020, corresponde rechazar el agravio. ' +
+    'La CSJN, en Fallos: 327:3753 («Aquino») y en la causa Arostegui, Pablo Martín c/ Omega ART S.A. (Fallos 331:570), sostuvo la reparación integral. ' +
+    'Asimismo, la Cámara Nacional de Apelaciones en lo Civil, Sala A, en “Rodríguez c/ Transportes del Sur” (ED 180-345) aplicó el mismo criterio ' +
+    '(C.N.Civ., Sala F, Martínez, Ana c/ Gómez, Luis s/ daños y perjuicios, 10/10/2010, JA 2011-II-123). Ver también SCBA, “Fernández”, sentencia del 3 de mayo de 2015. ' +
+    'La reparación debe ser integral (CSJN, «Vizzoti, Carlos A. c/ AMSA S.A.», Fallos: 327:3677, 14/09/2004). Ver Fallos 308:1118 y 318:1593. ' +
+    'En igual sentido (SCJM, Sala I, 12/04/2018, autos n° 13-01234567-8/1, “Rojas c/ Pérez”). Antes (cfr. TSJ, in re “López”, expte. n° 1234/02, sentencia del 1/2/2003). ' +
+    'Es doctrina de esta Corte in re “Aguirre” (L.S. 400-123). (SCBA, Ac. 87.654, “Sosa c/ Banco Nación”, 5-5-2010). ' +
+    'La doctrina coincide (Pizarro, Ramón D., Daño moral, Hammurabi, 2004, p. 120) y (conf. Kemelmajer de Carlucci, Aída, “Responsabilidad por daños”, LL 1999-A-100). ' +
+    'El perito informó un “daño severo” y la actora pidió “justicia”.';
+  const d = detectar(t);
+  const a = IVSAnalisis.analizar(t, { car: d.car, tipo: d.tipo });
+  const vistas = a.precedentes.map((p) => [p.tipo, p.caratula || p.publicacion, p.fecha || '']);
+  assert.deepEqual(vistas, [
+    ['provincial', 'Pérez, Juan c/ López, Ana s/ daños', '12/03/2019'],
+    ['provincial', 'Gómez María Elena', '05/06/2020'],
+    ['csjn', 'Aquino', ''],
+    ['csjn', 'Arostegui, Pablo Martín c/ Omega ART S.A', ''],
+    ['otro_tribunal', 'Rodríguez c/ Transportes del Sur', ''],
+    ['otro_tribunal', 'Martínez, Ana c/ Gómez, Luis s/ daños y perjuicios', '10/10/2010'],
+    ['provincial', 'Fernández', '03/05/2015'],
+    ['csjn', 'Vizzoti, Carlos A. c/ AMSA S.A.', '14/09/2004'],
+    ['csjn', 'Fallos 308:1118', ''],
+    ['csjn', 'Fallos 318:1593', ''],
+    ['provincial', 'Rojas c/ Pérez', '12/04/2018'],
+    ['provincial', 'López', '01/02/2003'],
+    ['provincial', 'Aguirre', ''],
+    ['provincial', 'Sosa c/ Banco Nación', '05/05/2010'],
+    ['doctrina', 'Daño moral', ''],
+    ['doctrina', 'Responsabilidad por daños', ''],
+  ]);
+  const P = Object.fromEntries(a.precedentes.map((p) => [p.caratula || p.publicacion, p]));
+  assert.equal(P.Aquino.publicacion, 'Fallos 327:3753');
+  assert.equal(P['Arostegui, Pablo Martín c/ Omega ART S.A'].publicacion, 'Fallos 331:570');
+  assert.match(P['Martínez, Ana c/ Gómez, Luis s/ daños y perjuicios'].tribunal, /C\.N\.Civ/);
+  assert.equal(P['Rojas c/ Pérez'].expediente, '13-01234567-8/1');
+  assert.equal(P.López.tribunal, 'Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires');
+  assert.equal(P['Sosa c/ Banco Nación'].tribunal, 'Suprema Corte de Justicia de la Provincia de Buenos Aires');
+});
+
+test('TSJ con firma digital: «APELLIDO, NOMBRES / JUEZ/A», fecha de la firma, licencia y mayoría deducida de las firmas', () => {
+  const { a, d } = cargar('tsj-federacion-patronal-firma-digital.txt');
+  assert.equal(d.tipo, 'tsj');
+  assert.equal(d.fecha, '09/09/2026');
+  assert.deepEqual(magistrados(a).sort(), ['Alicia E. C. Ruiz', 'Inés M. Weinberg', 'Luis Francisco Lozano', 'Marcela de Langhe', 'Santiago Otamendi']);
+  assert.equal(persona(a, 'otamendi').suscripcion, 'no_suscribe_por_licencia');
+  assert.deepEqual(persona(a, 'langhe').participacion, ['disidencia']);
+  assert.equal(a.votacion.estado, 'disidencia_identificada');
+  assert.ok(persona(a, 'lozano').participacion.includes('voto_mayoria'));
+  assert.ok(!persona(a, 'otamendi').participacion.includes('voto_mayoria'), 'quien no firma no integra la mayoría');
+  assert.ok(a.votacion.detalle.some((x) => /deducido de las firmas/.test(x)));
 });

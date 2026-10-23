@@ -216,8 +216,11 @@ function detectar(texto){
   // puntos como «S.A.» o «EXPTE. Nº»); si no, la del encabezado. También
   // se aceptan «contra»/«sobre» en lugar de «c/»/«s/» (TSJ).
   var reCarComillas=/[“"«]\s*([A-ZÁÉÍÓÚÑ][^”"»]{4,260}?\s+(?:c\/|contra)\s+[^”"»]{2,320}?\s+(?:s\/|p\/|sobre)\s*[^”"»]{2,260}?)\s*[”"»]/i;
-  var reCarSuelta=/([A-ZÁÉÍÓÚÑ][^"“”]{4,160}?\s+(?:c\/|contra)\s+[^"“”]{2,160}?\s+(?:s\/|p\/|sobre)\s+[^"“”]{2,120}?)\s*(?:\.(?:\s|$)|\*\d|$)/i;
-  m=apertura.match(reCarComillas)||apertura.match(reCarSuelta)||t.match(reCarComillas);
+  var reCarSuelta=/([A-ZÁÉÍÓÚÑ](?:(?!\.\s)[^"“”]){4,160}?\s+(?:c\/|contra)\s+(?:(?!\.\s)[^"“”]){2,160}?\s+(?:s\/|p\/|sobre)\s+(?:(?!\.\s)[^"“”]){2,120}?)\s*(?:\.(?:\s|$)|\*\d|$)/i;
+  // la carátula suelta del encabezado no es la de un precedente que se cita
+  var mSuelta=apertura.match(reCarSuelta);
+  if(mSuelta&&/\b(?:in\s+re|resuelto|conforme|causa|precedente|cfr|v\.\s?gr)\b/i.test(mSuelta[1])) mSuelta=null;
+  m=apertura.match(reCarComillas)||mSuelta||t.match(reCarComillas);
   if(m) d.car=m[1].replace(/\s+/g," ").trim();
 
   // El tribunal se busca primero en el encabezado: un fallo de la SCJM que
@@ -225,7 +228,9 @@ function detectar(texto){
   var TRIBUNALES=[
     [/suprema\s+corte\s+de\s+justicia.{0,60}mendoza|\bS\.?C\.?J\.?M\b/i,"Suprema Corte de Justicia de Mendoza","scjm"],
     [/suprema\s+corte\s+de\s+justicia.{0,60}buenos\s+aires|\bSCBA\b/i,"Suprema Corte de Justicia de la Provincia de Buenos Aires","scba"],
-    [/tribunal\s+superior\s+de\s+justicia(?:.{0,60}ciudad\s+aut[oó]noma)?|\bExpte\.?\s*n[°º]?\s*(?:TSJ|QTS)\b/i,"Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires","tsj"],
+    // el TSJ porteño: su nombre, «Expte. n° TSJ…», la fórmula «Vistos: los autos indicados en el epígrafe»,
+    // el pie de página del año de la Constitución de la Ciudad o el sello «TSJ|EXP:» de la firma digital
+    [/tribunal\s+superior\s+de\s+justicia(?:.{0,60}ciudad\s+aut[oó]noma)?|\bExpte\.?\s*n[°º]?\s*(?:TSJ|QTS)\b|Vist[oa]s?:?\s*(?:los\s+autos|las\s+actuaciones|el\s+expediente)\s+indicad[oa]s?\s+en\s+el\s+ep[ií]grafe|Aniversario\s+de\s+la\s+sanci[oó]n\s+de\s+la\s+Constituci[oó]n\s+de\s+la\s+Ciudad|TSJ\|EXP:/i,"Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires","tsj"],
     [/corte\s+suprema\s+de\s+justicia\s+de\s+la\s+naci/i,"Corte Suprema de Justicia de la Nación","csjn"],
     [/corte\s+interamericana/i,"Corte Interamericana de Derechos Humanos","cidh"],
     [/tribunal\s+europeo|european\s+court\s+of\s+human\s+rights/i,"Tribunal Europeo de Derechos Humanos","tedh"]
@@ -274,7 +279,9 @@ function detectar(texto){
     }else{
       // una fecha numérica suelta del encabezado suele ser de otra cosa (el
       // ingreso al trabajo, el hecho): sólo vale si dice que es la fecha
-      m=apertura.match(/\bFecha(?:\s+de\s+(?:la\s+)?sentencia\s*:?|\s*:)\s*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\b/i);
+      // la firma digital (TSJ: «FIRMADO DIGITALMENTE 09/09/2026 13:29») fecha la resolución
+      m=apertura.match(/\bFecha(?:\s+de\s+(?:la\s+)?sentencia\s*:?|\s*:)\s*(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\b/i)
+        ||texto.slice(-3000).match(/FIRMADO\s+DIGITALMENTE\s+(\d{1,2})\/(\d{1,2})\/(\d{4})/i);
       if(m) d.fecha=("0"+m[1]).slice(-2)+"/"+("0"+m[2]).slice(-2)+"/"+m[3];
     }
   }
@@ -835,19 +842,31 @@ var IVSAnalisis=(function(){
       if(/licencia/.test(pm)) motivo="licencia"; else if(/vacan/.test(pm)) motivo="vacancia";
       else if(/excus/.test(pm)) motivo="excusacion"; else if(/recus/.test(pm)) motivo="recusacion";
       else if(/ausen/.test(pm)) motivo="ausencia"; else if(/comision/.test(pm)) motivo="comision";
+      // el motivo tal como lo dice el fallo («en los términos de la acordada n° 40/14»)
+      var mt3=/(?:por\s+(?:encontrarse|hallarse|estar)\s+|en\s+los\s+t[eé]rminos\s+del?\s+|conforme\s+(?:a\s+)?(?:lo\s+dispuesto\s+en\s+)?)([^.;]{3,120})/i.exec(seg),motivoTexto=mt3?limpio(mt3[0]):null;
       while((mt2=reT.exec(seg))){
         var nm=nombreEn(texto,or.ini+mt2.index+mt2[0].length); if(!nm) continue;
         var pn=persona(nm.nombre);
-        var h3={tipo:"no_suscribe",motivo:motivo||"no_indicado",evidencia:evid(texto,or.ini,or.fin,0,0),regla:"constancia-de-no-suscripcion",certeza:motivo?"confirmado":"probable"};
+        var h3={tipo:"no_suscribe",motivo:motivo||(motivoTexto?"otro":"no_indicado"),motivoTexto:motivoTexto,evidencia:evid(texto,or.ini,or.fin,0,0),regla:"constancia-de-no-suscripcion",certeza:motivo?"confirmado":"probable"};
         hecho(pn,h3); noSuscriben.push(h3); usado(nm.ini,nm.fin);
       }
       usado(or.ini,or.fin);
     }
     // 6. firmas: después del «Notifíquese» final, nombre + cargo
     var firmas=[];
+    // firma digital: «LOZANO, LUIS\nFRANCISCO\nJUEZ/A»
+    (function(){
+      var desde=Math.max(0,texto.length-4000),zona=texto.slice(desde),mf,reFD=/([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ'’ ]{1,40}),\s*([A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ.\s]{0,60}?)\s+(JUEZ\/A|JUEZA|JUEZ|MINISTR[OA](?:\/A)?|VOCAL|PRESIDENT[EA](?:\/A)?|CONJUEZ(?:\/A)?|SECRETARI[OA](?:\/A)?)\b/g;
+      while((mf=reFD.exec(zona))){
+        var nom=limpio(mf[2])+" "+limpio(mf[1]),ini2=desde+mf.index;
+        var pf=persona(nom.split(" ").map(capitalizar).join(" ")),esSec=/SECRETARI/.test(mf[3]);
+        var h5={tipo:esSec?"firma_secretario":"firma",cargo:capitalizar(mf[3].replace(/\/A$/,"")),evidencia:evid(texto,ini2,ini2+mf[0].length,0,0),regla:"firma-digital",certeza:"confirmado"};
+        hecho(pf,h5); if(!esSec) firmas.push(h5); usado(ini2,ini2+mf[0].length);
+      }
+    })();
     if(sec.firmas){
       var zona=texto.slice(sec.firmas.ini,sec.firmas.fin),reF=/(?:(?:DR|DRA|Dr|Dra|DOCTOR|DOCTORA)\.?\s+)?/g;
-      var reCargo=/^\s*,?\s*(Ministr[oa]|MINISTR[OA]|Juez|Jueza|JUEZ|JUEZA|Presidente|Presidenta|PRESIDENTE|PRESIDENTA|Vicepresidente|Vicepresidenta|Vocal|VOCAL|Conjuez|CONJUEZ|Secretari[oa]|SECRETARI[OA]|Camarista)\b/;
+      var reCargo=/^\s*,?\s*(Ministr[oa]|MINISTR[OA]|Juez|Jueza|JUEZ\/A|JUEZ|JUEZA|Presidente|Presidenta|PRESIDENTE|PRESIDENTA|Vicepresidente|Vicepresidenta|Vocal|VOCAL|Conjuez|CONJUEZ|Secretari[oa]|SECRETARI[OA]|Camarista)\b/;
       var i2=0;
       while(i2<zona.length){
         var pos=sec.firmas.ini+i2;
@@ -904,7 +923,8 @@ var IVSAnalisis=(function(){
         .map(function(h){ return h.tipo; }).filter(function(t,i,a){ return a.indexOf(t)===i; });
       p.enOrdenDeEstudio=p.hechos.filter(function(h){ return h.tipo==="orden_de_estudio"; }).map(function(h){ return h.orden; })[0]||null;
       var ns=p.hechos.filter(function(h){ return h.tipo==="no_suscribe"; })[0];
-      p.suscripcion=ns?"no_suscribe"+(ns.motivo!=="no_indicado"?"_por_"+ns.motivo:""):(p.hechos.some(function(h){ return h.tipo==="firma"; })?"suscribe":"no_determinado");
+      p.suscripcion=ns?"no_suscribe"+(ns.motivo!=="no_indicado"&&ns.motivo!=="otro"?"_por_"+ns.motivo:""):(p.hechos.some(function(h){ return h.tipo==="firma"; })?"suscribe":"no_determinado");
+      p.motivoNoSuscribe=ns?ns.motivoTexto||null:null;
       var roles=p.hechos.map(function(h){ return h.tipo; }).filter(function(t){ return !MAG[t]; });
       p.rol=p.esMagistrado?"magistrado":(roles.indexOf("perito")>=0?"perito":roles.indexOf("abogado_o_representante")>=0?"abogado_o_representante":
         roles.indexOf("ministerio_publico")>=0?"ministerio_publico":roles.indexOf("profesional_con_honorarios")>=0?"profesional_con_honorarios":
@@ -946,8 +966,16 @@ var IVSAnalisis=(function(){
     }else{
       out.detalle.push("No encontré la estructura de votación (encabezados de voto, adhesiones o firmas).");
     }
-    if(dis.length&&!pers.votos.some(function(v){ return !/disidencia/.test(v.tipo); }))
-      out.detalle.push("El voto de la mayoría no lleva el nombre de quienes lo firman en el texto revisado: no pude identificarlos.");
+    if(dis.length&&!pers.votos.some(function(v){ return !/disidencia/.test(v.tipo); })){
+      // la mayoría sin autor («Fundamentos: …»): la firman los que firman y no disienten
+      var disidentes=dis.map(function(v){ return v.persona; });
+      var mayoria=mags.filter(function(p){ return p.suscripcion==="suscribe"&&disidentes.indexOf(p.id)<0; });
+      if(mayoria.length){
+        out.detalle.push("El voto de la mayoría no lleva autor en el texto; lo integran quienes firman la sentencia sin disidencia: "+mayoria.map(function(p){ return p.nombre; }).join(", ")+" (deducido de las firmas).");
+        mayoria.forEach(function(p){ p.hechos.push({tipo:"voto_mayoria",evidencia:(p.hechos.filter(function(h){ return h.tipo==="firma"; })[0]||{}).evidencia,regla:"firmantes-sin-disidencia",certeza:"probable"}); if(p.participacion.indexOf("voto_mayoria")<0) p.participacion.push("voto_mayoria"); });
+      }
+      else out.detalle.push("El voto de la mayoría no lleva el nombre de quienes lo firman en el texto revisado: no pude identificarlos.");
+    }
     var propios=pers.votos.filter(function(v){ return v.tipo==="voto_propio"; });
     if(propios.length) out.detalle.push("Votos con fundamentos propios: "+propios.map(function(v){ return nom(v.persona); }).join(", ")+".");
     var grupos={},ordenG=[];
@@ -961,7 +989,7 @@ var IVSAnalisis=(function(){
       out.detalle.push(nom(a.persona)+" adhiere"+(a.alcance==="parcial"?" parcialmente":"")+(a.a?" al voto de "+nom(a.a):" al voto que antecede")+(c.length?" ("+(c.length>1?c.slice(0,-1).join(", ")+" y "+c[c.length-1]:c[0])+" cuestión)":"")+".");
     });
     pers.noSuscriben.forEach(function(n){
-      out.detalle.push(nom(n.persona)+" no suscribe la resolución"+(n.motivo!=="no_indicado"?" por "+n.motivo.replace("_"," "):" (motivo no indicado)")+": eso no es una disidencia.");
+      out.detalle.push(nom(n.persona)+" no suscribe la resolución"+(n.motivo==="otro"?" ("+n.motivoTexto+")":n.motivo!=="no_indicado"?" por "+n.motivo.replace("_"," "):" (el fallo no dice por qué)")+": eso no es una disidencia.");
       out.evidencia.push(n.evidencia);
     });
     out.magistrados=mags.length;
@@ -1260,74 +1288,372 @@ var IVSAnalisis=(function(){
     return out;
   }
 
-  /* ---------- precedentes y doctrina ---------- */
-  function analizarPrecedentes(texto,tipoDoc){
-    var out=[],m,vistos={};
-    function agregar(p){
-      var k=p.tipo==="csjn"&&p.publicacion?"csjn|"+p.publicacion:p.tipo+"|"+plano(p.caratula||"")+"|"+(p.publicacion||"")+"|"+(p.fecha||"");
-      if(vistos[k]){ var o=vistos[k]; if(!o.caratula&&p.caratula) o.caratula=p.caratula; if(!o.fecha&&p.fecha) o.fecha=p.fecha; return; }
-      vistos[k]=p; out.push(p);
+  /* ---------- precedentes y doctrina ----------
+     Se trabaja por UNIDADES DE CITA, no por un formato único:
+       · cada paréntesis (y, adentro, cada tramo separado por «;»);
+       · lo que lo antecede inmediatamente («la CSJN en “Barrientos” (Fallos…)»,
+         «en la causa “Parra” (sentencia del 13/3/18)»);
+       · las citas en línea con palabra de aviso («precedente», «causa»,
+         «in re», «plenario», «lo resuelto en», «criterio sentado en»…) o con
+         fecha, expediente o registro pegados a la carátula.
+     En cada unidad se buscan los anclajes: colección «Fallos» de la Corte,
+     registros de la SCJM (LS/LA tomo-página), publicaciones (LL, ED, JA, TR
+     LALEY), expediente o CUIJ, fecha de la sentencia (en números o en
+     letras), tribunal; y la carátula: entre comillas (aunque falte la de
+     apertura), sin comillas («X c/ Y s/ Z», «X en j° Y», «PÉREZ JUAN
+     19/08/2025», «Corte… – Ontiveros, Stella Maris c. … –») o nombrada en
+     el texto («el precedente Barrientos»). Un nombre propio suelto, sin
+     ningún anclaje, no es un precedente. */
+  var Q_AB="“\"«",Q_CI="”\"»";
+  var MESES_P={enero:1,febrero:2,marzo:3,abril:4,mayo:5,junio:6,julio:7,agosto:8,septiembre:9,setiembre:9,octubre:10,noviembre:11,diciembre:12};
+  function fechaEn(s){
+    var m=/(\d{1,2})\s?[\/.\-]\s?(\d{1,2})\s?[\/.\-]\s?(\d{4}|\d{2})(?!\d)/.exec(s),t=/(\d{1,2})\s+de\s+([a-záéíóú]+)\s+(?:de|del)\s+(\d{4})/i.exec(s);
+    var usar=null;
+    if(m&&(!t||m.index<=t.index)){ var a=m[3].length===2?(+m[3]>40?"19"+m[3]:"20"+m[3]):m[3]; if(+m[2]>=1&&+m[2]<=12&&+m[1]>=1&&+m[1]<=31) usar=("0"+m[1]).slice(-2)+"/"+("0"+m[2]).slice(-2)+"/"+a; }
+    else if(t&&MESES_P[plano(t[2])]) usar=("0"+t[1]).slice(-2)+"/"+("0"+MESES_P[plano(t[2])]).slice(-2)+"/"+t[3];
+    return usar;
+  }
+  var RE_FALLOS=/Fallos\s*(?:Corte)?\s*:?\s*(\d{2,3})\s*:\s*(\d{1,5})((?:\s*(?:[;,]\s*(?:y\s+)?|y\s+)\d{2,3}\s*:\s*\d{1,5})*)/gi;
+  var RE_REG=/\b(L\.?\s?[SA])\.?\s?(\d{2,3})\s?[-–]\s?(\d{1,4})\b((?:\s*[;,\/]\s*(?:L\.?\s?[SA]\.?\s?)?\d{2,3}\s?[-–]\s?\d{1,4}\b)*)/g;
+  var RE_PUB=/\b(?:L\.?\s?L\.?|E\.?\s?D\.?|J\.?\s?A\.?|D\.?\s?J\.?)\s?(?:\d{4}\s?[-–]\s?[A-F]{1,3}\s?[-–]\s?\d{1,5}|\d{2,3}\s?[-–]\s?\d{1,5})|TR\s+LALEY\s+AR\/JUR\/\d+\/\d{4}|Constituci[oó]n\s+y\s+Justicia\s+\[Fallos\s+del\s+TSJ\][^;)]{0,60}/gi;
+  var RE_EXP=/\b(?:Expte\.?|expte\.?|EXPTE\.?|expediente|Expediente|CUIJ|causa\s+n[°º]|autos\s+n[°º]|Ac\.|Acuerdo)\s*\.?\s*(?:n\.?\s*[°º]?\s*|nro\.?\s*)?:?\s*((?:TSJ|QTS)?\s?\d[\d\-\/.]{2,}\d)/g;
+  function tribunalEn(s,tipoDoc){
+    var p=plano(s);
+    if(/\bcsjn\b|c\.\s?s\.\s?j\.\s?n|corte\s+suprema(?!\s+de\s+justicia\s+de\s+(?:mendoza|la\s+provincia))|\bfallos\s*(?:corte)?\s*:?\s*\d{2,3}\s*:/.test(p)) return {tipo:"csjn",tribunal:"Corte Suprema de Justicia de la Nación"};
+    var cam=/\b(c\.?\s?n\.?\s?a\.?\s?t\.?|c\.?\s?n\.?\s?a\.?\s?c\.?|c\.?\s?n\.?\s?civ\.?|cncom\.?|cnfed\.?|camara\s+nacional[^,;)]{0,60}|plenario|camara\s+(?:de\s+apelaciones|civil|comercial|del\s+trabajo|federal|en\s+lo)[^,;)]{0,60})/.exec(p);
+    if(cam) return {tipo:"otro_tribunal",tribunal:limpio(s.substr(cam.index,cam[0].length)).replace(/^./,function(x){ return x.toUpperCase(); })};
+    if(/\bscba\b|s\.\s?c\.\s?b\.\s?a|suprema\s+corte\s+de\s+(?:justicia\s+de\s+)?(?:la\s+provincia\s+de\s+)?buenos\s+aires/.test(p)) return {tipo:"provincial",tribunal:"Suprema Corte de Justicia de la Provincia de Buenos Aires"};
+    if(/\btsj\b|tribunal\s+superior\s+de\s+justicia|fallos\s+del\s+tsj/.test(p)) return {tipo:"provincial",tribunal:"Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires"};
+    if(/s\.?\s?c\.?\s?j\.?\s?(?:m\b|mza)|\bscjm\b|suprema\s+corte\s+de\s+(?:justicia\s+de\s+)?mendoza|\bex\s+sala\b|\bl\.?\s?[sa]\.?\s?\d{2,3}\s?[-–]\s?\d/.test(p)) return {tipo:"provincial",tribunal:"Suprema Corte de Justicia de Mendoza"};
+    return null;
+  }
+  var PROPIO={scjm:"Suprema Corte de Justicia de Mendoza",tsj:"Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires",scba:"Suprema Corte de Justicia de la Provincia de Buenos Aires",csjn:"Corte Suprema de Justicia de la Nación"};
+  function tribunalPropioEn(s,tipoDoc){
+    if(!PROPIO[tipoDoc]) return null;
+    return /este\s+tribunal|esta\s+corte|esta\s+sala|este\s+(?:cuerpo|estrado|superior\s+tribunal)|me\s+remito|como\s+se\s+record[oó]|precedentes?\s+de\s+esta|jurisprudencia\s+de\s+este|ha\s+resuelto\s+(?:la\s+)?ex\s+sala|nuestro\s+tribunal/i.test(s)?{tipo:tipoDoc==="csjn"?"csjn":"provincial",tribunal:PROPIO[tipoDoc]}:null;
+  }
+  /* ¿Parece una carátula y no un pasaje citado entre comillas? */
+  function esCaratula(c){
+    c=limpio(c).replace(/^[\s,;:–-]+|[\s,;:–-]+$/g,"").replace(/\s*(?:\.{2,}|…)$/,"");
+    if(c.length<2||c.length>330) return false;
+    if(!/^[A-ZÁÉÍÓÚÑ]/.test(c)) return false;
+    if(/\s(?:c\/?\.?|s\/|v\.|vs\.?|en\s+j\s?[°º:.]?|c\.)\s/i.test(" "+c+" ")) return true;
+    var pal=c.split(" ");
+    if(pal.length<=6&&!/[.:;]$/.test(c)&&pal.filter(function(w){ return /^[A-ZÁÉÍÓÚÑ]/.test(w); }).length>=Math.ceil(pal.length/2)) return true;
+    return /^[A-ZÁÉÍÓÚÑ][^,]{1,40},\s*[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+/.test(c)&&pal.length<=10;
+  }
+  function limpiarCaratula(c){ return limpio(c).replace(/^[\s,;:–\-]+|[\s,;:–\-]+$/g,"").replace(/^(?:DIGITAL\s*[–-]\s*)/i,""); }
+  /* Las carátulas de un tramo: entre comillas (también con la de apertura
+     ausente), o sin comillas. */
+  function caratulasEn(s){
+    var out=[],m;
+    function agregar(c,i,f){ if(esCaratula(c)&&!out.some(function(o){ return i<o.f&&f>o.i; })) out.push({c:limpiarCaratula(c),i:i,f:f}); }
+    // comilla de cierre sin apertura al principio del tramo: «Expte.: X – Triunfo en j° Uribe...”»,
+    // «CSJN, Pellicori", "Sisnero" y "Varela"» (comillas rectas desparejas)
+    var primeraAb=s.search(/[“«]/),primeraCi=s.search(/[”»]/),rectas=(s.match(/"/g)||[]).length,desde=0;
+    var cierreSuelto=primeraCi>=0&&(primeraAb<0||primeraCi<primeraAb)?primeraCi:(rectas%2===1&&/[A-Za-zÁÉÍÓÚáéíóúñÑ.]"/.test(s)?s.search(/[A-Za-zÁÉÍÓÚáéíóúñÑ.]"/)+1:-1);
+    if(cierreSuelto>=0){
+      var previo=s.slice(0,cierreSuelto),corte=Math.max(previo.lastIndexOf("–"),previo.lastIndexOf(" - "),previo.lastIndexOf("("),previo.lastIndexOf(","),previo.lastIndexOf(":"));
+      // «Expte.: 13-… – Triunfo en j° Uribe...”»: desde el último separador que no esté dentro del nombre
+      var cand=previo.slice(corte+1).replace(/^\s*-\s*/,"");
+      if(!esCaratula(cand)){ cand=previo.replace(/^.*\b(?:Expte|expte|CUIJ)[^–-]*[–-]\s*/,"").replace(/^\s*\(?\s*/,""); }
+      agregar(cand,previo.indexOf(cand),cierreSuelto+1);
+      desde=cierreSuelto+1;
     }
-    function fechaCerca(s){ var f=/(\d{1,2})[\/.](\d{1,2})[\/.](\d{2,4})/.exec(s); if(!f) return null;
-      var a=f[3].length===2?(+f[3]>40?"19"+f[3]:"20"+f[3]):f[3]; return ("0"+f[1]).slice(-2)+"/"+("0"+f[2]).slice(-2)+"/"+a; }
-    function pareceCaratula(c){ return !!c&&/^[A-ZÁÉÍÓÚÑ]/.test(c)&&(/\s(?:c\/|s\/|v\.|vs\.?)\s|,/.test(c)||c.length<=40); }
-    function funcionDe(i){ var a=plano(texto.slice(Math.max(0,i-900),i)); a=a.slice(Math.max(0,a.lastIndexOf("fallos")+1>0&&a.length-a.lastIndexOf("fallos")<120?0:a.lastIndexOf("fallos"))); return /no\s+corresponde[^.]{0,80}traer\s+a\s+colacion|no\s+nos\s+encontramos\s+ante\s+igual|no\s+resulta\s+aplicable|distinto\s+supuesto/.test(a)?"distinguido (el tribunal dice que no se aplica)":"citado"; }
-    // CSJN por su colección: «Fallos: 347:1446», «Cita Fallos Corte: 340:1038»
-    var re=/Fallos\s*(?:Corte)?\s*:?\s*(\d{2,3})\s*:\s*(\d{1,5})/gi;
-    while((m=re.exec(texto))){
-      var a=Math.max(0,m.index-320),ventana=texto.slice(a,m.index),car=null;
-      var mq=/[“"«]([^”"»]{3,160})[”"»][^“"«]*$/.exec(ventana);
-      var mn=/Naci[oó]n\s*[-–]\s*([^-–(]{3,160}?)\s*[-–•]/.exec(ventana);
-      if(mn) car=limpio(mn[1]); else if(mq&&pareceCaratula(limpio(mq[1]))) car=limpio(mq[1]);
-      var fe=fechaCerca(texto.slice(a,m.index+40));
-      agregar({tipo:"csjn",caratula:car,tribunal:"Corte Suprema de Justicia de la Nación",fecha:fe,publicacion:"Fallos "+m[1]+":"+m[2],funcion:funcionDe(m.index),evidencia:evid(texto,m.index,m.index+m[0].length,200,60),regla:"coleccion-fallos",certeza:"confirmado"});
-    }
-    // CSJN sin colección: «CSJN, “Carinadu SA c/ Banco…”, 02/03/2016»
-    re=/\b(?:CSJN|C\.S\.J\.N\.?|Corte\s+Suprema(?:\s+de\s+Justicia\s+de\s+la\s+Naci[oó]n)?)\s*[,:\-–]?\s*(?:en\s+)?(?:la\s+causa\s+)?[“"«]\s*([^”"»]{3,160})[”"»]/g;
-    while((m=re.exec(texto))){
-      var cola=texto.slice(m.index+m[0].length,m.index+m[0].length+120);
-      if(/Fallos\s*(?:Corte)?\s*:?\s*\d{2,3}\s*:/.test(cola)) continue;
-      agregar({tipo:"csjn",caratula:limpio(m[1]),tribunal:"Corte Suprema de Justicia de la Nación",fecha:fechaCerca(cola),publicacion:null,funcion:funcionDe(m.index),evidencia:evid(texto,m.index,m.index+m[0].length,60,100),regla:"csjn-por-caratula",certeza:"confirmado"});
-    }
-    // otras cámaras/tribunales nombrados: «CNAC, Sala C, “Cáfaro…”»
-    re=/\b(C\.?N\.?\s?A\.?\s?C\.?|C\.?N\.?Civ\.?|C\.?N\.?A\.?T\.?|CNCom\.?|C[aá]mara\s+[A-ZÁÉÍÓÚ][^,“"]{3,80}|S\.?C\.?B\.?A\.?|TSJ(?:\s+CABA)?)\s*,\s*(?:Sala\s+[A-Z0-9IVX]+\s*,\s*)?[“"«]([^”"»]{3,160})[”"»]/g;
-    while((m=re.exec(texto))){
-      var propio=(/^TSJ/.test(m[1])&&tipoDoc==="tsj")||(/S\.?C\.?B\.?A/.test(m[1])&&tipoDoc==="scba");
-      agregar({tipo:propio?"provincial":"otro_tribunal",caratula:limpio(m[2]),tribunal:limpio(m[1]),fecha:fechaCerca(texto.slice(m.index,m.index+m[0].length+80)),publicacion:null,funcion:funcionDe(m.index),evidencia:evid(texto,m.index,m.index+m[0].length,40,100),regla:"camara-por-sigla",certeza:"probable"});
-    }
-    // provinciales (estilo SCJM): carátula entre comillas + fecha, expediente o «LS/LA tomo-página»
-    re=/[“"«]\s*([A-ZÁÉÍÓÚÑ][^”"»]{1,120}?)\s*[”"»]/g;
-    while((m=re.exec(texto))){
-      var after=texto.slice(m.index+m[0].length,m.index+m[0].length+140),before=texto.slice(Math.max(0,m.index-160),m.index);
-      var fe2=/^\s*(?:[-–,]\s*)?(?:\(\s*)?(?:del?|de\s+fecha|sentencia\s+(?:de\s+fecha\s+|del\s+)|-\s*Fecha:\s*|Fecha:\s*|,\s*)?\s*(\d{1,2}[.\/]\d{1,2}[.\/]\d{2,4})/.exec(after);
-      var pub=/\b(L\.?\s?[SA]\.?\s?\d{2,3}\s?[-–]\s?\d{1,4})/.exec(after.slice(0,90));
-      var exp=/(?:Expte\.?|CUIJ)\s*:?\s*([\d\-\/]{8,})[^“"«]{0,10}$/i.exec(before);
-      if(!fe2&&!pub&&!exp) continue;
-      var nombre=limpio(m[1]);
-      if(/^(?:en|el|la|los|las)\s/i.test(nombre)&&nombre.length<6) continue;
-      if(out.some(function(x){ return x.evidencia&&Math.abs(x.evidencia.ini-m.index)<200&&plano(x.caratula||"")===plano(nombre); })) continue;
-      var ctx=plano(before.slice(-120)+" "+after.slice(0,80));
-      var trib=/csjn|corte\s+suprema|fallos/.test(ctx)?"Corte Suprema de Justicia de la Nación":
-        (/s\.?c\.?j\.?\s?mza|este\s+tribunal|esta\s+corte|esta\s+sala|ex\s+sala|este\s+cuerpo|\bl\.?\s?s\.?\s?\d|me\s+remito|como\s+se\s+record|ha\s+resuelto|ha\s+(?:establecido|sostenido)|en\s+el\s+precedente/.test(ctx)||(tipoDoc==="scjm"&&(pub||exp)))?(tipoDoc==="scjm"?"Suprema Corte de Justicia de Mendoza":"este tribunal"):null;
-      agregar({tipo:trib&&/Nacion/.test(trib)?"csjn":(trib?"provincial":"no_clasificable"),caratula:nombre,tribunal:trib,fecha:fe2?fechaCerca(fe2[1]):null,
-        expediente:exp?exp[1]:null,publicacion:pub?pub[1].replace(/\s+/g,""):null,funcion:funcionDe(m.index),evidencia:evid(texto,m.index,m.index+m[0].length,80,100),
-        regla:"caratula-entre-comillas-con-fecha-o-registro",certeza:trib?"probable":"no_confirmado"});
-    }
-    // registros sueltos «(LS 418-235; 423-184)»: precedentes sin carátula
-    re=/\(\s*((?:L\.?\s?[SA]\.?\s?\d{2,3}\s?[-–]\s?\d{1,4}\s*[;,\/]?\s*(?:\d{2,3}\s?[-–]\s?\d{1,4}\s*[;,\/]?\s*)*)+)\)/g;
-    while((m=re.exec(texto))){
-      if(out.some(function(x){ return x.evidencia&&m.index-x.evidencia.ini<260&&m.index>=x.evidencia.ini; })) continue;
-      agregar({tipo:tipoDoc==="scjm"?"provincial":"no_clasificable",caratula:null,tribunal:tipoDoc==="scjm"?"Suprema Corte de Justicia de Mendoza":null,fecha:null,publicacion:limpio(m[1]),funcion:"citado",evidencia:evid(texto,m.index,m.index+m[0].length,120,20),regla:"registro-ls-la",certeza:"probable"});
-    }
-    // doctrina: «(Altube, José Luis y Rinaldi…, “Baremo…”, Ed. García Alonso, 2013, p. 315)»
-    re=/\(([^()]{10,320}?(?:Ed\.|Editorial|Abeledo|Rubinzal|Astrea|Hammurabi|La\s+Ley(?!\s+\d)|Revista|Tratado|pág\.|p\.\s?\d)[^()]{0,200})\)/g;
-    while((m=re.exec(texto))){
-      if(/\bc\/|Fallos|Expte|CUIJ/.test(m[1])) continue;
-      var au=/^\s*([A-ZÁÉÍÓÚÑ][^,“"]{2,60})/.exec(m[1]),ti=/[“"«]([^”"»]{3,200})[”"»]/.exec(m[1]);
-      agregar({tipo:"doctrina",caratula:ti?limpio(ti[1]):null,autor:au?limpio(au[1]):null,tribunal:null,fecha:null,publicacion:null,funcion:"citado",evidencia:evid(texto,m.index,m.index+m[0].length,0,0),regla:"cita-de-obra",certeza:"probable"});
-    }
-    out.sort(function(a,b){ return a.evidencia.ini-b.evidencia.ini; });
+    var re=/[“"«]\s*([^”"»“«]{1,330}?)\s*[”"»]/g; re.lastIndex=desde;
+    while((m=re.exec(s))) agregar(m[1],m.index,m.index+m[0].length);
+    if(out.length) return out.sort(function(x,y){ return x.i-y.i; });
+    // sin comillas
+    m=/Naci[oó]n\s*[-–]\s*([^-–(•]{3,180}?)\s*[-–•]/.exec(s);
+    if(m) return [{c:limpio(m[1]),i:m.index,f:m.index+m[0].length}];
+    var sueltas=caratulasSueltas(s);
+    if(sueltas.length) return sueltas;
+    m=/([A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñ.\s]{1,60}?\s+en\s+j\s?[°º:.]?\s*[A-ZÁÉÍÓÚÑ][^;(),“”"]{1,80}?)(?=\s*(?:[,;)]|\(|\s+(?:del?|sentencia)\b|$))/.exec(s);
+    if(m) return [{c:limpio(m[1]),i:m.index,f:m.index+m[0].length}];
+    var reMay=/\b((?:[A-ZÁÉÍÓÚÑ]{3,}|[A-ZÁÉÍÓÚÑ]\.)(?:\s+(?:[A-ZÁÉÍÓÚÑ]{2,}|DE|DEL|Y)){1,6})\s*,?\s*(?:del?\s+)?\d{1,2}\s?[\/.\-]\s?\d{1,2}\s?[\/.\-]\s?\d{2,4}/g;
+    while((m=reMay.exec(s))) if(!/\b(?:CSJN|SCJM|SCBA|TSJ|LEY|FALLOS|SALA|CNAT|CNAC|EXPTE|CUIJ|LS|LA|ART)\b/.test(m[1])) out.push({c:capitalizarFrase(m[1]),i:m.index,f:m.index+m[1].length});
     return out;
+  }
+  /* «Pérez, Juan c/ López, Ana s/ daños», «Arostegui, Pablo Martín c/ Omega
+     ART S.A.»: la parte actora es la serie de palabras con mayúscula pegada a
+     «c/» (una palabra en minúscula la corta), la demandada llega hasta el
+     «s/» o hasta el paréntesis, la coma de la fecha o el fin de la oración. */
+  var RE_CAR_SUELTA=/((?:[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑáéíóúñü.'’\-]*,?\s+(?:(?:de|del|la|las|los|y|e)\s+)?){1,8}?)c\/\.?\s+([^;()“”"«»]{2,160}?)(?:\s+s\/\s*([^;()“”"«»]{2,140}?))?(?=\s*(?:[;()]|,\s*(?:\d|sent|resol|expte|Expte|fallo|del?\s|JA|ED|LL|L\.L)|\s+del?\s+\d|\.\s|$))/g;
+  function sinCortePrefijo(c){
+    return c.replace(/^(?:[^,]*\b(?:C\.?\s?N\.?|CNCiv|CNAT|CNAC|CNCom|CSJN|SCJM|SCBA|TSJ|C[aá]mara|Sala\s+[A-Z0-9IVX]+|Juzgado)\b[^,]*,\s*)+/,"");
+  }
+  function caratulasSueltas(s){
+    var out=[],m; RE_CAR_SUELTA.lastIndex=0;
+    while((m=RE_CAR_SUELTA.exec(s))){
+      var izq=sinCortePrefijo(limpio(m[1]).replace(/,$/,""));
+      if(!izq||/^(?:Fallos|LS|LA|CSJN|SCJM|Ley)\b/.test(izq)) continue;
+      var c=izq+" c/ "+limpio(m[2])+(m[3]?" s/ "+limpio(m[3]):"");
+      var ini=m.index+m[0].indexOf(izq.split(" ")[0]);
+      out.push({c:c,i:ini,f:m.index+m[0].length});
+    }
+    return out;
+  }
+  function capitalizarFrase(s){ return limpio(s).split(" ").map(capitalizar).join(" "); }
+  function sigTokens(s){ return plano(s).split(/[^a-z0-9]+/).filter(function(w){ return w.length>2&&!/^(los|las|del|por|sobre|contra|otros?|recurso|extraordinario|provincial|queja|inconstitucionalidad|denegado|sa|srl|ltda|ley|danos|derivados|accidentes?|transito|perjuicios)$/.test(w); }); }
+  /* ¿Es el propio expediente (o su origen), y no un precedente? */
+  function esPropia(c,car){
+    if(!car||!c) return false;
+    var a=sigTokens(car),b=sigTokens(c).slice(0,2);
+    return b.length>=2&&b.every(function(w){ return a.indexOf(w)>=0; });
+  }
+  function analizarPrecedentes(texto,tipoDoc,car){
+    var out=[],m;
+    var inicioCuerpo=Math.min(texto.length,Math.max(0,texto.search(/ANTECEDENTES|Vistos:|VISTOS:|Resulta:|RESULTA:/)));
+    if(inicioCuerpo<=0) inicioCuerpo=Math.min(500,texto.length);
+    function funcionDe(i,nombre){
+      var a=plano(texto.slice(Math.max(0,i-700),i+40));
+      var d=/no\s+corresponde[^.]{0,80}traer\s+a\s+colacion|no\s+nos\s+encontramos\s+ante\s+igual|no\s+resulta\s+aplicable|distinto\s+supuesto|no\s+es\s+aplicable\s+(?:al\s+caso|aqui)|se\s+distingue\s+de|la\s+camara\s+distinguio/.exec(a);
+      if(!d) return "citado";
+      var n=plano(nombre||"").split(/[^a-z]+/).filter(function(w){ return w.length>3; })[0];
+      return (!n||a.indexOf(n,d.index)>=0||a.length-d.index<320)?"distinguido (el tribunal dice que no se aplica)":"citado";
+    }
+    function nuevo(p){ p.publicaciones=p.publicaciones||[]; out.push(p); return p; }
+    /* una unidad: el texto de la cita y lo que la antecede */
+    function anclas(s){
+      var r={fallos:[],regs:[],pubs:[],exps:[],fecha:fechaEn(s)},mm;
+      RE_FALLOS.lastIndex=0;
+      while((mm=RE_FALLOS.exec(s))){
+        r.fallos.push(mm[1]+":"+mm[2]);
+        (mm[3]||"").split(/[;,]|\by\b/).forEach(function(x){ var q=/(\d{2,3})\s*:\s*(\d{1,5})/.exec(x); if(q) r.fallos.push(q[1]+":"+q[2]); });
+      }
+      RE_REG.lastIndex=0;
+      while((mm=RE_REG.exec(s))){
+        var sig=mm[1].replace(/[.\s]/g,"").toUpperCase();
+        r.regs.push(sig+" "+mm[2]+"-"+mm[3]);
+        (mm[4]||"").split(/[;,\/]/).forEach(function(x){ var q=/(?:(L\.?\s?[SA])\.?\s?)?(\d{2,3})\s?[-–]\s?(\d{1,4})/.exec(x); if(q) r.regs.push((q[1]?q[1].replace(/[.\s]/g,"").toUpperCase():sig)+" "+q[2]+"-"+q[3]); });
+      }
+      RE_PUB.lastIndex=0; while((mm=RE_PUB.exec(s))) r.pubs.push(limpio(mm[0]).replace(/\s?([-–])\s?/g,"$1"));
+      RE_EXP.lastIndex=0; while((mm=RE_EXP.exec(s))) r.exps.push(limpio(mm[1]));
+      return r;
+    }
+    function unidad(ini,fin,previo,iniPrevio,contexto){
+      var s=texto.slice(ini,fin),pre=previo||"",todo=anclas(s);
+      var cars=caratulasEn(s).filter(function(x){ return !esPropia(x.c,car); }),deAntes=false;
+      if(!cars.length&&pre){
+        // la carátula justo antes del paréntesis: «la CSJN en “Barrientos” (Fallos: 347:1446)»
+        // la más cercana al paréntesis: en «Fallos: 327:3753 («Aquino») y en la causa Arostegui… c/ Omega ART S.A. (Fallos 331:570)»
+        // el segundo paréntesis es de Arostegui, no de Aquino
+        var cp=caratulasEn(pre).concat(caratulasSueltas(pre+" (")).filter(function(x){ return pre.length-x.f<60&&!esPropia(x.c,car); })
+          .sort(function(x,y){ return x.f-y.f; });
+        if(cp.length){ cars=[{c:cp[cp.length-1].c,i:-(pre.length-cp[cp.length-1].i),f:0}]; deAntes=true; }
+        else{
+          var mu=/(?:precedente|causa|caso|in\s+re:?|fallo)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}(?:\s+(?:y\s+)?[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}){0,2})\s*$/.exec(pre);
+          if(mu){ cars=[{c:mu[1],i:-mu[0].length,f:0}]; deAntes=true; }
+        }
+      }
+      var tr=tribunalEn(s,tipoDoc)||tribunalEn(pre.slice(-160),tipoDoc)||(contexto?tribunalEn(contexto,tipoDoc):null);
+      var hayAncla=todo.fallos.length||todo.regs.length||todo.pubs.length||todo.exps.length||todo.fecha||tr;
+      if(!hayAncla) return [];
+      // los tramos de cada cita: de una carátula a la siguiente
+      var partes=[];
+      if(cars.length&&!deAntes){
+        cars.forEach(function(x,k){ var a2=k?x.i:0,b2=k+1<cars.length?cars[k+1].i:s.length; partes.push({c:x.c,a:a2,b:b2,ini:ini+x.i}); });
+      }else if(cars.length){
+        partes.push({c:cars[0].c,a:0,b:s.length,ini:iniPrevio+(pre.length+cars[0].i)});
+      }else if(todo.fallos.length>1&&!todo.regs.length){
+        // «Fallos 334:1821; 332:2159; 330:563»: cada uno es un fallo distinto
+        return todo.fallos.map(function(f){ return completar({caratula:null,fecha:null,expediente:null,publicaciones:["Fallos "+f]},ini,fin,false); });
+      }else if(todo.fallos.length||todo.regs.length||todo.pubs.length){
+        partes.push({c:null,a:0,b:s.length,ini:ini});
+      }else return [];
+      function completar(r,desde,hasta,deAntes2){
+        var fallosR=r.publicaciones.some(function(x){ return /^Fallos/.test(x); });
+        if(tr){ r.tipo=tr.tipo; r.tribunal=tr.tribunal; }
+        else if(fallosR){ r.tipo="csjn"; r.tribunal=PROPIO.csjn; }
+        else{
+          var pr=tribunalPropioEn(texto.slice(Math.max(0,ini-700),fin),tipoDoc);
+          if(pr){ r.tipo=pr.tipo; r.tribunal=pr.tribunal; r.certeza="probable"; r.regla="tribunal-propio-por-contexto"; }
+          else if(r.caratula&&(r.fecha||r.expediente)&&PROPIO[tipoDoc]){ r.tipo=tipoDoc==="csjn"?"csjn":"provincial"; r.tribunal=PROPIO[tipoDoc]+" (no lo dice: se deduce)"; r.certeza="no_confirmado"; r.regla="sin-tribunal-expreso"; }
+          else if(r.caratula&&!r.fecha&&!r.expediente&&!r.publicaciones.length){ r.tipo="otra_decision"; r.tribunal=null; }
+          else { r.tipo="no_clasificable"; r.tribunal=null; }
+        }
+        r.certeza=r.certeza||(r.tipo==="no_clasificable"||r.tipo==="otra_decision"?"no_confirmado":"confirmado");
+        r.regla=r.regla||(fallosR?"coleccion-fallos":r.publicaciones.some(function(x){ return /^L[SA] /.test(x); })?"registro-ls-la":deAntes2?"caratula-antes-de-la-cita":"unidad-de-cita");
+        r.evidencia=evid(texto,Math.max(0,desde),hasta,deAntes2?0:40,20);
+        r.funcion=funcionDe(Math.max(0,desde),r.caratula);
+        return r;
+      }
+      return partes.map(function(pt){
+        var sub=s.slice(pt.a,pt.b),an=partes.length>1?anclas(sub):todo;
+        var r={caratula:pt.c,fecha:an.fecha,expediente:an.exps[0]||null,publicaciones:an.fallos.map(function(f){ return "Fallos "+f; }).concat(an.regs,an.pubs)};
+        return completar(r,pt.ini,partes.length>1?ini+pt.b:fin,deAntes);
+      });
+    }
+    /* 1. paréntesis (los de afuera) y sus tramos separados por «;» */
+    var cubiertos=[];
+    for(var i=inicioCuerpo;i<texto.length;i++){
+      if(texto.charAt(i)!=="(") continue;
+      var prof=0,j=i,enCom=false;
+      for(;j<texto.length&&j-i<900;j++){
+        var ch=texto.charAt(j);
+        if(ch==="(") prof++;
+        else if(ch===")"){ prof--; if(!prof) break; }
+      }
+      if(prof) continue;
+      var interior=texto.slice(i+1,j);
+      if(interior.length<3){ i=j; continue; }
+      // doctrina: autor + obra + editorial, sin marcas de jurisprudencia
+      var autorAl=/^\s*(?:conf\.|cfr\.|ver|v\.)?\s*([A-ZÁÉÍÓÚÑ][a-záéíóúñ]+(?:\s+(?:de\s+)?[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)?),\s*(?:[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+|[A-ZÁÉÍÓÚÑ]\.)(?:\s+(?:[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+|[A-ZÁÉÍÓÚÑ]\.))*\s*,/.exec(interior);
+      var sinMarcasJuris=!/\bc\/|\bs\/|Fallos\s*:?\s*\d|\bExpte|\bCUIJ|\bL\.?\s?S\.?\s?\d|\b(?:CSJN|SCJM|SCBA|TSJ|CNAT|CNAC)\b/.test(interior);
+      var pareceObra=/Ed\.|Editorial|Abeledo|Rubinzal|Astrea|Hammurabi|Revista|Tratado|\bpág\.|\bp\.\s?\d|Baremo/.test(interior)||(autorAl&&(/[“"«][^”"»]{3,}[”"»]/.test(interior)||RE_PUB.test(interior)||/\b(?:19|20)\d{2}\b/.test(interior)));
+      RE_PUB.lastIndex=0;
+      if(pareceObra&&sinMarcasJuris){
+        var au=autorAl?{1:autorAl[1]}:/^\s*([A-ZÁÉÍÓÚÑ][^,“"«(]{2,60})/.exec(interior),ti=/[“"«]([^”"»]{3,220})[”"»]/.exec(interior);
+        if(!ti&&autorAl){ var resto=interior.slice(autorAl[0].length).split(",")[0]; if(resto&&resto.trim().length>2) ti={1:resto}; }
+        // «(Llambias, Tratado de Derecho Civil, Obligaciones, Abeledo Perrot…)»: el título es el segundo campo
+        if(!ti&&!autorAl){ var campos=interior.split(","); if(campos.length>2&&/^\s*[A-ZÁÉÍÓÚÑ][^\d]{3,120}$/.test(campos[1])) ti={1:campos[1]}; }
+        nuevo({tipo:"doctrina",caratula:ti?limpio(ti[1]):null,autor:au?limpio(au[1]):null,tribunal:null,fecha:null,expediente:null,
+          evidencia:evid(texto,i,j+1,0,0),regla:"cita-de-obra",certeza:"probable",funcion:"citado"});
+        cubiertos.push([i,j]); i=j; continue;
+      }
+      // tramos por «;» fuera de comillas
+      var tramos=[],k0=0,dentroC=false;
+      for(var k=0;k<interior.length;k++){
+        var c2=interior.charAt(k);
+        if(Q_AB.indexOf(c2)>=0&&c2!=="\"") dentroC=true; else if(Q_CI.indexOf(c2)>=0&&c2!=="\"") dentroC=false; else if(c2==="\"") dentroC=!dentroC;
+        if(c2===";"&&!dentroC){ tramos.push([k0,k]); k0=k+1; }
+      }
+      tramos.push([k0,interior.length]);
+      var previo=texto.slice(Math.max(0,i-200),i),cortes=previo.search(/[.;]\s+(?=[A-ZÁÉÍÓÚÑ])(?![\s\S]*[.;]\s+[A-ZÁÉÍÓÚÑ])/);
+      if(cortes>=0&&!/(?:Dr|Sr|art|arts|inc|fs|n|nro|cfr|conf)$/i.test(previo.slice(0,cortes))) previo=previo.slice(cortes+1);
+      var anterior=null;
+      tramos.forEach(function(tm,idx){
+        var a=i+1+tm[0],b=i+1+tm[1],seg=texto.slice(a,b);
+        // números de registro sueltos que siguen a una carátula o a otro registro
+        if(anterior&&/^\s*(?:L\.?\s?[SA]\.?\s?)?\d{2,3}\s?[-–]\s?\d{1,4}\s*$/.test(seg)){
+          var q=/(?:(L\.?\s?[SA])\.?\s?)?(\d{2,3})\s?[-–]\s?(\d{1,4})/.exec(seg);
+          var ultimo=anterior.publicaciones.filter(function(x){ return /^L[SA] /.test(x); }).pop();
+          anterior.publicaciones.push((q[1]?q[1].replace(/[.\s]/g,"").toUpperCase():(ultimo?ultimo.slice(0,2):"LS"))+" "+q[2]+"-"+q[3]);
+          return;
+        }
+        var fs2=/^\s*(\d{2,3})\s*:\s*(\d{1,5})\s*$/.exec(seg);
+        if(fs2&&anterior&&anterior.publicaciones.some(function(x){ return /^Fallos/.test(x); })){
+          anterior=nuevo({tipo:"csjn",caratula:null,tribunal:PROPIO.csjn,fecha:null,expediente:null,publicaciones:["Fallos "+fs2[1]+":"+fs2[2]],
+            evidencia:evid(texto,a,b,0,0),regla:"coleccion-fallos",certeza:"confirmado",funcion:"citado"});
+          return;
+        }
+        var us=unidad(a,b,idx===0?previo:"",i-previo.length,tramos.length>1?interior:null);
+        // un tramo sin carátula que sólo trae registro/publicación, pegado a la cita anterior, se suma a ella
+        if(us.length===1&&!us[0].caratula&&anterior&&!us[0].expediente){ anterior.publicaciones=anterior.publicaciones.concat(us[0].publicaciones); if(!anterior.fecha) anterior.fecha=us[0].fecha; return; }
+        us.forEach(function(u){ anterior=nuevo(u); });
+      });
+      // «(“Cinquemani...” del 20.03.2018) (LS 350-101)»: el paréntesis siguiente sólo con registro
+      cubiertos.push([i,j]); i=j;
+    }
+    // unir paréntesis consecutivos de una misma cita
+    for(var x=out.length-1;x>0;x--){
+      var A=out[x-1],B=out[x];
+      if(!B.caratula&&A.caratula&&B.tipo!=="doctrina"&&A.tipo!=="doctrina"&&B.evidencia.ini-A.evidencia.fin<12&&!B.expediente){
+        A.publicaciones=A.publicaciones.concat(B.publicaciones); out.splice(x,1);
+      }
+    }
+    /* 2. citas en línea, fuera de los paréntesis */
+    function cubierto(p){ return cubiertos.some(function(c){ return p>=c[0]&&p<=c[1]; }); }
+    var reLinea=/(?:precedentes?|causa|caso|in\s+re\s*:?|plenario|fallo\s+plenario[^“"«]{0,40}|lo\s+resuelto\s+(?:por\s+este\s+Tribunal\s+)?en|criterio\s+sentado\s+en|doctrina\s+de|expediente|autos)\s*(?:n[°º]\s*\d+\s*)?(?:de\s+la\s+[^“"«]{3,70}?,?\s*)?[“"«]\s*([^”"»“«]{1,330}?)\s*[”"»]|[“"«]\s*([^”"»“«]{1,330}?)\s*[”"»]\s*(?=,?\s*(?:[-–]\s*)?(?:del?\s+\d|sentencia\s+de|resoluci[oó]n\s+del|expte|Expte|de\s+fecha|\(\s*(?:sentencia|Fallos|LS|L\.S|expte)))/g;
+    while((m=reLinea.exec(texto))){
+      if(m.index<inicioCuerpo||cubierto(m.index)) continue;
+      var nombre=m[1]||m[2];
+      if(!esCaratula(nombre)||esPropia(nombre,car)) continue;
+      if(/caratulad[oa]s?\s*:?\s*$/i.test(texto.slice(Math.max(0,m.index-30),m.index))) continue;
+      var cola=texto.slice(m.index+m[0].length,m.index+m[0].length+220);
+      var colaCorta=cola.split(/[.;](?=\s+[A-ZÁÉÍÓÚÑ(“"«¿])/)[0];
+      // fecha y expediente: sólo los pegados a la carátula (coma, «del…», o el paréntesis que sigue)
+      var pegadoF=/^\s*(?:\([^)]{0,120}\)|[,–-]?\s*(?:del?\s+|de\s+fecha\s+|sentencia\s+del?\s+|resoluci[oó]n\s+del\s+)?[^;()“"«]{0,110})/.exec(colaCorta);
+      var s2=m[0]+colaCorta,fe=fechaEn(pegadoF?pegadoF[0]:""),exs=[],me;
+      RE_EXP.lastIndex=0; while((me=RE_EXP.exec(pegadoF?pegadoF[0]:""))) exs.push(limpio(me[1]));
+      var pegado=/^\s*[,(]\s*[^;.]{0,60}/.exec(colaCorta),antes2=texto.slice(Math.max(0,m.index-120),m.index);
+      antes2=antes2.slice(Math.max(0,antes2.search(/[.;]\s+[A-ZÁÉÍÓÚÑ](?![\s\S]*[.;]\s+[A-ZÁÉÍÓÚÑ])/)));
+      var tr2=tribunalEn(antes2+" "+(pegado?pegado[0]:""),tipoDoc);
+      var nm=limpiarCaratula(nombre),r2={caratula:nm,fecha:fe,expediente:exs[0]||null,publicaciones:[]};
+      if(tr2){ r2.tipo=tr2.tipo; r2.tribunal=tr2.tribunal; r2.certeza="confirmado"; }
+      else{
+        var pr2=tribunalPropioEn(texto.slice(Math.max(0,m.index-400),m.index+m[0].length),tipoDoc);
+        if(pr2){ r2.tipo=pr2.tipo; r2.tribunal=pr2.tribunal; r2.certeza="probable"; }
+        else if(fe||exs.length){ r2.tipo=PROPIO[tipoDoc]?(tipoDoc==="csjn"?"csjn":"provincial"):"no_clasificable"; r2.tribunal=PROPIO[tipoDoc]?PROPIO[tipoDoc]+" (no lo dice: se deduce)":null; r2.certeza="no_confirmado"; }
+        else { r2.tipo="otra_decision"; r2.tribunal=null; r2.certeza="no_confirmado"; }
+      }
+      r2.regla="cita-en-linea"; r2.evidencia=evid(texto,m.index,m.index+m[0].length,40,80); r2.funcion=funcionDe(m.index,nm);
+      nuevo(r2);
+    }
+    // «el precedente Barrientos de la CSJN», sin comillas
+    var reNom=/\b(?:el\s+precedente|la\s+causa|el\s+caso|in\s+re)\s+([A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}(?:\s+(?:y\s+)?[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}){0,2})(?=\s+(?:de\s+(?:la\s+)?(?:CSJN|Corte|este\s+Tribunal|esta\s+Corte)|del\s+\d|\(|,))/g;
+    while((m=reNom.exec(texto))){
+      if(m.index<inicioCuerpo||cubierto(m.index)) continue;
+      var tr3=tribunalEn(texto.slice(m.index,m.index+m[0].length+40),tipoDoc)||tribunalPropioEn(texto.slice(Math.max(0,m.index-300),m.index+80),tipoDoc);
+      nuevo({caratula:m[1],tipo:tr3?tr3.tipo:"otra_decision",tribunal:tr3?tr3.tribunal:null,fecha:fechaEn(texto.slice(m.index,m.index+m[0].length+30)),expediente:null,publicaciones:[],
+        evidencia:evid(texto,m.index,m.index+m[0].length,40,60),regla:"precedente-nombrado-sin-comillas",certeza:tr3?"probable":"no_confirmado",funcion:funcionDe(m.index,m[1])});
+    }
+    // «in re Pérez, Juan c/ López, Ana s/ daños», «y en GÓMEZ MARÍA ELENA 05/06/2020», fuera de paréntesis
+    var reAviso=/(?:\bin\s+re\s*:?|\bcausas?\b|\bautos\b|\bcaso\b|\bprecedentes?\b|\blo\s+resuelto\s+(?:por\s+[a-zA-ZáéíóúÁÉÍÓÚ]+\s+[a-zA-ZáéíóúÁÉÍÓÚ]+\s+)?en\b|\b(?:y\s+)?en\b|\bcfr\.?|\bconf\.?)\s+(?=[A-ZÁÉÍÓÚÑ])/g;
+    while((m=reAviso.exec(texto))){
+      var p0=m.index+m[0].length;
+      if(p0<inicioCuerpo||cubierto(p0)) continue;
+      var tramo=texto.slice(p0,p0+340),fuerte=!/^(?:y\s+)?en\s+$/i.test(m[0]);
+      var cs=fuerte?caratulasSueltas(tramo).filter(function(x){ return x.i<3; }):[];
+      var mayus=/^((?:[A-ZÁÉÍÓÚÑ]{3,})(?:\s+(?:[A-ZÁÉÍÓÚÑ]{2,}|DE|DEL|Y)){1,6})\s*,?\s*(?:del?\s+)?(\d{1,2}\s?[\/.\-]\s?\d{1,2}\s?[\/.\-]\s?\d{2,4})/.exec(tramo);
+      var nombreS=null,finS=0;
+      if(cs.length&&!esPropia(cs[0].c,car)){ nombreS=cs[0].c; finS=cs[0].f; }
+      else if(mayus&&!/\b(?:CSJN|SCJM|SCBA|TSJ|LEY|FALLOS|SALA|CNAT|CNAC|EXPTE|CUIJ|ART|DR|DRA|MENDOZA)\b/.test(mayus[1])){ nombreS=capitalizarFrase(mayus[1]); finS=mayus[0].length; }
+      if(!nombreS) continue;
+      var colaS=texto.slice(p0+finS,p0+finS+160),an=anclas(texto.slice(p0,p0+finS)+(/^\s*\(/.test(colaS)?colaS.slice(0,colaS.indexOf(")")+1):colaS.split(/[.;](?=\s)/)[0].slice(0,80)));
+      // el tribunal: lo que antecede en la misma oración y, después, sólo un paréntesis o una coma pegados
+      var antesS=texto.slice(Math.max(0,m.index-140),p0);
+      antesS=antesS.slice(Math.max(0,antesS.search(/[.;]\s+[A-ZÁÉÍÓÚÑ](?![\s\S]*[.;]\s+[A-ZÁÉÍÓÚÑ])/)));
+      var pegadoS=/^\s*(?:\([^)]{0,80}\)|,[^,.;]{0,50})/.exec(colaS);
+      var trS=tribunalEn(antesS+" "+texto.slice(p0,p0+finS)+" "+(pegadoS?pegadoS[0]:""),tipoDoc)||tribunalPropioEn(texto.slice(Math.max(0,m.index-300),p0+finS),tipoDoc);
+      if(!trS&&!an.fecha&&!an.fallos.length&&!an.regs.length&&!an.exps.length&&!/precedente|in\s+re|causa/.test(m[0])) continue;
+      nuevo({caratula:nombreS,tipo:trS?trS.tipo:(an.fallos.length?"csjn":"otra_decision"),tribunal:trS?trS.tribunal:(an.fallos.length?PROPIO.csjn:null),fecha:an.fecha,expediente:an.exps[0]||null,
+        publicaciones:an.fallos.map(function(f){ return "Fallos "+f; }).concat(an.regs,an.pubs),evidencia:evid(texto,p0,p0+finS,40,60),
+        regla:"caratula-sin-comillas",certeza:trS?"probable":"no_confirmado",funcion:funcionDe(p0,nombreS)});
+    }
+    // «Fallos: 327:3753 («Aquino»)» o «el precedente de Fallos: 324:1528», fuera de paréntesis
+    RE_FALLOS.lastIndex=0;
+    while((m=RE_FALLOS.exec(texto))){
+      if(m.index<inicioCuerpo||cubierto(m.index)) continue;
+      var lista=[m[1]+":"+m[2]];
+      (m[3]||"").split(/[;,]|\by\b/).forEach(function(x){ var q=/(\d{2,3})\s*:\s*(\d{1,5})/.exec(x); if(q) lista.push(q[1]+":"+q[2]); });
+      var sigue=/^\s*\(\s*[“"«]\s*([^”"»]{2,120}?)\s*[”"»]\s*\)/.exec(texto.slice(m.index+m[0].length,m.index+m[0].length+140));
+      lista.forEach(function(f,k){
+        nuevo({caratula:k===0&&sigue&&esCaratula(sigue[1])?limpiarCaratula(sigue[1]):null,tipo:"csjn",tribunal:PROPIO.csjn,fecha:null,expediente:null,publicaciones:["Fallos "+f],
+          evidencia:evid(texto,m.index,m.index+m[0].length,60,40),regla:"coleccion-fallos",certeza:"confirmado",funcion:funcionDe(m.index,null)});
+      });
+    }
+    /* 3. unir las menciones de un mismo precedente («Barrientos» y «Barrientos,
+       Gabriel Alexandra...»; «Medina» y «MEDINA»; los mismos Fallos) */
+    function clave(c){ return plano(c||"").replace(/\.{2,}|…/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim(); }
+    function mismo(a,b){
+      if(a.tipo==="doctrina"||b.tipo==="doctrina") return a.tipo===b.tipo&&a.evidencia.ini===b.evidencia.ini;
+      var pa=a.publicaciones.filter(function(x){ return /^Fallos/.test(x); }),pb=b.publicaciones.filter(function(x){ return /^Fallos/.test(x); });
+      if(pa.length&&pb.length&&pa.some(function(x){ return pb.indexOf(x)>=0; })) return true;
+      if(pa.length&&pb.length) return false;
+      if(!a.caratula||!b.caratula) return false;
+      var ka=clave(a.caratula),kb=clave(b.caratula);
+      if(!ka||!kb) return false;
+      var corta=ka.length<=kb.length?ka:kb,larga=ka.length<=kb.length?kb:ka;
+      if(larga.indexOf(corta)===0&&(larga.length===corta.length||/^[ ,]/.test(larga.charAt(corta.length)))) return !(a.fecha&&b.fecha&&a.fecha!==b.fecha);
+      return false;
+    }
+    var unidos=[];
+    out.forEach(function(p){
+      var q=unidos.filter(function(u){ return mismo(u,p); })[0];
+      if(!q){ unidos.push(p); return; }
+      if(p.caratula&&(!q.caratula||p.caratula.length>q.caratula.length)) q.caratula=p.caratula;
+      ["fecha","expediente","autor"].forEach(function(k){ if(!q[k]&&p[k]) q[k]=p[k]; });
+      p.publicaciones.forEach(function(x){ if(q.publicaciones.indexOf(x)<0) q.publicaciones.push(x); });
+      if(/distinguido/.test(p.funcion)) q.funcion=p.funcion;
+      var rango={csjn:5,provincial:4,otro_tribunal:4,otra_decision:1,no_clasificable:0};
+      var qDebil=q.certeza!=="confirmado"||q.tipo==="otra_decision"||q.tipo==="no_clasificable";
+      if(qDebil&&((p.certeza==="confirmado"&&p.tipo!=="otra_decision")||(rango[p.tipo]||0)>(rango[q.tipo]||0))){ q.tipo=p.tipo; q.tribunal=p.tribunal; q.certeza=p.certeza; }
+      (q.otrasMenciones=q.otrasMenciones||[]).push(p.evidencia);
+    });
+    unidos.forEach(function(p){ p.publicacion=p.publicaciones.length?p.publicaciones.join("; "):null; });
+    unidos.sort(function(a,b){ return a.evidencia.ini-b.evidencia.ini; });
+    return unidos;
   }
 
   /* ---------- contexto de cada norma citada ---------- */
@@ -1354,7 +1680,7 @@ var IVSAnalisis=(function(){
       montos:analizarMontos(texto,sec,pers),
       incapacidad:analizarIncapacidad(texto),
       decision:analizarDecision(texto,sec,pers),
-      precedentes:analizarPrecedentes(texto,opciones.tipo||null),
+      precedentes:analizarPrecedentes(texto,opciones.tipo||null,opciones.car||null),
       contextoDe:function(pos){ return contextoDe(texto,sec,pos); }
     };
     ultimo={texto:texto,car:opciones.car||null,res:res};
