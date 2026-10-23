@@ -52,6 +52,16 @@ export const NORMAS = [
   { clave: 'amparo', nombre: 'Ley de Amparo (16.986)', sigla: 'Ley 16.986',
     url: `https://${HOST}/infolegInternet/anexos/45000-49999/46871/norma.htm`,
     aviso: 'Texto original de 1966. El amparo tiene además rango constitucional desde 1994 (art. 43 CN).' },
+  { clave: 'ldc', nombre: 'Ley de Defensa del Consumidor (24.240)', sigla: 'LDC',
+    url: `https://${HOST}/infolegInternet/anexos/0-4999/638/texact.htm` },
+  { clave: 'cp', nombre: 'Código Penal de la Nación', sigla: 'CP',
+    url: `https://${HOST}/infolegInternet/anexos/15000-19999/16546/texact.htm` },
+  { clave: 'cpccn', nombre: 'Código Procesal Civil y Comercial de la Nación', sigla: 'CPCCN',
+    url: `https://${HOST}/infolegInternet/anexos/15000-19999/16547/texact.htm` },
+  { clave: 'lgs', nombre: 'Ley General de Sociedades (19.550)', sigla: 'LGS',
+    url: `https://${HOST}/infolegInternet/anexos/25000-29999/25553/texact.htm` },
+  { clave: 'lrt', nombre: 'Ley de Riesgos del Trabajo (24.557)', sigla: 'LRT',
+    url: `https://${HOST}/infolegInternet/anexos/25000-29999/27971/texact.htm` },
 ];
 
 export function normaPorClave(clave) {
@@ -110,9 +120,9 @@ async function textoDeNorma(norma) {
 function posicionDelArticulo(texto, numero) {
   const n = String(numero).trim().replace(/\s+/g, '\\s*'); // tolera "76 bis"
   const patrones = [
-    new RegExp(`ART[IÍ]CULO\\s*${n}\\b\\s*[\\.\\-–°º]`, 'i'),
-    new RegExp(`Art[íi]culo\\s*${n}\\b\\s*[\\.\\-–°º]`, 'i'),
-    new RegExp(`Art\\.?\\s*${n}\\b\\s*[\\.\\-–°º]`, 'i'),
+    new RegExp(`ART[IÍ]CULO\\s*${n}\\b\\s*[\\.\\-–—°º:]`, 'i'),
+    new RegExp(`Art[íi]culo\\s*${n}\\b\\s*[\\.\\-–—°º:]`, 'i'),
+    new RegExp(`Art\\.?\\s*${n}\\b\\s*[\\.\\-–—°º:]`, 'i'),
     new RegExp(`ART[IÍ]CULO\\s*${n}\\b`, 'i'),
   ];
   for (const p of patrones) {
@@ -186,7 +196,7 @@ export function rubricaDe(textoArticulo) {
   // Después del "N.-" viene la rúbrica, y termina en el primer punto. Se
   // exige que arranque en mayúscula y que sea corta: si lo que sigue es la
   // oración del articulado ("Toda persona tiene el deber..."), no es rúbrica.
-  const m = /^\s*(?:ART[IÍ]CULO|Art[íi]culo|Art\.?)\s*[\dbisterquax\s]+\s*[\.\-–—°º]+\s*([A-ZÁÉÍÓÚÑ][^.]{3,70})\./.exec(t);
+  const m = /^\s*(?:ART[IÍ]CULO|Art[íi]culo|Art\.?)\s*[\dbisterquax\s]+\s*(?:[\.\-–—°º:]\s*)+([A-ZÁÉÍÓÚÑ][^.]{3,70})\./.exec(t);
   if (!m) return null;
   const r = m[1].trim();
   // Una rúbrica es un rótulo, no una oración: si trae verbo conjugado común
