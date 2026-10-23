@@ -3777,10 +3777,18 @@ function lxSenalar(k){
   var tapa=0;
   Array.prototype.forEach.call(document.querySelectorAll(".top,.barra-doc"),function(el){
     var cs=getComputedStyle(el),r=el.getBoundingClientRect();
-    // pegada arriba (su «top» actual es el de su regla sticky) y dentro del primer tercio de la pantalla
-    var pegada=cs.position==="fixed"||(cs.position==="sticky"&&Math.abs(r.top-(parseFloat(cs.top)||0))<3);
-    if(pegada&&r.height&&r.bottom>0&&r.top<window.innerHeight/3&&cs.display!=="none") tapa=Math.max(tapa,r.bottom);
+    if(cs.display==="none"||!r.height) return;
+    // una barra «sticky» queda pegada arriba en cuanto se baja: cuenta su altura pegada
+    if(cs.position==="sticky") tapa=Math.max(tapa,(parseFloat(cs.top)||0)+r.height);
+    else if(cs.position==="fixed"&&r.top<window.innerHeight/3) tapa=Math.max(tapa,r.bottom);
   });
+  // si el navegador no anima el desplazamiento (algunos celulares, pestañas
+  // en segundo plano), al medio segundo se salta directo
+  function irA(y){
+    var desde=window.scrollY; y=Math.max(0,y);
+    window.scrollTo({top:y,behavior:modo});
+    if(modo==="smooth") setTimeout(function(){ if(Math.abs(window.scrollY-desde)<4&&Math.abs(window.scrollY-y)>40) window.scrollTo(0,y); },500);
+  }
   var cont=art.closest(".lector-lado"),cc=cont&&getComputedStyle(cont);
   if(cont&&/(auto|scroll)/.test(cc.overflowY)&&cont.scrollHeight>cont.clientHeight+4){
     // la columna de Lexia tiene su propio desplazamiento (computadora)
@@ -3788,9 +3796,9 @@ function lxSenalar(k){
     // (dos desplazamientos suaves a la vez se cancelan: el de la columna va directo)
     var rc=cont.getBoundingClientRect();
     cont.scrollTop=cont.scrollTop+art.getBoundingClientRect().top-rc.top-6;
-    if(rc.top<tapa||rc.top>tapa+40) window.scrollTo({top:Math.max(0,window.scrollY+rc.top-tapa-8),behavior:modo});
+    if(rc.top<tapa||rc.top>tapa+40) irA(window.scrollY+rc.top-tapa-8);
   }else{
-    window.scrollTo({top:window.scrollY+art.getBoundingClientRect().top-tapa-12,behavior:modo});
+    irA(window.scrollY+art.getBoundingClientRect().top-tapa-12);
   }
   try{ art.focus({preventScroll:true}); }catch(e){ art.focus(); }
   clearTimeout(art._t); art._t=setTimeout(function(){ art.classList.remove("lx-r--ahora"); },4000);
