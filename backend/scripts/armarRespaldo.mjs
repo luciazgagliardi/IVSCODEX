@@ -26,7 +26,9 @@ import { FUENTES } from '../lib/fuentes.js';
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 const RAIZ = path.resolve(aqui, '..');
 const SALIDA = path.join(RAIZ, 'respaldo');
-const PROGRESO = path.join(SALIDA, 'progreso.json');
+// cada ronda lleva su propio avance (RONDA=2 → progreso-2.json), así una ronda más honda no saltea lo ya hecho en otra
+const RONDA = process.env.RONDA || '';
+const PROGRESO = path.join(SALIDA, RONDA ? `progreso-${RONDA}.json` : 'progreso.json');
 const INDICE_LOCAL = path.join(RAIZ, 'indice');
 const PAGINAS_JURIS = Number(process.env.PAGINAS || 2);
 // Corte IDH ya tiene su corpus completo (lib/corpusCorteidh.js).
@@ -42,6 +44,18 @@ async function leerRamas() {
   const j = html.indexOf('\n];', i);
   // eslint-disable-next-line no-new-func
   return Function(`return ${html.slice(i + 'var RAMAS='.length, j + 2)}`)();
+}
+async function terminosAmplios() {
+  const html = await fs.readFile(path.join(RAIZ, '..', 'frontend', 'index.html'), 'utf8');
+  const arr = (nombre) => {
+    const i = html.indexOf(`var ${nombre}=[`), j = html.indexOf('\n];', i);
+    // eslint-disable-next-line no-new-func
+    return i < 0 ? [] : Function('TEXTO_OFICIAL', `return ${html.slice(i + nombre.length + 5, j + 2)}`)(new Proxy({}, { get: () => '' }));
+  };
+  const t = [];
+  for (const a of arr('TESAURO')) t.push(a.canonico, ...(a.equivalentes || []), ...(a.relacionados || []));
+  for (const r of arr('REQUISITOS')) t.push(r.q || r.n);
+  return t.filter(Boolean).map((x) => String(x).toLowerCase());
 }
 const leerJson = async (f, def) => { try { return JSON.parse(await fs.readFile(f, 'utf8')); } catch { return def; } };
 const conTope = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('tiempo')), ms))]);
@@ -80,7 +94,7 @@ async function armarBase(slug, paginas, voces, progreso) {
   const local = await leerJson(path.join(INDICE_LOCAL, `${slug}.json`), { registros: {} });
   for (const r of Object.values(local.registros || {})) if (r?.id && !mapa.has(r.id)) mapa.set(r.id, aRegistro(r));
   const hechas = new Set(progreso[slug] || []);
-  let fallas = 0, nuevas = 0, t0 = Date.now();
+  let fallas = 0, pausas = 0, nuevas = 0, t0 = Date.now();
   for (const voz of voces) {
     if (hechas.has(voz)) continue;
     let desde = null, ok = true;
@@ -104,7 +118,11 @@ async function armarBase(slug, paginas, voces, progreso) {
       await guardarRespaldo(slug, mapa);
       await fs.writeFile(PROGRESO, JSON.stringify(progreso));
     }
-    if (fallas >= FALLAS_SEGUIDAS) { console.log(`[${slug}] ${fallas} fallas seguidas: la dejo para otra corrida.`); break; }
+    if (fallas >= FALLAS_SEGUIDAS) {
+      // un corte de la conexión propia (o del sitio) por un rato: se espera y se sigue, hasta cinco veces
+      if (pausas < 5) { pausas++; fallas = 0; console.log(`[${slug}] ${FALLAS_SEGUIDAS} fallas seguidas: espero 2 min (${pausas}/5).`); await new Promise((r) => setTimeout(r, 120_000)); continue; }
+      console.log(`[${slug}] sigue fallando: la dejo para otra corrida.`); break;
+    }
   }
   await guardarRespaldo(slug, mapa);
   await fs.writeFile(PROGRESO, JSON.stringify(progreso));
@@ -113,7 +131,10 @@ async function armarBase(slug, paginas, voces, progreso) {
 
 await fs.mkdir(SALIDA, { recursive: true });
 const ramas = await leerRamas();
-const voces = [...new Set(ramas.flatMap((r) => r.v))];
+let voces = [...new Set(ramas.flatMap((r) => r.v))];
+// TERMINOS=amplio suma las expresiones del tesauro (canónicas, equivalentes y cercanas) y los trámites de Requisitos
+if (process.env.TERMINOS === 'amplio') voces = [...new Set(voces.concat(await terminosAmplios()))];
+console.log(`${voces.length} términos, hasta ${PAGINAS_JURIS} páginas en jurisprudencia`);
 const elegidas = process.argv.slice(2);
 const progreso = await leerJson(PROGRESO, {});
 // las bases en paralelo (cada una contra su propio sitio); dentro de cada una, de a una consulta

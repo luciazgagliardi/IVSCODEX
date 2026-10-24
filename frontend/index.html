@@ -864,6 +864,8 @@ body.en-recorrido .cab>*{animation:none}
 .lx-nota-in{font-size:12px;color:var(--mute-2)}
 .lx-r p{margin:0 0 8px;font-size:14.5px;line-height:1.55;color:var(--fg-82,var(--fg))}
 .lx-r h4{margin:14px 0 6px;font-size:13px;font-weight:500;color:var(--mute)}
+.lx-r h4.lx-parte{margin:18px 0 6px;padding-top:10px;border-top:1px solid var(--line,rgba(127,127,127,.18));font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.lx-r h4.lx-parte:first-of-type{border-top:0;padding-top:0;margin-top:8px}
 .lx-r .lx-sint{color:var(--gold);font-weight:500}
 .lx-pas{margin:4px 0 6px;padding:2px 0 2px 12px;border-left:2px solid var(--gold-55);font-size:14px;line-height:1.6;color:var(--mute)}
 .lx-r .mini{margin-bottom:6px}
@@ -1454,8 +1456,8 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 <div id="flash" role="status" aria-live="polite"></div>
 
-<script src="./analisis-fallo.js"></script>
-<script src="./calculos.js"></script>
+<script src="./analisis-fallo.js?v=20261024"></script>
+<script src="./calculos.js?v=20261024"></script>
 <script>
 "use strict";
 (function(){
@@ -3424,25 +3426,9 @@ function lxRecorte(texto,i,antes,largo){
   var a=Math.max(0,i-(antes==null?160:antes)),b=Math.min(texto.length,a+(largo||520));
   return {t:(a>0?"… ":"")+texto.slice(a,b).replace(/\s+/g," ").trim()+(b<texto.length?" …":""),a:a,crudo:texto.slice(i,Math.min(texto.length,i+90))};
 }
-var LX_INTENCIONES=[
-  ["votos",/disiden|unanim|voto|votaron|jueces|jueza|juez|magistrad|ministr|quien(es)? firm|quien(es)? (lo )?(fallaron|resolvieron|dictaron)|integr/],
-  ["honorarios",/honorario|regul(o|aron|acion)|cuanto (cobr|se le pag)|perito/],
-  ["incapacidad",/incapacidad|balthazar|capacidad restante|porcentaje/],
-  ["agravios",/agravi|que (se )?(planteo|cuestiono|pidio) (el|la) recurrente|que se cuestiona/],
-  ["resumen",/explic|resum|sintesis|de que (se )?trata|que (paso|dice el fallo|dice este fallo)|contame|cuenta(me)? el fallo|en pocas palabras|de que va|analiz|que es este fallo|que resolvio y por que/],
-  ["decision",/resolv|decidi|gano|perdio|fallo final|parte dispositiva|resultado|hizo lugar|hace lugar|rechaz|confirm|revoc|que dispuso|como termino/],
-  ["montos",/cuanto|monto|indemniz|suma|pesos|\$|dinero|plata|importe|condena(ron)? a pagar/],
-  ["precedentes",/precedente|jurisprudencia|fallos cita|que fallos|antecedente/],
-  ["normas",/norma|articulo|art\b|leyes|ley |codigo|que se aplic/],
-  ["partes",/partes|actor|actora|demandad|quien demand|contra quien|quienes son|recurrente|recurrido|aseguradora|citad[ao] en garantia/],
-  ["fecha",/fecha|cuando|que dia|que ano/],
-  ["tribunal",/tribunal|que corte|que camara|quien lo dicto|quien dicto|que juzgado|sala/]
-];
-function lxIntencion(p){
-  var q=lxPlano(p);
-  for(var i=0;i<LX_INTENCIONES.length;i++) if(LX_INTENCIONES[i][1].test(q)) return LX_INTENCIONES[i][0];
-  return "";
-}
+/* Qué pide la pregunta: lo decide IVSLexia (analisis-fallo.js), que además
+   reconoce sobre quién o qué se pregunta y si se piden varias cosas. */
+function lxIntencion(p){ return IVSLexia.intenciones(p)[0]||""; }
 function lxDecision(texto){
   // La parte resolutiva está al final; si hay una fórmula en MAYÚSCULAS
   // («POR ELLO», «RESUELVE», «FALLA», «S E N T E N C I A») la última manda:
@@ -3463,19 +3449,12 @@ function lxPrimerPasaje(texto,str){
   var i=texto.indexOf(str); if(i<0) i=lxPlano(texto).indexOf(lxPlano(str));
   return i<0?null:lxRecorte(texto,i,120,360);
 }
-function lxPorPalabras(texto,pregunta){
-  var ps=lxParrafos(texto);
-  var raices=palabrasResaltables(pregunta).map(function(w){ return lxPlano(w).slice(0,6); }).filter(function(w){ return w.length>=3; });
-  if(!raices.length||!ps.length) return [];
-  var planos=ps.map(function(p){ return lxPlano(p.t); });
-  var df=raices.map(function(r){ return planos.filter(function(t){ return t.indexOf(r)!==-1; }).length; });
-  var res=ps.map(function(p,i){
-    var s=0,dist=0;
-    raices.forEach(function(r,k){ if(!df[k]) return; var c=planos[i].split(r).length-1; if(c){ dist++; s+=(1+Math.log(c))*Math.log(1+ps.length/df[k]); } });
-    return {p:p,s:s*dist};
-  }).filter(function(x){ return x.s>0; }).sort(function(a,b){ return b.s-a.s; }).slice(0,3);
-  return res.map(function(x){ return {t:x.p.t.replace(/\s+/g," ").trim().slice(0,700)+(x.p.t.length>700?" …":""),a:x.p.a,crudo:x.p.t.slice(0,90)}; });
+function lxPorPalabras(texto,pregunta,opciones){
+  var d=datosDoc(texto);
+  return IVSLexia.rankear(texto,lxAnalisis(texto,d),pregunta,opciones).map(function(x){ return lxPas(texto,x); });
 }
+function lxPas(texto,x){ return x?{t:x.t,crudo:texto.slice(x.ini,Math.min(texto.length,x.ini+90))}:null; }
+function lxVer(texto,ini){ return ' <button type="button" class="mini" data-act="lx-ir" data-s="'+esc(texto.slice(ini,ini+80))+'">Ver</button>'; }
 
 /* Explicación del fallo, armada con sus propias partes (extractiva):
    antecedentes, agravios, los fundamentos más centrales y la resolución. */
@@ -3707,13 +3686,129 @@ function lxResumen(texto,d,pas,fila){
   h+='<h4>Qué se resolvió</h4>'+lxDecisionHTML(texto,A,pas);
   return h+'<p class="lx-nota">Esta explicación junta partes textuales del fallo y lo que se deduce de su estructura; no es una interpretación. Léala en contexto con «Ver en el fallo».</p>';
 }
+/* ---------- Respuestas sobre algo puntual (IVSLexia) ----------
+   Un magistrado, un artículo, un agravio, las costas, los intereses, lo que
+   dijo cada instancia y el porqué. Cada una dice de qué etapa del proceso es
+   lo que muestra: lo que decide este tribunal no se mezcla con lo que
+   decidió la cámara o el juzgado, ni con lo que pidió una parte. */
+var LX_ETAPA_TXT={parte:"Lo que pide o sostiene una parte",esta_instancia:"Este tribunal",ambas_instancias:"Ambas instancias",camara:"La cámara",primera:"Primera instancia",anterior:"La instancia anterior",texto_modificado:"La sentencia anterior, tal como queda modificada"};
+var LX_INSTANCIA_TXT={primera:"Primera instancia",camara:"Cámara (alzada)",anterior:"La instancia anterior (el «a quo»)"};
+function lxCostasHTML(texto,A,pas){
+  var C=IVSLexia.costas(texto,A);
+  if(!C.length) return '<p class="lx-nada">No encontré cómo se imponen las costas: ninguna oración une «costas» con «imponer», «orden causado», «a cargo de» o «vencido».</p>';
+  function regla(x){ return x.regla||(x.razon&&/vencid/.test(x.razon)?"a cargo de quien resulta vencido":"ver el pasaje"); }
+  var DE={camara:"las de la alzada",primera:"las de primera instancia",ambas_instancias:"las de ambas instancias"};
+  var propias=C.filter(function(x){ return x.etapa==="esta_instancia"&&!DE[x.de]; }),otras=C.filter(function(x){ return propias.indexOf(x)<0; }),h="";
+  if(propias.length){
+    var p0=propias[0];
+    h+='<p>Costas de esta instancia: <b>'+esc(regla(p0))+'</b>'+(p0.razon?', '+esc(p0.razon):'')+'.</p>'+pas(lxPas(texto,p0));
+    // el voto suele dar la razón que la resolutiva no repite
+    var conRazon=propias.filter(function(x){ return x!==p0&&x.razon&&!/vencid/.test(x.razon); })[0];
+    if(conRazon&&!(p0.razon&&!/vencid/.test(p0.razon))&&conRazon.regla===p0.regla) h+='<p class="lx-nota">La razón, según el voto:</p>'+pas(lxPas(texto,conRazon));
+    propias.slice(1).filter(function(x){ return x!==conRazon&&x.zona==="resolutiva"; }).forEach(function(x){ h+=pas(lxPas(texto,x)); });
+  }else h+='<p class="lx-nada">No encontré cómo impone las costas este tribunal. Lo que dice el fallo sobre las de otras etapas:</p>';
+  if(otras.length) h+='<h4>Costas de las instancias anteriores</h4><ul class="lx-lista lx-sec">'+otras.slice(0,5).map(function(x){
+    return '<li><b>'+esc(LX_ETAPA_TXT[x.etapa]+(DE[x.de]?", sobre "+DE[x.de]:""))+':</b> '+esc(regla(x))+(x.razon?' ('+esc(x.razon)+')':'')+lxVer(texto,x.ini)+'</li>';
+  }).join("")+'</ul>';
+  return h;
+}
+function lxInteresesHTML(texto,A,pas){
+  var I=IVSLexia.intereses(texto,A);
+  if(!I.length) return '<p class="lx-nada">No encontré qué tasa de interés o qué actualización se aplica.</p>';
+  var x=I[0],h='<p>'+(x.tasas.length?'Tasa o índice: <b>'+esc(x.tasas.join(", "))+'</b>':'Intereses')+(x.desde?' · desde '+esc(x.desde):'')+(x.hasta?' · hasta '+esc(x.hasta):'')+
+    (x.incluidos?' · incluidos en la cifra':x.aparte?' · con más los intereses (aparte de la cifra)':'')+' <span class="lx-nota-in">('+esc(LX_ETAPA_TXT[x.etapa]||"")+')</span>.</p>'+pas(lxPas(texto,x));
+  var ag=(A.decision.agravios||[]).filter(function(a){ return /interes|tasa/.test(lxPlano(a.titulo)); })[0];
+  if(ag) h+='<p>El agravio sobre los intereses («'+esc(ag.titulo)+'») fue <b>'+esc(LX_ESTADO_AGR[ag.estado])+'</b>.'+lxVer(texto,ag.evidencia.ini)+'</p>';
+  var resto=I.slice(1).filter(function(y){ return y.tasas.length||y.desde; }).slice(0,4);
+  if(resto.length) h+='<h4>Otras menciones</h4><ul class="lx-lista lx-sec">'+resto.map(function(y){
+    return '<li><b>'+esc(LX_ETAPA_TXT[y.etapa]||"")+':</b> '+esc((y.tasas.join(", ")||"intereses")+(y.desde?" desde "+y.desde:""))+lxVer(texto,y.ini)+'</li>';
+  }).join("")+'</ul>';
+  return h+'<p class="lx-nota">Lo que pidió una parte, lo que fijó otra instancia y lo que decide este tribunal se distinguen por el lugar del fallo donde aparece cada mención.</p>';
+}
+function lxInstanciaHTML(texto,A,e,pas){
+  var xs=IVSLexia.instancias(texto,A,e.instancia||"anterior");
+  if(e.tema){ var tem=IVSLexia.rankear(texto,A,e.tema,{n:30}).map(function(r){ return r.ini; }); xs=xs.slice().sort(function(a,b){ var ia=tem.indexOf(a.ini),ib=tem.indexOf(b.ini); return (ia<0?99:ia)-(ib<0?99:ib)||a.ini-b.ini; }); }
+  if(!xs.length) return '<p class="lx-nada">No encontré en el relato del fallo qué decidieron las instancias anteriores.</p>';
+  var grupos={},orden=[];
+  xs.forEach(function(x){ if(!grupos[x.instancia]){ grupos[x.instancia]=[]; orden.push(x.instancia); } grupos[x.instancia].push(x); });
+  return orden.map(function(k){ return '<h4>'+esc(LX_INSTANCIA_TXT[k])+'</h4>'+grupos[k].slice(0,3).map(function(x){ return pas(lxPas(texto,x)); }).join(""); }).join("")+
+    '<p class="lx-nota">Son los pasajes donde el fallo cuenta lo que resolvió o sostuvo cada instancia; lo que dicen las partes sobre esas sentencias queda afuera.</p>';
+}
+function lxPersonaHTML(texto,A,e,pas){
+  return e.personas.map(function(p){
+    var h="";
+    if(p.esMagistrado){
+      h+='<ul class="lx-lista">'+lxMagistradoHTML(p,A)+'</ul>';
+      var vs=IVSLexia.votosDe(A,texto,p);
+      vs.forEach(function(v){
+        var tit={voto_principal:"Su voto (preopinante)",voto:"Su voto",voto_propio:"Su voto",voto_concurrente:"Su voto concurrente",disidencia:"Su disidencia",disidencia_parcial:"Su disidencia parcial",voto_mayoria:"Su voto"}[v.voto.tipo]||"Su voto";
+        h+='<h4>'+esc(tit)+(v.voto.cuestion&&v.voto.cuestion!=="unica"?' — '+esc(v.voto.cuestion)+' cuestión':'')+'</h4>';
+        var ps=e.tema?IVSLexia.rankear(texto,A,e.tema,{rangos:[v.rango],n:2}):[];
+        if(!ps.length) ps=IVSLexia.porQue(texto,A,{rango:v.rango,n:2});
+        if(!ps.length) ps=IVSLexia.oraciones(texto,A).filter(function(o){ return o.ini>=v.rango[0]&&o.ini<v.rango[1]; }).slice(0,2);
+        h+=ps.map(function(x){ return pas(lxPas(texto,x)); }).join("");
+      });
+      var ad=A.adhesiones.filter(function(x){ return x.persona===p.id; }).slice(0,2);
+      if(ad.length) h+='<h4>Adhesión</h4>'+ad.map(function(x){ return pas(lxEv(texto,x.evidencia)); }).join("");
+      if(!vs.length&&!ad.length) h+='<p class="lx-nota">No tiene un voto propio en el texto.</p>';
+    }else{
+      h+='<p><b>'+esc(p.nombre)+'</b> — '+esc(LX_ROL[p.rol]||"Persona mencionada")+'. No integra el tribunal.</p>';
+      h+=IVSLexia.rankear(texto,A,p.nombre+" "+(e.tema||""),{n:2}).map(function(x){ return pas(lxPas(texto,x)); }).join("");
+    }
+    return h;
+  }).join("");
+}
+function lxArticuloHTML(texto,A,d,e,pas){
+  var ors=IVSLexia.oraciones(texto,A);
+  function oracionDe(pos){ for(var i=ors.length-1;i>=0;i--) if(ors[i].ini<=pos) return ors[i]; return null; }
+  var CTX={fundamentos:"en los fundamentos",resolutiva:"en la parte resolutiva",honorarios:"al regular honorarios",costas:"al imponer las costas"};
+  return e.articulos.map(function(art){
+    var cs=IVSLexia.citasDelArticulo(d,art);
+    if(!cs.length&&art.norma) cs=IVSLexia.citasDelArticulo(d,{num:art.num,norma:null}).map(function(c){ c._otra=true; return c; });
+    if(!cs.length){
+      var re=new RegExp("art(?:[íi]culos?|s?\\.)\\s*(?:\\d+\\s*(?:,|y)\\s*)*"+art.num+"(?!\\d)","i"),m=re.exec(texto);
+      return m?'<p>El fallo menciona el art. '+esc(art.num)+', pero no pude atribuirlo a una norma con seguridad.</p>'+pas(lxPas(texto,oracionDe(m.index))):
+        '<p class="lx-nada">El fallo no cita el art. '+esc(art.num)+(art.norma?' de esa norma':'')+'.</p>';
+    }
+    var porNorma={},orden=[];
+    cs.forEach(function(c){ if(!porNorma[c.f]){ porNorma[c.f]=[]; orden.push(c.f); } porNorma[c.f].push(c); });
+    return orden.map(function(f){
+      var xs=porNorma[f],ctx=[],vistas={},h='';
+      xs.forEach(function(c){ var k=A.contextoDe(c.pos); if(ctx.indexOf(k)<0) ctx.push(k); });
+      h+='<p><b>'+esc(xs[0].l)+' — '+esc(f)+'</b>: lo cita '+(xs.length===1?'una vez':xs.length+' veces')+', '+esc(ctx.map(function(k){ return CTX[k]||k; }).join(", "))+'.'+(xs[0]._otra?' <span class="lx-nota-in">(no lo cita de la norma que usted nombró; sí de esta)</span>':'')+'</p>';
+      xs.forEach(function(c){ var o=oracionDe(c.pos); if(o&&!vistas[o.i]&&Object.keys(vistas).length<2){ vistas[o.i]=1; h+=pas(lxPas(texto,o)); } });
+      return h;
+    }).join("");
+  }).join("");
+}
+function lxAgravioHTML(texto,A,e,pas){
+  var g=e.agravio,h='<p>Agravio '+esc(g.letra)+') «'+esc(g.titulo)+'»: <b>'+esc(LX_ESTADO_AGR[g.estado])+'</b>.</p>'+pas(lxEv(texto,g.evidencia));
+  var ps=IVSLexia.porQue(texto,A,{agravio:g,pregunta:e.tema,n:3}).filter(function(x){ return x.ini!==g.evidencia.ini; });
+  if(ps.length) h+='<h4>Por qué</h4>'+ps.map(function(x){ return pas(lxPas(texto,x)); }).join("");
+  return h;
+}
+function lxPorqueHTML(texto,A,e,pas){
+  var D=A.decision,h="";
+  if(D.global&&D.global.verbos.length) h+='<p>Resultado: <b>'+esc(D.global.verbos.join(" y "))+'</b>. Las razones del voto que decide:</p>';
+  if(D.agravios.length&&!e.tema){
+    return h+'<ul class="lx-lista">'+D.agravios.map(function(a){
+      var r=IVSLexia.porQue(texto,A,{agravio:a,n:1})[0];
+      return '<li><b>'+esc(LX_ESTADO_AGR[a.estado])+'</b> — '+esc(a.titulo)+(r?'<blockquote class="lx-pas">'+esc(r.t)+'</blockquote>'+lxVer(texto,r.ini):'')+'</li>';
+    }).join("")+'</ul>';
+  }
+  var ps=IVSLexia.porQue(texto,A,{pregunta:e.tema,n:3});
+  if(!ps.length) ps=IVSLexia.rankear(texto,A,e.pregunta,{n:3});
+  return h+(ps.length?ps.map(function(x){ return pas(lxPas(texto,x)); }).join(""):'<p class="lx-nada">No encontré en el voto que decide oraciones que den las razones.</p>');
+}
+var LX_TITULO={resumen:"Explicación del fallo",instancia:"Lo que decidieron las instancias anteriores",votos:"Votos",honorarios:"Honorarios",costas:"Costas",intereses:"Intereses",incapacidad:"Incapacidad",
+  agravios:"Agravios",decision:"Qué se resolvió",montos:"Importes",precedentes:"Precedentes",normas:"Normas",partes:"Partes",fecha:"Fecha",tribunal:"Tribunal",porque:"Por qué",persona:"Sobre la persona",articulo:"Sobre el artículo"};
 /* Arma la respuesta (HTML) a una pregunta, o la ficha completa si p === null. */
 function lxResponder(p){
-  var texto=estado.texto||"",d=datosDoc(texto),it=p===null?"ficha":lxIntencion(p),h="",A=lxAnalisis(texto,d);
+  var texto=estado.texto||"",d=datosDoc(texto),h="",A=lxAnalisis(texto,d);
   function pas(r){ return r?'<blockquote class="lx-pas">'+resaltarSimple(r.t,p||"")+'</blockquote>'+
     '<button type="button" class="mini" data-act="lx-ir" data-s="'+esc(r.crudo||r.t.replace(/^…\s*/,"").slice(0,80))+'">Ver en el fallo</button>':""; }
   function fila(et,v){ return v?'<div class="lx-fila"><b>'+et+'</b><span>'+esc(v)+'</span></div>':""; }
-  if(it==="ficha"){
+  if(p===null){
     var P=A.partes,mags=A.personas.filter(function(x){ return x.esMagistrado; });
     h+='<div class="lx-ficha">'+fila("Carátula",d.car)+
       (P.origen?fila("Actor",P.origen.actor.map(function(x){ return x.nombre; }).join("; "))+fila("Demandado",P.origen.demandados.map(function(x){ return x.nombre+(x.funcion?" ("+x.funcion+")":""); }).join("; ")):"")+
@@ -3724,30 +3819,53 @@ function lxResponder(p){
     h+='<h4>Qué se resolvió</h4>'+(A.decision.global?'<p><b>'+esc(A.decision.global.verbos.join(" y ")||"ver la parte resolutiva")+'</b></p>'+pas(lxEv(texto,A.decision.global.evidencia)):'<p class="lx-nada">No encontré la parte resolutiva con las fórmulas habituales.</p>');
     var pri=A.montos.filter(function(x){ return x.principal; });
     if(pri.length) h+='<h4>Importes principales</h4><ul class="lx-lista">'+pri.slice(0,6).map(lxMontoHTML).join("")+'</ul>';
+    var co=IVSLexia.costas(texto,A).filter(function(x){ return x.etapa==="esta_instancia"; })[0];
+    if(co) h+='<h4>Costas</h4><p>'+esc((co.regla||"a cargo de quien resulta vencido").replace(/^./,function(c){ return c.toUpperCase(); }))+'.'+lxVer(texto,co.ini)+'</p>';
     if(d.citas&&d.citas.length) h+='<h4>Normas</h4>'+lxNormasHTML(texto,A,d);
     var cs=A.precedentes.filter(function(x){ return x.tipo==="csjn"; });
     if(cs.length) h+='<h4>Precedentes de la Corte Suprema</h4><ul class="lx-lista">'+cs.map(function(x){ return '<li>'+esc([x.caratula?"«"+x.caratula+"»":null,x.fecha,x.publicacion].filter(Boolean).join(" · "))+'</li>'; }).join("")+'</ul>';
     return h;
   }
+  var e=IVSLexia.entender(p,A,d),partes=[];
+  function parte(n,html){ if(html) partes.push({n:n,h:html}); }
+  if(e.personas.length) parte("persona",lxPersonaHTML(texto,A,e,pas));
+  if(e.articulos.length) parte("articulo",lxArticuloHTML(texto,A,d,e,pas));
+  if(e.agravio) parte("agravios",lxAgravioHTML(texto,A,e,pas));
+  else if(e.porque&&!e.personas.length) parte("porque",lxPorqueHTML(texto,A,e,pas));
+  e.intenciones.forEach(function(n){
+    if(n==="porque") return;
+    // el tema de la pregunta ya lo cubre el voto de esa persona o el apartado de ese agravio
+    if((e.personas.length||e.agravio)&&/^(intereses|incapacidad|montos|normas|precedentes|instancia)$/.test(n)) return;
+    parte(n,lxPorIntencion(n,texto,A,d,e,pas,fila));
+  });
+  if(partes.length===1) return partes[0].h;
+  if(partes.length) return partes.map(function(x){ return '<h4 class="lx-parte">'+esc(LX_TITULO[x.n]||"")+'</h4>'+x.h; }).join("");
+  var ps=lxPorPalabras(texto,p);
+  if(ps.length) return '<p>Estos son los pasajes del fallo que mejor responden:</p>'+ps.map(pas).join("");
+  // nada específico: en vez de un «no encontré», la explicación del fallo
+  return '<p class="lx-nada">No encontré un pasaje que hable puntualmente de eso. Le dejo la explicación general del fallo:</p>'+lxResumen(texto,d,pas,fila);
+}
+function lxPorIntencion(it,texto,A,d,e,pas,fila){
   if(it==="resumen") return lxResumen(texto,d,pas,fila);
   if(it==="decision"||it==="agravios") return lxDecisionHTML(texto,A,pas);
-  if(it==="incapacidad"){ var ih=lxIncapacidadHTML(A.incapacidad); if(ih) return ih+(A.incapacidad.evidenciaResultado?pas(lxEv(texto,A.incapacidad.evidenciaResultado)):""); }
+  if(it==="costas") return lxCostasHTML(texto,A,pas);
+  if(it==="intereses") return lxInteresesHTML(texto,A,pas);
+  if(it==="instancia") return lxInstanciaHTML(texto,A,e,pas);
+  if(it==="incapacidad"){ var ih=lxIncapacidadHTML(A.incapacidad); if(ih) return ih+(A.incapacidad.evidenciaResultado?pas(lxEv(texto,A.incapacidad.evidenciaResultado)):""); return ""; }
   if(it==="honorarios"){
     var ho=A.montos.filter(function(x){ return x.funcion==="honorarios_regulados"; });
     if(ho.length) return '<p>Honorarios regulados en el fallo:</p><ul class="lx-lista">'+ho.map(lxMontoHTML).join("")+'</ul>'+pas(lxEv(texto,ho[0].evidencia));
+    var rh=lxPorPalabras(texto,"regular honorarios",{n:2});
+    return rh.length?'<p>No hay montos fijos de honorarios; el fallo los regula así:</p>'+rh.map(pas).join(""):"";
   }
   if(it==="montos") return lxMontosHTML(texto,A,pas);
   if(it==="votos") return lxVotosHTML(texto,A,pas);
   if(it==="normas") return lxNormasHTML(texto,A,d);
   if(it==="precedentes") return lxPrecedentesHTML(texto,A,pas);
   if(it==="partes") return lxPartesHTML(texto,A,d,pas);
-  if(it==="fecha"&&d.fecha) return '<p>Fecha del fallo: <b>'+esc(d.fecha)+'</b>.</p>';
-  if(it==="fecha") return '<p class="lx-nada">No encontré la fecha propia de la sentencia (la fórmula de apertura o la del cierre). No tomo otra fecha del texto para no confundirla con la de un hecho o la de otro fallo citado.</p>';
+  if(it==="fecha") return d.fecha?'<p>Fecha del fallo: <b>'+esc(d.fecha)+'</b>.</p>':'<p class="lx-nada">No encontré la fecha propia de la sentencia (la fórmula de apertura o la del cierre). No tomo otra fecha del texto para no confundirla con la de un hecho o la de otro fallo citado.</p>';
   if(it==="tribunal"&&d.trib) return '<p>Lo dictó: <b>'+esc([d.trib,d.sala].filter(Boolean).join(" · "))+'</b>.</p>'+pas(lxPrimerPasaje(texto,d.trib.split(" ").slice(0,3).join(" ")));
-  var ps=lxPorPalabras(texto,p);
-  if(ps.length) return '<p>Estos son los pasajes del fallo que mejor responden:</p>'+ps.map(pas).join("");
-  // nada específico: en vez de un «no encontré», la explicación del fallo
-  return '<p class="lx-nada">No encontré un pasaje que hable puntualmente de eso. Le dejo la explicación general del fallo:</p>'+lxResumen(texto,d,pas,fila);
+  return "";
 }
 /* Ir al pasaje dentro del texto ya dibujado y dejarlo seleccionado. Los
    espacios se comparan colapsados: el texto del fallo trae saltos de línea
@@ -3778,7 +3896,13 @@ function lxIrA(s){
 /* Al tocar una pregunta se va a SU respuesta y se la marca en dorado un
    momento. Si ya estaba contestada para este fallo, no se repite: se
    ubica la que ya está. */
-function lxClave(pr){ return pr===null?"ficha":(lxIntencion(pr)||lxPlano(pr).replace(/[^a-z0-9 ]/g,"").replace(/\s+/g," ").trim()); }
+/* Dos preguntas que piden lo mismo («¿Hubo disidencia?» y «¿Algún voto en disidencia?») comparten respuesta;
+   las que nombran a alguien, un artículo o un agravio, o traen un tema propio, tienen la suya. */
+function lxClave(pr){
+  if(pr===null) return "ficha";
+  var texto=estado.texto||"",d=datosDoc(texto),k=IVSLexia.entender(pr,lxAnalisis(texto,d),d).clave;
+  return k&&k.replace(/[|+]/g,"")?k:lxPlano(pr).replace(/[^a-z0-9 ]/g,"").replace(/\s+/g," ").trim();
+}
 function lxPreguntar(p){
   if(!estado.texto) return;
   var pr=p===null?null:String(p||"").trim(); if(pr==="") return;
