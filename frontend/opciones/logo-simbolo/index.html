@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Símbolos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;1,400&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.6);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.14);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:#1a1712;color:var(--fg);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+.w{max-width:1100px;margin:0 auto;padding:clamp(24px,4vw,56px) clamp(16px,3vw,40px) 90px}
+h1{margin:0 0 12px;font:400 clamp(32px,4.6vw,58px)/1 Cormorant,serif;letter-spacing:-.02em}
+h1 em{color:var(--dim)}
+.lead{max-width:70ch;color:var(--mute);margin:0 0 44px}
+.op{border-top:1px solid var(--line);padding:30px 0 36px}
+.op h2{margin:0 0 6px;font:400 clamp(24px,2.4vw,32px)/1.1 Cormorant,serif}
+.op h2 span{color:var(--dim);margin-right:12px}
+.op>p{margin:0 0 18px;max-width:72ch;color:var(--mute)}
+.fila{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px}
+@media(max-width:800px){.fila{grid-template-columns:1fr}}
+.barra{display:flex;align-items:center;gap:26px;padding:0 24px;height:78px;background:var(--bg);border:1px solid var(--line);border-radius:16px}
+.barra nav{display:flex;gap:22px;font-size:14px;color:var(--mute);margin-left:18px}
+.barra nav b{font-weight:400}.barra nav b.on{color:var(--gold)}
+.grande{display:grid;place-items:center;height:150px;background:var(--bg);border:1px solid var(--line);border-radius:16px}
+.papel{display:grid;place-items:center;height:78px;background:#ece6d8;border-radius:16px;margin-top:14px;grid-column:1/-1}
+.papel .logo{--fg:#14110a;--gold:#a77a0c;--mute:rgba(20,17,10,.58)}
+.logo{display:inline-flex;align-items:center;gap:.5em;white-space:nowrap;color:var(--fg)}
+.logo svg{height:1.6em;width:auto;flex:none;overflow:visible}
+.logo .t{display:flex;flex-direction:column;line-height:1}
+.logo .t b{font-family:var(--sans);font-weight:600;letter-spacing:.06em}
+.logo .t span{font-family:var(--sans);font-weight:400;font-size:.46em;letter-spacing:.42em;color:var(--mute);margin-top:.5em}
+.chico{font-size:18px}.gr{font-size:40px}.med{font-size:26px}
+.nota{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:13.5px;max-width:72ch}
+</style>
+</head>
+<body><div class="w">
+<h1>El símbolo, <em>sin la X.</em></h1>
+<p class="lead">Se mantiene el formato de la opción 4 (símbolo a la izquierda, «IVS» y debajo «CODEX»), pero con otros símbolos y el punto dorado en otro lugar. Todos parten de la V con trazo grueso a la izquierda y fino a la derecha, como en el logo original.</p>
+<div id="lista"></div>
+<p class="nota">Maqueta: no modifica el sitio. El símbolo elegido se aplica a la barra, la portada y la miniatura.</p>
+</div>
+<script>
+/* V alta, con la pata gruesa a la izquierda y la fina a la derecha */
+var V='4,4 15,4 36.5,44.9 58,4 62,4 32,57.2';
+function svg(vb,cont,oro,w){ return '<svg viewBox="'+vb+'" aria-hidden="true">'+cont.replace(/ORO/g,oro).replace(/TINTA/g,'currentColor')+'</svg>'; }
+var OPS=[
+ ['El punto adentro de la V','La V con el punto dorado en el hueco, como una marca puesta sobre el pasaje. Es la más simple y la más fácil de reconocer chica.',
+  '0 0 64 64','<polygon points="'+V+'" fill="ORO"/><circle cx="36.5" cy="15" r="4.2" fill="TINTA"/>'],
+ ['El punto abajo, como un pin','La V «clava» el punto dorado en su vértice: el lugar exacto donde aparece lo que se busca. Se lee como una señal de ubicación.',
+  '0 0 64 76','<polygon points="'+V+'" fill="TINTA"/><circle cx="32" cy="68" r="4.4" fill="ORO"/>'],
+ ['La V sobre una línea','Una V sobre un filete fino que termina en el punto dorado, como un renglón de texto subrayado. Remite a la sentencia y al subrayado del pasaje.',
+  '0 0 64 70','<polygon points="'+V+'" fill="ORO"/><rect x="4" y="64" width="46" height="2" fill="TINTA"/><circle cx="58" cy="65" r="4.2" fill="ORO"/>'],
+ ['La V en una píldora','Una cápsula de contorno fino con la V adentro y el punto dorado a la derecha. Repite la forma de los sellos de cada base y de los botones.',
+  '0 0 104 64','<rect x="1.5" y="1.5" width="101" height="61" rx="30.5" fill="none" stroke="TINTA" stroke-width="2"/><g transform="translate(14 8) scale(.78)"><polygon points="'+V+'" fill="ORO"/></g><circle cx="84" cy="32" r="5" fill="ORO"/>'],
+ ['El sello: aro, V y punto','Un aro fino con la V en el centro y el punto dorado montado sobre el aro, arriba. Es el sello de la miniatura simplificado, sin las leyendas.',
+  '0 0 72 72','<circle cx="36" cy="36" r="33" fill="none" stroke="TINTA" stroke-width="2"/><g transform="translate(14 14) scale(.62)"><polygon points="'+V+'" fill="ORO"/></g><circle cx="36" cy="3" r="5" fill="ORO"/>']
+];
+var h='';
+OPS.forEach(function(o,i){
+  var s=svg(o[2],o[3],'#d9a31b'), sp=svg(o[2],o[3],'#a77a0c');
+  var logo=function(sv,c){ return '<span class="logo '+c+'">'+sv+'<span class="t"><b>IVS</b><span>CODEX</span></span></span>'; };
+  h+='<section class="op"><h2><span>'+(i+1)+'</span>'+o[0]+'</h2><p>'+o[1]+'</p><div class="fila"><div class="barra">'+logo(s,'chico')+'<nav><b class="on">Buscar</b><b>Lector</b><b>Ramas</b></nav></div><div class="grande">'+logo(s,'gr')+'</div><div class="papel">'+logo(sp,'med')+'</div></div></section>';
+});
+document.getElementById('lista').innerHTML=h;
+</script>
+</body>
+</html>

@@ -273,6 +273,8 @@ strong,b{font-weight:500}
   body{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
   /* arriba: sólo el nombre y «Cómo usar» */
   .nav-wrap{padding:12px var(--pad);gap:10px}
+  .marca-sello{width:28px;height:28px}
+  .marca2{font-size:15px}
   .nav-fin{margin-left:auto}
   #abrir-menu,#mi-perfil{display:none}
   #como-usar{display:inline-flex;padding:8px 16px 7px;font-size:13px}
@@ -347,14 +349,14 @@ strong,b{font-weight:500}
   /* avisos y atajos */
   #flash{left:14px;right:14px;transform:none;width:auto;bottom:calc(86px + env(safe-area-inset-bottom,0px));max-width:none;font-size:13px;padding:10px 16px 9px;border-radius:16px;text-align:center}
   /* Lexia: botón sobre la barra, panel como hoja */
-  .asist{right:12px;bottom:calc(88px + env(safe-area-inset-bottom,0px))}
-  .asist__fab{padding:11px 16px 10px;font-size:14px}
+  body .asist{right:12px;bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+  body .asist__fab{padding:11px 16px 10px;font-size:14px}
   .perfil-abierto .asist:not(.is-on){display:none}
-  .asist.is-on{right:0;left:0;bottom:0}
-  .asist.is-on .asist__panel{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));width:auto;height:min(86vh,680px);z-index:90;border-radius:22px}
-  .asist__m{font-size:15px;max-width:92%}
-  .asist__ops button{padding:11px 16px;font-size:14px}
-  .asist .asist__form input[type=text]{font-size:16px}
+  body .asist.is-on{right:0;left:0;bottom:0}
+  body .asist.is-on .asist__panel{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));width:auto;height:min(86vh,680px);z-index:90;border-radius:22px}
+  body .asist__m{font-size:15px;max-width:92%}
+  body .asist__ops button{padding:11px 16px;font-size:14px}
+  body .asist .asist__form input[type=text]{font-size:16px}
   /* recorrido */
   .tour-card{left:10px!important;right:10px!important;width:auto!important}
   /* pie y menú */
@@ -496,7 +498,11 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .nav-wrap{display:flex;align-items:center;gap:24px;padding:22px var(--pad)}   /* mismo margen izquierdo que el contenido: el nombre queda sobre el mismo borde que el título */
 /* Las medidas son las de sigillvm.com: la marca ocupa 180 × 44 px, el
    símbolo mide 24 px y la palabra va 12 px a su derecha. */
-.marca-app{display:inline-flex;align-items:center;flex:none;width:auto;height:auto;padding:0;border:0;background:none;color:var(--fg)}
+.marca-sello{display:block;width:32px;height:32px;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(241,238,230,.24)}
+.marca2{display:inline-flex;align-items:center;gap:.32em;font:600 16px/1 var(--sans);letter-spacing:-.02em;color:var(--fg);white-space:nowrap}
+.marca2 span{font-weight:400;color:var(--mute)}
+.marca2 .m-pt{display:inline-block;width:.2em;height:.2em;border-radius:50%;background:var(--gold);flex:none}
+.marca-app{gap:10px;display:inline-flex;align-items:center;flex:none;width:auto;height:auto;padding:0;border:0;background:none;color:var(--fg)}
 .marca-app .marca{font-size:15.5px;font-weight:500;letter-spacing:.26em;--ls:.26em;line-height:1.55;padding-right:.26em;position:relative;top:.4px}
 .nav{display:flex;align-items:center;gap:clamp(16px,2vw,30px);min-width:0;margin-left:clamp(20px,4vw,72px)}
 .nav button{
@@ -1385,7 +1391,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 <header class="top">
   <div class="nav-wrap">
-    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></button>
+    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><img class="marca-sello" src="./favicon.png?v=16" alt="" width="36" height="36"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
     <div class="nav-fin"><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><span class="perfil-wrap"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-act="tog-perfil" aria-haspopup="menu" aria-expanded="false">Mi perfil <span class="fl" aria-hidden="true">▾</span></button><div class="perfil-menu" id="perfil-menu" role="menu" hidden></div></span><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
