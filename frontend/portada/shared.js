@@ -7,7 +7,7 @@
     {k:"ramas",lat:"MATERIAE",t:"Ramas y voces",d:"Los descriptores técnicos con que indexan los buscadores judiciales, ordenados por rama del derecho.",c:"--c-caba"},
     {k:"calculos",lat:"CALCVLVS",t:"Cálculos y plazos",d:"Intereses, índices, despido, incapacidad, honorarios, plazos procesales y calendario judicial.",c:"--c-csjn"},
     {k:"verificar",lat:"PROBATIO",t:"Verificación",d:"Contrasta una cita jurisprudencial con los repositorios oficiales antes de presentarla.",c:"--c-saij"},
-    {k:"herramientas",lat:"INSTRVMENTA",t:"Herramientas",d:"Unir, dividir, foliar y reducir PDF dentro del navegador: los archivos no salen de su computadora.",c:"--c-dial"}
+    {k:"herramientas",lat:"INSTRVMENTA",t:"Herramientas",d:"Unir, dividir, numerar y reducir PDF dentro del navegador: los archivos no salen de su computadora.",c:"--c-dial"}
   ];
   /* dibujos de línea, simétricos o geométricos, con un solo punto dorado */
   function dibujo(tab){

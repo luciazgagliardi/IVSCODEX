@@ -61,6 +61,13 @@
 .pie9 .bs span{display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;font:500 11.5px/1 var(--caps);letter-spacing:.16em}.pie9 .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
 .pie9 .adv{max-width:24ch;margin:0 0 22px;font:500 clamp(28px,4.2vw,58px)/1.02 var(--sans);letter-spacing:-.04em;text-wrap:balance}.pie9 .adv em{font-style:normal;color:var(--gold)}
 .pie9 .aviso{max-width:70ch;margin:0 0 28px;color:var(--mute);font-size:14px}
+.legal-velo{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:clamp(16px,5vh,60px) 16px;background:rgba(8,7,5,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);overflow:auto}
+.legal-velo[hidden]{display:none}
+.legal-caja{position:relative;width:min(760px,100%);padding:clamp(24px,4vw,44px);border:1px solid var(--line);border-radius:28px;background:var(--bg);color:var(--mute);font-size:15px;line-height:1.65;outline:none}
+.legal-caja .h2{margin:0 0 18px;color:var(--fg)}
+.legal-caja h3{margin:22px 0 6px;font:500 12px/1.3 var(--caps);letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+.legal-caja p{margin:0 0 10px;max-width:68ch}
+.legal-x{position:absolute;top:18px;right:18px}
 .legal{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 40px;align-items:end;margin-top:clamp(40px,6vw,80px);padding-top:22px;border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
 .legal p{margin:0;max-width:62ch}.legal b{font-weight:500;color:var(--fg)}
 .legal nav{display:flex;flex-wrap:wrap;gap:8px 22px}.legal a:hover{color:var(--gold)}
@@ -82,17 +89,17 @@ function $(i){return document.getElementById(i);}
 function fh(d){return d.toISOString().slice(0,10);}
 var hoy=hoyUTC(),h180=masDias(hoy,-180);
 var TOOLS=[
- {k:"cita",c:"--c-saij",lat:"LECTVRA",n:"Lector de citas",t:"Lector de citas",s:"Pegue una cita y vea qué entiende de ella: tribunal, tomo y página, año y carátula."},
- {k:"int",c:"--c-csjn",lat:"CALCVLVS",n:"Intereses",t:"Intereses",s:"Interés simple sobre un capital, entre dos fechas. Para tasas variables o capitalización, use la herramienta completa de la plataforma."},
- {k:"pla",c:"--c-mzl",lat:"TEMPVS",n:"Plazos procesales",t:"Plazos procesales",s:"Calcula el vencimiento descontando fines de semana y feriados nacionales (o de Mendoza), con el plazo de gracia."},
+ {k:"cita",c:"--c-saij",lat:"LECTVRA",n:"Lector de citas",t:"Lector de citas",s:"Inserte una cita para extraer automáticamente sus datos clave: tribunal, tomo/página, año y carátula."},
+ {k:"int",c:"--c-csjn",lat:"CALCVLVS",n:"Intereses",t:"Intereses",s:"Cálculo de interés simple sobre capital entre dos fechas. Para tasas variables o capitalizaciones, utilice la herramienta completa de la plataforma."},
+ {k:"pla",c:"--c-mzl",lat:"TEMPVS",n:"Plazos procesales",t:"Plazos procesales",s:"Cálculo de vencimiento excluyendo fines de semana, feriados nacionales (o provinciales de Mendoza) e incorporando el plazo de gracia procesal."},
  {k:"des",c:"--c-caba",lat:"CALCVLVS",n:"Despido sin causa",t:"Indemnización por despido",s:"Liquidación final con los rubros de la Ley de Contrato de Trabajo: antigüedad, preaviso, integración, SAC y vacaciones."},
  {k:"pre",c:"--c-mza",lat:"TEMPVS",n:"Prescripción",t:"Prescripción de la acción",s:"Cuándo prescribe cada tipo de acción según el Código Civil y Comercial y la LCT."},
  {k:"glo",c:"--c-dial",lat:"VERBA",n:"Glosario latino",t:"Glosario de latín jurídico",s:"Setenta brocardos y expresiones de uso en los tribunales, con su traducción y su sentido."},
- {k:"fol",c:"--c-saij",lat:"INSTRVMENTA",n:"Foliar un PDF",t:"Numerador de fojas",s:"Elija un PDF y descárguelo foliado («Fs. 1, Fs. 2…»). El archivo no sale de su computadora."}
+ {k:"fol",c:"--c-saij",lat:"INSTRVMENTA",n:"Numerar un PDF",t:"Numerador de fojas",s:"Seleccione un PDF para descargar su versión numerada («Fs. 1, Fs. 2…»)."}
 ];
 var st={tab:"cita",modo:"habiles",juris:"nacion",pdf:null};
 var s=document.createElement("section");s.className="mesa";
-s.innerHTML='<p class="eyebrow">LABORATORIVM</p><h2 class="h2">Pruébelo <em>aquí mismo.</em></h2><p class="lead6">Siete instrumentos de la plataforma, funcionando dentro de esta página. Los cálculos son los mismos que usa la aplicación y nada se envía a ningún servidor.</p>'+
+s.innerHTML='<p class="eyebrow">LABORATORIVM</p><h2 class="h2">Pruébelo <em>aquí mismo.</em></h2><p class="lead6">Siete herramientas de la plataforma listas para probar.</p>'+
  '<div class="lab"><div class="tabs" id="tabs" role="tablist" aria-label="Instrumentos"></div><div class="panel" id="panel" role="tabpanel"></div></div>';
 m.appendChild(s);
 function pintarTabs(){$("tabs").innerHTML=TOOLS.map(function(t){return '<button class="tab" role="tab" data-k="'+t.k+'" aria-selected="'+(st.tab===t.k)+'" style="--c:var('+t.c+')"><i></i>'+t.n+'</button>';}).join("");}
@@ -145,8 +152,8 @@ var P={
   c:function(){var q=sinTildes($("gq").value).trim(),L=GLOSARIO.filter(function(g){return !q||sinTildes(g.join(" ")).indexOf(q)!==-1;}),mas=L.length>6;L=L.slice(0,6);
    $("out").innerHTML=L.length?'<dl class="glos">'+L.map(function(g){return '<div><dt>'+esc(g[0])+'</dt><dd><small>«'+esc(g[1])+'»</small>'+esc(g[2])+'</dd></div>';}).join("")+'</dl>'+(mas?'<p class="nota5">Mostrando 6 de '+GLOSARIO.filter(function(g){return !q||sinTildes(g.join(" ")).indexOf(q)!==-1;}).length+'. Afine la búsqueda.</p>':""):'<div class="sal"><span class="mal">Ninguna expresión coincide con «'+esc($("gq").value)+'».</span></div>';}},
  fol:{f:function(){return '<label class="drop" id="drop" for="pdf"><span id="dt">'+(st.pdf?'<b>'+esc(st.pdf.name)+'</b> · '+st.pdf.pag+' páginas (cambiar)':'<b>Elegir un PDF</b> o arrastrarlo aquí')+'</span><input type="file" id="pdf" accept=".pdf,application/pdf"></label>'+
-   '<div class="form">'+campo("fp","Texto antes del número","Fs. ")+campo("fi","Empezar en","1",'inputmode="numeric"')+'</div><div class="acciones" style="margin-bottom:14px"><button class="btn" id="fgo"'+(st.pdf?"":" disabled")+'>Foliar y descargar</button></div><div class="sal" id="out" aria-live="polite"></div>'+nota("Se hace dentro de su navegador con pdf-lib: el archivo no se envía a ningún servidor. Máximo 150 MB.");},
-  c:function(){$("out").innerHTML=st.pdf?'<small>Listo para foliar '+st.pdf.pag+' páginas.</small>':'<small>Elija un archivo PDF para empezar.</small>';}}
+   '<div class="form">'+campo("fp","Texto antes del número","Fs. ")+campo("fi","Empezar en","1",'inputmode="numeric"')+'</div><div class="acciones" style="margin-bottom:14px"><button class="btn" id="fgo"'+(st.pdf?"":" disabled")+'>Numerar y descargar</button></div><div class="sal" id="out" aria-live="polite"></div>'+nota("Procesamiento local en el navegador mediante pdf-lib: el archivo no se envía a ningún servidor. Límite máximo de 150 MB.");},
+  c:function(){$("out").innerHTML=st.pdf?'<small>Listo para numerar '+st.pdf.pag+' páginas.</small>':'<small>Elija un archivo PDF para empezar.</small>';}}
 };
 function motivo(d){var w=d.getUTCDay();if(w===0||w===6)return "Fin de semana";return feriados(d.getUTCFullYear(),st.juris)[isoDe(d)]||"";}
 function pintarPanel(){var t=TOOLS.filter(function(x){return x.k===st.tab;})[0];
@@ -157,7 +164,7 @@ function pintarPanel(){var t=TOOLS.filter(function(x){return x.k===st.tab;})[0];
  if(st.tab==="fol")conectarPdf();
 }
 $("panel").addEventListener("click",function(e){var b=e.target.closest(".chip");if(!b)return;st[b.dataset.g]=b.dataset.v;var y=scrollY;pintarPanel();scrollTo(0,y);});
-/* foliador real, con pdf-lib cargado recién cuando se usa */
+/* numerador real, con pdf-lib cargado recién cuando se usa */
 var lib=null;function cargarLib(){return lib||(lib=new Promise(function(ok,mal){var x=document.createElement("script");x.src="../vendor/pdf-lib.min.js";x.onload=function(){ok(window.PDFLib);};x.onerror=function(){lib=null;mal(new Error("No se pudo cargar el módulo de PDF."));};document.head.appendChild(x);}));}
 function aPdf(r,W,H,x,y){return r===90?{x:W-y,y:x}:r===180?{x:W-x,y:H-y}:r===270?{x:y,y:H-x}:{x:x,y:y};}
 function conectarPdf(){var inp=$("pdf"),dr=$("drop");
@@ -172,33 +179,63 @@ function conectarPdf(){var inp=$("pdf"),dr=$("drop");
     var a=aPdf(r,mb.width,mb.height,vx,vy),c1=aPdf(r,mb.width,mb.height,vx-pd,vy-pd),c2=aPdf(r,mb.width,mb.height,vx+tw+pd,vy+tam+pd);
     p.drawRectangle({x:Math.min(c1.x,c2.x)+mb.x,y:Math.min(c1.y,c2.y)+mb.y,width:Math.abs(c2.x-c1.x),height:Math.abs(c2.y-c1.y),color:L.rgb(1,1,1),opacity:.9});
     p.drawText(txt,{x:a.x+mb.x,y:a.y+mb.y,size:tam,font:font,color:L.rgb(0,0,0),rotate:L.degrees(r)});});
-   return doc.save({useObjectStreams:true});});});}).then(function(b){var bl=new Blob([b],{type:"application/pdf"}),a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=st.pdf.name.replace(/\.pdf$/i,"")+"-foliado.pdf";document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
-   $("out").innerHTML='<span class="gran">Listo</span><small>'+st.pdf.pag+' páginas numeradas desde «'+esc(pre+ini)+'». Se descargó el archivo foliado.</small>';go.disabled=false;})["catch"](function(){$("out").innerHTML='<span class="mal">No se pudo foliar el archivo.</span>';go.disabled=false;});};}
+   return doc.save({useObjectStreams:true});});});}).then(function(b){var bl=new Blob([b],{type:"application/pdf"}),a=document.createElement("a");a.href=URL.createObjectURL(bl);a.download=st.pdf.name.replace(/\.pdf$/i,"")+"-numerado.pdf";document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
+   $("out").innerHTML='<span class="gran">Listo</span><small>'+st.pdf.pag+' páginas numeradas desde «'+esc(pre+ini)+'». Se descargó el archivo numerado.</small>';go.disabled=false;})["catch"](function(){$("out").innerHTML='<span class="mal">No se pudo numerar el archivo.</span>';go.disabled=false;});};}
 pintarTabs();pintarPanel();
 
 /* lo demás */
-var SERV=[["buscar","Buscar","Las ocho bases a la vez, con los términos que usted elija.","--c-mza"],
-["lector","Lector","El fallo con su búsqueda destacada, los pasajes recortados y la cita preparada para copiar.","--c-mzl"],
-["ramas","Ramas","Las ramas del derecho y sus voces: los descriptores con que indexan los buscadores judiciales.","--c-caba"],
-["requisitos","Requisitos","Lo que exige cada trámite, en fichas de control.","--c-csjn"],
-["comparar","Comparar","Una misma consulta, por jurisdicción: Mendoza, la Nación y otras provincias.","--c-saij"],
-["norma","Norma","El texto oficial de un artículo, tomado de InfoLeg.","--c-dial"],
-["fuentes","Fuentes","El catálogo de fuentes oficiales, con enlace a cada una.","--c-mza"],
-["citas","Citar","El formateador de citas jurisprudenciales, listo para copiar.","--c-mzl"],
+var SERV=[["buscar","Buscar","Búsqueda simultánea en los ocho motores de la plataforma.","--c-mza"],
+["lector","Lector","Visualización del fallo con términos resaltados, pasajes relevantes y cita lista para copiar.","--c-mzl"],
+["ramas","Ramas","Ramas del derecho y sus voces: descriptores oficiales utilizados para la indexación.","--c-caba"],
+["requisitos","Requisitos","Recaudos de cada trámite organizados en fichas de control.","--c-csjn"],
+["comparar","Comparar","Consulta unificada por jurisdicción: Mendoza, Nación y otras provincias.","--c-saij"],
+["norma","Norma","El texto oficial de un artículo tomado de InfoLeg.","--c-dial"],
+["fuentes","Fuentes","Catálogo de fuentes oficiales, con enlace a cada una.","--c-mza"],
+["citas","Citar","Formateador de citas jurisprudenciales, listo para copiar.","--c-mzl"],
 ["verificar","Verificar","Contrasta una cita con los repositorios oficiales antes de presentarla.","--c-caba"],
 ["guardados","Guardados","Sus pasajes, fuentes y búsquedas, reunidos en un solo lugar.","--c-csjn"],
 ["cuenta","Cuenta","Sincronice sus guardados entre dispositivos.","--c-saij"],
 ["calculos","Cálculos","Intereses, índices, despido, incapacidad y honorarios.","--c-dial"],
 ["plazos","Plazos","Plazos procesales, prescripción y calendario judicial.","--c-mza"],
 ["glosario","Glosario","Brocardos y expresiones latinas de uso en los tribunales.","--c-mzl"],
-["herramientas","Herramientas","Unir, dividir, foliar y reducir PDF dentro del navegador: los archivos no salen de su computadora.","--c-caba"]];
+["herramientas","Herramientas","Unir, dividir, numerar y reducir PDF dentro del navegador: los archivos no salen de su computadora.","--c-caba"]];
 var of=document.createElement("section");of.className="ofr";of.id="servicios";of.innerHTML='<h2 class="h2">Servicios.</h2><p class="lead6">Todo lo que ofrece la plataforma. Seleccione un servicio para abrirlo.</p><div class="rej">'+SERV.map(function(f){return '<a class="cel" href="#" data-tab="'+f[0]+'" style="--c:var('+f[3]+')">'+IVS4.dibujo(f[0])+'<h3>'+f[1]+'</h3><p>'+f[2]+'</p></a>';}).join("")+'</div>';m.appendChild(of);
 /* pie: sin el nombre grande; aviso, derechos reservados y contacto */
 var pie=document.createElement("footer");pie.className="pie9";
-pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<span style="--c:var('+b[1]+')"><i></i>'+b[0]+'</span>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</p>'+IVS4.BOTONES+
- '<div class="legal"><p><b>© 2026 IVS CODEX.</b> Todos los derechos reservados. Las marcas, nombres y contenidos de esta plataforma no pueden reproducirse sin autorización. Los fallos y normas pertenecen a los organismos oficiales que los publican; esta plataforma no los almacena ni genera contenido jurídico.</p><nav aria-label="Información legal"><a href="#">Términos de uso</a><a href="#">Política de privacidad</a><a href="#">Fuentes oficiales</a></nav>'+
+pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<span style="--c:var('+b[1]+')"><i></i>'+b[0]+'</span>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</p>'+IVS4.BOTONES+
+ '<div class="legal"><p><b>© 2026 IVS CODEX.</b> Todos los derechos reservados. Las marcas, nombres y contenidos de esta plataforma no pueden reproducirse sin autorización. Los fallos y normas pertenecen a los organismos oficiales que los publican; esta plataforma no los almacena ni genera contenido jurídico.</p><nav aria-label="Información legal"><a href="#terminos" data-legal="terminos">Términos de uso</a><a href="#privacidad" data-legal="privacidad">Política de privacidad</a><a href="#" data-tab="fuentes">Fuentes oficiales</a></nav>'+
  '<div class="ct"><span>Contacto: <a href="#" style="color:var(--fg)">contacto@su-dominio.com</a></span><span>Mendoza, Argentina</span></div></div>';
 m.appendChild(pie);
+
+/* Términos de uso y política de privacidad: un panel sobre la portada. El
+   texto describe lo que la plataforma hace de verdad (ver backend/lib/usuarios.js,
+   lib/datosUsuario.js y lib/cache.js); si eso cambia, hay que cambiarlo acá. */
+var LEGAL={
+ terminos:{t:"Términos de uso",h:
+  '<p>IVS CODEX es una herramienta de consulta que reúne, en una sola búsqueda, los resultados de repositorios judiciales y de doctrina de acceso público. Su uso implica la aceptación de las condiciones siguientes.</p>'+
+  '<h3>Naturaleza del servicio</h3><p>La plataforma no produce contenido jurídico ni presta asesoramiento profesional. Los fallos, sumarios y normas pertenecen a los organismos que los publican; la plataforma los consulta en el momento del pedido y remite siempre al documento de origen.</p>'+
+  '<h3>Exactitud de la información</h3><p>Los resultados dependen de la disponibilidad y de la indexación de cada repositorio oficial. La ausencia de coincidencias no prueba que un fallo no exista, y la existencia de un expediente no garantiza el criterio que se le atribuye. El análisis automático del fallo abierto (partes, votos, montos, normas, precedentes) es orientativo y debe contrastarse con el texto. Los cálculos aplican las fórmulas y las normas que se indican en cada caso, con los valores que ingresa el usuario; su procedencia y su resultado definitivo corresponden al criterio del tribunal.</p>'+
+  '<h3>Uso responsable</h3><p>El usuario se compromete a verificar en la fuente toda cita antes de presentarla, a no utilizar la plataforma para consultas masivas o automatizadas que afecten a los servidores oficiales y a resguardar la confidencialidad de su cuenta.</p>'+
+  '<h3>Propiedad intelectual</h3><p>Las marcas, el diseño y el código de IVS CODEX no pueden reproducirse sin autorización. Los documentos oficiales conservan el régimen que les asigna su organismo de origen.</p>'+
+  '<h3>Modificaciones</h3><p>Estos términos pueden actualizarse; la versión vigente es la publicada en esta página.</p>'},
+ privacidad:{t:"Política de privacidad",h:
+  '<h3>Datos de la cuenta</h3><p>Si crea una cuenta, se guardan su correo electrónico, su nombre, su especialidad y su preferencia sobre el envío de novedades. La contraseña nunca se almacena en texto legible: se conserva únicamente su resumen criptográfico (scrypt con sal individual).</p>'+
+  '<h3>Elementos guardados</h3><p>Las fuentes marcadas, los pasajes guardados, los términos propios y las búsquedas se conservan en su navegador y, si inició sesión, también en su cuenta, para que pueda verlos desde otros dispositivos.</p>'+
+  '<h3>Consultas y documentos</h3><p>Para buscar, la consulta se envía a los repositorios oficiales a través del servidor de la plataforma. Los documentos que se traen por enlace pueden conservarse temporalmente en una memoria del servidor para acelerar consultas posteriores. El texto que se pega o el archivo que se sube para leerlo en el Lector, y el análisis que realiza Lexia sobre el fallo abierto, se procesan en su navegador. Las herramientas de PDF también funcionan dentro del navegador, salvo el reconocimiento de texto (OCR), que utiliza el servidor sin guardar el archivo.</p>'+
+  '<h3>Terceros</h3><p>La plataforma no vende ni cede datos personales. Para funcionar consulta servicios públicos de terceros —los repositorios judiciales, InfoLeg, el Banco Central y datos.gob.ar— y utiliza tipografías de Google Fonts, que reciben la dirección IP del navegador como cualquier sitio web.</p>'+
+  '<h3>Sus derechos</h3><p>Puede solicitar el acceso, la rectificación o la supresión de sus datos (Ley 25.326 de Protección de los Datos Personales) escribiendo a la dirección de contacto que figura al pie de esta página.</p>'}
+};
+function abrirLegal(k){
+ var L=LEGAL[k]; if(!L) return;
+ var v=document.getElementById("legal-panel");
+ if(!v){ v=document.createElement("div"); v.id="legal-panel"; v.className="legal-velo"; v.setAttribute("role","dialog"); v.setAttribute("aria-modal","true"); document.body.appendChild(v);
+  v.addEventListener("click",function(e){ if(e.target===v||e.target.closest("[data-cerrar]")) cerrarLegal(); }); }
+ v.innerHTML='<div class="legal-caja" tabindex="-1"><button class="btn sec legal-x" type="button" data-cerrar>Cerrar</button><h2 class="h2">'+L.t+'</h2>'+L.h+'</div>';
+ v.hidden=false; document.body.style.overflow="hidden"; v.querySelector(".legal-caja").focus();
+}
+function cerrarLegal(){ var v=document.getElementById("legal-panel"); if(v){ v.hidden=true; document.body.style.overflow=""; } }
+document.addEventListener("keydown",function(e){ if(e.key==="Escape") cerrarLegal(); });
+document.addEventListener("click",function(e){ var a=e.target.closest&&e.target.closest("[data-legal]"); if(!a) return; e.preventDefault(); abrirLegal(a.getAttribute("data-legal")); });
 
 /* La portada vive dentro de la aplicación: los botones y enlaces con data-tab le piden a la página madre que abra esa sección. */
 document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest("[data-tab]");if(!b)return;e.preventDefault();

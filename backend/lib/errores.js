@@ -90,7 +90,7 @@ export const errores = {
   tiempoAgotado: (ms) =>
     new ErrorApp(
       'TIEMPO_AGOTADO',
-      `El sitio no respondió en ${Math.round(ms / 1000)} segundos. Puede estar caído o lento; pruebe de nuevo en un rato.`,
+      `El sitio no respondió en ${Math.round(ms / 1000)} segundos. Puede estar caído o lento; intente nuevamente en unos minutos.`,
       504
     ),
 
@@ -228,14 +228,14 @@ export const errores = {
   indiceMzaFalla: (detalle) =>
     new ErrorApp(
       'INDICE_MZA_FALLA',
-      `El buscador de la SCJM no respondió como se esperaba${detalle ? ': ' + lim(detalle, 160) : ''}. Puede estar caído o haber cambiado de formato; pruebe de nuevo en un rato.`,
+      `El buscador de la SCJM no respondió como se esperaba${detalle ? ': ' + lim(detalle, 160) : ''}. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos.`,
       502
     ),
 
   indiceFuenteFalla: (fuente, detalle) =>
     new ErrorApp(
       'INDICE_FUENTE_FALLA',
-      `El buscador de "${fuente}" no respondió como se esperaba${detalle ? ': ' + lim(detalle, 160) : ''}. Puede estar caído, lento o haber cambiado de formato; pruebe de nuevo en un rato.`,
+      `El buscador de "${fuente}" no respondió como se esperaba${detalle ? ': ' + lim(detalle, 160) : ''}. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos.`,
       502,
       { fuente }
     ),

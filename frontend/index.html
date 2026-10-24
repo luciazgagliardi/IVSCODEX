@@ -565,6 +565,8 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 /* ---------- la cabecera de cada sección ---------- */
 .cab{padding:clamp(12px,2vh,22px) var(--pad) 0}
 .cab>*{animation:entra .9s var(--ease) both}
+body.en-recorrido .cab>*{animation:none}
+.tour-ov.tour-acomoda .tour-foco,.tour-ov.tour-acomoda .tour-card{opacity:0;transition:none}
 .cab>*:nth-child(2){animation-delay:.07s}.cab>*:nth-child(3){animation-delay:.14s}.cab>*:nth-child(4){animation-delay:.21s}
 .cab__saludo{margin:0 0 16px;font-size:15px;color:var(--mute)}
 .cab__saludo b{font-weight:400;color:var(--fg)}
@@ -649,12 +651,12 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .rail-grupo:first-child{margin-top:4px}
 .rail-sub{display:block;margin:8px 0 2px;padding:0 9px;font-size:12px;color:var(--mute-2);font-style:italic}
 .ramas-indice{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 36px}
-.ramas-indice a{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--line);border-radius:999px;color:var(--fg);text-decoration:none;font-size:14px;transition:border-color .3s,color .3s}
-.ramas-indice a:hover{border-color:var(--gold);color:var(--gold)}
-.ramas-indice a span{color:var(--mute-2);font-size:12.5px}
+.ramas-indice button{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--gold-55);border-radius:999px;background:none;color:var(--gold);font:500 14px/1.2 var(--sans);cursor:pointer;transition:border-color .3s,background-color .3s}
+.ramas-indice button:hover,.ramas-indice button:focus-visible{border-color:var(--gold);background:rgba(217,163,27,.08)}
+.ramas-indice button span{color:var(--mute-2);font-size:12.5px}
 .rama-grupo{margin:0 0 28px;padding-top:40px;border-top:1px solid var(--line);scroll-margin-top:90px}
 .rama-grupo:first-of-type{padding-top:8px;border-top:0}
-.rama-grupo h2{margin:0 0 6px;font:400 clamp(26px,2.6vw,36px)/1.15 var(--sans);letter-spacing:-.025em;color:var(--fg)}
+.rama-grupo h2{margin:0 0 8px;font:500 clamp(15px,1.4vw,18px)/1.25 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
 .rama-grupo p{margin:0;max-width:62ch;font-size:15px;color:var(--mute)}
 .col.v-ramas>.ramas-indice,.col.v-ramas>.rama-grupo,.col.v-ramas>.rama-sub,.col.v-ramas>.conteo,.col.v-ramas>.aviso{grid-column:1/-1}
 .rama-sub{margin:0 0 18px;font:500 12px/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
@@ -1823,14 +1825,14 @@ var RAMAS=[
    de cada rama son los de siempre, porque los puentes del intérprete y las
    fuentes (campo r) apuntan a ellos. */
 var GRUPOS_RAMAS=[
-  {id:"pub",n:"Derecho público",d:"El Estado y las personas frente a él: la Constitución, la administración, los impuestos, el castigo y el proceso.",
+  {id:"pub",n:"Derecho público",d:"Regulación del Estado y sus relaciones con los particulares: marcos constitucionales, actividad administrativa, régimen tributario, potestad punitiva y normas procesales.",
    ramas:["const","adm","trib","pen","proc_pen","ejec","proc_civ","ddhh","elec"]},
-  {id:"priv",n:"Derecho privado",d:"Las relaciones entre particulares: personas, familia, obligaciones, bienes, sucesiones y empresa.",
+  {id:"priv",n:"Derecho privado",d:"Regulación de las relaciones jurídicas entre particulares: atributos de la persona, régimen familiar, obligaciones, derechos reales, sucesiones y actividad empresarial.",
    subs:[{n:"Derecho civil",ramas:["civ","dan","rea","fam","nna","gen","suc"]},
          {n:"Derecho comercial y de la empresa",ramas:["com","cyq","seg","cons","pi"]},
          {n:"Derecho internacional privado",ramas:["dipr"]}]},
-  {id:"soc",n:"Derecho social",d:"El trabajo y la seguridad social.",ramas:["lab","sind","art","prev"]},
-  {id:"esp",n:"Ambiente, aguas y minería",d:"Ramas de los bienes colectivos y los recursos naturales.",ramas:["amb","agua"]}
+  {id:"soc",n:"Derecho social",d:"Regulación de las relaciones laborales, condiciones de trabajo y régimen de previsión y seguridad social.",ramas:["lab","sind","art","prev"]},
+  {id:"esp",n:"Bienes colectivos y recursos naturales",d:"Regulación de los derechos de incidencia colectiva, protección ambiental, uso sustentable del suelo, régimen de aguas y explotación de recursos energéticos y mineros.",ramas:["amb","agua"]}
 ];
 (function(){
   var NOMBRES={const:"Derecho constitucional y amparo",adm:"Derecho administrativo",trib:"Derecho tributario",pen:"Derecho penal",
@@ -2648,7 +2650,7 @@ var F=[
 {id:"n3",n:"Buscador de fallos del CIJ",o:"Centro de Información Judicial",a:"nac",t:"juris",c:"libre",
  u:"https://www.cij.gov.ar/buscador.html",dom:"cij.gov.ar",r:"*",
  tmpl:"https://www.cij.gov.ar/buscador.html?acc=search&search={q}",
- nota:"Búsqueda directa por texto en fallos, acordadas y resoluciones publicados por la Corte. Acepta la consulta desde acá."},
+ nota:"Búsqueda directa por texto en fallos, acordadas y resoluciones publicados por la Corte. Admite la consulta directa desde esta plataforma."},
 {id:"n4",n:"Consulta de jurisprudencia del Poder Judicial de la Nación",o:"PJN",a:"nac",t:"juris",c:"libre",
  u:"https://sj.pjn.gov.ar/consulta/",dom:"pjn.gov.ar",r:"*",
  nota:"Sumarios de las cámaras nacionales y federales. Se elige primero la cámara y después se busca por voces."},
@@ -2815,7 +2817,7 @@ var F=[
 {id:"i24",n:"CourtListener",o:"Free Law Project",a:"int",t:"juris",c:"libre",
  u:"https://www.courtlistener.com/",dom:"courtlistener.com",r:"*",
  tmpl:"https://www.courtlistener.com/?q={q}",
- nota:"Jurisprudencia federal y estatal de los Estados Unidos, con texto completo. Acepta la consulta desde acá."},
+ nota:"Jurisprudencia federal y estatal de los Estados Unidos, con texto completo. Admite la consulta directa desde esta plataforma."},
 {id:"i25",n:"Corte Suprema de los Estados Unidos",o:"SCOTUS",a:"int",t:"juris",c:"libre",
  u:"https://www.supremecourt.gov/",dom:"supremecourt.gov",r:"const,ddhh,pi",
  nota:"Opiniones y expedientes del término en curso."},
@@ -4088,7 +4090,7 @@ var TESAURO=[
   equivalentes:["daño extrapatrimonial","consecuencias no patrimoniales","agravio moral","daño inmaterial"],
   relacionados:["daño psicológico"],
   normas:["ccyc:1741"],desde:2015,
-  nota:"El CCyC de 2015 lo rebautizó: los fallos anteriores dicen casi siempre «daño moral» y los posteriores alternan. La Corte Interamericana lo llama «daño inmaterial»."},
+  nota:"El CCyC de 2015 unificó el concepto, por lo que la jurisprudencia previa utiliza el término «daño moral», mientras que los fallos posteriores alternan su denominación. Por su parte, la Corte IDH adopta la fórmula «daño inmaterial»."},
 
  {id:"prescripcion-adquisitiva",canonico:"prescripción adquisitiva",rama:"rea",
   equivalentes:["usucapión","usucapión veinteañal","prescripción veinteañal"],
@@ -4251,10 +4253,10 @@ var PRINCIPALES=["buscar","lector","ramas","calculos","fuentes","verificar"];
 var GRUPOS_NAV=["Investigar","Leer y citar","Calcular","Preparar","Fuentes","Archivo personal"];
 var SECCIONES={
   buscar:["QVAESTIO","Investigar","Las ocho bases a la vez"],
-  comparar:["COLLATIO","Investigar","Una consulta, por jurisdicción"],
+  comparar:["COLLATIO","Investigar","Contraste criterios de resolución por jurisdicción"],
   ramas:["MATERIAE","Investigar","Las ramas del derecho y sus voces"],
   requisitos:["REQVISITA","Investigar","Lo que exige cada trámite"],
-  norma:["LEX","Investigar","El artículo, desde InfoLeg"],
+  norma:["LEX","Investigar","Los artículos desde InfoLeg"],
   lector:["LECTIO","Leer y citar","El fallo con su búsqueda destacada"],
   citas:["CITATIO","Leer y citar","Formateador de citas"],
   verificar:["PROBATIO","Leer y citar","Contrastar antes de citar"],
@@ -4462,7 +4464,7 @@ function fichaFuente(f){
   var favOn=!!estado.fav[f.id];
   var cLab=f.c==="paga"?'<span class="tag paga">Suscripción</span>':
            f.c==="mixto"?'<span class="tag">Mixto</span>':'<span class="tag libre">Libre</span>';
-  var directo=(f.tmpl&&cadena())?"Buscar acá":"Abrir buscador";
+  var directo=(f.tmpl&&cadena())?"Buscar aquí":"Abrir buscador";
   return '<div class="fuente">'+
     '<div class="f-top">'+
       '<span class="cod '+f.a+'">'+esc(f.a.toUpperCase())+'</span>'+
@@ -4595,12 +4597,12 @@ function tiraEquivalentes(){
   var eq=chips("canonico")+chips("equivalente"), cer=chips("relacionado");
   if(!eq&&!cer) return "";
   return '<div class="sugeridas">'+
-    (eq?'<p class="sug-nota"><b>Los tribunales escriben esto mismo de otras formas</b>, y cada una devuelve fallos '+
-        'distintos: buscar sólo una deja material afuera.</p><div class="chips">'+eq+'</div>'+
+    (eq?'<p class="sug-nota"><b>Los tribunales emplean distintas expresiones para referirse al mismo concepto</b>, lo que altera los resultados; '+
+        'limitar la búsqueda a un solo término excluye fallos relevantes.</p><div class="chips">'+eq+'</div>'+
         '<div class="chips" style="margin-top:8px"><button class="chip" data-act="tog-equivalentes" aria-pressed="'+(estado.conEquivalentes?"true":"false")+'">'+
         (estado.conEquivalentes?'Buscando también estas formas':'Buscar también estas formas')+'</button></div>':'')+
-    (cer?'<p class="sug-nota" style="margin-top:10px">Cercanos, <b>pero no lo mismo</b> — cambian los presupuestos, '+
-        'revíselos antes de citarlos.</p><div class="chips">'+cer+'</div>':'')+
+    (cer?'<p class="sug-nota" style="margin-top:10px"><b>Conceptos análogos.</b> Nociones jurídicas afines pero con presupuestos diferentes; '+
+        'se requiere verificar sus requisitos sustanciales antes de proceder a su cita.</p><div class="chips">'+cer+'</div>':'')+
     (e.anillo.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(e.anillo.nota)+'</p>':'')+
     '</div>';
 }
@@ -4635,7 +4637,7 @@ function tiraProponer(){
       '<p class="sug-nota"><b>Propuesta, para revisar.</b> Esto lo sugirió el asistente y todavía no está en el tesauro: '+
       'compruébelo antes de darlo por bueno.</p>'+
       (s.equivalentes.length?'<p class="sug-nota" style="margin-top:8px">Serían lo mismo:</p><div class="chips">'+chips(s.equivalentes)+'</div>':'')+
-      (s.relacionados.length?'<p class="sug-nota" style="margin-top:10px">Cercanos, <b>pero no lo mismo</b>:</p><div class="chips">'+chips(s.relacionados)+'</div>':'')+
+      (s.relacionados.length?'<p class="sug-nota" style="margin-top:10px"><b>Conceptos análogos.</b> Nociones jurídicas afines pero con presupuestos diferentes; se requiere verificar sus requisitos sustanciales antes de proceder a su cita.</p><div class="chips">'+chips(s.relacionados)+'</div>':'')+
       (s.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(s.nota)+'</p>':'')+
       '<div class="chips" style="margin-top:10px">'+
         '<button class="chip sug-cerrar" data-act="copiar-anillo">Copiar el anillo para el tesauro</button>'+
@@ -4643,8 +4645,8 @@ function tiraProponer(){
       '</div></div>';
   }
 
-  return '<div class="sugeridas"><p class="sug-nota">«'+esc(comoTitulo(q))+'» todavía no está en el tesauro. '+
-    'Si los tribunales lo escriben de otra forma, esa otra forma trae fallos distintos.</p>'+
+  return '<div class="sugeridas"><p class="sug-nota"><b>Ausencia en el tesauro:</b> el término «'+esc(comoTitulo(q))+'» aún no está indexado en el catálogo. '+
+    'Debido a la dispersión terminológica de los tribunales, emplear expresiones alternativas modificará los resultados y recuperará fallos distintos.</p>'+
     '<div class="chips"><button class="chip voz-sug" data-act="pedir-propuesta">Buscar cómo se escribe de otras formas</button></div></div>';
 }
 
@@ -4769,7 +4771,7 @@ function bloqueResultados(vis){
   var h=estadoLista(vis);
   if(!lista.length){
     return h+(buscadas?'<div class="vacio">Sin resultados en las bases que respondieron. Pruebe con menos palabras, o cambie «Cómo combinar».</div>'
-      :'<div class="vacio">Escriba su consulta y toque <b>Buscar</b>: se consulta a la vez en las bases marcadas y los resultados aparecen acá.</div>');
+      :'<div class="vacio">Escriba su consulta y seleccione <b>Buscar</b>: la consulta se envía en simultáneo a las bases seleccionadas y los resultados se muestran en esta sección.</div>');
   }
   h+='<div class="rz-cab"><b>Todas las bases</b>'+
     '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"]].map(function(o){
@@ -4808,13 +4810,13 @@ function vistaBuscar(){
         '<button class="btn" data-act="buscar-todas">Buscar</button></label>'+
         '<button class="chip" data-act="tog-drawer" aria-pressed="'+(estado.drawer?"true":"false")+'">Filtros'+(ac.length?' <span class="fsb-n">'+ac.length+'</span>':'')+''+' '+(estado.drawer?"▴":"▾")+'</button></div>'+
       (tieneSug?'<div class="bq-sug bq-sug--abajo">'+sug+sugs+'</div>':'')+
-      '<div class="bq-sum">'+(ac.length?ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join(""):'<span>Todas las bases · cualquier jurisdicción y año</span>')+
+      '<div class="bq-sum">'+(ac.length?ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join(""):'<span><b>Búsqueda irrestricta</b> · Todas las bases, jurisdicciones y períodos.</span>')+
         '<span class="bq-cuenta">'+(resp?'<b>'+tot.toLocaleString("es-AR")+'</b> resultados · '+resp+' de '+vis.length+' bases respondieron':'')+'</span></div>'+
       '<div class="bq-drawer'+(estado.drawer?" is-on":"")+'">'+franjaBuscar()+
         '<div class="bq-pie"><span class="bq-cad"><span>Consulta</span> <code id="cadena" aria-live="polite"></code></span>'+
         '<span class="bq-acc"><button class="mini" data-act="copiar-cadena">Copiar</button>'+botonCompartir()+
         '<button class="mini" data-act="barrido">Buscar con Google</button><button class="mini" data-act="limpiar-filtros">Limpiar filtros</button><button class="mini" data-act="limpiar">Empezar de nuevo</button>'+
-        '<button class="btn" data-act="tog-drawer">Listo</button></span></div></div>'+
+        '<button class="btn" data-act="tog-drawer">Aplicar</button></span></div></div>'+
     '</div>'+
     (estado.api?avisoServidor():"")+
     '<div class="bz" id="bz"><aside class="bz-riel" aria-label="Bases">'+rielBuscar(vis)+'</aside><div class="bz-lista">'+bloqueResultados(vis)+'</div></div>';
@@ -4901,7 +4903,7 @@ function resaltarSimple(texto,q){
    compartidos por todo lo que trae un documento al Lector. */
 var AYUDAS_ERROR_LINK={
   DOMINIO_NO_PERMITIDO:"Agregue el dominio en server/config.js y reinicie el servidor.",
-  PDF_ESCANEADO:"Es una foto del papel, sin texto adentro. Toque «Aplicar OCR» aquí abajo — tarda, pero funciona sin salir de la página.",
+  PDF_ESCANEADO:"El documento es una imagen escaneada, sin texto seleccionable. Seleccione «Aplicar OCR» a continuación: el reconocimiento puede demorar, y se realiza sin salir de la página.",
   HTML_SIN_TEXTO:"Pasa cuando el fallo está dentro de un frame o se arma con JavaScript. Abra el enlace y pegue el texto a mano.",
   RESPUESTA_NO_OK:"Verifique que el enlace sea el del documento y no el del buscador.",
   TIEMPO_AGOTADO:"Los sitios judiciales se ponen lentos en horario de tribunales. Pruebe más tarde.",
@@ -5511,7 +5513,7 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   var nombreTrib=(fCfg.tribunales||[]).filter(function(t){return t.v===imBusco.tribunal;})[0];
   var enDonde=fCfg.nombre+(nombreTrib?" · "+nombreTrib.n:"");
   if(esNueva) flash(imBusco.local
-    ?"El sitio oficial no respondió: mostrando "+d.resultados.length+" resultado(s) ya guardados"
+    ?"El sitio oficial no respondió: se muestran "+d.resultados.length+" resultado(s) del respaldo de la plataforma"
     :(d.total?d.total.toLocaleString("es-AR")+" coincidencias en "+enDonde:"Sin coincidencias en "+enDonde));
 }
 
@@ -5697,7 +5699,7 @@ function buscarEnFuente(slug,pagina){
       imBusco.error=(err&&err.tope)
         ?"Tardó demasiado y no llegó respuesta — puede haberse cortado la conexión a mitad de camino. Pruebe de nuevo."
         :(slug==="saij"||slug==="csjn")
-          ?"No se pudo consultar SAIJ, ni desde el servidor ni desde acá. Pruebe de nuevo en un rato."
+          ?"No fue posible consultar SAIJ, ni desde el servidor ni desde el navegador. Intente nuevamente en unos minutos."
           :"Se cortó la comunicación con el servidor.";
       render();
     });
@@ -5847,7 +5849,7 @@ function panelIndice(f){
   }
 
   if(im.cargando){
-    out+='<p style="font-size:13px;color:var(--humo);margin:0">Consultando el buscador… puede tardar hasta 30 segundos: son sistemas oficiales viejos, no es que se haya colgado.</p></div>';
+    out+='<p style="font-size:13px;color:var(--humo);margin:0">Procesando consulta… La respuesta puede demorar hasta 30 segundos debido a los tiempos de respuesta de los servidores oficiales; el sistema se encuentra activo.</p></div>';
     return out;
   }
   if(im.error){
@@ -5866,7 +5868,7 @@ function panelIndice(f){
       '<button class="mini" data-act="buscar-indice" data-fuente="'+esc(f.slug)+'" style="margin-left:6px">Rehacer la búsqueda</button></div>'
     : '';
   var avisoLocal=avisoRango+(local?'<div class="aviso" style="margin:0 0 10px"><strong>El buscador de '+esc(f.nombre)+' no respondió'+
-    (im.avisoFalla?' ('+esc(im.avisoFalla)+')':'')+'.</strong> Esto es lo que ya estaba guardado de búsquedas anteriores en su índice local — puede estar incompleto o desactualizado. Pruebe de nuevo en un rato para la versión en vivo.</div>':'');
+    (im.avisoFalla?' ('+esc(im.avisoFalla)+')':'')+'.</strong> Se muestran los fallos de esa base conservados en el respaldo de la plataforma: pueden no incluir las resoluciones más recientes. Intente nuevamente en unos minutos para obtener la consulta en vivo.</div>':'');
   if(!im.resultados.length){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+
       (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
@@ -5941,13 +5943,13 @@ function tesPanel(rama){
   var conFallos=rama.v.filter(function(v){ return (voces[v]||[]).length; });
   return '<div class="tes-panel">'+
     '<p class="tes-nota">Fallos guardados de fuentes oficiales, al '+esc((t.datos.generado||"").split("-").reverse().join("/"))+
-      '. Toque una voz para verlos; para lo más reciente, «Buscar más».</p>'+
+      '. Seleccione una voz para verlos; para los más recientes, utilice «Buscar más».</p>'+
     conFallos.map(function(v){
       var fs=voces[v];
       return '<details class="tes-voz"><summary><span>'+esc(comoTitulo(v))+'</span><small>'+fs.length+' fallo'+(fs.length>1?"s":"")+'</small></summary>'+
         fs.map(function(f){
           var leer=f.link&&(f.f==="scba"||f.f==="mendoza")
-            ?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.f)+'" data-url="'+esc(f.link)+'">Leer acá</button>':'';
+            ?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.f)+'" data-url="'+esc(f.link)+'">Leer en el Lector</button>':'';
           return '<article class="tes-fallo"><div class="tes-meta"><span class="cod">'+esc(f.cod)+'</span>'+
               (f.trib?'<span>'+esc(f.trib)+'</span>':'')+(f.fecha?'<span>'+esc(f.fecha)+'</span>':'')+'</div>'+
             (f.car?'<h4>'+esc(f.car)+'</h4>':'')+
@@ -5975,7 +5977,7 @@ function vistaRamas(){
   html+='<p class="conteo">'+(cuales>=0?cuales+1:RAMAS.length)+' de '+RAMAS.length+' ramas</p>';
   var ultG="",ultS="";
   if(!estado.rama) html+='<nav class="ramas-indice" aria-label="Grandes divisiones">'+GRUPOS_RAMAS.map(function(g){
-    return '<a href="#grupo-'+g.id+'">'+esc(g.n)+' <span>'+RAMAS.filter(function(r){return r.g===g.id;}).length+'</span></a>'; }).join("")+'</nav>';
+    return '<button type="button" data-act="ir-grupo" data-g="'+esc(g.id)+'">'+esc(g.n)+' <span>'+RAMAS.filter(function(r){return r.g===g.id;}).length+'</span></button>'; }).join("")+'</nav>';
   html+=lista.map(function(x){
     var n=F.filter(function(f){return f.r==="*"||f.r.split(",").indexOf(x.id)!==-1;}).length, cab="";
     if(!estado.rama&&x.g!==ultG){ ultG=x.g; ultS="";
@@ -6366,7 +6368,7 @@ function avisoErrorLector(){
          (estado.errorLink.url
            ?'<a class="mini" href="'+escU(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">'+(esEscaneo?"Abrir el original":"1 · Abrir el original y guardarlo")+'</a>'
            :'')+
-         (esEscaneo||!estado.errorLink.url?'':'<button class="mini" data-act="elegir-archivo">2 · Subirlo acá</button>')+
+         (esEscaneo||!estado.errorLink.url?'':'<button class="mini" data-act="elegir-archivo">2 · Subirlo aquí</button>')+
        '</div>'
       :'')+
     '</div>';
@@ -6741,7 +6743,7 @@ function vistaCitas(){
         '<button class="btn sec" data-act="copiar-cita">Copiar</button>'+
       '</div>'+
       '<div class="rotulo">Resultado</div>'+
-      '<div class="out" id="cita-out">Complete los campos y toque «Armar la cita».</div>'+
+      '<div class="out" id="cita-out">Complete los campos y seleccione «Armar la cita».</div>'+
     '</div>'+
     '<div class="blk">'+
       '<h3>Interpretación de citas de Fallos (CSJN)</h3>'+
@@ -6973,7 +6975,7 @@ function seccionAnillos(){
       '<div class="voces">'+(a.equivalentes||[]).map(function(t){
         return '<span class="voz" style="cursor:default">'+esc(comoTitulo(t))+'</span>';}).join("")+'</div>'+
       ((a.relacionados||[]).length
-        ?'<div class="rotulo" style="margin-top:10px">Cercanos, pero no lo mismo</div>'+
+        ?'<div class="rotulo" style="margin-top:10px">Conceptos análogos (con presupuestos diferentes)</div>'+
          '<div class="voces">'+a.relacionados.map(function(t){
             return '<span class="voz" style="cursor:default">'+esc(comoTitulo(t))+'</span>';}).join("")+'</div>'
         :'')+
@@ -7013,7 +7015,7 @@ function vistaGuardados(){
   var favs=F.filter(function(f){return ids.indexOf(f.id)!==-1;});
   var h='<div class="blk"><h3>Pasajes guardados</h3>';
   if(!estado.pasajes.length){
-    h+='<div class="vacio">Los pasajes que guarde en el Lector se acumulan acá, con la cita y la fecha de consulta puestas.</div>';
+    h+='<div class="vacio">Los pasajes que guarde en el Lector se reúnen en esta sección, con la cita y la fecha de consulta.</div>';
   }else{
     h+='<div class="acciones" style="margin:0 0 12px;padding:0;border:0">'+
        '<button class="btn" data-act="pasajes-copiar">Copiar los '+estado.pasajes.length+'</button>'+
@@ -7037,10 +7039,10 @@ function vistaGuardados(){
   h+='</div>';
   h+='<div class="blk"><h3>Fuentes guardadas</h3>'+
     (favs.length?listaPorAmbito(favs)
-     :'<div class="vacio">Todavía no hay fuentes guardadas. Toque la estrella en cualquier ficha para tenerla a mano.</div>')+'</div>';
+     :'<div class="vacio">Aún no hay fuentes guardadas. Seleccione la estrella en cualquier ficha para incorporarla.</div>')+'</div>';
   h+='<div class="blk"><h3>Búsquedas de esta sesión</h3>';
   if(!estado.hist.length){
-    h+='<div class="vacio">Acá van quedando las consultas que realice, para repetirlas sin volver a tipearlas.</div>';
+    h+='<div class="vacio">Aquí se registran las consultas que realice, para repetirlas sin volver a escribirlas.</div>';
   }else{
     h+='<div class="chips">'+estado.hist.slice(0,20).map(function(q){
       return '<button class="voz" data-act="rehacer" data-v="'+esc(q)+'">'+esc(q)+'</button>';}).join("")+'</div>';
@@ -7093,7 +7095,7 @@ var AYUDA_SECCION={
   norma:"El texto oficial de un artículo (desde InfoLeg): escriba «art 1741 CCyC» o elija la norma.",
   citas:"Arma la cita de un fallo con el formato correcto, y la copia lista para pegar.",
   guardados:"Sus pasajes guardados, fuentes marcadas con la estrella, búsquedas recientes y sus propios términos equivalentes.",
-  herramientas:"Preparar archivos para presentar: unir, dividir, foliar, reducir el tamaño y reconocer el texto (OCR)."
+  herramientas:"Preparar archivos para presentar: unir, dividir, numerar, reducir el tamaño y reconocer el texto (OCR)."
 };
 var NOMBRES_SECCION={lector:"Lector",ramas:"Ramas",requisitos:"Requisitos",comparar:"Comparar",norma:"Norma",fuentes:"Fuentes",citas:"Citar",verificar:"Verificar",guardados:"Guardados",cuenta:"Cuenta",calculos:"Cálculos",plazos:"Plazos",glosario:"Glosario",herramientas:"Herramientas"};
 function montarAsistente(){
@@ -7552,113 +7554,104 @@ function montarAsistente(){
   var cierraPanel=function(){ if(estado.drawer){ estado.drawer=false; render(); } };
   var abrePanel=function(){ enBuscar(); if(!estado.drawer){ estado.drawer=true; render(); } };
   var TOURS={
-    completo:{n:"Recorrido completo",pasos:function(){ return [
-      {sel:".marca-app",t:"Bienvenido a IVS CODEX",x:"Busca a la vez en las bases judiciales oficiales y le muestra los resultados con el pasaje donde está lo que busca. Le voy señalando cada parte.",antes:function(){ enBuscar(); cierraPanel(); }},
-      {sel:"#nav",t:"Las secciones principales",x:"Buscar jurisprudencia, leer un fallo (Lector), recorrer las ramas del derecho, hacer Cálculos, ver las Fuentes y Verificar una cita."},
-      {sel:"#abrir-menu",t:"Todas las secciones",x:"Acá están las quince secciones, agrupadas por lo que se hace en cada una: Plazos, Glosario, Guardados y más."},
-      {sel:"#mi-perfil",t:"Mi perfil",x:"Su cuenta y todo lo que guardó: fuentes, pasajes y búsquedas recientes, que puede repetir con un toque."},
-      {sel:".cq",t:"La consulta",x:"Escriba el tema con sus palabras (por ejemplo «daño moral por incumplimiento»). Con Enter o «Buscar» se consulta a la vez en todas las bases marcadas."},
-      {sel:".bq-barra [data-act=\"tog-drawer\"]",t:"Filtros",x:"Acá afina la búsqueda. Se abre como un panel sin mover los resultados."},
-      {sel:".bq-drawer .fsb",t:"Qué se puede filtrar",x:"«Dónde»: nación, Mendoza, otras provincias o internacional. «Fuente»: marque o desmarque cada base. «Cómo»: frase exacta, todas o alguna palabra, años y palabras a excluir.",antes:abrePanel},
-      {sel:".bz-riel",t:"Las bases",x:"Cada base con su punto de color, su estado (buscando, cuántos resultados trajo, en cuánto tiempo) y su botón. Toque una para ver sólo esa.",antes:cierraPanel},
-      {sel:".bz-lista",t:"Los resultados",x:"Aparecen mezclados, uno por base. Toque cualquiera para ver el pasaje completo y sus acciones. Arriba puede ordenarlos por fecha o por base."},
-      {sel:"#asist-abrir",t:"Y si se pierde…",x:"Estoy acá. Puede pedirme búsquedas con filtros («jurisprudencia de Córdoba desde 2019»), o hacer juntos una parte con «Cómo usar»."}
-    ]; }},
+    completo:{n:"Recorrido completo",pasos:function(){ return []; }},
     consulta:{n:"Hacer una búsqueda",pasos:function(){ return [
-      {sel:".cq input",t:"Escriba el tema",x:"Escríbalo con sus palabras, por ejemplo «daño moral». Pruébelo ahora; cuando termine, toque «Siguiente».",hazlo:true,antes:function(){ enBuscar(); cierraPanel(); }},
-      {sel:".cq .btn",t:"Toque «Buscar»",x:"Se consulta a la vez en todas las bases marcadas. Tóquelo y miramos cómo responden.",hazlo:true,alTocar:true},
-      {sel:".bq-sug",t:"Otras formas de decirlo",x:"Los tribunales a veces nombran lo mismo de otra manera. Con un toque busca también por esas formas.",opcional:true},
-      {sel:".bz-riel",t:"Cómo van respondiendo",x:"Cada base muestra «buscando…» y después cuántos resultados trajo. Algunas tardan hasta 30 segundos.",espera:true},
-      {sel:".bz-lista",t:"Los resultados",x:"Aparecen mezclados, uno por base. Toque uno para ver el pasaje completo."}
+      {sel:".cq input",t:"Escriba el tema",x:"Ingrese el tema con sus palabras, por ejemplo «daño moral». Puede hacerlo ahora; al terminar, seleccione «Siguiente».",hazlo:true,antes:function(){ enBuscar(); cierraPanel(); }},
+      {sel:".cq .btn",t:"Seleccione «Buscar»",x:"La consulta se envía en simultáneo a todas las bases seleccionadas. Selecciónelo para continuar.",hazlo:true,alTocar:true},
+      {sel:".bq-sug",t:"Expresiones equivalentes",x:"Los tribunales emplean distintas expresiones para un mismo concepto. Desde aquí puede incluirlas en la búsqueda.",opcional:true},
+      {sel:".bz-riel",t:"Estado de cada base",x:"Cada base indica «buscando…» y luego la cantidad de resultados obtenidos. Algunas pueden demorar hasta 30 segundos.",espera:true},
+      {sel:".bz-lista",t:"Resultados",x:"Lista combinada, un registro por base. Seleccione uno para ver el pasaje completo."}
     ]; }},
     filtros:{n:"Usar los filtros",pasos:function(){ return [
-      {sel:".bq-barra [data-act=\"tog-drawer\"]",t:"Toque «Filtros»",x:"Tóquelo para abrir el panel. Se superpone y no mueve los resultados.",hazlo:true,alTocar:true,antes:function(){ enBuscar(); cierraPanel(); }},
-      {sel:".bq-drawer [data-fila=\"donde\"]",t:"Dónde buscar",x:"Elija el alcance: nación, Mendoza, otras provincias o internacional. «Una provincia» abre la lista de las 24. Pruebe una y toque «Siguiente».",hazlo:true,antes:abrePanel},
-      {sel:".bq-drawer [data-fila=\"fuente\"]",t:"Fuente",x:"Cada base es una fuente. Toque una para dejarla afuera (queda tachada) y otra vez para volver a marcarla.",hazlo:true,antes:abrePanel},
-      {sel:".bq-drawer [data-fila=\"como\"]",t:"Cómo, años y excluir",x:"Frase exacta (la más estricta), todas o alguna palabra; años desde y hasta; y palabras a excluir.",hazlo:true,antes:abrePanel},
-      {sel:".bq-drawer .bq-pie .btn",t:"Toque «Listo»",x:"Cuando termine de elegir, cierre el panel.",hazlo:true,alTocar:true,antes:abrePanel},
-      {sel:".bq-sum",t:"Sus filtros, a la vista",x:"Los filtros activos quedan acá como fichas. Con la ✕ de cada una la quita; «Limpiar filtros» las quita todas.",antes:cierraPanel}
+      {sel:".bq-barra [data-act=\"tog-drawer\"]",t:"Seleccione «Filtros»",x:"Abre el panel de filtros, que se superpone sin desplazar los resultados.",hazlo:true,alTocar:true,antes:function(){ enBuscar(); cierraPanel(); }},
+      {sel:".bq-drawer [data-fila=\"donde\"]",t:"Ámbito",x:"Defina el alcance: nación, Mendoza, otras provincias o internacional. «Una provincia» despliega las 24 jurisdicciones. Elija una y seleccione «Siguiente».",hazlo:true,antes:abrePanel},
+      {sel:".bq-drawer [data-fila=\"fuente\"]",t:"Fuentes",x:"Cada base es una fuente. Selecciónela para excluirla (queda tachada) y nuevamente para incluirla.",hazlo:true,antes:abrePanel},
+      {sel:".bq-drawer [data-fila=\"como\"]",t:"Modo, período y exclusiones",x:"Frase exacta (la opción más estricta), todas o alguna de las palabras; años desde y hasta; y términos a excluir.",hazlo:true,antes:abrePanel},
+      {sel:".bq-drawer .bq-pie .btn",t:"Seleccione «Aplicar»",x:"Una vez definidos los filtros, cierre el panel.",hazlo:true,alTocar:true,antes:abrePanel},
+      {sel:".bq-sum",t:"Filtros activos",x:"Los filtros aplicados se muestran como fichas. La ✕ de cada una la elimina; «Limpiar filtros» elimina todas.",antes:cierraPanel}
     ]; }},
     bases:{n:"Entender las bases",pasos:function(){ return [
-      {sel:".bz-riel",t:"Las bases",x:"Cada fila es una base oficial (SCJM, TSJ, CSJN, SAIJ…). El punto de color la identifica; al lado ve su estado: «en espera», «buscando…» o cuántos resultados trajo y en cuánto tiempo.",antes:function(){ enBuscar(); cierraPanel(); }},
-      {sel:".bz-fila[data-fuente]:not([data-fuente=\"\"]) .rf-buscar",t:"«Buscar» o «Repetir»",x:"Con este botón busca sólo en esa base, sin tocar las demás.",hazlo:false},
-      {sel:".bz-fila[data-fuente]:not([data-fuente=\"\"])",t:"Toque una base",x:"Pruébelo: toque una fila para ver sólo sus resultados, con sus controles propios (cámaras, provincia, páginas).",hazlo:true,alTocar:true},
-      {sel:".bz-lista",t:"Sólo esa base",x:"Acá están los resultados de esa base, con todos sus controles y el paginador."},
-      {sel:".bz-fila[data-fuente=\"\"]",t:"Volver a «Todas»",x:"Toque «Todas» para volver a verlos mezclados.",hazlo:true,alTocar:true}
+      {sel:".bz-riel",t:"Las bases",x:"Cada fila corresponde a una base oficial (SCJM, TSJ, CSJN, SAIJ…). El punto de color la identifica y, a su lado, se indica su estado: «en espera», «buscando…» o la cantidad de resultados y el tiempo de respuesta.",antes:function(){ enBuscar(); cierraPanel(); }},
+      {sel:".bz-fila[data-fuente]:not([data-fuente=\"\"]) .rf-buscar",t:"«Buscar» o «Repetir»",x:"Ejecuta la consulta únicamente en esa base, sin modificar las demás.",hazlo:false},
+      {sel:".bz-fila[data-fuente]:not([data-fuente=\"\"])",t:"Seleccione una base",x:"Seleccione una fila para ver sólo sus resultados, con sus controles propios (cámaras, provincia, páginas).",hazlo:true,alTocar:true},
+      {sel:".bz-lista",t:"Resultados de una base",x:"Resultados de la base elegida, con sus controles y el paginador."},
+      {sel:".bz-fila[data-fuente=\"\"]",t:"Volver a «Todas»",x:"Seleccione «Todas» para volver a la lista combinada.",hazlo:true,alTocar:true}
     ]; }},
     resultados:{n:"Leer los resultados",requiere:function(){ enBuscar(); return !!document.querySelector(".rz"); },pasos:function(){ return [
-      {sel:".bz-lista",t:"La lista",x:"Los resultados de todas las bases, mezclados: uno de cada base, en orden. Cada uno tiene la carátula, el tribunal, la fecha y el pasaje donde aparece lo que busca.",antes:function(){ enBuscar(); cierraPanel(); }},
-      {sel:".rz-ord",t:"Ordenar",x:"Puede verlos intercalados, por fecha (los más recientes primero) o agrupados por base.",opcional:true},
-      {sel:".rz",t:"Toque un resultado",x:"Pruébelo: al tocarlo se abre la ficha completa.",hazlo:true,alTocar:true},
-      {sel:".rz-abierta",t:"La ficha completa",x:"Tribunal, fecha, el pasaje con su búsqueda marcada y las acciones: ver la ficha oficial, traer el texto completo y abrirlo en el Lector. Con «Cerrar» vuelve a la lista.",opcional:true}
+      {sel:".bz-lista",t:"La lista",x:"Resultados de todas las bases, intercalados: uno de cada base, en orden. Cada registro indica carátula, tribunal, fecha y el pasaje donde aparecen los términos buscados.",antes:function(){ enBuscar(); cierraPanel(); }},
+      {sel:".rz-ord",t:"Orden",x:"Los resultados pueden verse intercalados, por fecha (los más recientes primero) o agrupados por base.",opcional:true},
+      {sel:".rz",t:"Seleccione un resultado",x:"Al seleccionarlo se abre la ficha completa.",hazlo:true,alTocar:true},
+      {sel:".rz-abierta",t:"Ficha completa",x:"Tribunal, fecha, el pasaje con los términos destacados y las acciones disponibles: ficha oficial, texto completo y apertura en el Lector. «Cerrar» regresa a la lista.",opcional:true}
     ]; }},
-    sugerencias:{n:"Las otras formas de decirlo",requiere:function(){ enBuscar(); return !!document.querySelector(".bq-sug"); },pasos:function(){ return [
-      {sel:".bq-sug",t:"Otras formas de decirlo",x:"Los buscadores oficiales indexan por voces técnicas. Acá le sugerimos cómo los tribunales nombran su tema; con un toque busca por esa forma, o también por las equivalentes.",antes:function(){ enBuscar(); cierraPanel(); }}
+    sugerencias:{n:"Expresiones equivalentes",requiere:function(){ enBuscar(); return !!document.querySelector(".bq-sug"); },pasos:function(){ return [
+      {sel:".bq-sug",t:"Expresiones equivalentes",x:"Los buscadores oficiales indexan por voces técnicas. Aquí se indican las expresiones con que los tribunales denominan el tema; puede buscar por cualquiera de ellas o incluir todas las equivalentes.",antes:function(){ enBuscar(); cierraPanel(); }}
     ]; }},
     perfil:{n:"Mi perfil y lo guardado",pasos:function(){ return [
-      {sel:"#mi-perfil",t:"Toque «Mi perfil»",x:"Tóquelo para abrir su menú.",hazlo:true,alTocar:true,antes:function(){ if(estado.perfilMenu){ estado.perfilMenu=false; pintarNav(); } }},
-      {sel:"#perfil-menu",t:"Todo lo suyo, en un lugar",x:"Su cuenta, las fuentes y pasajes que guardó, y sus últimas búsquedas: toque una para repetirla. Con la sesión iniciada también puede cerrarla desde acá.",antes:function(){ if(!estado.perfilMenu){ estado.perfilMenu=true; pintarNav(); } }}
+      {sel:"#mi-perfil",t:"Seleccione «Mi perfil»",x:"Abre el menú de su cuenta.",hazlo:true,alTocar:true,antes:function(){ if(estado.perfilMenu){ estado.perfilMenu=false; pintarNav(); } }},
+      {sel:"#perfil-menu",t:"Su cuenta y lo guardado",x:"Su cuenta, las fuentes y pasajes guardados y sus búsquedas recientes, que puede repetir en cualquier momento. Con la sesión iniciada, también puede cerrarla desde aquí.",antes:function(){ if(!estado.perfilMenu){ estado.perfilMenu=true; pintarNav(); } }}
     ]; }}
   };
 
   /* un recorrido por cada sección, y el completo que las pasa a todas */
   var en=function(tab){ return function(){ if(estado.tab!==tab){ estado.tab=tab; estado.drawer=false; render(); window.scrollTo(0,0); } }; };
   var CABSEL=[".cab__ojo",".cab h1",".cab__intro","#cab > .aviso"]; /* del rótulo dorado hasta donde explica */
+  /* El primer elemento de cada sección es su descripción: la usa también el
+     recorrido completo («… Para instrucciones detalladas, consulte …»). */
   var SEC={
-    lector:[["#cab","Lector","Para leer un fallo con su búsqueda destacada. Hay tres maneras de traerlo: por enlace, desde un archivo o pegando el texto."],
-      ["#doc-url","Opción 1: el enlace","Pegue acá el enlace del fallo (de los sitios oficiales) y toque «Traer el fallo».",{hazlo:1}],
-      ["[data-act=\"elegir-archivo\"]","Opción 2: un archivo","Suba un PDF o un Word desde su computadora.",{opc:1}],
-      ["#doc-in","Opción 3: pegar el texto","Si ya tiene el texto del fallo, pégalo acá.",{hazlo:1}],
-      ["[data-act=\"analizar\"]","Analizar el fallo","Reconoce tribunal, fecha, partes y pasajes clave, y marca su búsqueda dentro del texto.",{opc:1}]],
-    ramas:[["#cab","Ramas","Las ramas del derecho con los términos (voces) con que los tribunales las nombran."],
-      ["#buscarRama","Buscar una rama","Escriba para encontrar una rama en la lista de la izquierda, o toque una.",{hazlo:1,opc:1}],
-      [".rama .voces","Las voces","Cada voz es un término técnico. Tóquela y se busca en las bases.",{opc:1}],
-      ["[data-act=\"ir-rama\"]","Ver esas fuentes","Muestra las fuentes que cubren esa rama.",{opc:1}]],
-    requisitos:[["#cab","Requisitos","Lo que exige la norma para cada trámite, con su artículo, como punto de partida para buscar."],
-      ["#buscarReq","Buscar un trámite","Escriba «divorcio», «adopción» o «cuota alimentaria» para encontrarlo.",{hazlo:1}],
-      [".grupo","Qué exige la norma","Cada trámite lista sus requisitos con el artículo que los fundamenta. Tóquelos para tildar lo que ya cumplió.",{opc:1}],
-      ["[data-act=\"tramite\"]","Buscar fallos sobre esto","Arma la consulta de ese trámite y lo lleva a Buscar.",{opc:1}]],
-    comparar:[["#cab","Comparar","Una consulta, ocho fuentes: sirve para ver cómo resuelve cada jurisdicción."],
-      ["#q","La consulta","Escriba el tema que quiere comparar.",{hazlo:1}],
-      ["[data-act=\"comparar\"]","Comparar","Lanza la misma consulta en las ocho fuentes y ordena los resultados por jurisdicción.",{hazlo:1}]],
-    norma:[["#cab","Norma","El texto oficial de un artículo, traído desde InfoLeg."],
+    lector:[["#cab","Lector","Visor de fallos con resaltado de términos. Modos de importación: enlace, archivo o texto copiado."],
+      ["#doc-url","Opción 1: enlace","Ingrese el enlace del fallo (de los sitios oficiales) y seleccione «Traer el fallo».",{hazlo:1}],
+      ["[data-act=\"elegir-archivo\"]","Opción 2: archivo","Cargue un PDF o un documento de Word desde su equipo.",{opc:1}],
+      ["#doc-in","Opción 3: texto copiado","Si dispone del texto del fallo, péguelo en este campo.",{hazlo:1}],
+      ["[data-act=\"analizar\"]","Analizar el fallo","Identifica tribunal, fecha, partes y pasajes relevantes, y destaca los términos buscados dentro del texto.",{opc:1}]],
+    ramas:[["#cab","Ramas","Glosario del derecho con voces jurisprudenciales."],
+      ["#buscarRama","Buscar una rama","Escriba para localizar una rama en el listado o selecciónela directamente.",{hazlo:1,opc:1}],
+      [".rama .voces","Las voces","Cada voz es un término técnico; al seleccionarla se busca en las bases.",{opc:1}],
+      ["[data-act=\"ir-rama\"]","Fuentes de la rama","Muestra las fuentes que cubren esa rama.",{opc:1}]],
+    requisitos:[["#cab","Requisitos","Condiciones normativas por trámite y artículos de referencia para iniciar la búsqueda."],
+      ["#buscarReq","Buscar un trámite","Escriba «divorcio», «adopción» o «cuota alimentaria» para localizarlo.",{hazlo:1}],
+      [".grupo","Recaudos normativos","Cada trámite enumera sus recaudos con el artículo que los fundamenta. Puede marcar los que ya se encuentran cumplidos.",{opc:1}],
+      ["[data-act=\"tramite\"]","Buscar fallos sobre el trámite","Arma la consulta correspondiente y la ejecuta en Buscar.",{opc:1}]],
+    comparar:[["#cab","Comparar","Consulta simultánea en ocho fuentes para contrastar criterios jurisdiccionales."],
+      ["#q","La consulta","Escriba el tema que desea comparar.",{hazlo:1}],
+      ["[data-act=\"comparar\"]","Comparar","Ejecuta la misma consulta en las ocho fuentes y ordena los resultados por jurisdicción.",{hazlo:1}]],
+    norma:[["#cab","Norma","Texto oficial articulado provisto por InfoLeg."],
       ["#norma-art","El artículo","Escriba, por ejemplo, «art 1741 CCyC» o «artículo 70 de la ley 24.522».",{hazlo:1}],
-      ["#norma-clave","O elija la norma","También puede elegir el código o la ley de la lista.",{opc:1}],
-      ["[data-act=\"ver-articulo\"]","Ver el artículo","Trae el texto vigente y le ofrece buscar los fallos que lo citan.",{hazlo:1}]],
-    fuentes:[["#cab","Fuentes","El catálogo de las bases y buscadores oficiales, agrupado por ámbito."],
-      [".grupo","Por ámbito","Mendoza, Nacional, Otras provincias, Internacional y Doctrina. Cada ficha dice qué contiene y si es libre o paga."],
-      ["[data-act=\"fav\"]","La estrella","Guarda esa fuente en Guardados para tenerla a mano.",{hazlo:1}],
-      ["[data-act=\"google\"]","Buscar en el sitio","Abre el buscador de esa fuente con su consulta ya armada.",{opc:1}]],
-    citas:[["#cab","Citar","Arma la cita de un fallo con el formato correcto."],
-      ["#c-tipo","El tipo de cita","Elija qué está citando (fallo de la Corte, de una cámara…).",{hazlo:1}],
-      ["#c-car","Los datos","Complete la carátula, el tribunal, la fecha y lo que corresponda.",{hazlo:1}],
-      ["[data-act=\"armar-cita\"]","Armar la cita","Genera la cita lista para pegar en su escrito.",{hazlo:1,opc:1}]],
-    verificar:[["#cab","Verificar","Comprueba si una cita de jurisprudencia existe de verdad, antes de presentarla."],
-      ["#cita-in","Pegue la cita","Por ejemplo: «CSJN, Halabi, Ernesto c/ P.E.N. (2009)».",{hazlo:1}],
-      ["[data-act=\"verificar-cita\"]","Verificar la cita","Se busca en las bases oficiales y se le dice si aparece o no.",{hazlo:1}],
-      [".aviso","Sus límites","Sólo verifica que exista; no garantiza que diga lo que usted le atribuye. Siempre revise la fuente.",{opc:1}]],
-    guardados:[["#cab","Guardados","Todo lo que usted fue reuniendo."],
-      ["#vista .blk:nth-child(1)","Pasajes guardados","Los pasajes que guarda en el Lector, con su cita y fecha. Puede copiarlos o exportarlos a Word.",{opc:1}],
-      ["#vista .blk:nth-child(2)","Fuentes guardadas","Las fuentes que marcó con la estrella.",{opc:1}],
-      ["#vista .blk:nth-child(3)","Búsquedas de esta sesión","Toque una para repetirla.",{opc:1}],
-      ["#an-canonico","Sus propios términos","Enséñele sinónimos a la plataforma: su búsqueda los usará.",{opc:1}]],
-    cuenta:[["#cab","Cuenta","Su perfil, y lo que se guarda en su cuenta."],
-      ["#auth-email","Crear una cuenta","Con su correo y una clave puede guardar fuentes y búsquedas y verlas desde cualquier dispositivo.",{opc:1,sin:1}],
-      ["#perfil-nombre","Su perfil","Su nombre, su especialidad y si quiere recibir novedades. Con «Guardar perfil» se actualiza en su cuenta.",{opc:1,con:1}]],
-    calculos:[["#cab","Cálculos","Las cuentas más usadas, con la fórmula a la vista."],
-      [".calc-sel","Elija la calculadora","Intereses, actualización, despido, incapacidad, honorarios y tasa de justicia, liquidación…",{hazlo:1}],
-      [".brief","Los datos","Complete los montos y fechas; el resultado se actualiza.",{hazlo:1}],
-      [".brief__summary","El resultado","Con el detalle del cálculo y para copiarlo.",{opc:1}]],
-    plazos:[["#cab","Plazos","Cuenta plazos procesales, prescripción y el calendario judicial."],
-      [".calc-sel","Qué calcular","Plazos procesales, prescripción o calendario judicial.",{hazlo:1}],
-      [".brief","Los datos","Elija días hábiles o corridos, la jurisdicción y la fecha de inicio.",{hazlo:1}],
-      [".brief__summary","El vencimiento","Le muestra cuándo vence, descontando feriados y ferias.",{opc:1}]],
-    glosario:[["#cab","Glosario","Latín jurídico: brocardos y expresiones con su traducción y su sentido."],
-      ["#buscarGlosario","Buscar","Escriba «cosa juzgada», «cautelar»… y se filtra la lista.",{hazlo:1}],
-      [".glos-letras","Por letra","O vaya directo a la inicial.",{opc:1}]],
-    herramientas:[["#cab","Herramientas","Para preparar archivos antes de presentarlos."],
+      ["#norma-clave","La norma","También puede seleccionar el código o la ley del listado.",{opc:1}],
+      ["[data-act=\"ver-articulo\"]","Ver el artículo","Trae el texto vigente y permite buscar los fallos que lo citan.",{hazlo:1}]],
+    fuentes:[["#cab","Fuentes","Catálogo de bases y buscadores oficiales agrupados por ámbito territorial."],
+      [".grupo","Por ámbito","Mendoza, Nación, otras provincias, internacional y doctrina. Cada ficha indica su contenido y si el acceso es libre o arancelado."],
+      ["[data-act=\"fav\"]","Guardar una fuente","La estrella incorpora la fuente a Guardados.",{hazlo:1}],
+      ["[data-act=\"google\"]","Buscar en el sitio","Abre el buscador de esa fuente con la consulta ya formulada.",{opc:1}]],
+    citas:[["#cab","Citar","Generador de citas jurisprudenciales en formato reglamentario."],
+      ["#c-tipo","Tipo de cita","Seleccione el tipo de resolución citada (Corte Suprema, cámara, etc.).",{hazlo:1}],
+      ["#c-car","Los datos","Complete carátula, tribunal, fecha y los demás datos que correspondan.",{hazlo:1}],
+      ["[data-act=\"armar-cita\"]","Armar la cita","Genera la cita lista para incorporar al escrito.",{hazlo:1,opc:1}]],
+    verificar:[["#cab","Verificar","Validación de existencia de citas jurisprudenciales previa a su presentación."],
+      ["#cita-in","La cita","Por ejemplo: «CSJN, Halabi, Ernesto c/ P.E.N. (2009)».",{hazlo:1}],
+      ["[data-act=\"verificar-cita\"]","Verificar la cita","Se consulta en las bases oficiales y se informa si aparece.",{hazlo:1}],
+      [".aviso","Alcance","La verificación acredita la existencia de la resolución, no el criterio que se le atribuye. Revise siempre la fuente.",{opc:1}]],
+    guardados:[["#cab","Guardados","Repositorio central de elementos recopilados por el usuario."],
+      ["#vista .blk:nth-child(1)","Pasajes guardados","Los pasajes guardados en el Lector, con su cita y fecha. Pueden copiarse o exportarse a Word.",{opc:1}],
+      ["#vista .blk:nth-child(2)","Fuentes guardadas","Las fuentes marcadas con la estrella.",{opc:1}],
+      ["#vista .blk:nth-child(3)","Búsquedas de esta sesión","Seleccione una para repetirla.",{opc:1}],
+      ["#an-canonico","Términos propios","Incorpore sinónimos para que la búsqueda los utilice.",{opc:1}]],
+    cuenta:[["#cab","Cuenta","Perfil de usuario y registro de elementos almacenados."],
+      ["#auth-email","Crear una cuenta","Con su correo electrónico y una contraseña puede conservar fuentes y búsquedas y consultarlas desde cualquier dispositivo.",{opc:1,sin:1}],
+      ["#perfil-nombre","Su perfil","Nombre, especialidad y preferencia sobre el envío de novedades. «Guardar perfil» actualiza su cuenta.",{opc:1,con:1}]],
+    calculos:[["#cab","Cálculos","Herramientas de cómputo habituales con fórmulas visibles."],
+      [".calc-sel","Calculadora","Intereses, actualización, despido, incapacidad, honorarios y tasa de justicia, liquidación…",{hazlo:1}],
+      [".brief","Los datos","Complete montos y fechas; el resultado se actualiza automáticamente.",{hazlo:1}],
+      [".brief__summary","El resultado","Con el detalle del cálculo y la opción de copiarlo.",{opc:1}]],
+    plazos:[["#cab","Plazos","Cómputo de términos procesales, plazos de prescripción y calendario judicial."],
+      [".calc-sel","Tipo de cómputo","Plazos procesales, prescripción o calendario judicial.",{hazlo:1}],
+      [".brief","Los datos","Indique días hábiles o corridos, jurisdicción y fecha de inicio.",{hazlo:1}],
+      [".brief__summary","El vencimiento","Fecha de vencimiento, con exclusión de feriados y ferias judiciales.",{opc:1}]],
+    glosario:[["#cab","Glosario","Diccionario de latín jurídico con traducción y acepción de brocardos y expresiones."],
+      ["#buscarGlosario","Buscar","Escriba «cosa juzgada», «cautelar»… para filtrar el listado.",{hazlo:1}],
+      [".glos-letras","Por letra","O acceda directamente por la inicial.",{opc:1}]],
+    herramientas:[["#cab","Herramientas","Utilidades de preparación y procesamiento de archivos previo a su presentación formal."],
       [".her","Una herramienta por tarjeta","Unir y dividir PDF, numerar fojas, reducir el tamaño, reconocer el texto (OCR) y convertir a PDF/A.",{}],
-      ["#her-unir-in","Elegir archivos","Cada herramienta empieza eligiendo los archivos de su computadora.",{hazlo:1,opc:1}]]
+      ["#her-unir-in","Seleccionar archivos","Cada herramienta comienza con la selección de los archivos de su equipo.",{hazlo:1,opc:1}]]
   };
   Object.keys(SEC).forEach(function(tab){
     TOURS["s-"+tab]={n:NOMBRES_SECCION[tab],tab:tab,pasos:function(){
@@ -7667,20 +7660,20 @@ function montarAsistente(){
   });
   /* el completo: la barra, Buscar a fondo y un paso por cada una de las otras secciones */
   TOURS.completo.pasos=function(){
-    var bq=TOURS.consulta.pasos().slice(0,1), base=[
-      {sel:".marca-app",t:"Bienvenido a IVS CODEX",x:"Busca a la vez en las bases judiciales oficiales y le muestra los resultados con el pasaje donde está lo que busca. Voy a recorrer con usted todas las funciones, una por una.",antes:function(){ enBuscar(); cierraPanel(); }},
-      {sel:"#nav",t:"Las secciones principales",x:"Buscar, Lector, Ramas, Cálculos, Fuentes y Verificar, a un toque."},
-      {sel:"#abrir-menu",t:"Todas las secciones",x:"Acá están las quince, agrupadas por lo que se hace en cada una."},
-      {sel:"#mi-perfil",t:"Mi perfil",x:"Su cuenta y todo lo que guardó: fuentes, pasajes y búsquedas recientes, que puede repetir con un toque."},
-      {sel:".cq",t:"Buscar: la consulta",x:"Escriba el tema con sus palabras. Con Enter o «Buscar» se consulta a la vez en todas las bases marcadas.",antes:function(){ enBuscar(); cierraPanel(); }},
-      {sel:".bq-barra [data-act=\"tog-drawer\"]",t:"Buscar: filtros",x:"Dónde (nación, provincias), fuentes, cómo combinar las palabras, años y excluir."},
-      {sel:".bz-riel",t:"Buscar: las bases",x:"Cada base con su punto de color, su estado y su botón para buscar sólo ahí.",antes:cierraPanel},
-      {sel:".bz-lista",t:"Buscar: los resultados",x:"Mezclados, uno por base. Toque uno para ver el pasaje completo."}
+    var base=[
+      {sel:".marca-app",t:"Bienvenido a IVS CODEX",x:"Busca a la vez en las bases judiciales oficiales y le muestra los resultados con el pasaje donde está lo que busca. Voy a recorrer con usted todas las funciones.",antes:function(){ enBuscar(); cierraPanel(); }},
+      {sel:"#nav",t:"Las secciones principales",x:"Acceso directo a las secciones de uso más frecuente de la plataforma."},
+      {sel:"#abrir-menu",t:"Todas las secciones",x:"Aquí aparecen las quince secciones agrupadas por su función."},
+      {sel:"#mi-perfil",t:"Mi perfil",x:"Su cuenta y todo lo que guardó: fuentes, pasajes y búsquedas recientes, que puede repetir en cualquier momento."},
+      {sel:".cq",t:"Buscar: consulta",x:"Escriba el tema con sus palabras. Con Enter o «Buscar» se consulta a la vez en todas las bases seleccionadas.",antes:function(){ enBuscar(); cierraPanel(); }},
+      {sel:".bq-barra [data-act=\"tog-drawer\"]",t:"Buscar: filtros",x:"Dónde (nación, provincias), fuentes, cómo combinar las palabras, años y restricciones aplicadas."},
+      {sel:".bz-riel",t:"Buscador: bases",x:"Lista de fuentes con indicador, estado y botón de búsqueda.",antes:cierraPanel},
+      {sel:".bz-lista",t:"Buscar: resultados",x:"Lista combinada (un registro por base) con acceso al texto completo mediante selección."}
     ];
     var ord=["lector","ramas","requisitos","comparar","norma","fuentes","citas","verificar","guardados","cuenta","calculos","plazos","glosario","herramientas"];
     var resto=ord.map(function(tab){
       var x=SEC[tab][0];
-      return {sel:CABSEL,t:NOMBRES_SECCION[tab],x:x[2]+" Para verla en detalle, elija «"+NOMBRES_SECCION[tab]+"» en «Cómo usar».",antes:en(tab)};
+      return {sel:CABSEL,t:NOMBRES_SECCION[tab],x:x[2]+" Para instrucciones detalladas, consulte «"+NOMBRES_SECCION[tab]+"» en la sección «Cómo usar».",antes:en(tab)};
     });
     var fin=[{sel:"#asist-abrir",t:"Y si se pierde…",x:"Estoy acá. Puedo hacer búsquedas con filtros, explicarle una parte o hacerla juntos con usted con «Cómo usar».",antes:function(){ enBuscar(); }}];
     return base.concat(resto,fin);
@@ -7694,6 +7687,14 @@ function montarAsistente(){
         if(!e) return;
         var cs=getComputedStyle(e); if(cs.display==="none"||cs.visibility==="hidden") return;
         var r=e.getBoundingClientRect(); if(!r.width&&!r.height) return;
+        // el logo (letras muy espaciadas) se mide por su texto: la caja del botón
+        // suma a la derecha el espaciado de la última letra y un relleno, y el
+        // cuadro dorado quedaba corrido hacia la derecha
+        if(e.classList&&e.classList.contains("marca-app")){
+          var txt=e.querySelector(".marca")||e,rg=document.createRange(); rg.selectNodeContents(txt);
+          var rt=rg.getBoundingClientRect(),ls=parseFloat(getComputedStyle(txt).letterSpacing)||0;
+          if(rt.width) r={left:rt.left,top:r.top,right:rt.right-ls,bottom:r.bottom,width:rt.width-ls,height:r.height};
+        }
         if(!primero) primero=e;
         L=Math.min(L,r.left); T=Math.min(T,r.top); R=Math.max(R,r.right); B=Math.max(B,r.bottom);
       });
@@ -7704,6 +7705,7 @@ function montarAsistente(){
   function cerrarRecorrido(terminado){
     limpiarEspera();
     if(rec.ov){ rec.ov.remove(); rec.ov=null; }
+    document.body.classList.remove("en-recorrido");
     document.removeEventListener("keydown",rec.tecla,true); window.removeEventListener("resize",rec.reubicar); window.removeEventListener("scroll",rec.reubicar,true);
     if(estado.perfilMenu){ estado.perfilMenu=false; pintarNav(); }
     estado.drawer=false; render();
@@ -7737,12 +7739,22 @@ function montarAsistente(){
     else if(rr.bottom>vh0-m) window.scrollBy(0,rr.bottom-(vh0-m));
     var n=rec.pasos.length, ult=rec.i===n-1;
     rec.hazlo=!!p.hazlo; rec.sel=p.sel;
-    rec.card.innerHTML='<div class="tour-n">Paso '+(rec.i+1)+' de '+n+(p.hazlo?' · pruébelo usted':'')+'</div><h4>'+esc(p.t)+'</h4><p>'+esc(p.x)+'</p>'+
+    rec.card.innerHTML='<div class="tour-n">Paso '+(rec.i+1)+' de '+n+(p.hazlo?' · puede realizarlo usted':'')+'</div><h4>'+esc(p.t)+'</h4><p>'+esc(p.x)+'</p>'+
       '<div class="tour-bt">'+(rec.i>0?'<button type="button" class="tour-b" data-t="ant">Anterior</button>':'')+
       '<button type="button" class="tour-b prim" data-t="sig">'+(ult?"Terminar":"Siguiente")+'</button>'+
       '<button type="button" class="tour-b suave" data-t="fin">Salir</button></div>';
-    ubicar();
-    setTimeout(function(){ if(rec.ov&&rec.pasos[rec.i]===p) ubicar(); },1000);
+    // el cuadro se muestra recién cuando lo iluminado deja de moverse (cambio de
+    // sección, tipografías que terminan de cargar): antes aparecía abajo y subía
+    rec.ov.classList.add("tour-acomoda");
+    var prev=null,quietos=0,t0=performance.now();
+    (function esperar(){
+      if(!rec.ov||rec.pasos[rec.i]!==p) return;
+      var q=rectDe(p.sel),k=q?[Math.round(q.left),Math.round(q.top),Math.round(q.width),Math.round(q.height)].join():"";
+      quietos=(k&&k===prev)?quietos+1:0; prev=k;
+      ubicar();
+      if(quietos>=3||performance.now()-t0>1500){ rec.ov.classList.remove("tour-acomoda"); return; }
+      requestAnimationFrame(esperar);
+    })();
     if(p.alTocar){
       rec.espera=function(ev){
         var d=document.querySelector(p.sel);
@@ -7755,6 +7767,7 @@ function montarAsistente(){
   function cerrarSinMostrar(){
     limpiarEspera();
     if(rec.ov){ rec.ov.remove(); rec.ov=null; }
+    document.body.classList.remove("en-recorrido");
     document.removeEventListener("keydown",rec.tecla,true); window.removeEventListener("resize",rec.reubicar); window.removeEventListener("scroll",rec.reubicar,true);
     abrir(true);
     var cl=rec.clave;
@@ -7792,7 +7805,7 @@ function montarAsistente(){
     rec.clave=clave; rec.pasos=TOURS[clave].pasos(); rec.i=0;
     var ov=document.createElement("div"); ov.className="tour-ov"; ov.setAttribute("role","dialog"); ov.setAttribute("aria-label",TOURS[clave].n);
     ov.innerHTML='<i class="tour-v"></i><i class="tour-v"></i><i class="tour-v"></i><i class="tour-v"></i><div class="tour-tapa"></div><div class="tour-foco"></div><div class="tour-card" aria-live="polite"></div>';
-    document.body.appendChild(ov); rec.ov=ov; rec.foco=ov.querySelector(".tour-foco"); rec.card=ov.querySelector(".tour-card"); rec.tapa=ov.querySelector(".tour-tapa"); rec.vel=ov.querySelectorAll(".tour-v");
+    document.body.appendChild(ov); document.body.classList.add("en-recorrido"); rec.ov=ov; rec.foco=ov.querySelector(".tour-foco"); rec.card=ov.querySelector(".tour-card"); rec.tapa=ov.querySelector(".tour-tapa"); rec.vel=ov.querySelectorAll(".tour-v");
     ov.addEventListener("click",function(ev){
       var t=ev.target.closest&&ev.target.closest("[data-t]"); if(!t) return;
       var a=t.getAttribute("data-t");
@@ -8910,6 +8923,13 @@ document.addEventListener("click",function(ev){
     estado.rama=b.getAttribute("data-rama")||""; render(); return;
   }
   if(act==="ir-rama"){ estado.rama=b.getAttribute("data-rama")||""; estado.tab="buscar"; render(); window.scrollTo(0,0); return; }
+  if(act==="ir-grupo"){
+    // a la división elegida, debajo de la cabecera fija
+    var gEl=document.getElementById("grupo-"+b.getAttribute("data-g"));
+    if(gEl){ var tope=0,cab=document.querySelector(".top"); if(cab) tope=cab.getBoundingClientRect().height;
+      window.scrollTo({top:Math.max(0,window.scrollY+gEl.getBoundingClientRect().top-tope-16),behavior:"smooth"}); }
+    return;
+  }
 
   if(act==="modo"){ estado.modo=b.getAttribute("data-modo"); render(); return; }
   if(act==="amb"){
@@ -8967,7 +8987,7 @@ document.addEventListener("click",function(ev){
     estado.articuloTema=d.rubrica||"";
     estado.modo="todas"; estado.tab="buscar";
     render(); window.scrollTo(0,0);
-    flash("Toque una fuente abajo: a cada una se le pregunta como ella entiende");
+    flash("Seleccione una fuente: la consulta se adapta a la forma de búsqueda de cada una");
     return;
   }
   if(act==="compartir-fallo"){
