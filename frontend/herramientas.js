@@ -230,12 +230,12 @@
         return doc.save({useObjectStreams:true});
       });
     }).then(function(bytes){
-      var nom=limpiarNombre(F.file.name)+"-foliado.pdf";
+      var nom=limpiarNombre(F.file.name)+"-numerado.pdf";
       HERR.ultimo.foliar={bytes:bytes,nombre:nom};
       descargar(bytes,nom);
       aviso("foliar","Listo: "+n0+" páginas numeradas desde "+(pre+ini)+". Se descargó «"+nom+"».");
     })["catch"](function(e){
-      aviso("foliar","No se pudo foliar: "+(e&&e.message?e.message:"el archivo está dañado o protegido")+".",true);
+      aviso("foliar","No se pudo numerar: "+(e&&e.message?e.message:"el archivo está dañado o protegido")+".",true);
     }).then(function(){ HERR.ocupado=""; redibujar(); });
   }
 
@@ -389,7 +389,7 @@
     var o=HERR.ocupado,dis=!!o,U=HERR.unir,D=HERR.dividir,F=HERR.foliar,C=HERR.comprimir,O=HERR.ocr,h="";
 
     h+='<div class="aviso"><span class="av-tit">Sus archivos no salen de su computadora</span>'+
-       'Unir, dividir, foliar y reducir se hacen dentro de su navegador: los documentos no se envían a ningún servidor. '+
+       'Unir, dividir, numerar y reducir se hacen dentro de su navegador: los documentos no se envían a ningún servidor. '+
        'La única herramienta que usa el servidor de la plataforma es el reconocimiento de texto (OCR), y no guarda el archivo.</div>';
 
     // 1. Unir
@@ -422,7 +422,7 @@
       }).join("")+'</ul><div class="her-acc">'+boton("dividir-zip","Descargar todas (.zip)",true)+'</div>':''));
 
     // 3. Foliar
-    h+=tarjeta(3,"Numerador de fojas","Agrega un número correlativo en cada página (Fs. 1, Fs. 2…) para presentar la prueba documental foliada.",
+    h+=tarjeta(3,"Numerador de fojas","Agrega un número correlativo en cada página (Fs. 1, Fs. 2…) para presentar la prueba documental numerada.",
       zona("her-fol-in",F.file?'<b>'+esc(F.file.name)+'</b> · '+F.paginas+' páginas (cambiar)':"<b>Elegir un PDF</b>",false,".pdf,application/pdf")+
       (F.file?'<div class="her-opc her-opc--fila">'+
         '<label class="campo her-campo"><span>Texto antes del número</span><input type="text" id="her-fol-pre" value="'+esc(F.pre==null?"Fs. ":F.pre)+'" maxlength="12" autocomplete="off"></label>'+
@@ -433,7 +433,7 @@
             return '<option value="'+p[0]+'"'+((F.pos||"abajo-derecha")===p[0]?' selected':'')+'>'+p[1]+'</option>'; }).join("")+'</select></label>'+
         '<label class="her-radio"><input type="checkbox" id="her-fol-total"'+(F.total?' checked':'')+'> Agregar «de N» (Fs. 3 de 40)</label>'+
       '</div>':'')+
-      '<div class="her-acc">'+boton("foliar-go","Foliar y descargar",false,null,dis||!F.file)+
+      '<div class="her-acc">'+boton("foliar-go","Numerar y descargar",false,null,dis||!F.file)+
         (HERR.ultimo.foliar?boton("foliar-otra","Volver a descargar",true,null,dis):"")+'</div>'+msg("foliar"));
 
     // 4. Reducir
