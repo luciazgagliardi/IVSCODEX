@@ -5017,7 +5017,7 @@ function citaSinNombre(q){
    ponen junto a la cita («"Fiorentino" (Fallos: 306:1892)»). */
 var TABLA_CITAS=null;
 function resolverCita(cita){
-  var tabla=TABLA_CITAS?Promise.resolve(TABLA_CITAS):fetch("./datos/fallos-citas.json?v=20261024").then(function(r){ return r.ok?r.json():{}; })["catch"](function(){ return {}; }).then(function(t){ TABLA_CITAS=t; return t; });
+  var tabla=TABLA_CITAS?Promise.resolve(TABLA_CITAS):fetch("./datos/fallos-citas.json?v=20261024b").then(function(r){ return r.ok?r.json():{}; })["catch"](function(){ return {}; }).then(function(t){ TABLA_CITAS=t; return t; });
   return tabla.then(function(t){
     if(t[cita]) return {nombre:t[cita][0],veces:t[cita][1],fuente:"tabla"};
     var nombres=[];

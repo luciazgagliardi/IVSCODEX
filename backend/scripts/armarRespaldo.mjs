@@ -77,13 +77,14 @@ async function cargarRespaldo(slug) {
     return new Map((d.registros || []).map((r) => [r.id, r]));
   } catch { return new Map(); }
 }
+const CONTEOS = await leerJson(path.join(SALIDA, 'conteos.json'), {});
 async function guardarRespaldo(slug, mapa) {
   const cuerpo = JSON.stringify({ fuente: slug, generado: new Date().toISOString().slice(0, 10), registros: [...mapa.values()] });
   await fs.writeFile(path.join(SALIDA, `${slug}.json.gz`), zlib.gzipSync(cuerpo, { level: 9 }));
-  // cuántos hay de cada base, para /estado sin abrir el respaldo
-  const archivo = path.join(SALIDA, 'conteos.json'), conteos = await leerJson(archivo, {});
-  conteos[slug] = mapa.size;
-  await fs.writeFile(archivo, JSON.stringify(conteos));
+  // cuántos hay de cada base, para /estado sin abrir el respaldo. Las bases corren
+  // en paralelo: un solo objeto en memoria, así ninguna pisa el conteo de otra
+  CONTEOS[slug] = mapa.size;
+  await fs.writeFile(path.join(SALIDA, 'conteos.json'), JSON.stringify(CONTEOS));
 }
 
 async function armarBase(slug, paginas, voces, progreso) {
