@@ -4598,23 +4598,9 @@ function tiraEquivalentes(){
 }
 
 /* Otras formas de escribir lo que se buscó, cuando no tiene anillo en el
-   tesauro. Se arman con reglas del idioma (singular/plural) y con las voces
-   del propio catálogo que comparten raíz con alguna palabra: no hay asistente
-   ni consulta al servidor, así que anda igual sin conexión. */
-function _otroNumero(w){
-  if(w.length<4) return "";
-  if(/ciones$/.test(w)) return w.slice(0,-5)+"ción";
-  if(/siones$/.test(w)) return w.slice(0,-5)+"sión";
-  if(/ión$/.test(w)) return w.slice(0,-3)+"iones";
-  if(/ón$/.test(w)) return w.slice(0,-2)+"ones";
-  if(/ces$/.test(w)) return w.slice(0,-3)+"z";
-  if(/z$/.test(w)) return w.slice(0,-1)+"ces";
-  if(/[aeiouáéíóú]s$/.test(w)) return w.slice(0,-1);
-  if(/[aeiouáéíóú]$/.test(w)) return w+"s";
-  if(/es$/.test(w)&&w.length>5) return w.slice(0,-2);
-  if(/s$/.test(w)) return "";
-  return w+"es";
-}
+   tesauro. Salen de las voces del propio catálogo que comparten raíz con
+   alguna palabra: no hay asistente ni consulta al servidor, así que anda
+   igual sin conexión. */
 function variantesDe(q){
   var palabrasQ=q.split(/\s+/).filter(Boolean);
   if(!palabrasQ.length||palabrasQ.length>6) return [];
@@ -4625,17 +4611,7 @@ function variantesDe(q){
     if(!k||visto[k]) return;
     visto[k]=1; salida.push(t);
   }
-  // 1) todo el texto en el otro número, y cada palabra por separado
-  var todo=palabrasQ.map(function(w){ return _VACIAS[sinTildes(w)]?w:(_otroNumero(w)||w); });
-  poner(todo.join(" "));
-  if(palabrasQ.length>1){
-    palabrasQ.forEach(function(w,i){
-      if(_VACIAS[sinTildes(w)]) return;
-      var o=_otroNumero(w); if(!o) return;
-      var c=palabrasQ.slice(); c[i]=o; poner(c.join(" "));
-    });
-  }
-  // 2) voces del catálogo que comparten raíz con alguna palabra del texto
+  // Voces del catálogo que comparten raíz con alguna palabra del texto
   var raices=_palabrasUtiles(q).filter(function(w){ return w.length>=5; }).map(_raiz);
   if(raices.length){
     RAMAS.forEach(function(r){
@@ -4656,7 +4632,7 @@ function tiraVariantes(){
   var multi=palabras(q).length>1&&estado.modo!=="alguna";
   if(!vs.length&&!multi) return "";
   return '<div class="sugeridas"><p class="sug-nota"><b>Otras formas de escribirlo.</b> «'+esc(comoTitulo(q))+'» no figura en el tesauro; '+
-    'los tribunales varían el número y la redacción, y cada forma recupera fallos distintos.</p><div class="chips">'+
+    'los tribunales varían la redacción, y cada forma recupera fallos distintos.</p><div class="chips">'+
     vs.map(function(t){ return '<button class="chip voz-sug" data-act="usar-variante" data-voz="'+esc(t)+'">'+esc(comoTitulo(t))+'</button>'; }).join("")+
     (multi?'<button class="chip voz-sug" data-act="usar-variante" data-voz="'+esc(q)+'" data-modo="alguna">Con cualquiera de las palabras</button>':'')+
     '</div></div>';
