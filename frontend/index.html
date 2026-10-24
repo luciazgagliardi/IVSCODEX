@@ -249,6 +249,13 @@ strong,b{font-weight:500}
 .rz-t{display:flex;align-items:baseline;gap:9px;font-size:15px;font-weight:500;line-height:1.35}
 .rz-t .rf-punto{width:7px;height:7px;border-radius:50%;flex:none;background:var(--punto,var(--humo));transform:translateY(-1px)}
 .rz-m{margin:2px 0 0 16px;font-size:12px;color:var(--mute-2)}
+.rz-coincide{color:var(--gold);font-weight:600}
+.rz--nombre .rz-t mark{background:transparent;color:var(--gold);font-weight:600}
+.nombre-av{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:0 0 14px;padding:12px 14px;border:1px solid var(--gold-55);border-radius:14px;background:rgba(217,163,27,.05)}
+.nombre-av-r{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.nombre-av-t{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.nombre-av-n{flex-basis:100%;font-size:12.5px;color:var(--mute-2)}
+.nombre-av .mini{margin-left:auto}
 .rz-m b{font:500 11.5px/1 var(--caps);letter-spacing:.12em;color:var(--mute)}
 .rz p{margin:5px 0 0 16px;font-size:13.5px;line-height:1.5;color:var(--mute);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .rz-abierta{padding:6px 0 14px;border-bottom:1px solid var(--line-2)}
@@ -1458,6 +1465,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 <script src="./analisis-fallo.js?v=20261024"></script>
 <script src="./calculos.js?v=20261024"></script>
+<script src="./nombre-fallo.js?v=20261024"></script>
 <script>
 "use strict";
 (function(){
@@ -4879,10 +4887,13 @@ function filaIndice(f,r,k){
   if(abierta) return '<div class="rz-abierta f-'+f.slug+'">'+fichaIndice(f,r)+
     '<button type="button" class="mini" data-act="abrir-fila" data-k="'+esc(k)+'">Cerrar</button></div>';
   var pas=pasajeDe(f,r), meta=[r.tribunal,r.fecha].filter(Boolean).map(esc).join(" · ");
-  return '<article class="rz f-'+f.slug+'" data-act="abrir-fila" data-k="'+esc(k)+'" tabindex="0">'+
-    '<div class="rz-t"><span class="rf-punto"></span><span>'+esc(r.caratula||r.expediente||"(sin carátula)")+'</span></div>'+
-    '<div class="rz-m"><b>'+esc(f.cod)+'</b>'+(meta?' · '+meta:'')+'</div>'+
-    (pas?'<p>'+resaltarSimple(pas,estado.q)+'</p>':'')+'</article>';
+  var nom=r.coincideNombre?nombreBuscado(estado.q):null,qn=nom?nom.palabras.join(" "):estado.q;
+  var titulo=nom?resaltarSimple(r.caratula||r.expediente||"(sin carátula)",qn):esc(r.caratula||r.expediente||"(sin carátula)");
+  return '<article class="rz f-'+f.slug+(nom?' rz--nombre':'')+'" data-act="abrir-fila" data-k="'+esc(k)+'" tabindex="0">'+
+    '<div class="rz-t"><span class="rf-punto"></span><span>'+titulo+'</span></div>'+
+    '<div class="rz-m"><b>'+esc(f.cod)+'</b>'+(meta?' · '+meta:'')+(nom?' · <span class="rz-coincide">coincide con el nombre buscado</span>':'')+
+      (r.otrasFichas&&r.otrasFichas.length?' · <span class="rz-otras">'+(r.otrasFichas.length+1)+' fichas del mismo fallo</span>':'')+'</div>'+
+    (pas?'<p>'+resaltarSimple(pas,nom?qn+" "+estado.q:estado.q)+'</p>':(nom?'<p>Carátula: '+resaltarSimple(r.caratula||"",qn)+'</p>':''))+'</article>';
 }
 function listaTodas(vis){
   var grupos=vis.map(function(f){ return resultadosDe(f).map(function(r,i){ return {f:f,r:r,k:f.slug+":"+i,i:i}; }); });
@@ -4894,6 +4905,8 @@ function listaTodas(vis){
     grupos.forEach(function(g){ g.forEach(function(x){ a.push(x); }); });
     if(estado.orden==="fecha") a.sort(function(x,y){ return fechaNum(y.r)-fechaNum(x.r); });
   }
+  // por nombre: lo que coincide con la carátula buscada va primero, de cualquier base
+  if(nombreBuscado(estado.q)) a.sort(function(x,y){ return (y.r.parecido||0)-(x.r.parecido||0); });
   return a;
 }
 function estadoLista(vis){
@@ -4913,7 +4926,7 @@ function bloqueResultados(vis){
     return '<div class="rz-cab"><button class="mini" data-act="ver-base" data-fuente="">← Todas las bases</button><span class="rz-ord">'+e.t+'</span></div>'+panelIndice(base);
   }
   var lista=listaTodas(vis), buscadas=vis.filter(function(f){ return (estado.indices[f.slug]||{}).busco; }).length;
-  var h=estadoLista(vis);
+  var h=avisoNombre()+estadoLista(vis);
   if(!lista.length){
     return h+(buscadas?'<div class="vacio">Sin resultados en las bases que respondieron. Pruebe con menos palabras, o cambie «Cómo combinar».</div>'
       :'<div class="vacio">Escriba su consulta y seleccione <b>Buscar</b>: la consulta se envía en simultáneo a las bases seleccionadas y los resultados se muestran en esta sección.</div>');
@@ -4971,6 +4984,27 @@ function vistaBuscar(){
    misma búsqueda en vivo de cada base (cada una con su propio pedido, así
    que no se pisan) y lleva la vista a los resultados. Sin servidor, cae a
    la búsqueda con Google sobre los sitios oficiales. */
+/* ¿La consulta es el nombre de un fallo? (ver nombre-fallo.js). Un tema
+   conocido del tesauro o de las ramas no lo es: «CSJN 2020 daño moral» se
+   busca como tema. «Buscarlo como tema» lo fuerza para esa consulta. */
+function esTemaConocido(t){
+  var p=sinTildes(t).replace(/\s+/g," ").trim();
+  if(!p) return false;
+  if(anilloDe(p)) return true;
+  return RAMAS.some(function(r){ return r.v.some(function(v){ var x=sinTildes(v); return x===p||(x.length>5&&p.indexOf(x)>=0); }); });
+}
+function nombreBuscado(q){
+  q=String(q||"").trim();
+  if(!q||estado.articulo||estado.comoTema===q||typeof IVSNombre==="undefined") return null;
+  return IVSNombre.interpretar(q,{esTema:esTemaConocido});
+}
+function avisoNombre(){
+  var n=nombreBuscado(estado.q); if(!n) return "";
+  var que=["«"+n.texto+"»",n.nombreTribunal,n.fecha||n.anio,n.fallos?"Fallos "+n.fallos:null].filter(Boolean);
+  return '<div class="nombre-av"><span class="nombre-av-r">Fallo por su nombre</span><span class="nombre-av-t">'+esc(que.join(" · "))+'</span>'+
+    '<span class="nombre-av-n">Se busca por la carátula'+(n.bases?' en la base de '+esc(n.nombreTribunal):' en todas las bases')+' y se ordena por parecido con el nombre'+(n.anio?' y el año':'')+'.</span>'+
+    '<button type="button" class="mini" data-act="buscar-como-tema">Buscarlo como tema</button></div>';
+}
 function buscarEnTodas(){
   if(!String(estado.q||"").trim()){
     flash("Escriba primero qué quiere averiguar");
@@ -4984,7 +5018,17 @@ function buscarEnTodas(){
     return;
   }
   estado.limFilas=40;
-  basesVisibles().forEach(function(f){ buscarEnFuente(f.slug); });
+  // El nombre de un fallo («CSJN 1984 Fiorentino s/ tenencia…») se busca por su
+  // carátula y, si nombra al tribunal, sólo en la base de ese tribunal
+  var bases=basesVisibles(),nom=nombreBuscado(estado.q);
+  if(nom&&nom.bases){
+    var solo=bases.filter(function(f){ return nom.bases.indexOf(f.slug)>=0; });
+    if(solo.length){
+      bases.forEach(function(f){ if(solo.indexOf(f)<0){ var im=estado.indices[f.slug]; im.busco=false; im.cargando=false; im.resultados=[]; im.total=0; im.error=null; im.pedido=(im.pedido||0)+1; } });
+      bases=solo;
+    }
+  }
+  bases.forEach(function(f){ buscarEnFuente(f.slug); });
   setTimeout(function(){
     var c=document.getElementById("bz");
     if(c&&c.scrollIntoView) c.scrollIntoView({behavior:"smooth",block:"start"});
@@ -5378,6 +5422,8 @@ var SAIJ_TIPOS={
    sus SUMARIOS, que son federales y llevan número con "A"; las fichas de fallos
    no tienen texto y el filtro por modo las descartaba todas. */
 var SAIJ_FACETA_CSJN="Total|Tipo de Documento/Jurisprudencia/Sumario|Jurisdicción/Federal";
+// las fichas de los fallos de la Corte (con la carátula entera): para buscar un fallo por su nombre
+var SAIJ_FACETA_CSJN_FALLOS="Total|Tipo de Documento/Jurisprudencia/Fallo|Tribunal/CORTE SUPREMA DE JUSTICIA DE LA NACION";
 
 function saijPlegar(s){
   try{ return String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase(); }
@@ -5519,7 +5565,8 @@ function buscarSaijNavegador(cuerpo,slug){
     });
   }
 
-  var faceta=slug==="csjn"?SAIJ_FACETA_CSJN:(SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios);
+  var fichasCsjn=slug==="csjn"&&cuerpo.tribunal==="fallos";
+  var faceta=fichasCsjn?SAIJ_FACETA_CSJN_FALLOS:slug==="csjn"?SAIJ_FACETA_CSJN:(SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios);
   if(slug==="saij"&&PROVINCIAS_SAIJ.indexOf(cuerpo.provincia)!==-1&&cuerpo.tribunal!=="doctrina"&&cuerpo.tribunal!=="dictamenes")
     faceta+="|Jurisdicción/Local/"+cuerpo.provincia;
   var porPagina=20, porPedido=100;
@@ -5557,7 +5604,7 @@ function buscarSaijNavegador(cuerpo,slug){
         for(var k=0;k<crudos.length;k++){
           var reg=saijARegistro(crudos[k]);
           if(!reg) continue;
-          if(slug==="csjn"&&!/^A\d/i.test(reg.numero||"")) continue; // sumario federal que no es de la Corte
+          if(slug==="csjn"&&!fichasCsjn&&!/^A\d/i.test(reg.numero||"")) continue; // sumario federal que no es de la Corte
           filaDe.push(cursor+k);
           revisados.push(reg);
         }
@@ -5783,7 +5830,13 @@ function buscarEnFuente(slug,pagina){
   if(slug==="saij"&&imBusco.provincia) cuerpo.provincia=imBusco.provincia;
   // Las formas equivalentes del término (tesauro): el servidor las busca también
   // y suma, en la primera página, lo que encuentre con cada una.
-  if(estado.conEquivalentes&&!estado.articulo){
+  var nom=nombreBuscado(qi);
+  if(nom){
+    // a la base se le piden las partes; el tribunal y el año sirven para ordenar
+    cuerpo.q=nom.consulta; cuerpo.modo="todas";
+    // en SAIJ, las fichas de los fallos: son las que traen la carátula completa
+    if(slug==="csjn"||slug==="saij") cuerpo.tribunal="fallos";
+  }else if(estado.conEquivalentes&&!estado.articulo){
     var eqs=equivalentesDe(qi);
     if(eqs.length) cuerpo.variantes=eqs;
   }
@@ -5800,6 +5853,10 @@ function buscarEnFuente(slug,pagina){
       // contestó con su respaldo), la consulta en vivo se hace desde el navegador;
       // el respaldo queda sólo si eso también falla.
       if((slug==="saij"||slug==="csjn")&&(!d||!d.ok||d.desdeIndiceLocal)) return saijEnVivo(cuerpo,slug,d);
+      return d;
+    }).then(function(d){
+      // por nombre: primero lo que más se parece a la carátula buscada, sin fichas repetidas
+      if(nom&&d&&d.ok&&d.resultados) d.resultados=IVSNombre.ordenar(d.resultados,nom);
       return d;
     });
   // Sin esto, un pedido que se corta a mitad de camino —típico en el celular:
@@ -9299,6 +9356,7 @@ document.addEventListener("click",function(ev){
   }
   if(act==="tog-perfil"){ estado.perfilMenu=!estado.perfilMenu; pintarNav(); return; }
   if(act==="buscar-todas"){ estado.drawer=false; buscarEnTodas(); return; }
+  if(act==="buscar-como-tema"){ estado.comoTema=String(estado.q||"").trim(); buscarEnTodas(); return; }
   if(act==="mas-filas"){ estado.limFilas=(estado.limFilas||40)+40; render(); return; }
   if(act==="tog-drawer"){ estado.drawer=!estado.drawer; render(); return; }
   if(act==="ver-base"){ estado.verBase=b.getAttribute("data-fuente")||""; render(); return; }
