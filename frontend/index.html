@@ -270,30 +270,30 @@ strong,b{font-weight:500}
 .rz-mas{padding:18px 0 6px;text-align:center}
 .rz-mas-n{color:var(--mute-2);margin-left:4px}
 @media (max-width:760px){
-  body{padding-bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+  body{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
   /* arriba: sólo el nombre y «Cómo usar» */
   .nav-wrap{padding:12px var(--pad);gap:10px}
-  .marca-sello{width:28px;height:28px}
-  .marca2{font-size:15px}
+  .marca-app .marca-sello{width:28px;height:28px}
+  .marca-app .marca2{font-size:15px}
   .nav-fin{margin-left:auto}
   #abrir-menu,#mi-perfil{display:none}
   #como-usar{display:inline-flex;padding:8px 16px 7px;font-size:13px}
   .perfil-wrap .perfil-menu{display:none}
   /* barra de abajo */
-  .botnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:55;
-    padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));background:rgba(16,14,11,.94);
-    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
-  .bn{appearance:none;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 2px 5px;
-    color:var(--mute-2);font:400 11px/1.1 var(--sans);cursor:pointer;border-radius:14px;-webkit-tap-highlight-color:transparent}
+  .botnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;
+    padding:7px 8px;border-radius:999px;background:var(--bg);border:1px solid var(--gold);
+    box-shadow:0 10px 28px rgba(0,0,0,.55)}
+  .bn{appearance:none;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 2px 6px;
+    color:var(--mute-2);font:400 11px/1.1 var(--sans);cursor:pointer;border-radius:999px;-webkit-tap-highlight-color:transparent}
   .bn svg{width:23px;height:23px}
   .bn[aria-current="page"],.bn.on{color:var(--gold)}
-  .bn:active{background:rgba(241,238,230,.06)}
+  .bn:active{color:var(--gold)}
   .menu__grid{padding-bottom:110px;row-gap:22px}
   .menu__item b{font-size:20px}
   .menu__item span{font-size:13px}
   .menu__grupo h2{margin-bottom:6px}
   /* hoja del perfil */
-  .perfil-hoja.perfil-menu{display:block;position:fixed;left:10px;right:10px;bottom:calc(78px + env(safe-area-inset-bottom,0px));top:auto;width:auto;max-height:68vh;overflow:auto;z-index:70}
+  .perfil-hoja.perfil-menu{display:block;position:fixed;left:10px;right:10px;bottom:calc(92px + env(safe-area-inset-bottom,0px));top:auto;width:auto;max-height:68vh;overflow:auto;z-index:70}
   .perfil-hoja[hidden]{display:none}
   .pm-it{padding:13px 14px;font-size:15px}
   /* cabecera de la sección, más corta */
@@ -880,7 +880,7 @@ body.en-recorrido .cab>*{animation:none}
 @media (max-width:760px){
   /* Lexia vive en el buscador: sin botón flotante que tape la barra */
   .asist__fab{display:none!important}
-  .lx-chip{display:inline-flex;flex:none;align-items:center;gap:6px;margin-right:4px;padding:7px 11px 6px;border:0;border-radius:999px;background:rgba(217,163,27,.14);color:var(--gold);font:500 12.5px/1 var(--sans)}
+  .lx-chip{display:inline-flex;flex:none;align-items:center;gap:6px;margin-right:8px;padding:7px 11px 6px;border:0;border-radius:999px;background:rgba(217,163,27,.14);color:var(--gold);font:500 12.5px/1 var(--sans)}
   .lx-chip i{width:6px;height:6px;border-radius:50%;background:var(--gold)}
   .bq-barra .cq{display:flex;align-items:center;min-width:0;max-width:100%;box-sizing:border-box}
   .bq-barra{min-width:0}
@@ -1393,7 +1393,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   <div class="nav-wrap">
     <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><img class="marca-sello" src="./favicon.png?v=16" alt="" width="36" height="36"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
-    <div class="nav-fin"><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><span class="perfil-wrap"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-act="tog-perfil" aria-haspopup="menu" aria-expanded="false">Mi perfil <span class="fl" aria-hidden="true">▾</span></button><div class="perfil-menu" id="perfil-menu" role="menu" hidden></div></span><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
+    <div class="nav-fin"><button type="button" class="lx-chip" data-act="abrir-lexia" aria-label="Preguntarle a Lexia"><i></i>Lexia</button><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><span class="perfil-wrap"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-act="tog-perfil" aria-haspopup="menu" aria-expanded="false">Mi perfil <span class="fl" aria-hidden="true">▾</span></button><div class="perfil-menu" id="perfil-menu" role="menu" hidden></div></span><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
 </header>
 
@@ -4794,7 +4794,7 @@ function vistaBuscar(){
   var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?(im.total||(im.resultados||[]).length):0); },0);
   var resp=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; }).length;
   return '<div class="bq" id="panel-buscar-form">'+
-      '<div class="bq-barra"><label class="cq"><button type="button" class="lx-chip" data-act="abrir-lexia" aria-label="Preguntarle a Lexia"><i></i>Lexia</button><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
+      '<div class="bq-barra"><label class="cq"><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
         '<button class="btn" data-act="buscar-todas">Buscar</button></label>'+
         '<button class="chip" data-act="tog-drawer" aria-pressed="'+(estado.drawer?"true":"false")+'">Filtros'+(ac.length?' <span class="fsb-n">'+ac.length+'</span>':'')+''+' '+(estado.drawer?"▴":"▾")+'</button></div>'+
       (tieneSug?'<div class="bq-sug bq-sug--abajo">'+sug+sugs+'</div>':'')+
@@ -7733,7 +7733,8 @@ function montarAsistente(){
       '<button type="button" class="tour-b suave" data-t="fin">Salir</button></div>';
     // el cuadro se muestra recién cuando lo iluminado deja de moverse (cambio de
     // sección, tipografías que terminan de cargar): antes aparecía abajo y subía
-    rec.ov.classList.add("tour-acomoda");
+    if(!rec.vistoUno) rec.ov.classList.add("tour-acomoda"); /* sólo el primer paso aparece quieto; los demás se deslizan de uno a otro */
+    rec.vistoUno=true;
     var prev=null,quietos=0,t0=performance.now();
     (function esperar(){
       if(!rec.ov||rec.pasos[rec.i]!==p) return;
@@ -7764,8 +7765,9 @@ function montarAsistente(){
   }
   function ubicar(){
     var r=rec.sel&&rectDe(rec.sel); if(!r||!rec.ov) return;
-    var pad=8, vw=innerWidth, vh=innerHeight;
-    var fL=r.left-pad, fT=r.top-pad, fR=r.right+pad, fB=r.bottom+pad;
+    var pad=8, m=4, vw=document.documentElement.clientWidth||innerWidth, vh=innerHeight;
+    /* el borde dorado se mantiene dentro de la pantalla: si lo iluminado llega al borde, el cuadro no se corta */
+    var fL=Math.max(m,r.left-pad), fT=Math.max(m,r.top-pad), fR=Math.min(vw-m,r.right+pad), fB=Math.min(vh-m,r.bottom+pad);
     var L=Math.max(0,fL), T=Math.max(0,fT), R=Math.min(vw,fR), B=Math.min(vh,fB);
     var f=rec.foco.style; f.left=fL+"px"; f.top=fT+"px"; f.width=(fR-fL)+"px"; f.height=(fB-fT)+"px";
     var v=rec.vel; // cuatro paneles alrededor del hueco: tapan y bloquean todo lo demás
@@ -7783,6 +7785,7 @@ function montarAsistente(){
   }
   function iniciarRecorrido(clave){
     if(rec.ov) return;
+    rec.vistoUno=false;
     clave=(typeof clave==="string"&&TOURS[clave])?clave:"completo";
     if(TOURS[clave].requiere&&!TOURS[clave].requiere()){
       abrir(true);
