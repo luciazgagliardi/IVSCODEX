@@ -110,13 +110,41 @@ var IVSNombre=(function(){
   }
   function nombresJuntoACita(texto,cita){
     var t=String(texto||"").replace(/\s+/g," "),pc=cita.split(":"),out=[];
-    var reC=new RegExp("Fallos\\s*:?\\s*(?:T\\.?\\s*)?"+pc[0]+"\\s*:\\s*"+pc[1]+"(?!\\d)","g"),m;
+    // la cita, con «Fallos», «CSJN» o sola dentro de un paréntesis de citas
+    var reC=new RegExp("(?:(?:Fallos|CSJN|C\\.\\s?S\\.\\s?J\\.\\s?N\\.?)\\s*,?\\s*:?\\s*(?:T\\.?\\s*)?)?(?<!\\d)(?<!\\d:)(?<!\\d: )"+pc[0]+"\\s*:\\s*"+pc[1]+"(?!\\d)","g"),m;
+    var CITA_G=/(?<!\d)(?<!\d:)(?<!\d: )\d{1,3}\s*:\s*\d{1,5}(?!\d)/g;
     while((m=reC.exec(t))){
-      var antes=t.slice(Math.max(0,m.index-160),m.index).replace(/[\s,(;:\-–—]+$/,"").replace(/\b(?:CSJN|C\.S\.J\.N\.?|Corte Suprema(?: de Justicia de la Naci[oó]n)?)\s*,?\s*$/i,"").replace(/[\s,(;:]+$/,"");
-      var q=/[«"“]([^«»"“”]{2,140})[»"”]\s*$/.exec(antes),n=null;
-      if(q) n=corto(q[1]);
-      // sin comillas: el nombre propio pegado a la cita («en Bazterrica (Fallos…»)
-      if(!n){ var u=/(?:^|\s)(?:en|in re|causa|caso|precedente|autos)\s+([A-ZÁÉÍÓÚÑ][\wáéíóúñü'.-]+(?:\s+(?:de\s+|del\s+)?[A-ZÁÉÍÓÚÑ][\wáéíóúñü'.-]+){0,2})\s*$/.exec(antes); if(u) n=corto(u[1]); }
+      var conPrefijo=/^(?:Fallos|CSJN|C\.)/.test(m[0]),n=null;
+      // el paréntesis que la contiene: «(Fallos: 46:36; 303:1938; 306:1752 y 308:733)»
+      var ab=t.lastIndexOf("(",m.index),ce=t.lastIndexOf(")",m.index);
+      var enPar=ab>=0&&ab>ce&&m.index-ab<220;
+      if(enPar){
+        var grupo=t.slice(ab+1,m.index+m[0].length+200),fin=grupo.indexOf(")");
+        if(fin>=0) grupo=grupo.slice(0,fin);
+        if(!conPrefijo&&!/Fallos|CSJN|C\.\s?S\.\s?J\.\s?N/.test(grupo)) continue;
+        var citas=(grupo.match(CITA_G)||[]).map(function(x){ return x.replace(/\s+/g,""); }),k=citas.indexOf(pc[0]+":"+pc[1]);
+        // los nombres que van antes del paréntesis, en orden: «"Montenegro", "Fiorentino" y "Rayford"»
+        // entre el nombre y el paréntesis puede ir la fecha: «"Nieto…" del 8.08.2006 (Fallos: 329:3054)»
+        var antes=t.slice(Math.max(0,ab-400),ab).replace(/\s+$/,"").replace(/,?\s*(?:(?:sentencia|fallo|resuelto|resuelta)\s+)?(?:del|de fecha|el)\s+\d{1,2}(?:[\/.\-]\d{1,2}[\/.\-]\d{2,4}|\s+de\s+[a-záéíóú]+\s+de\s+\d{4})\s*,?$/i,"");
+        var lista=/((?:[«"“][^«»"“”]{2,140}[»"”]\s*(?:,|;|\by\b|\be\b)?\s*)+)$/.exec(antes),nombres=[];
+        if(lista){ var rq=/[«"“]([^«»"“”]{2,140})[»"”]/g,q; while((q=rq.exec(lista[1]))) nombres.push(q[1]); }
+        // menos nombres en la lista que citas: los anteriores de la misma frase completan la serie
+        // («"Charles Hnos." y se consolida en "Montenegro", "Fiorentino" y "Rayford" (Fallos: 46:36; 303:1938; 306:1752 y 308:733)»)
+        if(nombres.length&&nombres.length<citas.length&&nombres.length*2>=citas.length){
+          var todos=[],rq2=/[«"“]([^«»"“”]{2,140})[»"”]/g,q2; while((q2=rq2.exec(antes))) todos.push(q2[1]);
+          if(todos.length>=citas.length) nombres=todos.slice(-citas.length);
+        }
+        if(nombres.length&&citas.length===nombres.length&&k>=0) n=corto(nombres[k]);
+        // un solo nombre: es el de la primera cita del paréntesis (las demás suelen ser otros fallos o la misma causa en otro tomo)
+        else if(nombres.length&&(citas.length===1||(k===0&&nombres.length===1))) n=corto(nombres[nombres.length-1]);
+        else if(!nombres.length&&citas.length===1){ var u=/(?:^|\s)(?:en|in re|causa|caso|precedente|autos)\s+([A-ZÁÉÍÓÚÑ][\wáéíóúñü'.-]+(?:\s+(?:de\s+|del\s+)?[A-ZÁÉÍÓÚÑ][\wáéíóúñü'.-]+){0,2})$/.exec(antes); if(u) n=corto(u[1]); }
+      }else if(conPrefijo){
+        // sin paréntesis: «Ver CSJN, "Halabi, Ernesto c/ P.E.N. s/ amparo", Fallos: 332:111»
+        var antes2=t.slice(Math.max(0,m.index-160),m.index).replace(/[\s,(;:\-–—]+$/,"").replace(/\b(?:CSJN|C\.S\.J\.N\.?|Corte Suprema(?: de Justicia de la Naci[oó]n)?)\s*,?\s*$/i,"").replace(/[\s,(;:]+$/,"");
+        var qq=/[«"“]([^«»"“”]{2,140})[»"”]\s*$/.exec(antes2);
+        if(qq) n=corto(qq[1]);
+        if(!n){ var u2=/(?:^|\s)(?:en|in re|causa|caso|precedente|autos)\s+([A-ZÁÉÍÓÚÑ][\wáéíóúñü'.-]+(?:\s+(?:de\s+|del\s+)?[A-ZÁÉÍÓÚÑ][\wáéíóúñü'.-]+){0,2})$/.exec(antes2); if(u2) n=corto(u2[1]); }
+      }
       if(n) out.push(n);
     }
     return out;

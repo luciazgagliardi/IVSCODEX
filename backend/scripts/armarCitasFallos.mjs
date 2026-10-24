@@ -31,7 +31,8 @@ const { IVSNombre } = require(path.join(RAIZ, '..', 'frontend', 'nombre-fallo.js
 const SALIDA = path.join(RAIZ, '..', 'frontend', 'datos', 'fallos-citas.json');
 const CACHE_SAIJ = path.join(RAIZ, 'respaldo', 'citas-saij.json');
 const leerJson = async (f, def) => { try { return JSON.parse(await fs.readFile(f, 'utf8')); } catch { return def; } };
-const reCitaG = /Fallos\s*:?\s*(?:T\.?\s*)?(\d{1,3})\s*:\s*(\d{1,5})(?!\d)/g;
+// cada «tomo:página» del texto; nombresJuntoACita decide si es una cita de Fallos y de quién
+const reCitaG = /(?<!\d)(?<!\d:)(?<!\d: )(\d{1,3})\s*:\s*(\d{1,5})(?!\d)/g;
 function paresDe(t) {
   const out = [], vistas = new Set();
   let m;
@@ -67,7 +68,7 @@ if (process.env.SAIJ) {
         for (const x of sr.documentResultList || []) {
           let doc; try { doc = JSON.parse(x.documentAbstract).document; } catch { continue; }
           const id = doc?.metadata?.uuid, t = String(doc?.content?.texto || '').replace(/\[\[[^\]]*\]\]/g, ' ');
-          if (!id || cacheSaij.docs[id] || !/Fallos/.test(t)) continue;
+          if (!id || cacheSaij.docs[id] || !/Fallos|CSJN/.test(t)) continue;
           const pares = paresDe(t);
           if (pares.length) { cacheSaij.docs[id] = pares; nuevos++; }
         }
@@ -95,7 +96,7 @@ for (const dir of [path.join(RAIZ, 'respaldo'), path.join(RAIZ, 'indice')]) {
 }
 const porCita = {};
 for (const t of textos) {
-  if (!/Fallos/.test(t)) continue;
+  if (!/Fallos|CSJN/.test(t)) continue;
   for (const [cita, n] of paresDe(t)) (porCita[cita] = porCita[cita] || []).push(n);
 }
 for (const pares of Object.values(cacheSaij.docs)) for (const [cita, n] of pares) (porCita[cita] = porCita[cita] || []).push(n);
