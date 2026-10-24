@@ -79,9 +79,9 @@ test('ordena por parecido con la carátula, el año y el lugar de la parte', () 
 });
 
 test('sólo la cita de Fallos: se averigua el nombre en las citas de otros fallos', () => {
-  const n = leer('Fallos 306:1892');
+  const n = leer('Fallos 306:1752');
   assert.equal(n.soloCita, true);
-  assert.equal(n.fallos, '306:1892');
+  assert.equal(n.fallos, '306:1752');
   assert.equal(n.anio, 1984, 'el año del tomo');
   assert.equal(leer('Fallos: 332:111').anio, 2009);
   const t = 'La sentencia dictada por la Corte en el precedente "Halabi" (Fallos: 332:111) no ha… ' +
@@ -90,6 +90,14 @@ test('sólo la cita de Fallos: se averigua el nombre en las citas de otros fallo
   assert.deepEqual(IVSNombre.nombresJuntoACita(t, '332:111'), ['Halabi', 'Halabi', 'Halabi']);
   assert.deepEqual(IVSNombre.nombresJuntoACita(t, '308:1392'), ['Bazterrica']);
   assert.deepEqual(IVSNombre.nombresJuntoACita(t, '313:1333'), ['Montalvo']);
+  // las formas reales de los sumarios de SAIJ que citan a Fiorentino (Fallos 306:1752)
+  assert.deepEqual(IVSNombre.nombresJuntoACita('Explicaron, con cita del precedente "Fiorentino" (CSJN 306:1752), que', '306:1752'), ['Fiorentino']);
+  const serie = '"Charles Hnos." y se consolida en "Montenegro", "Fiorentino" y "Rayford" (Fallos: 46:36; 303:1938; 306:1752 y 308:733).';
+  assert.deepEqual(IVSNombre.nombresJuntoACita(serie, '306:1752'), ['Fiorentino']);
+  assert.deepEqual(IVSNombre.nombresJuntoACita(serie, '46:36'), ['Charles Hnos.']);
+  assert.deepEqual(IVSNombre.nombresJuntoACita(serie, '308:733'), ['Rayford']);
+  // una lista de citas sin nombres no se atribuye a nadie
+  assert.deepEqual(IVSNombre.nombresJuntoACita('(Doctrina de Fallos: 95:133; 99:158; 104:284)', '104:284'), []);
   assert.equal(IVSNombre.consenso(['Halabi', 'Halabi Ernesto', 'Otro']).nombre, 'Halabi');
   // con el nombre, se ordena como cualquier búsqueda por nombre, confirmando con el año del tomo
   const b = IVSNombre.conNombre(leer('Fallos 308:1392'), 'Bazterrica');

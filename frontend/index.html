@@ -5017,7 +5017,7 @@ function citaSinNombre(q){
    ponen junto a la cita («"Fiorentino" (Fallos: 306:1892)»). */
 var TABLA_CITAS=null;
 function resolverCita(cita){
-  var tabla=TABLA_CITAS?Promise.resolve(TABLA_CITAS):fetch("./datos/fallos-citas.json?v=20261024b").then(function(r){ return r.ok?r.json():{}; })["catch"](function(){ return {}; }).then(function(t){ TABLA_CITAS=t; return t; });
+  var tabla=TABLA_CITAS?Promise.resolve(TABLA_CITAS):fetch("./datos/fallos-citas.json?v=20261024c").then(function(r){ return r.ok?r.json():{}; })["catch"](function(){ return {}; }).then(function(t){ TABLA_CITAS=t; return t; });
   return tabla.then(function(t){
     if(t[cita]) return {nombre:t[cita][0],veces:t[cita][1],fuente:"tabla"};
     var nombres=[];
@@ -5029,7 +5029,9 @@ function resolverCita(cita){
         return xs.length;
       })["catch"](function(){ return 0; });
     }
-    return pagina(0).then(function(k){ return k>=100&&nombres.length<2?pagina(100).then(function(){ return pagina(200); }):null; }).then(function(){
+    // hasta tres páginas, mientras no aparezcan al menos dos menciones con nombre
+    function seguir(o){ return pagina(o).then(function(k){ return k>=100&&nombres.length<2&&o<200?seguir(o+100):null; }); }
+    return seguir(0).then(function(){
       var c=IVSNombre.consenso(nombres);
       if(!c||(c.otros[0]&&c.otros[0].v*2>c.veces)) return null;
       return {nombre:c.nombre,veces:c.veces,fuente:"saij"};
