@@ -2,7 +2,7 @@
 (function(){
   var S=IVS4;
   var BASES=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["SCBA","--c-scba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"],["CORTE IDH","--c-idh"]];
-  var CAB='<header class="cab"><span class="marca">I<span class="v">V</span>S<span class="d"></span>CODE<span class="v">X</span></span><nav><a href="#" data-tab="buscar">Consulta</a><a href="#" data-tab="fuentes">Fuentes</a><a href="#" data-tab="verificar">Verificación</a><a href="#" data-tab="cuenta">Mi perfil</a></nav><div class="acts"><a class="btn sec" href="#" data-tab="fuentes">Ver el catálogo de fuentes</a><a class="btn" href="#" data-tab="buscar">Iniciar la consulta</a></div></header>';
+  var CAB='<header class="cab"><span class="lock"><img class="sello" src="../favicon.png?v=16" alt="" width="32" height="32"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></span><nav><a href="#" data-tab="buscar">Consulta</a><a href="#" data-tab="fuentes">Fuentes</a><a href="#" data-tab="verificar">Verificación</a><a href="#" data-tab="cuenta">Mi perfil</a></nav><div class="acts"><a class="btn sec" href="#" data-tab="fuentes">Ver el catálogo de fuentes</a><a class="btn" href="#" data-tab="buscar">Iniciar la consulta</a></div></header>';
   window.IVS6={
     BASES:BASES,
     /* monta la cabecera, el héroe del prisma y devuelve el contenedor <main> donde van las secciones */
