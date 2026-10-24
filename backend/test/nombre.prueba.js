@@ -77,3 +77,39 @@ test('ordena por parecido con la carátula, el año y el lugar de la parte', () 
   assert.match(rb[0].caratula, /^Gustavo Mario BAZTERRICA/);
   assert.ok(rb[0].parecido > rb[1].parecido);
 });
+
+test('sólo la cita de Fallos: se averigua el nombre en las citas de otros fallos', () => {
+  const n = leer('Fallos 306:1892');
+  assert.equal(n.soloCita, true);
+  assert.equal(n.fallos, '306:1892');
+  assert.equal(n.anio, 1984, 'el año del tomo');
+  assert.equal(leer('Fallos: 332:111').anio, 2009);
+  const t = 'La sentencia dictada por la Corte en el precedente "Halabi" (Fallos: 332:111) no ha… ' +
+    'La C.S.J.N. en "Halabi" (Fallos: 332:111), después… Ver CSJN, "Halabi, Ernesto c/ P.E.N. ley 25.873 s/ amparo", Fallos: 332:111. ' +
+    'resuelto en «Bazterrica» (Fallos: 308:1392); y en la causa Montalvo (Fallos 313:1333).';
+  assert.deepEqual(IVSNombre.nombresJuntoACita(t, '332:111'), ['Halabi', 'Halabi', 'Halabi']);
+  assert.deepEqual(IVSNombre.nombresJuntoACita(t, '308:1392'), ['Bazterrica']);
+  assert.deepEqual(IVSNombre.nombresJuntoACita(t, '313:1333'), ['Montalvo']);
+  assert.equal(IVSNombre.consenso(['Halabi', 'Halabi Ernesto', 'Otro']).nombre, 'Halabi');
+  // con el nombre, se ordena como cualquier búsqueda por nombre, confirmando con el año del tomo
+  const b = IVSNombre.conNombre(leer('Fallos 308:1392'), 'Bazterrica');
+  const r = IVSNombre.ordenar([
+    { caratula: 'Blanco, María Estela c/ Clínica Bazterrica S.A. s/ recurso de hecho', fecha: '06/06/1989' },
+    { caratula: 'Gustavo Mario BAZTERRICA s/ TENENCIA DE ESTUPEFACIENTES', fecha: '29/08/1986' },
+  ], b);
+  assert.match(r[0].caratula, /BAZTERRICA s\/ TENENCIA/);
+  assert.equal(r[0].coincideNombre, true);
+  assert.equal(r[1].coincideNombre, false);
+});
+
+test('la tabla de citas: cada entrada es un nombre visto junto a esa cita', async () => {
+  const { readFileSync } = await import('node:fs');
+  const tabla = JSON.parse(readFileSync(join(AQUI, '..', '..', 'frontend', 'datos', 'fallos-citas.json'), 'utf8'));
+  assert.ok(Object.keys(tabla).length >= 50);
+  for (const [cita, [nombre, veces]] of Object.entries(tabla)) {
+    assert.match(cita, /^\d{1,3}:\d{1,5}$/);
+    assert.ok(nombre && veces >= 1);
+  }
+  assert.equal(tabla['327:3677'][0], 'Vizzoti');
+  assert.equal(tabla['308:490'][0], 'Strada');
+});

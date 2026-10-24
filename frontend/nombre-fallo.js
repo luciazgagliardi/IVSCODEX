@@ -44,6 +44,12 @@ var IVSNombre=(function(){
     if(md){ fecha=("0"+md[1]).slice(-2)+"/"+("0"+md[2]).slice(-2)+"/"+md[3]; anio=+md[3]; p=p.slice(0,md.index)+" "+p.slice(md.index+md[0].length); }
     else{ var ma=/(?:^|[\s(,])((?:18[6-9]|19\d|20[0-4])\d)(?=[\s),.]|$)/.exec(p); if(ma){ anio=+ma[1]; p=p.slice(0,ma.index)+" "+p.slice(ma.index+ma[0].length); } }
     p=p.replace(/\s+/g," ").trim();
+    // sólo la cita («Fallos 306:1892»): hay que averiguar de qué fallo es (ver nombresJuntoACita)
+    if(fallos&&!palabras(p).length){
+      var t=+fallos.split(":")[0];
+      return {soloCita:true,tribunal:"csjn",nombreTribunal:TRIBUNALES[0].nombre,bases:["csjn"],fallos:fallos,
+        anio:anio||anioDeTomo(t),anioAprox:!anio,fecha:fecha,partes:[],contra:[],objeto:[],consulta:"",palabras:[],texto:orig};
+    }
     if(!p) return null;
     var conNexo=NEXOS.test(" "+p+" ");
     var resto=palabras(p);
@@ -84,6 +90,52 @@ var IVSNombre=(function(){
       palabras:wPartes.concat(wContra,wObjeto),
       texto:orig
     };
+  }
+
+  /* El año de un tomo de Fallos: desde el tomo 300 sale uno por año (306 → 1984,
+     332 → 2009, 347 → 2024), con un año de margen. Antes había varios por año. */
+  function anioDeTomo(t){ return t>=300&&t<=400?t+(t<=320?1678:1677):null; }
+
+  /* Los nombres que otros fallos ponen junto a una cita: «"Halabi" (Fallos:
+     332:111)», «en Bazterrica (Fallos 308:1392)», «causa "Vizzoti, Carlos c/
+     AMSA" Fallos: 327:3677». Se devuelve el nombre corto (la primera parte). */
+  function corto(c){
+    c=String(c||"").replace(/\s+/g," ").trim().replace(/^(?:in re|causa|caso|autos|precedente|fallo|sentencia|el|la|los)\s+/i,"");
+    var x=c.split(/\s+(?:c\s*\/|c\.|v\.|vs\.?|s\s*\/|contra|en\s+j)\s+|,|;/)[0].trim();
+    x=x.replace(/\s+(?:y\s+otros?|s\.?\s?a\.?|s\.?\s?r\.?\s?l\.?)$/i,"").trim();
+    var ws=x.split(" ").filter(Boolean);
+    if(!ws.length||ws.length>6||!/[A-ZÁÉÍÓÚÑ]/.test(x.charAt(0))) return null;
+    if(/^(?:Fallos|Corte|CSJN|Tribunal|Sala|Considerando|Ley|Art|Constituci)/i.test(x)) return null;
+    return ws.slice(0,4).join(" ");
+  }
+  function nombresJuntoACita(texto,cita){
+    var t=String(texto||"").replace(/\s+/g," "),pc=cita.split(":"),out=[];
+    var reC=new RegExp("Fallos\\s*:?\\s*(?:T\\.?\\s*)?"+pc[0]+"\\s*:\\s*"+pc[1]+"(?!\\d)","g"),m;
+    while((m=reC.exec(t))){
+      var antes=t.slice(Math.max(0,m.index-160),m.index).replace(/[\s,(;:\-–—]+$/,"").replace(/\b(?:CSJN|C\.S\.J\.N\.?|Corte Suprema(?: de Justicia de la Naci[oó]n)?)\s*,?\s*$/i,"").replace(/[\s,(;:]+$/,"");
+      var q=/[«"“]([^«»"“”]{2,140})[»"”]\s*$/.exec(antes),n=null;
+      if(q) n=corto(q[1]);
+      // sin comillas: el nombre propio pegado a la cita («en Bazterrica (Fallos…»)
+      if(!n){ var u=/(?:^|\s)(?:en|in re|causa|caso|precedente|autos)\s+([A-ZÁÉÍÓÚÑ][\wáéíóúñü'.-]+(?:\s+(?:de\s+|del\s+)?[A-ZÁÉÍÓÚÑ][\wáéíóúñü'.-]+){0,2})\s*$/.exec(antes); if(u) n=corto(u[1]); }
+      if(n) out.push(n);
+    }
+    return out;
+  }
+  /* El nombre más citado junto a la cita, con cuántas veces; los apellidos
+     iguales con o sin nombre de pila («Halabi» y «Halabi Ernesto») cuentan juntos. */
+  function consenso(nombres){
+    var c={};
+    nombres.forEach(function(n){ var k=plano(n).split(" ")[0]; (c[k]=c[k]||{n:n,v:0}).v++; if(n.length<c[k].n.length) c[k].n=n; });
+    var xs=Object.keys(c).map(function(k){ return c[k]; }).sort(function(a,b){ return b.v-a.v; });
+    return xs.length?{nombre:xs[0].n,veces:xs[0].v,total:nombres.length,otros:xs.slice(1,3)}:null;
+  }
+  /* Completa una búsqueda «sólo cita» con el nombre averiguado. */
+  function conNombre(n,nombre){
+    var ws=palabras(nombre);
+    if(!ws.length) return n;
+    var x={};for(var k in n) x[k]=n[k];
+    x.soloCita=false; x.citaResuelta=nombre; x.partes=ws; x.palabras=ws; x.consulta=ws.slice(0,3).join(" ");
+    return x;
   }
 
   /* De 0 a 1: cuánto se parece un resultado al fallo buscado. */
@@ -138,7 +190,7 @@ var IVSNombre=(function(){
     });
     return out;
   }
-  return {interpretar:interpretar,parecido:parecido,ordenar:ordenar,plano:plano};
+  return {interpretar:interpretar,parecido:parecido,ordenar:ordenar,plano:plano,nombresJuntoACita:nombresJuntoACita,consenso:consenso,conNombre:conNombre,anioDeTomo:anioDeTomo};
 })();
 
 if(typeof module!=="undefined"&&module.exports) module.exports={IVSNombre:IVSNombre};
