@@ -1371,6 +1371,39 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   .entrada [data-reveal],.pt-llega{opacity:1;transform:none}
 }
 .cab.quieta>*{animation:none}
+
+/* ---------- celular: lo que debe verse igual que en la portada y el espacio de la pantalla ----------
+   Va al final para que ninguna regla de arriba lo pise. */
+@media (max-width:760px){
+  /* cabecera: el logo y las píldoras en el mismo lugar y con el mismo tamaño que en la portada */
+  header.top .nav-wrap{padding:22px var(--pad) 12px;gap:8px;min-height:69px;align-items:center}
+  header.top .marca-app{gap:10px}
+  header.top .nav-fin{display:flex;align-items:center;gap:8px;margin-left:auto}
+  header.top .nav-fin .lx-chip,header.top #como-usar{height:35px;margin:0;padding:0 14px;font:500 13.5px/1 var(--sans);display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+  header.top .nav-fin .lx-chip{gap:7px;border:1px solid var(--gold-55);background:rgba(217,163,27,.12)}
+  header.top .nav-fin .lx-chip i{width:7px;height:7px}
+  /* «En vivo» / «Desde su índice local»: bajo el nombre, en el mismo borde del texto */
+  .rotulo-fuente{align-items:center;gap:14px}
+  .rotulo-fuente>span{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0}
+  .rotulo-fuente .en-vivo{margin-left:0}
+  .bz-riel{top:calc(69px + env(safe-area-inset-top,0px))}
+  header.top .marca-app{position:relative;top:-1px}
+  /* espacio: menos aire sobrante arriba y bloques que no ocupan media pantalla */
+  .cab{padding-top:6px}
+  .cab__saludo{margin:0 0 2px;font-size:13px}
+  .cab__ojo{display:none}
+  .cab h1,.cab[data-tab="buscar"] h1{font-size:30px;margin-top:4px}
+  .wrap.en-buscar{padding-top:8px}
+  .bq{gap:10px;margin-bottom:14px;grid-template-columns:minmax(0,1fr)}
+  .bq>*{min-width:0}
+  .bq-barra{gap:8px;align-items:center}
+  .bq-sum{padding:0 2px;font-size:12.5px;line-height:1.45}
+  .sugeridas .sug-nota{font-size:13px;line-height:1.5;margin-top:8px}
+  .sugeridas .chips{flex-wrap:nowrap;overflow-x:auto;gap:7px;margin:8px 0 0;padding:0 0 2px;max-width:100%;scrollbar-width:none}
+  .sugeridas .chips::-webkit-scrollbar{display:none}
+  .sugeridas .chips .chip{flex:none;padding:7px 13px 6px;font-size:13px}
+  .bz-riel{padding-top:8px;padding-bottom:8px}
+}
 </style>
 </head>
 <body>
@@ -7223,6 +7256,8 @@ function montarAsistente(){
   /* cuando terminan de responder las bases, Lexia comenta qué pasó */
   var vig=0;
   function vigilar(){
+    /* Lexia no comenta sola: contesta sólo cuando la persona le escribe */
+    return;
     var id=++vig, n=0;
     (function mirar(){
       if(id!==vig) return;
@@ -7814,6 +7849,9 @@ function montarAsistente(){
   }
   function elegirRecorrido(){
     abrir(true);
+    /* si ya está preguntando o escribiendo lo mismo, no se repite el mensaje */
+    var ult=log.lastElementChild;
+    if(corriendo||cola.length||(ult&&ult.classList.contains("asist__ops")&&/Recorrido completo/.test(ult.textContent))){ ir(); return; }
     dice(["Con gusto. Puedo guiarlo por todas las funciones de la página, o hacer juntos sólo la parte que le cuesta.","¿Qué prefiere?"],[
       {t:"Recorrido completo",f:function(){ iniciarRecorrido("completo"); }},
       {t:"Una parte de Buscar",f:menuBuscar},
