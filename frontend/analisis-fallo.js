@@ -1689,6 +1689,482 @@ var IVSAnalisis=(function(){
   return {analizar:analizar,mismaPersona:mismaPersona,nombreVisible:nombreVisible,plano:plano,limpio:limpio};
 })();
 
+/* ============================================================
+   IVSLexia — el razonamiento de Lexia sobre el fallo abierto.
+   ============================================================
+   Determinista, sin IA externa: entiende la pregunta (qué se pide y sobre
+   quién o qué: un magistrado, un artículo, un agravio, una instancia),
+   la descompone si pide varias cosas («¿quién ganó y cuánto?») y busca la
+   respuesta en el lugar del fallo donde corresponde (el voto de ese juez,
+   el apartado de ese agravio, la parte resolutiva). Cuando no hay una regla
+   puntual, ordena las ORACIONES del fallo por BM25 con el peso de la
+   sección en la que están. Todo devuelve el pasaje con su posición. */
+var IVSLexia=(function(){
+  var plano=IVSAnalisis.plano,limpio=IVSAnalisis.limpio;
+  var VACIAS={};
+  ("de del la las el los lo un una unos unas y o u e a al en con sin por para que se su sus le les es son fue fueron ser sido era este esta estos estas ese esa esos esas aquel "+
+   "como cual cuales cuando donde quien quienes cuanto cuanta cuantos cuantas porque pero mas muy ya no si sobre entre hasta desde hacia segun tambien "+
+   "me mi te tu nos hay hubo habia tiene tienen tuvo dijo dice dicen decia fallo sentencia caso autos tema algo puede podes podria "+
+   "explicame decime contame quiero saber pregunta respecto acerca parte partes esto eso ello aqui alli ahi asi tal tan otro otra otros otras").split(" ").forEach(function(w){ VACIAS[w]=1; });
+
+  /* Intenciones, por prioridad. Cada una toma su tramo de la pregunta: dos
+     intenciones que reclaman las mismas palabras no se suman («cuánto cobró
+     el perito» es honorarios, no además montos). */
+  var INTENCIONES=[
+    ["resumen",/explic|resum|sintesis|de que (se )?trata|que (paso|dice el fallo|dice este fallo)|contame|cuenta(me)? el fallo|en pocas palabras|de que va|analiz|que es este fallo|que resolvio y por que/],
+    ["instancia",/primera instancia|juez(a)? de (grado|primera)|jueza? de origen|a quo|aquo|sentencia (recurrida|apelada|impugnada|de grado|de primera|de camara|anterior)|tribunal (de grado|inferior|anterior)|(dijo|resolvio|decidio|sostuvo|considero|entendio|hizo|fallo|opino|condeno|rechazo) (el|la) (camara|alzada|juez|jueza|juzgado|sentenciante|tribunal de grado)|(la|el) (camara|alzada|juzgado) (dijo|resolvio|decidio|sostuvo|considero|entendio|hizo|fallo|condeno|rechazo|confirmo|revoco)|instancias? anterior/],
+    ["votos",/disiden|unanim|voto|votaron|jueces|jueza|juez|magistrad|ministr|quien(es)? firm|quien(es)? (lo )?(fallaron|resolvieron|dictaron)|integr|mayoria|coincid/],
+    ["honorarios",/honorario|regul(o|aron|acion)|cuanto (cobr|se le pag)|perito/],
+    ["costas",/costas|quien (paga|carga con|soporta) (los )?(gastos|el juicio|el proceso)|gastos del (juicio|proceso)/],
+    ["intereses",/interes|\btasa|desde cuando corren|actualiza|indexa|desvaloriz|repotenci/],
+    ["incapacidad",/incapacidad|balthazar|capacidad restante|porcentaje/],
+    ["porque",/por ?que|fundament|razon|motivo|argument|en que se (bas|fund|apoy)|como (lo )?justific|criterio/],
+    ["agravios",/agravi|que (se )?(planteo|cuestiono|pidio|reclamo) (el|la) (recurrente|apelante|actor|actora|demandad[oa])|que se cuestiona|que (se )?recurri/],
+    ["decision",/resolv|decidi|gano|perdio|fallo final|parte dispositiva|resultado|hizo lugar|hace lugar|rechaz|confirm|revoc|que dispuso|como termino|prosper|admiti/],
+    ["montos",/cuanto|monto|indemniz|suma|pesos|\$|dinero|plata|importe|condena(ron)? a pagar|capital/],
+    ["precedentes",/precedente|jurisprudencia|fallos cita|que fallos|antecedente|doctrina/],
+    ["normas",/norma|articulo|\bart\b|leyes|\bley\b|codigo|que se aplic/],
+    ["partes",/partes|actor|actora|demandad|quien demand|contra quien|quienes son|recurrente|recurrido|aseguradora|citad[ao] en garantia/],
+    ["fecha",/fecha|cuando|que dia|que ano/],
+    ["tribunal",/tribunal|que corte|que camara|quien lo dicto|quien dicto|que juzgado|\bsala\b/]
+  ];
+  function intenciones(p){
+    var q=plano(p).replace(/[¿?¡!.,;:()«»“”"]/g," ").replace(/\s+/g," "),tomados=[],out=[];
+    INTENCIONES.forEach(function(it){
+      var re=new RegExp(it[1].source,"g"),m;
+      while((m=re.exec(q))){
+        var a=m.index,b=a+Math.max(1,m[0].length);
+        if(!tomados.some(function(t){ return a<t[1]&&b>t[0]; })){ tomados.push([a,b]); if(out.indexOf(it[0])<0) out.push(it[0]); }
+        if(!m[0].length) re.lastIndex++;
+      }
+    });
+    // el orden de la respuesta: el de la pregunta
+    return out.map(function(n){ var t=tomados[out.indexOf(n)]; return {n:n,a:t?t[0]:0}; }).sort(function(x,y){ return x.a-y.a; }).map(function(x){ return x.n; });
+  }
+
+  /* ---------- oraciones y secciones ---------- */
+  var ABREV=/(?:^|[\s(])(?:arts?|incs?|fs|fjs|dr|dra|dres|dras|sr|sra|sres|sras|nro|nros|n|cfr|conf|cf|cit|ss|sgtes|p|pag|pags|ap|apart|cap|ib|ibid|op|vid|v|etc|cc|t|vol|ed|ll|ja|ed|exp|expte|mat|lic|ing|esc|ptos?|pto|tit|sec|cpo|ref|n[°º]|nros?[°º]?|bs)$/i;
+  var cacheOr={texto:null,res:null};
+  /* Dónde empiezan los fundamentos: el primer voto, o antes, el rótulo
+     «Fundamentos:» / «CONSIDERANDO» (en el TSJ el voto de la mayoría va sin
+     encabezado propio, y antes está el relato de las instancias anteriores). */
+  function inicioFundamentos(texto,A){
+    var v0=A&&A.votos&&A.votos.length?A.votos[0].ini:Math.floor(texto.length*.15);
+    var m=/(?:^|\n|\.\s)\s*(Fundamentos\s*:|FUNDAMENTOS\s*:|CONSIDERANDO\s*:?|Considerando\s*:)/.exec(texto.slice(0,v0));
+    return m?m.index+m[0].indexOf(m[1]):v0;
+  }
+  function oraciones(texto,A){
+    if(cacheOr.texto===texto) return cacheOr.res;
+    var out=[],re=/[.;!?]["”’»)]*(?=\s+["“‘«(¿]*[A-ZÁÉÍÓÚÑ0-9])|\n\s*\n/g,m,ini=0;
+    var f0=inicioFundamentos(texto,A);
+    function zona(pos){
+      var s=A&&A.secciones;
+      if(s&&s.firmas&&pos>=s.firmas.ini) return "firmas";
+      if(s&&s.resolutiva&&pos>=s.resolutiva.ini) return "resolutiva";
+      return pos<f0?"encabezado":"fundamentos";
+    }
+    function push(a,b){
+      var t=texto.slice(a,b),l=t.replace(/\s+/g," ").trim();
+      if(l.length<3) return;
+      var a2=a+(t.length-t.replace(/^\s+/,"").length);
+      out.push({t:l,ini:a2,fin:b,zona:zona(a2)});
+    }
+    while((m=re.exec(texto))){
+      var fin=m.index+m[0].length;
+      if(m[0].charAt(0)!=="\n"){
+        var antes=texto.slice(Math.max(ini,m.index-12),m.index);
+        // abreviaturas («art.», «fs.», «Dr.») e iniciales («Julio B. J. Maier») no cierran la oración
+        if(m[0].charAt(0)==="."&&(ABREV.test(antes)||/(?:^|[\s.])[A-ZÁÉÍÓÚÑ]$/.test(antes))) continue;
+        if(fin-ini<25&&m[0].charAt(0)!==";") continue;
+        // dentro de un paréntesis abierto (una cita de doctrina o de un fallo) la oración sigue
+        var seg=texto.slice(ini,m.index);
+        if(seg.length<900&&(seg.match(/\(/g)||[]).length>(seg.match(/\)/g)||[]).length) continue;
+      }
+      push(ini,fin); ini=fin;
+    }
+    push(ini,texto.length);
+    // una oración muy larga se parte en sus «;»
+    var res=[];
+    out.forEach(function(o){
+      if(o.t.length<=700){ res.push(o); return; }
+      var cuerpo=texto.slice(o.ini,o.fin),r2=/;\s+/g,mm,a=0;
+      while((mm=r2.exec(cuerpo))) if(mm.index-a>200){ res.push({t:limpio(cuerpo.slice(a,mm.index+1)),ini:o.ini+a,fin:o.ini+mm.index+1,zona:o.zona}); a=mm.index+mm[0].length; }
+      res.push({t:limpio(cuerpo.slice(a)),ini:o.ini+a,fin:o.fin,zona:o.zona});
+    });
+    res.forEach(function(o,i){ o.i=i; });
+    cacheOr={texto:texto,res:res};
+    return res;
+  }
+
+  /* ---------- términos y sinónimos ---------- */
+  function raiz(w){
+    w=w.replace(/(aciones|iciones|amientos|imientos)$/,"ac").replace(/(es|s)$/,"");
+    return w.length>6?w.slice(0,6):w;
+  }
+  function terminos(s){
+    return plano(s).split(/[^a-z0-9ñ]+/).filter(function(w){ return w.length>=3&&!VACIAS[w]&&!/^\d{1,2}$/.test(w); });
+  }
+  // equivalencias del lenguaje de los fallos (la pregunta suele usar la palabra común)
+  var SINONIMOS=[
+    ["dano moral","consecuencias no patrimoniales","dano extrapatrimonial","agravio moral"],
+    ["despido","distracto","extincion del contrato","desvinculacion"],
+    ["indemnizacion","resarcimiento","reparacion"],
+    ["intereses","tasa","interes moratorio"],
+    ["costas","gastos causidicos"],
+    ["incapacidad","invalidez","minusvalia","secuelas"],
+    ["lucro cesante","perdida de ganancias"],
+    ["seguro","aseguradora","citada en garantia","poliza","asegurador"],
+    ["accidente","siniestro","hecho danoso","evento danoso"],
+    ["arbitrariedad","arbitraria","arbitrario","absurdo"],
+    ["prescripcion","prescripto","prescripta"],
+    ["apelacion","alzada","camara"],
+    ["juez de grado","a quo","primera instancia","sentenciante"],
+    ["actualizacion","indexacion","repotenciacion","desvalorizacion","uva","ripte","cer"],
+    ["multa","sancion","agravamiento indemnizatorio"],
+    ["caso constitucional","cuestion federal","garantia constitucional"]
+  ];
+  function expandir(p){
+    var q=" "+plano(p).replace(/[^a-z0-9ñ ]+/g," ").replace(/\s+/g," ")+" ",extra=[];
+    SINONIMOS.forEach(function(g){ if(g.some(function(x){ return q.indexOf(" "+x+" ")>=0||q.indexOf(" "+x.split(" ")[0]+" ")>=0&&x.indexOf(" ")<0; })) g.forEach(function(x){ extra.push(x); }); });
+    return extra;
+  }
+
+  /* ---------- BM25 por oración, con el peso de la sección ---------- */
+  var PESO_ZONA={encabezado:.85,fundamentos:1,resolutiva:1.15,firmas:.15};
+  function rankear(texto,A,pregunta,opciones){
+    opciones=opciones||{};
+    var ors=oraciones(texto,A).filter(function(o){ return (!opciones.rangos||opciones.rangos.some(function(r){ return o.ini>=r[0]&&o.ini<r[1]; }))&&(!opciones.excluir||!opciones.excluir.test(plano(o.t))); });
+    if(!ors.length) return [];
+    var base=terminos(pregunta).map(raiz),sin=[],frases=[];
+    expandir(pregunta).forEach(function(x){ var ts=terminos(x).map(raiz); if(ts.length>1) frases.push(ts.join(" ")); terminos(x).forEach(function(w){ var r=raiz(w); if(base.indexOf(r)<0&&sin.indexOf(r)<0) sin.push(r); }); });
+    (opciones.extra||[]).forEach(function(w){ var r=raiz(plano(w)); if(base.indexOf(r)<0&&sin.indexOf(r)<0) sin.push(r); });
+    var q=[];base.forEach(function(r){ if(q.indexOf(r)<0) q.push(r); });
+    if(!q.length&&!sin.length) return [];
+    var docs=ors.map(function(o){ return terminos(o.t).map(raiz); }),N=docs.length;
+    var avg=docs.reduce(function(a,d){ return a+d.length; },0)/N||1,df={};
+    q.concat(sin).forEach(function(r){ df[r]=docs.filter(function(d){ return d.indexOf(r)>=0; }).length; });
+    // pares de palabras seguidas de la pregunta («daño moral», «tasa activa»): valen más juntas
+    var pares=[];for(var i=0;i+1<base.length;i++) pares.push(base[i]+" "+base[i+1]);
+    var res=ors.map(function(o,k){
+      var d=docs[k],s=0,dist=0,tf={};
+      d.forEach(function(r){ tf[r]=(tf[r]||0)+1; });
+      function suma(r,peso){
+        if(!tf[r]||!df[r]) return;
+        var idf=Math.log(1+(N-df[r]+.5)/(df[r]+.5));
+        s+=peso*idf*(tf[r]*2.2)/(tf[r]+1.2*(.25+.75*d.length/avg)); dist++;
+      }
+      q.forEach(function(r){ suma(r,1); });
+      sin.forEach(function(r){ suma(r,.8); });
+      var j=" "+d.join(" ")+" ";
+      pares.forEach(function(pp){ if(j.indexOf(" "+pp+" ")>=0) s*=1.35; });
+      // la expresión equivalente entera («consecuencias no patrimoniales» por «daño moral») cuenta como la de la pregunta
+      frases.forEach(function(f){ if(j.indexOf(" "+f+" ")>=0){ s*=1.35; dist++; } });
+      // cubrir más términos distintos de la pregunta pesa más que repetir uno
+      s*=1+.35*Math.max(0,dist-1);
+      s*=PESO_ZONA[o.zona]||1;
+      if(opciones.preferir&&opciones.preferir.test(plano(o.t))) s*=1.5;
+      // transcripciones largas de normas o de otros fallos entre comillas: algo menos
+      if(/^["“«]/.test(o.t)) s*=.85;
+      if(DESCRIPCION.test(plano(o.t))) s*=.85;
+      return {o:o,s:s};
+    }).filter(function(x){ return x.s>0; }).sort(function(a,b){ return b.s-a.s; });
+    var el=[],n=opciones.n||3;
+    for(var k2=0;k2<res.length&&el.length<n;k2++){
+      if(el.every(function(x){ return Math.abs(x.o.i-res[k2].o.i)>1; })) el.push(res[k2]);
+    }
+    return el.map(function(x){ return pasaje(texto,A,x.o,x.s); });
+  }
+  /* La oración, y la siguiente si la primera es muy corta para entenderse sola. */
+  function pasaje(texto,A,o,s){
+    var ors=oraciones(texto,A),fin=o.fin,t=o.t;
+    // corta para entenderse sola, o termina en «:» (lo que sigue es lo que anuncia)
+    if((t.length<160||/:$/.test(t))&&ors[o.i+1]&&ors[o.i+1].zona===o.zona){ fin=ors[o.i+1].fin; t=t+" "+ors[o.i+1].t; }
+    return {t:t,ini:o.ini,fin:fin,zona:o.zona,puntaje:s==null?null:+s.toFixed(3)};
+  }
+
+  /* ---------- entidades de la pregunta ---------- */
+  function tokensPersona(n){ return plano(n).replace(/\./g," ").split(/\s+/).filter(function(w){ return w.length>=3&&!/^(del|las|los|don|dona)$/.test(w); }); }
+  function personasEn(p,A){
+    var q=" "+plano(p).replace(/[^a-z0-9ñ ]+/g," ").replace(/\s+/g," ")+" ",out=[];
+    (A.personas||[]).forEach(function(x){
+      var ts=tokensPersona(x.nombre),ap=ts[ts.length-1];
+      // el apellido (o cualquiera de los nombres si son de más de 4 letras) como palabra entera
+      if(ap&&q.indexOf(" "+ap+" ")>=0||ts.slice(0,-1).some(function(w){ return w.length>4&&q.indexOf(" "+w+" ")>=0&&!VACIAS[w]; })) out.push(x);
+    });
+    // si nombra a un magistrado, los homónimos que no integran el tribunal no cuentan
+    var mags=out.filter(function(x){ return x.esMagistrado; });
+    return mags.length?mags:out;
+  }
+  var NORMAS_ALIAS=[
+    [/\b(ccyc|ccycn|codigo civil y comercial|cccn)\b/,/ccyc|civil y comercial/],
+    [/\b(codigo civil|cc)\b/,/codigo civil \(derogado\)|codigo civil$/],
+    [/\b(lct|contrato de trabajo|20\.?744)\b/,/contrato de trabajo|lct/],
+    [/\b(cn|constitucion nacional)\b/,/constitucion nacional/],
+    [/\bconstitucion (provincial|de mendoza|de la ciudad)\b/,/constitucion provincial|ccaba/],
+    [/\b(ldc|defensa del consumidor|24\.?240)\b/,/consumidor|24\.240/],
+    [/\b(cpccn|codigo procesal civil y comercial de la nacion)\b/,/cpccn/],
+    [/\b(cpccyt|cpcct|codigo procesal)\b/,/procesal/],
+    [/\b(cp|codigo penal)\b/,/codigo penal/],
+    [/\b(ls|ley de seguros|17\.?418)\b/,/seguros/],
+    [/\b(lrt|riesgos del trabajo|24\.?557)\b/,/riesgos del trabajo|24\.557/],
+    [/\b(cayt|ccayt|contencioso administrativo)\b/,/ccayt|cayt/]
+  ];
+  function articulosEn(p){
+    var q=plano(p),re=/\b(?:art(?:iculo)?s?\.?|arts?\b)\s*(\d{1,4}(?:\s*bis)?)(?:\s*(?:,|y|e)\s*(\d{1,4}))*/g,m,out=[];
+    while((m=re.exec(q))){
+      var nums=m[0].match(/\d{1,4}(?:\s*bis)?/g),resto=q.slice(m.index+m[0].length,m.index+m[0].length+60),norma=null;
+      var ley=/^\s*(?:de la |del |de )?ley\s*(?:n[°º.]?\s*)?(\d{1,2}\.?\d{3}|\d{3,5})/.exec(resto);
+      if(ley) norma={ley:ley[1].replace(/\./g,"")};
+      else NORMAS_ALIAS.some(function(a){ if(a[0].test(resto.slice(0,45))){ norma={re:a[1]}; return true; } return false; });
+      nums.forEach(function(n){ out.push({num:n.replace(/\s+/g," "),norma:norma}); });
+    }
+    return out;
+  }
+  function citasDelArticulo(d,art){
+    var reN=new RegExp("^art\\. "+art.num.replace(" ","\\s*")+"(?![0-9])");
+    return (d.citas||[]).filter(function(c){
+      if(!reN.test(plano(c.l))) return false;
+      if(!art.norma) return true;
+      var f=plano(c.f);
+      if(art.norma.ley) return f.replace(/\./g,"").indexOf(art.norma.ley)>=0;
+      return art.norma.re.test(f);
+    });
+  }
+  var ORDINALES={primer:"a",primero:"a",segundo:"b",tercer:"c",tercero:"c",cuarto:"d",quinto:"e",sexto:"f"};
+  var GENERICAS=/^(agravi|recurs|sentenc|aplica|referid|rechazo|inclusi|cuesti|tema|punto|planteo|admiti|rechaz|porque|motivo|razon|fundam|resolv|decidi)/;
+  function agravioEn(p,A){
+    var ag=(A.decision&&A.decision.agravios)||[];
+    if(!ag.length) return null;
+    var q=plano(p),m=/agravio\s+([a-h])\b|\b([a-h])\)\s/.exec(q)||null;
+    if(m) return ag.filter(function(a){ return a.letra===(m[1]||m[2]); })[0]||null;
+    var mo=/\b(primer|primero|segundo|tercer|tercero|cuarto|quinto|sexto)\s+agravio/.exec(q);
+    if(mo) return ag.filter(function(a){ return a.letra===ORDINALES[mo[1]]; })[0]||null;
+    // por el tema, sólo si la pregunta es sobre un agravio («¿por qué se rechazó lo del daño moral?»);
+    // «¿qué tasa se aplicó?» pregunta por la tasa, no por el agravio
+    if(!/agravi|por ?que|fundament|razon|motivo|planteo|cuestion|queja|admiti|rechaz|prosper|recurrente|apelante/.test(q)) return null;
+    var qs=terminos(p).map(raiz).filter(function(r){ return !GENERICAS.test(r); });
+    expandir(p).forEach(function(x){ terminos(x).forEach(function(w){ var r=raiz(w); if(qs.indexOf(r)<0&&!GENERICAS.test(r)) qs.push(r); }); });
+    var mejor=null,ms=0;
+    ag.forEach(function(a){
+      var ts=terminos(a.titulo).map(raiz),s=qs.filter(function(r){ return ts.indexOf(r)>=0; }).length;
+      if(s>ms){ ms=s; mejor=a; }
+    });
+    return ms>0?mejor:null;
+  }
+  function instanciaEn(p){
+    var q=plano(p),pr=/primera instancia|juez(a)? de (grado|primera)|juzgado|de origen|sentencia de grado/.test(q),ca=/camara|alzada|apelacion|sala\b/.test(q);
+    // las dos, o «el a quo» (la inmediata anterior): todas
+    return pr&&!ca?"primera":ca&&!pr?"camara":"anterior";
+  }
+
+  /* ---------- rangos: el voto de cada juez, el apartado de cada agravio ---------- */
+  function rangoVoto(A,texto,v){
+    var sig=(A.votos||[]).filter(function(x){ return x.ini>v.ini; })[0];
+    var fin=sig?sig.ini:(A.secciones&&A.secciones.resolutiva?A.secciones.resolutiva.ini:texto.length);
+    var k=texto.slice(v.ini,fin).search(/\bAS[IÍ] VOTO\b|\bAs[ií] voto\b/);
+    if(k>0) fin=v.ini+k+9;
+    // el último voto llega hasta la fórmula que abre la resolutiva («Por ello, … resuelve:»), no la incluye
+    var r=texto.slice(v.ini,fin).search(/(?:Por ello|Por lo expuesto|En consecuencia)[^.]{0,260}?\bresuelve\s*:/i);
+    if(r>0) fin=v.ini+r;
+    return [v.ini,fin];
+  }
+  function votosDe(A,texto,p){
+    return (A.votos||[]).filter(function(v){ return v.persona===p.id; }).map(function(v){ return {voto:v,rango:rangoVoto(A,texto,v)}; });
+  }
+  function rangoPrincipal(A,texto){
+    // el voto de la mayoría sin encabezado (TSJ): de «Fundamentos:» al primer voto con nombre
+    var f0=inicioFundamentos(texto,A),v0=A.votos&&A.votos.length?A.votos[0].ini:null;
+    if(v0!=null&&v0-f0>800&&!/voto_principal|voto_mayoria/.test(A.votos[0].tipo)) return [f0,v0];
+    var vp=(A.votos||[]).filter(function(v){ return /voto_principal|voto_propio|^voto$|voto_mayoria/.test(v.tipo); })[0]||(A.votos||[])[0];
+    if(vp) return rangoVoto(A,texto,vp);
+    return [Math.floor(texto.length*.15),A.secciones&&A.secciones.resolutiva?A.secciones.resolutiva.ini:texto.length];
+  }
+
+  /* ---------- por qué: las razones, no la descripción ---------- */
+  var RAZON=/\b(porque|toda vez que|ya que|dado que|puesto que|en tanto|habida cuenta|atento a|atento que|en virtud de|pues\b|por cuanto|en consecuencia|por ello|por lo tanto|de alli que|de ahi que|de modo que|lo que (impone|determina|conduce|lleva)|corresponde|cabe|no se advierte|no advierto|entiendo que|considero que|estimo que|surge que|resulta|se observa|no logra|no demuestra|no acredit|carece de|omiti[oó]|razonabl|arbitrari)/;
+  // lo que dice una parte (no el tribunal): «La recurrente sostiene…», «4. Afirma que…», «Señala que…»
+  var DESCRIPCION=/^(?:(?:\d+|[ivx]+|[a-h])\s*[.)\-]+\s*)?(?:(?:el|la|los|las) (?:recurrente|apelante|actora?|demandad[oa]|quejos[oa]|compania|aseguradora|citada|parte|accionante|presentante)[^.;]{0,40}? )?(?:se agravia|se queja|sostiene|alega|afirma|argumenta|agrega|cuestiona|denuncia|plantea|considera que|entiende que|senala|expresa|manifiesta|refiere|indica|aduce|invoca|reclama|solicita|pide|critica|insiste|esgrime)\b/;
+  var CONCLUYE=/\b(en definitiva|por ello|asi las cosas|en consecuencia|por lo expuesto|por las razones expuestas|entiendo que|considero que|estimo que|corresponde|cabe concluir|se impone|se deduce|de ello se sigue|por lo que|lo que lleva)\b/;
+  function entreComillas(t){
+    var dentro=0,re=/[“"«]([^”"»]{20,})[”"»]/g,m;
+    while((m=re.exec(t))) dentro+=m[1].length;
+    var ab=t.search(/[“«]/);
+    // comilla que abre y no cierra en la oración: la cita sigue hasta el final
+    if(ab>=0&&!/[”»]/.test(t.slice(ab))) dentro+=t.length-ab;
+    return dentro/(t.length||1);
+  }
+  function porQue(texto,A,opciones){
+    opciones=opciones||{};
+    var rango=opciones.agravio?[opciones.agravio.ini,opciones.agravio.fin]:(opciones.rango||rangoPrincipal(A,texto));
+    var ors=oraciones(texto,A).filter(function(o){ return o.ini>=rango[0]&&o.ini<rango[1]&&o.t.length>40; });
+    if(!ors.length) return [];
+    var tema=opciones.pregunta?rankear(texto,A,opciones.pregunta,{rangos:[rango],n:40}):[],porTema={};
+    tema.forEach(function(x){ porTema[x.ini]=x.puntaje; });
+    var largo=rango[1]-rango[0];
+    var res=ors.map(function(o){
+      var pl=plano(o.t),s=0,mm=pl.match(new RegExp(RAZON.source,"g"));
+      if(mm) s+=1+.4*(mm.length-1);
+      if(DESCRIPCION.test(pl)) s*=.3;
+      if(CONCLUYE.test(pl)) s*=1.4;
+      // las razones del tribunal suelen estar hacia el cierre del apartado
+      s*=.7+.6*((o.ini-rango[0])/(largo||1));
+      if(porTema[o.ini]) s*=1+Math.min(2,porTema[o.ini]/3);
+      if(/^["“«]/.test(o.t)) s*=.6;
+      // una oración que es casi toda una cita textual (de otro fallo o de la ley) explica menos que la conclusión propia
+      if(entreComillas(o.t)>.5) s*=.55;
+      return {o:o,s:s};
+    }).filter(function(x){ return x.s>.5; }).sort(function(a,b){ return b.s-a.s; });
+    var el=[];
+    for(var k=0;k<res.length&&el.length<(opciones.n||3);k++) if(el.every(function(x){ return Math.abs(x.o.i-res[k].o.i)>1; })) el.push(res[k]);
+    return el.sort(function(a,b){ return a.o.ini-b.o.ini; }).map(function(x){ return pasaje(texto,A,x.o,x.s); });
+  }
+
+  /* ---------- etapa de lo que dice una oración ---------- */
+  function etapaDe(texto,A,o){
+    var pl=plano(o.t);
+    if(o.zona==="resolutiva"&&/^[“"]/.test(o.t)) return "texto_modificado";
+    // lo que este tribunal dispone ahora («se imponen», «corresponde imponer», «deberá cargar»)
+    if(/\b(se imponen|se impondran|imponer(?:le|les)?|corresponde imponer|debera cargar|deberan cargar|voto por|propongo)\b/.test(pl)&&o.zona!=="encabezado") return "esta_instancia";
+    if(o.zona!=="resolutiva"){
+      // lo que cuenta el fallo de las sentencias anteriores
+      if(/la sentencia (cuestionada|recurrida|apelada|impugnada|de primera instancia|de grado|de origen|de camara)|la sentencia hace lugar|\b(hizo lugar|rechazo|condeno|impuso|impusieron|dispuso|fijo|aplico|establecio|confirmo|revoco|modifico|redujo|elevo|otorgo|reconocio|desestimo)\b/.test(pl)&&!/\b(se imponen|imponer|corresponde imponer|propongo|voto por|se impondran)\b/.test(pl)){
+        if(/primera instancia|de grado|la jueza|el juez|el juzgado|de origen/.test(pl)) return "primera";
+        if(/la camara|la sala|la alzada|tramite de apelacion/.test(pl)) return "camara";
+        return "anterior";
+      }
+    }
+    if(/instancia extraordinaria|recurso extraordinario|esta (corte|instancia|sede)|este tribunal|la queja/.test(pl)&&!/impuso|impusieron|dispuso/.test(pl)) return "esta_instancia";
+    if(/ambas instancias/.test(pl)) return "ambas_instancias";
+    if(/tramite de apelacion|la alzada|la camara|por la sala|segunda instancia/.test(pl)) return "camara";
+    if(/primera instancia|de grado|la jueza|el juez|el juzgado|a quo|de origen/.test(pl)) return "primera";
+    if(o.zona==="resolutiva"){
+      // la resolutiva que transcribe la sentencia modificada (entre comillas) habla de la instancia anterior
+      var antes=texto.slice(Math.max(A.secciones.resolutiva.ini,o.ini-1500),o.ini),ab=(antes.match(/[“"]/g)||[]).length,ci=(antes.match(/[”]/g)||[]).length;
+      if(ab>ci) return "texto_modificado";
+      return "esta_instancia";
+    }
+    if(/\b(impuso|impusieron|dispuso|fijo|aplico|establecio|condeno)\b/.test(pl)) return "anterior";
+    // antes del primer voto, en los fallos del TSJ, va el relato de lo que pasó en las instancias anteriores
+    if(o.zona==="encabezado"&&!/\b(se imponen|imponer|corresponde)\b/.test(pl)) return "anterior";
+    return "esta_instancia";
+  }
+
+  /* ---------- costas ---------- */
+  function costas(texto,A){
+    var out=[];
+    oraciones(texto,A).forEach(function(o){
+      var pl=plano(o.t);
+      if(!/\bcostas\b/.test(pl)||o.zona==="firmas") return;
+      if(/^(tercera?|cuarta?) cuestion|pronunciamiento sobre costas\.?$|^costas\.?$/.test(pl)||/cuestion:? costas|sobre costas\./.test(pl)&&pl.length<120) return;
+      var regla=null,m;
+      if(/sin costas|sin imposicion de costas/.test(pl)) regla="sin costas";
+      else if(/(orden causado|por su orden|por el orden causado)/.test(pl)) regla="en el orden causado (cada parte carga con las suyas)";
+      else if((m=/costas[^.;]{0,120}?\b(?:a cargo de|a|al)\s+((?:la|el|los|las)\s+[^,.;(]{3,90}?)(?=\s+(?:por|en lo que|vencid|de conformidad|conforme|\(|y regula)|[,.;(]|$)/.exec(pl))){
+        // con las mayúsculas del original («Distribuidora Pompeya SRL»)
+        var ia=m.index+m[0].lastIndexOf(m[1]),orig=o.t.length===pl.length?o.t.slice(ia,ia+m[1].length):m[1];
+        regla="a cargo de "+orig.trim().replace(/^(La|El|Los|Las)\b/,function(x){ return x.toLowerCase(); });
+      }
+      else if((m=/costas[^.;]{0,120}?\b(al|a la)\s+(recurrente|demandad[oa]|actora?|actor|apelante|vencid[oa]|citada en garantia)\b/.exec(pl))) regla="a cargo de"+(m[1]==="al"?"l ":" la ")+m[2];
+      else if((m=/(?:impon\w*|cargo de)\s+(?:a\s+la\s+|a\s+el\s+|al\s+|la\s+|el\s+)(recurrente|demandad[oa]|actora?|actor|vencid[oa]|apelante|citada)/.exec(pl))) regla="a cargo de"+(/^(demandado|actor|apelante|recurrente|vencido)$/.test(m[1])&&/\bal\s/.test(m[0])?"l ":" la ")+m[1];
+      var razon=/(por resultar vencid\w*|en lo que resulta vencid\w*|vencid\w* en lo principal|principio objetivo de la derrota|razon probable[^.;]*|buena fe[^.;]*|en atencion a[^.;]*|atento[^.;]*|dada la naturaleza[^.;]*|por la novedad[^.;]*|por haber podido creerse con derecho[^.;]*)/.exec(pl);
+      if(!regla&&!razon) return;
+      var rz=razon?razon[1].replace(/\s*\((?:art|cfr|conf)[^)]*$/,"").replace(/\s*\(\s*["“].*$/,""):null;
+      if(rz&&rz.length>160) rz=rz.slice(0,160).replace(/\s+\S*$/,"")+" …";
+      // de qué instancia son las costas (no es lo mismo que quién las impone)
+      var mi=/costas\s+(?:procesales\s+)?(?:de|del|por|en)\s+(?:la\s+|el\s+|lo\s+)?(?:tramite\s+de\s+(?:la\s+)?|actuado\s+en\s+)?(alzada|apelacion|segunda instancia|primera instancia|origen|instancia extraordinaria|recurso extraordinario|esta instancia|ambas instancias)/.exec(pl);
+      var de=mi?{alzada:"camara",apelacion:"camara","segunda instancia":"camara","primera instancia":"primera",origen:"primera","instancia extraordinaria":"esta_instancia","recurso extraordinario":"esta_instancia","esta instancia":"esta_instancia","ambas instancias":"ambas_instancias"}[mi[1]]:null;
+      out.push({oracion:o,regla:regla,razon:rz,de:de,etapa:etapaDe(texto,A,o),zona:o.zona,ini:o.ini,fin:o.fin,t:o.t});
+    });
+    // primero lo que decide este tribunal (resolutiva), después lo que propone el voto, después lo de instancias anteriores
+    var ord={resolutiva:0,fundamentos:1,encabezado:2};
+    function propia(x){ return x.etapa==="esta_instancia"&&(!x.de||x.de==="esta_instancia")?0:x.etapa==="esta_instancia"?1:2; }
+    out.sort(function(a,b){ return propia(a)-propia(b)||ord[a.zona]-ord[b.zona]||a.ini-b.ini; });
+    return out;
+  }
+
+  /* ---------- intereses y actualización ---------- */
+  var TASAS=[
+    [/tasa activa[^.;,]{0,90}/,"tasa activa"],[/tasa pasiva[^.;,]{0,90}/,"tasa pasiva"],[/tasa (?:de interes )?uva[^.;,]{0,40}|\buva\b/,"UVA"],
+    [/tasa pura[^.;,]{0,40}/,"tasa pura"],[/\b(?:6|8) ?% anual/,"tasa pura anual"],[/\bley\s*(?:n[°º.]?\s*)?(?:9\.?041|4\.?087|7\.?198)\b/,"ley provincial de intereses"],
+    [/\bripte\b/,"RIPTE"],[/\bcer\b|coeficiente de estabilizacion/,"CER"],[/indice de precios al consumidor|\bipc\b/,"IPC"],[/acta\s*(?:n[°º.]?\s*)?(?:2601|2630|2658|2764|2783)/,"acta de la CNAT"],
+    [/plazo fijo/,"plazo fijo"],[/doctrina legal[^.;]{0,60}/,"doctrina legal"]
+  ];
+  function intereses(texto,A){
+    var out=[];
+    oraciones(texto,A).forEach(function(o){
+      var pl=plano(o.t);
+      if(!/\bintereses?\b|\btasa\b|actualiza|indexa|desvaloriz/.test(pl)||o.zona==="firmas") return;
+      if(/^\s*tasado|tasad[oa] por la ley/.test(pl)&&!/interes/.test(pl)) return;
+      var tasas=[];TASAS.forEach(function(t){ var m=t[0].exec(pl); if(m&&tasas.indexOf(t[1])<0) tasas.push(t[1]); });
+      var desde=/\bdesde\s+(?:la fecha (?:del|de la|de)\s+|el\s+|la\s+)?([^,.;]{3,70}?)(?=\s+(?:y\s+)?hasta|[,.;]|$)/.exec(pl);
+      var hasta=/hasta\s+(?:el|la|su)\s+([^,.;]{3,60}?)(?=[,.;]|$)/.exec(pl);
+      var incl=/incluidos? (?:los )?intereses|intereses incluidos/.test(pl),aparte=/con mas (?:sus |los )?intereses/.test(pl);
+      if(!tasas.length&&!desde&&!incl&&!aparte&&!/interes(es)? (moratorio|compensatorio|legal|punitorio)/.test(pl)) return;
+      var x={oracion:o,t:o.t,ini:o.ini,fin:o.fin,zona:o.zona,tasas:tasas,desde:desde?desde[1].trim():null,hasta:hasta?hasta[1].trim():null,incluidos:incl,aparte:aparte,etapa:etapaDe(texto,A,o)};
+      // lo que decide este tribunal pesa más que lo que pidió una parte o fijó otra instancia
+      x.s=tasas.length+(desde?.5:0)+(o.zona==="resolutiva"?2:0)+(x.etapa==="esta_instancia"?1:0)+(enAgravio(o.ini)?1:0)+(CONCLUYE.test(pl)?.7:0);
+      // lo que pide o sostiene una parte no es lo que se decide
+      if(DESCRIPCION.test(pl)){ x.s*=.3; x.etapa="parte"; }
+      out.push(x);
+    });
+    function enAgravio(pos){ return ((A.decision&&A.decision.agravios)||[]).some(function(a){ return /interes|tasa/.test(plano(a.titulo))&&pos>=a.ini&&pos<a.fin; }); }
+    out.sort(function(a,b){ return b.s-a.s||a.ini-b.ini; });
+    return out;
+  }
+
+  /* ---------- lo que decidieron las instancias anteriores ---------- */
+  var SUJ_PRIMERA=/\b(la jueza|el juez|la juez|el juzgado|la sentencia de (primera instancia|grado|origen)|el a[ -]?quo|la a[ -]?quo|el iudex|el inferior|el sentenciante|la sentenciante|el tribunal de (grado|origen)|el fallo de primera instancia|primera instancia|la magistrada de grado|el magistrado de grado)\b/;
+  var SUJ_CAMARA=/\b(la (?:\w+ )?camara|la sala|la alzada|el tribunal de alzada|la sentencia (de (?:la )?camara|de alzada|recurrida|impugnada|cuestionada)|el tribunal de apelacion|la decision recurrida|la resolucion recurrida)\b/;
+  var VERBO_DEC=/\b(resolvio|decidio|condeno|rechazo|hizo lugar|admitio|confirmo|revoco|modifico|redujo|elevo|fijo|establecio|sostuvo|considero|entendio|estimo|declaro|desestimo|aplico|impuso|denego|nego|argumento|razono|concluyo|otorgo|reconocio|cuantifico|realizo|sumo|actualizo|valoro|tuvo en cuenta|afirma|considera|analiza|senala|cuantifica|expresa|entiende|sostiene|rechaza|confirma|hace lugar|concluye|valora|pondera|dice|convalido|convalida)\b/;
+  function instancias(texto,A,cual){
+    var lim=A.secciones&&A.secciones.resolutiva?A.secciones.resolutiva.ini:texto.length,out=[];
+    oraciones(texto,A).forEach(function(o){
+      if(o.ini>=lim||o.zona==="firmas") return;
+      var pl=plano(o.t),mP=SUJ_PRIMERA.exec(pl),mC=SUJ_CAMARA.exec(pl),esP=!!mP,esC=!!mC;
+      if(!(esP||esC)) return;
+      // el verbo tiene que venir después del sujeto y cerca: «La Sala V … revocó»
+      var desdeS=Math.min(mP?mP.index:1e9,mC?mC.index:1e9),vb=VERBO_DEC.exec(pl.slice(desdeS));
+      if(!vb||vb.index>160) return;
+      if(DESCRIPCION.test(pl)) return;
+      // «Se equivoca al afirmar que el Juez…»: es lo que sostiene una parte sobre esa sentencia
+      if(/(afirmar|sostener|sostiene|alega|arguido|senala|denuncia|aduce|pretende) que\s*$/.test(pl.slice(Math.max(0,desdeS-40),desdeS).trim()+" ")) return;
+      var inst=esP&&!/la camara|la sala|la alzada/.test(pl)?"primera":"camara";
+      // «el a quo» es la instancia inmediata anterior: en un fallo de corte, la cámara
+      if(/\ba[ -]?quo\b|\binferior\b|\biudex\b|el sentenciante/.test(pl)&&!/primera instancia|de grado|la camara|la alzada/.test(pl)) inst="anterior";
+      var ps=pasaje(texto,A,o);
+      out.push({t:ps.t,ini:o.ini,fin:ps.fin,zona:o.zona,instancia:inst,s:(VERBO_DEC.exec(pl)?1:0)+(/^(la|el) /.test(pl)?.5:0)});
+    });
+    var f=out.filter(function(x){ return cual==="anterior"||x.instancia===cual||x.instancia==="anterior"; });
+    if(!f.length) f=out;
+    // en el orden en que lo cuenta el fallo (los antecedentes van primero)
+    return f.slice(0,6);
+  }
+
+  /* ---------- la pregunta entera ---------- */
+  function entender(p,A,d){
+    var its=intenciones(p),ps=personasEn(p,A),arts=articulosEn(p),ag=agravioEn(p,A);
+    var q=plano(p);
+    var e={pregunta:p,intenciones:its,personas:ps,articulos:arts,agravio:ag,
+      porque:its.indexOf("porque")>=0,
+      instancia:its.indexOf("instancia")>=0?instanciaEn(p):null};
+    // «¿qué votó X?»: la persona manda; «votos» queda sólo si pregunta por el tribunal entero
+    if(ps.length) e.intenciones=its.filter(function(n){ return n!=="votos"&&n!=="partes"; });
+    if(arts.length) e.intenciones=e.intenciones.filter(function(n){ return n!=="normas"; });
+    if(ag&&!e.porque) e.intenciones=e.intenciones.filter(function(n){ return n!=="agravios"&&n!=="decision"; });
+    // «¿por qué se rechazó?»: es el por qué de la decisión, no la decisión otra vez
+    if(e.porque) e.intenciones=e.intenciones.filter(function(n){ return n!=="decision"&&n!=="agravios"; });
+    // lo que queda de la pregunta sin las palabras de intención ni las entidades: el tema
+    var tema=terminos(p).filter(function(w){ return !ps.some(function(x){ return tokensPersona(x.nombre).indexOf(w)>=0; })&&!/^(voto|voto|votaron|opino|dijo|sostuvo|considero|piensa|penso|juez|jueza|ministr|doctor|dra|art|articulo|articulos|porque|fundamento|fundamentos|razon|razones|motivo|motivos|agravio|resolvio|decidio|rechazo|rechazaron|admitio|hizo|lugar|cita|citan|dice)/.test(w)&&!/^\d+$/.test(w); });
+    e.tema=tema.join(" ");
+    var ents=ps.map(function(x){ return "p:"+x.id; }).concat(arts.map(function(a){ return "a:"+a.num; })).concat(ag?["g:"+ag.letra]:[]);
+    e.clave=(ents.length||!e.intenciones.length||(e.tema&&e.intenciones.length===1&&/porque|instancia/.test(e.intenciones[0])))?(e.intenciones.join("+")+"|"+ents.join(",")+"|"+tema.join(" ")):e.intenciones.join("+");
+    return e;
+  }
+
+  return {intenciones:intenciones,entender:entender,oraciones:oraciones,rankear:rankear,porQue:porQue,costas:costas,intereses:intereses,
+    instancias:instancias,personasEn:personasEn,articulosEn:articulosEn,citasDelArticulo:citasDelArticulo,agravioEn:agravioEn,votosDe:votosDe,rangoVoto:rangoVoto,rangoPrincipal:rangoPrincipal,etapaDe:etapaDe};
+})();
+
 if(typeof module!=="undefined"&&module.exports){
-  module.exports={detectar:detectar,IVSAnalisis:IVSAnalisis,LEYES_BASE:LEYES_BASE,CATEGORIA_FUENTE:CATEGORIA_FUENTE,NORMA_A_CLAVE:NORMA_A_CLAVE};
+  module.exports={detectar:detectar,IVSAnalisis:IVSAnalisis,IVSLexia:IVSLexia,LEYES_BASE:LEYES_BASE,CATEGORIA_FUENTE:CATEGORIA_FUENTE,NORMA_A_CLAVE:NORMA_A_CLAVE};
 }
