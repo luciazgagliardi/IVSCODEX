@@ -214,6 +214,7 @@ strong,b{font-weight:500}
 .cq .btn{flex:none;padding:11px 24px}
 .bq-barra>.chip{flex:none;padding:11px 18px}
 .fsb-n{display:inline-block;min-width:18px;padding:1px 6px;border-radius:999px;background:var(--gold);color:var(--bg);font-size:11.5px;text-align:center}
+.bq .aviso-srv{margin:4px 0 0!important;padding:0 4px;font-size:12.5px!important;color:var(--mute-2)!important;line-height:1.5}
 .bq-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:10px 4px 0;font-size:13px;color:var(--mute)}
 .bq-cuenta{margin-left:auto;color:var(--mute-2)}.bq-cuenta b{color:var(--fg);font-weight:500}
 .bq-drawer{display:none;position:absolute;left:0;right:0;top:calc(100% - 4px);z-index:30;padding:18px 20px 16px;border:1px solid var(--line);border-radius:18px;background:#15120e;box-shadow:0 30px 80px rgba(0,0,0,.65);max-height:min(72vh,640px);overflow:auto}
@@ -4817,13 +4818,13 @@ function vistaBuscar(){
       (tieneSug?'<div class="bq-sug bq-sug--abajo">'+sug+sugs+'</div>':'')+
       '<div class="bq-sum">'+(ac.length?ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join(""):'<span><b>Búsqueda irrestricta</b> · Todas las bases, jurisdicciones y períodos.</span>')+
         '<span class="bq-cuenta">'+(resp?'<b>'+tot.toLocaleString("es-AR")+'</b> resultados · '+resp+' de '+vis.length+' bases respondieron':'')+'</span></div>'+
+      (estado.api?avisoServidor():"")+
       '<div class="bq-drawer'+(estado.drawer?" is-on":"")+'">'+franjaBuscar()+
         '<div class="bq-pie"><span class="bq-cad"><span>Consulta</span> <code id="cadena" aria-live="polite"></code></span>'+
         '<span class="bq-acc"><button class="mini" data-act="copiar-cadena">Copiar</button>'+botonCompartir()+
         '<button class="mini" data-act="barrido">Buscar con Google</button><button class="mini" data-act="limpiar-filtros">Limpiar filtros</button><button class="mini" data-act="limpiar">Empezar de nuevo</button>'+
         '<button class="btn" data-act="tog-drawer">Aplicar</button></span></div></div>'+
     '</div>'+
-    (estado.api?avisoServidor():"")+
     '<div class="bz" id="bz"><aside class="bz-riel" aria-label="Bases">'+rielBuscar(vis)+'</aside><div class="bz-lista">'+bloqueResultados(vis)+'</div></div>';
 }
 
