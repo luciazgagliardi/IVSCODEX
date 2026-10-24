@@ -106,9 +106,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 input,select,textarea{font:inherit;color:inherit}
 h1,h2,h3,h4{text-wrap:balance}
 ::selection{background:var(--gold);color:var(--bg)}
-/* Sin el cursor de texto que titila: el campo activo se marca con la línea
-   dorada de abajo. */
-input,textarea,select,[contenteditable]{caret-color:transparent}
+/* el cursor de escritura (la barrita) tiene que verse: sin él, quien va a escribir cree que el campo no responde */
+input,textarea,[contenteditable]{caret-color:var(--gold)}
 :focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
 ::placeholder{color:var(--mute-2);opacity:1}
 [hidden]{display:none!important}
