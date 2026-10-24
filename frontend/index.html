@@ -5366,6 +5366,12 @@ function formasDeArticulo(cuerpo){
   return f;
 }
 
+function saijEnVivo(cuerpo,slug,delServidor){
+  return Promise.resolve().then(function(){ return buscarSaijNavegador(cuerpo,slug); }).then(function(n){
+    if(n&&n.ok&&(n.total||!(delServidor&&delServidor.ok))) return n;
+    return (delServidor&&delServidor.ok)?delServidor:n;
+  },function(e){ if(delServidor&&delServidor.ok) return delServidor; throw e; });
+}
 function buscarSaijNavegador(cuerpo,slug){
   var formas=formasDeArticulo(cuerpo);
   if(formas){
@@ -5666,7 +5672,10 @@ function buscarEnFuente(slug,pagina){
       // los navegadores (ver el bloque de "SAIJ desde el navegador"). Si el
       // servidor no pudo, lo intenta tu computadora antes de darse por
       // vencida.
-      if((slug==="saij"||slug==="csjn")&&(!d||!d.ok)) return buscarSaijNavegador(cuerpo,slug);
+      // SAIJ le responde 403 al servidor publicado: si el servidor no pudo (o
+      // contestó con su respaldo), la consulta en vivo se hace desde el navegador;
+      // el respaldo queda sólo si eso también falla.
+      if((slug==="saij"||slug==="csjn")&&(!d||!d.ok||d.desdeIndiceLocal)) return saijEnVivo(cuerpo,slug,d);
       return d;
     });
   // Sin esto, un pedido que se corta a mitad de camino —típico en el celular:
@@ -6194,7 +6203,7 @@ function compararFuentes(){
       .then(function(d){
         // Mismo respaldo que en el buscador normal: a SAIJ el servidor
         // publicado no llega (403), pero el navegador sí.
-        if((f.slug==="saij"||f.slug==="csjn")&&(!d||!d.ok)) return buscarSaijNavegador(cuerpo,f.slug);
+        if((f.slug==="saij"||f.slug==="csjn")&&(!d||!d.ok||d.desdeIndiceLocal)) return saijEnVivo(cuerpo,f.slug,d);
         return d;
       })
       .then(function(d){
