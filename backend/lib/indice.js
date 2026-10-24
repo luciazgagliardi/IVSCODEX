@@ -12,6 +12,8 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import zlib from 'node:zlib';
+import { fileURLToPath } from 'node:url';
 import { DIR_INDICE } from '../config.js';
 import { filtrarPorModo } from './relevancia.js';
 
@@ -75,12 +77,41 @@ export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = 
   const q = String(texto || '').trim();
   if (!q) return [];
   const dato = await leer(fuente);
-  const { lista } = filtrarPorModo(Object.values(dato.registros), { q, modo, excluir });
+  // lo guardado por las búsquedas + el respaldo armado a propósito (sin repetir)
+  const todos = { ...(await respaldoDe(fuente)), ...dato.registros };
+  const { lista } = filtrarPorModo(Object.values(todos), { q, modo, excluir });
   return lista;
+}
+
+/**
+ * El respaldo de cada base: backend/respaldo/<fuente>.json.gz, armado con
+ * scripts/armarRespaldo.mjs (una consulta por cada voz del tesauro). Viaja con
+ * el código, así existe aunque el disco del servidor esté vacío. Se lee recién
+ * cuando hace falta (una base que no respondió) y se suelta de la memoria
+ * tras un rato sin uso: son miles de fallos por base.
+ */
+const DIR_RESPALDO = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'respaldo');
+const RESPALDOS = new Map();
+const SUELTA_MS = 15 * 60 * 1000;
+export async function respaldoDe(fuente) {
+  const nombre = String(fuente || '').replace(/[^a-z0-9_-]/gi, '');
+  const ya = RESPALDOS.get(nombre);
+  if (ya) { clearTimeout(ya.reloj); ya.reloj = setTimeout(() => RESPALDOS.delete(nombre), SUELTA_MS); ya.reloj.unref?.(); return ya.registros; }
+  let registros = {};
+  try {
+    const d = JSON.parse(zlib.gunzipSync(await fs.readFile(path.join(DIR_RESPALDO, `${nombre}.json.gz`))));
+    for (const r of d.registros || []) if (r?.id) registros[r.id] = r;
+  } catch { /* esa base todavía no tiene respaldo */ }
+  const reloj = setTimeout(() => RESPALDOS.delete(nombre), SUELTA_MS); reloj.unref?.();
+  RESPALDOS.set(nombre, { registros, reloj });
+  return registros;
 }
 
 /** Cuántos registros hay guardados y cuándo se actualizó por última vez. */
 export async function estadoIndice(fuente) {
   const dato = await leer(fuente);
-  return { guardados: Object.keys(dato.registros).length, actualizadoEn: dato.actualizadoEn };
+  // el conteo sale de respaldo/conteos.json, para no cargar miles de fallos en memoria por una consulta de estado
+  let respaldo = 0;
+  try { respaldo = JSON.parse(await fs.readFile(path.join(DIR_RESPALDO, 'conteos.json'), 'utf8'))[fuente] || 0; } catch { /* sin respaldo */ }
+  return { guardados: Object.keys(dato.registros).length, respaldo, actualizadoEn: dato.actualizadoEn };
 }
