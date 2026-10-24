@@ -4996,11 +4996,56 @@ function esTemaConocido(t){
 function nombreBuscado(q){
   q=String(q||"").trim();
   if(!q||estado.articulo||estado.comoTema===q||typeof IVSNombre==="undefined") return null;
-  return IVSNombre.interpretar(q,{esTema:esTemaConocido});
+  var n=IVSNombre.interpretar(q,{esTema:esTemaConocido});
+  // sólo la cita («Fallos 306:1892»): vale cuando ya se sabe de qué fallo es
+  if(n&&n.soloCita){
+    var c=estado.citaResuelta;
+    if(!c||c.q!==q||!c.nombre) return null;
+    n=IVSNombre.conNombre(n,c.nombre); n.cita=c;
+  }
+  return n;
+}
+function citaSinNombre(q){
+  var c=estado.citaResuelta;
+  if(!c||c.q!==q||c.nombre||c.buscando||estado.comoTema===q) return null;
+  var n=typeof IVSNombre!=="undefined"?IVSNombre.interpretar(q):null;
+  return n&&n.soloCita?n.fallos:null;
+}
+/* ¿De qué fallo es «Fallos 306:1892»? Primero la tabla armada con las citas
+   de otros fallos (datos/fallos-citas.json, scripts/armarCitasFallos.mjs);
+   si no está, los sumarios de SAIJ que la citan, en vivo: el nombre que
+   ponen junto a la cita («"Fiorentino" (Fallos: 306:1892)»). */
+var TABLA_CITAS=null;
+function resolverCita(cita){
+  var tabla=TABLA_CITAS?Promise.resolve(TABLA_CITAS):fetch("./datos/fallos-citas.json?v=20261024").then(function(r){ return r.ok?r.json():{}; })["catch"](function(){ return {}; }).then(function(t){ TABLA_CITAS=t; return t; });
+  return tabla.then(function(t){
+    if(t[cita]) return {nombre:t[cita][0],veces:t[cita][1],fuente:"tabla"};
+    var nombres=[];
+    function pagina(o){
+      var p=new URLSearchParams({q:cita,o:String(o),p:"100",f:SAIJ_TIPOS.sumarios});
+      return fetch(SAIJ_URL+"?"+p.toString(),{headers:{Accept:"application/json"}}).then(function(r){ return r.ok?r.json():null; }).then(function(d){
+        var xs=(d&&d.searchResults&&d.searchResults.documentResultList)||[];
+        xs.forEach(function(x){ var r=saijARegistro(x); if(r&&r.sumario) nombres=nombres.concat(IVSNombre.nombresJuntoACita(r.sumario,cita)); });
+        return xs.length;
+      })["catch"](function(){ return 0; });
+    }
+    return pagina(0).then(function(k){ return k>=100&&nombres.length<2?pagina(100).then(function(){ return pagina(200); }):null; }).then(function(){
+      var c=IVSNombre.consenso(nombres);
+      if(!c||(c.otros[0]&&c.otros[0].v*2>c.veces)) return null;
+      return {nombre:c.nombre,veces:c.veces,fuente:"saij"};
+    });
+  });
 }
 function avisoNombre(){
-  var n=nombreBuscado(estado.q); if(!n) return "";
-  var que=["«"+n.texto+"»",n.nombreTribunal,n.fecha||n.anio,n.fallos?"Fallos "+n.fallos:null].filter(Boolean);
+  var q=String(estado.q||"").trim(),c=estado.citaResuelta;
+  if(c&&c.q===q&&c.buscando) return '<div class="nombre-av"><span class="nombre-av-r">Fallo por su cita</span><span class="nombre-av-t">«'+esc(q)+'»</span><span class="nombre-av-n">Buscando de qué fallo es, en las citas que hacen otros fallos…</span></div>';
+  if(c&&c.q===q&&!c.nombre&&!c.buscando) return '<div class="nombre-av"><span class="nombre-av-r">Fallo por su cita</span><span class="nombre-av-t">«'+esc(q)+'»</span><span class="nombre-av-n">No encontré de qué fallo es esa cita en las citas de otros fallos. Abajo, los fallos que la mencionan: el nombre suele estar junto a la cita.</span></div>';
+  var n=nombreBuscado(q); if(!n) return "";
+  var que=["«"+n.texto+"»",n.nombreTribunal,n.anioAprox?null:(n.fecha||n.anio),n.fallos&&!n.cita?"Fallos "+n.fallos:null].filter(Boolean);
+  if(n.cita) return '<div class="nombre-av"><span class="nombre-av-r">Fallo por su cita</span><span class="nombre-av-t">«'+esc(n.texto)+'» es «'+esc(n.cita.nombre)+'»</span>'+
+    '<span class="nombre-av-n">Lo deduje de '+(n.cita.veces===1?'la cita de otro fallo que lo nombra':n.cita.veces+' citas de otros fallos que lo nombran')+' junto a ese tomo y página'+(n.cita.fuente==="saij"?' (sumarios de SAIJ)':'')+
+    '. Se busca «'+esc(n.cita.nombre)+'» en la base de la Corte Suprema'+(n.anio?', y se confirma con el año del tomo (≈ '+n.anio+')':'')+'.</span>'+
+    '<button type="button" class="mini" data-act="buscar-como-tema">Buscar la cita como texto</button></div>';
   return '<div class="nombre-av"><span class="nombre-av-r">Fallo por su nombre</span><span class="nombre-av-t">'+esc(que.join(" · "))+'</span>'+
     '<span class="nombre-av-n">Se busca por la carátula'+(n.bases?' en la base de '+esc(n.nombreTribunal):' en todas las bases')+' y se ordena por parecido con el nombre'+(n.anio?' y el año':'')+'.</span>'+
     '<button type="button" class="mini" data-act="buscar-como-tema">Buscarlo como tema</button></div>';
@@ -5020,7 +5065,21 @@ function buscarEnTodas(){
   estado.limFilas=40;
   // El nombre de un fallo («CSJN 1984 Fiorentino s/ tenencia…») se busca por su
   // carátula y, si nombra al tribunal, sólo en la base de ese tribunal
-  var bases=basesVisibles(),nom=nombreBuscado(estado.q);
+  // sólo una cita de Fallos: primero se averigua de qué fallo es
+  var qq=String(estado.q||"").trim(),soloCita=(!estado.articulo&&estado.comoTema!==qq&&typeof IVSNombre!=="undefined")?IVSNombre.interpretar(qq,{esTema:esTemaConocido}):null;
+  if(soloCita&&soloCita.soloCita&&!(estado.citaResuelta&&estado.citaResuelta.q===qq&&!estado.citaResuelta.buscando)){
+    if(estado.citaResuelta&&estado.citaResuelta.q===qq) return;
+    estado.citaResuelta={q:qq,buscando:true}; render();
+    resolverCita(soloCita.fallos).then(function(r){
+      if(String(estado.q||"").trim()!==qq) return;
+      estado.citaResuelta={q:qq,nombre:r&&r.nombre,veces:r&&r.veces,fuente:r&&r.fuente};
+      buscarEnTodas();
+    });
+    return;
+  }
+  var bases=basesVisibles(),nom=nombreBuscado(estado.q),sc=citaSinNombre(qq);
+  // la cita sin nombre conocido: los fallos que la mencionan, con la cita exacta
+  if(sc&&!nom) nom={bases:["csjn","saij","scba","mendoza","caba","mendozalegal"]};
   if(nom&&nom.bases){
     var solo=bases.filter(function(f){ return nom.bases.indexOf(f.slug)>=0; });
     if(solo.length){
@@ -5830,8 +5889,9 @@ function buscarEnFuente(slug,pagina){
   if(slug==="saij"&&imBusco.provincia) cuerpo.provincia=imBusco.provincia;
   // Las formas equivalentes del término (tesauro): el servidor las busca también
   // y suma, en la primera página, lo que encuentre con cada una.
-  var nom=nombreBuscado(qi);
-  if(nom){
+  var nom=nombreBuscado(qi),sinNombre=citaSinNombre(qi);
+  if(sinNombre){ cuerpo.q=sinNombre; cuerpo.modo="exacta"; }
+  else if(nom){
     // a la base se le piden las partes; el tribunal y el año sirven para ordenar
     cuerpo.q=nom.consulta; cuerpo.modo="todas";
     // en SAIJ, las fichas de los fallos: son las que traen la carátula completa
