@@ -214,7 +214,7 @@ strong,b{font-weight:500}
 .cq .btn{flex:none;padding:11px 24px}
 .bq-barra>.chip{flex:none;padding:11px 18px}
 .fsb-n{display:inline-block;min-width:18px;padding:1px 6px;border-radius:999px;background:var(--gold);color:var(--bg);font-size:11.5px;text-align:center}
-.bq .aviso-srv{margin:4px 0 0!important;padding:0 4px;font-size:12.5px!important;color:var(--mute-2)!important;line-height:1.5}
+.bq .aviso-srv{margin:-10px 0 0!important;padding:0 4px;font-size:12.5px!important;color:var(--mute-2)!important;line-height:1.5}
 .bq-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:10px 4px 0;font-size:13px;color:var(--mute)}
 .bq-cuenta{margin-left:auto;color:var(--mute-2)}.bq-cuenta b{color:var(--fg);font-weight:500}
 .bq-drawer{display:none;position:absolute;left:0;right:0;top:calc(100% - 4px);z-index:30;padding:18px 20px 16px;border:1px solid var(--line);border-radius:18px;background:#15120e;box-shadow:0 30px 80px rgba(0,0,0,.65);max-height:min(72vh,640px);overflow:auto}
@@ -2968,18 +2968,6 @@ function nuevoIndices(){
   });
   return o;
 }
-/* ¿El servidor tiene clave para proponer anillos? Se pregunta una vez, al
-   arranque. Devuelve un booleano y nada más — nunca la clave. Sin clave, el
-   botón directamente no aparece: ofrecer algo que después falla es peor que
-   no ofrecerlo. */
-function preguntarPorElModelo(){
-  if(!estado.api) return;
-  fetch(estado.api+"/tesauro/estado")
-    .then(function(r){ return r.json(); })
-    .then(function(d){ estado.modeloTesauro=!!(d&&d.disponible); if(estado.tab==="buscar") render(); })
-    ["catch"](function(){ estado.modeloTesauro=false; });
-}
-
 function nuevoEstado(){
   return {tab:"buscar",q:"",modo:"todas",conEquivalentes:true,excluir:"",desde:"",hasta:"",
           rama:"",buscarRama:"",
@@ -2990,11 +2978,7 @@ function nuevoEstado(){
           // Requisitos tildados como cumplidos, por ficha: {id:{0:true,…}}.
           // Se guardan en el navegador (ver la checklist de fichaRequisito).
           reqHecho:{},
-          // Propuestas de anillos nuevos para el tesauro (capa 3).
-          // modeloTesauro queda en null hasta que el servidor contesta si
-          // tiene clave; false significa que la función no se ofrece.
-          modeloTesauro:null,
-          propuesta:{para:"",cargando:false,error:null,salida:null},firmaTiras:"",
+          firmaTiras:"",
           // Anillos del tesauro cargados por la propia usuaria. Van a la
           // cuenta como los pasajes: se escriben una vez y sirven desde
           // cualquier computadora.
@@ -3043,7 +3027,7 @@ function detectarServidor(){
       fetch(base+"/salud").then(function(r){ return r.ok?r.json():null; })
       .then(function(d){
         clearTimeout(corte);
-        if(d&&d.ok){ estado.api=base; intentarRestaurarSesion(); preguntarPorElModelo(); if(estado.tab==="lector"||estado.tab==="buscar"||estado.tab==="verificar") render(); }
+        if(d&&d.ok){ estado.api=base; intentarRestaurarSesion(); if(estado.tab==="lector"||estado.tab==="buscar"||estado.tab==="verificar") render(); }
         else probar();
       })["catch"](function(){ clearTimeout(corte); probar(); });
     }catch(e){ clearTimeout(corte); probar(); }
@@ -4536,7 +4520,7 @@ function recalcularSugeridas(){
   // repintado ocurre sólo si cambió — render() rehace el HTML y se lleva
   // puesto el cursor del campo, así que después se devuelve donde estaba.
   var anillo=expandir(String(estado.q||"").trim());
-  var firma=(anillo?anillo.anillo.id:"")+"|"+(tiraProponer()?"p":"");
+  var firma=(anillo?anillo.anillo.id:"")+"|"+(tiraVariantes()?"v"+variantesDe(String(estado.q||"").trim()).join("|"):"");
   var cambioAbajo=(firma!==estado.firmaTiras);
   estado.firmaTiras=firma;
 
@@ -4613,47 +4597,69 @@ function tiraEquivalentes(){
     '</div>';
 }
 
-/* Pedir una propuesta de anillo cuando lo escrito no está en el tesauro.
-   Lo que vuelve es una PROPUESTA, no un cambio: el tesauro se edita a mano,
-   con revisión. Por eso abajo hay un botón para copiar el anillo listo para
-   pegar, y no uno que diga "agregar". */
-function tiraProponer(){
-  if(estado.tab!=="buscar"||!estado.api||estado.modeloTesauro!==true) return "";
+/* Otras formas de escribir lo que se buscó, cuando no tiene anillo en el
+   tesauro. Se arman con reglas del idioma (singular/plural) y con las voces
+   del propio catálogo que comparten raíz con alguna palabra: no hay asistente
+   ni consulta al servidor, así que anda igual sin conexión. */
+function _otroNumero(w){
+  if(w.length<4) return "";
+  if(/ciones$/.test(w)) return w.slice(0,-5)+"ción";
+  if(/siones$/.test(w)) return w.slice(0,-5)+"sión";
+  if(/ión$/.test(w)) return w.slice(0,-3)+"iones";
+  if(/ón$/.test(w)) return w.slice(0,-2)+"ones";
+  if(/ces$/.test(w)) return w.slice(0,-3)+"z";
+  if(/z$/.test(w)) return w.slice(0,-1)+"ces";
+  if(/[aeiouáéíóú]s$/.test(w)) return w.slice(0,-1);
+  if(/[aeiouáéíóú]$/.test(w)) return w+"s";
+  if(/es$/.test(w)&&w.length>5) return w.slice(0,-2);
+  if(/s$/.test(w)) return "";
+  return w+"es";
+}
+function variantesDe(q){
+  var palabrasQ=q.split(/\s+/).filter(Boolean);
+  if(!palabrasQ.length||palabrasQ.length>6) return [];
+  var visto={}, salida=[];
+  visto[sinTildes(q).trim()]=1;
+  function poner(t){
+    var k=sinTildes(t).trim();
+    if(!k||visto[k]) return;
+    visto[k]=1; salida.push(t);
+  }
+  // 1) todo el texto en el otro número, y cada palabra por separado
+  var todo=palabrasQ.map(function(w){ return _VACIAS[sinTildes(w)]?w:(_otroNumero(w)||w); });
+  poner(todo.join(" "));
+  if(palabrasQ.length>1){
+    palabrasQ.forEach(function(w,i){
+      if(_VACIAS[sinTildes(w)]) return;
+      var o=_otroNumero(w); if(!o) return;
+      var c=palabrasQ.slice(); c[i]=o; poner(c.join(" "));
+    });
+  }
+  // 2) voces del catálogo que comparten raíz con alguna palabra del texto
+  var raices=_palabrasUtiles(q).filter(function(w){ return w.length>=5; }).map(_raiz);
+  if(raices.length){
+    RAMAS.forEach(function(r){
+      (r.v||[]).forEach(function(voz){
+        var pv=_palabrasUtiles(voz);
+        if(pv.some(function(w){ return raices.indexOf(_raiz(w))!==-1; })) poner(voz);
+      });
+    });
+  }
+  return salida.slice(0,8);
+}
+function tiraVariantes(){
+  if(estado.tab!=="buscar") return "";
   var q=String(estado.q||"").trim();
   if(q.length<3||q.length>120) return "";
-  if(expandir(q)) return "";                    // ya tiene anillo: no hay nada que proponer
-  var p=estado.propuesta;
-
-  if(p.cargando&&p.para===q)
-    return '<div class="sugeridas"><p class="sug-nota">Buscando de qué otras formas se escribe «'+esc(q)+'»…</p></div>';
-
-  if(p.error&&p.para===q)
-    return '<div class="sugeridas"><p class="sug-nota">'+esc(p.error)+'</p></div>';
-
-  if(p.salida&&p.para===q){
-    var s=p.salida;
-    function chips(lista){
-      return (lista||[]).map(function(t){
-        return '<button class="chip voz-sug" data-act="usar-equivalente" data-voz="'+esc(t)+'">'+esc(comoTitulo(t))+'</button>';
-      }).join("");
-    }
-    if(!s.equivalentes.length&&!s.relacionados.length)
-      return '<div class="sugeridas"><p class="sug-nota">No se encontraron otras formas de escribir «'+esc(q)+'».</p></div>';
-    return '<div class="sugeridas">'+
-      '<p class="sug-nota"><b>Propuesta, para revisar.</b> Esto lo sugirió el asistente y todavía no está en el tesauro: '+
-      'compruébelo antes de darlo por bueno.</p>'+
-      (s.equivalentes.length?'<p class="sug-nota" style="margin-top:8px">Serían lo mismo:</p><div class="chips">'+chips(s.equivalentes)+'</div>':'')+
-      (s.relacionados.length?'<p class="sug-nota" style="margin-top:10px"><b>Conceptos análogos.</b> Nociones jurídicas afines pero con presupuestos diferentes; se requiere verificar sus requisitos sustanciales antes de proceder a su cita.</p><div class="chips">'+chips(s.relacionados)+'</div>':'')+
-      (s.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(s.nota)+'</p>':'')+
-      '<div class="chips" style="margin-top:10px">'+
-        '<button class="chip sug-cerrar" data-act="copiar-anillo">Copiar el anillo para el tesauro</button>'+
-        '<button class="chip sug-cerrar" data-act="cerrar-propuesta">✕</button>'+
-      '</div></div>';
-  }
-
-  return '<div class="sugeridas"><p class="sug-nota"><b>Ausencia en el tesauro:</b> el término «'+esc(comoTitulo(q))+'» aún no está indexado en el catálogo. '+
-    'Debido a la dispersión terminológica de los tribunales, emplear expresiones alternativas modificará los resultados y recuperará fallos distintos.</p>'+
-    '<div class="chips"><button class="chip voz-sug" data-act="pedir-propuesta">Buscar cómo se escribe de otras formas</button></div></div>';
+  if(expandir(q)) return "";                    // ya tiene anillo: no hay nada que sumar
+  var vs=variantesDe(q);
+  var multi=palabras(q).length>1&&estado.modo!=="alguna";
+  if(!vs.length&&!multi) return "";
+  return '<div class="sugeridas"><p class="sug-nota"><b>Otras formas de escribirlo.</b> «'+esc(comoTitulo(q))+'» no figura en el tesauro; '+
+    'los tribunales varían el número y la redacción, y cada forma recupera fallos distintos.</p><div class="chips">'+
+    vs.map(function(t){ return '<button class="chip voz-sug" data-act="usar-variante" data-voz="'+esc(t)+'">'+esc(comoTitulo(t))+'</button>'; }).join("")+
+    (multi?'<button class="chip voz-sug" data-act="usar-variante" data-voz="'+esc(q)+'" data-modo="alguna">Con cualquiera de las palabras</button>':'')+
+    '</div></div>';
 }
 
 /* Buscar, ordenado en columnas: arriba la consulta y los filtros; abajo una
@@ -4807,7 +4813,7 @@ function vistaBuscar(){
   }
   var vis=basesVisibles();
   if(estado.verBase&&!vis.some(function(f){return f.slug===estado.verBase;})) estado.verBase="";
-  var ac=filtrosActivos(), sugs=tiraSugerencias()+tiraEquivalentes()+tiraProponer();
+  var ac=filtrosActivos(), sugs=tiraSugerencias()+tiraEquivalentes()+tiraVariantes();
   var tieneSug=!!(sug||sugs);
   var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?(im.total||(im.resultados||[]).length):0); },0);
   var resp=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; }).length;
@@ -4853,7 +4859,7 @@ function buscarEnTodas(){
 }
 function avisoServidor(){
   var local=/localhost|127\.0\.0\.1/.test(String(estado.api||""))||String(estado.api||"").charAt(0)==="/";
-  if(local) return '<p class="aviso-srv" style="font-size:12px;color:var(--humo);margin:0 0 12px">Servidor: <b style="color:var(--lacre)">el propio</b> · todo disponible, incluido el texto completo de los fallos de CABA.</p>';
+  if(local) return '';
   // Sin número acá adentro: decía "las cuatro búsquedas andan" y ya iban
   // seis. El conteo sale de FUENTES_INDICE, que es donde se agregan.
   return '<p class="aviso-srv" style="font-size:12px;color:var(--humo);margin:0 0 12px">Para procesar el texto completo de un fallo de CABA, '+
@@ -9259,41 +9265,15 @@ document.addEventListener("click",function(ev){
     invalidarBusquedas(); render();
     return;
   }
-  if(act==="pedir-propuesta"){
-    var qp=String(estado.q||"").trim();
-    if(!qp||!estado.api) return;
-    estado.propuesta={para:qp,cargando:true,error:null,salida:null}; render();
-    fetch(estado.api+"/tesauro/proponer",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({termino:qp,ramas:RAMAS.map(function(r){return r.id;}),
-        yaEnTesauro:TESAURO.map(function(a){return a.canonico;})})
-    }).then(function(r){ return r.json(); })
-      .then(function(d){
-        if(estado.propuesta.para!==qp) return;
-        if(d&&d.ok) estado.propuesta={para:qp,cargando:false,error:null,salida:d.propuesta};
-        else estado.propuesta={para:qp,cargando:false,error:(d&&d.mensaje)||"No se pudo pedir la propuesta.",salida:null};
-        render();
-      })["catch"](function(){
-        if(estado.propuesta.para!==qp) return;
-        estado.propuesta={para:qp,cargando:false,error:"Se cortó la comunicación con el servidor.",salida:null};
-        render();
-      });
+  if(act==="usar-variante"){
+    var vq=b.getAttribute("data-voz")||"";
+    if(!vq) return;
+    estado.q=vq; estado.modo=b.getAttribute("data-modo")==="alguna"?"alguna":"exacta"; estado.articulo=""; estado.marca=0;
+    invalidarBusquedas();
+    render();
+    flash(estado.modo==="alguna"?"Buscando fallos que tengan cualquiera de las palabras":"Buscando «"+vq+"»");
     return;
   }
-  if(act==="copiar-anillo"){
-    var sp=estado.propuesta.salida;
-    if(!sp) return;
-    var lineas=[" {id:\""+sp.canonico.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")+"\",canonico:\""+sp.canonico+"\""];
-    if(sp.rama) lineas.push(",rama:\""+sp.rama+"\"");
-    lineas.push(",\n  equivalentes:["+sp.equivalentes.map(function(t){return '"'+t+'"';}).join(",")+"]");
-    if(sp.relacionados.length) lineas.push(",\n  relacionados:["+sp.relacionados.map(function(t){return '"'+t+'"';}).join(",")+"]");
-    if(sp.desde) lineas.push(",desde:"+sp.desde);
-    if(sp.nota) lineas.push(",\n  nota:\""+sp.nota.replace(/"/g,"'")+"\"");
-    copiar(lineas.join("")+"},");
-    flash("Anillo copiado — revisalo y pasámelo para agregarlo al tesauro");
-    return;
-  }
-  if(act==="cerrar-propuesta"){ estado.propuesta={para:"",cargando:false,error:null,salida:null}; render(); return; }
   if(act==="usar-equivalente"){
     var eq=b.getAttribute("data-voz")||"";
     if(!eq) return;
