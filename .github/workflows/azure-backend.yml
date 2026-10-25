@@ -18,6 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # El acervo (backend/lib/acervo.js): las tandas viven en la rama «acervo», que se
+      # reemplaza entera en cada versión; viajan con el servidor y se importan al arrancar.
+      - name: Traer las tandas del acervo
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: acervo
+          path: backend/acervo-datos
+      - name: Sin la carpeta .git de las tandas
+        run: rm -rf backend/acervo-datos/.git && ls -la backend/acervo-datos || true
       - uses: actions/setup-node@v4
         with:
           node-version: '24'

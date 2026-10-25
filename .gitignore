@@ -27,3 +27,8 @@ npm-debug.log*
 .DS_Store
 .claude/
 .vscode/
+
+# cosecha masiva (scripts/cosecharSaij.mjs): fuera del repositorio
+backend/acervo-crudo/
+backend/acervo/
+backend/acervo-datos/

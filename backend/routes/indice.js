@@ -18,6 +18,7 @@ import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
+import { estadoAcervo } from '../lib/acervo.js';
 import { errores, ErrorApp } from '../lib/errores.js';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
 import { NORMAS, articuloDe, rubricaDe } from '../lib/legislacion.js';
@@ -295,7 +296,12 @@ for (const { slug, buscar } of FUENTES) {
         // quien busca sin nada: probamos con lo que ya quedó guardado de
         // búsquedas anteriores. Es parcial y puede estar viejo, pero es
         // mejor que un error en pantalla, y el frontend avisa que es local.
-        resultados = await buscarEnIndice(slug, consulta, { modo, excluir });
+        resultados = await buscarEnIndice(slug, consulta, {
+          modo, excluir,
+          ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}),
+          ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}),
+          ...(slug === 'saij' && typeof provincia === 'string' && provincia.length <= 60 ? { provincia } : {}),
+        });
         total = resultados.length;
         // El respaldo local no tiene "cuántos hay en el sitio": lo guardado
         // es todo lo que hay. Va null y no un número para que el frontend no
@@ -574,6 +580,12 @@ router.get('/legislacion/:norma/:articulo', async (req, res, next) => {
  * llega a SAIJ, repite la consulta desde el navegador de quien busca.
  */
 let ultimoEstado = { en: 0, dato: null };
+/** Cuántos fallos tiene el acervo propio (lib/acervo.js), por base, y de qué versión. */
+router.get('/acervo/estado', (_req, res) => {
+  const e = estadoAcervo();
+  res.json({ ok: true, activo: e.activo, version: e.version, conteos: e.conteos, importando: e.importando, error: e.error || null });
+});
+
 router.get('/fuentes/estado', async (_req, res) => {
   // Cada llamada hace una búsqueda de verdad en cada sitio oficial: se
   // reutiliza el último resultado durante 2 minutos para que esta ruta no

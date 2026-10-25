@@ -16,6 +16,7 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { DIR_INDICE } from '../config.js';
 import { filtrarPorModo } from './relevancia.js';
+import { acervoTiene, buscarEnAcervo, estadoAcervo } from './acervo.js';
 
 let listo = false;
 
@@ -73,14 +74,21 @@ export async function upsertRegistros(fuente, registros) {
  * es exactamente cuando tenia que servir. Ahora usa el mismo filtro por
  * modo que el resto de la app (lib/relevancia.js).
  */
-export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '' } = {}) {
+export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '' } = {}) {
   const q = String(texto || '').trim();
   if (!q) return [];
   const dato = await leer(fuente);
-  // lo guardado por las búsquedas + el respaldo armado a propósito (sin repetir)
-  const todos = { ...(await respaldoDe(fuente)), ...dato.registros };
-  const { lista } = filtrarPorModo(Object.values(todos), { q, modo, excluir });
-  return lista;
+  // con acervo (lib/acervo.js), la base grande en disco reemplaza al respaldo en memoria:
+  // trae los candidatos por índice de texto y el filtro por modo de siempre decide
+  const delAcervo = acervoTiene(fuente) ? buscarEnAcervo(fuente, q, { modo, excluir, anioDesde, anioHasta, provincia, limite: 600 }) : null;
+  const base = delAcervo ? Object.fromEntries(delAcervo.map((r) => [r.id, r])) : await respaldoDe(fuente);
+  // lo guardado por las búsquedas + el acervo o el respaldo (sin repetir)
+  const todos = { ...base, ...dato.registros };
+  const { lista } = filtrarPorModo(Object.values(todos), { q, modo, excluir, anioDesde, anioHasta });
+  if (!delAcervo) return lista;
+  // el orden del índice (relevancia) primero; lo guardado que no vino del acervo, después
+  const orden = new Map(delAcervo.map((r, i) => [r.id, i]));
+  return lista.sort((a, b) => (orden.get(a.id) ?? 1e9) - (orden.get(b.id) ?? 1e9));
 }
 
 /**
@@ -113,5 +121,6 @@ export async function estadoIndice(fuente) {
   // el conteo sale de respaldo/conteos.json, para no cargar miles de fallos en memoria por una consulta de estado
   let respaldo = 0;
   try { respaldo = JSON.parse(await fs.readFile(path.join(DIR_RESPALDO, 'conteos.json'), 'utf8'))[fuente] || 0; } catch { /* sin respaldo */ }
-  return { guardados: Object.keys(dato.registros).length, respaldo, actualizadoEn: dato.actualizadoEn };
+  const acervo = estadoAcervo().conteos?.[fuente] || 0;
+  return { guardados: Object.keys(dato.registros).length, respaldo: Math.max(respaldo, acervo), acervo, actualizadoEn: dato.actualizadoEn };
 }
