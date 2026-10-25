@@ -89,7 +89,7 @@ function inicioDelCuerpo(texto) {
  * resultado. CABA no manda nada de eso —solo carátula, secretaría y
  * fecha— así que el pasaje hay que sacarlo del documento en sí.
  */
-function recortarPasaje(texto, q) {
+function recortarPasaje(texto, q, { exigir = false } = {}) {
   const limpio = String(texto || '').replace(/\s+/g, ' ').trim();
   if (!limpio) return '';
 
@@ -110,6 +110,8 @@ function recortarPasaje(texto, q) {
   // Sin coincidencia (pasa cuando el buscador matcheó por una forma
   // declinada de la palabra): mostramos el arranque del cuerpo, que es
   // donde el fallo empieza a decir algo.
+  // Dialnet: si lo buscado no está en el texto (un autor que se llama así, otra disciplina), no hay pasaje
+  if (pos === -1 && exigir) return '';
   if (pos === -1) {
     const trozo = limpio.slice(cuerpo, cuerpo + VENTANA * 2).trim();
     return (cuerpo > 0 ? '… ' : '') + trozo + (cuerpo + VENTANA * 2 < limpio.length ? ' …' : '');
@@ -456,7 +458,7 @@ for (const { slug, buscar } of FUENTES) {
             const resumen = await resumenDeArticulo(url);
             fragmentos.push({
               url,
-              fragmento: resumen ? recortarPasaje(resumen, q) : '',
+              fragmento: resumen ? recortarPasaje(resumen, q, { exigir: true }) : '',
               error: resumen ? null : 'Dialnet no publica un resumen de este artículo.',
             });
             continue;
@@ -467,7 +469,7 @@ for (const { slug, buscar } of FUENTES) {
             continue;
           }
           const doc = await obtenerDocumento(url);
-          fragmentos.push({ url, fragmento: recortarPasaje(doc.texto, q), error: null });
+          fragmentos.push({ url, fragmento: recortarPasaje(doc.texto, q, { exigir: slug === 'dialnet' }), error: null });
         } catch (e) {
           const mensaje = e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.';
           if (e?.codigo === 'RESPUESTA_NO_OK' && [401, 403].includes(e.extra?.estadoOrigen)) {

@@ -250,6 +250,9 @@ strong,b{font-weight:500}
 .rz-t .rf-punto{width:7px;height:7px;border-radius:50%;flex:none;background:var(--punto,var(--humo));transform:translateY(-1px)}
 .rz-m{margin:2px 0 0 16px;font-size:12px;color:var(--mute-2)}
 .rz-coincide{color:var(--gold);font-weight:600}
+.rz-busca{font-style:italic;opacity:.55}
+.rz-acc{margin:6px 0 0 16px}
+@media (max-width:640px){.rz-acc{margin-left:0}}
 .rz--nombre .rz-t mark{background:transparent;color:var(--gold);font-weight:600}
 .nombre-av{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:0 0 14px;padding:12px 14px;border:1px solid var(--gold-55);border-radius:14px;background:rgba(217,163,27,.05)}
 .nombre-av-r{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
@@ -4589,7 +4592,7 @@ function pintarRail(){
         consultadas++; der='<span class="rf-n">0</span>';
       }else if(im.busco){
         consultadas++; respondieron++;
-        der='<span class="rf-n">'+(im.total||im.resultados.length)+'</span>'+
+        der='<span class="rf-n">'+cuantosDe(f,im)+'</span>'+
             (im.ms?'<span class="rf-t">'+(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+' s</span>':'');
       }else{
         clase=" sin-buscar"; der='<span class="rf-t">en espera</span>';
@@ -4864,7 +4867,7 @@ function estadoBase(f){
   var im=estado.indices[f.slug]||{};
   if(im.cargando) return {c:" consultando",t:'<span class="rf-t">buscando…</span>'};
   if(im.busco&&im.error) return {c:"",t:'<span class="rf-n">0</span>'};
-  if(im.busco) return {c:"",t:'<span class="rf-n">'+(im.total||im.resultados.length)+'</span>'+(im.ms?'<span class="rf-t">'+(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+' s</span>':'')};
+  if(im.busco) return {c:"",t:'<span class="rf-n">'+cuantosDe(f,im)+'</span>'+(im.ms?'<span class="rf-t">'+(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+' s</span>':'')};
   return {c:" sin-buscar",t:'<span class="rf-t">en espera</span>'};
 }
 /* Buscar, en dos zonas: a la izquierda las bases (punto, estado, conteo y su
@@ -4877,11 +4880,39 @@ function fechaNum(r){
 }
 function resultadosDe(f){
   var im=estado.indices[f.slug]||{};
-  return (im.busco&&!im.error&&im.resultados)?im.resultados:[];
+  return (im.busco&&!im.error&&im.resultados)?im.resultados.filter(function(r){ return conTexto(f,r)!==false; }):[];
 }
 function pasajeDe(f,r){
   var im=estado.indices[f.slug]||{}, uf=urlFragmento(f.slug,r);
   return r.sumario||(uf&&im.fragmentos?im.fragmentos[uf]:"")||"";
+}
+/* Un resultado se muestra sólo con su texto: true si ya tiene pasaje, "pendiente"
+   si se está yendo a buscar al documento, false si no lo tiene. Dialnet no se
+   muestra mientras tanto: muchos documentos no tienen el término en su texto
+   (un autor que se llama así) y aparecerían para desaparecer. Un fallo hallado
+   por su nombre muestra la carátula, que es donde está la coincidencia. */
+/* Dialnet es de todas las disciplinas: de ahí sólo cuenta lo jurídico (el título,
+   la revista o el pasaje hablan de derecho). «Alonso» traía testamentos en náhuatl. */
+var RE_JURIDICO=/\b(derech|jur[ií]dic|jurispruden|leyes?\b|legal|legisla|tribunal|sentencia|c[oó]digo|constituci|contrat|penal|civil|laboral|trabajador|procesal|juez|jueces|jueza|delito|responsabilidad|normativ|abogac|abogad|judicial|justicia|fiscal|tributari|administrativ|consumidor|familia|sucesi|propiedad|obligaci|indemniz|daño|recurso|amparo|garant[ií]a|crimin|notari|registral|societari|concursal|arbitraj|mediaci|empleo p[uú]blico|seguridad social)/i;
+function esJuridico(r,pas){
+  if(RE_JURIDICO.test([r.caratula,r.tribunal].join(" "))) return true;
+  // sólo en el pasaje: al menos dos términos jurídicos distintos («la herencia del linaje» no alcanza)
+  var re=new RegExp(RE_JURIDICO.source,"gi"),m,vistos={};
+  while((m=re.exec(pas||""))) vistos[m[1].toLowerCase()]=1;
+  return Object.keys(vistos).length>=2;
+}
+function conTexto(f,r){
+  if(f.slug==="dialnet"){ var pd=pasajeDe(f,r); return !!pd&&esJuridico(r,pd); }
+  if(pasajeDe(f,r)) return true;
+  if(r.coincideNombre) return true;
+  var im=estado.indices[f.slug]||{}, uf=urlFragmento(f.slug,r);
+  if(uf&&!(im.fragmentos&&im.fragmentos.hasOwnProperty(uf))) return f.slug==="dialnet"?false:"pendiente";
+  return false;
+}
+function cuantosDe(f,im){
+  // Dialnet: los que de verdad tienen el término en su texto, no el total crudo del sitio
+  if(f.slug==="dialnet") return (im.resultados||[]).filter(function(r){ return conTexto(f,r)===true; }).length;
+  return im.total||(im.resultados||[]).length;
 }
 function filaIndice(f,r,k,tambien){
   var abierta=!!estado.filasAbiertas[k];
@@ -4895,7 +4926,8 @@ function filaIndice(f,r,k,tambien){
     '<div class="rz-m"><b>'+esc(f.cod)+'</b>'+(meta?' · '+meta:'')+(nom?' · <span class="rz-coincide">coincide con el nombre buscado</span>':'')+
       (r.otrasFichas&&r.otrasFichas.length?' · <span class="rz-otras">'+(r.otrasFichas.length+1)+' fichas del mismo fallo</span>':'')+
       (tambien&&tambien.length?' · <span class="rz-otras">también en '+esc(tambien.join(", "))+'</span>':'')+'</div>'+
-    (pas?'<p>'+resaltarSimple(pas,nom?qn+" "+estado.q:estado.q)+'</p>':(nom?'<p>Carátula: '+resaltarSimple(r.caratula||"",qn)+'</p>':''))+'</article>';
+    (pas?'<p>'+resaltarSimple(pas,nom?qn+" "+estado.q:estado.q)+'</p>':(nom?'<p>Carátula: '+resaltarSimple(r.caratula||"",qn)+'</p>':(conTexto(f,r)==="pendiente"?'<p class="rz-busca">Buscando el pasaje…</p>':'')))+
+    (r.linkFallo?'<div class="rz-acc"><button type="button" class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Abrir en el Lector</button></div>':'')+'</article>';
 }
 function listaTodas(vis){
   var grupos=vis.map(function(f){ return resultadosDe(f).map(function(r,i){ return {f:f,r:r,k:f.slug+":"+i,i:i}; }); });
@@ -4954,7 +4986,7 @@ function bloqueResultados(vis){
   return h;
 }
 function rielBuscar(vis){
-  var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?(im.total||(im.resultados||[]).length):0); },0);
+  var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?cuantosDe(f,im):0); },0);
   var h='<div class="bz-fila'+(!estado.verBase?" on":"")+'" data-act="ver-base" data-fuente=""><span class="rf-nom">TODAS</span><span class="rf-n">'+(tot||"")+'</span></div>';
   h+=vis.map(function(f){
     var im=estado.indices[f.slug]||{}, e=estadoBase(f);
@@ -4974,7 +5006,7 @@ function vistaBuscar(){
   if(estado.verBase&&!vis.some(function(f){return f.slug===estado.verBase;})) estado.verBase="";
   var ac=filtrosActivos(), sugs=tiraSugerencias()+tiraEquivalentes()+tiraVariantes();
   var tieneSug=!!(sug||sugs);
-  var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?(im.total||(im.resultados||[]).length):0); },0);
+  var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?cuantosDe(f,im):0); },0);
   var resp=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; }).length;
   return '<div class="bq" id="panel-buscar-form">'+
       '<div class="bq-barra"><label class="cq"><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
@@ -5113,8 +5145,7 @@ function avisoServidor(){
   if(local) return '';
   // Sin número acá adentro: decía "las cuatro búsquedas andan" y ya iban
   // seis. El conteo sale de FUENTES_INDICE, que es donde se agregan.
-  return '<p class="aviso-srv" style="font-size:12px;color:var(--humo);margin:0 0 12px">Para procesar el texto completo de un fallo de CABA, '+
-    'es necesario descargarlo previamente e introducirlo de manera directa en el Lector.</p>';
+  return '';
 }
 
 /* Conectores que aparecen en cualquier texto jurídico. No se resaltan: en
@@ -5370,7 +5401,7 @@ function fichaIndice(f,r){
     '<div class="f-acc" style="margin-top:8px">'+
       (r.linkFicha?'<a class="mini" href="'+escU(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
       marcaTema+marcaVariante+
-      (r.linkFallo&&!(f.slug==="caba"&&uf&&im.fragmentos.hasOwnProperty(uf)&&!im.fragmentos[uf])?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Traer texto completo</button>'+
+      (r.linkFallo?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Abrir en el Lector</button>'+
         '<button class="mini lx-mini" data-act="traer-indice-fallo" data-lexia="1" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Preguntarle a Lexia</button>':"")+
       // Si el documento se puede traer, también se puede abrir donde vive:
       // el enlace al sitio oficial es lo que hace citable al resultado.
@@ -5779,7 +5810,7 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   render();
   // Los resultados ya están en pantalla; los pasajes que esta fuente no
   // manda se van completando atrás, sin hacer esperar a nadie.
-  if(imBusco.resultados.some(function(r){return r.linkFallo&&!r.sumario;})){
+  if(imBusco.resultados.some(function(r){return urlFragmento(slug,r)&&!r.sumario;})){
     traerFragmentos(slug,imBusco.pedido);
   }
   var nombreTrib=(fCfg.tribunales||[]).filter(function(t){return t.v===imBusco.tribunal;})[0];
@@ -6080,8 +6111,10 @@ function paginadorIndice(f,im){
  * por otra— sino que el sitio DEVUELVE esas filas. Eso es cierto para los
  * seis buscadores, cuenten como cuenten.
  */
-function conteoIndice(im,local){
+function conteoIndice(im,local,visibles){
   var n=function(x){ return '<b>'+(x||0).toLocaleString("es-AR")+'</b>'; };
+  // Dialnet: sólo cuentan los que tienen el término en su texto (no el total crudo del sitio)
+  if(visibles!=null) return n(visibles)+' resultado(s) con texto en esta página'+(typeof im.cursores[(im.pagina||1)+1]==="number"?'; pase de página para ver más':'');
   if(local) return n(im.total)+' resultado(s)';
   // Sin revisados, el filtro lo hizo el propio sitio: su contador es el total.
   // Si la fuente avisa que el conteo todavía no está cerrado (la Corte IDH
@@ -6157,8 +6190,12 @@ function panelIndice(f){
       (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
     return out;
   }
-  var visibles=im.secFiltro?im.resultados.filter(function(r){return r.secretaria===im.secFiltro;}):im.resultados;
+  var visibles=(im.secFiltro?im.resultados.filter(function(r){return r.secretaria===im.secFiltro;}):im.resultados).filter(function(r){ return conTexto(f,r)!==false; });
   var nombreSec=SECRETARIAS_CABA[im.secFiltro];
+  if(!visibles.length&&!im.secFiltro){
+    out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">'+(im.fragCargando?'Buscando los pasajes…':'Sin coincidencias en '+esc(f.nombre)+' para esta búsqueda en esta página.')+'</p>'+paginadorIndice(f,im)+'</div>';
+    return out;
+  }
   if(!visibles.length){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Ninguno de los '+im.resultados.length+
       ' resultados que trajo esta página es de '+esc(nombreSec||im.secFiltro)+'. Puede estar en otra página del sitio oficial.</p></div>';
@@ -6170,7 +6207,7 @@ function panelIndice(f){
     // Cuando el sitio de origen no sabe hacer el modo pedido, el filtro corre
     // de nuestro lado y su contador ya no aplica al modo pedido: se dice
     // cuántos se verificaron. Ver lib/relevancia.js.
-    conteoIndice(im,local)+
+    conteoIndice(im,local,f.slug==="dialnet"?visibles.length:null)+
     // Antes acá también decía "· N guardadas en tu índice local hasta
     // ahora": un detalle interno (cuántos documentos se acumularon con el
     // tiempo en la copia de respaldo, ver lib/indice.js) que no ayuda a
@@ -7526,7 +7563,7 @@ function montarAsistente(){
       if(pend&&n++<40) return setTimeout(mirar,1000);
       if(!el.classList.contains("is-on")&&!log.children.length) return;
       var ok=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; });
-      var tot=ok.reduce(function(a,f){ var im=estado.indices[f.slug]; return a+(im.total||im.resultados.length); },0);
+      var tot=ok.reduce(function(a,f){ var im=estado.indices[f.slug]; return a+cuantosDe(f,im); },0);
       var mal=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
       if(!ok.length){ dice(pick("sinresp",["Ninguna base respondió todavía. Los sistemas oficiales a veces se cuelgan; ¿reintento?","No hubo respuesta de las bases. Suele pasar en horario de tribunales; ¿lo intento de nuevo?"]),[{t:"Reintentar",f:buscarEnTodas}]); return; }
       if(tot===0){ dice(pick("cero",["Respondieron "+ok.length+" bases pero sin coincidencias. Probemos aflojar la búsqueda.","Nada con esas palabras. Puedo probar con «alguna palabra» o quitar filtros."]),
@@ -7680,7 +7717,7 @@ function montarAsistente(){
       return dice([bs.nombre+".",bs.nota||""].filter(Boolean),[{t:"Buscar sólo ahí",f:function(){ FUENTES_INDICE.forEach(function(f){ estado.fuentesOff[f.slug]=(f.slug!==bs.slug); }); estado.tab="buscar"; render(); }},{t:"Gracias",suave:true,f:function(){}}]);
     if(/\b(resumen|resumime|resumi|cuantos resultados|cuantos hay|que base (trajo|respondio|tuvo)|cual (base|fuente) (trajo|respondio|tuvo)|como (me )?(fue|salio)|que paso con la busqueda|ya termino)\b/.test(t)){
       if(!hizoBusqueda) return dice("Todavía no hay una búsqueda hecha. Dígame el tema y la lanzo.",null),pedirTema();
-      var filas=vis1.map(function(f){ var im=estado.indices[f.slug]||{}; return {f:f,im:im,n:(im.busco&&!im.error)?(im.total||(im.resultados||[]).length):-1}; });
+      var filas=vis1.map(function(f){ var im=estado.indices[f.slug]||{}; return {f:f,im:im,n:(im.busco&&!im.error)?cuantosDe(f,im):-1}; });
       var cargando=filas.filter(function(x){return x.im.cargando;}).length, ok=filas.filter(function(x){return x.n>=0;}).sort(function(a,b){return b.n-a.n;});
       var rap=ok.filter(function(x){return x.im.ms;}).sort(function(a,b){return a.im.ms-b.im.ms;})[0], mal=filas.filter(function(x){return x.im.busco&&x.im.error;});
       var l1=ok.length?"La que más trajo fue "+ok[0].f.cod+" ("+ok[0].n.toLocaleString("es-AR")+")"+(ok[1]?", después "+ok[1].f.cod+" ("+ok[1].n.toLocaleString("es-AR")+")":"")+".":"Todavía no respondió ninguna base.";

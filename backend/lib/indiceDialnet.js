@@ -114,6 +114,9 @@ function parsearItem(li) {
   // mitad de las veces es peor que no ofrecerlo.
   const enlaceDescarga = li.querySelector('a[href^="/descarga/"]');
   const linkFallo = enlaceDescarga ? new URL(enlaceDescarga.getAttribute('href'), URL_BUSQUEDA).toString() : null;
+  // Sin resumen y sin PDF propio no hay de dónde sacar el pasaje: no se muestra (null ocupa su fila del sitio)
+  const conResumen = Boolean(li.querySelector('a.resumen'));
+  if (!conResumen && !linkFallo) return null;
 
   return {
     id: `dialnet_${li.id}`,
