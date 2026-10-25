@@ -110,8 +110,11 @@ async function tic() {
   let espera = PAUSA_MS;
   try {
     if (!estadoAcervo().activo || Date.now() - ultimoUso < 60_000) { espera = 60_000; return; }
-    // alterna: con fallos esperando su texto, uno de cada dos tics es de texto (aunque el anterior haya fallado)
-    const toca = estado.pendientes.length && estado.ultimo !== 'texto' ? 'texto' : 'listado';
+    // el mismo ritmo de pedidos, repartido según lo que falta: con muchos fallos esperando su texto,
+    // tres de cada cuatro tics son de texto; si no, uno de cada dos (aunque el anterior haya fallado)
+    estado.vuelta = ((estado.vuelta || 0) + 1) % 4;
+    const muchos = estado.pendientes.length > 200;
+    const toca = estado.pendientes.length && (muchos ? estado.vuelta !== 0 : estado.ultimo !== 'texto') ? 'texto' : 'listado';
     estado.ultimo = toca;
     const hizo = toca === 'texto' ? await pasoTexto() || await pasoListado() : await pasoListado() || await pasoTexto();
     estado.error = null;
