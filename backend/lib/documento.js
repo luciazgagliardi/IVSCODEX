@@ -96,7 +96,8 @@ export async function obtenerDocumento(url, { refrescar = false } = {}) {
 
   if (!refrescar) {
     const guardado = await leerCache(url);
-    if (guardado) return { ...guardado, ok: true, desdeCache: true };
+    // una ficha de SAIJ guardada antes de saber leerla (el HTML vacío de su página) no sirve
+    if (guardado && !(uuidSaij(url) && !/^saij/.test(guardado.metodo || ''))) return { ...guardado, ok: true, desdeCache: true };
   }
 
   // SAIJ: su página se arma con JavaScript; el fallo sale de la ficha (texto o PDF), ver lib/textoSaij.js
