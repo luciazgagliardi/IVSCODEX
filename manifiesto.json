@@ -1,0 +1,33 @@
+{
+ "version": "20261025-6a935761",
+ "generado": "2026-10-25T14:41:48.050Z",
+ "archivos": [
+  "caba-001.jsonl.gz",
+  "dialnet-001.jsonl.gz",
+  "mendoza-001.jsonl.gz",
+  "mendozalegal-001.jsonl.gz",
+  "saij-001.jsonl.gz",
+  "saij-002.jsonl.gz",
+  "saij-003.jsonl.gz",
+  "saij-004.jsonl.gz",
+  "saij-005.jsonl.gz",
+  "saij-006.jsonl.gz",
+  "saij-007.jsonl.gz",
+  "saij-008.jsonl.gz",
+  "saij-009.jsonl.gz",
+  "saij-010.jsonl.gz",
+  "saij-011.jsonl.gz",
+  "saij-012.jsonl.gz",
+  "saij-013.jsonl.gz",
+  "scba-001.jsonl.gz"
+ ],
+ "conteos": {
+  "caba": 6582,
+  "csjn": 61730,
+  "dialnet": 1832,
+  "mendoza": 719,
+  "mendozalegal": 146,
+  "saij": 764034,
+  "scba": 7830
+ }
+}
