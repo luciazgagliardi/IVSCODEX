@@ -4927,7 +4927,7 @@ function filaIndice(f,r,k,tambien){
       (r.otrasFichas&&r.otrasFichas.length?' · <span class="rz-otras">'+(r.otrasFichas.length+1)+' fichas del mismo fallo</span>':'')+
       (tambien&&tambien.length?' · <span class="rz-otras">también en '+esc(tambien.join(", "))+'</span>':'')+'</div>'+
     (pas?'<p>'+resaltarSimple(pas,nom?qn+" "+estado.q:estado.q)+'</p>':(nom?'<p>Carátula: '+resaltarSimple(r.caratula||"",qn)+'</p>':(conTexto(f,r)==="pendiente"?'<p class="rz-busca">Buscando el pasaje…</p>':'')))+
-    (r.linkFallo?'<div class="rz-acc"><button type="button" class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Abrir en el Lector</button></div>':'')+'</article>';
+    (urlLector(f.slug,r)?'<div class="rz-acc"><button type="button" class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(urlLector(f.slug,r))+'">Abrir en el Lector</button></div>':'')+'</article>';
 }
 function listaTodas(vis){
   var grupos=vis.map(function(f){ return resultadosDe(f).map(function(r,i){ return {f:f,r:r,k:f.slug+":"+i,i:i}; }); });
@@ -5334,6 +5334,13 @@ function fichaDesdeIndice(slug,r){
           fecha:fecha||r.fecha,exp:r.expediente};
 }
 /* La dirección de la que se saca el pasaje cuando el resultado no trae sumario. */
+/* Qué se abre en el Lector: el documento del fallo; en SAIJ y la Corte, su ficha
+   (el servidor saca de ahí el texto o el PDF del fallo, ver backend/lib/textoSaij.js). */
+function urlLector(slug,r){
+  if(r.linkFallo) return r.linkFallo;
+  if((slug==="saij"||slug==="csjn")&&/^https?:\/\/(www\.)?saij\.gob\.ar\//.test(r.linkFicha||"")) return r.linkFicha;
+  return null;
+}
 function urlFragmento(slug,r){
   return r.linkFallo||(slug==="dialnet"?r.linkFicha:null)||null;
 }
@@ -5401,8 +5408,8 @@ function fichaIndice(f,r){
     '<div class="f-acc" style="margin-top:8px">'+
       (r.linkFicha?'<a class="mini" href="'+escU(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
       marcaTema+marcaVariante+
-      (r.linkFallo?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Abrir en el Lector</button>'+
-        '<button class="mini lx-mini" data-act="traer-indice-fallo" data-lexia="1" data-fuente="'+esc(f.slug)+'" data-url="'+esc(r.linkFallo)+'">Preguntarle a Lexia</button>':"")+
+      (urlLector(f.slug,r)?'<button class="mini" data-act="traer-indice-fallo" data-fuente="'+esc(f.slug)+'" data-url="'+esc(urlLector(f.slug,r))+'">Abrir en el Lector</button>'+
+        '<button class="mini lx-mini" data-act="traer-indice-fallo" data-lexia="1" data-fuente="'+esc(f.slug)+'" data-url="'+esc(urlLector(f.slug,r))+'">Preguntarle a Lexia</button>':"")+
       // Si el documento se puede traer, también se puede abrir donde vive:
       // el enlace al sitio oficial es lo que hace citable al resultado.
       //
