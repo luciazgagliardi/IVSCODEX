@@ -246,12 +246,17 @@ app.use(manejadorErrores);
  * ------------------------------------------------------------------ */
 
 import { mudarDatosSiHaceFalta } from './lib/mudarDatos.js';
+import { prepararAcervo } from './lib/acervo.js';
 import { actualizarCorpus } from './lib/corpusCorteidh.js';
 import { listarTodo } from './lib/indiceCorteidh.js';
 
 // Antes de atender a nadie: rescatar lo que haya quedado en el lugar viejo.
 // Es de una sola vez y no pisa nada; si falla, se avisa y se sigue.
 const mudanza = await mudarDatosSiHaceFalta().catch((e) => ({ mudo: false, detalle: [e.message] }));
+
+// El acervo (lib/acervo.js): la base grande en disco. Si las tandas que vinieron con
+// este despliegue son de otra versión, se importan de fondo; mientras tanto, el respaldo.
+prepararAcervo().then((e) => { if (e.activo || e.importando) console.log(`  Acervo     ${e.activo ? `versión ${e.version}` : 'sin base todavía'}${e.importando ? ' · importando la versión nueva de fondo' : ''}`); else if (e.error) console.log(`  Acervo     apagado: ${e.error}`); });
 
 const servidor = app.listen(PUERTO, () => {
   console.log('');
