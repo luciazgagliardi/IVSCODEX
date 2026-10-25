@@ -17,6 +17,7 @@ import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
+import { urlParaPedir, sinClave } from './proxyOrigen.js';
 
 const HOST = 'fallos.jusrionegro.gov.ar';
 const BASE = `https://${HOST}/protocoloweb`;
@@ -41,7 +42,8 @@ async function pedir(q, modo, stj, pagina) {
   const control = new AbortController();
   const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const r = await fetch(`${BASE}/protocolo/buscar?${p}`, {
+    // por el relevo, si está configurado: Río Negro no le contesta al datacenter publicado (ver lib/proxyOrigen.js)
+    const r = await fetch(urlParaPedir(`${BASE}/protocolo/buscar?${p}`, HOST), {
       signal: control.signal,
       headers: { 'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`, Accept: 'text/html', 'Accept-Language': 'es-AR,es;q=0.9' },
     });
@@ -50,7 +52,7 @@ async function pedir(q, modo, stj, pagina) {
   } catch (e) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e;
-    throw errores.indiceFuenteFalla('rionegro', e?.cause?.code || e?.message);
+    throw errores.indiceFuenteFalla('rionegro', sinClave(e?.cause?.code || e?.message));
   } finally {
     clearTimeout(reloj);
   }
