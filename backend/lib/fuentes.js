@@ -37,6 +37,7 @@ import { buscarMendozaLegal } from './indiceMendozaLegal.js';
 import { buscarCorteidh } from './indiceCorteidh.js';
 import { buscarScba } from './indiceScba.js';
 import { buscarRioNegro } from './indiceRioNegro.js';
+import { buscarJuristeca } from './indiceJuristeca.js';
 
 /**
  * Cómo pedirle a cada buscador los fallos que citan un artículo.
@@ -71,6 +72,7 @@ const COMO_SE_CITA = {
   csjn: (n) => `artículo ${n}`,
   dialnet: (n) => `artículo ${n}`,
   rionegro: (n) => `art. ${n}`,
+  juristeca: (n) => `art. ${n}`,
 };
 
 /** La consulta con la que ESTE buscador encuentra citas de un artículo. */
@@ -149,6 +151,14 @@ export const FUENTES = [
     nombre: 'Poder Judicial de Río Negro',
     tribunalPorDefecto: 'STJ',
     buscar: (args) => buscarRioNegro(args),
+  },
+  // Juristeca (Consejo de la Magistratura de la Ciudad): los fallos de las cámaras de la
+  // Ciudad, con su PDF. Ver lib/indiceJuristeca.js.
+  {
+    slug: 'juristeca',
+    nombre: 'Cámaras de la Ciudad de Buenos Aires (Juristeca)',
+    tribunalPorDefecto: null,
+    buscar: (args) => buscarJuristeca(args),
   },
   {
     slug: 'scba',

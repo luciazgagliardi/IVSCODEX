@@ -2,7 +2,7 @@
 (function(){
   var NS="http://www.w3.org/2000/svg";
   var OFERTAS=[
-    {k:"buscar",lat:"QVAESTIO",t:"Consulta",d:"Se arma con los operadores de cada buscador oficial y se envía a las nueve bases a la vez.",c:"--c-mza"},
+    {k:"buscar",lat:"QVAESTIO",t:"Consulta",d:"Se arma con los operadores de cada buscador oficial y se envía a las diez bases a la vez.",c:"--c-mza"},
     {k:"lector",lat:"LECTIO",t:"Lector",d:"El fallo con su búsqueda destacada, los pasajes recortados y la cita preparada para copiar.",c:"--c-mzl"},
     {k:"ramas",lat:"MATERIAE",t:"Ramas y voces",d:"Los descriptores técnicos con que indexan los buscadores judiciales, ordenados por rama del derecho.",c:"--c-caba"},
     {k:"calculos",lat:"CALCVLVS",t:"Cálculos y plazos",d:"Intereses, índices, despido, incapacidad, honorarios, plazos procesales y calendario judicial.",c:"--c-csjn"},
