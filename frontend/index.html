@@ -4585,7 +4585,8 @@ function pintarRail(){
       if(im.cargando){
         clase=" consultando"; der='<span class="rf-t">buscando…</span>'; consultadas++;
       }else if(im.busco&&im.error){
-        clase=" con-error"; der='<span class="rf-t">sin respuesta</span>'; consultadas++;
+        // una base que no trajo nada cuenta como cero, sin avisos: lo que importa son los fallos
+        consultadas++; der='<span class="rf-n">0</span>';
       }else if(im.busco){
         consultadas++; respondieron++;
         der='<span class="rf-n">'+(im.total||im.resultados.length)+'</span>'+
@@ -4862,7 +4863,7 @@ function franjaBuscar(){
 function estadoBase(f){
   var im=estado.indices[f.slug]||{};
   if(im.cargando) return {c:" consultando",t:'<span class="rf-t">buscando…</span>'};
-  if(im.busco&&im.error) return {c:" con-error",t:'<span class="rf-t">sin respuesta</span>'};
+  if(im.busco&&im.error) return {c:"",t:'<span class="rf-n">0</span>'};
   if(im.busco) return {c:"",t:'<span class="rf-n">'+(im.total||im.resultados.length)+'</span>'+(im.ms?'<span class="rf-t">'+(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+' s</span>':'')};
   return {c:" sin-buscar",t:'<span class="rf-t">en espera</span>'};
 }
@@ -4927,7 +4928,6 @@ function estadoLista(vis){
   var fallaron=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
   var h="";
   if(buscando.length) h+='<p class="rz-aviso"><span class="rf-t" style="color:var(--gold)">buscando…</span> '+buscando.map(function(f){return esc(f.cod);}).join(", ")+' (los sistemas oficiales pueden tardar hasta 30 segundos)</p>';
-  if(fallaron.length) h+='<p class="rz-aviso">Sin respuesta: '+fallaron.map(function(f){return esc(f.cod);}).join(", ")+'. <button class="mini" data-act="buscar-todas">Reintentar</button></p>';
   return h;
 }
 function bloqueResultados(vis){
@@ -5784,9 +5784,7 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   }
   var nombreTrib=(fCfg.tribunales||[]).filter(function(t){return t.v===imBusco.tribunal;})[0];
   var enDonde=fCfg.nombre+(nombreTrib?" · "+nombreTrib.n:"");
-  if(esNueva) flash(imBusco.local
-    ?"El sitio oficial no respondió: se muestran "+d.resultados.length+" resultado(s) del respaldo de la plataforma"
-    :(d.total?d.total.toLocaleString("es-AR")+" coincidencias en "+enDonde:"Sin coincidencias en "+enDonde));
+  if(esNueva) flash(d.total?d.total.toLocaleString("es-AR")+" coincidencias en "+enDonde:"Sin coincidencias en "+enDonde);
 }
 
 /**
@@ -6084,7 +6082,7 @@ function paginadorIndice(f,im){
  */
 function conteoIndice(im,local){
   var n=function(x){ return '<b>'+(x||0).toLocaleString("es-AR")+'</b>'; };
-  if(local) return n(im.total)+' resultado(s) guardados';
+  if(local) return n(im.total)+' resultado(s)';
   // Sin revisados, el filtro lo hizo el propio sitio: su contador es el total.
   // Si la fuente avisa que el conteo todavía no está cerrado (la Corte IDH
   // verifica la frase exacta de a tandas), se dice «al menos».
@@ -6105,8 +6103,8 @@ function panelIndice(f){
   // El borde izquierdo dorado del caso "local" se mantiene: no es decoración
   // sino un aviso —estos resultados salieron de la copia guardada, no del
   // sitio— y sigue siendo UN borde, con un lado marcado.
-  var out='<div class="panel vivo f-'+f.slug+'" id="panel-'+f.slug+'"'+(local?' style="border-left-color:var(--oro)"':'')+'>'+
-    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+' <span class="en-vivo'+(local?' local':'')+'">'+(local?'Desde su índice local':'En vivo')+'</span></span></div>';
+  var out='<div class="panel vivo f-'+f.slug+'" id="panel-'+f.slug+'">'+
+    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+(local?'':' <span class="en-vivo">En vivo</span>')+'</span></div>';
 
   if(f.slug==="saij"){
     // SAIJ indexa la jurisprudencia y la legislación de las 24 jurisdicciones:
@@ -6139,7 +6137,7 @@ function panelIndice(f){
     return out;
   }
   if(im.error){
-    out+='<div class="aviso" style="margin:0"><strong>No se pudo consultar.</strong> '+esc(im.error)+'</div></div>';
+    out+='<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
     return out;
   }
   if(!im.busco){
@@ -6153,8 +6151,7 @@ function panelIndice(f){
     ? '<div class="aviso" style="margin:0 0 10px"><strong>Se cambió el rango de años.</strong> Estos resultados son de la búsqueda anterior y no respetan el rango indicado ahora. '+
       '<button class="mini" data-act="buscar-indice" data-fuente="'+esc(f.slug)+'" style="margin-left:6px">Rehacer la búsqueda</button></div>'
     : '';
-  var avisoLocal=avisoRango+(local?'<div class="aviso" style="margin:0 0 10px"><strong>El buscador de '+esc(f.nombre)+' no respondió'+
-    (im.avisoFalla?' ('+esc(im.avisoFalla)+')':'')+'.</strong> Se muestran los fallos de esa base conservados en el respaldo de la plataforma: pueden no incluir las resoluciones más recientes. Intente nuevamente en unos minutos para obtener la consulta en vivo.</div>':'');
+  var avisoLocal=avisoRango;
   if(!im.resultados.length){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+
       (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
@@ -6185,7 +6182,6 @@ function panelIndice(f){
     // que iba sumando de a 20 sin fin; ahora se ve de entrada cuánto hay y
     // se puede saltar directo a cualquier página, como en cualquier buscador.
     paginadorIndice(f,im)+
-    (im.desdeNavegador?'<div class="aviso" style="margin:0 0 10px">Esta búsqueda la hizo <b>su computadora</b>, no el servidor: SAIJ no atiende pedidos desde donde está publicada la web, pero sí desde un navegador común. Por eso estos resultados no quedan guardados en el índice local.</div>':'')+
     // «Frase exacta» es el modo por defecto y es el más estricto: sólo cuentan
     // los documentos con las palabras juntas y en ese orden. Cuando deja poco,
     // se ofrece el modo siguiente con un clic (con «daño extrapatrimonial» el TSJ
@@ -6484,7 +6480,7 @@ function tarjetaComparar(f){
   var borde=' style="border-left-color:var(--f-'+f.slug+')"';
 
   if(!r) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Consultando…</p></div>';
-  if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">No respondió: '+esc(r.error)+'</p></div>';
+  if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Sin coincidencias.</p></div>';
   if(!r.resultados.length) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Sin coincidencias.</p></div>';
 
   // NO se muestra el contador crudo del sitio, aunque lo tengamos.
@@ -6508,7 +6504,7 @@ function tarjetaComparar(f){
   var cifra='<p class="comp-cifra"><b>'+r.resultados.length.toLocaleString("es-AR")+'</b> resultado'+
     (r.resultados.length===1?'':'s')+' encontrados'+
     (r.parcial?' (hay más para revisar)':'')+
-    (r.local?' · de su índice local':'')+'</p>';
+'</p>';
 
   var items=r.resultados.slice(0,3).map(function(x){
     var enlace=x.linkFicha||x.linkFallo;
@@ -7173,8 +7169,8 @@ function resultadoCita(){
   var d=estado.cita.salida;
   if(!d) return '';
   var v=VEREDICTOS[d.veredicto]||VEREDICTOS.no_verificable;
-  var fuentes=(d.fuentesConsultadas||[]).map(function(f){
-    return esc(f.nombre)+(f.ok?" · "+f.resultados+" resultado(s) revisados":" · no respondió: "+esc(f.error||"sin detalle"));
+  var fuentes=(d.fuentesConsultadas||[]).filter(function(f){ return f.ok; }).map(function(f){
+    return esc(f.nombre)+" · "+f.resultados+" resultado(s) revisados";
   }).join("<br>");
 
   return '<div class="panel vivo">'+
@@ -7687,9 +7683,9 @@ function montarAsistente(){
       var filas=vis1.map(function(f){ var im=estado.indices[f.slug]||{}; return {f:f,im:im,n:(im.busco&&!im.error)?(im.total||(im.resultados||[]).length):-1}; });
       var cargando=filas.filter(function(x){return x.im.cargando;}).length, ok=filas.filter(function(x){return x.n>=0;}).sort(function(a,b){return b.n-a.n;});
       var rap=ok.filter(function(x){return x.im.ms;}).sort(function(a,b){return a.im.ms-b.im.ms;})[0], mal=filas.filter(function(x){return x.im.busco&&x.im.error;});
-      var l1=ok.length?"Respondieron "+ok.length+" de "+vis1.length+" bases. La que más trajo fue "+ok[0].f.cod+" ("+ok[0].n.toLocaleString("es-AR")+")"+(ok[1]?", después "+ok[1].f.cod+" ("+ok[1].n.toLocaleString("es-AR")+")":"")+".":"Todavía no respondió ninguna base.";
+      var l1=ok.length?"La que más trajo fue "+ok[0].f.cod+" ("+ok[0].n.toLocaleString("es-AR")+")"+(ok[1]?", después "+ok[1].f.cod+" ("+ok[1].n.toLocaleString("es-AR")+")":"")+".":"Todavía no respondió ninguna base.";
       var partes=[l1];
-      if(rap) partes.push("La más rápida fue "+rap.f.cod+" ("+(rap.im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+" s)."+(mal.length?" Sin respuesta: "+mal.map(function(x){return x.f.cod;}).join(", ")+".":"")+(cargando?" Siguen buscando "+cargando+".":""));
+      if(rap) partes.push("La más rápida fue "+rap.f.cod+" ("+(rap.im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+" s)."+(cargando?" Siguen buscando "+cargando+".":""));
       else if(cargando) partes.push("Siguen buscando "+cargando+" bases.");
       return dice(partes,[{t:"Ordenar por fecha",f:function(){ estado.orden="fecha"; estado.verBase=""; render(); }},{t:"Ver sólo la que más trajo",suave:true,f:function(){ if(ok[0]){ estado.verBase=ok[0].f.slug; render(); } }}]);
     }
@@ -7772,7 +7768,7 @@ function montarAsistente(){
       return dice(pick("muchos2",["Para acotar: frase exacta, un rango de años o una provincia. ¿Cuál prueba?","Se achica rápido con la frase exacta o con «desde 2020». Elija."]),
         [{t:"Frase exacta",f:function(){ estado.modo="exacta"; render(); buscarEnTodas(); vigilar(); }},{t:"Desde 2020",f:function(){ estado.desde="2020"; render(); buscarEnTodas(); vigilar(); }},{t:"Elegir provincia",f:function(){ estado.provAbierto=true; abrirFiltros(); }}]);
     if(/\b(lent[oa]|tarda\w*|demora\w*|se colg\w+|no carga|no responde|sin respuesta)\b/.test(t))
-      return dice(["Los buscadores oficiales son sistemas viejos y a veces tardan hasta 30 segundos; CABA y la Corte son los más lentos.","Si alguna base figura «sin respuesta», puedo reintentar sólo esa."],[{t:"Reintentar",f:function(){ buscarEnTodas(); vigilar(); }},{t:"Esperar",suave:true,f:function(){}}]);
+      return dice(["Los buscadores oficiales son sistemas viejos y a veces tardan hasta 30 segundos; CABA y la Corte son los más lentos.","Si quiere, la vuelvo a lanzar."],[{t:"Reintentar",f:function(){ buscarEnTodas(); vigilar(); }},{t:"Esperar",suave:true,f:function(){}}]);
     if(/\b(ayuda|ayudame|que hago|por donde empiezo|como empiezo|no se (como|que)|como (uso|funciona))\b/.test(t)&&palabras<=8)
       return ayudaAqui();
     /* acción sobre lo ya buscado: «y en Córdoba», «solo desde 2019» */
