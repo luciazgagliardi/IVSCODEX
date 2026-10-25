@@ -28,16 +28,26 @@ const SALIDA = process.env.DIR_ACERVO_DATOS ? path.resolve(process.env.DIR_ACERV
 const POR_TANDA = 60_000;
 const TRIB_CORTE = /CORTE SUPREMA DE JUSTICIA DE LA NACI[OÓ]N/i;
 
+/* Lo cosechado de un tipo: la pasada general (saij-<tipo>) y las de cada provincia
+   (saij-<tipo>-<provincia>, con PROVINCIA=… en cosecharSaij.mjs), que le ponen la provincia. */
 async function leerCrudo(tipo) {
-  const dir = path.join(CRUDO, `saij-${tipo}`);
-  let archivos = [];
-  try { archivos = (await fs.readdir(dir)).filter((a) => a.endsWith('.jsonl.gz')).sort(); } catch { return []; }
-  const out = [];
-  for (const a of archivos) {
-    const t = zlib.gunzipSync(await fs.readFile(path.join(dir, a))).toString('utf8');
-    for (const l of t.split('\n')) if (l) { try { out.push(JSON.parse(l)); } catch { /* renglón roto */ } }
+  let dirs = [];
+  try { dirs = (await fs.readdir(CRUDO)).filter((d) => d === `saij-${tipo}` || d.startsWith(`saij-${tipo}-`)); } catch { return []; }
+  const porId = new Map();
+  for (const d of dirs) {
+    let archivos = [];
+    try { archivos = (await fs.readdir(path.join(CRUDO, d))).filter((a) => a.endsWith('.jsonl.gz')).sort(); } catch { continue; }
+    for (const a of archivos) {
+      const t = zlib.gunzipSync(await fs.readFile(path.join(CRUDO, d, a))).toString('utf8');
+      for (const l of t.split('\n')) {
+        if (!l) continue;
+        let r; try { r = JSON.parse(l); } catch { continue; }
+        const ya = porId.get(r.id);
+        porId.set(r.id, ya ? { ...ya, ...r, pr: r.pr || ya.pr } : r);
+      }
+    }
   }
-  return out;
+  return [...porId.values()];
 }
 const sin = (o) => { for (const k of Object.keys(o)) if (o[k] == null || o[k] === '' || (Array.isArray(o[k]) && !o[k].length)) delete o[k]; return o; };
 const caratulaDe = (f) => [f.a, f.d].filter(Boolean).join(' c/ ') + (f.s ? `${f.a || f.d ? ' ' : ''}s/ ${f.s}` : '');

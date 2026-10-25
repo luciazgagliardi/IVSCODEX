@@ -5349,7 +5349,8 @@ function fichaDesdeIndice(slug,r){
    (el servidor saca de ahí el texto o el PDF del fallo, ver backend/lib/textoSaij.js). */
 function urlLector(slug,r){
   if(r.linkFallo) return r.linkFallo;
-  if((slug==="saij"||slug==="csjn")&&/^https?:\/\/(www\.)?saij\.gob\.ar\//.test(r.linkFicha||"")) return r.linkFicha;
+  // también los fallos de SAIJ que las bases provinciales suman de respaldo
+  if(/^https?:\/\/(www\.)?saij\.gob\.ar\//.test(r.linkFicha||"")) return r.linkFicha;
   return null;
 }
 function urlFragmento(slug,r){
