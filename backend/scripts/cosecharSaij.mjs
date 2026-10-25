@@ -15,6 +15,7 @@
  *
  *   node scripts/cosecharSaij.mjs                  (sumarios y fichas, 1863–hoy)
  *   TIPOS=fallos DESDE=1990 HASTA=2026 node scripts/cosecharSaij.mjs
+ *   RECIENTES=3 node scripts/cosecharSaij.mjs      (sólo los últimos 3 meses, de nuevo: la actualización mensual)
  *
  * Lo cosechado queda en backend/acervo-crudo/saij-<tipo>/<tramo>.jsonl.gz
  * (fuera del repositorio) y el avance en backend/acervo-crudo/progreso-saij.json.
@@ -150,6 +151,21 @@ async function recorrerSinMes(tipo, fecha, totalAnio, enMeses) {
 
 await fs.mkdir(CRUDO, { recursive: true });
 const t0 = Date.now();
+const RECIENTES = Number(process.env.RECIENTES || 0);
+if (RECIENTES > 0) {
+  // los últimos meses se vuelven a bajar enteros: SAIJ sigue cargando fallos de meses ya pasados
+  const hoy = new Date(), meses = [];
+  for (let i = 0; i < RECIENTES; i++) { const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1); meses.push(`Fecha/${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`); }
+  for (const tipo of TIPOS) {
+    for (const k of Object.keys(progreso.hechos)) if (meses.some((m) => k.startsWith(`${tipo}|${m}`))) delete progreso.hechos[k];
+    for (const m of meses) {
+      const n = await recorrer(tipo, [m], 'mes');
+      console.log(`${new Date().toTimeString().slice(0, 8)} ${tipo} ${m.slice(6)}: ${n}`);
+    }
+  }
+  console.log(`fin: ${pedidos} consultas, ${((Date.now() - t0) / 60000).toFixed(0)} min`);
+  process.exit(0);
+}
 for (const tipo of TIPOS) {
   for (let anio = HASTA; anio >= DESDE; anio--) {
     const antes = pedidos;
