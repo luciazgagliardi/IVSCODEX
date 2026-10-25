@@ -19,6 +19,7 @@ import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
 import { estadoAcervo } from '../lib/acervo.js';
+import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
 import { errores, ErrorApp } from '../lib/errores.js';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
 import { NORMAS, articuloDe, rubricaDe } from '../lib/legislacion.js';
@@ -264,6 +265,7 @@ for (const { slug, buscar } of FUENTES) {
 
       const consulta = q;
       if (!consulta) throw errores.consultaVacia();
+      if (slug === 'caba') marcarUsoCaba(); // la cosecha de fondo le deja el sitio a quien está buscando
 
       const arranque = Date.now();
       let total, totalFuente, siguienteDesde = null, resultados, desdeIndiceLocal = false, avisoFalla = null;
@@ -432,6 +434,7 @@ for (const { slug, buscar } of FUENTES) {
       }
 
       const arranque = Date.now();
+      if (slug === 'caba') marcarUsoCaba();
       const pedidas = urls.filter((u) => typeof u === 'string' && u && u.length <= 2048).slice(0, MAX_FRAGMENTOS);
 
       const fragmentos = [];
@@ -585,7 +588,7 @@ let ultimoEstado = { en: 0, dato: null };
 /** Cuántos fallos tiene el acervo propio (lib/acervo.js), por base, y de qué versión. */
 router.get('/acervo/estado', (_req, res) => {
   const e = estadoAcervo();
-  res.json({ ok: true, activo: e.activo, version: e.version, conteos: e.conteos, importando: e.importando, error: e.error || null });
+  res.json({ ok: true, activo: e.activo, version: e.version, conteos: e.conteos, importando: e.importando, error: e.error || null, cosechaCaba: estadoCosechaCaba() });
 });
 
 router.get('/fuentes/estado', async (_req, res) => {

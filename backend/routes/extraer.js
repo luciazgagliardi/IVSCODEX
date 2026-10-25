@@ -12,6 +12,7 @@
 
 import os from 'node:os';
 import { estadoCorpus } from '../lib/corpusCorteidh.js';
+import { buscarFalloEnSaij } from '../lib/textoSaij.js';
 import express from 'express';
 import crypto from 'node:crypto';
 import { dominioHabilitado } from '../lib/descargador.js';
@@ -51,7 +52,17 @@ router.post('/extraer', async (req, res, next) => {
     const { refrescar } = req.body || {};
     const url = urlDe(req.body?.url);
     const arranque = Date.now();
-    const salida = await obtenerDocumento(url, { refrescar });
+    let salida;
+    try {
+      salida = await obtenerDocumento(url, { refrescar });
+    } catch (e) {
+      // la base no entregó el documento: el mismo fallo en SAIJ, por carátula y fecha
+      const f = req.body?.ficha;
+      const enSaij = f && typeof f.caratula === 'string' && typeof f.fecha === 'string' && !/saij\.gob\.ar/.test(url)
+        ? await buscarFalloEnSaij(f.caratula.slice(0, 300), f.fecha.slice(0, 20)).catch(() => null) : null;
+      if (!enSaij || e?.codigo === 'PDF_ESCANEADO') throw e;
+      salida = { ...(await obtenerDocumento(`https://www.saij.gob.ar/${enSaij}`)), urlOriginal: url };
+    }
     res.json({ ...salida, ms: Date.now() - arranque });
   } catch (e) {
     next(e);

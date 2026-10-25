@@ -26,8 +26,10 @@ export function uuidSaij(url) {
   return m ? m[1] : null;
 }
 
+// El Lector va por un carril propio: no queda detrás de las búsquedas y los pasajes, que también le piden a SAIJ
+const CARRIL = `${HOST}#lector`;
 async function pedirJson(url) {
-  await esperarTurno(HOST);
+  await esperarTurno(CARRIL);
   const r = await fetch(url, {
     headers: { 'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`, Accept: 'application/json', Referer: `https://${HOST}/` },
     signal: AbortSignal.timeout(30_000),
@@ -55,8 +57,17 @@ export function pdfDeFicha(c) {
 }
 
 /* La ficha del fallo de un sumario: la que tiene su carátula y su fecha. */
-async function fichaDelFallo(c) {
-  const car = caratulaDe(c), fecha = String(c.fecha || '');
+async function fichaDelFallo(c) { return buscarFalloEnSaij(caratulaDe(c), String(c.fecha || ''), { mismaFecha: false }); }
+
+/**
+ * Un fallo en SAIJ por su carátula y su fecha (ISO o dd/mm/aaaa). Sirve para
+ * abrir en el Lector un fallo de otra base cuando esa base no entrega el
+ * documento (JUBA fuera de servicio, Mendoza bloqueada): SAIJ suele tenerlo.
+ */
+export async function buscarFalloEnSaij(car, fechaTxt, { mismaFecha = true } = {}) {
+  let fecha = String(fechaTxt || '');
+  const dmy = /(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(fecha);
+  if (dmy) fecha = `${dmy[3]}-${dmy[2].padStart(2, '0')}-${dmy[1].padStart(2, '0')}`;
   const m = /^(\d{4})-(\d{2})/.exec(fecha);
   if (!car || !m) return null;
   const palabras = car.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').split(/[^a-z0-9]+/).filter((w) => w.length > 3).slice(0, 6);
@@ -69,7 +80,10 @@ async function fichaDelFallo(c) {
     const k = doc.content || {};
     const otra = (caratulaDe(k) || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
     let p = palabras.filter((w) => otra.includes(w)).length / palabras.length;
-    if (String(k.fecha || '').slice(0, 10) === fecha.slice(0, 10)) p += 0.5;
+    const igualFecha = String(k.fecha || '').slice(0, 10) === fecha.slice(0, 10);
+    // de otra base: la fecha tiene que ser la misma y la carátula casi igual (las iniciales «C. L. M.» no alcanzan)
+    if (mismaFecha && (!igualFecha || p < 0.6 || palabras.length < 2)) continue;
+    if (igualFecha) p += 0.5;
     if (p > puntos) { puntos = p; mejor = doc.metadata?.uuid; }
   }
   return puntos >= 0.8 ? mejor : null;

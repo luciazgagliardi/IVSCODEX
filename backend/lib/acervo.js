@@ -29,6 +29,8 @@ import { DIR_DATOS } from '../config.js';
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 export const DIR_TANDAS = process.env.DIR_ACERVO_DATOS ? path.resolve(process.env.DIR_ACERVO_DATOS) : path.join(aqui, '..', 'acervo-datos');
 const DIR_BASE = process.env.DIR_ACERVO ? path.resolve(process.env.DIR_ACERVO) : path.join(DIR_DATOS, 'acervo');
+// lo que el propio servidor cosecha (lib/cosechaCaba.js): un renglón por fallo, y se vuelve a sumar en cada versión nueva
+const DIR_COSECHAS = path.join(DIR_BASE, 'cosechas');
 
 let sqlite = null, db = null, estado = { activo: false, version: null, conteos: {}, importando: false, error: null };
 async function modulo() {
@@ -128,10 +130,67 @@ async function importar(man) {
   await fsp.rename(nueva, actual);
   db = abrir(actual);
   estado = { activo: true, version: man.version, conteos, importando: false, error: null, segundos: Math.round((Date.now() - t0) / 1000) };
+  await volverASumarCosechas();
   console.log(`[acervo] versión ${man.version}: ${Object.entries(conteos).map(([k, v]) => `${k} ${v}`).join(', ')} (${estado.segundos} s)`);
 }
 
 export function estadoAcervo() { return { ...estado }; }
+
+/* ---------- lo cosechado por el servidor ---------- */
+const COLUMNAS = 'id,fuente,corte,provincia,caratula,tribunal,fecha,anio,expediente,sumario,voces,magistrados,materia,linkFicha,linkFallo,tipo,marca';
+function valores(r) {
+  const m = /(\d{4})\s*$/.exec(String(r.fecha || ''));
+  return [r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, m ? Number(m[1]) : null,
+    r.expediente || null, r.sumario || null, Array.isArray(r.voces) ? r.voces.join(' · ') : (r.voces || null), r.magistrados || null, r.materia || null,
+    r.linkFicha || null, r.linkFallo || null, r.tipo || null, `zf${r.fuente}${r.corte ? ' zfcsjn' : ''}`];
+}
+/* Pone (o actualiza) un fallo en la base abierta, con su índice de texto. */
+function poner(r) {
+  const v = valores(r);
+  const ya = db.prepare('SELECT rid, caratula, sumario, voces, marca FROM fallos WHERE id = ?').get(r.id);
+  if (ya) {
+    db.prepare("INSERT INTO fts(fts, rowid, caratula, sumario, voces, marca) VALUES('delete', ?, ?, ?, ?, ?)").run(ya.rid, ya.caratula, ya.sumario, ya.voces, ya.marca);
+    db.prepare(`UPDATE fallos SET (${COLUMNAS}) = (${COLUMNAS.split(',').map(() => '?').join(',')}) WHERE rid = ?`).run(...v, ya.rid);
+    db.prepare('INSERT INTO fts(rowid, caratula, sumario, voces, marca) VALUES(?, ?, ?, ?, ?)').run(ya.rid, v[4], v[9], v[10], v[16]);
+    return false;
+  }
+  const rid = db.prepare(`INSERT INTO fallos(${COLUMNAS}) VALUES(${COLUMNAS.split(',').map(() => '?').join(',')})`).run(...v).lastInsertRowid;
+  db.prepare('INSERT INTO fts(rowid, caratula, sumario, voces, marca) VALUES(?, ?, ?, ?, ?)').run(rid, v[4], v[9], v[10], v[16]);
+  estado.conteos[r.fuente] = (estado.conteos[r.fuente] || 0) + 1;
+  return true;
+}
+/**
+ * Suma fallos cosechados por el servidor: quedan en disco (cosechas/<fuente>.jsonl,
+ * sobreviven a las versiones nuevas del acervo) y, si la base está abierta, ya se buscan.
+ */
+export async function agregarAlAcervo(registros) {
+  const regs = (registros || []).filter((r) => r?.id && r.fuente);
+  if (!regs.length) return 0;
+  await fsp.mkdir(DIR_COSECHAS, { recursive: true });
+  const porFuente = {};
+  for (const r of regs) (porFuente[r.fuente] = porFuente[r.fuente] || []).push(JSON.stringify(r));
+  for (const [f, lineas] of Object.entries(porFuente)) await fsp.appendFile(path.join(DIR_COSECHAS, `${f.replace(/[^a-z0-9]/g, '')}.jsonl`), lineas.join('\n') + '\n');
+  if (!db || !estado.activo || estado.importando) return 0;
+  let nuevos = 0;
+  db.exec('BEGIN');
+  try { for (const r of regs) if (poner(r)) nuevos++; db.exec('COMMIT'); } catch (e) { db.exec('ROLLBACK'); throw e; }
+  return nuevos;
+}
+async function volverASumarCosechas() {
+  let archivos = [];
+  try { archivos = (await fsp.readdir(DIR_COSECHAS)).filter((a) => a.endsWith('.jsonl')); } catch { return; }
+  for (const a of archivos) {
+    const entrada = readline.createInterface({ input: fs.createReadStream(path.join(DIR_COSECHAS, a)), crlfDelay: Infinity });
+    db.exec('BEGIN');
+    for await (const l of entrada) { if (!l) continue; try { poner(JSON.parse(l)); } catch { /* renglón roto */ } }
+    db.exec('COMMIT');
+  }
+}
+/** Los ids que ya están en el acervo, de una base (para no volver a pedir su texto). */
+export function idsConTexto(fuente) {
+  if (!db || !estado.activo) return new Set();
+  return new Set(db.prepare("SELECT id FROM fallos WHERE fuente = ? AND sumario IS NOT NULL AND sumario <> ''").all(fuente).map((x) => x.id));
+}
 /** ¿El acervo tiene esta base? */
 export function acervoTiene(fuente) { return Boolean(db && estado.activo && estado.conteos[fuente]); }
 
