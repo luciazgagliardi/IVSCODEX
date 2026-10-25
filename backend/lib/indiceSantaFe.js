@@ -14,6 +14,7 @@ import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
+import { urlParaPedir, sinClave } from './proxyOrigen.js';
 
 const HOST = 'portal.justiciasantafe.gov.ar';
 const URL_AJAX = `https://${HOST}/bdj/modulos/busqueda/ajax/funciones_ajax.php`;
@@ -34,7 +35,8 @@ async function pedir(q, inicio) {
   const control = new AbortController();
   const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const r = await fetch(URL_AJAX, {
+    // por el proxy, si está configurado: Santa Fe no le contesta al datacenter publicado (ver lib/proxyOrigen.js)
+    const r = await fetch(urlParaPedir(URL_AJAX, HOST), {
       method: 'POST', signal: control.signal, body: cuerpo.toString(),
       headers: { 'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`, 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest', Referer: `https://${HOST}/bdj/index.php` },
     });
@@ -43,7 +45,7 @@ async function pedir(q, inicio) {
   } catch (e) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e;
-    throw errores.indiceFuenteFalla('santafe', e?.cause?.code || e?.message);
+    throw errores.indiceFuenteFalla('santafe', sinClave(e?.cause?.code || e?.message));
   } finally {
     clearTimeout(reloj);
   }
