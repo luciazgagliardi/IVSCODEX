@@ -38,6 +38,7 @@ import { buscarCorteidh } from './indiceCorteidh.js';
 import { buscarScba } from './indiceScba.js';
 import { buscarRioNegro } from './indiceRioNegro.js';
 import { buscarJuristeca } from './indiceJuristeca.js';
+import { buscarSantaFe } from './indiceSantaFe.js';
 
 /**
  * Cómo pedirle a cada buscador los fallos que citan un artículo.
@@ -73,6 +74,7 @@ const COMO_SE_CITA = {
   dialnet: (n) => `artículo ${n}`,
   rionegro: (n) => `art. ${n}`,
   juristeca: (n) => `art. ${n}`,
+  santafe: (n) => `artículo ${n}`,
 };
 
 /** La consulta con la que ESTE buscador encuentra citas de un artículo. */
@@ -159,6 +161,14 @@ export const FUENTES = [
     nombre: 'Cámaras de la Ciudad de Buenos Aires (Juristeca)',
     tribunalPorDefecto: null,
     buscar: (args) => buscarJuristeca(args),
+  },
+  // Santa Fe: los sumarios de la Corte Suprema provincial con su texto y la sentencia completa en HTML.
+  // Ver lib/indiceSantaFe.js.
+  {
+    slug: 'santafe',
+    nombre: 'Corte Suprema de Justicia de Santa Fe',
+    tribunalPorDefecto: null,
+    buscar: (args) => buscarSantaFe(args),
   },
   {
     slug: 'scba',

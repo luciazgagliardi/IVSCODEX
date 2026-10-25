@@ -33,7 +33,7 @@
       host.appendChild(s);return s;
     },
     PRINC:[["FONS","La fuente","Todo resultado remite al documento del organismo que lo dictó. Lo que se lee nunca es una versión propia."],
-           ["ORDO","El orden","Los resultados de las diez bases se presentan juntos, con la misma forma y la procedencia a la vista."],
+           ["ORDO","El orden","Los resultados de las once bases se presentan juntos, con la misma forma y la procedencia a la vista."],
            ["FIDES","La fe","Una cita se contrasta con la base oficial antes de presentarse. Ante su ausencia, el antecedente se presume inexistente."]]
   };
 })();
