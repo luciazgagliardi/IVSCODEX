@@ -62,9 +62,17 @@ async function pasoListado() {
 
 /* El PDF: directo con Chrome (el pedido común se va en la redirección y el desafío de
    Cloudflare, y no le alcanzan sus 25 s); si Chrome no está, el pedido común. */
+async function destinoDe(url) {
+  // el enlace redirige a www-test.tsjbaires.gov.ar: Chrome tiene que ir directo al destino
+  try {
+    const r = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(15_000), headers: { 'User-Agent': 'Mozilla/5.0' } });
+    const l = r.headers.get('location');
+    return l ? new URL(l, url).toString() : url;
+  } catch { return url; }
+}
 async function bajarPdf(url) {
   try {
-    const n = await traerConNavegador(url);
+    const n = await traerConNavegador(await destinoDe(url));
     if (n?.estado >= 200 && n.estado < 300 && n.buffer?.length) return { buffer: n.buffer, contentType: n.contentType, urlFinal: url };
   } catch { /* sin navegador: el pedido común */ }
   return descargar(url);
