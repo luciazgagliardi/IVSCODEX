@@ -136,6 +136,8 @@ const ramas = await leerRamas();
 let voces = [...new Set(ramas.flatMap((r) => r.v))];
 // TERMINOS=amplio suma las expresiones del tesauro (canónicas, equivalentes y cercanas) y los trámites de Requisitos
 if (process.env.TERMINOS === 'amplio') voces = [...new Set(voces.concat(await terminosAmplios()))];
+// TERMINOS_ARCHIVO=lista.json: además, los términos de ese archivo (p. ej. las voces de los sumarios de SAIJ, para JUBA)
+if (process.env.TERMINOS_ARCHIVO) voces = [...new Set(voces.concat(JSON.parse(await fs.readFile(path.resolve(RAIZ, process.env.TERMINOS_ARCHIVO), 'utf8'))))];
 console.log(`${voces.length} términos, hasta ${PAGINAS_JURIS} páginas en jurisprudencia`);
 const elegidas = process.argv.slice(2);
 const progreso = await leerJson(PROGRESO, {});
