@@ -186,6 +186,16 @@ async function volverASumarCosechas() {
     db.exec('COMMIT');
   }
 }
+/** El texto guardado de esos fallos (id → sumario), para los resultados en vivo que llegan sin texto. */
+export function textosDe(ids) {
+  const lista = [...new Set((ids || []).filter(Boolean))].slice(0, 200);
+  if (!db || !estado.activo || !lista.length) return new Map();
+  try {
+    const filas = db.prepare(`SELECT id, sumario FROM fallos WHERE id IN (${lista.map(() => '?').join(',')}) AND sumario IS NOT NULL AND sumario <> ''`).all(...lista);
+    return new Map(filas.map((f) => [f.id, f.sumario]));
+  } catch { return new Map(); }
+}
+
 /** Los ids que ya están en el acervo, de una base (para no volver a pedir su texto). */
 export function idsConTexto(fuente) {
   if (!db || !estado.activo) return new Set();

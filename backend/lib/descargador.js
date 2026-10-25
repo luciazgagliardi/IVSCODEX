@@ -156,9 +156,11 @@ const ultimoPedido = new Map();
  * Se exporta para que otros clientes HTTP del backend (ej. lib/indiceMza.js)
  * respeten la misma cortesía sin duplicar la lógica.
  */
+// sitios que sirven archivos fijos (los PDF de Juristeca): con menos espera entre pedidos alcanza
+const ESPERA_PROPIA = { 'juristeca.jusbaires.gob.ar': 400 };
 export async function esperarTurno(host) {
   const previo = ultimoPedido.get(host) || 0;
-  const falta = previo + ESPERA_POR_HOST_MS - Date.now();
+  const falta = previo + (ESPERA_PROPIA[host] ?? ESPERA_POR_HOST_MS) - Date.now();
   if (falta > 0) await new Promise((r) => setTimeout(r, falta));
   ultimoPedido.set(host, Date.now());
 }
