@@ -35,7 +35,7 @@ const ESPERA_CORTE_MS = 30 * 60_000;
 const PAGINAS_POR_TERMINO = 10;
 const LARGO_TEXTO = 6000;
 
-let estado = { activa: false, termino: 0, desde: 0, pagina: 1, listados: 0, conTexto: 0, pendientes: [], ultimo: null, error: null };
+let estado = { activa: false, termino: 0, desde: 0, pagina: 1, listados: 0, conTexto: 0, pendientes: [], ultimo: null, error: null, fallasPagina: 0 };
 let ultimoUso = 0, reloj = null, terminos = [];
 
 /** Lo llama la búsqueda en vivo de CABA: mientras alguien la usa, la cosecha espera. */
@@ -47,7 +47,15 @@ async function guardar() { await fs.mkdir(path.dirname(ARCHIVO_ESTADO), { recurs
 async function pasoListado() {
   const q = terminos[estado.termino];
   if (!q) return false;
-  const r = await buscarCaba({ q, modo: 'todas', desde: estado.desde, porPagina: 20 });
+  let r;
+  try {
+    r = await buscarCaba({ q, modo: 'todas', desde: estado.desde, porPagina: 20 });
+    estado.fallasPagina = 0;
+  } catch (e) {
+    // una página que el TSJ no puede listar (siempre la misma): a la segunda, se sigue con el término siguiente
+    if (++estado.fallasPagina >= 2) { estado.fallasPagina = 0; estado.termino++; estado.desde = 0; estado.pagina = 1; }
+    throw e;
+  }
   const regs = (r.resultados || []).filter((x) => x?.id && x.linkFallo).map((x) => ({ ...x, fuente: 'caba' }));
   if (regs.length) {
     await agregarAlAcervo(regs);
@@ -102,9 +110,10 @@ async function tic() {
   let espera = PAUSA_MS;
   try {
     if (!estadoAcervo().activo || Date.now() - ultimoUso < 60_000) { espera = 60_000; return; }
-    // alterna: con fallos esperando su texto, uno de cada dos tics es de texto
-    const hizo = (estado.pendientes.length && estado.ultimo !== 'texto') ? await pasoTexto() || await pasoListado() : await pasoListado() || await pasoTexto();
-    estado.ultimo = estado.ultimo === 'texto' ? 'listado' : 'texto';
+    // alterna: con fallos esperando su texto, uno de cada dos tics es de texto (aunque el anterior haya fallado)
+    const toca = estado.pendientes.length && estado.ultimo !== 'texto' ? 'texto' : 'listado';
+    estado.ultimo = toca;
+    const hizo = toca === 'texto' ? await pasoTexto() || await pasoListado() : await pasoListado() || await pasoTexto();
     estado.error = null;
     if (!hizo) { estado.activa = false; console.log(`[cosecha CABA] terminada: ${estado.listados} listados, ${estado.conTexto} con texto`); await guardar(); return; }
   } catch (e) {
