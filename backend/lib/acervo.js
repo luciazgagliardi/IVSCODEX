@@ -43,6 +43,8 @@ async function modulo() {
   return sqlite;
 }
 
+// cambia cuando cambia la estructura de la base: obliga a reimportar aunque las tandas sean las mismas
+const ESQUEMA_V = '2';
 const ESQUEMA = `
 CREATE TABLE IF NOT EXISTS fallos(
   rid INTEGER PRIMARY KEY, id TEXT UNIQUE, fuente TEXT, corte INTEGER DEFAULT 0, provincia TEXT,
@@ -72,7 +74,8 @@ export async function prepararAcervo({ esperar = false } = {}) {
     try {
       db = abrir(actual);
       const m = db.prepare('SELECT valor FROM meta WHERE clave = ?');
-      estado = { ...estado, activo: true, version: m.get('version')?.valor || null, conteos: JSON.parse(m.get('conteos')?.valor || '{}') };
+      const deEsquema = m.get('esquema')?.valor === ESQUEMA_V;
+      estado = { ...estado, activo: deEsquema, version: deEsquema ? (m.get('version')?.valor || null) : null, conteos: deEsquema ? JSON.parse(m.get('conteos')?.valor || '{}') : {} };
     } catch (e) { estado.error = e.message; db = null; }
   }
   const man = leerManifiesto();
@@ -115,6 +118,7 @@ async function importar(man) {
   d.exec("INSERT INTO fts(fts) VALUES('optimize')");
   const meta = d.prepare('INSERT OR REPLACE INTO meta(clave, valor) VALUES(?, ?)');
   meta.run('version', man.version);
+  meta.run('esquema', ESQUEMA_V);
   meta.run('conteos', JSON.stringify(conteos));
   d.close();
   // en lugar de la anterior
