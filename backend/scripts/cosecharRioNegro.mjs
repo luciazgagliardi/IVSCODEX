@@ -46,9 +46,10 @@ async function pedir(url, tipo = 'text') {
       if (!r.ok) throw new Error(`respuesta ${r.status}`);
       return tipo === 'buffer' ? { buffer: Buffer.from(await r.arrayBuffer()), contentType: r.headers.get('content-type') || '' } : await r.text();
     } catch (e) {
-      if (intento >= 5) throw e;
-      console.log(`  ${new Date().toTimeString().slice(0, 8)} corte (${e.message}): espero ${intento * 2} min`);
-      await dormir(intento * 120_000);
+      if (intento >= 8) throw e;
+      const min = Math.min(10, intento * 2);
+      console.log(`  ${new Date().toTimeString().slice(0, 8)} corte (${e.message}): espero ${min} min`);
+      await dormir(min * 60_000);
     }
   }
 }
@@ -67,7 +68,14 @@ const urlPagina = (n) => `https://fallos.jusrionegro.gov.ar/protocoloweb/protoco
 
 // 1. el listado
 while (!progreso.listado) {
-  const html = await pedir(urlPagina(progreso.pagina));
+  let html;
+  try { html = await pedir(urlPagina(progreso.pagina)); } catch (e) {
+    // una página que no sale después de una hora de intentos: se anota y se sigue
+    (progreso.salteadas = progreso.salteadas || []).push(progreso.pagina);
+    console.log(`  página ${progreso.pagina} salteada (${e.message})`);
+    progreso.pagina++;
+    continue;
+  }
   if (!progreso.total) progreso.total = totalDe(html);
   const regs = parsear(html, STJ);
   for (const r of regs) if (!mapa.has(r.id)) mapa.set(r.id, { ...r, sumario: '' }); // los fragmentos de «sentencia» no dicen nada
