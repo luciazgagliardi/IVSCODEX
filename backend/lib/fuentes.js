@@ -36,6 +36,7 @@ import { buscarDialnet } from './indiceDialnet.js';
 import { buscarMendozaLegal } from './indiceMendozaLegal.js';
 import { buscarCorteidh } from './indiceCorteidh.js';
 import { buscarScba } from './indiceScba.js';
+import { buscarRioNegro } from './indiceRioNegro.js';
 
 /**
  * Cómo pedirle a cada buscador los fallos que citan un artículo.
@@ -69,6 +70,7 @@ const COMO_SE_CITA = {
   saij: (n) => `artículo ${n}`,
   csjn: (n) => `artículo ${n}`,
   dialnet: (n) => `artículo ${n}`,
+  rionegro: (n) => `art. ${n}`,
 };
 
 /** La consulta con la que ESTE buscador encuentra citas de un artículo. */
@@ -140,6 +142,14 @@ export const FUENTES = [
   },
   // JUBA: sumarios de la Suprema Corte y las cámaras de la Provincia de Buenos
   // Aires, con su texto y el enlace al fallo completo. Ver lib/indiceScba.js.
+  // Río Negro: el «Protocolo web» del Poder Judicial busca en el texto de las sentencias y
+  // da cada fallo en PDF con texto. Tribunales: STJ y «CJ» (cámaras y juzgados). Ver lib/indiceRioNegro.js.
+  {
+    slug: 'rionegro',
+    nombre: 'Poder Judicial de Río Negro',
+    tribunalPorDefecto: 'STJ',
+    buscar: (args) => buscarRioNegro(args),
+  },
   {
     slug: 'scba',
     nombre: 'Suprema Corte de la Provincia de Buenos Aires (JUBA)',
