@@ -6454,10 +6454,11 @@ var NORMAS_UI=[
    fuentes (el Poder Judicial y la revista) y Nación otras dos (la Corte y
    SAIJ). Dialnet va aparte porque no es jurisprudencia. */
 var GRUPOS_COMPARAR=[
-  ["Mendoza",  ["mendoza","mendozalegal"]],
   ["Nación",   ["csjn","saij"]],
-  ["TSJ",      ["caba"]],
+  ["Mendoza",  ["mendoza","mendozalegal"]],
+  ["Ciudad de Buenos Aires", ["caba","juristeca"]],
   ["Buenos Aires", ["scba"]],
+  ["Río Negro", ["rionegro"]],
   ["Internacional", ["corteidh"]],
   ["Doctrina", ["dialnet"]]
 ];
@@ -6490,9 +6491,13 @@ function compararFuentes(){
     var trib=estado.indices[f.slug]&&estado.indices[f.slug].tribunal;
     if(trib) cuerpo.tribunal=trib;
 
-    fetch(estado.api+"/indice/"+f.slug+"/buscar",{
-      method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cuerpo)
-    }).then(function(r){ return r.json(); })
+    // con tope: una base colgada no deja la tarjeta en «Consultando…» para siempre
+    Promise.race([
+      fetch(estado.api+"/indice/"+f.slug+"/buscar",{
+        method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cuerpo)
+      }).then(function(r){ return r.json(); }),
+      new Promise(function(_,no){ setTimeout(function(){ no(new Error("tope")); },45000); })
+    ])
       .then(function(d){
         // Mismo respaldo que en el buscador normal: a SAIJ el servidor
         // publicado no llega (403), pero el navegador sí.
@@ -6583,14 +6588,17 @@ function vistaComparar(){
     '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></div>'+
     '<div class="acciones" style="margin:0;padding:0;border:0">'+
       '<button class="btn" data-act="comparar"'+(c.corriendo?" disabled":"")+'>'+
-        (c.corriendo?"Consultando las diez…":"Comparar las diez fuentes")+'</button>'+
+        (c.corriendo?"Consultando las "+FUENTES_INDICE.length+"…":"Comparar las "+FUENTES_INDICE.length+" fuentes")+'</button>'+
     '</div></div>';
 
   if(!c.corriendo&&!c.hecho) return html;
 
   html+='<p class="conteo">'+(c.corriendo?'Consultando… cada fuente aparece apenas contesta':'Resultados para «'+esc(c.q)+'»')+'</p>';
 
-  GRUPOS_COMPARAR.forEach(function(g){
+  // una base nueva sin grupo no queda afuera: va a «Otras»
+  var agrupadas=[].concat.apply([],GRUPOS_COMPARAR.map(function(g){ return g[1]; }));
+  var otras=FUENTES_INDICE.filter(function(f){ return agrupadas.indexOf(f.slug)===-1; }).map(function(f){ return f.slug; });
+  GRUPOS_COMPARAR.concat(otras.length?[["Otras",otras]]:[]).forEach(function(g){
     var fs=FUENTES_INDICE.filter(function(f){ return g[1].indexOf(f.slug)!==-1; });
     if(!fs.length) return;
     html+='<div class="grupo"><h3>'+esc(g[0])+'</h3>'+
