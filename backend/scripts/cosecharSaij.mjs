@@ -16,6 +16,8 @@
  *   node scripts/cosecharSaij.mjs                  (sumarios y fichas, 1863–hoy)
  *   TIPOS=fallos DESDE=1990 HASTA=2026 node scripts/cosecharSaij.mjs
  *   RECIENTES=3 node scripts/cosecharSaij.mjs      (sólo los últimos 3 meses, de nuevo: la actualización mensual)
+ *   PROVINCIA=Mendoza node scripts/cosecharSaij.mjs (sólo esa jurisdicción local: así sus fallos quedan con la
+ *                                                    provincia, y la base de esa provincia los usa de respaldo)
  *
  * Lo cosechado queda en backend/acervo-crudo/saij-<tipo>/<tramo>.jsonl.gz
  * (fuera del repositorio) y el avance en backend/acervo-crudo/progreso-saij.json.
@@ -29,6 +31,9 @@ import { fileURLToPath } from 'node:url';
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 const CRUDO = path.join(aqui, '..', 'acervo-crudo');
 const PROGRESO = path.join(CRUDO, 'progreso-saij.json');
+const PROVINCIA = process.env.PROVINCIA || '';
+const EXTRA = PROVINCIA ? [`Jurisdicción/Local/${PROVINCIA}`] : [];
+const sufijo = PROVINCIA ? `-${PROVINCIA.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]+/g, '-')}` : '';
 const URL_SAIJ = 'https://www.saij.gob.ar/busqueda';
 const Q = 'que la de el y en';
 const PAUSA_MS = Number(process.env.PAUSA_MS || 2000);
@@ -82,14 +87,14 @@ function aRegistro(tipo, x) {
   if (tipo === 'sumarios') {
     const texto = limpio(c.texto);
     if (!texto) return null;
-    return { id, n: String(c['numero-sumario'] || ''), t: limpio(c.titulo), x: texto, f: fechaDe(c.fecha), j: jur, tt: c['tipo-tribunal'] || '', pr: c.provincia || '', v: voces.length ? voces : undefined, ni: c['numero-interno'] || undefined };
+    return { id, n: String(c['numero-sumario'] || ''), t: limpio(c.titulo), x: texto, f: fechaDe(c.fecha), j: jur, tt: c['tipo-tribunal'] || '', pr: c.provincia || PROVINCIA, v: voces.length ? voces : undefined, ni: c['numero-interno'] || undefined };
   }
   const rel = [].concat(c['sumarios-relacionados']?.['sumario-relacionado'] || []).map(String);
-  return { id, n: String(c['numero-fallo'] || ''), tr: limpio(c.tribunal), f: fechaDe(c.fecha), j: jur, pr: c.provincia || '', tf: c['tipo-fallo'] || '', a: limpio(c.actor), d: limpio(c.demandado), s: limpio(c.sobre), m: limpio(c.magistrados) || undefined, rel: rel.length ? rel : undefined };
+  return { id, n: String(c['numero-fallo'] || ''), tr: limpio(c.tribunal), f: fechaDe(c.fecha), j: jur, pr: c.provincia || PROVINCIA, tf: c['tipo-fallo'] || '', a: limpio(c.actor), d: limpio(c.demandado), s: limpio(c.sobre), m: limpio(c.magistrados) || undefined, rel: rel.length ? rel : undefined };
 }
 
 async function guardar(tipo, tramo, registros) {
-  const dir = path.join(CRUDO, `saij-${tipo}`);
+  const dir = path.join(CRUDO, `saij-${tipo}${sufijo}`);
   await fs.mkdir(dir, { recursive: true });
   const nombre = tramo.replace(/[^\w-]+/g, '_');
   await fs.writeFile(path.join(dir, `${nombre}.jsonl.gz`), zlib.gzipSync(registros.map((r) => JSON.stringify(r)).join('\n')));
@@ -128,7 +133,7 @@ async function recorrer(tipo, partes, nivel) {
     if (total > 1000) console.log(`  ${clave}: ${total} (se bajan los primeros 1.000)`);
   } else if (fecha.split('/').length === 2) {
     // año → meses
-    for (let m = 1; m <= 12; m++) n += await recorrer(tipo, [`${fecha}/${String(m).padStart(2, '0')}`], 'mes');
+    for (let m = 1; m <= 12; m++) n += await recorrer(tipo, [`${fecha}/${String(m).padStart(2, '0')}`, ...partes.filter((p) => !p.startsWith('Fecha/'))], 'mes');
     n += await recorrerSinMes(tipo, fecha, total, n);
   } else if (!conJur) {
     // mes → jurisdicciones
@@ -169,7 +174,7 @@ if (RECIENTES > 0) {
 for (const tipo of TIPOS) {
   for (let anio = HASTA; anio >= DESDE; anio--) {
     const antes = pedidos;
-    const n = await recorrer(tipo, [`Fecha/${anio}`], 'anio');
+    const n = await recorrer(tipo, [`Fecha/${anio}`, ...EXTRA], 'anio');
     if (pedidos > antes) console.log(`${new Date().toTimeString().slice(0, 8)} ${tipo} ${anio}: ${n} (${pedidos} consultas, ${((Date.now() - t0) / 60000).toFixed(0)} min)`);
   }
 }

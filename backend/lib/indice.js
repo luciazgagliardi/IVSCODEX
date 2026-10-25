@@ -74,14 +74,19 @@ export async function upsertRegistros(fuente, registros) {
  * es exactamente cuando tenia que servir. Ahora usa el mismo filtro por
  * modo que el resto de la app (lib/relevancia.js).
  */
+const PROVINCIA_DE = { mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires' };
 export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '' } = {}) {
   const q = String(texto || '').trim();
   if (!q) return [];
   const dato = await leer(fuente);
   // con acervo (lib/acervo.js), la base grande en disco reemplaza al respaldo en memoria:
   // trae los candidatos por índice de texto y el filtro por modo de siempre decide
-  const delAcervo = acervoTiene(fuente) ? buscarEnAcervo(fuente, q, { modo, excluir, anioDesde, anioHasta, provincia, limite: 600 }) : null;
-  const base = delAcervo ? Object.fromEntries(delAcervo.map((r) => [r.id, r])) : await respaldoDe(fuente);
+  const propios = acervoTiene(fuente) ? buscarEnAcervo(fuente, q, { modo, excluir, anioDesde, anioHasta, provincia, limite: 600 }) : null;
+  // las bases provinciales suman lo que SAIJ tiene de su provincia (los tribunales locales que SAIJ publica)
+  const deSaij = PROVINCIA_DE[fuente] && acervoTiene('saij')
+    ? buscarEnAcervo('saij', q, { modo, excluir, anioDesde, anioHasta, provincia: PROVINCIA_DE[fuente], limite: 400 }) || [] : [];
+  const delAcervo = propios || deSaij.length ? [...(propios || []), ...deSaij] : null;
+  const base = { ...(propios ? {} : await respaldoDe(fuente)), ...Object.fromEntries((delAcervo || []).map((r) => [r.id, r])) };
   // lo guardado por las búsquedas + el acervo o el respaldo (sin repetir)
   const todos = { ...base, ...dato.registros };
   const { lista } = filtrarPorModo(Object.values(todos), { q, modo, excluir, anioDesde, anioHasta });

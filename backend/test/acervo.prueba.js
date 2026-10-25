@@ -23,6 +23,7 @@ const registros = [
   { id: 'saij_1', fuente: 'saij', corte: true, caratula: 'Fiorentino, Diego Enrique s/ tenencia ilegítima de estupefacientes', tribunal: 'CORTE SUPREMA DE JUSTICIA DE LA NACION', fecha: '27/11/1984', sumario: 'Establecida la invalidez del registro domiciliario, igual suerte debe correr el secuestro de marihuana practicado en esas circunstancias.', tipo: 'fallo' },
   { id: 'saij_2', fuente: 'saij', caratula: 'Pérez c/ López s/ daños y perjuicios', tribunal: 'Cámara Civil', fecha: '10/03/2015', sumario: 'Corresponde indemnizar el daño moral sufrido por la víctima del accidente.', voces: ['daño moral', 'accidente de tránsito'] },
   { id: 'saij_3', fuente: 'saij', caratula: 'Gómez c/ Banco s/ despido', fecha: '02/05/2021', sumario: 'La indemnización por despido debe calcularse con la mejor remuneración mensual.' },
+  { id: 'saij_4', fuente: 'saij', provincia: 'Mendoza', caratula: 'Bodega Andina c/ Pérez s/ cobro', fecha: '01/03/2020', sumario: 'El contrato de elaboración de vino en la vendimia obliga al bodeguero.', linkFicha: 'https://www.saij.gob.ar/123456789-0abc-defg0000-000asoiramus' },
   { id: 'scba_1', fuente: 'scba', caratula: 'Ripodas contra Turcuman. Despido', sumario: 'Si la relación laboral se hallaba deficientemente registrada procede la indemnización.' },
 ];
 fs.writeFileSync(path.join(process.env.DIR_ACERVO_DATOS, 'todo-001.jsonl.gz'), zlib.gzipSync(registros.map((r) => JSON.stringify(r)).join('\n')));
@@ -35,7 +36,7 @@ const e = await prepararAcervo({ esperar: true });
 test('las tandas se importan con sus conteos, la Corte aparte', () => {
   assert.equal(e.activo, true, e.error || '');
   assert.equal(e.version, 'prueba-1');
-  assert.deepEqual(estadoAcervo().conteos, { saij: 3, csjn: 1, scba: 1 });
+  assert.deepEqual(estadoAcervo().conteos, { saij: 4, csjn: 1, scba: 1 });
 });
 
 test('la consulta: raíces sin acentos, modos y exclusión', () => {
@@ -65,7 +66,7 @@ test('la búsqueda de respaldo usa el acervo, con años', async () => {
   const r = await buscarEnIndice('saij', 'despido', { modo: 'todas' });
   assert.deepEqual(r.map((x) => x.id), ['saij_3']);
   assert.equal((await buscarEnIndice('saij', 'daño moral', { anioHasta: 2010 })).length, 0);
-  assert.equal((await estadoIndice('saij')).acervo, 3);
+  assert.equal((await estadoIndice('saij')).acervo, 4);
 });
 
 test('lo cosechado por el servidor se suma al acervo, se busca y se actualiza cuando llega su texto', async () => {
@@ -83,4 +84,10 @@ test('lo cosechado por el servidor se suma al acervo, se busca y se actualiza cu
   // queda en disco para la versión siguiente del acervo
   const enDisco = fs.readFileSync(path.join(process.env.DIR_ACERVO, 'cosechas', 'caba.jsonl'), 'utf8').trim().split('\n');
   assert.equal(enDisco.length, 2);
+});
+
+test('una base provincial suma, de respaldo, los fallos de SAIJ de su provincia', async () => {
+  const r = await buscarEnIndice('mendoza', 'vendimia', { modo: 'todas' });
+  assert.ok(r.some((x) => x.id === 'saij_4'), 'el fallo de SAIJ de Mendoza');
+  assert.equal((await buscarEnIndice('scba', 'vendimia', { modo: 'todas' })).length, 0, 'no es de Buenos Aires');
 });
