@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { DIR_DATOS } from '../config.js';
 import { buscarCaba } from './indiceCaba.js';
 import { descargar } from './descargador.js';
+import { traerConNavegador } from './navegadorCf.js';
 import { extraerDesdeBuffer } from './documento.js';
 import { agregarAlAcervo, estadoAcervo, idsConTexto } from './acervo.js';
 
@@ -59,10 +60,26 @@ async function pasoListado() {
   return true;
 }
 
+/* El PDF: directo con Chrome (el pedido común se va en la redirección y el desafío de
+   Cloudflare, y no le alcanzan sus 25 s); si Chrome no está, el pedido común. */
+async function bajarPdf(url) {
+  try {
+    const n = await traerConNavegador(url);
+    if (n?.estado >= 200 && n.estado < 300 && n.buffer?.length) return { buffer: n.buffer, contentType: n.contentType, urlFinal: url };
+  } catch { /* sin navegador: el pedido común */ }
+  return descargar(url);
+}
 async function pasoTexto() {
   const r = estado.pendientes.shift();
   if (!r) return false;
-  const { buffer, contentType, urlFinal } = await descargar(r.linkFallo);
+  let buffer, contentType, urlFinal;
+  try {
+    ({ buffer, contentType, urlFinal } = await bajarPdf(r.linkFallo));
+  } catch (e) {
+    // no se pierde: vuelve al final de la cola, hasta tres intentos
+    if ((r.intentos || 0) < 2) estado.pendientes.push({ ...r, intentos: (r.intentos || 0) + 1 });
+    throw e;
+  }
   const doc = await extraerDesdeBuffer(buffer, contentType, urlFinal);
   const texto = String(doc.texto || '').replace(/\s+/g, ' ').trim();
   if (texto.length > 200) {
@@ -84,7 +101,8 @@ async function tic() {
     if (!hizo) { estado.activa = false; console.log(`[cosecha CABA] terminada: ${estado.listados} listados, ${estado.conTexto} con texto`); await guardar(); return; }
   } catch (e) {
     estado.error = `${new Date().toISOString().slice(0, 16)} ${String(e?.message || e).slice(0, 160)}`;
-    espera = ESPERA_CORTE_MS;
+    // un corte (403, 429, 5xx) es media hora; una demora o un PDF que no se pudo leer, cinco minutos
+    espera = /\b(403|429|5\d\d)\b|bloque|denegad/i.test(String(e?.message || '')) ? ESPERA_CORTE_MS : 5 * 60_000;
   } finally {
     await guardar().catch(() => {});
     if (estado.activa) { reloj = setTimeout(tic, espera); reloj.unref?.(); }
