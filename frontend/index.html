@@ -4882,7 +4882,7 @@ function pasajeDe(f,r){
   var im=estado.indices[f.slug]||{}, uf=urlFragmento(f.slug,r);
   return r.sumario||(uf&&im.fragmentos?im.fragmentos[uf]:"")||"";
 }
-function filaIndice(f,r,k){
+function filaIndice(f,r,k,tambien){
   var abierta=!!estado.filasAbiertas[k];
   if(abierta) return '<div class="rz-abierta f-'+f.slug+'">'+fichaIndice(f,r)+
     '<button type="button" class="mini" data-act="abrir-fila" data-k="'+esc(k)+'">Cerrar</button></div>';
@@ -4892,7 +4892,8 @@ function filaIndice(f,r,k){
   return '<article class="rz f-'+f.slug+(nom?' rz--nombre':'')+'" data-act="abrir-fila" data-k="'+esc(k)+'" tabindex="0">'+
     '<div class="rz-t"><span class="rf-punto"></span><span>'+titulo+'</span></div>'+
     '<div class="rz-m"><b>'+esc(f.cod)+'</b>'+(meta?' · '+meta:'')+(nom?' · <span class="rz-coincide">coincide con el nombre buscado</span>':'')+
-      (r.otrasFichas&&r.otrasFichas.length?' · <span class="rz-otras">'+(r.otrasFichas.length+1)+' fichas del mismo fallo</span>':'')+'</div>'+
+      (r.otrasFichas&&r.otrasFichas.length?' · <span class="rz-otras">'+(r.otrasFichas.length+1)+' fichas del mismo fallo</span>':'')+
+      (tambien&&tambien.length?' · <span class="rz-otras">también en '+esc(tambien.join(", "))+'</span>':'')+'</div>'+
     (pas?'<p>'+resaltarSimple(pas,nom?qn+" "+estado.q:estado.q)+'</p>':(nom?'<p>Carátula: '+resaltarSimple(r.caratula||"",qn)+'</p>':''))+'</article>';
 }
 function listaTodas(vis){
@@ -4906,7 +4907,19 @@ function listaTodas(vis){
     if(estado.orden==="fecha") a.sort(function(x,y){ return fechaNum(y.r)-fechaNum(x.r); });
   }
   // por nombre: lo que coincide con la carátula buscada va primero, de cualquier base
-  if(nombreBuscado(estado.q)) a.sort(function(x,y){ return (y.r.parecido||0)-(x.r.parecido||0); });
+  if(nombreBuscado(estado.q)){
+    a.sort(function(x,y){ return (y.r.parecido||0)-(x.r.parecido||0); });
+    // el mismo fallo en dos bases (la Corte y SAIJ traen las mismas fichas): una sola fila
+    var vistos={},unicos=[];
+    a.forEach(function(x){
+      if(!x.r.coincideNombre){ unicos.push(x); return; }
+      var k=(x.r.fecha||"")+"|"+sinTildes(String(x.r.caratula||"")).replace(/[^a-z0-9]+/g,"").slice(0,40);
+      var y=vistos[k];
+      if(y){ if(!y.r.sumario&&x.r.sumario) y.r.sumario=x.r.sumario; if((y.tambien=y.tambien||[]).indexOf(x.f.cod)<0) y.tambien.push(x.f.cod); return; }
+      vistos[k]=x; unicos.push(x);
+    });
+    a=unicos;
+  }
   return a;
 }
 function estadoLista(vis){
@@ -4935,7 +4948,7 @@ function bloqueResultados(vis){
     '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"]].map(function(o){
       return '<button class="chip" data-act="orden" data-v="'+o[0]+'" aria-pressed="'+(estado.orden===o[0]?"true":"false")+'">'+o[1]+'</button>'; }).join("")+'</span></div>';
   var lim=estado.limFilas||40;
-  h+=lista.slice(0,lim).map(function(x){ return filaIndice(x.f,x.r,x.k); }).join("");
+  h+=lista.slice(0,lim).map(function(x){ return filaIndice(x.f,x.r,x.k,x.tambien); }).join("");
   if(lista.length>lim) h+='<div class="rz-mas"><button class="btn sec" data-act="mas-filas">Mostrar 40 más <span class="rz-mas-n">(quedan '+(lista.length-lim)+')</span></button></div>';
   h+='<p class="rz-aviso">Se muestran los primeros resultados de cada base. Para ver todos, filtrar por tribunal o cambiar de página, elija la base en la columna de la izquierda.</p>';
   return h;
