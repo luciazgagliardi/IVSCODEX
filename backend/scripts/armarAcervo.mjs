@@ -90,7 +90,7 @@ console.log(`SAIJ: ${fichas.length} fichas, ${sumarios.length} sumarios (${conCa
 
 // ---- el respaldo de las bases (incluido lo de SAIJ y la Corte que ya había) ----
 // el respaldo del repositorio y la cosecha grande de cada base (acervo-crudo/respaldo/, ver armarRespaldo.mjs con DIR_SALIDA)
-for (const [base, dir] of ['saij', 'csjn', 'scba', 'caba', 'mendoza', 'mendozalegal', 'dialnet'].flatMap((b) => [[b, path.join(RAIZ, 'respaldo')], [b, path.join(CRUDO, 'respaldo')]])) {
+for (const [base, dir] of ['saij', 'csjn', 'scba', 'caba', 'mendoza', 'mendozalegal', 'dialnet', 'rionegro', 'juristeca'].flatMap((b) => [[b, path.join(RAIZ, 'respaldo')], [b, path.join(CRUDO, 'respaldo')]])) {
   let d;
   try { d = JSON.parse(zlib.gunzipSync(await fs.readFile(path.join(dir, `${base}.json.gz`)))); } catch { continue; }
   let n = 0;
