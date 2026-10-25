@@ -125,11 +125,24 @@ function posicionDelArticulo(texto, numero) {
     new RegExp(`Art\\.?\\s*${n}\\b\\s*[\\.\\-–—°º:]`, 'i'),
     new RegExp(`ART[IÍ]CULO\\s*${n}\\b`, 'i'),
   ];
-  for (const p of patrones) {
-    const m = p.exec(texto);
-    if (m) return m.index;
+  // Todas las apariciones, y gana la que tiene forma de encabezado: al principio del renglón
+  // y no precedida de «del», «el», «conforme al»… Antes ganaba la primera, y en la LCT la
+  // primera «artículo 245.» es una mención dentro del art. 186, justo antes del capítulo IV.
+  let mejor = -1, puntos = -Infinity;
+  for (const [k, p] of patrones.entries()) {
+    const re = new RegExp(p.source, 'gi');
+    let m;
+    while ((m = re.exec(texto))) {
+      const antes = texto.slice(Math.max(0, m.index - 40), m.index);
+      let s = -k; // a igualdad, el patrón más específico
+      if (/(^|\n)\s*$/.test(antes) || m.index === 0) s += 6;
+      if (/[.:;]\s*$/.test(antes)) s += 2;
+      if (/\b(del|el|al|los|las|y|o|e|conforme|seg[uú]n|previsto|prevista|dispuesto|establecido|en el|por el|art[ií]culos?)\s*$/i.test(antes)) s -= 8;
+      if (/^[A-ZÁÉÍÓÚ]/.test(m[0])) s += 1;
+      if (s > puntos) { puntos = s; mejor = m.index; }
+    }
   }
-  return -1;
+  return mejor;
 }
 
 /** Cuántos caracteres se devuelven como mucho de un artículo. */
