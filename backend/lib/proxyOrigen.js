@@ -4,8 +4,8 @@
  * contestan bien a una conexión hogareña. La idea era que esos pedidos
  * puntuales pasaran por ScraperAPI en vez de ir directo.
  *
- * DESACTIVADO A PROPÓSITO — SUFIJOS_VIA_PROXY vacío. Los dos dominios de
- * CABA se probaron en vivo y ninguno funciona con el plan actual de
+ * Para CABA quedó DESACTIVADO A PROPÓSITO (hoy sólo van Santa Fe y Río
+ * Negro, más abajo). Los dos dominios de CABA se probaron en vivo y ninguno funciona con el plan actual de
  * ScraperAPI, cada uno fallando distinto:
  *
  *   - jurisprudencia.tsjbaires.gob.ar (el buscador): ScraperAPI lo tiene
@@ -66,7 +66,9 @@ function dominioVaPorRele(host) {
 }
 
 /** Dominios que se sabe que le niegan la conexión al datacenter publicado. */
-const SUFIJOS_VIA_PROXY = [];
+// Santa Fe y Río Negro no le contestan al datacenter publicado (sin conexión o 403, medido en vivo)
+// y no tienen la protección de Cloudflare que frenaba al TSJ: el plan común de ScraperAPI alcanza.
+const SUFIJOS_VIA_PROXY = ['justiciasantafe.gov.ar', 'jusrionegro.gov.ar'];
 
 /** True si el host es uno de esos dominios o un subdominio suyo. */
 export function dominioNecesitaProxy(host) {
