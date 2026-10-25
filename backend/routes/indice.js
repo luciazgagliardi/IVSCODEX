@@ -19,6 +19,7 @@ import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
 import { estadoAcervo } from '../lib/acervo.js';
+import { IVSPasajes } from '../lib/pasajes.js';
 import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
 import { errores, ErrorApp } from '../lib/errores.js';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
@@ -46,25 +47,6 @@ const PRESUPUESTO_MS = 22_000;
 /** Caracteres a cada lado de la coincidencia en el pasaje devuelto. */
 const VENTANA = 160;
 
-/**
- * Qué buscar dentro del documento, en orden de preferencia.
- *
- * Primero la consulta entera: si alguien busca "daño moral", el pasaje
- * tiene que mostrar "daño moral", no la primera vez que aparece "daño"
- * suelto en cualquier otra parte del fallo. Recién si esa frase no está
- * literal se cae a las palabras por separado.
- */
-function agujasDe(q) {
-  const limpia = String(q || '').replace(/["'()]/g, ' ').replace(/\s+/g, ' ').trim();
-  const sueltas = limpia
-    .split(' ')
-    .filter((p) => p.length >= 3 && !/^(and|or|not|site)$/i.test(p));
-
-  const agujas = [];
-  if (limpia.includes(' ') && limpia.length >= 3) agujas.push(limpia);
-  for (const p of sueltas) if (!agujas.includes(p)) agujas.push(p);
-  return agujas;
-}
 
 /**
  * Dónde termina el encabezado y empieza el fallo en sí.
@@ -93,34 +75,9 @@ function inicioDelCuerpo(texto) {
 function recortarPasaje(texto, q, { exigir = false } = {}) {
   const limpio = String(texto || '').replace(/\s+/g, ' ').trim();
   if (!limpio) return '';
-
-  const enMinusculas = limpio.toLocaleLowerCase('es');
-  const cuerpo = inicioDelCuerpo(limpio);
-
-  let pos = -1;          // coincidencia en el cuerpo del fallo: la que sirve
-  let posEncabezado = -1; // la misma pero dentro de la carátula: último recurso
-
-  for (const aguja of agujasDe(q)) {
-    const buscada = aguja.toLocaleLowerCase('es');
-    const enCuerpo = enMinusculas.indexOf(buscada, cuerpo);
-    if (enCuerpo !== -1) { pos = enCuerpo; break; }
-    if (posEncabezado === -1) posEncabezado = enMinusculas.indexOf(buscada);
-  }
-  if (pos === -1) pos = posEncabezado;
-
-  // Sin coincidencia (pasa cuando el buscador matcheó por una forma
-  // declinada de la palabra): mostramos el arranque del cuerpo, que es
-  // donde el fallo empieza a decir algo.
-  // Dialnet: si lo buscado no está en el texto (un autor que se llama así, otra disciplina), no hay pasaje
-  if (pos === -1 && exigir) return '';
-  if (pos === -1) {
-    const trozo = limpio.slice(cuerpo, cuerpo + VENTANA * 2).trim();
-    return (cuerpo > 0 ? '… ' : '') + trozo + (cuerpo + VENTANA * 2 < limpio.length ? ' …' : '');
-  }
-
-  const desde = Math.max(0, pos - VENTANA);
-  const hasta = Math.min(limpio.length, pos + VENTANA);
-  return (desde > 0 ? '… ' : '') + limpio.slice(desde, hasta).trim() + (hasta < limpio.length ? ' …' : '');
+  // el tramo con más palabras de la búsqueda, sin acentos y por la raíz (lib/pasajes.js), en el
+  // cuerpo del fallo antes que en la carátula; sin coincidencia, el arranque del cuerpo (o nada, si se exige)
+  return IVSPasajes.pasaje(limpio, q, { desde: inicioDelCuerpo(limpio), largo: VENTANA * 2, exigir }).texto;
 }
 
 /**

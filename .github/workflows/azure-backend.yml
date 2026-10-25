@@ -3,7 +3,7 @@ name: Publicar backend en Azure App Service
 on:
   push:
     branches: [main]
-    paths: ["backend/**"]
+    paths: ["backend/**", "frontend/pasajes.js"]
   workflow_dispatch: {}
 
 permissions:
@@ -28,6 +28,9 @@ jobs:
           path: backend/acervo-datos
       - name: Sin la carpeta .git de las tandas
         run: rm -rf backend/acervo-datos/.git && ls -la backend/acervo-datos || true
+      # el mismo módulo de pasajes que la página (frontend/pasajes.js): el servidor lo usa para recortar
+      - name: Copiar el módulo de pasajes
+        run: cp frontend/pasajes.js backend/lib/pasajes.cjs
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
