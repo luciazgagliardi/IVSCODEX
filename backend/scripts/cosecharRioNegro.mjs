@@ -64,27 +64,50 @@ async function guardar(mapa, progreso) {
 const mapa = await cargar();
 const progreso = await leerJson(PROGRESO, { pagina: 1, total: null, listado: false });
 const t0 = Date.now();
-const urlPagina = (n) => `https://fallos.jusrionegro.gov.ar/protocoloweb/protocolo/buscar?${new URLSearchParams({ 'Datos[FilterProtocolo][texto]': 'sentencia', 'Datos[FilterProtocolo][stj]': STJ, page: String(n), 'per-page': '10' })}`;
+const urlPagina = (n, desde, hasta) => `https://fallos.jusrionegro.gov.ar/protocoloweb/protocolo/buscar?${new URLSearchParams({
+  'Datos[FilterProtocolo][texto]': 'sentencia', 'Datos[FilterProtocolo][stj]': STJ,
+  ...(desde ? { 'Datos[FilterProtocolo][fecha_desde]': desde, 'Datos[FilterProtocolo][fecha_hasta]': hasta } : {}),
+  page: String(n), 'per-page': '10' })}`;
+const dd = (n) => String(n).padStart(2, '0');
 
-// 1. el listado
-while (!progreso.listado) {
-  let html;
-  try { html = await pedir(urlPagina(progreso.pagina)); } catch (e) {
-    // una página que no sale después de una hora de intentos: se anota y se sigue
-    (progreso.salteadas = progreso.salteadas || []).push(progreso.pagina);
-    console.log(`  página ${progreso.pagina} salteada (${e.message})`);
-    progreso.pagina++;
-    continue;
+/* Un tramo de fechas entero (el buscador no deja pasar del resultado 10.000: se parte en tramos que entren). */
+async function tramo(clave, desde, hasta) {
+  if ((progreso.hechos || {})[clave]) return;
+  const primera = await pedir(urlPagina(1, desde, hasta));
+  const total = totalDe(primera);
+  if (total > 10000 && clave.length === 4) {
+    // un año con más de diez mil: mes por mes
+    const anio = Number(clave);
+    for (let m = 1; m <= 12; m++) {
+      const fin = new Date(anio, m, 0).getDate();
+      await tramo(`${clave}-${dd(m)}`, `01/${dd(m)}/${anio}`, `${fin}/${dd(m)}/${anio}`);
+    }
+  } else {
+    for (let n = 1; (n - 1) * 10 < Math.min(total, 10000); n++) {
+      let html;
+      try { html = n === 1 ? primera : await pedir(urlPagina(n, desde, hasta)); } catch (e) {
+        (progreso.salteadas = progreso.salteadas || []).push(`${clave}:${n}`);
+        continue;
+      }
+      const regs = parsear(html, STJ);
+      for (const r of regs) if (!mapa.has(r.id)) mapa.set(r.id, { ...r, sumario: '' }); // los fragmentos de «sentencia» no dicen nada
+      if (!regs.length) break;
+    }
   }
-  if (!progreso.total) progreso.total = totalDe(html);
-  const regs = parsear(html, STJ);
-  for (const r of regs) if (!mapa.has(r.id)) mapa.set(r.id, { ...r, sumario: '' }); // los fragmentos de «sentencia» no dicen nada
-  if (!regs.length || progreso.pagina * 10 >= progreso.total) progreso.listado = true;
-  progreso.pagina++;
-  if (progreso.pagina % 25 === 0 || progreso.listado) {
-    await guardar(mapa, progreso);
-    console.log(`${new Date().toTimeString().slice(0, 8)} listado ${TRIBUNAL}: página ${progreso.pagina - 1} de ${Math.ceil(progreso.total / 10)}, ${mapa.size} fallos (${((Date.now() - t0) / 60000).toFixed(0)} min)`);
+  (progreso.hechos = progreso.hechos || {})[clave] = total;
+  await guardar(mapa, progreso);
+  console.log(`${new Date().toTimeString().slice(0, 8)} listado ${TRIBUNAL} ${clave}: ${total} · ${mapa.size} fallos en total (${((Date.now() - t0) / 60000).toFixed(0)} min)`);
+}
+
+// 1. el listado, año por año (de este año hacia atrás, hasta uno sin sentencias)
+if (!progreso.listado) {
+  let vacios = 0;
+  for (let anio = new Date().getFullYear(); anio >= 1950 && vacios < 3; anio--) {
+    await tramo(String(anio), `01/01/${anio}`, `31/12/${anio}`);
+    vacios = progreso.hechos[String(anio)] ? 0 : vacios + 1;
   }
+  progreso.listado = true;
+  await guardar(mapa, progreso);
 }
 
 // 2. el texto de cada PDF
