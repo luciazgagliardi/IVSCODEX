@@ -75,6 +75,7 @@
   --f-dialnet:#8a3853;
   --f-corteidh:#5f7f9a;
   --f-scba:#c06a2c;
+  --f-rionegro:#7d8f4a;
 
   --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -641,6 +642,7 @@ body.en-recorrido .cab>*{animation:none}
 .f-dialnet{--punto:var(--f-dialnet)}
 .f-corteidh{--punto:var(--f-corteidh)}
 .f-scba{--punto:var(--f-scba)}
+.f-rionegro{--punto:var(--f-rionegro)}
 
 /* ---------- sin cajas: un filete arriba y aire ---------- */
 .panel,.blk,.rama,.aviso{
@@ -718,7 +720,7 @@ body.en-recorrido .cab>*{animation:none}
 @media (max-width:1180px){ .brief{grid-template-columns:minmax(0,1fr)} .brief__summary{position:static} }
 
 /* ---------- resultados en vivo: cada base con su sello de procedencia ---------- */
-.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet,.panel.f-corteidh,.panel.f-scba{
+.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet,.panel.f-corteidh,.panel.f-scba,.panel.f-rionegro{
   margin:0 0 64px;padding:0;border-top:0
 }
 .rotulo-fuente{
@@ -1431,7 +1433,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261024b" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261025a" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
@@ -2971,6 +2973,13 @@ var FUENTES_INDICE=[
  {slug:"scba",cod:"SCBA",clase:"prov",boton:"la Suprema Corte de Buenos Aires",
   nombre:"Suprema Corte de la Provincia de Buenos Aires (JUBA)",
   nota:"Sumarios de la Suprema Corte y de las cámaras bonaerenses, con su texto, voces, normas citadas, carátula y enlace al fallo completo. Es la base provincial más grande del país."},
+ {slug:"rionegro",cod:"RN",clase:"prov",boton:"el Poder Judicial de Río Negro",
+  nombre:"Poder Judicial de Río Negro",
+  nota:"Sentencias del Superior Tribunal y de las cámaras y juzgados de Río Negro, buscadas en su texto completo, con los pasajes donde aparece lo buscado y el fallo entero para el Lector.",
+  tribunales:[
+    {v:"STJ",n:"Superior Tribunal"},
+    {v:"CJ",n:"Cámaras y juzgados"}
+  ]},
  {slug:"corteidh",cod:"CORTE IDH",clase:"int",boton:"la Corte Interamericana",
   nombre:"Corte Interamericana de Derechos Humanos",
   nota:"Sentencias, opiniones consultivas, medidas provisionales y supervisiones de cumplimiento del tribunal del sistema interamericano, con enlace al PDF oficial. El buscador del sitio trabaja por frase: «todas las palabras» y «alguna palabra» se resuelven consultando cada palabra por separado."}
@@ -4392,7 +4401,7 @@ var TABS=[["buscar","Buscar"],["lector","Lector"],["ramas","Ramas"],["requisitos
 var PRINCIPALES=["buscar","lector","ramas","calculos","fuentes","verificar"];
 var GRUPOS_NAV=["Investigar","Leer y citar","Calcular","Preparar","Fuentes","Archivo personal"];
 var SECCIONES={
-  buscar:["QVAESTIO","Investigar","Las ocho bases a la vez"],
+  buscar:["QVAESTIO","Investigar","Las nueve bases a la vez"],
   comparar:["COLLATIO","Investigar","Contraste criterios de resolución por jurisdicción"],
   ramas:["MATERIAE","Investigar","Las ramas del derecho y sus voces"],
   requisitos:["REQVISITA","Investigar","Lo que exige cada trámite"],
@@ -4792,7 +4801,7 @@ function tiraVariantes(){
 /* Buscar, ordenado en columnas: arriba la consulta y los filtros; abajo una
    columna por base, cada una con su punto de color, su estado, su botón
    para buscar sólo ahí y sus resultados. */
-var PROV_DE={mendoza:"Mendoza",mendozalegal:"Mendoza",caba:"Ciudad Autónoma de Buenos Aires",scba:"Buenos Aires"};
+var PROV_DE={mendoza:"Mendoza",mendozalegal:"Mendoza",caba:"Ciudad Autónoma de Buenos Aires",scba:"Buenos Aires",rionegro:"Río Negro"};
 function basesVisibles(){
   return FUENTES_INDICE.filter(function(f){
     if(!estado.ambitos[f.clase]) return false;
@@ -4829,7 +4838,7 @@ function franjaBuscar(){
   if(estado.provAbierto) h+='<div class="fsb-prov"><input type="text" id="prov-q" placeholder="Buscar provincia…" aria-label="Buscar provincia" autocomplete="off">'+
      '<div class="fsb-provs">'+pl(!estado.provSel,"prov",'data-p=""',"Todo el país")+
      PROVINCIAS_SAIJ.map(function(p){ return '<button class="chip" data-act="prov" data-p="'+esc(p)+'" data-n="'+esc(sinTildes(p))+'" aria-pressed="'+(estado.provSel===p?"true":"false")+'">'+esc(p)+'</button>'; }).join("")+'</div>'+
-     '<span class="fsb-nota">Con base propia: Mendoza, Buenos Aires y Ciudad de Buenos Aires. Las demás provincias se buscan a través de SAIJ.</span></div>';
+     '<span class="fsb-nota">Con base propia: Mendoza, Buenos Aires, Ciudad de Buenos Aires y Río Negro. Las demás provincias se buscan a través de SAIJ.</span></div>';
   h+='<div class="fsb-fila" data-fila="como"><span class="fsb-rot">Cómo</span>'+
      [["exacta","Frase exacta"],["todas","Todas las palabras"],["alguna","Alguna palabra"]].map(function(m){ return pl(estado.modo===m[0],"modo",'data-modo="'+m[0]+'"',m[1]); }).join("")+
      '<label class="fsb-c"><span>Años</span><input type="number" id="desde" value="'+esc(estado.desde)+'" min="1863" max="2100" placeholder="Desde" aria-label="Año desde"><span>–</span><input type="number" id="hasta" value="'+esc(estado.hasta)+'" min="1863" max="2100" placeholder="Hasta" aria-label="Año hasta"></label>'+
@@ -6569,7 +6578,7 @@ function vistaComparar(){
     '<input type="text" id="q" value="'+esc(estado.q)+'" autocomplete="off" placeholder="daño moral"></div>'+
     '<div class="acciones" style="margin:0;padding:0;border:0">'+
       '<button class="btn" data-act="comparar"'+(c.corriendo?" disabled":"")+'>'+
-        (c.corriendo?"Consultando las ocho…":"Comparar las ocho fuentes")+'</button>'+
+        (c.corriendo?"Consultando las nueve…":"Comparar las nueve fuentes")+'</button>'+
     '</div></div>';
 
   if(!c.corriendo&&!c.hecho) return html;
