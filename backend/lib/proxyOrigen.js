@@ -56,7 +56,9 @@ import { SCRAPER_API_KEY, RELE_URL, RELE_CLAVE } from '../config.js';
 // Vacío a propósito: el TSJ contesta con el desafío de Cloudflare también a los
 // pedidos que pasan por el Worker (medido en vivo). Ese dominio se resuelve con
 // un navegador de verdad: ver lib/navegadorCf.js.
-const SUFIJOS_VIA_RELE = [];
+// Río Negro sí: le niega la conexión al datacenter publicado (403 a todo, medido en vivo) y le
+// contesta a cualquier conexión común. Sin relevo configurado, esto no cambia nada.
+const SUFIJOS_VIA_RELE = ['jusrionegro.gov.ar'];
 
 function dominioVaPorRele(host) {
   const h = String(host || '').toLowerCase().replace(/\.$/, '');
