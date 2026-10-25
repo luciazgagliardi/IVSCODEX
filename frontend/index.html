@@ -5222,7 +5222,8 @@ function traerDocEnLector(url,opciones){
   render();
   fetch(estado.api+"/extraer",{
     method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({url:url})
+    // con la carátula y la fecha, si la base no entrega el documento el servidor lo busca en SAIJ
+    body:JSON.stringify(opciones.alternativa?{url:url,ficha:opciones.alternativa}:{url:url})
   }).then(function(r){ return r.json(); })
     .then(function(d){
       estado.cargando=false;
@@ -9479,7 +9480,8 @@ document.addEventListener("click",function(ev){
     // si la fuente no entrega el documento (JUBA fuera de servicio, un sitio caído), el Lector
     // abre lo que el resultado ya trae: carátula, tribunal, fecha y sumario
     var respaldoIdx=fichaIdx&&fichaIdx.sumario?{texto:[fichaIdx.caratula,[fichaIdx.tribunal,fichaIdx.fecha,fichaIdx.expediente].filter(Boolean).join(" · "),fichaIdx.sumario].filter(Boolean).join("\n\n")}:null;
-    traerDocEnLector(linkIdx,{fichaConocida:fichaIdx?fichaDesdeIndice(slugIdx,fichaIdx):null,respaldo:respaldoIdx});
+    var altIdx=fichaIdx&&fichaIdx.caratula&&fichaIdx.fecha?{caratula:String(fichaIdx.caratula),fecha:String(fichaIdx.fecha).slice(0,10)}:null;
+    traerDocEnLector(linkIdx,{fichaConocida:fichaIdx?fichaDesdeIndice(slugIdx,fichaIdx):null,respaldo:respaldoIdx,alternativa:altIdx});
     return;
   }
   if(act==="tog-perfil"){ estado.perfilMenu=!estado.perfilMenu; pintarNav(); return; }

@@ -67,3 +67,20 @@ test('la búsqueda de respaldo usa el acervo, con años', async () => {
   assert.equal((await buscarEnIndice('saij', 'daño moral', { anioHasta: 2010 })).length, 0);
   assert.equal((await estadoIndice('saij')).acervo, 3);
 });
+
+test('lo cosechado por el servidor se suma al acervo, se busca y se actualiza cuando llega su texto', async () => {
+  const { agregarAlAcervo, idsConTexto } = await import('../lib/acervo.js');
+  const r = { id: 'caba_1', fuente: 'caba', caratula: 'Romero, Guadalupe c/ GCBA s/ amparo', fecha: '29/4/2026', linkFallo: 'https://www.tsjbaires.gov.ar/x.pdf', voces: ['amparo'] };
+  assert.equal(await agregarAlAcervo([r]), 1);
+  assert.deepEqual(buscarEnAcervo('caba', 'romero').map((x) => x.id), ['caba_1']);
+  assert.equal(idsConTexto('caba').size, 0);
+  // llega el texto del PDF: se busca por lo que dice el fallo
+  await agregarAlAcervo([{ ...r, sumario: 'El derecho a la vivienda digna exige una respuesta del Estado local.' }]);
+  assert.deepEqual(buscarEnAcervo('caba', 'vivienda digna').map((x) => x.id), ['caba_1']);
+  assert.equal(buscarEnAcervo('caba', 'romero').length, 1, 'no queda repetido');
+  assert.ok(idsConTexto('caba').has('caba_1'));
+  assert.equal(estadoAcervo().conteos.caba, 1);
+  // queda en disco para la versión siguiente del acervo
+  const enDisco = fs.readFileSync(path.join(process.env.DIR_ACERVO, 'cosechas', 'caba.jsonl'), 'utf8').trim().split('\n');
+  assert.equal(enDisco.length, 2);
+});
