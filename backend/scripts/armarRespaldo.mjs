@@ -25,7 +25,8 @@ import { FUENTES } from '../lib/fuentes.js';
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 const RAIZ = path.resolve(aqui, '..');
-const SALIDA = path.join(RAIZ, 'respaldo');
+// DIR_SALIDA=acervo-crudo/respaldo: una cosecha grande va al acervo (scripts/armarAcervo.mjs), no al repositorio
+const SALIDA = process.env.DIR_SALIDA ? path.resolve(RAIZ, process.env.DIR_SALIDA) : path.join(RAIZ, 'respaldo');
 // cada ronda lleva su propio avance (RONDA=2 → progreso-2.json), así una ronda más honda no saltea lo ya hecho en otra
 const RONDA = process.env.RONDA || '';
 const PROGRESO = path.join(SALIDA, RONDA ? `progreso-${RONDA}.json` : 'progreso.json');

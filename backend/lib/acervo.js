@@ -47,10 +47,11 @@ const ESQUEMA = `
 CREATE TABLE IF NOT EXISTS fallos(
   rid INTEGER PRIMARY KEY, id TEXT UNIQUE, fuente TEXT, corte INTEGER DEFAULT 0, provincia TEXT,
   caratula TEXT, tribunal TEXT, fecha TEXT, anio INTEGER, expediente TEXT, sumario TEXT, voces TEXT,
-  magistrados TEXT, materia TEXT, linkFicha TEXT, linkFallo TEXT, tipo TEXT);
+  magistrados TEXT, materia TEXT, linkFicha TEXT, linkFallo TEXT, tipo TEXT, marca TEXT);
 CREATE INDEX IF NOT EXISTS fallos_fuente ON fallos(fuente, anio);
 CREATE INDEX IF NOT EXISTS fallos_corte ON fallos(corte, anio);
-CREATE VIRTUAL TABLE IF NOT EXISTS fts USING fts5(caratula, sumario, voces, content='fallos', content_rowid='rid', tokenize='unicode61 remove_diacritics 2');
+-- «marca»: la base como palabra del índice (zfsaij, zfcsjn…), así el filtro por base lo hace el propio índice
+CREATE VIRTUAL TABLE IF NOT EXISTS fts USING fts5(caratula, sumario, voces, marca, content='fallos', content_rowid='rid', tokenize='unicode61 remove_diacritics 2');
 CREATE TABLE IF NOT EXISTS meta(clave TEXT PRIMARY KEY, valor TEXT);
 `;
 
@@ -90,8 +91,8 @@ async function importar(man) {
   for (const f of [nueva, `${nueva}-wal`, `${nueva}-shm`]) await fsp.rm(f, { force: true });
   const d = abrir(nueva);
   d.exec('PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;');
-  const ins = d.prepare(`INSERT OR IGNORE INTO fallos(id,fuente,corte,provincia,caratula,tribunal,fecha,anio,expediente,sumario,voces,magistrados,materia,linkFicha,linkFallo,tipo)
-    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+  const ins = d.prepare(`INSERT OR IGNORE INTO fallos(id,fuente,corte,provincia,caratula,tribunal,fecha,anio,expediente,sumario,voces,magistrados,materia,linkFicha,linkFallo,tipo,marca)
+    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
   const conteos = {};
   for (const archivo of man.archivos) {
     const entrada = readline.createInterface({ input: fs.createReadStream(path.join(DIR_TANDAS, archivo)).pipe(zlib.createGunzip()), crlfDelay: Infinity });
@@ -103,7 +104,7 @@ async function importar(man) {
       const m = /(\d{4})\s*$/.exec(String(r.fecha || ''));
       ins.run(r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, m ? Number(m[1]) : null,
         r.expediente || null, r.sumario || null, Array.isArray(r.voces) ? r.voces.join(' · ') : (r.voces || null), r.magistrados || null, r.materia || null,
-        r.linkFicha || null, r.linkFallo || null, r.tipo || null);
+        r.linkFicha || null, r.linkFallo || null, r.tipo || null, `zf${r.fuente}${r.corte ? ' zfcsjn' : ''}`);
       conteos[r.fuente] = (conteos[r.fuente] || 0) + 1;
       if (r.corte) conteos.csjn = (conteos.csjn || 0) + 1;
       if (++n % 20000 === 0) { d.exec('COMMIT'); d.exec('BEGIN'); await new Promise((ok) => setImmediate(ok)); }
@@ -155,16 +156,15 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
   if (!acervoTiene(fuente)) return null;
   const expr = consultaFts(q, modo, excluir);
   if (!expr) return [];
-  const donde = [fuente === 'csjn' ? 'f.corte = 1' : 'f.fuente = ?'];
-  const args = [expr];
-  if (fuente !== 'csjn') args.push(fuente);
+  const donde = ['1 = 1'];
+  const args = [`(${expr}) AND marca : zf${String(fuente).replace(/[^a-z0-9]/g, '')}`];
   if (anioDesde) { donde.push('f.anio >= ?'); args.push(Number(anioDesde)); }
   if (anioHasta) { donde.push('f.anio <= ?'); args.push(Number(anioHasta)); }
   if (provincia) { donde.push('f.provincia = ?'); args.push(provincia); }
   args.push(Math.min(2000, Math.max(1, limite)));
   try {
     const filas = db.prepare(`SELECT f.* FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}
-      ORDER BY bm25(fts, 4.0, 1.0, 2.0) LIMIT ?`).all(...args);
+      ORDER BY bm25(fts, 4.0, 1.0, 2.0, 0.0) LIMIT ?`).all(...args);
     return filas.map((f) => {
       const r = { id: f.id, caratula: f.caratula, tribunal: f.tribunal, fecha: f.fecha, expediente: f.expediente, sumario: f.sumario,
         voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo, desdeAcervo: true };

@@ -79,9 +79,10 @@ for (const f of fichas) {
 console.log(`SAIJ: ${fichas.length} fichas, ${sumarios.length} sumarios (${conCaratula} con la carátula de su fallo)`);
 
 // ---- el respaldo de las bases (incluido lo de SAIJ y la Corte que ya había) ----
-for (const base of ['saij', 'csjn', 'scba', 'caba', 'mendoza', 'mendozalegal', 'dialnet']) {
+// el respaldo del repositorio y la cosecha grande de cada base (acervo-crudo/respaldo/, ver armarRespaldo.mjs con DIR_SALIDA)
+for (const [base, dir] of ['saij', 'csjn', 'scba', 'caba', 'mendoza', 'mendozalegal', 'dialnet'].flatMap((b) => [[b, path.join(RAIZ, 'respaldo')], [b, path.join(CRUDO, 'respaldo')]])) {
   let d;
-  try { d = JSON.parse(zlib.gunzipSync(await fs.readFile(path.join(RAIZ, 'respaldo', `${base}.json.gz`)))); } catch { continue; }
+  try { d = JSON.parse(zlib.gunzipSync(await fs.readFile(path.join(dir, `${base}.json.gz`)))); } catch { continue; }
   let n = 0;
   for (const r of d.registros || []) {
     if (!r?.id) continue;
@@ -89,7 +90,7 @@ for (const base of ['saij', 'csjn', 'scba', 'caba', 'mendoza', 'mendozalegal', '
     poner(sin({ ...r, fuente, corte: base === 'csjn' || (base === 'saij' && TRIB_CORTE.test(r.tribunal || '')) }));
     n++;
   }
-  console.log(`respaldo ${base}: ${n}`);
+  console.log(`${path.relative(RAIZ, dir)} ${base}: ${n}`);
 }
 
 // ---- tandas ----
