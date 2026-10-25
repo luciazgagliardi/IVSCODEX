@@ -15,6 +15,7 @@ import { extraerDoc } from './extraerDoc.js';
 import { ocrPdf } from './ocr.js';
 import { leerCache, escribirCache } from './cache.js';
 import { errores } from './errores.js';
+import { uuidSaij, resolverSaij } from './textoSaij.js';
 import { OCR_HABILITADO } from '../config.js';
 
 /**
@@ -98,6 +99,22 @@ export async function obtenerDocumento(url, { refrescar = false } = {}) {
     if (guardado) return { ...guardado, ok: true, desdeCache: true };
   }
 
+  // SAIJ: su página se arma con JavaScript; el fallo sale de la ficha (texto o PDF), ver lib/textoSaij.js
+  const guid = uuidSaij(url);
+  if (guid) {
+    const s = await resolverSaij(guid).catch((e) => { throw errores.indiceFuenteFalla('saij', e.message); });
+    const base = s.pdf ? await obtenerDocumento(s.pdf, { refrescar }) : null;
+    const texto = base ? base.texto : s.texto;
+    if (!texto) throw errores.indiceFuenteFalla('saij', 'la ficha no tiene el texto del fallo');
+    const salida = {
+      ...(base || {}), ok: true, url, urlFinal: base?.urlFinal || url, tipo: base?.tipo || 'html', titulo: s.caratula || base?.titulo || '',
+      texto, caracteres: texto.length, palabras: texto.split(/\s+/).filter(Boolean).length, metodo: base ? `saij-pdf · ${base.metodo}` : s.metodo,
+      ficha: { caratula: s.caratula, tribunal: s.tribunal, fecha: s.fecha }, obtenidoEn: new Date().toISOString(), desdeCache: false,
+    };
+    escribirCache(url, salida).catch(() => {});
+    return salida;
+  }
+
   const { buffer: crudo, contentType, urlFinal, saltos } = await descargar(url);
   const resultado = await extraerDesdeBuffer(crudo, contentType, urlFinal);
   const tipo = resultado.tipo;
@@ -145,7 +162,15 @@ export async function ocrDocumento(url, { refrescar = false } = {}) {
     if (guardado) return { ...guardado, ok: true, desdeCache: true };
   }
 
-  const { buffer: crudo, contentType, urlFinal, saltos } = await descargar(url);
+  // SAIJ: el OCR es sobre el PDF del fallo que indica su ficha, no sobre la página
+  const guid = uuidSaij(url);
+  let origen = url;
+  if (guid) {
+    const s = await resolverSaij(guid).catch((e) => { throw errores.indiceFuenteFalla('saij', e.message); });
+    if (!s.pdf) throw errores.ocrSoloPdf('html');
+    origen = s.pdf;
+  }
+  const { buffer: crudo, contentType, urlFinal, saltos } = await descargar(origen);
   const buffer = destaparPdf(crudo);
   const tipo = detectarTipo(buffer, contentType);
   if (tipo !== 'pdf') throw errores.ocrSoloPdf(tipo);
