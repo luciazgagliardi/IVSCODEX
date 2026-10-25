@@ -5226,6 +5226,7 @@ function traerDocEnLector(url,opciones){
   }).then(function(r){ return r.json(); })
     .then(function(d){
       estado.cargando=false;
+      if((!d||!d.ok)&&opciones.respaldo&&!(d&&d.codigo==="PDF_ESCANEADO")){ abrirRespaldoEnLector(url,opciones); return; }
       if(!d||!d.ok){
         // El servidor no pudo, pero el documento sigue estando a un clic:
         // se guarda el enlace para ofrecer abrirlo y subirlo a mano, que es
@@ -5245,10 +5246,19 @@ function traerDocEnLector(url,opciones){
       flash((d.desdeCache?"Traído del caché · ":"")+d.palabras.toLocaleString("es-AR")+" palabras");
     })["catch"](function(){
       estado.cargando=false;
+      if(opciones.respaldo){ abrirRespaldoEnLector(url,opciones); return; }
       estado.errorLink={mensaje:"Se cortó la comunicación con el servidor.",
                         ayuda:"Verifique que la terminal siga diciendo «Interfaz http://localhost:3000»."};
       render();
     });
+}
+
+function abrirRespaldoEnLector(url,opciones){
+  var t=opciones.respaldo.texto;
+  estado.cargando=false; estado.errorLink=null;
+  estado.texto=t; estado.fuenteDe=url; estado.infoDoc={texto:t,tipo:"texto",caracteres:t.length,palabras:t.split(/\s+/).length,url:url}; estado.marca=0;
+  estado.fichaConocida=opciones.fichaConocida||null;
+  render(); window.scrollTo(0,0);
 }
 
 /**
@@ -9464,9 +9474,12 @@ document.addEventListener("click",function(ev){
     // del buscador oficial: la guardamos para no tener que adivinarla de
     // nuevo con detectar() sobre el texto crudo (ver datosDoc()).
     var imIdx=estado.indices[slugIdx];
-    var fichaIdx=(imIdx&&imIdx.resultados||[]).filter(function(x){return x.linkFallo===linkIdx;})[0];
+    var fichaIdx=(imIdx&&imIdx.resultados||[]).filter(function(x){return urlLector(slugIdx,x)===linkIdx;})[0];
     if(b.getAttribute("data-lexia")) estado.lxFoco=true; // al abrir, ir directo a Lexia
-    traerDocEnLector(linkIdx,{fichaConocida:fichaIdx?fichaDesdeIndice(slugIdx,fichaIdx):null});
+    // si la fuente no entrega el documento (JUBA fuera de servicio, un sitio caído), el Lector
+    // abre lo que el resultado ya trae: carátula, tribunal, fecha y sumario
+    var respaldoIdx=fichaIdx&&fichaIdx.sumario?{texto:[fichaIdx.caratula,[fichaIdx.tribunal,fichaIdx.fecha,fichaIdx.expediente].filter(Boolean).join(" · "),fichaIdx.sumario].filter(Boolean).join("\n\n")}:null;
+    traerDocEnLector(linkIdx,{fichaConocida:fichaIdx?fichaDesdeIndice(slugIdx,fichaIdx):null,respaldo:respaldoIdx});
     return;
   }
   if(act==="tog-perfil"){ estado.perfilMenu=!estado.perfilMenu; pintarNav(); return; }
