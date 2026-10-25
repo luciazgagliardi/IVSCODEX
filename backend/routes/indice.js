@@ -18,7 +18,7 @@ import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
-import { estadoAcervo } from '../lib/acervo.js';
+import { estadoAcervo, textosDe, agregarAlAcervo } from '../lib/acervo.js';
 import { IVSPasajes } from '../lib/pasajes.js';
 import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
 import { errores, ErrorApp } from '../lib/errores.js';
@@ -39,6 +39,9 @@ const MODOS = new Set(['exacta', 'todas', 'alguna']);
 
 /** El host de una URL, o '' si no se puede leer. */
 const hostDe = (u) => { try { return new URL(u).hostname; } catch { return ''; } };
+
+/** Las bases cuyo texto leído del documento se guarda en el acervo (las que no mandan texto con el resultado). */
+const GUARDAN_TEXTO = new Set(['caba', 'juristeca', 'rionegro']);
 
 /** Cuántos documentos como mucho se traen en un mismo pedido de fragmentos. */
 const MAX_FRAGMENTOS = 6;
@@ -337,6 +340,15 @@ for (const { slug, buscar } of FUENTES) {
         }
       }
 
+      // los que llegan sin texto (CABA, Juristeca, Dialnet) y ya tienen el suyo en el acervo, salen con él:
+      // así el pasaje aparece al instante, sin ir a leer el PDF de nuevo
+      const sinTexto = resultados.filter((r) => r && !r.sumario);
+      if (sinTexto.length) {
+        const textos = textosDe(sinTexto.map((r) => r.id));
+        // sólo si lo buscado está en lo guardado (que es el principio del fallo); si no, el pasaje sale del PDF
+        for (const r of sinTexto) if (textos.has(r.id)) r.sumario = recortarPasaje(textos.get(r.id), consulta, { exigir: true }) || undefined;
+      }
+
       const guardados = desdeIndiceLocal
         ? (await estadoIndice(slug)).guardados
         : await upsertRegistros(slug, resultados.map(({ variante, ...r }) => r)); // la marca de variante es de esta búsqueda, no del documento
@@ -392,6 +404,10 @@ for (const { slug, buscar } of FUENTES) {
 
       const arranque = Date.now();
       if (slug === 'caba') marcarUsoCaba();
+      // los datos de cada resultado (opcional), para guardar su texto en el acervo
+      const registrosPorUrl = new Map((Array.isArray(req.body?.registros) ? req.body.registros : []).slice(0, MAX_FRAGMENTOS)
+        .filter((r) => r && typeof r.id === 'string' && typeof r.url === 'string' && /^[a-z]+_[\w-]{1,80}$/.test(r.id))
+        .map((r) => [r.url, { id: r.id, caratula: String(r.caratula || '').slice(0, 400), fecha: String(r.fecha || '').slice(0, 20), tribunal: String(r.tribunal || '').slice(0, 200), expediente: String(r.expediente || '').slice(0, 80) }]));
       const pedidas = urls.filter((u) => typeof u === 'string' && u && u.length <= 2048).slice(0, MAX_FRAGMENTOS);
 
       const fragmentos = [];
@@ -402,43 +418,42 @@ for (const { slug, buscar } of FUENTES) {
       // un 403 puede ser un tropiezo de un momento y no tiene que dejar a todos
       // sin pasajes durante minutos.
       const SITIOS_CERRADOS = new Map(); // host -> { mensaje }
-      for (let i = 0; i < pedidas.length; i++) {
-        const url = pedidas[i];
+      // los documentos de la tanda se leen en paralelo (la espera de cortesía por sitio la sigue
+      // poniendo esperarTurno): uno por uno, cuatro PDF eran doce segundos de pantalla vacía
+      const porUrl = new Map();
+      const leerUno = async (url, i) => {
         // Los documentos largos (sentencias de la Corte IDH, de varios MB) pueden
         // sumar más de lo que el navegador espera por una tanda (40 s). Pasado el
         // presupuesto se devuelve lo ya leído y se avisa cuáles faltan, para que la
         // pantalla los pida en la tanda siguiente. El primero siempre se procesa.
-        if (i > 0 && Date.now() - arranque > PRESUPUESTO_MS) {
-          pendientes = pedidas.slice(i);
-          break;
-        }
+        if (i > 0 && Date.now() - arranque > PRESUPUESTO_MS) { pendientes.push(url); return; }
         try {
           // Dialnet: lo útil es el resumen del artículo (otra página de la misma ficha).
           if (/^https?:\/\/dialnet\.unirioja\.es\/servlet\/articulo/i.test(url)) {
             const resumen = await resumenDeArticulo(url);
-            fragmentos.push({
-              url,
-              fragmento: resumen ? recortarPasaje(resumen, q, { exigir: true }) : '',
-              error: resumen ? null : 'Dialnet no publica un resumen de este artículo.',
-            });
-            continue;
+            porUrl.set(url, { url, fragmento: resumen ? recortarPasaje(resumen, q, { exigir: true }) : '', error: resumen ? null : 'Dialnet no publica un resumen de este artículo.' });
+            return;
           }
           const cerrado = SITIOS_CERRADOS.get(hostDe(url));
-          if (cerrado) {
-            fragmentos.push({ url, fragmento: '', error: cerrado.mensaje });
-            continue;
-          }
+          if (cerrado) { porUrl.set(url, { url, fragmento: '', error: cerrado.mensaje }); return; }
           const doc = await obtenerDocumento(url);
-          fragmentos.push({ url, fragmento: recortarPasaje(doc.texto, q, { exigir: slug === 'dialnet' }), error: null });
+          porUrl.set(url, { url, fragmento: recortarPasaje(doc.texto, q, { exigir: slug === 'dialnet' }), error: null });
+          // el texto leído queda en el acervo: la próxima vez ese fallo sale con su pasaje al instante
+          const reg = registrosPorUrl.get(url);
+          if (reg && GUARDAN_TEXTO.has(slug) && doc.texto && doc.texto.length > 200) {
+            const t = doc.texto.replace(/\s+/g, ' ').trim();
+            agregarAlAcervo([{ ...reg, fuente: slug, linkFallo: url, sumario: t.length > 6000 ? `${t.slice(0, 6000).replace(/\s+\S*$/, '')} …` : t }]).catch(() => {});
+          }
         } catch (e) {
           const mensaje = e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.';
           if (e?.codigo === 'RESPUESTA_NO_OK' && [401, 403].includes(e.extra?.estadoOrigen)) {
             SITIOS_CERRADOS.set(hostDe(url), { mensaje });
           }
-          fragmentos.push({ url, fragmento: '', error: mensaje });
+          porUrl.set(url, { url, fragmento: '', error: mensaje });
         }
-      }
-
+      };
+      await Promise.all(pedidas.map((u, i) => leerUno(u, i)));
+      for (const u of pedidas) if (porUrl.has(u)) fragmentos.push(porUrl.get(u));
       res.json({ ok: true, fragmentos, ...(pendientes.length ? { pendientes } : {}), ms: Date.now() - arranque });
     } catch (e) {
       next(e instanceof ErrorApp ? e : errores.indiceFuenteFalla(slug, e?.message));
