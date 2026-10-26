@@ -2,7 +2,7 @@
 (function(){
   var S=IVS4;
   var BASES=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["SCBA","--c-scba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"],["CORTE IDH","--c-idh"]];
-  var CAB='<header class="cab"><span class="lock"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></span><div class="acts"><a class="btn sec" href="#" data-tab="fuentes">Ver el catálogo de fuentes</a><a class="btn" href="#" data-tab="buscar">Iniciar la consulta</a></div></header>';
+  var CAB='<header class="cab"><span class="lock"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></span><div class="acts"><span class="tema-seg" role="group" aria-label="Fondo del sitio"><button type="button" class="tema-op" data-tema-op="claro" aria-label="Día" title="Día" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.2v2M10 15.8v2M2.2 10h2M15.8 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button><button type="button" class="tema-op" data-tema-op="oscuro" aria-label="Noche" title="Noche" aria-pressed="true"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M16.2 12.3A6.7 6.7 0 0 1 7.7 3.8a6.7 6.7 0 1 0 8.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button></span><a class="btn sec" href="#" data-tab="fuentes">Ver el catálogo de fuentes</a><a class="btn" href="#" data-tab="buscar">Iniciar la consulta</a></div></header>';
   window.IVS6={
     BASES:BASES,
     /* monta la cabecera, el héroe del prisma y devuelve el contenedor <main> donde van las secciones */
@@ -20,6 +20,17 @@
         band:function(W,H){var h=banda(W,H);return [.5-h/H,.5+h/H];},
         out:function(P,w,h){return [[w,P.y]];}});
       colocar();addEventListener("resize",colocar);
+      /* el fondo (claro u oscuro) es el mismo que el de la aplicación: se guarda en «ivs-tema» */
+      var ops=[].slice.call(document.querySelectorAll(".tema-op"));
+      function pon(c){
+        var r=document.documentElement;
+        if(c) r.setAttribute("data-tema","claro"); else r.removeAttribute("data-tema");
+        ops.forEach(function(op){ op.setAttribute("aria-pressed",String((op.getAttribute("data-tema-op")==="claro")===c)); });
+      }
+      pon(document.documentElement.getAttribute("data-tema")==="claro");
+      ops.forEach(function(op){ op.addEventListener("click",function(){ var c=op.getAttribute("data-tema-op")==="claro"; pon(c); try{ localStorage.setItem("ivs-tema",c?"claro":"oscuro"); }catch(e){} }); });
+      addEventListener("storage",function(e){ if(e.key==="ivs-tema") pon(e.newValue==="claro"); });
+      window.IVS6.ponTema=pon;
       if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){pr.medir();colocar();});
       return document.getElementById("m6");
     },
