@@ -686,6 +686,7 @@ body.en-recorrido .cab>*{animation:none}
 .rama-sub{margin:0 0 18px;font:500 12px/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 
 .vacio{padding:32px 24px;border:1px dashed var(--line);color:var(--mute);text-align:center;font-size:15px}
+.vacio--inicio{border:1px solid var(--line);border-radius:22px;padding:26px 30px;text-align:left;line-height:1.6}
 .out{
   padding:22px 24px;border:0;border-left:1px solid var(--gold);background:var(--ficha);
   font:400 clamp(17px,1.4vw,20px)/1.55 var(--sans);color:var(--fg);white-space:pre-wrap;word-break:break-word;min-height:44px
@@ -4997,8 +4998,8 @@ function bloqueResultados(vis){
   var lista=listaTodas(vis), buscadas=vis.filter(function(f){ return (estado.indices[f.slug]||{}).busco; }).length;
   var h=avisoNombre()+estadoLista(vis);
   if(!lista.length){
-    return h+(buscadas?'<div class="vacio">Sin resultados en las bases que respondieron. Pruebe con menos palabras, o cambie «Cómo combinar».</div>'
-      :'<div class="vacio">Escriba su consulta y seleccione <b>Buscar</b>: la consulta se envía en simultáneo a las bases seleccionadas y los resultados se muestran en esta sección.</div>');
+    return h+(buscadas?'<div class="vacio vacio--inicio">Sin resultados en las bases que respondieron. Pruebe con menos palabras, o cambie «Cómo combinar».</div>'
+      :'<div class="vacio vacio--inicio">Escriba su consulta y seleccione <b>Buscar</b>:<br>la consulta se envía en simultáneo a las bases seleccionadas y los resultados se muestran en esta sección.</div>');
   }
   h+='<div class="rz-cab"><b>Todas las bases</b>'+
     '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"]].map(function(o){
