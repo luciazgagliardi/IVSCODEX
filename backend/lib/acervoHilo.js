@@ -10,13 +10,18 @@ import { DatabaseSync } from 'node:sqlite';
 import { paginaEn } from './acervoConsulta.js';
 
 let db = null, abierta = null;
-parentPort.on('message', ({ id, archivo, version, base, q, opciones }) => {
+parentPort.on('message', ({ id, archivo, version, base, q, opciones, copiaPropia }) => {
   try {
     if (!db || abierta !== version) {
       try { db?.close(); } catch { /* ya cerrada */ }
-      // sólo lectura; si el disco no deja abrirla así (el índice compartido de WAL en un disco de red), común y sin escribir
+      // Sólo lectura. Abrirla de otro modo es aceptable únicamente en la copia de lectura del disco local
+      // (copiaPropia), que nadie más usa: una segunda conexión con escritura sobre la base del disco de red
+      // del servidor la dañó («database disk image is malformed»).
       try { db = new DatabaseSync(archivo, { readOnly: true }); db.prepare('SELECT 1 FROM fallos LIMIT 1').get(); }
-      catch { db = new DatabaseSync(archivo); db.exec('PRAGMA query_only = 1'); }
+      catch (e) {
+        if (!copiaPropia) throw e;
+        db = new DatabaseSync(archivo); db.exec('PRAGMA query_only = 1');
+      }
       abierta = version;
     }
     parentPort.postMessage({ id, r: paginaEn(db, base, q, opciones) });

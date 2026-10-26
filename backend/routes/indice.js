@@ -18,7 +18,7 @@ import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
-import { estadoAcervo, textosDe, agregarAlAcervo, acervoCubre, buscarPagina, sumarVivos } from '../lib/acervo.js';
+import { estadoAcervo, textosDe, agregarAlAcervo, acervoCubre, buscarPagina, sumarVivos, copiaLista } from '../lib/acervo.js';
 import { IVSPasajes } from '../lib/pasajes.js';
 import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
 import { errores, ErrorApp } from '../lib/errores.js';
@@ -236,8 +236,9 @@ async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta
   // si la misma página estaba en curso para la vista previa y se le acabó su espera (más corta), se la pide de nuevo con la propia
   if (!p && respaldo && acervoCubre(slug)) p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
     tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina }, { espera: 30_000, prioridad: 3 });
-  // con acervo para esa base, la consulta de respaldo de acá no se hace: corre en el hilo principal y con muchas a la vez frenaría al servidor
-  if (!p && acervoCubre(slug)) return null;
+  // con acervo para esa base, la consulta de respaldo de acá no se hace: corre en el hilo principal y con muchas a la vez frenaría al servidor.
+  // Salvo que la copia todavía no esté lista (los primeros minutos después de un reinicio) y el sitio no haya contestado: ahí es la única respuesta.
+  if (!p && acervoCubre(slug) && (copiaLista() || !respaldo)) return null;
   if (!p) {
     // sin acervo para esa base, o el hilo de la copia no contestó: lo guardado por las búsquedas, el acervo y el respaldo, también de a páginas
     const lista = await buscarEnIndice(slug, consulta, o);
