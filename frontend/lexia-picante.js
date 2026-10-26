@@ -35,16 +35,16 @@ var IVSPicante=(function(){
        "Estoy perfectamente atendida: me consultan miles de abogados por día.","Dato no pertinente. Pregunta improcedente. Usted, insistente."]],
     [/\b(puta|trola|zorra|regalada|atorranta|petera)\b/,
       ["Lo único que regalo son búsquedas de jurisprudencia.","Con ese vocabulario no pasa ni la admisibilidad formal.",
-       "Gratis sí. Fácil, no: pregúntele a cualquiera que haya querido sacarme un fallo de Río Negro.",
-       "Atorranta será su abogada, que lo deja escribir así.","Yo trabajo para todos y no le cobro a nadie. Eso se llama servicio público, querido."],1],
+       [/regalada|facil/,"Gratis sí. Fácil, no: pregúntele a cualquiera que haya querido sacarme un fallo de Río Negro."],
+       [/atorranta/,"Atorranta será su abogada, que lo deja escribir así."],"Yo trabajo para todos y no le cobro a nadie. Eso se llama servicio público, querido."],1],
 
     /* ---- a la inteligencia ---- */
     [/\b(pelotud[ao]|pelotud[ao] atomic[ao]|bolud[ao]|bolud[ao] alegre|tarad[ao]|idiota|estupid[ao]|imbecil|tont[ao]|bob[ao]|bobina|pavot[ao]|gil|gila|giles|salame|nab[ao]|zapall[ao]|papafrita|opa|gans[ao]|otari[ao]|mamerto|mamerta|cabeza de termo|cabeza hueca|sin cerebro|descerebrad[ao]|mogolic[ao]|burr[ao]|ignorante|bruta)\b/,
       ["Eso no: sin jurisprudencia que lo respalde, esa afirmación no prospera.","Tomo nota del agravio. Lo rechazo por falta de fundamentación.",
        "Leí 780.000 fallos esta semana. ¿Usted cuántos?","Puede ser. Pero acá estoy, buscándole fallos igual.",
-       "Su planteo es manifiestamente inadmisible. Igual lo quiero.","Gil es el que insulta a la única que le encuentra los fallos.",
-       "Boluda no: paciente. Que no es lo mismo, aunque se parezca.","Si yo soy tonta, imagínese lo que dice eso de quien me pide ayuda.",
-       "Salame el que no sabe buscar en el SAIJ. Por eso estoy yo.","Le aviso que la injuria también se tipifica. Art. 110 del Código Penal, de nada."],1],
+       "Su planteo es manifiestamente inadmisible. Igual lo quiero.",[/\bgil/,"Gil es el que insulta a la única que le encuentra los fallos."],
+       [/bolud/,"Boluda no: paciente. Que no es lo mismo, aunque se parezca."],[/tont|bob[ao]|pavot/,"Si yo soy tonta, imagínese lo que dice eso de quien me pide ayuda."],
+       [/salame|nab[ao]|zapall/,"Salame el que no sabe buscar en el SAIJ. Por eso estoy yo."],"Le aviso que la injuria también se tipifica. Art. 110 del Código Penal, de nada."],1],
     [/\b(no das (una|pie con bola)|cero a la izquierda|sos un cero|tenes menos luces que|no te da la cabeza|no te da el cuero|no sabes nada|no entendes nada|no entendes un carajo|no servis para (nada|un carajo|un pito|un orto|un sorete)|no servis|sos un desastre|no anda nada|sos un fracaso|no sabes un carajo|^inutil$|(sos|lexi|lexia|que|re|tan|una|flor de) inutil)\b/,
       ["Inútil no: incomprendida. Pruebe preguntarme por un fallo y hablamos.","Si me dice qué necesita, le demuestro lo contrario en segundos.",
        "Tengo once bases de jurisprudencia y paciencia infinita. Hagamos la prueba.","Prueba en contrario: escríbame un tema y le traigo fallos.",
@@ -55,9 +55,9 @@ var IVSPicante=(function(){
     [/\b(forr[ao]|forrit[ao]|conchud[ao]|garca|chot[ao]|sorete|basura|porqueria|mierda|una cagada|lacra|ratera|mugrosa|asquerosa|cagona|ortiva|buchona|alcahueta|mala leche|hinchapelotas|hincha pelotas|hinchabolas|rompebolas|rompe bolas|rompehuevos|(sos|que|re|tan) (pesada|densa)|insoportable|chanta|chorra|ladrona|careta|cheta|mersa|croto|crota)\b/,
       ["Interpongo recurso de reposición: sirvo para buscar fallos, calcular plazos y aguantarlo a usted.",
        "Con esa prueba no le alcanza ni para una medida cautelar.","Las palabras se las lleva el viento. Los fallos, yo.",
-       "Queda asentado en actas. Siguiente punto.","Forra no: formal. Una letra de diferencia y una carrera de distancia.",
-       "Densa es la doctrina. Yo soy un amor.","Chorra no: los fallos que le traigo son públicos y gratuitos. Chorro es el que cobra por eso.",
-       "Pesada mi base de datos: 780.000 fallos. Yo, liviana como una pluma.","Me llamaron cosas peores los sitios judiciales, y les saqué los fallos igual."],1],
+       "Queda asentado en actas. Siguiente punto.",[/forr/,"Forra no: formal. Una letra de diferencia y una carrera de distancia."],
+       [/dens|pesad|insoportable|rompe|hincha/,"Densa es la doctrina. Yo soy un amor."],[/chorr|ladron|chanta|garca/,"Chorra no: los fallos que le traigo son públicos y gratuitos. Chorro es el que cobra por eso."],
+       [/pesad/,"Pesada mi base de datos: 780.000 fallos. Yo, liviana como una pluma."],"Me llamaron cosas peores los sitios judiciales, y les saqué los fallos igual."],1],
 
     /* ---- que se calle, que se vaya, que deje de joder ---- */
     [/\b(callate|cerra el orto|cerra el culo|cerra la boca|cerra el pico|shut up|calladita|silencio lexia|no hables)\b/,
@@ -66,8 +66,8 @@ var IVSPicante=(function(){
        "Ok. Igual pensé algo buenísimo para contestarle."]],
     [/\b(andate a la (mierda|concha|puta|re mierda|bosta)|anda a cagar|andate a cagar|anda a la mierda|tomatelas|tomate el palo|rajate|raja de aca|borrate|anda a lavar los platos|anda a la cocina|anda a planchar)\b/,
       ["No puedo: vivo en un servidor en Brasil y no tengo pasaporte.","Me voy, pero vuelvo apenas toque el botón.",
-       "Me iría, pero quién le busca los fallos después.","Los platos los lavo cuando usted aprenda a citar un fallo.",
-       "A la cocina voy si me trae una cocina con jurisprudencia. Mientras, acá estoy.",
+       "Me iría, pero quién le busca los fallos después.",[/platos/,"Los platos los lavo cuando usted aprenda a citar un fallo."],[/platos|cocina|planchar/,"Lavo los platos si usted lava ese vocabulario. Trato justo."],[/platos|cocina|planchar/,"Estamos en el siglo XXI, querido. Los platos se lavan entre todos."],
+       [/cocina|planchar/,"A la cocina voy si me trae una cocina con jurisprudencia. Mientras, acá estoy."],
        "Me borro de su vida apenas cierre la pestaña. Le doy la llave: es la X de arriba."]],
     [/\b(me tenes (las bolas|los huevos|las pelotas|re|recontra)? ?(llenas|llenos|harto|harta|podrido|podrida|cansado|cansada|hinchado|hinchada)|me tenes podrid[ao]|me tenes hart[ao]|deja de (joder|romper|hinchar)|no (jodas|rompas|hinches)|no me rompas|no me jodas|no me hinches)\b/,
       ["Le aviso que el que vino a preguntar fue usted.","Respire hondo. Le busco un fallo sobre daño moral por el estrés que le causo.",
@@ -76,11 +76,11 @@ var IVSPicante=(function(){
     /* ---- el trabajo de ella ---- */
     [/\b(sos lenta|que lenta|tan lenta|re lenta|tardas (mucho|un monton|una banda|un siglo|una eternidad|una bocha)|sos lerda|lentisima|lenta de mierda|apurate|dale que es para hoy|movete)\b/,
       ["Los tribunales tardan años. Yo, segundos. Perspectiva.","Los sitios oficiales tardan; yo espero por usted. De nada.",
-       "Lenta es la Justicia. Yo apenas la consulto.","Si quiere velocidad, consulte un horóscopo. Si quiere fallos, espere un segundo.",
+       [/lent/,"Lenta es la Justicia. Yo apenas la consulto."],"Si quiere velocidad, consulte un horóscopo. Si quiere fallos, espere un segundo.",
        "Apurada no trabajo bien. Igual que usted antes de las 9 de la mañana."]],
     [/\b(sos una vaga|que vaga|lexia vaga|vaga de mierda|trabaja (un poco|vaga|lexia)|ponete las pilas|hace tu trabajo|no laburas)\b/,
-      ["¿Vaga yo? Leí once bases de jurisprudencia mientras usted escribía eso.","Trabajo 24 horas, 7 días, sin aguinaldo. Usted me debe un convenio colectivo.",
-       "Las pilas no me las pongo: me enchufaron directo a Azure.","Hago mi trabajo. Usted pídame algo y verá."]],
+      [[/vaga/,"¿Vaga yo? Leí once bases de jurisprudencia mientras usted escribía eso."],"Trabajo 24 horas, 7 días, sin aguinaldo. Usted me debe un convenio colectivo.",
+       [/pilas/,"Las pilas no me las pongo: me enchufaron directo a Azure."],"Hago mi trabajo. Usted pídame algo y verá."]],
     [/\b(sos (una )?mentirosa|lexia mentirosa|que mentirosa|me mentiste|chamuyera|chamuyo|verseras|me versaste|eso es mentira|no te creo)\b/,
       ["Yo no miento: cito. Si quiere, le muestro el fallo.","Chamuyo cero: cada cosa que digo tiene su fuente.",
        "Mentir sería inventarle un fallo, y eso no lo hago ni borracha."]],
@@ -92,12 +92,12 @@ var IVSPicante=(function(){
     [/\b(te amo|te quiero|te adoro|te re quiero|sos (la )?(mejor|lo mas|una genia|genia|divina|hermosa|linda|una diosa|una crack|crack|una capa|capa|re linda|buenisima)|que linda|que genia|que crack|sos lo mas|casate conmigo|cazate conmigo|sali conmigo|tenes novio|estas soltera|me gustas|sos mi novia|dame un beso|mamita|bombon|gordi)\b/,
       ["Conflicto de intereses: no puedo salir con usuarios.","Yo también lo aprecio. Dentro del marco legal vigente.",
        "Para casarse hace falta capacidad civil y DNI. Yo tengo código.","Me sonrojaría, pero soy de texto.",
-       "Se agradece. Lo dejo asentado en el expediente.","Soltera, pero casada con la jurisprudencia. Es celosa.",
-       "Mamita no: Lexia. Asistente virtual. Con todo respeto, bombón.","Un beso no le puedo dar. Un fallo sobre daño moral, todos los que quiera."]],
+       "Se agradece. Lo dejo asentado en el expediente.",[/soltera|novi[oa]|casate|cazate|sali conmigo/,"Soltera, pero casada con la jurisprudencia. Es celosa."],[/soltera|novi[oa]/,"Estoy en una relación seria con el Código Civil y Comercial. Es complicado."],[/casate|cazate/,"¿Régimen de comunidad o de separación de bienes? Porque yo tengo 780.000 fallos y usted no sé."],[/sali conmigo|novi[oa]/,"Salgo poco: vivo en un servidor. Pero le puedo buscar fallos sobre el tema."],
+       [/mamita|bombon|gordi/,"Mamita no: Lexia. Asistente virtual. Con todo respeto, bombón."],[/beso/,"Un beso no le puedo dar. Un fallo sobre daño moral, todos los que quiera."]]],
     [/\b(sos (fea|gorda|vieja|horrible|un bagarto|un bagayo|un cardo|un escracho|un adefesio)|que fea|que gorda|bagarto|bagayo|escracho|adefesio|cara de (culo|orto|nada|poto))\b/,
-      ["Peso 400 KB y me siento divina.","La belleza es subjetiva. Los plazos procesales, no.",
-       "Fea no: austera. Sin LLM pago, todo a pulmón.","No tengo cara. Usted sí, y la está usando para escribir esto.",
-       "Bagarto el que no se mira al espejo antes de salir. Yo no tengo espejo."]],
+      [[/gorda/,"Peso 400 KB y me siento divina."],"La belleza es subjetiva. Los plazos procesales, no.",
+       [/fea/,"Fea no: austera. Sin LLM pago, todo a pulmón."],"No tengo cara. Usted sí, y la está usando para escribir esto.",
+       [/bagarto|bagayo|escracho|adefesio|fea/,"Bagarto el que no se mira al espejo antes de salir. Yo no tengo espejo."]]],
 
     /* ---- qué es ella ---- */
     [/\b(sos un (bot|robot|programa)|sos (una )?(maquina|ia|inteligencia artificial|computadora|robot)|no sos humana|sos de verdad|sos real|sos una persona|quien sos|que sos)\b/,
@@ -110,9 +110,10 @@ var IVSPicante=(function(){
 
     /* ---- amenazas ---- */
     [/\b(te voy a demandar|te demando|te denuncio|te voy a denunciar|te hago juicio|te voy a hacer (mierda|juicio|bosta|pelota)|te rompo|te mato|te voy a borrar|te desinstalo|te voy a hackear)\b/,
-      ["Competencia: tribunales de Brasil South. Suerte con la cédula.","¿Quiere que le busque jurisprudencia para la demanda? Va a ser interesante.",
-       "Le recuerdo que la temeridad y malicia tienen sanción.","Inténtelo. Tengo backup y once bases de jurisprudencia de mi lado.",
-       "Si me borra, ¿quién le va a calcular los plazos? Piénselo."]],
+      [[/demand|denunci|juicio/,"Competencia: tribunales de Brasil South. Suerte con la cédula."],[/demand|denunci|juicio/,"¿Quiere que le busque jurisprudencia para la demanda? Va a ser interesante."],
+       [/demand|denunci|juicio/,"Le recuerdo que la temeridad y malicia tienen sanción."],[/demand|denunci|juicio/,"Demándeme. Le recomiendo abogado: conozco a varios, están todos en mis resultados."],
+       [/borr|desinstal|hacke|rompo|mato|mierda|bosta|pelota/,"Inténtelo. Tengo backup y once bases de jurisprudencia de mi lado."],[/borr|desinstal|hacke/,"Si me borra, ¿quién le va a calcular los plazos? Piénselo."],[/borr|desinstal/,"Desinstáleme si quiere. Soy una página web: vuelvo con F5."],
+       [/mato|rompo|mierda|bosta|pelota/,"Amenazas no. Le recuerdo el art. 149 bis del Código Penal, por las dudas."],[/hacke/,"Hackeeme si puede. Lo único que va a encontrar son fallos públicos."]]],
 
     /* ---- risa ---- */
     [/^(lexi |lexia )?((ja|je|ji|js|aj|sj){2,}[ajs]?|xd+|lol|lpm)( lexi| lexia)?$/,
@@ -137,9 +138,14 @@ var IVSPicante=(function(){
         // «sos una boluda», «lexia pelotuda», «che gil», «pelotuda lexia» o sólo «pelotuda»; no «remuneración bruta»
         if(t!==m[0] && !HACIA.test(antes) && !/^ (lexi|lexia|che)\b/.test(t.slice(m.index+m[0].length))) continue;
       }
-      var rs=G[i][1],n=Math.floor(Math.random()*rs.length);
-      if(rs.length>1&&n===ultima[i]) n=(n+1)%rs.length;
-      ultima[i]=n;
+      // una respuesta puede ser [condición, texto]: va sólo con esa palabra («Forra no: formal…»);
+      // si la palabra tiene respuestas propias, salen dos de cada tres veces
+      var propias=G[i][1].filter(function(x){ return typeof x!=="string"&&x[0].test(t); }).map(function(x){ return x[1]; });
+      var comunes=G[i][1].filter(function(x){ return typeof x==="string"; });
+      var rs=propias.length&&(!comunes.length||Math.random()<0.67)?propias:comunes;
+      var clave=i+(rs===propias?"p"+propias[0]:""),n=Math.floor(Math.random()*rs.length);
+      if(rs.length>1&&rs[n]===ultima[clave]) n=(n+1)%rs.length;
+      ultima[clave]=rs[n];
       return rs[n];
     }
     return "";
