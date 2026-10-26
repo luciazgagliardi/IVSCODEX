@@ -227,15 +227,15 @@ function sondear(slug, buscarVivo) {
     .catch(() => sinAcceso.set(slug, Date.now() + SIN_ACCESO_MS));
 }
 /** Una página de la copia local, con la forma de la respuesta en vivo. null si la copia no tiene esa base. */
-async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, desde = 0, porPagina = 20 }) {
+async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, desde = 0, porPagina = 20 }, { respaldo = true } = {}) {
   const o = { modo: MODOS.has(modo) ? modo : 'todas', excluir: typeof excluir === 'string' ? excluir.slice(0, 200) : '',
     ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}), ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}) };
   let p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
     tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina });
-  // la copia tiene la base pero la consulta no terminó a tiempo: contesta el sitio en vivo
-  if (!p && acervoCubre(slug)) return null;
+  // a la copia sola (…/local) no se le hace la consulta de respaldo: corre acá y con muchas a la vez frenaría al servidor
+  if (!p && !respaldo && acervoCubre(slug)) return null;
   if (!p) {
-    // sin acervo para esa base: lo guardado por las búsquedas y el respaldo, también de a páginas
+    // sin acervo para esa base, o el hilo de la copia no contestó: lo guardado por las búsquedas, el acervo y el respaldo, también de a páginas
     const lista = await buscarEnIndice(slug, consulta, o);
     if (!lista.length) return null;
     const pos = Math.max(0, desde);
@@ -275,7 +275,7 @@ for (const { slug, buscar } of FUENTES) {
 
       // la copia local, a pedido (o para seguir paginando lo que vino de ahí)
       if (cuerpo.soloLocal === true || cuerpo.local === true) {
-        const loc = await paginaLocal(slug, consulta, pedidoLocal);
+        const loc = await paginaLocal(slug, consulta, pedidoLocal, { respaldo: cuerpo.local === true && !cuerpo.soloLocal && desdeN > 0 });
         if (!loc) return res.json({ ok: false, codigo: 'SIN_COPIA_LOCAL', fuente: slug });
         return res.json({ ok: true, ...loc, ms: Date.now() - arranque });
       }

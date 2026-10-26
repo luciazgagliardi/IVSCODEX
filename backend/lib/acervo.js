@@ -310,12 +310,12 @@ function hiloDeConsultas() {
   if (hilo) return hilo;
   hilo = new Worker(new URL('./acervoHilo.js', import.meta.url));
   hilo.on('message', ({ id, r, error }) => {
-    if (error) console.warn('[acervo] página:', error);
+    if (error) { console.warn('[acervo] página:', error); estado.errorHilo = error; } else estado.errorHilo = null;
     if (enCurso?.id === id) { clearTimeout(enCurso.reloj); enCurso.ok(error ? null : r); }
     enCurso = null;
     siguiente();
   });
-  hilo.on('error', (e) => console.warn('[acervo] hilo:', e.message));
+  hilo.on('error', (e) => { console.warn('[acervo] hilo:', e.message); estado.errorHilo = e.message; });
   hilo.on('exit', () => { hilo = null; if (enCurso) { clearTimeout(enCurso.reloj); enCurso.ok(null); enCurso = null; } siguiente(); });
   return hilo;
 }
