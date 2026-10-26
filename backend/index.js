@@ -122,8 +122,6 @@ app.use(
 const limite = rateLimit({
   windowMs: LIMITE_VENTANA_MS,
   limit: LIMITE_PETICIONES,
-  // la copia local (routes/indice.js, …/local) no le pide nada a ningún sitio oficial
-  skip: (req) => /^\/api\/indice\/[a-z]+\/local$/.test(req.originalUrl.split('?')[0]),
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: {
