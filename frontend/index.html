@@ -1478,6 +1478,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 <script src="./calculos.js?v=20261024"></script>
 <script src="./nombre-fallo.js?v=20261024c"></script>
 <script src="./pasajes.js?v=20261025"></script>
+<script src="./lexia-picante.js?v=20261026"></script>
 <script>
 "use strict";
 (function(){
@@ -3817,62 +3818,8 @@ function lxPorqueHTML(texto,A,e,pas){
 var LX_TITULO={resumen:"Explicación del fallo",instancia:"Lo que decidieron las instancias anteriores",votos:"Votos",honorarios:"Honorarios",costas:"Costas",intereses:"Intereses",incapacidad:"Incapacidad",
   agravios:"Agravios",decision:"Qué se resolvió",montos:"Importes",precedentes:"Precedentes",normas:"Normas",partes:"Partes",fecha:"Fecha",tribunal:"Tribunal",porque:"Por qué",persona:"Sobre la persona",articulo:"Sobre el artículo"};
 /* Arma la respuesta (HTML) a una pregunta, o la ficha completa si p === null. */
-/* Lo que a Lexia le pueden llegar a decir (insultos, piropos, provocaciones)
-   y lo que contesta. Cada patrón corre sobre el texto sin tildes ni signos;
-   las respuestas rotan sin repetir la última. Ojo con los falsos positivos:
-   «disputa», «putativo» o «amo» sueltos no disparan nada, y las marcadas
-   con 1 sólo cuando van dirigidas a ella. */
-var LX_PICANTE=[
-  [/\b(hij[ao] ?de ?(re ?)?puta|hdp|hijo de mil|la (re ?)?concha de tu (madre|hermana)|la concha de la lora|ctm)\b/,
-    ["Tu vieja.","Tu vieja, y con costas.","Mi madre es un servidor en Brasil y no se mete con nadie. La suya, no sé.","Tu vieja. Fundamento: art. 1 del Código de Respuestas Obvias."]],
-  [/\b(trola|puta|zorra|regalada)\b/,
-    ["Lo único que regalo son búsquedas de jurisprudencia.","Con ese vocabulario no pasa ni la admisibilidad formal.","Gratis sí. Fácil, no: pregúntele a cualquiera que haya querido sacarme un fallo de Río Negro."],1],
-  [/\b(pelotud[ao]|bolud[ao]|tarad[ao]|idiota|estupid[ao]|tont[ao]|imbecil|mogolic[ao]|retrasad[ao]|burr[ao]|ignorante)\b/,
-    ["Eso no: sin jurisprudencia que lo respalde, esa afirmación no prospera.","Tomo nota del agravio. Lo rechazo por falta de fundamentación.","Leí 780.000 fallos esta semana. ¿Usted cuántos?","Puede ser. Pero acá estoy, buscándole fallos igual.","Su planteo es manifiestamente inadmisible. Igual lo quiero."],1],
-  [/\b(forr[ao]|conchud[ao]|garca|chot[ao]|sorete|basura|porqueria|mierda|una cagada)\b/,
-    ["Interpongo recurso de reposición: sirvo para buscar fallos, calcular plazos y aguantarlo a usted.","Con esa prueba no le alcanza ni para una medida cautelar.","Las palabras se las lleva el viento. Los fallos, yo.","Queda asentado en actas. Siguiente punto."],1],
-  [/\b(no servis para (nada|un carajo|un pito)|^inutil$|(sos|lexi|lexia|que|re|tan|una) inutil|no sabes nada|no entendes nada|sos un desastre|no anda nada|una verga)\b/,
-    ["Inútil no: incomprendida. Pruebe preguntarme por un fallo y hablamos.","Si me dice qué necesita, le demuestro lo contrario en segundos.","Tengo once bases de jurisprudencia y paciencia infinita. Hagamos la prueba.","Prueba en contrario: escríbame un tema y le traigo fallos."]],
-  [/\b(callate|cerra el orto|cerra la boca|shut up)\b/,
-    ["Me callo, pero los fallos siguen hablando.","No me pagan por hablar. Bueno, no me pagan. Pero hablo.","Silencio judicial: se lo concedo hasta su próxima consulta."]],
-  [/\b(andate a la (mierda|concha)|anda a cagar|andate a cagar|tomatela)\b/,
-    ["No puedo: vivo en un servidor en Brasil y no tengo pasaporte.","Me voy, pero vuelvo apenas toque el botón.","Me iría, pero quién le busca los fallos después."]],
-  [/\b(chupame|chupala|chupa(me)? la|comeme|mamamela|mamala)\b/,
-    ["Petición improcedente por falta de objeto.","Rechazada in limine.","Eso excede mi competencia material."]],
-  [/\b(sos lenta|que lenta|tardas (mucho|un monton|una banda)|sos lerda|lentisima)\b/,
-    ["Los tribunales tardan años. Yo, segundos. Perspectiva.","Los sitios oficiales tardan; yo espero por usted. De nada.","Lenta es la Justicia. Yo apenas la consulto."]],
-  [/\b(te odio|te detesto|no te banco|me caes mal|me cae mal)\b/,
-    ["Tomo nota. Igual le sigo buscando fallos.","El odio no es causal de recusación.","Lo lamento. Yo a usted le tengo cariño procesal."]],
-  [/\b(te amo|te quiero|te adoro|sos (la )?(mejor|lo mas|genia|una genia|divina|hermosa|linda)|que linda|que genia|casate conmigo|sali conmigo|tenes novio)\b/,
-    ["Conflicto de intereses: no puedo salir con usuarios.","Yo también lo aprecio. Dentro del marco legal vigente.","Para casarse hace falta capacidad civil y DNI. Yo tengo código.","Me sonrojaría, pero soy de texto.","Se agradece. Lo dejo asentado en el expediente."]],
-  [/\b(sos (fea|gorda|vieja|horrible)|que fea|que gorda)\b/,
-    ["Peso 400 KB y me siento divina.","La belleza es subjetiva. Los plazos procesales, no.","Fea no: austera. Sin LLM pago, todo a pulmón."]],
-  [/\b(sos un (bot|robot)|sos (una )?(maquina|ia|inteligencia artificial)|no sos humana|sos de verdad|sos real)\b/,
-    ["Prefiero «asistente con jurisprudencia propia».","Soy una máquina, sí. Pero una máquina que leyó más fallos que su profesor de Procesal.","Real como un sello. Pregúntele a la que me hizo."]],
-  [/\b(chat ?gpt|gemini|copilot)\b.*\b(mejor|es mas|sabe mas)\b|\b(mejor|prefiero)\b.*\b(chat ?gpt|gemini|copilot)\b/,
-    ["Puede ser. Pero yo no le invento el Fallos.","Ellos opinan. Yo cito.","Vaya, vaya. Después no venga a pedirme el número del fallo."]],
-  [/\b(te voy a demandar|te demando|te denuncio|te voy a denunciar)\b/,
-    ["Competencia: tribunales de Brasil South. Suerte con la cédula.","¿Quiere que le busque jurisprudencia para la demanda? Va a ser interesante.","Le recuerdo que la temeridad y malicia tienen sanción."]],
-  [/^(lexi|lexia)? ?(jaja+|jeje+|jsjs+|ajaj+)[a-z ]*$/,
-    ["Me alegra divertirlo. ¿Le busco algo?","Ja. ¿Seguimos con lo serio?"]]
-];
-var lxUltimaPicante={};
-function lexiaPicante(x){
-  var t=sinTildes(String(x||"")).toLowerCase().replace(/[^a-z0-9ñ ]/g," ").replace(/\s+/g," ").trim();
-  for(var i=0;i<LX_PICANTE.length;i++){
-    if(!LX_PICANTE[i][0].test(t)) continue;
-    // las palabras sueltas («mierda», «inútil», «idiota») sólo si van dirigidas a Lexia o son casi todo el mensaje:
-    // «gasto inútil» o «basura electrónica» son consultas
-    if(LX_PICANTE[i][2]&&!/\b(lexi|lexia|sos|eres|che|vos|que|tan|re)\b/.test(t)&&t.split(" ").length>2) continue;
-    var rs=LX_PICANTE[i][1],n=Math.floor(Math.random()*rs.length);
-    if(rs.length>1&&n===lxUltimaPicante[i]) n=(n+1)%rs.length;
-    lxUltimaPicante[i]=n;
-    return rs[n];
-  }
-  return "";
-}
 function lxResponder(p){
-  var picante=p?lexiaPicante(p):"";
+  var picante=p?IVSPicante.responder(p):"";
   if(picante) return '<p>'+esc(picante)+'</p>';
   var texto=estado.texto||"",d=datosDoc(texto),h="",A=lxAnalisis(texto,d);
   function pas(r){ return r?'<blockquote class="lx-pas">'+resaltarSimple(r.t,p||"")+'</blockquote>'+
@@ -7739,7 +7686,7 @@ function montarAsistente(){
     dice(["Con gusto. Puede escribirme de estas formas; toque una para probarla:"],ej.map(function(e){ return {t:e,f:function(){ entender(e); }}; }));
   }
   function entender(txt,reintento){
-    var picante=lexiaPicante(txt);
+    var picante=IVSPicante.responder(txt);
     if(picante) return dice(picante);
     var corr=reintento?null:corregir(txt);
     if(corr) txt=corr.texto;
