@@ -333,18 +333,29 @@ function siguiente() {
  * paginaEn en lib/acervoConsulta.js). null si la copia no tiene esa base o si
  * la consulta no terminó a tiempo.
  */
-export function buscarPagina(base, q, opciones = {}) {
-  if (!acervoCubre(base) || cola.length >= MAX_EN_COLA) return Promise.resolve(null);
-  return new Promise((ok) => {
-    const t = { id: ++sec, base, q, opciones, ok };
-    // vencida: si todavía esperaba turno, sale de la cola y no corre; si ya corría, su resultado se descarta
+/* Lo ya consultado (10 minutos) y lo que se está consultando: la misma página pedida dos veces se resuelve una sola vez. */
+const RECUERDA_MS = 10 * 60 * 1000;
+const recordadas = new Map();
+const enVuelo = new Map();
+export function buscarPagina(base, q, opciones = {}, { espera = ESPERA_HILO_MS } = {}) {
+  if (!acervoCubre(base)) return Promise.resolve(null);
+  const clave = JSON.stringify([estado.version, base, q, opciones]);
+  const ya = recordadas.get(clave);
+  if (ya && Date.now() - ya.t < RECUERDA_MS) return Promise.resolve(ya.r);
+  if (enVuelo.has(clave)) return enVuelo.get(clave);
+  if (cola.length >= MAX_EN_COLA) return Promise.resolve(null);
+  const promesa = new Promise((ok) => {
+    const t = { id: ++sec, base, q, opciones, ok: (r) => { if (r) { recordadas.set(clave, { r, t: Date.now() }); if (recordadas.size > 400) recordadas.delete(recordadas.keys().next().value); } ok(r); } };
+    // vencida: si todavía esperaba turno, sale de la cola y no corre; si ya corría, su resultado igual queda recordado
     t.reloj = setTimeout(() => {
       const i = cola.indexOf(t);
       if (i >= 0) cola.splice(i, 1);
-      t.ok = () => {};
+      t.ok = (r) => { if (r) recordadas.set(clave, { r, t: Date.now() }); };
       ok(null);
-    }, ESPERA_HILO_MS);
+    }, espera);
     cola.push(t);
     siguiente();
-  });
+  }).finally(() => enVuelo.delete(clave));
+  enVuelo.set(clave, promesa);
+  return promesa;
 }
