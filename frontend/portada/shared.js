@@ -142,14 +142,20 @@
         return true;
       });
       ctx.globalCompositeOperation="source-over";
-      var s=Math.min(W,H)*.1;ctx.save();ctx.translate(P.x,P.y);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(0,-s);ctx.lineTo(-s*.87,s*.5);ctx.lineTo(s*.87,s*.5);ctx.closePath();
-      ctx.fillStyle=cl?"rgba(31,27,20,.03)":"rgba(241,238,230,.035)";ctx.fill();ctx.strokeStyle=cl?"rgba(31,27,20,.55)":"rgba(241,238,230,.6)";ctx.lineWidth=1;ctx.stroke();ctx.restore();
+      var s=Math.min(W,H)*.1;
+      /* el filete es blanco en los dos fondos; en el claro va encima de la luz y con una sombra mínima para que no se pierda en el papel */
+      function prisma(){ctx.save();ctx.translate(P.x,P.y);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(0,-s);ctx.lineTo(-s*.87,s*.5);ctx.lineTo(s*.87,s*.5);ctx.closePath();
+        ctx.fillStyle=cl?"rgba(255,255,255,.14)":"rgba(241,238,230,.035)";ctx.fill();
+        if(cl){ctx.shadowColor="rgba(110,78,8,.5)";ctx.shadowBlur=4;}
+        ctx.strokeStyle=cl?"#fff":"rgba(241,238,230,.6)";ctx.lineWidth=1;ctx.stroke();ctx.restore();}
+      if(!cl)prisma();
       if(o.mouse&&vivo>0){var gc=ctx.createRadialGradient(mpx,mpy,0,mpx,mpy,170);gc.addColorStop(0,"rgba(255,226,150,"+(.13*Math.min(1,vivo*1.6)).toFixed(3)+")");gc.addColorStop(1,"rgba(217,163,27,0)");ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gc;ctx.beginPath();ctx.arc(mpx,mpy,170,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
       /* la luz que se filtra por el prisma: del mismo tamaño en los dos fondos; en el claro, más dorada para que se vea sobre el papel */
       var gl=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,s*1.3);
       if(cl){gl.addColorStop(0,"rgba(236,176,40,.62)");gl.addColorStop(.5,"rgba(225,165,30,.26)");}else gl.addColorStop(0,"rgba(255,226,150,.5)");
       gl.addColorStop(1,"rgba(217,163,27,0)");
       ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";
+      if(cl)prisma();
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       /* Sin el nombre de cada base sobre su haz (pedido de la portada): los
          haces conservan el color de su base; los nombres siguen en BASES_PRISMA

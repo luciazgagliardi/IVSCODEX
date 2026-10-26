@@ -7,7 +7,7 @@ html[data-tema="claro"]{
   color-scheme:light
 }
 html[data-tema="claro"] ::selection{background:var(--gold);color:var(--bg)}
-html[data-tema="claro"] .grano{opacity:.06!important;mix-blend-mode:multiply}
+html[data-tema="claro"] .grano{opacity:.6!important;filter:invert(1);mix-blend-mode:multiply}   /* el grano son puntos claros: en el papel se invierten */
 
 /* botones: el texto en papel sobre el oro y sobre la tinta */
 html[data-tema="claro"] .btn{color:var(--bg)}
