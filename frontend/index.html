@@ -217,7 +217,7 @@ strong,b{font-weight:500}
 .cq .btn{flex:none;padding:11px 24px}
 .bq-barra>.chip{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:9px;box-sizing:border-box;height:39px;padding:0 18px;line-height:1}
 .fsb-flecha{flex:none;display:block;transition:transform .25s}
-.bq-barra>.chip[aria-pressed="true"] .fsb-flecha{transform:rotate(180deg)}
+.bq-barra>.chip[aria-pressed="true"] .fsb-flecha,#mi-perfil[aria-expanded="true"] .fsb-flecha{transform:rotate(180deg)}
 .fsb-n{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:24px;height:24px;padding:0 7px;border-radius:999px;background:var(--gold);color:var(--bg);font:600 13.5px/1 var(--sans);font-variant-numeric:tabular-nums}
 .bq .aviso-srv{margin:-10px 0 0!important;padding:0 4px;font-size:12.5px!important;color:var(--mute-2)!important;line-height:1.5}
 .bq-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:10px 4px 0;font-size:13px;color:var(--mute)}
@@ -527,7 +527,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .nav button:hover,.nav button:active{color:var(--gold)}
 .nav button[aria-current="page"]{color:var(--gold)}
 .nav-fin{margin-left:auto;display:flex;align-items:center;gap:10px}
-.btn-perfil{padding:10px 18px 9px;font-size:13.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-perfil{padding:10px 18px;gap:9px;font-size:13.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 .perfil-wrap{position:relative;display:inline-flex}
 .btn-perfil .fl{font-size:10px;opacity:.7}
@@ -1444,9 +1444,9 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 <header class="top">
   <div class="nav-wrap">
-    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><img class="marca-sello" src="./favicon.png?v=16" alt="" width="36" height="36"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></button>
+    <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
-    <div class="nav-fin"><button type="button" class="lx-chip" data-act="abrir-lexia" aria-label="Preguntarle a Lexia"><i></i>Lexia</button><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><span class="perfil-wrap"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-act="tog-perfil" aria-haspopup="menu" aria-expanded="false">Mi perfil <span class="fl" aria-hidden="true">▾</span></button><div class="perfil-menu" id="perfil-menu" role="menu" hidden></div></span><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
+    <div class="nav-fin"><button type="button" class="lx-chip" data-act="abrir-lexia" aria-label="Preguntarle a Lexia"><i></i>Lexia</button><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><span class="perfil-wrap"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-act="tog-perfil" aria-haspopup="menu" aria-expanded="false"><span>Mi perfil</span><svg class="fsb-flecha" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="perfil-menu" id="perfil-menu" role="menu" hidden></div></span><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
 </header>
 
