@@ -441,7 +441,6 @@ strong,b{font-weight:500}
 .bq-acc .btn,.bq-acc .mini{padding:5px 12px 4px;font-size:12px;border-radius:999px}
 /* en Buscar el trabajo va primero: la cabecera de la sección se compacta */
 .cab[data-tab="buscar"] .cab__intro,.cab[data-tab="buscar"] .cab__dibujo{display:none}
-.cab[data-tab="buscar"] h1{font-size:clamp(30px,3.2vw,44px);margin-top:10px}
 .colsb{display:flex;gap:14px;align-items:stretch;overflow-x:auto;padding:4px 2px 18px;height:clamp(480px,76vh,820px);scroll-snap-type:x proximity}
 .colb{flex:0 0 clamp(310px,27vw,400px);display:flex;flex-direction:column;min-height:0;border:1px solid var(--line);border-top:2px solid var(--punto,var(--line));border-radius:16px;scroll-snap-align:start;background:rgba(var(--tx),.015)}
 .colb.chica{flex-basis:96px}
@@ -687,6 +686,17 @@ body.en-recorrido .cab>*{animation:none}
 }
 .blk:hover,.rama:hover{border-top-color:var(--gold-55)}
 .panel.vivo{border-top-color:rgba(143,191,154,.45)}
+/* Lector sin fallo: cada opción en su recuadro redondeado, sin filetes de más */
+.op-caja,.op-caja.vivo{margin:0 0 16px;padding:22px 24px 24px;border:1px solid var(--line);border-radius:22px;background:rgba(var(--tx),.02)}
+.op-caja .rotulo{margin:0 0 6px;color:var(--fg)}
+.op-caja .campo{margin-bottom:14px}
+.op-caja .campo input[type=text]{padding:11px 18px;border:1px solid var(--line);border-radius:999px}
+.op-caja .campo input[type=text]:focus{border-color:var(--gold-55)}
+.op-caja textarea{border-radius:18px}
+.op-caja .acciones{margin-top:14px!important;padding-top:0;border-top:0}
+.blk.op-caja:hover{border-top-color:var(--line)}
+.op-caja .sin-items p{padding:7px 0;border-top:0}
+.aviso.sin-filete{padding-top:0;border-top:0}
 .aviso{color:var(--mute);font-size:15px}
 .aviso strong{color:var(--fg)}
 .av-tit{display:block;margin-bottom:4px;color:var(--fg);font-weight:500}
@@ -6780,7 +6790,7 @@ function vistaLector(){
   if(!estado.texto){
     var porLink="";
     if(estado.api){
-      porLink='<div class="panel vivo">'+
+      porLink='<div class="panel vivo op-caja">'+
         '<div class="rotulo" style="margin-top:0"><strong>Opción 1 · Ingresar el enlace para la descarga automática</strong></div>'+
         '<label class="campo"><span>Permite introducir el vínculo directo del documento para que el sistema lo recupere de forma automatizada.</span>'+
           '<input type="text" id="doc-url" placeholder="https://…  (el enlace del documento, no el del buscador)" autocomplete="off"></label>'+
@@ -6793,7 +6803,7 @@ function vistaLector(){
         '</div>'+
         // Subir el archivo desde la computadora: sirve para lo que no tiene
         // enlace público (lo que te mandaron por mail, lo que bajaste antes).
-        '<div class="panel vivo">'+
+        '<div class="panel vivo op-caja">'+
           '<div class="rotulo" style="margin-top:0"><strong>Opción 2 · Adjuntar el archivo desde su dispositivo</strong></div>'+
           '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Admite archivos en formato PDF o Word (.doc/.docx) almacenados localmente, '+
           'tales como documentos recibidos por correo electrónico o descargados de plataformas oficiales.</p>'+
@@ -6805,18 +6815,18 @@ function vistaLector(){
           '<input type="file" id="doc-archivo" accept=".pdf,.doc,.htm,.html,.txt,application/pdf,application/msword" style="display:none">'+
         '</div>';
     }else if(estado.api===false){
-      porLink='<div class="panel inactivo">'+
+      porLink='<div class="panel inactivo op-caja">'+
         '<div class="rotulo" style="margin-top:0">Traer por enlace · no disponible ahora</div>'+
         '<p style="font-size:13.5px;margin:0;color:var(--humo)">El servidor de extracción no está corriendo, así que la carga automática por enlace está apagada. '+
         'Todo lo demás funciona igual. Para activarla, levante el servidor con <code>npm start</code> y recargue esta página.</p></div>';
     }
 
-    return '<div class="aviso"><span class="av-tit">Cargue el fallo aquí para visualizarlo con su búsqueda destacada</span>'+
+    return '<div class="aviso sin-filete"><span class="av-tit">Cargue el fallo aquí para visualizarlo con su búsqueda destacada</span>'+
       'Puede proceder ingresando el enlace, subiendo el archivo o pegando el texto manualmente. '+
       'El Lector opera directamente en su navegador y asegura total fidelidad al documento original, '+
       'garantizando que el contenido desplegado sea exactamente el del texto fuente, sin alteraciones ni elementos simulados.</div>'+
       porLink+
-      '<div class="panel">'+
+      '<div class="panel op-caja">'+
         '<div class="rotulo" style="margin-top:0">'+(estado.api?"<strong>Opción 3 · Transcribir o pegar el texto manualmente</strong>":"Pegar el texto del fallo")+'</div>'+
         '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Consiste en abrir la resolución en la base de origen, seleccionar la totalidad del contenido (Ctrl+A), '+
         'copiarlo (Ctrl+C) y pegarlo en este espacio. Este procedimiento garantiza la lectura del documento en cualquier circunstancia, '+
@@ -6828,7 +6838,7 @@ function vistaLector(){
         '<div class="acciones"><button class="btn" data-act="analizar">Analizar el fallo</button></div>'+
       '</div>'+
       // Tarjeta sin ítems, a pedido: cada línea suelta, sin viñeta ni número.
-      '<div class="blk"><span class="av-tit" style="margin-bottom:10px">El resultado incluye</span><div class="sin-items">'+
+      '<div class="blk op-caja"><span class="av-tit" style="margin-bottom:10px">El resultado incluye</span><div class="sin-items">'+
         '<p>Visualización del documento con resaltado automático de términos y herramientas de navegación secuencial entre coincidencias.</p>'+
         '<p>Panel de pasajes (coincidencias recortadas con su contexto inmediato), preparadas para copiar junto a su respectiva cita.</p>'+
         '<p>Detección e identificación de carátula, tribunal, fecha, expediente y tomo de Fallos para su validación y posterior formateo.</p>'+
