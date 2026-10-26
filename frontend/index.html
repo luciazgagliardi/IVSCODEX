@@ -3817,7 +3817,13 @@ function lxPorqueHTML(texto,A,e,pas){
 var LX_TITULO={resumen:"Explicación del fallo",instancia:"Lo que decidieron las instancias anteriores",votos:"Votos",honorarios:"Honorarios",costas:"Costas",intereses:"Intereses",incapacidad:"Incapacidad",
   agravios:"Agravios",decision:"Qué se resolvió",montos:"Importes",precedentes:"Precedentes",normas:"Normas",partes:"Partes",fecha:"Fecha",tribunal:"Tribunal",porque:"Por qué",persona:"Sobre la persona",articulo:"Sobre el artículo"};
 /* Arma la respuesta (HTML) a una pregunta, o la ficha completa si p === null. */
+/* «Lexia hija de puta» (o «lexi hdp»): Lexia contesta como corresponde. */
+function esPuteadaALexia(x){
+  var t=sinTildes(String(x||"")).toLowerCase().replace(/[^a-z0-9ñ ]/g," ").replace(/\s+/g," ").trim();
+  return /\b(hij[ao] ?de ?(re ?)?puta|hdp)\b/.test(t);
+}
 function lxResponder(p){
+  if(p&&esPuteadaALexia(p)) return '<p>Tu vieja.</p>';
   var texto=estado.texto||"",d=datosDoc(texto),h="",A=lxAnalisis(texto,d);
   function pas(r){ return r?'<blockquote class="lx-pas">'+resaltarSimple(r.t,p||"")+'</blockquote>'+
     '<button type="button" class="mini" data-act="lx-ir" data-s="'+esc(r.crudo||r.t.replace(/^…\s*/,"").slice(0,80))+'">Ver en el fallo</button>':""; }
@@ -7683,6 +7689,7 @@ function montarAsistente(){
     dice(["Con gusto. Puede escribirme de estas formas; toque una para probarla:"],ej.map(function(e){ return {t:e,f:function(){ entender(e); }}; }));
   }
   function entender(txt,reintento){
+    if(esPuteadaALexia(txt)) return dice("Tu vieja.");
     var corr=reintento?null:corregir(txt);
     if(corr) txt=corr.texto;
     var prevFallos=ctx.fallos||0; ctx.fallos=0;
