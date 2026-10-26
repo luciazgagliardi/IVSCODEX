@@ -47,33 +47,12 @@ async function modulo() {
   return sqlite;
 }
 
-// cambia cuando cambia la estructura de la base: obliga a reimportar aunque las tandas sean las mismas
-const ESQUEMA_V = '3'; // 3: los magistrados (y los autores de Dialnet) también en el índice de texto
-const ESQUEMA = `
-CREATE TABLE IF NOT EXISTS fallos(
-  rid INTEGER PRIMARY KEY, id TEXT UNIQUE, fuente TEXT, corte INTEGER DEFAULT 0, provincia TEXT,
-  caratula TEXT, tribunal TEXT, fecha TEXT, anio INTEGER, expediente TEXT, sumario TEXT, voces TEXT,
-  magistrados TEXT, materia TEXT, linkFicha TEXT, linkFallo TEXT, tipo TEXT, marca TEXT);
-CREATE INDEX IF NOT EXISTS fallos_fuente ON fallos(fuente, anio);
-CREATE INDEX IF NOT EXISTS fallos_corte ON fallos(corte, anio);
--- «marca»: la base como palabra del índice (zfsaij, zfcsjn…), así el filtro por base lo hace el propio índice
-CREATE VIRTUAL TABLE IF NOT EXISTS fts USING fts5(caratula, sumario, voces, marca, magistrados, content='fallos', content_rowid='rid', tokenize='unicode61 remove_diacritics 2');
-CREATE TABLE IF NOT EXISTS meta(clave TEXT PRIMARY KEY, valor TEXT);
-`;
 
 function abrir(archivo) {
   const d = new sqlite.DatabaseSync(archivo);
   d.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;');
   d.exec(ESQUEMA);
   return d;
-}
-/** El año de una fecha: «27/07/2026 - Sentencia», «2026-07-27», «julio de 2026». */
-export function anioDe(fecha) {
-  const t = String(fecha || '');
-  const dmy = /\b\d{1,2}[/.-]\d{1,2}[/.-]((?:18|19|20)\d{2})\b/.exec(t) || /\b((?:18|19|20)\d{2})-\d{2}-\d{2}\b/.exec(t);
-  if (dmy) return Number(dmy[1]);
-  const sueltos = t.match(/\b(?:18|19|20)\d{2}\b/g);
-  return sueltos ? Number(sueltos[sueltos.length - 1]) : null;
 }
 const leerManifiesto = () => { try { return JSON.parse(fs.readFileSync(path.join(DIR_TANDAS, 'manifiesto.json'), 'utf8')); } catch { return null; } };
 
@@ -86,13 +65,16 @@ export async function prepararAcervo({ esperar = false } = {}) {
     try {
       db = abrir(actual);
       const m = db.prepare('SELECT valor FROM meta WHERE clave = ?');
-      const deEsquema = m.get('esquema')?.valor === ESQUEMA_V;
-      estado = { ...estado, activo: deEsquema, version: deEsquema ? (m.get('version')?.valor || null) : null, conteos: deEsquema ? JSON.parse(m.get('conteos')?.valor || '{}') : {} };
-      if (deEsquema) { completarAnios(); await sumarIndiceGuardado(); copiarParaLeer(); }
+      const esquema = m.get('esquema')?.valor || null;
+      // una base de un esquema anterior (2) sigue contestando mientras se arma la nueva; más vieja, no
+      const sirve = esquema === ESQUEMA_V || esquema === '2';
+      estado = { ...estado, activo: sirve, esquema, version: sirve ? (m.get('version')?.valor || null) : null, conteos: sirve ? JSON.parse(m.get('conteos')?.valor || '{}') : {} };
+      if (sirve) { completarAnios(); await sumarIndiceGuardado(); }
+      if (esquema === ESQUEMA_V) copiarParaLeer();
     } catch (e) { estado.error = e.message; db = null; }
   }
   const man = leerManifiesto();
-  if (man && man.version !== estado.version && !estado.importando) {
+  if (man && (man.version !== estado.version || estado.esquema !== ESQUEMA_V) && !estado.importando) {
     const tarea = importar(man).catch((e) => { estado.error = `importación: ${e.message}`; estado.importando = false; });
     if (esperar) await tarea;
   }
@@ -105,34 +87,13 @@ async function importar(man) {
   const t0 = Date.now();
   const nueva = path.join(DIR_BASE, `acervo-${man.version}.db.tmp`);
   for (const f of [nueva, `${nueva}-wal`, `${nueva}-shm`]) await fsp.rm(f, { force: true });
-  const d = abrir(nueva);
-  d.exec('PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;');
-  const ins = d.prepare(`INSERT OR IGNORE INTO fallos(id,fuente,corte,provincia,caratula,tribunal,fecha,anio,expediente,sumario,voces,magistrados,materia,linkFicha,linkFallo,tipo,marca)
-    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
-  const conteos = {};
-  for (const archivo of man.archivos) {
-    const entrada = readline.createInterface({ input: fs.createReadStream(path.join(DIR_TANDAS, archivo)).pipe(zlib.createGunzip()), crlfDelay: Infinity });
-    d.exec('BEGIN');
-    let n = 0;
-    for await (const linea of entrada) {
-      if (!linea) continue;
-      let r; try { r = JSON.parse(linea); } catch { continue; }
-      ins.run(r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, anioDe(r.fecha),
-        r.expediente || null, r.sumario || null, Array.isArray(r.voces) ? r.voces.join(' · ') : (r.voces || null), r.magistrados || null, r.materia || null,
-        r.linkFicha || null, r.linkFallo || null, r.tipo || null, `zf${r.fuente}${r.corte ? ' zfcsjn' : ''}`);
-      conteos[r.fuente] = (conteos[r.fuente] || 0) + 1;
-      if (r.corte) conteos.csjn = (conteos.csjn || 0) + 1;
-      if (++n % 20000 === 0) { d.exec('COMMIT'); d.exec('BEGIN'); await new Promise((ok) => setImmediate(ok)); }
-    }
-    d.exec('COMMIT');
-  }
-  d.exec("INSERT INTO fts(fts) VALUES('rebuild')");
-  d.exec("INSERT INTO fts(fts) VALUES('optimize')");
-  const meta = d.prepare('INSERT OR REPLACE INTO meta(clave, valor) VALUES(?, ?)');
-  meta.run('version', man.version);
-  meta.run('esquema', ESQUEMA_V);
-  meta.run('conteos', JSON.stringify(conteos));
-  d.close();
+  // en un hilo aparte (lib/acervoImportar.js): mientras tanto contesta la base anterior
+  const { conteos } = await new Promise((ok, mal) => {
+    const w = new Worker(new URL('./acervoImportar.js', import.meta.url), { workerData: { man, dirTandas: DIR_TANDAS, nueva } });
+    w.once('message', ok);
+    w.once('error', mal);
+    w.once('exit', (c) => { if (c) mal(new Error(`el armado terminó con código ${c}`)); });
+  });
   // en lugar de la anterior
   const actual = path.join(DIR_BASE, 'acervo.db');
   if (db) { try { db.close(); } catch { /* ya cerrada */ } db = null; }
@@ -140,7 +101,8 @@ async function importar(man) {
   await fsp.rename(nueva, actual);
   db = abrir(actual);
   archivoLectura = null; // la copia de lectura era de la versión anterior
-  estado = { activo: true, version: man.version, conteos, importando: false, error: null, segundos: Math.round((Date.now() - t0) / 1000) };
+  generacion++;          // los hilos de consulta vuelven a abrir la base (aunque se llame igual, es otra)
+  estado = { activo: true, esquema: ESQUEMA_V, version: man.version, conteos, importando: false, error: null, segundos: Math.round((Date.now() - t0) / 1000) };
   await volverASumarCosechas();
   await sumarIndiceGuardado();
   copiarParaLeer();
@@ -159,15 +121,18 @@ function valores(r) {
 /* Pone (o actualiza) un fallo en la base abierta, con su índice de texto. */
 function poner(r) {
   const v = valores(r);
+  // la base anterior (esquema 2) no tiene los magistrados en el índice: sigue sirviendo mientras se arma la nueva
+  const mag = ftsConMagistrados(db);
+  const cols = `caratula, sumario, voces, marca${mag ? ', magistrados' : ''}`, marcas = mag ? '?, ?, ?, ?, ?' : '?, ?, ?, ?';
   const ya = db.prepare('SELECT rid, caratula, sumario, voces, marca, magistrados FROM fallos WHERE id = ?').get(r.id);
   if (ya) {
-    db.prepare("INSERT INTO fts(fts, rowid, caratula, sumario, voces, marca, magistrados) VALUES('delete', ?, ?, ?, ?, ?, ?)").run(ya.rid, ya.caratula, ya.sumario, ya.voces, ya.marca, ya.magistrados);
+    db.prepare(`INSERT INTO fts(fts, rowid, ${cols}) VALUES('delete', ?, ${marcas})`).run(ya.rid, ya.caratula, ya.sumario, ya.voces, ya.marca, ...(mag ? [ya.magistrados] : []));
     db.prepare(`UPDATE fallos SET (${COLUMNAS}) = (${COLUMNAS.split(',').map(() => '?').join(',')}) WHERE rid = ?`).run(...v, ya.rid);
-    db.prepare('INSERT INTO fts(rowid, caratula, sumario, voces, marca, magistrados) VALUES(?, ?, ?, ?, ?, ?)').run(ya.rid, v[4], v[9], v[10], v[16], v[11]);
+    db.prepare(`INSERT INTO fts(rowid, ${cols}) VALUES(?, ${marcas})`).run(ya.rid, v[4], v[9], v[10], v[16], ...(mag ? [v[11]] : []));
     return false;
   }
   const rid = db.prepare(`INSERT INTO fallos(${COLUMNAS}) VALUES(${COLUMNAS.split(',').map(() => '?').join(',')})`).run(...v).lastInsertRowid;
-  db.prepare('INSERT INTO fts(rowid, caratula, sumario, voces, marca, magistrados) VALUES(?, ?, ?, ?, ?, ?)').run(rid, v[4], v[9], v[10], v[16], v[11]);
+  db.prepare(`INSERT INTO fts(rowid, ${cols}) VALUES(?, ${marcas})`).run(rid, v[4], v[9], v[10], v[16], ...(mag ? [v[11]] : []));
   estado.conteos[r.fuente] = (estado.conteos[r.fuente] || 0) + 1;
   return true;
 }
@@ -255,8 +220,8 @@ export function idsConTexto(fuente) {
 /** ¿El acervo tiene esta base? */
 export function acervoTiene(fuente) { return Boolean(db && estado.activo && estado.conteos[fuente]); }
 
-import { consultaFts, paginaEn, PROVINCIA_DE_BASE } from './acervoConsulta.js';
-export { consultaFts };
+import { consultaFts, paginaEn, PROVINCIA_DE_BASE, ESQUEMA, ESQUEMA_V, anioDe, ftsConMagistrados } from './acervoConsulta.js';
+export { consultaFts, anioDe };
 
 /**
  * Busca en el acervo. fuente: 'saij' (todo SAIJ), 'csjn' (la Corte), u otra
@@ -275,7 +240,7 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
   args.push(Math.min(2000, Math.max(1, limite)));
   try {
     const filas = db.prepare(`SELECT f.* FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}
-      ORDER BY bm25(fts, 4.0, 1.0, 2.0, 0.0, 1.0) LIMIT ?`).all(...args);
+      ORDER BY bm25(fts, 4.0, 1.0, 2.0, 0.0${ftsConMagistrados(db) ? ', 1.0' : ''}) LIMIT ?`).all(...args);
     return filas.map((f) => {
       const r = { id: f.id, caratula: f.caratula, tribunal: f.tribunal, fecha: f.fecha, expediente: f.expediente, sumario: f.sumario,
         voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo, desdeAcervo: true };
@@ -316,7 +281,7 @@ const MAX_EN_COLA = 64;
  * la copia de lectura en el próximo arranque.
  */
 const COPIA_PARA_LEER = process.env.ACERVO_COPIA_LOCAL === '1' || Boolean(process.env.WEBSITE_SITE_NAME);
-let archivoLectura = null, copiando = false;
+let archivoLectura = null, copiando = false, generacion = 0;
 async function copiarParaLeer() {
   if (!COPIA_PARA_LEER || copiando || !db || !sqlite?.backup) return;
   copiando = true;
@@ -379,7 +344,7 @@ function siguiente() {
     libre.w.ref();
     const archivo = archivoLectura || path.join(DIR_BASE, 'acervo.db');
     lectura().archivo = archivo;
-    libre.w.postMessage({ id: t.id, archivo, version: `${estado.version}|${archivo}`, base: t.base, q: t.q, opciones: t.opciones });
+    libre.w.postMessage({ id: t.id, archivo, version: `${estado.version}|${generacion}|${archivo}`, base: t.base, q: t.q, opciones: t.opciones });
   }
   for (const h of hilos) if (!h.enCurso) h.w.unref(); // sin consultas, los hilos no retienen al proceso
 }

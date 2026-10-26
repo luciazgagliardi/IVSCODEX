@@ -5,6 +5,41 @@
  * —«recurso» en SAIJ son 155.000 coincidencias— no frene al servidor entero.
  */
 
+
+// cambia cuando cambia la estructura de la base: obliga a reimportar aunque las tandas sean las mismas
+export const ESQUEMA_V = '3'; // 3: los magistrados (y los autores de Dialnet) también en el índice de texto
+export const ESQUEMA = `
+CREATE TABLE IF NOT EXISTS fallos(
+  rid INTEGER PRIMARY KEY, id TEXT UNIQUE, fuente TEXT, corte INTEGER DEFAULT 0, provincia TEXT,
+  caratula TEXT, tribunal TEXT, fecha TEXT, anio INTEGER, expediente TEXT, sumario TEXT, voces TEXT,
+  magistrados TEXT, materia TEXT, linkFicha TEXT, linkFallo TEXT, tipo TEXT, marca TEXT);
+CREATE INDEX IF NOT EXISTS fallos_fuente ON fallos(fuente, anio);
+CREATE INDEX IF NOT EXISTS fallos_corte ON fallos(corte, anio);
+-- «marca»: la base como palabra del índice (zfsaij, zfcsjn…), así el filtro por base lo hace el propio índice
+CREATE VIRTUAL TABLE IF NOT EXISTS fts USING fts5(caratula, sumario, voces, marca, magistrados, content='fallos', content_rowid='rid', tokenize='unicode61 remove_diacritics 2');
+CREATE TABLE IF NOT EXISTS meta(clave TEXT PRIMARY KEY, valor TEXT);
+`;
+
+/** El año de una fecha: «27/07/2026 - Sentencia», «2026-07-27», «julio de 2026». */
+export function anioDe(fecha) {
+  const t = String(fecha || '');
+  const dmy = /\b\d{1,2}[/.-]\d{1,2}[/.-]((?:18|19|20)\d{2})\b/.exec(t) || /\b((?:18|19|20)\d{2})-\d{2}-\d{2}\b/.exec(t);
+  if (dmy) return Number(dmy[1]);
+  const sueltos = t.match(/\b(?:18|19|20)\d{2}\b/g);
+  return sueltos ? Number(sueltos[sueltos.length - 1]) : null;
+}
+
+/** ¿El índice de esta base ya tiene la columna de magistrados (esquema 3)? Una base anterior sigue sirviendo mientras se arma la nueva. */
+const conMagistrados = new WeakMap();
+export function ftsConMagistrados(db) {
+  if (!conMagistrados.has(db)) {
+    let si = true;
+    try { db.prepare('SELECT magistrados FROM fts LIMIT 0').all(); } catch { si = false; }
+    conMagistrados.set(db, si);
+  }
+  return conMagistrados.get(db);
+}
+
 /* La consulta de FTS5: cada palabra por su raíz («indemniz*»), en el modo pedido. */
 const VACIAS = new Set('de del la las el los un una unos unas y e o u en al a ante con sin por para que se su sus lo le les es son como mas sobre entre desde hasta segun contra ni no'.split(' '));
 const plano = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -65,7 +100,8 @@ const TRIBUNAL_DE = { mendoza: { SC: '%SUPREMA%', CC: '%CIVIL%', CT: '%TRABAJO%'
  * —la misma carátula, fecha y texto— cuentan una sola vez.
  */
 export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', desde = 0, porPagina = 20 } = {}) {
-  const expr = consultaFts(q, modo, excluir, apellidos(db));
+  const mag = ftsConMagistrados(db);
+  const expr = consultaFts(q, modo, excluir, mag ? apellidos(db) : null);
   if (!expr) return { total: 0, resultados: [], siguienteDesde: null };
   const prov = PROVINCIA_DE_BASE[base];
   const junta = Boolean(prov && base !== 'saij');
@@ -83,7 +119,7 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   // MATERIALIZED: bm25() sólo vale dentro de la consulta al índice, y así SQLite no la «aplana» hacia afuera.
   // Si se juntan dos orígenes, una fila por clave: la de mejor relevancia (SQLite devuelve con min() la fila de ese mínimo).
   // Una sola base no repite fichas (el id es único): no hace falta agrupar, que es lo caro en las consultas amplias.
-  const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0, 1.0) AS rel${junta
+  const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0${mag ? ', 1.0' : ''}) AS rel${junta
     ? ", coalesce(lower(trim(f.caratula)), '') || '|' || coalesce(f.fecha, '') || '|' || substr(coalesce(f.sumario, f.id), 1, 80) AS clave" : ''}
     FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}`;
   const unicos = junta
