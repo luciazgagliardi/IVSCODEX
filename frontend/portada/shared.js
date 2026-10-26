@@ -87,7 +87,7 @@
     var BASES_PRISMA=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["SCBA","--c-scba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"],["CORTE IDH","--c-idh"]];
     var B=BASES_PRISMA.map(function(f,i){var n=f[0],h=cs.getPropertyValue(f[1]).trim();
       return {n:n,c:[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)],next:i*.5};});
-    var ORO=[217,163,27],CLARO=[255,226,150];
+    var ORO0=[217,163,27],CLARO0=[255,226,150];
     function medir(){
       W=cv.clientWidth;H=cv.clientHeight;cv.width=W*D;cv.height=H*D;
       var m=W<700,band=typeof o.band==="function"?o.band(W,H):(o.band||[.34,.66]);
@@ -119,7 +119,9 @@
       var dt=Math.min((now-last)/1000,.05);last=now;tm+=dt;
       if(o.mouse){var k=1-Math.exp(-dt*5);ox+=(tmx*W*.04-ox)*k;oy+=(tmy*H*.07-oy)*k;ang+=(tmx*.09-ang)*k;vel*=Math.exp(-dt*2.2);vivo=Math.max(0,vivo-dt*.35);calc();}
       ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
-      ctx.globalCompositeOperation="lighter";ctx.lineCap="round";ctx.lineJoin="round";
+      /* en el fondo claro la luz no suma (no hay negro sobre el que brillar): se pinta normal y en oro más hondo */
+      var cl=document.documentElement.getAttribute("data-tema")==="claro",LUZ=cl?"source-over":"lighter",ORO=cl?[168,118,8]:ORO0,CLARO=cl?[148,106,6]:CLARO0;
+      ctx.globalCompositeOperation=LUZ;ctx.lineCap="round";ctx.lineJoin="round";
       B.forEach(function(b,i){
         var g=ctx.createLinearGradient(0,0,P.x,0);g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
@@ -141,10 +143,10 @@
       });
       ctx.globalCompositeOperation="source-over";
       var s=Math.min(W,H)*.1;ctx.save();ctx.translate(P.x,P.y);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(0,-s);ctx.lineTo(-s*.87,s*.5);ctx.lineTo(s*.87,s*.5);ctx.closePath();
-      ctx.fillStyle="rgba(241,238,230,.035)";ctx.fill();ctx.strokeStyle="rgba(241,238,230,.6)";ctx.lineWidth=1;ctx.stroke();ctx.restore();
-      if(o.mouse&&vivo>0){var gc=ctx.createRadialGradient(mpx,mpy,0,mpx,mpy,170);gc.addColorStop(0,"rgba(255,226,150,"+(.13*Math.min(1,vivo*1.6)).toFixed(3)+")");gc.addColorStop(1,"rgba(217,163,27,0)");ctx.globalCompositeOperation="lighter";ctx.fillStyle=gc;ctx.beginPath();ctx.arc(mpx,mpy,170,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
-      var gl=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,s*1.3);gl.addColorStop(0,"rgba(255,226,150,.5)");gl.addColorStop(1,"rgba(217,163,27,0)");
-      ctx.globalCompositeOperation="lighter";ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";
+      ctx.fillStyle=cl?"rgba(31,27,20,.03)":"rgba(241,238,230,.035)";ctx.fill();ctx.strokeStyle=cl?"rgba(31,27,20,.55)":"rgba(241,238,230,.6)";ctx.lineWidth=1;ctx.stroke();ctx.restore();
+      if(o.mouse&&vivo>0){var gc=ctx.createRadialGradient(mpx,mpy,0,mpx,mpy,170);gc.addColorStop(0,"rgba(255,226,150,"+(.13*Math.min(1,vivo*1.6)).toFixed(3)+")");gc.addColorStop(1,"rgba(217,163,27,0)");ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gc;ctx.beginPath();ctx.arc(mpx,mpy,170,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
+      var gl=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,s*1.3);gl.addColorStop(0,cl?"rgba(217,163,27,.28)":"rgba(255,226,150,.5)");gl.addColorStop(1,"rgba(217,163,27,0)");
+      ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       /* Sin el nombre de cada base sobre su haz (pedido de la portada): los
          haces conservan el color de su base; los nombres siguen en BASES_PRISMA

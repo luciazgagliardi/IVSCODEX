@@ -1,0 +1,50 @@
+/* Fondo claro de la portada: el mismo papel cálido y la misma tinta que el tema claro de la
+   aplicación (ver «Tema claro» en ../index.html). Se activa con data-tema="claro" en <html>,
+   que comparte la elección guardada en localStorage («ivs-tema») con la aplicación. */
+html[data-tema="claro"]{
+  --bg:#f5f1e7;--fg:#1f1b14;--mute:rgba(31,27,20,.64);--dim:rgba(31,27,20,.46);--line:rgba(31,27,20,.18);
+  --gold:#946a06;
+  color-scheme:light
+}
+html[data-tema="claro"] ::selection{background:var(--gold);color:var(--bg)}
+html[data-tema="claro"] .grano{opacity:.06!important;mix-blend-mode:multiply}
+
+/* botones: el texto en papel sobre el oro y sobre la tinta */
+html[data-tema="claro"] .btn{color:var(--bg)}
+html[data-tema="claro"] .btn:hover{color:var(--bg)}
+html[data-tema="claro"] .btn.sec{color:var(--fg)}
+html[data-tema="claro"] .btn.sec:hover{color:var(--gold)}
+
+/* la marca en un oro más hondo, que se lea sobre el papel */
+html[data-tema="claro"] .marca .v,html[data-tema="claro"] .marca-g .v{background-image:linear-gradient(170deg,#c08d16 8%,#946a06 46%,#6b4c03 92%)}
+html[data-tema="claro"] .marca-g .d{background:linear-gradient(170deg,#c08d16,#946a06 50%,#6b4c03)}
+
+/* cabecera y piezas comunes */
+html[data-tema="claro"] .cab{background:linear-gradient(var(--bg) 20%,rgba(245,241,231,0))}
+html[data-tema="claro"] .cab .sello{box-shadow:0 0 0 1px rgba(31,27,20,.24)}
+html[data-tema="claro"] .dib .dl{stroke:rgba(31,27,20,.7)}
+html[data-tema="claro"] .dib .dp{fill:rgba(31,27,20,.4)}
+html[data-tema="claro"] .h6d i::after{background:var(--gold);box-shadow:0 0 8px 1px rgba(148,106,6,.45)}
+html[data-tema="claro"] .cierre .marcaf{color:rgba(31,27,20,.8)}
+html[data-tema="claro"] .idx6{background:rgba(245,241,231,.85)}
+
+/* el laboratorio */
+html[data-tema="claro"] .tab[aria-selected="true"]{color:var(--bg)}
+html[data-tema="claro"] .panel{background:rgba(31,27,20,.02)}
+html[data-tema="claro"] .panel input[type=text],html[data-tema="claro"] .panel input[type=date],html[data-tema="claro"] .panel select,html[data-tema="claro"] .panel input[type=number]{color-scheme:light}
+html[data-tema="claro"] .panel select option{background:#fbf8f1}
+html[data-tema="claro"] .chip[aria-pressed="true"]{color:var(--bg)}
+html[data-tema="claro"] .sal{background:rgba(148,106,6,.07);border-color:rgba(148,106,6,.3)}
+html[data-tema="claro"] .sal .mal{color:#a23d2c}
+html[data-tema="claro"] .drop{border-color:rgba(31,27,20,.3)}
+html[data-tema="claro"] .ofr .cel .dib .dl{stroke:rgba(31,27,20,.42)}
+html[data-tema="claro"] .ofr .cel .dib .dd{fill:rgba(31,27,20,.55)}
+html[data-tema="claro"] .ofr .cel:hover .dib .dd,html[data-tema="claro"] .ofr .cel:focus .dib .dd,html[data-tema="claro"] .ofr .cel:active .dib .dd{fill:var(--gold)}
+html[data-tema="claro"] .legal-velo{background:rgba(40,34,20,.45)}
+
+/* interruptor de fondo: sol y luna, como en la aplicación */
+.tema-seg{flex:none;display:inline-flex;align-items:center;padding:3px;border:1px solid var(--line);border-radius:999px}
+.tema-op{appearance:none;display:inline-flex;align-items:center;justify-content:center;width:29px;height:29px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--mute);cursor:pointer;transition:background .25s,color .25s}
+.tema-op svg{display:block}
+.tema-op:hover{color:var(--fg)}
+.tema-op[aria-pressed="true"]{background:var(--fg);color:var(--bg)}

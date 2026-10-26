@@ -1481,7 +1481,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261025c" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261026" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
@@ -10177,7 +10177,10 @@ window.IVS={
     var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",c?"#f5f1e7":"#100e0b");
   }
   pon(document.documentElement.getAttribute("data-tema")==="claro");
-  ops.forEach(function(o){ o.addEventListener("click",function(){ pon(o.getAttribute("data-tema-op")==="claro"); }); });
+  ops.forEach(function(o){ o.addEventListener("click",function(){ var c=o.getAttribute("data-tema-op")==="claro"; pon(c); portada(c); }); });
+  // la portada (en su marco) lleva el mismo fondo; si se cambia allá, se cambia acá
+  function portada(c){ try{ var w=document.getElementById("portada-marco").contentWindow; if(w&&w.IVS6&&w.IVS6.ponTema) w.IVS6.ponTema(c); }catch(e){} }
+  addEventListener("storage",function(e){ if(e.key==="ivs-tema") pon(e.newValue==="claro"); });
 })();
 </script>
 </body>
