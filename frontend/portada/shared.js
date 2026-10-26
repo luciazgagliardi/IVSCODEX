@@ -142,11 +142,17 @@
         return true;
       });
       ctx.globalCompositeOperation="source-over";
-      var s=Math.min(W,H)*.1;ctx.save();ctx.translate(P.x,P.y);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(0,-s);ctx.lineTo(-s*.87,s*.5);ctx.lineTo(s*.87,s*.5);ctx.closePath();
-      ctx.fillStyle=cl?"rgba(31,27,20,.03)":"rgba(241,238,230,.035)";ctx.fill();ctx.strokeStyle=cl?"rgba(31,27,20,.55)":"rgba(241,238,230,.6)";ctx.lineWidth=1;ctx.stroke();ctx.restore();
+      var s=Math.min(W,H)*.1;
+      /* en el claro: un halo dorado grande detrás, el prisma de vidrio blanco con su sombra y el filete fino de siempre */
+      if(cl){var hc=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,s*2.6);hc.addColorStop(0,"rgba(240,190,80,.46)");hc.addColorStop(.4,"rgba(232,178,62,.2)");hc.addColorStop(1,"rgba(217,163,27,0)");ctx.fillStyle=hc;ctx.beginPath();ctx.arc(P.x,P.y,s*2.6,0,7);ctx.fill();}
+      ctx.save();ctx.translate(P.x,P.y);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(0,-s);ctx.lineTo(-s*.87,s*.5);ctx.lineTo(s*.87,s*.5);ctx.closePath();
+      if(cl){ctx.save();ctx.shadowColor="rgba(60,45,10,.16)";ctx.shadowBlur=22;ctx.shadowOffsetY=8;var vb=ctx.createLinearGradient(0,-s,0,s*.5);vb.addColorStop(0,"rgba(255,255,255,.96)");vb.addColorStop(1,"rgba(255,252,244,.62)");ctx.fillStyle=vb;ctx.fill();ctx.restore();}
+      else{ctx.fillStyle="rgba(241,238,230,.035)";ctx.fill();}
+      ctx.strokeStyle=cl?"rgba(31,27,20,.55)":"rgba(241,238,230,.6)";ctx.lineWidth=1;ctx.stroke();ctx.restore();
+      if(cl){var bl=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,s*.55);bl.addColorStop(0,"rgba(255,255,255,.95)");bl.addColorStop(1,"rgba(255,255,255,0)");ctx.fillStyle=bl;ctx.beginPath();ctx.arc(P.x,P.y,s*.55,0,7);ctx.fill();}
       if(o.mouse&&vivo>0){var gc=ctx.createRadialGradient(mpx,mpy,0,mpx,mpy,170);gc.addColorStop(0,"rgba(255,226,150,"+(.13*Math.min(1,vivo*1.6)).toFixed(3)+")");gc.addColorStop(1,"rgba(217,163,27,0)");ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gc;ctx.beginPath();ctx.arc(mpx,mpy,170,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
-      var gl=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,s*1.3);gl.addColorStop(0,cl?"rgba(217,163,27,.28)":"rgba(255,226,150,.5)");gl.addColorStop(1,"rgba(217,163,27,0)");
-      ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";
+      if(!cl){var gl=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,s*1.3);gl.addColorStop(0,"rgba(255,226,150,.5)");gl.addColorStop(1,"rgba(217,163,27,0)");
+      ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       /* Sin el nombre de cada base sobre su haz (pedido de la portada): los
          haces conservan el color de su base; los nombres siguen en BASES_PRISMA
