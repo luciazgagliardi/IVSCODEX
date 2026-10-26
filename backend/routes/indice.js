@@ -613,7 +613,8 @@ let ultimoEstado = { en: 0, dato: null };
 /** Cuántos fallos tiene el acervo propio (lib/acervo.js), por base, y de qué versión. */
 router.get('/acervo/estado', (_req, res) => {
   const e = estadoAcervo();
-  res.json({ ok: true, activo: e.activo, version: e.version, conteos: e.conteos, importando: e.importando, error: e.error || null, cosechaCaba: estadoCosechaCaba() });
+  res.json({ ok: true, activo: e.activo, version: e.version, conteos: e.conteos, importando: e.importando, error: e.error || null,
+    lectura: e.lectura || null, errorHilo: e.errorHilo || null, errorCopia: e.errorCopia || null, cosechaCaba: estadoCosechaCaba() });
 });
 
 router.get('/fuentes/estado', async (_req, res) => {

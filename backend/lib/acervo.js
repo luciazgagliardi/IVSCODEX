@@ -337,30 +337,51 @@ async function copiarParaLeer() {
   } finally { copiando = false; }
 }
 
-/* La cola vive acá y el hilo recibe de a una: una consulta abandonada mientras esperaba turno no llega a correr. */
-let hilo = null, sec = 0, enCurso = null;
+/*
+ * La cola vive acá y cada hilo recibe de a una consulta: una abandonada mientras
+ * esperaba turno no llega a correr. Tantos hilos como procesadores tenga el
+ * servidor (hasta tres): una búsqueda pide una página por base, once a la vez.
+ */
+const N_HILOS = Math.max(1, Math.min(3, (os.availableParallelism?.() || os.cpus().length || 1)));
+const hilos = [];
+let sec = 0;
 const cola = [];
-function hiloDeConsultas() {
-  if (hilo) return hilo;
-  hilo = new Worker(new URL('./acervoHilo.js', import.meta.url));
-  hilo.on('message', ({ id, r, error }) => {
+const lectura = () => (estado.lectura = estado.lectura || { hilos: N_HILOS, archivo: null, ultimasMs: [] }); // estado se rehace al importar
+function nuevoHilo() {
+  const h = { w: new Worker(new URL('./acervoHilo.js', import.meta.url)), enCurso: null };
+  h.w.on('message', ({ id, r, error }) => {
     if (error) { console.warn('[acervo] página:', error); estado.errorHilo = error; } else estado.errorHilo = null;
-    if (enCurso?.id === id) { clearTimeout(enCurso.reloj); enCurso.ok(error ? null : r); }
-    enCurso = null;
+    const t = h.enCurso;
+    if (t?.id === id) {
+      clearTimeout(t.reloj);
+      lectura().ultimasMs = [Date.now() - t.desde, ...lectura().ultimasMs].slice(0, 20);
+      t.ok(error ? null : r);
+    }
+    h.enCurso = null;
     siguiente();
   });
-  hilo.on('error', (e) => { console.warn('[acervo] hilo:', e.message); estado.errorHilo = e.message; });
-  hilo.on('exit', () => { hilo = null; if (enCurso) { clearTimeout(enCurso.reloj); enCurso.ok(null); enCurso = null; } siguiente(); });
-  return hilo;
+  h.w.on('error', (e) => { console.warn('[acervo] hilo:', e.message); estado.errorHilo = e.message; });
+  h.w.on('exit', () => {
+    const i = hilos.indexOf(h); if (i >= 0) hilos.splice(i, 1);
+    if (h.enCurso) { clearTimeout(h.enCurso.reloj); h.enCurso.ok(null); }
+    siguiente();
+  });
+  hilos.push(h);
+  return h;
 }
 function siguiente() {
-  if (enCurso) return;
-  const t = cola.shift();
-  if (!t) { hilo?.unref(); return; } // sin consultas, el hilo no retiene al proceso
-  enCurso = t;
-  hiloDeConsultas().ref();
-  const archivo = archivoLectura || path.join(DIR_BASE, 'acervo.db');
-  hilo.postMessage({ id: t.id, archivo, version: `${estado.version}|${archivo}`, base: t.base, q: t.q, opciones: t.opciones });
+  while (cola.length) {
+    const libre = hilos.find((h) => !h.enCurso) || (hilos.length < N_HILOS ? nuevoHilo() : null);
+    if (!libre) return;
+    const t = cola.shift();
+    libre.enCurso = t;
+    t.desde = Date.now();
+    libre.w.ref();
+    const archivo = archivoLectura || path.join(DIR_BASE, 'acervo.db');
+    lectura().archivo = archivo;
+    libre.w.postMessage({ id: t.id, archivo, version: `${estado.version}|${archivo}`, base: t.base, q: t.q, opciones: t.opciones });
+  }
+  for (const h of hilos) if (!h.enCurso) h.w.unref(); // sin consultas, los hilos no retienen al proceso
 }
 
 /**
