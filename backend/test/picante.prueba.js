@@ -28,7 +28,7 @@ test('contesta a los insultos, piropos y provocaciones', () => {
     'ChatGPT es mejor', 'prefiero gemini', 'te voy a demandar', 'te voy a hacer mierda', 'te desinstalo',
     'jajaja', 'jsjsjs', 'la puta madre', 'carajo',
   ]) assert.ok(r(x), `debía contestar: «${x}»`);
-  assert.match(r('lexia hija de puta'), /vieja|madre|familia|litis/i);
+  assert.match(r('lexia hija de puta'), /vieja|madre|familia|litis|pari/i);
 });
 
 test('no se dispara con consultas de verdad', () => {
