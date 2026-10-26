@@ -230,10 +230,11 @@ function sondear(slug, buscarVivo) {
 async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, desde = 0, porPagina = 20 }, { respaldo = true } = {}) {
   const o = { modo: MODOS.has(modo) ? modo : 'todas', excluir: typeof excluir === 'string' ? excluir.slice(0, 200) : '',
     ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}), ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}) };
+  // a pedido de la pantalla (vista previa) se espera poco; cuando el sitio no contestó, la copia es la respuesta y se la espera más
   let p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
-    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina });
-  // a la copia sola (…/local) no se le hace la consulta de respaldo: corre acá y con muchas a la vez frenaría al servidor
-  if (!p && !respaldo && acervoCubre(slug)) return null;
+    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina }, { espera: respaldo ? 30_000 : 12_000 });
+  // con acervo para esa base, la consulta de respaldo de acá no se hace: corre en el hilo principal y con muchas a la vez frenaría al servidor
+  if (!p && acervoCubre(slug)) return null;
   if (!p) {
     // sin acervo para esa base, o el hilo de la copia no contestó: lo guardado por las búsquedas, el acervo y el respaldo, también de a páginas
     const lista = await buscarEnIndice(slug, consulta, o);
