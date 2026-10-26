@@ -234,7 +234,7 @@ strong,b{font-weight:500}
 .bz-fila:hover{background:rgba(241,238,230,.04)}
 .bz-fila.on{background:rgba(241,238,230,.08)}
 .bz-fila .rf-nom{flex:1 1 auto;min-width:0;font:500 12.5px/1.2 var(--caps);letter-spacing:.14em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bz-fila[data-fuente=""] .rf-nom{font-family:var(--sans);font-weight:600;letter-spacing:.08em}
+.bz-fila[data-fuente=""] .rf-nom{font-family:var(--sans);font-weight:400;letter-spacing:.08em}
 .bz-fila .rf-punto{width:7px;height:7px;border-radius:50%;flex:none;background:var(--punto,var(--humo))}
 .bz-fila.sin-buscar .rf-punto{background:var(--line)}
 .bz-fila.consultando .rf-punto{animation:parpadeo 1s ease-in-out infinite alternate}
@@ -5013,7 +5013,7 @@ function bloqueResultados(vis){
 }
 function rielBuscar(vis){
   var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?cuantosDe(f,im):0); },0);
-  var h='<div class="bz-fila'+(!estado.verBase?" on":"")+'" data-act="ver-base" data-fuente=""><span class="rf-nom">TODAS</span><span class="rf-n">'+(tot?tot.toLocaleString("es-AR"):"")+'</span></div>';
+  var h='<div class="bz-fila'+(!estado.verBase?" on":"")+'" data-act="ver-base" data-fuente=""><span class="rf-nom">TODAS LAS BASES</span><span class="rf-n">'+(tot?tot.toLocaleString("es-AR"):"")+'</span></div>';
   h+=vis.map(function(f){
     var im=estado.indices[f.slug]||{}, e=estadoBase(f);
     return '<div class="bz-fila f-'+f.slug+e.c+(estado.verBase===f.slug?" on":"")+'" data-act="ver-base" data-fuente="'+f.slug+'" title="'+esc(f.nombre)+'"><span class="rf-punto"></span><span class="rf-nom">'+esc(f.cod)+'</span>'+e.t+
