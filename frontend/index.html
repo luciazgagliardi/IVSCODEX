@@ -1239,7 +1239,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
  * ================================================================== */
 .entrada{
   position:fixed;inset:0;z-index:100;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
-  background:var(--bg);color:var(--fg);opacity:1;transition:opacity .5s ease-out
+  background:var(--bg);color:var(--fg);opacity:1;transition:opacity .9s ease-in-out
 }
 .entrada.saliendo{opacity:0;pointer-events:none}
 .portada-marco{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg);display:block}
@@ -1790,13 +1790,19 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
       if(!abierta) return;
       abierta=false;
       entrada.classList.add("saliendo");
+      // mientras la portada se desvanece, la cabecera de la sección sube suave, como al cambiar de sección
+      // (después del render de la sección, que la deja quieta si es la misma)
+      setTimeout(function(){
+        var cb=document.getElementById("cab");
+        if(cb){ cb.classList.remove("quieta"); [].forEach.call(cb.children,function(el){ el.style.animation="none"; void el.offsetWidth; el.style.animation=""; }); }
+      },120);
       if(cursor) cursor.classList.remove("is-on");
       document.documentElement.classList.remove("con-cursor");
       entrada.addEventListener("transitionend",function(){ if(!abierta) entrada.style.display="none"; },{once:true});
       // Respaldo: con "reducir movimiento" activado no hay transición y por
       // lo tanto tampoco evento, así que la portada quedaría invisible pero
       // tapando los clics del resto de la página.
-      setTimeout(function(){ if(!abierta) entrada.style.display="none"; },700);
+      setTimeout(function(){ if(!abierta) entrada.style.display="none"; },1100);
       if(destino==="buscar"){
         setTimeout(function(){ var c=document.getElementById("q"); if(c) c.focus(); },520);
       }
