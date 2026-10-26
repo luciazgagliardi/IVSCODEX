@@ -23,8 +23,9 @@ import fsp from 'node:fs/promises';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import readline from 'node:readline';
+import { Worker } from 'node:worker_threads';
 import { fileURLToPath } from 'node:url';
-import { DIR_DATOS } from '../config.js';
+import { DIR_DATOS, DIR_INDICE } from '../config.js';
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 export const DIR_TANDAS = process.env.DIR_ACERVO_DATOS ? path.resolve(process.env.DIR_ACERVO_DATOS) : path.join(aqui, '..', 'acervo-datos');
@@ -65,6 +66,14 @@ function abrir(archivo) {
   d.exec(ESQUEMA);
   return d;
 }
+/** El año de una fecha: «27/07/2026 - Sentencia», «2026-07-27», «julio de 2026». */
+export function anioDe(fecha) {
+  const t = String(fecha || '');
+  const dmy = /\b\d{1,2}[/.-]\d{1,2}[/.-]((?:18|19|20)\d{2})\b/.exec(t) || /\b((?:18|19|20)\d{2})-\d{2}-\d{2}\b/.exec(t);
+  if (dmy) return Number(dmy[1]);
+  const sueltos = t.match(/\b(?:18|19|20)\d{2}\b/g);
+  return sueltos ? Number(sueltos[sueltos.length - 1]) : null;
+}
 const leerManifiesto = () => { try { return JSON.parse(fs.readFileSync(path.join(DIR_TANDAS, 'manifiesto.json'), 'utf8')); } catch { return null; } };
 
 /** Abre la base que haya y, si las tandas son de otra versión, las importa de fondo. */
@@ -78,6 +87,7 @@ export async function prepararAcervo({ esperar = false } = {}) {
       const m = db.prepare('SELECT valor FROM meta WHERE clave = ?');
       const deEsquema = m.get('esquema')?.valor === ESQUEMA_V;
       estado = { ...estado, activo: deEsquema, version: deEsquema ? (m.get('version')?.valor || null) : null, conteos: deEsquema ? JSON.parse(m.get('conteos')?.valor || '{}') : {} };
+      if (deEsquema) { completarAnios(); await sumarIndiceGuardado(); }
     } catch (e) { estado.error = e.message; db = null; }
   }
   const man = leerManifiesto();
@@ -106,8 +116,7 @@ async function importar(man) {
     for await (const linea of entrada) {
       if (!linea) continue;
       let r; try { r = JSON.parse(linea); } catch { continue; }
-      const m = /(\d{4})\s*$/.exec(String(r.fecha || ''));
-      ins.run(r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, m ? Number(m[1]) : null,
+      ins.run(r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, anioDe(r.fecha),
         r.expediente || null, r.sumario || null, Array.isArray(r.voces) ? r.voces.join(' · ') : (r.voces || null), r.magistrados || null, r.materia || null,
         r.linkFicha || null, r.linkFallo || null, r.tipo || null, `zf${r.fuente}${r.corte ? ' zfcsjn' : ''}`);
       conteos[r.fuente] = (conteos[r.fuente] || 0) + 1;
@@ -131,6 +140,7 @@ async function importar(man) {
   db = abrir(actual);
   estado = { activo: true, version: man.version, conteos, importando: false, error: null, segundos: Math.round((Date.now() - t0) / 1000) };
   await volverASumarCosechas();
+  await sumarIndiceGuardado();
   console.log(`[acervo] versión ${man.version}: ${Object.entries(conteos).map(([k, v]) => `${k} ${v}`).join(', ')} (${estado.segundos} s)`);
 }
 
@@ -139,8 +149,7 @@ export function estadoAcervo() { return { ...estado }; }
 /* ---------- lo cosechado por el servidor ---------- */
 const COLUMNAS = 'id,fuente,corte,provincia,caratula,tribunal,fecha,anio,expediente,sumario,voces,magistrados,materia,linkFicha,linkFallo,tipo,marca';
 function valores(r) {
-  const m = /(\d{4})\s*$/.exec(String(r.fecha || ''));
-  return [r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, m ? Number(m[1]) : null,
+  return [r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, anioDe(r.fecha),
     r.expediente || null, r.sumario || null, Array.isArray(r.voces) ? r.voces.join(' · ') : (r.voces || null), r.magistrados || null, r.materia || null,
     r.linkFicha || null, r.linkFallo || null, r.tipo || null, `zf${r.fuente}${r.corte ? ' zfcsjn' : ''}`];
 }
@@ -186,6 +195,45 @@ async function volverASumarCosechas() {
     db.exec('COMMIT');
   }
 }
+/* Los años que no se leyeron al importar (fechas «dd/mm/aaaa - Sentencia»): sin año, el filtro de años no los encuentra. */
+function completarAnios() {
+  try {
+    db.exec("UPDATE fallos SET anio = CAST(substr(fecha, 7, 4) AS INTEGER) WHERE anio IS NULL AND fecha GLOB '[0-3][0-9]/[01][0-9]/[12][0-9][0-9][0-9]*'");
+  } catch (e) { console.warn('[acervo] años:', e.message); }
+}
+/*
+ * Lo que guardaron las búsquedas en vivo (lib/indice.js, un JSON por base) entra
+ * también al acervo: así la copia local crece de a poco con cada búsqueda que el
+ * sitio sí contestó, sin barridos.
+ */
+const BASES_DEL_ACERVO = new Set(['mendoza', 'mendozalegal', 'caba', 'csjn', 'saij', 'dialnet', 'scba', 'juristeca', 'santafe', 'rionegro', 'corteidh']);
+async function sumarIndiceGuardado() {
+  let archivos = [];
+  try { archivos = (await fsp.readdir(DIR_INDICE)).filter((a) => a.endsWith('.json')); } catch { return; }
+  for (const a of archivos) {
+    const fuente = a.replace(/\.json$/, '');
+    if (!BASES_DEL_ACERVO.has(fuente)) continue;
+    let regs = [];
+    try { regs = Object.values(JSON.parse(await fsp.readFile(path.join(DIR_INDICE, a), 'utf8')).registros || {}); } catch { continue; }
+    const esta = db.prepare('SELECT 1 FROM fallos WHERE id = ?');
+    const nuevos = regs.filter((r) => r?.id && !esta.get(r.id));
+    // de a 500, cediendo el turno: al arrancar no se frena al servidor
+    for (let i = 0; i < nuevos.length; i += 500) {
+      db.exec('BEGIN');
+      try { for (const r of nuevos.slice(i, i + 500)) poner({ ...r, fuente }); db.exec('COMMIT'); } catch (e) { db.exec('ROLLBACK'); console.warn('[acervo] índice guardado:', e.message); break; }
+      await new Promise((ok) => setImmediate(ok));
+    }
+  }
+}
+/** Suma al acervo lo que trajo una búsqueda en vivo (sólo lo que todavía no estaba). */
+export async function sumarVivos(fuente, registros) {
+  if (!BASES_DEL_ACERVO.has(fuente) || !db || !estado.activo) return 0;
+  const regs = (registros || []).filter((r) => r?.id && (r.caratula || r.sumario)).map(({ variante, desdeAcervo, ...r }) => ({ ...r, fuente }));
+  if (!regs.length) return 0;
+  const ya = new Set(db.prepare(`SELECT id FROM fallos WHERE id IN (${regs.map(() => '?').join(',')})`).all(...regs.map((r) => r.id)).map((x) => x.id));
+  return agregarAlAcervo(regs.filter((r) => !ya.has(r.id)));
+}
+
 /** El texto guardado de esos fallos (id → sumario), para los resultados en vivo que llegan sin texto. */
 export function textosDe(ids) {
   const lista = [...new Set((ids || []).filter(Boolean))].slice(0, 200);
@@ -204,21 +252,8 @@ export function idsConTexto(fuente) {
 /** ¿El acervo tiene esta base? */
 export function acervoTiene(fuente) { return Boolean(db && estado.activo && estado.conteos[fuente]); }
 
-/* La consulta de FTS5: cada palabra por su raíz («indemniz*»), en el modo pedido. */
-const VACIAS = new Set('de del la las el los un una unos unas y e o u en al a ante con sin por para que se su sus lo le les es son como mas sobre entre desde hasta segun contra ni no'.split(' '));
-const plano = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-function terminos(s) { return plano(s).split(/[^a-z0-9ñ]+/).filter((w) => w.length >= 2 && !VACIAS.has(w)); }
-const raiz = (w) => (w.length > 7 ? w.slice(0, Math.max(5, w.length - 2)) : w);
-export function consultaFts(q, modo = 'todas', excluir = '') {
-  const ts = terminos(q);
-  if (!ts.length) return null;
-  let expr;
-  if (modo === 'exacta') expr = `"${ts.join(' ')}"`;
-  else expr = ts.map((w) => `"${raiz(w)}"*`).join(modo === 'alguna' ? ' OR ' : ' AND ');
-  const fuera = terminos(excluir);
-  if (fuera.length) expr = `(${expr}) NOT (${fuera.map((w) => `"${raiz(w)}"*`).join(' OR ')})`;
-  return expr;
-}
+import { consultaFts, paginaEn, PROVINCIA_DE_BASE } from './acervoConsulta.js';
+export { consultaFts };
 
 /**
  * Busca en el acervo. fuente: 'saij' (todo SAIJ), 'csjn' (la Corte), u otra
@@ -248,4 +283,68 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
     console.warn('[acervo] consulta:', e.message);
     return null;
   }
+}
+
+
+/** ¿Hay algo en el acervo para esta base? */
+export function acervoCubre(base) {
+  if (!db || !estado.activo) return false;
+  if (base === 'csjn') return Boolean(estado.conteos.csjn);
+  return Boolean(estado.conteos[base] || (PROVINCIA_DE_BASE[base] && estado.conteos.saij));
+}
+
+/*
+ * Las páginas de la copia local se piden a un hilo aparte (lib/acervoHilo.js):
+ * una búsqueda amplia puede tardar varios segundos, y hecha acá dejaba al
+ * servidor sin atender a nadie mientras tanto (con muchas a la vez, colgado).
+ * Una consulta que pasa ESPERA_HILO_MS (esperando turno o resolviéndose) se
+ * abandona: contesta el sitio en vivo. Si ya hay demasiadas esperando, no se
+ * encola una más.
+ */
+const ESPERA_HILO_MS = 12_000;
+const MAX_EN_COLA = 64;
+/* La cola vive acá y el hilo recibe de a una: una consulta abandonada mientras esperaba turno no llega a correr. */
+let hilo = null, sec = 0, enCurso = null;
+const cola = [];
+function hiloDeConsultas() {
+  if (hilo) return hilo;
+  hilo = new Worker(new URL('./acervoHilo.js', import.meta.url));
+  hilo.on('message', ({ id, r, error }) => {
+    if (error) console.warn('[acervo] página:', error);
+    if (enCurso?.id === id) { clearTimeout(enCurso.reloj); enCurso.ok(error ? null : r); }
+    enCurso = null;
+    siguiente();
+  });
+  hilo.on('error', (e) => console.warn('[acervo] hilo:', e.message));
+  hilo.on('exit', () => { hilo = null; if (enCurso) { clearTimeout(enCurso.reloj); enCurso.ok(null); enCurso = null; } siguiente(); });
+  return hilo;
+}
+function siguiente() {
+  if (enCurso) return;
+  const t = cola.shift();
+  if (!t) { hilo?.unref(); return; } // sin consultas, el hilo no retiene al proceso
+  enCurso = t;
+  hiloDeConsultas().ref();
+  hilo.postMessage({ id: t.id, archivo: path.join(DIR_BASE, 'acervo.db'), version: estado.version, base: t.base, q: t.q, opciones: t.opciones });
+}
+
+/**
+ * Una página de la copia local para una base, con su total exacto (ver
+ * paginaEn en lib/acervoConsulta.js). null si la copia no tiene esa base o si
+ * la consulta no terminó a tiempo.
+ */
+export function buscarPagina(base, q, opciones = {}) {
+  if (!acervoCubre(base) || cola.length >= MAX_EN_COLA) return Promise.resolve(null);
+  return new Promise((ok) => {
+    const t = { id: ++sec, base, q, opciones, ok };
+    // vencida: si todavía esperaba turno, sale de la cola y no corre; si ya corría, su resultado se descarta
+    t.reloj = setTimeout(() => {
+      const i = cola.indexOf(t);
+      if (i >= 0) cola.splice(i, 1);
+      t.ok = () => {};
+      ok(null);
+    }, ESPERA_HILO_MS);
+    cola.push(t);
+    siguiente();
+  });
 }

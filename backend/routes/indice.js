@@ -18,7 +18,7 @@ import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
-import { estadoAcervo, textosDe, agregarAlAcervo } from '../lib/acervo.js';
+import { estadoAcervo, textosDe, agregarAlAcervo, acervoCubre, buscarPagina, sumarVivos } from '../lib/acervo.js';
 import { IVSPasajes } from '../lib/pasajes.js';
 import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
 import { errores, ErrorApp } from '../lib/errores.js';
@@ -202,10 +202,52 @@ async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anio
 /** Largo máximo de una consulta de búsqueda. */
 const MAX_CONSULTA = 500;
 
+/*
+ * La copia local (el acervo, lib/acervo.js) contesta al instante y con el total
+ * exacto de lo que tiene, de a páginas. Se usa:
+ *   - cuando la pantalla la pide junto con la búsqueda en vivo (soloLocal), para
+ *     mostrar resultados enseguida mientras el sitio oficial contesta;
+ *   - para seguir paginando una búsqueda que vino de ahí (local);
+ *   - cuando el sitio no le contesta al servidor (firewall, caído, fuera de la
+ *     región): durante media hora no se lo hace esperar a nadie y se contesta con
+ *     la copia; una sola consulta de fondo vuelve a probar el sitio, y lo que
+ *     traiga entra a la copia.
+ * Cada búsqueda en vivo que sí contesta suma a la copia lo que todavía no tenía:
+ * así crece de a poco, con lo que la gente busca, sin barridos.
+ */
+const SIN_ACCESO_MS = 30 * 60 * 1000;
+const sinAcceso = new Map(); // base → hasta cuándo se contesta con la copia sin preguntarle al sitio
+const sondeos = new Map();   // base → cuándo se volvió a probar el sitio por última vez
+const accesible = (slug) => !(sinAcceso.get(slug) > Date.now());
+function sondear(slug, buscarVivo) {
+  if (Date.now() - (sondeos.get(slug) || 0) < SIN_ACCESO_MS) return;
+  sondeos.set(slug, Date.now());
+  buscarVivo()
+    .then((r) => { sinAcceso.delete(slug); sumarVivos(slug, r?.resultados).catch(() => {}); })
+    .catch(() => sinAcceso.set(slug, Date.now() + SIN_ACCESO_MS));
+}
+/** Una página de la copia local, con la forma de la respuesta en vivo. null si la copia no tiene esa base. */
+async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, desde = 0, porPagina = 20 }) {
+  const o = { modo: MODOS.has(modo) ? modo : 'todas', excluir: typeof excluir === 'string' ? excluir.slice(0, 200) : '',
+    ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}), ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}) };
+  let p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
+    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina });
+  // la copia tiene la base pero la consulta no terminó a tiempo: contesta el sitio en vivo
+  if (!p && acervoCubre(slug)) return null;
+  if (!p) {
+    // sin acervo para esa base: lo guardado por las búsquedas y el respaldo, también de a páginas
+    const lista = await buscarEnIndice(slug, consulta, o);
+    if (!lista.length) return null;
+    const pos = Math.max(0, desde);
+    p = { total: lista.length, resultados: lista.slice(pos, pos + porPagina), siguienteDesde: pos + porPagina < lista.length ? pos + porPagina : null };
+  }
+  return { total: p.total, totalFuente: null, siguienteDesde: p.siguienteDesde, resultados: p.resultados, totalParcial: false, revisados: 0, aflojado: false, desdeIndiceLocal: true };
+}
+
 // El catálogo de fuentes vive en lib/fuentes.js: lo comparten estas rutas y
 // el verificador de citas (lib/verificarCita.js).
 for (const { slug, buscar } of FUENTES) {
-  router.post(`/indice/${slug}/buscar`, async (req, res, next) => {
+  const atenderBusqueda = async (req, res, next) => {
     try {
       const cuerpo = req.body || {};
       const { pagina, desde, tribunal, modo, excluir, anioDesde, anioHasta, articulo, norma, provincia, variantes } = cuerpo;
@@ -228,57 +270,67 @@ for (const { slug, buscar } of FUENTES) {
       if (slug === 'caba') marcarUsoCaba(); // la cosecha de fondo le deja el sitio a quien está buscando
 
       const arranque = Date.now();
+      const desdeN = Number.isFinite(Number(desde)) && Number(desde) >= 0 ? Number(desde) : 0;
+      const pedidoLocal = { modo, excluir, anioDesde, anioHasta, provincia, tribunal, desde: desdeN };
+
+      // la copia local, a pedido (o para seguir paginando lo que vino de ahí)
+      if (cuerpo.soloLocal === true || cuerpo.local === true) {
+        const loc = await paginaLocal(slug, consulta, pedidoLocal);
+        if (!loc) return res.json({ ok: false, codigo: 'SIN_COPIA_LOCAL', fuente: slug });
+        return res.json({ ok: true, ...loc, ms: Date.now() - arranque });
+      }
+
       let total, totalFuente, siguienteDesde = null, resultados, desdeIndiceLocal = false, avisoFalla = null;
       let totalParcial = false, revisados = 0, aflojado = false;
+      const parametrosVivo = {
+        q: consulta,
+        pagina: Number(pagina) > 0 ? Number(pagina) : 1,
+        // El cursor: la fila del sitio donde sigue esta página. Lo devuelve
+        // el pedido anterior como "siguienteDesde" y el frontend lo manda
+        // de vuelta tal cual. Numerar las páginas no alcanza cuando el
+        // filtro corre de este lado — ver lib/paginarFiltrado.js.
+        ...(Number.isFinite(Number(desde)) && Number(desde) >= 0 ? { desde: Number(desde) } : {}),
+        // Rango de años. Ojo con el nombre: "desde" de arriba es el CURSOR
+        // (una fila del sitio) y esto es un AÑO — dos cosas distintas que
+        // se llaman parecido, de ahí "anioDesde". Se filtra en
+        // lib/relevancia.js, igual para las seis fuentes.
+        ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}),
+        ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}),
+        // El modo lo entiende cada fuente a su manera: CABA lo resuelve en
+        // el propio sitio, Mendoza y SAIJ lo filtran despues. Ver
+        // lib/relevancia.js.
+        ...(MODOS.has(modo) ? { modo } : {}),
+        ...(typeof excluir === 'string' && excluir.trim() ? { excluir: excluir.slice(0, 200) } : {}),
+        ...(typeof tribunal === 'string' && /^[A-Za-z0-9_-]{1,30}$/.test(tribunal) ? { tribunal } : {}),
+        // Sólo SAIJ: filtra por provincia (las demás fuentes lo ignoran).
+        ...(typeof provincia === 'string' && provincia.length <= 60 ? { provincia } : {}),
+      };
+
+      // un sitio que no le contesta al servidor: la copia, sin hacer esperar a nadie; de fondo se lo vuelve a probar
+      if (!accesible(slug) && acervoCubre(slug)) {
+        sondear(slug, () => buscar(parametrosVivo));
+        const loc = await paginaLocal(slug, consulta, pedidoLocal);
+        if (loc) return res.json({ ok: true, ...loc, ms: Date.now() - arranque });
+      }
 
       try {
-        ({ total, totalFuente = null, siguienteDesde = null, resultados, totalParcial = false, revisados = 0, aflojado = false } = await buscar({
-          q: consulta,
-          pagina: Number(pagina) > 0 ? Number(pagina) : 1,
-          // El cursor: la fila del sitio donde sigue esta página. Lo devuelve
-          // el pedido anterior como "siguienteDesde" y el frontend lo manda
-          // de vuelta tal cual. Numerar las páginas no alcanza cuando el
-          // filtro corre de este lado — ver lib/paginarFiltrado.js.
-          ...(Number.isFinite(Number(desde)) && Number(desde) >= 0 ? { desde: Number(desde) } : {}),
-          // Rango de años. Ojo con el nombre: "desde" de arriba es el CURSOR
-          // (una fila del sitio) y esto es un AÑO — dos cosas distintas que
-          // se llaman parecido, de ahí "anioDesde". Se filtra en
-          // lib/relevancia.js, igual para las seis fuentes.
-          ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}),
-          ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}),
-          // El modo lo entiende cada fuente a su manera: CABA lo resuelve en
-          // el propio sitio, Mendoza y SAIJ lo filtran despues. Ver
-          // lib/relevancia.js.
-          ...(MODOS.has(modo) ? { modo } : {}),
-          ...(typeof excluir === 'string' && excluir.trim() ? { excluir: excluir.slice(0, 200) } : {}),
-          ...(typeof tribunal === 'string' && /^[A-Za-z0-9_-]{1,30}$/.test(tribunal) ? { tribunal } : {}),
-          // Sólo SAIJ: filtra por provincia (las demás fuentes lo ignoran).
-          ...(typeof provincia === 'string' && provincia.length <= 60 ? { provincia } : {}),
-        }));
+        ({ total, totalFuente = null, siguienteDesde = null, resultados, totalParcial = false, revisados = 0, aflojado = false } = await buscar(parametrosVivo));
+        sinAcceso.delete(slug);
+        // lo que trajo el sitio y la copia todavía no tenía, a la copia (de fondo)
+        sumarVivos(slug, resultados).catch(() => {});
       } catch (e) {
         // El sitio de origen no respondió o cambió de forma —no dejamos a
         // quien busca sin nada: probamos con lo que ya quedó guardado de
         // búsquedas anteriores. Es parcial y puede estar viejo, pero es
         // mejor que un error en pantalla, y el frontend avisa que es local.
-        resultados = await buscarEnIndice(slug, consulta, {
-          modo, excluir,
-          ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}),
-          ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}),
-          ...(slug === 'saij' && typeof provincia === 'string' && provincia.length <= 60 ? { provincia } : {}),
-        });
-        total = resultados.length;
-        // El respaldo local no tiene "cuántos hay en el sitio": lo guardado
-        // es todo lo que hay. Va null y no un número para que el frontend no
-        // muestre un total de origen inventado.
-        totalFuente = null;
-        // Lo guardado se sirve de una sola vez: no hay página siguiente.
-        siguienteDesde = null;
-        totalParcial = false;
-        revisados = resultados.length;
-        aflojado = false;
-        desdeIndiceLocal = true;
+        // durante media hora, la copia contesta sin hacer esperar a nadie (ver sondear)
+        if (!(e instanceof ErrorApp && e.codigo === 'CONSULTA_VACIA')) sinAcceso.set(slug, Date.now() + SIN_ACCESO_MS);
+        // la copia local, de a páginas y con su total exacto. El sitio no dijo cuántos tiene:
+        // totalFuente va null para que la pantalla no muestre un total de origen inventado.
+        const loc = await paginaLocal(slug, consulta, pedidoLocal);
+        if (!loc || !loc.resultados.length) throw e instanceof ErrorApp ? e : errores.indiceFuenteFalla(slug, e?.message);
+        ({ total, totalFuente, siguienteDesde, resultados, totalParcial, revisados, aflojado, desdeIndiceLocal } = loc);
         avisoFalla = (e instanceof ErrorApp ? e.message : null) || 'El sitio de origen no respondió.';
-        if (!resultados.length) throw e instanceof ErrorApp ? e : errores.indiceFuenteFalla(slug, e?.message);
       }
 
       // CABA no siempre avisa con un error cuando algo salió mal: a veces
@@ -286,15 +338,9 @@ for (const { slug, buscar } of FUENTES) {
       // (visto con acentos que el sitio no matchea, ver lib/indiceCaba.js).
       // Antes de creerle el cero, se revisa si el índice local tiene algo.
       if (slug === 'caba' && total === 0) {
-        const locales = await buscarEnIndice(slug, consulta, { modo, excluir });
-        if (locales.length) {
-          resultados = locales;
-          total = locales.length;
-          totalFuente = null;
-          siguienteDesde = null;
-          totalParcial = true;
-          revisados = locales.length;
-          desdeIndiceLocal = true;
+        const loc = await paginaLocal(slug, consulta, pedidoLocal);
+        if (loc && loc.resultados.length) {
+          ({ total, totalFuente, siguienteDesde, resultados, totalParcial, revisados, aflojado, desdeIndiceLocal } = loc);
           avisoFalla = 'La fuente CABA no devolvió coincidencias; muestro resultados guardados localmente, que pueden estar desactualizados.';
         }
       }
@@ -379,6 +425,12 @@ for (const { slug, buscar } of FUENTES) {
     } catch (e) {
       next(e instanceof ErrorApp ? e : errores.indiceFuenteFalla(slug, e?.message));
     }
+  };
+  router.post(`/indice/${slug}/buscar`, atenderBusqueda);
+  // la copia local sola: no le pregunta nada a los sitios oficiales, así que no cuenta para el límite de peticiones (index.js)
+  router.post(`/indice/${slug}/local`, (req, res, next) => {
+    req.body = { ...(req.body || {}), local: true };
+    return atenderBusqueda(req, res, next);
   });
 
   /**
