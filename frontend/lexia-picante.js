@@ -19,6 +19,10 @@ var IVSPicante=(function(){
   }
   // [patrón, respuestas, dirigido]
   var G=[
+    /* ---- «sos re puta», «sos re hija de puta»: la respuesta de la casa ---- */
+    [/\bsos (una )?re ?(re ?)*(puta|hij[ao] de ?(re ?)?puta|hdp)\b/,
+      ["Lo único que regalo es jurisprudencia. Ojalá su madre pudiera decir lo mismo."]],
+
     /* ---- a la madre y la familia ---- */
     [/\b(hij[ao] ?de ?(re ?|mil ?|una ?)?puta|hdp|la (re ?)?puta que te (pario|re pario)|la (re ?)?concha de tu (madre|hermana|vieja|abuela|prima)|concha de tu madre|ctm|me cago en tu (vieja|madre|familia|abuela)|tu vieja en tanga|tu vieja)\b/,
       ["Tu vieja.","Tu vieja, y con costas.","Tu vieja. Fundamento: art. 1 del Código de Respuestas Obvias.",

@@ -45,6 +45,11 @@ test('no se dispara con consultas de verdad', () => {
   ]) assert.equal(r(x), '', `no debía contestar: «${x}» → «${r(x)}»`);
 });
 
+test('«sos re puta» y «sos re hija de puta» tienen su respuesta', () => {
+  for (const x of ['sos re puta', 'Sos re hija de puta!!', 'lexia sos re hija de puta', 'sos una re puta', 'sos re re puta', 'sos re hdp'])
+    assert.equal(r(x), 'Lo único que regalo es jurisprudencia. Ojalá su madre pudiera decir lo mismo.', x);
+});
+
 test('no repite la misma respuesta dos veces seguidas', () => {
   let antes = r('callate');
   for (let i = 0; i < 20; i++) { const ahora = r('callate'); assert.notEqual(ahora, antes); antes = ahora; }
