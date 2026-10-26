@@ -110,6 +110,7 @@ input,select,textarea{font:inherit;color:inherit}
 h1,h2,h3,h4{text-wrap:balance}
 ::selection{background:var(--gold);color:var(--bg)}
 /* el cursor de escritura (la barrita) tiene que verse: sin él, quien va a escribir cree que el campo no responde */
+*{caret-color:transparent}
 input,textarea,[contenteditable]{caret-color:var(--gold)}
 :focus-visible{outline:1px solid var(--gold);outline-offset:3px;border-radius:2px}
 ::placeholder{color:var(--mute-2);opacity:1}
@@ -213,7 +214,7 @@ strong,b{font-weight:500}
 .bq-barra{display:flex;align-items:center;gap:10px}
 .cq{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 22px;background:rgba(241,238,230,.03);transition:border-color .3s}
 .cq:focus-within{border-color:var(--gold)}
-.cq input[type=text]{flex:1;min-width:0;width:auto;border:0;padding:8px 0;font-size:18px;background:transparent}
+.cq input[type=text]{flex:1;min-width:0;width:auto;border:0;box-sizing:border-box;height:39px;padding:0;line-height:39px;font-size:18px;background:transparent}
 .cq .btn{flex:none;padding:11px 24px}
 .bq-barra>.chip{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:9px;box-sizing:border-box;height:39px;padding:0 18px;line-height:1}
 .fsb-flecha{flex:none;display:block;transition:transform .25s}
@@ -324,7 +325,7 @@ strong,b{font-weight:500}
   /* buscar */
   .bq-barra{flex-wrap:wrap;gap:8px}
   .cq{flex:1 1 100%;padding:4px 4px 4px 16px}
-  .cq input[type=text]{font-size:16px;padding:9px 0}
+  .cq input[type=text]{font-size:16px;height:37px;line-height:37px;padding:0}
   .cq .btn{padding:10px 20px}
   .bq-barra>.chip{height:36px;padding:0 14px;font-size:13px}
   .bq-sum{padding:8px 2px 0;font-size:12.5px}
