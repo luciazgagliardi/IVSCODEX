@@ -215,8 +215,10 @@ strong,b{font-weight:500}
 .cq:focus-within{border-color:var(--gold)}
 .cq input[type=text]{flex:1;min-width:0;width:auto;border:0;padding:8px 0;font-size:18px;background:transparent}
 .cq .btn{flex:none;padding:11px 24px}
-.bq-barra>.chip{flex:none;padding:11px 18px}
-.fsb-n{display:inline-block;min-width:18px;padding:1px 6px;border-radius:999px;background:var(--gold);color:var(--bg);font-size:11.5px;text-align:center}
+.bq-barra>.chip{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:9px;box-sizing:border-box;height:39px;padding:0 18px;line-height:1}
+.fsb-flecha{flex:none;display:block;transition:transform .25s}
+.bq-barra>.chip[aria-pressed="true"] .fsb-flecha{transform:rotate(180deg)}
+.fsb-n{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:24px;height:24px;padding:0 7px;border-radius:999px;background:var(--gold);color:var(--bg);font:600 13.5px/1 var(--sans);font-variant-numeric:tabular-nums}
 .bq .aviso-srv{margin:-10px 0 0!important;padding:0 4px;font-size:12.5px!important;color:var(--mute-2)!important;line-height:1.5}
 .bq-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:10px 4px 0;font-size:13px;color:var(--mute)}
 .bq-cuenta{margin-left:auto;color:var(--mute-2)}.bq-cuenta b{color:var(--fg);font-weight:500}
@@ -323,7 +325,7 @@ strong,b{font-weight:500}
   .cq{flex:1 1 100%;padding:4px 4px 4px 16px}
   .cq input[type=text]{font-size:16px;padding:9px 0}
   .cq .btn{padding:10px 20px}
-  .bq-barra>.chip{padding:8px 14px;font-size:13px}
+  .bq-barra>.chip{height:36px;padding:0 14px;font-size:13px}
   .bq-sum{padding:8px 2px 0;font-size:12.5px}
   .bq-cuenta{margin-left:0;width:100%}
   .aviso-srv{display:none}
@@ -4883,9 +4885,26 @@ function resultadosDe(f){
   var im=estado.indices[f.slug]||{};
   return (im.busco&&!im.error&&im.resultados)?im.resultados.filter(function(r){ return conTexto(f,r)!==false; }):[];
 }
+/* ¿El sumario que manda la base contiene lo buscado? Muchas veces no: el
+   buscador encontró la palabra en el fallo entero y el sumario habla de otra
+   cosa («despido» → un sumario sobre cosa juzgada). Ese sumario no sirve de
+   pasaje: no hay nada que marcar. Se recuerda por consulta. */
+function sumarioCoincide(r){
+  if(!r.sumario) return false;
+  var clave=estado.modo+"|"+estado.q;
+  if(r._coinQ!==clave){ r._coinQ=clave; r._coin=IVSPasajes.coincidencias(r.sumario,estado.q,{modo:estado.modo,tope:1}).length>0; }
+  return r._coin;
+}
+/* El pasaje de un resultado: el sumario si contiene lo buscado; si no, el
+   tramo del documento donde está (ver traerFragmentos); y sólo si el
+   documento no se pudo leer, el sumario tal cual. */
 function pasajeDe(f,r){
   var im=estado.indices[f.slug]||{}, uf=urlFragmento(f.slug,r);
-  return r.sumario||(uf&&im.fragmentos?im.fragmentos[uf]:"")||"";
+  if(sumarioCoincide(r)) return r.sumario;
+  var frag=uf&&im.fragmentos?im.fragmentos[uf]:"";
+  if(frag) return frag;
+  if(r.sumario&&uf&&im.fragmentos&&!im.fragmentos.hasOwnProperty(uf)) return "";
+  return r.sumario||"";
 }
 /* Un resultado se muestra sólo con su texto: true si ya tiene pasaje, "pendiente"
    si se está yendo a buscar al documento, false si no lo tiene. Dialnet no se
@@ -5012,7 +5031,7 @@ function vistaBuscar(){
   return '<div class="bq" id="panel-buscar-form">'+
       '<div class="bq-barra"><label class="cq"><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
         '<button class="btn" data-act="buscar-todas">Buscar</button></label>'+
-        '<button class="chip" data-act="tog-drawer" aria-pressed="'+(estado.drawer?"true":"false")+'">Filtros'+(ac.length?' <span class="fsb-n">'+ac.length+'</span>':'')+''+' '+(estado.drawer?"▴":"▾")+'</button></div>'+
+        '<button class="chip" data-act="tog-drawer" aria-pressed="'+(estado.drawer?"true":"false")+'"><span>Filtros</span>'+(ac.length?'<span class="fsb-n">'+ac.length+'</span>':'')+'<svg class="fsb-flecha" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>'+
       (tieneSug?'<div class="bq-sug bq-sug--abajo">'+sug+sugs+'</div>':'')+
       '<div class="bq-sum">'+(ac.length?ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join(""):'<span><b>Búsqueda irrestricta</b> · Todas las bases, jurisdicciones y períodos.</span>')+
         '<span class="bq-cuenta">'+(resp?'<b>'+tot.toLocaleString("es-AR")+'</b> resultados · '+resp+' de '+vis.length+' bases respondieron':'')+'</span></div>'+
@@ -5178,7 +5197,7 @@ function resaltarSimple(texto,q){
 }
 /* El pasaje de un resultado: el tramo con más palabras de la búsqueda, no el texto entero. */
 function pasajeResaltado(texto,q,largo){
-  return IVSPasajes.html(String(texto||""),String(q||""),{modo:estado.modo,largo:largo||460},esc);
+  return IVSPasajes.html(String(texto||""),String(q||""),{modo:estado.modo,largo:largo||320},esc);
 }
 
 /* Cada fuente trae los campos que su buscador ofrece: Mendoza da voces y
@@ -5370,7 +5389,7 @@ function fichaIndice(f,r){
   // De dónde sale el pasaje si el resultado no lo trae: del documento (PDF)
   // o, en Dialnet, del resumen de la ficha.
   var uf=urlFragmento(f.slug,r);
-  var pasaje=r.sumario||(uf?im.fragmentos[uf]:"");
+  var pasaje=pasajeDe(f,r);
   var esperando=!pasaje&&uf&&im.fragCargando&&!im.fragmentos.hasOwnProperty(uf);
   // Si se intentó y no se pudo, se dice por qué en vez de dejar la ficha sin nada.
   // sin avisos de falla: si no hay pasaje, quedan los datos y el botón del Lector
@@ -5401,7 +5420,7 @@ function fichaIndice(f,r){
       (metaEnc?'<span class="f-enc">'+metaEnc+'</span>':'')+
       (fechaEnc?'<span class="f-fecha">'+fechaEnc+'</span>':'')+'</div>'+
     '<h3 class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</h3>'+
-    (pasaje?'<p class="f-nota">'+pasajeResaltado(pasaje,q,1200)+'</p>':'')+
+    (pasaje?'<p class="f-nota">'+pasajeResaltado(pasaje,q,800)+'</p>':'')+
     (temas?'<p class="f-nota"><span style="opacity:.6">Temas que el TSJ asigna a este fallo: </span>'+resaltarSimple(temas,q)+'</p>':'')+
     (esperando?'<p class="f-nota" style="opacity:.55;font-style:italic">Buscando el pasaje en el documento…</p>':'')+
     (sinPasaje?'<p class="f-nota" style="opacity:.55;font-style:italic">'+esc(sinPasaje)+'</p>':'')+
@@ -5450,7 +5469,7 @@ function traerFragmentos(slug,pedido,carril){
   // tanda siguiente para siempre — un bucle infinito contra el servidor.
   var pendientes=im.resultados.filter(function(r){
     var u=urlFragmento(slug,r);
-    return u && !r.sumario && !im.fragmentos.hasOwnProperty(u) && !im.fragEnCurso[u];
+    return u && !sumarioCoincide(r) && !im.fragmentos.hasOwnProperty(u) && !im.fragEnCurso[u];
   });
   var faltan=pendientes.map(function(r){ return urlFragmento(slug,r); });
   if(!faltan.length){ if(!Object.keys(im.fragEnCurso).length){ im.fragCargando=false; render(); } return; }
@@ -5830,7 +5849,7 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   render();
   // Los resultados ya están en pantalla; los pasajes que esta fuente no
   // manda se van completando atrás, sin hacer esperar a nadie.
-  if(imBusco.resultados.some(function(r){return urlFragmento(slug,r)&&!r.sumario;})){
+  if(imBusco.resultados.some(function(r){return urlFragmento(slug,r)&&!sumarioCoincide(r);})){
     traerFragmentos(slug,imBusco.pedido);
   }
   var nombreTrib=(fCfg.tribunales||[]).filter(function(t){return t.v===imBusco.tribunal;})[0];
