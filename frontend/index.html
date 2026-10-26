@@ -258,7 +258,7 @@ strong,b{font-weight:500}
 .rz-busca{font-style:italic;opacity:.55}
 .rz-acc{margin:6px 0 0 16px}
 @media (max-width:640px){.rz-acc{margin-left:0}}
-.rz--nombre .rz-t mark{background:transparent;color:var(--gold);font-weight:600}
+.rz-t mark{background:transparent;color:var(--gold);font-weight:600}
 .nombre-av{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:0 0 14px;padding:12px 14px;border:1px solid var(--gold-55);border-radius:14px;background:rgba(217,163,27,.05)}
 .nombre-av-r{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600}
 .nombre-av-t{font-weight:600;min-width:0;overflow-wrap:anywhere}
@@ -4940,7 +4940,8 @@ function filaIndice(f,r,k,tambien){
     '<button type="button" class="mini" data-act="abrir-fila" data-k="'+esc(k)+'">Cerrar</button></div>';
   var pas=pasajeDe(f,r), meta=[r.tribunal,r.fecha].filter(Boolean).map(esc).join(" · ");
   var nom=r.coincideNombre?nombreBuscado(estado.q):null,qn=nom?nom.palabras.join(" "):estado.q;
-  var titulo=nom?resaltarSimple(r.caratula||r.expediente||"(sin carátula)",qn):esc(r.caratula||r.expediente||"(sin carátula)");
+  // el título también marca lo buscado: en SAIJ muchas veces la coincidencia está ahí («Despido, despido con causa…»)
+  var titulo=resaltarSimple(r.caratula||r.expediente||"(sin carátula)",nom?qn:estado.q);
   return '<article class="rz f-'+f.slug+(nom?' rz--nombre':'')+'" data-act="abrir-fila" data-k="'+esc(k)+'" tabindex="0">'+
     '<div class="rz-t"><span class="rf-punto"></span><span>'+titulo+'</span></div>'+
     '<div class="rz-m"><b>'+esc(f.cod)+'</b>'+(meta?' · '+meta:'')+(nom?' · <span class="rz-coincide">coincide con el nombre buscado</span>':'')+
