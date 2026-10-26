@@ -4983,8 +4983,6 @@ function conTexto(f,r){
 function cuantosDe(f,im){
   // Dialnet: los que de verdad tienen el término en su texto, no el total crudo del sitio
   if(f.slug==="dialnet") return (im.resultados||[]).filter(function(r){ return conTexto(f,r)===true; }).length;
-  // si lo de esta página es una muestra (el filtro corre de este lado), el número es el del sitio, no el de la muestra
-  if(im.parcial&&typeof im.totalFuente==="number"&&im.totalFuente>(im.total||0)) return im.totalFuente;
   return im.total||(im.resultados||[]).length;
 }
 function filaIndice(f,r,k,tambien){
@@ -5999,7 +5997,7 @@ function buscarEnFuente(slug,pagina){
   // no cada clic. Cambia solo con una búsqueda nueva, así que ir pasando
   // de página a mano no corta la precarga de fondo de esta misma búsqueda
   // (ver precargarPaginasIndice).
-  if(esNueva){ imBusco.busquedaId=(imBusco.busquedaId||0)+1; imBusco.paginas={}; imBusco.cursores={1:0}; imBusco.porCopia=false; }
+  if(esNueva){ imBusco.busquedaId=(imBusco.busquedaId||0)+1; imBusco.paginas={}; imBusco.cursores={1:0}; }
   var busquedaId=imBusco.busquedaId;
   imBusco.cargando=true; imBusco.error=null; imBusco.inicio=Date.now(); render();
   // El modo y las palabras a excluir viajan al servidor: antes se elegían
@@ -6037,25 +6035,7 @@ function buscarEnFuente(slug,pagina){
     var eqs=equivalentesDe(qi);
     if(eqs.length) cuerpo.variantes=eqs;
   }
-  // La copia local del servidor contesta al instante y con su total exacto: se
-  // muestra mientras el sitio oficial responde, y la respuesta en vivo la
-  // reemplaza al llegar (salvo que ya se esté hojeando la copia). Una búsqueda
-  // que vino de la copia se sigue paginando ahí.
-  if(!esNueva&&imBusco.local) cuerpo.local=true;
-  var vivoListo=false;
-  if(esNueva&&!estado.articulo){
-    fetch(estado.api+"/indice/"+slug+"/local",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cuerpo)})
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if(vivoListo||imBusco.pedido!==pedido||!d||!d.ok||!d.resultados||!d.resultados.length) return;
-        if(nom) d.resultados=IVSNombre.ordenar(d.resultados,nom);
-        imBusco.busco=true; imBusco.porCopia=true;
-        aplicarPaginaIndice(slug,fCfg,imBusco,d,1,false);
-        imBusco.paginas[1]=d;
-      })["catch"](function(){ /* sin copia: se espera al sitio, como siempre */ });
-  }
-  // la copia local va por …/local: no le pregunta a ningún sitio oficial y no cuenta para el límite de peticiones
-  var promesaBusco=fetch(estado.api+"/indice/"+slug+(cuerpo.local?"/local":"/buscar"),{
+  var promesaBusco=fetch(estado.api+"/indice/"+slug+"/buscar",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(cuerpo)
   }).then(function(r){ return r.json(); })
@@ -6094,10 +6074,6 @@ function buscarEnFuente(slug,pagina){
     function(err){ clearTimeout(idTope); throw err; })
     .then(function(d){
       if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
-      vivoListo=true;
-      // ya se está mostrando la copia: si el sitio no contestó, o si se está hojeando la copia, queda la copia
-      if(imBusco.porCopia&&(!d||!d.ok||imBusco.pagina>1)){ imBusco.cargando=false; render(); return; }
-      if(imBusco.porCopia&&esNueva){ imBusco.paginas={}; imBusco.cursores={1:0}; imBusco.porCopia=false; }
       imBusco.busco=true;
       if(!d||!d.ok){
         imBusco.cargando=false;
@@ -6109,7 +6085,7 @@ function buscarEnFuente(slug,pagina){
       // Se haya pedido a mano o de una búsqueda nueva, cualquier página que
       // de verdad se trajo del sitio queda guardada: volver a pasar por
       // ella (ida y vuelta entre páginas) también es instantáneo.
-      imBusco.paginas[paginaPedida]=d;
+      if(!d.desdeIndiceLocal) imBusco.paginas[paginaPedida]=d;
       // Búsqueda nueva, con más de una página y no demasiado grande: se van
       // trayendo las siguientes solas, de fondo, sin hacer esperar a nadie
       // (ver la nota grande de arriba de precargarPaginasIndice).
@@ -6143,6 +6119,7 @@ function buscarEnFuente(slug,pagina){
  * tanda, así que ahí no hay "página siguiente" que ofrecer.
  */
 function paginadorIndice(f,im){
+  if(im.local) return '';
   var porPagina=POR_PAGINA_INDICE;
   var actual=Math.max(1,im.pagina||1);
 

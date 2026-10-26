@@ -24,7 +24,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import readline from 'node:readline';
 import { fileURLToPath } from 'node:url';
-import { DIR_DATOS, DIR_INDICE } from '../config.js';
+import { DIR_DATOS } from '../config.js';
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 export const DIR_TANDAS = process.env.DIR_ACERVO_DATOS ? path.resolve(process.env.DIR_ACERVO_DATOS) : path.join(aqui, '..', 'acervo-datos');
@@ -65,14 +65,6 @@ function abrir(archivo) {
   d.exec(ESQUEMA);
   return d;
 }
-/** El año de una fecha: «27/07/2026 - Sentencia», «2026-07-27», «julio de 2026». */
-export function anioDe(fecha) {
-  const t = String(fecha || '');
-  const dmy = /\b\d{1,2}[/.-]\d{1,2}[/.-]((?:18|19|20)\d{2})\b/.exec(t) || /\b((?:18|19|20)\d{2})-\d{2}-\d{2}\b/.exec(t);
-  if (dmy) return Number(dmy[1]);
-  const sueltos = t.match(/\b(?:18|19|20)\d{2}\b/g);
-  return sueltos ? Number(sueltos[sueltos.length - 1]) : null;
-}
 const leerManifiesto = () => { try { return JSON.parse(fs.readFileSync(path.join(DIR_TANDAS, 'manifiesto.json'), 'utf8')); } catch { return null; } };
 
 /** Abre la base que haya y, si las tandas son de otra versión, las importa de fondo. */
@@ -86,7 +78,6 @@ export async function prepararAcervo({ esperar = false } = {}) {
       const m = db.prepare('SELECT valor FROM meta WHERE clave = ?');
       const deEsquema = m.get('esquema')?.valor === ESQUEMA_V;
       estado = { ...estado, activo: deEsquema, version: deEsquema ? (m.get('version')?.valor || null) : null, conteos: deEsquema ? JSON.parse(m.get('conteos')?.valor || '{}') : {} };
-      if (deEsquema) { completarAnios(); await sumarIndiceGuardado(); }
     } catch (e) { estado.error = e.message; db = null; }
   }
   const man = leerManifiesto();
@@ -115,7 +106,8 @@ async function importar(man) {
     for await (const linea of entrada) {
       if (!linea) continue;
       let r; try { r = JSON.parse(linea); } catch { continue; }
-      ins.run(r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, anioDe(r.fecha),
+      const m = /(\d{4})\s*$/.exec(String(r.fecha || ''));
+      ins.run(r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, m ? Number(m[1]) : null,
         r.expediente || null, r.sumario || null, Array.isArray(r.voces) ? r.voces.join(' · ') : (r.voces || null), r.magistrados || null, r.materia || null,
         r.linkFicha || null, r.linkFallo || null, r.tipo || null, `zf${r.fuente}${r.corte ? ' zfcsjn' : ''}`);
       conteos[r.fuente] = (conteos[r.fuente] || 0) + 1;
@@ -139,7 +131,6 @@ async function importar(man) {
   db = abrir(actual);
   estado = { activo: true, version: man.version, conteos, importando: false, error: null, segundos: Math.round((Date.now() - t0) / 1000) };
   await volverASumarCosechas();
-  await sumarIndiceGuardado();
   console.log(`[acervo] versión ${man.version}: ${Object.entries(conteos).map(([k, v]) => `${k} ${v}`).join(', ')} (${estado.segundos} s)`);
 }
 
@@ -148,7 +139,8 @@ export function estadoAcervo() { return { ...estado }; }
 /* ---------- lo cosechado por el servidor ---------- */
 const COLUMNAS = 'id,fuente,corte,provincia,caratula,tribunal,fecha,anio,expediente,sumario,voces,magistrados,materia,linkFicha,linkFallo,tipo,marca';
 function valores(r) {
-  return [r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, anioDe(r.fecha),
+  const m = /(\d{4})\s*$/.exec(String(r.fecha || ''));
+  return [r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, m ? Number(m[1]) : null,
     r.expediente || null, r.sumario || null, Array.isArray(r.voces) ? r.voces.join(' · ') : (r.voces || null), r.magistrados || null, r.materia || null,
     r.linkFicha || null, r.linkFallo || null, r.tipo || null, `zf${r.fuente}${r.corte ? ' zfcsjn' : ''}`];
 }
@@ -194,39 +186,6 @@ async function volverASumarCosechas() {
     db.exec('COMMIT');
   }
 }
-/* Los años que no se leyeron al importar (fechas «dd/mm/aaaa - Sentencia»): sin año, el filtro de años no los encuentra. */
-function completarAnios() {
-  try {
-    db.exec("UPDATE fallos SET anio = CAST(substr(fecha, 7, 4) AS INTEGER) WHERE anio IS NULL AND fecha GLOB '[0-3][0-9]/[01][0-9]/[12][0-9][0-9][0-9]*'");
-  } catch (e) { console.warn('[acervo] años:', e.message); }
-}
-/*
- * Lo que guardaron las búsquedas en vivo (lib/indice.js, un JSON por base) entra
- * también al acervo: así la copia local crece de a poco con cada búsqueda que el
- * sitio sí contestó, sin barridos.
- */
-const BASES_DEL_ACERVO = new Set(['mendoza', 'mendozalegal', 'caba', 'csjn', 'saij', 'dialnet', 'scba', 'juristeca', 'santafe', 'rionegro', 'corteidh']);
-async function sumarIndiceGuardado() {
-  let archivos = [];
-  try { archivos = (await fsp.readdir(DIR_INDICE)).filter((a) => a.endsWith('.json')); } catch { return; }
-  for (const a of archivos) {
-    const fuente = a.replace(/\.json$/, '');
-    if (!BASES_DEL_ACERVO.has(fuente)) continue;
-    let regs = [];
-    try { regs = Object.values(JSON.parse(await fsp.readFile(path.join(DIR_INDICE, a), 'utf8')).registros || {}); } catch { continue; }
-    db.exec('BEGIN');
-    try { for (const r of regs) if (r?.id) poner({ ...r, fuente }); db.exec('COMMIT'); } catch (e) { db.exec('ROLLBACK'); console.warn('[acervo] índice guardado:', e.message); }
-  }
-}
-/** Suma al acervo lo que trajo una búsqueda en vivo (sólo lo que todavía no estaba). */
-export async function sumarVivos(fuente, registros) {
-  if (!BASES_DEL_ACERVO.has(fuente) || !db || !estado.activo) return 0;
-  const regs = (registros || []).filter((r) => r?.id && (r.caratula || r.sumario)).map(({ variante, desdeAcervo, ...r }) => ({ ...r, fuente }));
-  if (!regs.length) return 0;
-  const ya = new Set(db.prepare(`SELECT id FROM fallos WHERE id IN (${regs.map(() => '?').join(',')})`).all(...regs.map((r) => r.id)).map((x) => x.id));
-  return agregarAlAcervo(regs.filter((r) => !ya.has(r.id)));
-}
-
 /** El texto guardado de esos fallos (id → sumario), para los resultados en vivo que llegan sin texto. */
 export function textosDe(ids) {
   const lista = [...new Set((ids || []).filter(Boolean))].slice(0, 200);
@@ -287,70 +246,6 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
     });
   } catch (e) {
     console.warn('[acervo] consulta:', e.message);
-    return null;
-  }
-}
-
-/*
- * Qué parte del acervo responde por cada base del buscador. Las provinciales
- * suman lo que SAIJ publica de su provincia (los tribunales locales que SAIJ
- * recoge); la Corte es lo de SAIJ marcado como de la Corte.
- */
-const PROVINCIA_DE_BASE = { mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires', santafe: 'Santa Fe', rionegro: 'Río Negro' };
-/* El selector de tribunal de Mendoza (SC, CC, CT), por el nombre del tribunal que trae cada ficha. */
-const TRIBUNAL_DE = { mendoza: { SC: '%SUPREMA%', CC: '%CIVIL%', CT: '%TRABAJO%' } };
-
-/** ¿Hay algo en el acervo para esta base? */
-export function acervoCubre(base) {
-  if (!db || !estado.activo) return false;
-  if (base === 'csjn') return Boolean(estado.conteos.csjn);
-  return Boolean(estado.conteos[base] || (PROVINCIA_DE_BASE[base] && estado.conteos.saij));
-}
-
-/**
- * Una página de resultados del acervo para una base, con el total EXACTO de
- * coincidencias (no una muestra) y el cursor de la siguiente: la posición en
- * la lista ordenada por relevancia. El orden es estable (relevancia y, a
- * igualdad, el número de fila), así que pasar de página no repite ni saltea
- * nada. Los duplicados exactos (la misma ficha guardada dos veces, con la
- * misma carátula, fecha y texto) cuentan una sola vez.
- */
-export function buscarPagina(base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', desde = 0, porPagina = 20 } = {}) {
-  if (!acervoCubre(base)) return null;
-  const expr = consultaFts(q, modo, excluir);
-  if (!expr) return { total: 0, resultados: [], siguienteDesde: null };
-  const prov = PROVINCIA_DE_BASE[base];
-  const marcas = base === 'csjn' ? ['csjn'] : [base, ...(prov && base !== 'saij' ? ['saij'] : [])];
-  const args = [`(${expr}) AND (${marcas.map((m) => `marca : zf${m}`).join(' OR ')})`];
-  const donde = [];
-  if (base === 'csjn') donde.push("(f.corte = 1 OR f.fuente = 'csjn')");
-  else if (prov && base !== 'saij') { donde.push("(f.fuente = ? OR (f.fuente = 'saij' AND f.provincia = ?))"); args.push(base, prov); }
-  else { donde.push('f.fuente = ?'); args.push(base); }
-  if (anioDesde) { donde.push('f.anio >= ?'); args.push(Number(anioDesde)); }
-  if (anioHasta) { donde.push('f.anio <= ?'); args.push(Number(anioHasta)); }
-  if (provincia) { donde.push('f.provincia = ?'); args.push(provincia); }
-  const trib = TRIBUNAL_DE[base]?.[tribunal];
-  if (trib) { donde.push("(f.fuente <> ? OR upper(coalesce(f.tribunal, '')) LIKE ?)"); args.push(base, trib); }
-  const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0) AS rel,
-      coalesce(lower(trim(f.caratula)), '') || '|' || coalesce(f.fecha, '') || '|' || substr(coalesce(f.sumario, f.id), 1, 80) AS clave
-    FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}`;
-  try {
-    // MATERIALIZED: bm25() sólo vale dentro de la consulta al índice, y así SQLite no la «aplana» hacia afuera.
-    // Una fila por clave: la de mejor relevancia (SQLite devuelve con min() la fila de ese mínimo).
-    // El total sale de la misma pasada (count() OVER), sin recorrer el índice dos veces.
-    const unicos = `WITH m AS MATERIALIZED (${coinciden}), u AS (SELECT rid, min(rel) AS rel FROM m GROUP BY clave)`;
-    const pos = Math.max(0, Number(desde) || 0), n = Math.min(100, Math.max(1, Number(porPagina) || 20));
-    const filas = db.prepare(`${unicos} SELECT f.*, count(*) OVER () AS total_ FROM u JOIN fallos f ON f.rid = u.rid ORDER BY u.rel, u.rid LIMIT ? OFFSET ?`).all(...args, n, pos);
-    const total = filas.length ? filas[0].total_ : db.prepare(`${unicos} SELECT count(*) AS n FROM u`).get(...args).n;
-    const resultados = filas.map((f) => {
-      const r = { id: f.id, caratula: f.caratula, tribunal: f.tribunal, fecha: f.fecha, expediente: f.expediente, sumario: f.sumario,
-        voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo, desdeAcervo: true };
-      for (const k of Object.keys(r)) if (r[k] == null) delete r[k];
-      return r;
-    });
-    return { total, resultados, siguienteDesde: pos + filas.length < total ? pos + filas.length : null };
-  } catch (e) {
-    console.warn('[acervo] página:', e.message);
     return null;
   }
 }
