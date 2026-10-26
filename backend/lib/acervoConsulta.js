@@ -10,12 +10,38 @@ const VACIAS = new Set('de del la las el los un una unos unas y e o u en al a an
 const plano = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 function terminos(s) { return plano(s).split(/[^a-z0-9ñ]+/).filter((w) => w.length >= 2 && !VACIAS.has(w)); }
 const raiz = (w) => (w.length > 7 ? w.slice(0, Math.max(5, w.length - 2)) : w);
-export function consultaFts(q, modo = 'todas', excluir = '') {
+/*
+ * Nombres de magistrados. Buscar «aida kemelmajer» tiene que traer los fallos
+ * que firmó, aunque la ficha diga sólo «Kemelmajer Romano Bohm»: si cada
+ * palabra buscada es un apellido que figura entre los magistrados (o un nombre
+ * de pila), también vale el apellido en el campo de los magistrados.
+ * «derecho romano» no: «derecho» no es un apellido de nadie.
+ */
+const NOMBRES_DE_PILA = new Set(('aida ada adela adriana alberto alejandra alejandro alicia ana andrea angel angela antonio armando beatriz carlos carmen carolina cecilia claudia cristina daniel daniela david diana diego eduardo elena elsa enrique ernesto estela eugenia eva federico fernanda fernando francisco gabriel gabriela graciela guillermo gustavo hector horacio hugo ines irma isabel jaime javier jorge jose josefina juan julia julio laura leonardo lidia lorena lucia luis manuel marcela marcelo marcos maria mariana mario marta martin miguel monica nelly norma oscar pablo patricia pedro rafael raul ricardo roberto rodolfo rosa ruben sandra santiago sergio silvia susana teresa tomas valeria veronica victor').split(' '));
+const NO_SON_APELLIDOS = new Set(['autor', 'autores', 'dres', 'dras', 'doctor', 'doctora', 'juez', 'jueza', 'ministro', 'ministra', 'conjuez', 'presidente', 'vocal', 'firmado']);
+/** Los apellidos de los magistrados de una base abierta (se calculan una vez por base). */
+const apellidosDe = new WeakMap();
+export function apellidos(db) {
+  if (apellidosDe.has(db)) return apellidosDe.get(db);
+  const set = new Set();
+  try {
+    for (const { magistrados } of db.prepare("SELECT DISTINCT magistrados FROM fallos WHERE magistrados IS NOT NULL AND magistrados <> ''").iterate())
+      for (const w of plano(magistrados).split(/[^a-z0-9ñ]+/)) if (w.length >= 3 && !VACIAS.has(w) && !NO_SON_APELLIDOS.has(w)) set.add(w);
+  } catch { /* base sin esa columna */ }
+  apellidosDe.set(db, set);
+  return set;
+}
+export function consultaFts(q, modo = 'todas', excluir = '', apellidosConocidos = null) {
   const ts = terminos(q);
   if (!ts.length) return null;
   let expr;
   if (modo === 'exacta') expr = `"${ts.join(' ')}"`;
   else expr = ts.map((w) => `"${raiz(w)}"*`).join(modo === 'alguna' ? ' OR ' : ' AND ');
+  if (apellidosConocidos && ts.length <= 5) {
+    const deApellido = ts.filter((w) => apellidosConocidos.has(w) && !NOMBRES_DE_PILA.has(w));
+    if (deApellido.length && ts.every((w) => apellidosConocidos.has(w) || NOMBRES_DE_PILA.has(w)))
+      expr = `(${expr}) OR (magistrados : (${deApellido.map((w) => `"${w}"`).join(' OR ')}))`;
+  }
   const fuera = terminos(excluir);
   if (fuera.length) expr = `(${expr}) NOT (${fuera.map((w) => `"${raiz(w)}"*`).join(' OR ')})`;
   return expr;
@@ -39,7 +65,7 @@ const TRIBUNAL_DE = { mendoza: { SC: '%SUPREMA%', CC: '%CIVIL%', CT: '%TRABAJO%'
  * —la misma carátula, fecha y texto— cuentan una sola vez.
  */
 export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', desde = 0, porPagina = 20 } = {}) {
-  const expr = consultaFts(q, modo, excluir);
+  const expr = consultaFts(q, modo, excluir, apellidos(db));
   if (!expr) return { total: 0, resultados: [], siguienteDesde: null };
   const prov = PROVINCIA_DE_BASE[base];
   const junta = Boolean(prov && base !== 'saij');
@@ -57,7 +83,7 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   // MATERIALIZED: bm25() sólo vale dentro de la consulta al índice, y así SQLite no la «aplana» hacia afuera.
   // Si se juntan dos orígenes, una fila por clave: la de mejor relevancia (SQLite devuelve con min() la fila de ese mínimo).
   // Una sola base no repite fichas (el id es único): no hace falta agrupar, que es lo caro en las consultas amplias.
-  const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0) AS rel${junta
+  const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0, 1.0) AS rel${junta
     ? ", coalesce(lower(trim(f.caratula)), '') || '|' || coalesce(f.fecha, '') || '|' || substr(coalesce(f.sumario, f.id), 1, 80) AS clave" : ''}
     FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}`;
   const unicos = junta
