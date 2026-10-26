@@ -21,6 +21,7 @@
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
+import os from 'node:os';
 import zlib from 'node:zlib';
 import readline from 'node:readline';
 import { Worker } from 'node:worker_threads';
@@ -87,7 +88,7 @@ export async function prepararAcervo({ esperar = false } = {}) {
       const m = db.prepare('SELECT valor FROM meta WHERE clave = ?');
       const deEsquema = m.get('esquema')?.valor === ESQUEMA_V;
       estado = { ...estado, activo: deEsquema, version: deEsquema ? (m.get('version')?.valor || null) : null, conteos: deEsquema ? JSON.parse(m.get('conteos')?.valor || '{}') : {} };
-      if (deEsquema) { completarAnios(); await sumarIndiceGuardado(); }
+      if (deEsquema) { completarAnios(); await sumarIndiceGuardado(); copiarParaLeer(); }
     } catch (e) { estado.error = e.message; db = null; }
   }
   const man = leerManifiesto();
@@ -138,9 +139,11 @@ async function importar(man) {
   for (const f of [`${actual}-wal`, `${actual}-shm`]) await fsp.rm(f, { force: true });
   await fsp.rename(nueva, actual);
   db = abrir(actual);
+  archivoLectura = null; // la copia de lectura era de la versión anterior
   estado = { activo: true, version: man.version, conteos, importando: false, error: null, segundos: Math.round((Date.now() - t0) / 1000) };
   await volverASumarCosechas();
   await sumarIndiceGuardado();
+  copiarParaLeer();
   console.log(`[acervo] versión ${man.version}: ${Object.entries(conteos).map(([k, v]) => `${k} ${v}`).join(', ')} (${estado.segundos} s)`);
 }
 
@@ -303,6 +306,37 @@ export function acervoCubre(base) {
  */
 const ESPERA_HILO_MS = 12_000;
 const MAX_EN_COLA = 64;
+/*
+ * En el servidor publicado la base vive en un disco de red (/home, lo único que
+ * sobrevive a los reinicios), lento para estas consultas: la misma página tarda
+ * diez veces más que en un disco común. Al abrirla se hace una copia en el disco
+ * local del servidor (rápido, se borra al reiniciar), de fondo y sin frenar nada
+ * (la copia en línea de SQLite, de a pasos), y el hilo de consultas lee de ahí.
+ * Lo que traen las búsquedas en vivo sigue entrando a la base de /home: llega a
+ * la copia de lectura en el próximo arranque.
+ */
+const COPIA_PARA_LEER = process.env.ACERVO_COPIA_LOCAL === '1' || Boolean(process.env.WEBSITE_SITE_NAME);
+let archivoLectura = null, copiando = false;
+async function copiarParaLeer() {
+  if (!COPIA_PARA_LEER || copiando || !db || !sqlite?.backup) return;
+  copiando = true;
+  const dir = path.join(os.tmpdir(), 'ivs-acervo');
+  const destino = path.join(dir, `acervo-${estado.version}.db`);
+  try {
+    await fsp.mkdir(dir, { recursive: true });
+    for (const viejo of await fsp.readdir(dir)) if (!viejo.startsWith(path.basename(destino))) await fsp.rm(path.join(dir, viejo), { force: true });
+    await fsp.rm(destino, { force: true });
+    const t0 = Date.now();
+    await sqlite.backup(db, `${destino}.tmp`, { rate: 2000 });
+    await fsp.rename(`${destino}.tmp`, destino);
+    archivoLectura = destino;
+    console.log(`[acervo] copia de lectura en el disco local (${Math.round((Date.now() - t0) / 1000)} s)`);
+  } catch (e) {
+    estado.errorCopia = e.message;
+    console.warn('[acervo] copia de lectura:', e.message);
+  } finally { copiando = false; }
+}
+
 /* La cola vive acá y el hilo recibe de a una: una consulta abandonada mientras esperaba turno no llega a correr. */
 let hilo = null, sec = 0, enCurso = null;
 const cola = [];
@@ -325,7 +359,8 @@ function siguiente() {
   if (!t) { hilo?.unref(); return; } // sin consultas, el hilo no retiene al proceso
   enCurso = t;
   hiloDeConsultas().ref();
-  hilo.postMessage({ id: t.id, archivo: path.join(DIR_BASE, 'acervo.db'), version: estado.version, base: t.base, q: t.q, opciones: t.opciones });
+  const archivo = archivoLectura || path.join(DIR_BASE, 'acervo.db');
+  hilo.postMessage({ id: t.id, archivo, version: `${estado.version}|${archivo}`, base: t.base, q: t.q, opciones: t.opciones });
 }
 
 /**
