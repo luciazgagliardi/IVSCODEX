@@ -254,6 +254,9 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
 }
 
 
+/** ¿Las consultas de la copia ya pueden contestar? (en el servidor publicado, cuando terminó la copia al disco local) */
+export function copiaLista() { return !COPIA_PARA_LEER || Boolean(archivoLectura); }
+
 /** ¿Hay algo en el acervo para esta base? */
 export function acervoCubre(base) {
   if (!db || !estado.activo) return false;
@@ -338,13 +341,15 @@ function siguiente() {
   while (cola.length) {
     const libre = hilos.find((h) => !h.enCurso) || (hilos.length < N_HILOS ? nuevoHilo() : null);
     if (!libre) return;
+    // en el servidor publicado, sólo desde la copia del disco local: hasta que esté, la copia no contesta
+    if (COPIA_PARA_LEER && !archivoLectura) { for (const x of cola.splice(0)) { clearTimeout(x.reloj); x.ok(null); } break; }
     const t = cola.shift();
     libre.enCurso = t;
     t.desde = Date.now();
     libre.w.ref();
     const archivo = archivoLectura || path.join(DIR_BASE, 'acervo.db');
     lectura().archivo = archivo;
-    libre.w.postMessage({ id: t.id, archivo, version: `${estado.version}|${generacion}|${archivo}`, base: t.base, q: t.q, opciones: t.opciones });
+    libre.w.postMessage({ id: t.id, archivo, version: `${estado.version}|${generacion}|${archivo}`, base: t.base, q: t.q, opciones: t.opciones, copiaPropia: archivo === archivoLectura });
   }
   for (const h of hilos) if (!h.enCurso) h.w.unref(); // sin consultas, los hilos no retienen al proceso
 }
