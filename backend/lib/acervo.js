@@ -393,7 +393,7 @@ function siguiente() {
 const RECUERDA_MS = 10 * 60 * 1000;
 const recordadas = new Map();
 const enVuelo = new Map();
-export function buscarPagina(base, q, opciones = {}, { espera = ESPERA_HILO_MS } = {}) {
+export function buscarPagina(base, q, opciones = {}, { espera = ESPERA_HILO_MS, prioridad = 1 } = {}) {
   if (!acervoCubre(base)) return Promise.resolve(null);
   const clave = JSON.stringify([estado.version, base, q, opciones]);
   const ya = recordadas.get(clave);
@@ -401,7 +401,7 @@ export function buscarPagina(base, q, opciones = {}, { espera = ESPERA_HILO_MS }
   if (enVuelo.has(clave)) return enVuelo.get(clave);
   if (cola.length >= MAX_EN_COLA) return Promise.resolve(null);
   const promesa = new Promise((ok) => {
-    const t = { id: ++sec, base, q, opciones, ok: (r) => { if (r) { recordadas.set(clave, { r, t: Date.now() }); if (recordadas.size > 400) recordadas.delete(recordadas.keys().next().value); } ok(r); } };
+    const t = { id: ++sec, base, q, opciones, prioridad, ok: (r) => { if (r) { recordadas.set(clave, { r, t: Date.now() }); if (recordadas.size > 400) recordadas.delete(recordadas.keys().next().value); } ok(r); } };
     // vencida: si todavía esperaba turno, sale de la cola y no corre; si ya corría, su resultado igual queda recordado
     t.reloj = setTimeout(() => {
       const i = cola.indexOf(t);
@@ -409,7 +409,9 @@ export function buscarPagina(base, q, opciones = {}, { espera = ESPERA_HILO_MS }
       t.ok = (r) => { if (r) recordadas.set(clave, { r, t: Date.now() }); };
       ok(null);
     }, espera);
-    cola.push(t);
+    // primero lo más urgente (la copia es la respuesta); a igual urgencia, por orden de llegada
+    const i = cola.findIndex((x) => x.prioridad < prioridad);
+    if (i < 0) cola.push(t); else cola.splice(i, 0, t);
     siguiente();
   }).finally(() => enVuelo.delete(clave));
   enVuelo.set(clave, promesa);

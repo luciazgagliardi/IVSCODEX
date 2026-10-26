@@ -232,7 +232,10 @@ async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta
     ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}), ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}) };
   // a pedido de la pantalla (vista previa) se espera poco; cuando el sitio no contestó, la copia es la respuesta y se la espera más
   let p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
-    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina }, { espera: respaldo ? 30_000 : 12_000 });
+    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina }, { espera: respaldo ? 30_000 : 12_000, prioridad: respaldo ? 3 : (accesible(slug) ? 0 : 2) });
+  // si la misma página estaba en curso para la vista previa y se le acabó su espera (más corta), se la pide de nuevo con la propia
+  if (!p && respaldo && acervoCubre(slug)) p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
+    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina }, { espera: 30_000, prioridad: 3 });
   // con acervo para esa base, la consulta de respaldo de acá no se hace: corre en el hilo principal y con muchas a la vez frenaría al servidor
   if (!p && acervoCubre(slug)) return null;
   if (!p) {
