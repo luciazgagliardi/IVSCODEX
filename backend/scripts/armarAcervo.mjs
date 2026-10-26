@@ -61,6 +61,13 @@ function poner(r) {
 
 // ---- SAIJ: fichas y sumarios ----
 const fichas = await leerCrudo('fallos');
+// los magistrados de cada fallo, desde su ficha completa (scripts/completarMagistradosSaij.mjs)
+try {
+  const mag = JSON.parse(await fs.readFile(path.join(CRUDO, 'saij-magistrados.json'), 'utf8'));
+  let n = 0;
+  for (const f of fichas) if (!f.m && mag[f.id]) { f.m = mag[f.id]; n++; }
+  console.log(`SAIJ: magistrados de ${n} fallos`);
+} catch { /* todavía no se completaron */ }
 const sumarios = await leerCrudo('sumarios');
 const fichaDeSumario = new Map();
 for (const f of fichas) for (const n of f.rel || []) if (!fichaDeSumario.has(n)) fichaDeSumario.set(n, f);

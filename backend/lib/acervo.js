@@ -48,7 +48,7 @@ async function modulo() {
 }
 
 // cambia cuando cambia la estructura de la base: obliga a reimportar aunque las tandas sean las mismas
-const ESQUEMA_V = '2';
+const ESQUEMA_V = '3'; // 3: los magistrados (y los autores de Dialnet) también en el índice de texto
 const ESQUEMA = `
 CREATE TABLE IF NOT EXISTS fallos(
   rid INTEGER PRIMARY KEY, id TEXT UNIQUE, fuente TEXT, corte INTEGER DEFAULT 0, provincia TEXT,
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS fallos(
 CREATE INDEX IF NOT EXISTS fallos_fuente ON fallos(fuente, anio);
 CREATE INDEX IF NOT EXISTS fallos_corte ON fallos(corte, anio);
 -- «marca»: la base como palabra del índice (zfsaij, zfcsjn…), así el filtro por base lo hace el propio índice
-CREATE VIRTUAL TABLE IF NOT EXISTS fts USING fts5(caratula, sumario, voces, marca, content='fallos', content_rowid='rid', tokenize='unicode61 remove_diacritics 2');
+CREATE VIRTUAL TABLE IF NOT EXISTS fts USING fts5(caratula, sumario, voces, marca, magistrados, content='fallos', content_rowid='rid', tokenize='unicode61 remove_diacritics 2');
 CREATE TABLE IF NOT EXISTS meta(clave TEXT PRIMARY KEY, valor TEXT);
 `;
 
@@ -159,15 +159,15 @@ function valores(r) {
 /* Pone (o actualiza) un fallo en la base abierta, con su índice de texto. */
 function poner(r) {
   const v = valores(r);
-  const ya = db.prepare('SELECT rid, caratula, sumario, voces, marca FROM fallos WHERE id = ?').get(r.id);
+  const ya = db.prepare('SELECT rid, caratula, sumario, voces, marca, magistrados FROM fallos WHERE id = ?').get(r.id);
   if (ya) {
-    db.prepare("INSERT INTO fts(fts, rowid, caratula, sumario, voces, marca) VALUES('delete', ?, ?, ?, ?, ?)").run(ya.rid, ya.caratula, ya.sumario, ya.voces, ya.marca);
+    db.prepare("INSERT INTO fts(fts, rowid, caratula, sumario, voces, marca, magistrados) VALUES('delete', ?, ?, ?, ?, ?, ?)").run(ya.rid, ya.caratula, ya.sumario, ya.voces, ya.marca, ya.magistrados);
     db.prepare(`UPDATE fallos SET (${COLUMNAS}) = (${COLUMNAS.split(',').map(() => '?').join(',')}) WHERE rid = ?`).run(...v, ya.rid);
-    db.prepare('INSERT INTO fts(rowid, caratula, sumario, voces, marca) VALUES(?, ?, ?, ?, ?)').run(ya.rid, v[4], v[9], v[10], v[16]);
+    db.prepare('INSERT INTO fts(rowid, caratula, sumario, voces, marca, magistrados) VALUES(?, ?, ?, ?, ?, ?)').run(ya.rid, v[4], v[9], v[10], v[16], v[11]);
     return false;
   }
   const rid = db.prepare(`INSERT INTO fallos(${COLUMNAS}) VALUES(${COLUMNAS.split(',').map(() => '?').join(',')})`).run(...v).lastInsertRowid;
-  db.prepare('INSERT INTO fts(rowid, caratula, sumario, voces, marca) VALUES(?, ?, ?, ?, ?)').run(rid, v[4], v[9], v[10], v[16]);
+  db.prepare('INSERT INTO fts(rowid, caratula, sumario, voces, marca, magistrados) VALUES(?, ?, ?, ?, ?, ?)').run(rid, v[4], v[9], v[10], v[16], v[11]);
   estado.conteos[r.fuente] = (estado.conteos[r.fuente] || 0) + 1;
   return true;
 }
@@ -275,7 +275,7 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
   args.push(Math.min(2000, Math.max(1, limite)));
   try {
     const filas = db.prepare(`SELECT f.* FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}
-      ORDER BY bm25(fts, 4.0, 1.0, 2.0, 0.0) LIMIT ?`).all(...args);
+      ORDER BY bm25(fts, 4.0, 1.0, 2.0, 0.0, 1.0) LIMIT ?`).all(...args);
     return filas.map((f) => {
       const r = { id: f.id, caratula: f.caratula, tribunal: f.tribunal, fecha: f.fecha, expediente: f.expediente, sumario: f.sumario,
         voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo, desdeAcervo: true };
