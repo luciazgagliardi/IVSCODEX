@@ -93,6 +93,8 @@
     tri.setAttribute("aria-hidden","true");tri.style.cssText="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible";
     poli.setAttribute("stroke-width","1");poli.setAttribute("stroke-linejoin","miter");poli.setAttribute("shape-rendering","geometricPrecision");
     tri.appendChild(poli);cv.parentNode.insertBefore(tri,cv.nextSibling);
+    /* o.sinHaces(W,H): sin las dos líneas de los extremos (la de arriba, amarilla, y la de abajo, celeste); el resto del prisma queda igual */
+    function sinH(){return typeof o.sinHaces==="function"?!!o.sinHaces(W,H):!!o.sinHaces;}
     function medir(){
       D=Math.min(devicePixelRatio||1,3);   /* se vuelve a medir con el zoom del navegador */
       W=cv.clientWidth;H=cv.clientHeight;cv.width=W*D;cv.height=H*D;
@@ -128,7 +130,9 @@
       /* en el fondo claro la luz no suma (no hay negro sobre el que brillar): se pinta normal y en oro más hondo */
       var cl=document.documentElement.getAttribute("data-tema")==="claro",LUZ=cl?"source-over":"lighter",ORO=cl?[168,118,8]:ORO0,CLARO=cl?[148,106,6]:CLARO0;
       ctx.globalCompositeOperation=LUZ;ctx.lineCap="round";ctx.lineJoin="round";
+      var sh=sinH();
       B.forEach(function(b,i){
+        if(sh&&(i===0||i===B.length-1))return;
         var g=ctx.createLinearGradient(0,0,P.x,0);g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
         ctx.strokeStyle=g;ctx.lineWidth=1.3;ctx.stroke();ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();
