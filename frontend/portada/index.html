@@ -78,11 +78,26 @@
 /* sin barra de desplazamiento visible: el contenido queda centrado y el grano cubre toda la ventana (se sigue desplazando con la rueda, el dedo y el teclado) */
 html{scrollbar-width:none}
 html::-webkit-scrollbar{display:none}
+/* sin barras de desplazamiento en ningún lado: se sigue desplazando con la rueda, el dedo y el teclado */
+*{scrollbar-width:none!important}
+*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+
 /* grano muy leve */
 .grano{opacity:.4!important;z-index:200!important}   /* el grano cubre toda la pantalla, también la barra de arriba */
 @media (max-width:760px){.grano{opacity:.3!important}}
+/* los datos de la cita: el texto de cada globo va centrado, también cuando «Tribunal» ocupa dos renglones */
+.camp span{display:inline-block;text-align:center;line-height:1.35;padding:6px 14px}
+/* celular: nada se pasa del ancho de la pantalla, así la página no se corre hacia los costados */
+@media (max-width:900px){
+  html{overflow-x:hidden;overflow-x:clip;overscroll-behavior-x:none}
+  body{max-width:100%}
+  .lab,.lab>*,.panel,.form,.form>*,.form label,.sal,.glos,.mesa,.ofr,.pie9{min-width:0;max-width:100%}
+  .form{grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr))}
+  .panel input[type=text],.panel input[type=date],.panel input[type=number],.panel select{min-width:0;max-width:100%}
+  .panel input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-height:46px;text-align:left}
+}
 </style></head><body>
-<script src="shared.js?v=20261026f"></script><script src="shared6.js?v=20261026"></script><script src="calculos.js?v=20261024a"></script>
+<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261026h"></script><script src="shared6.js?v=20261026d"></script><script src="calculos.js?v=20261024a"></script>
 <script>
 var m=IVS6.montar(),O=IVS4.OFERTAS;
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}

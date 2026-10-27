@@ -16,10 +16,18 @@
       function banda(W,H){return Math.max(40,Math.min(H*.13,H*.5-110));}
       function colocar(){var H=document.getElementById("hero6").offsetHeight,W=innerWidth,fondo=H*.5+banda(W,H),sube=H*.27;   /* la sección siguiente sube un 27 % para acortar el espacio */
         d.style.top=((fondo+H+mp()-sube)/2-d.offsetHeight/2)+"px";}
-      var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:.5,
-        band:function(W,H){var h=banda(W,H);return [.5-h/H,.5+h/H];},
+      /* celular: sin las líneas amarilla y celeste del costado izquierdo, y el prisma a la misma distancia del título y de «Desplace»
+         (se mide el triángulo entero, que sube s sobre el centro y baja s/2 por debajo) */
+      var cel=function(W){return W<=760;},t6=document.getElementById("h6t");
+      function cyCel(W,H){
+        if(!cel(W)) return .5;
+        var s=Math.min(W,H)*.1,arriba=t6.offsetTop+t6.offsetHeight,abajo=d.offsetTop;
+        return Math.max(.2,Math.min(.7,((arriba+abajo)/2+s*.25)/H));
+      }
+      var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:cyCel,sinHaces:cel,
+        band:function(W,H){var h=banda(W,H),c=cyCel(W,H);return [c-h/H,c+h/H];},   /* las entradas se reparten alrededor del prisma, no del centro de la pantalla */
         out:function(P,w,h){return [[w,P.y]];}});
-      colocar();addEventListener("resize",colocar);
+      colocar();pr.medir();addEventListener("resize",function(){colocar();pr.medir();});
       /* el fondo (claro u oscuro) es el mismo que el de la aplicación: se guarda en «ivs-tema» */
       var ops=[].slice.call(document.querySelectorAll(".tema-op"));
       function pon(c){
@@ -31,7 +39,8 @@
       ops.forEach(function(op){ op.addEventListener("click",function(){ var c=op.getAttribute("data-tema-op")==="claro"; pon(c); try{ localStorage.setItem("ivs-tema",c?"claro":"oscuro"); }catch(e){} }); });
       addEventListener("storage",function(e){ if(e.key==="ivs-tema") pon(e.newValue==="claro"); });
       window.IVS6.ponTema=pon;
-      if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){pr.medir();colocar();});
+      if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){colocar();pr.medir();});
+      addEventListener("load",function(){colocar();pr.medir();});
       return document.getElementById("m6");
     },
     /* el cierre común: las ocho bases, la advertencia y la llamada a la acción */

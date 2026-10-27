@@ -1466,6 +1466,70 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   .sugeridas .chips .chip{flex:none;padding:7px 13px 6px;font-size:13px}
   .bz-riel{padding-top:8px;padding-bottom:8px}
 }
+
+/* ---------- celular: pasada de pulido (sólo hasta 760 px; la compu no cambia) ----------
+   Va al final de todo para que ninguna regla de arriba la pise. */
+.solo-cel{display:none}
+.rail-sel{display:none}
+@media (max-width:760px){
+  /* nada se corre hacia los costados: la página queda fija y sólo se desplaza hacia arriba y abajo.
+     «hidden» antes de «clip» es el respaldo para los navegadores que no conocen «clip». */
+  html{overflow-x:hidden;overflow-x:clip;overscroll-behavior-x:none}
+  body{max-width:100%}
+  .wrap,#vista,.col,.cab,.bq,.panel,.blk,.her{min-width:0;max-width:100%}
+  input,select,textarea{max-width:100%;min-width:0}
+  input[type=date]{-webkit-appearance:none;appearance:none;display:block;width:100%;text-align:left}
+
+  /* subtítulos: se leen enteros, sin los tres puntos; la letra se achica un poco para que entren */
+  .cab>.aviso{display:block;-webkit-line-clamp:unset;overflow:visible;font-size:13.5px;line-height:1.5;cursor:default}
+  .cab>.aviso .av-tit{font-size:14.5px;line-height:1.35}
+
+  /* Ramas: un menú desplegable en lugar de los globos de arriba */
+  .ramas-indice{display:none}
+  .rail{position:relative;top:auto;z-index:40;margin:0}
+  .rail-sel{
+    appearance:none;display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;margin:0;padding:10px 2px 10px 0;
+    border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;color:var(--fg);font:400 16px/1.3 var(--sans);text-align:left;cursor:pointer
+  }
+  .rail-sel .rs-t{flex:none;color:var(--mute)}
+  .rail-sel .rs-v{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--gold)}
+  .rail-sel svg{flex:none;transition:transform .3s var(--ease)}
+  .rail.abierto .rail-sel svg{transform:rotate(180deg)}
+  .rail.abierto .rail-sel{border-bottom-color:var(--gold)}
+  .rail-cuerpo{
+    display:none;position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:60;max-height:min(50vh,400px);overflow-y:auto;overscroll-behavior:contain;
+    padding:14px 16px 10px;border:1px solid var(--line);border-radius:22px;background:var(--bg);box-shadow:0 18px 44px rgba(0,0,0,.5)
+  }
+  html[data-tema="claro"] .rail-cuerpo{background:var(--panel);box-shadow:0 18px 44px rgba(60,45,10,.2)}
+  .rail.abierto .rail-cuerpo{display:block}
+  /* adentro, la misma barra de la compu: buscador con filete y lista con punto dorado */
+  .rail-cuerpo h2{display:none}
+  .rail-cuerpo .rail-buscador{width:100%;margin-bottom:8px}
+  .rail-cuerpo .rail-list{flex-direction:column;flex-wrap:nowrap;overflow:visible;max-height:none;gap:0;padding:0 0 4px}
+  .rail-cuerpo .rail-list button{white-space:normal;padding:9px 0 9px 16px;border:0;border-radius:0;background:none;color:var(--tinta2)}
+  .rail-cuerpo .rail-list button[aria-pressed="true"]{background:none;border:0;color:var(--fg)}
+  .rail-cuerpo .rail-list button[aria-pressed="true"]::before{display:block}
+
+  /* Buscar · voces sugeridas: sólo seis, repartidas en dos columnas para que no queden huecos */
+  .bq-sug .panel .voces{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:6px}
+  .bq-sug .panel .voz{display:flex;align-items:center;justify-content:center;min-height:46px;margin:0;padding:8px 12px;text-align:center;font-size:13px;line-height:1.25;overflow-wrap:anywhere}
+  .bq-sug .panel .voces .voz:nth-child(n+7){display:none}
+  .bq-sug .panel{margin-bottom:6px}
+  .voces-tit{font-size:19px;line-height:1.25;margin-bottom:12px}
+
+  /* Verificar: el límite, en una sola frase corta */
+  .solo-pc{display:none}
+  .solo-cel{display:inline}
+
+  /* Herramientas: cada una en su globo, como las opciones del Lector */
+  .her{margin:0 0 16px;padding:22px 18px 20px;border:1px solid var(--line);border-radius:22px;background:rgba(var(--tx),.02)}
+  .her-cab{grid-template-columns:auto minmax(0,1fr);gap:0 14px;margin-bottom:16px}
+  .her-lista li{gap:6px 10px}
+  .her-nom{flex-basis:100%}
+}
+/* sin barras de desplazamiento en ningún lado: se sigue desplazando con la rueda, el dedo y el teclado */
+*{scrollbar-width:none!important}
+*::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 </style>
 </head>
 <body>
@@ -1481,7 +1545,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261026f" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261026m" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
@@ -4666,11 +4730,19 @@ function pintarRail(){
       '<div class="rail-fuentes">'+filas+'</div>'+
       '<button type="button" class="rf-todas" data-act="buscar-todas">Buscar en todas</button>';
   }
+  // En el celular las ramas son un menú desplegable («Ramas», con la rama
+  // elegida al lado); en la compu el botón no se ve y el cuerpo es la barra de siempre.
+  var elegida=estado.rama?RAMAS.filter(function(x){return x.id===estado.rama;})[0]:null;
+  r.classList.remove("abierto");
   r.innerHTML=fuentes+
+    '<button type="button" class="rail-sel" data-act="tog-ramas" aria-expanded="false" aria-haspopup="true" aria-controls="rail-cuerpo">'+
+      '<span class="rs-t">Ramas</span><span class="rs-v">'+(elegida?esc(comoTitulo(elegida.n)):'')+'</span>'+
+      '<svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
+    '<div class="rail-cuerpo" id="rail-cuerpo">'+
     '<h2>Ramas del derecho</h2>'+
     '<input type="text" id="buscarRama" class="rail-buscador" value="'+esc(estado.buscarRama)+
     '" placeholder="Buscar rama…" autocomplete="off">'+
-    '<div class="rail-list" id="listaRamas">'+listaRamasHTML()+'</div>';
+    '<div class="rail-list" id="listaRamas">'+listaRamasHTML()+'</div></div>';
 }
 
 function fichaFuente(f){
@@ -7383,9 +7455,10 @@ function vistaVerificar(){
     panelVerificadorCita()+
     resultadoCita()+
     '<div class="aviso" style="border-style:dashed"><span class="av-tit">Límite de la verificación</span>'+
-      'La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; '+
+      '<span class="solo-pc">La ausencia de coincidencias no demuestra la falsedad del fallo, ya que puede responder a faltas de indexación o carátulas alternativas; '+
       'asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, '+
-      'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</div>'+
+      'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</span>'+
+      '<span class="solo-cel">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</span></div>'+
     '<div class="blk"><h3>Guía de verificación</h3><div class="fichas">'+
       '<button type="button" class="ficha-paso">Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</button>'+
       '<button type="button" class="ficha-paso">Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</button>'+
@@ -9332,6 +9405,9 @@ function ajustarAlturaRail(){
 // estado (ni una búsqueda, ni una pestaña) — nada de lo que ya dispara
 // render() se entera de eso, así que hace falta un oyente propio.
 window.addEventListener("resize",ajustarAlturaRail);
+// En el celular la página no se corre hacia los costados: si algún navegador
+// la deja arrastrar de lado, vuelve sola al borde izquierdo.
+window.addEventListener("scroll",function(){ if(window.scrollX>0&&window.innerWidth<=760) window.scrollTo(0,window.scrollY); },{passive:true});
 
 /* ============================================================
    8. Eventos (delegación única)
@@ -9362,6 +9438,14 @@ document.addEventListener("click",function(ev){
   if(etiqueta) ev.preventDefault();
 });
 
+// El menú de ramas del celular se cierra al tocar cualquier otra cosa.
+document.addEventListener("click",function(ev){
+  var rl=document.getElementById("rail");
+  if(!rl||!rl.classList.contains("abierto")||(ev.target.closest&&ev.target.closest("#rail"))) return;
+  rl.classList.remove("abierto");
+  var bs=rl.querySelector(".rail-sel"); if(bs) bs.setAttribute("aria-expanded","false");
+});
+
 document.addEventListener("click",function(ev){
   var t=ev.target;
   var b=t.closest?t.closest("[data-act],[data-tab],[data-rama]"):null;
@@ -9371,6 +9455,11 @@ document.addEventListener("click",function(ev){
 
   var act=b.getAttribute("data-act");
 
+  if(act==="tog-ramas"){
+    var rl=document.getElementById("rail"), ab=!rl.classList.contains("abierto");
+    rl.classList.toggle("abierto",ab); b.setAttribute("aria-expanded",ab?"true":"false");
+    return;
+  }
   if(b.hasAttribute("data-rama")&&act!=="ir-rama"){
     estado.rama=b.getAttribute("data-rama")||""; render(); return;
   }
