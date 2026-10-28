@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · A · Resplandor</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="base.css">
+<style>
+/* campo de luz: manchas desenfocadas que derivan despacio, más un haz que cruza en diagonal */
+.luz{position:fixed;inset:0;z-index:0;overflow:hidden;background:var(--bg)}
+.luz i{position:absolute;border-radius:50%;filter:blur(72px);animation:deriva 28s ease-in-out infinite alternate;will-change:transform}
+.l1{width:64vw;height:64vw;left:-16vw;bottom:-30vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.95),rgba(var(--ember),.5) 46%,transparent 70%)}
+.l2{width:50vw;height:50vw;right:-12vw;top:4vh;background:radial-gradient(circle,rgba(var(--ember),.85),rgba(var(--vino),.5) 52%,transparent 72%);animation-duration:34s}
+.l3{width:32vw;height:32vw;left:40vw;top:-10vw;background:radial-gradient(circle,rgba(240,190,64,.55),transparent 70%);animation-duration:23s}
+.haz{position:absolute;left:-12%;top:34%;width:130%;height:20vh;transform:rotate(-13deg);background:linear-gradient(90deg,transparent,rgba(240,160,50,.55) 38%,rgba(255,214,110,.85) 56%,transparent);filter:blur(34px);opacity:.8}
+.luz::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(var(--bg-rgb),.55),transparent 32%,transparent 52%,rgba(var(--bg-rgb),.78))}
+@keyframes deriva{to{transform:translate3d(7vw,-5vh,0) scale(1.14)}}
+
+.pag{position:relative;z-index:2;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.cab{display:flex;align-items:center;gap:20px;padding:22px 0}
+.cab nav{margin:0 auto;gap:clamp(16px,2.2vw,32px);padding:11px 26px;color:var(--mute)}
+.cab nav a:hover{color:var(--fg)}
+.cab .btn{padding:11px 20px;font-size:14px}
+.hero{position:relative;flex:1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(24px,4vw,72px);align-items:end;padding:clamp(40px,8vh,96px) 0 clamp(96px,14vh,150px)}
+.kic{color:var(--fg);margin:0 0 22px}
+h1{margin:0 0 22px;font:400 clamp(44px,7.4vw,116px)/.96 var(--sans);letter-spacing:-.05em;text-wrap:balance}
+h1 em{font-style:normal;color:rgba(var(--fg-rgb),.62)}
+.lede{max-width:46ch;margin:0;color:var(--mute);font-size:clamp(15px,1.25vw,18px)}
+
+/* la tarjeta de vidrio: la consulta y dos ajustes */
+.busca{border-radius:30px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px;box-shadow:0 30px 80px rgba(0,0,0,.28)}
+.q{display:flex;align-items:center;gap:12px;padding:6px 6px 6px 20px;border-radius:999px;background:rgba(var(--bg-rgb),.42)}
+.q svg{width:19px;height:19px;flex:none;fill:none;stroke:var(--mute);stroke-width:1.7;stroke-linecap:round}
+.q input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:16px;padding:10px 0}
+.q input::placeholder{color:var(--dim)}
+.aj{display:grid;grid-template-columns:52px minmax(0,1fr) auto;align-items:center;gap:14px;padding:13px 20px;border-radius:999px;background:rgba(var(--fg-rgb),.1);font-size:14px}
+.aj>span{color:var(--mute)}
+.aj>b{font-weight:500;min-width:62px;text-align:right}
+.pista{display:flex;justify-content:space-between;align-items:center;position:relative;height:22px}
+.pista button{position:relative;flex:1;min-width:0;max-width:30px;height:22px;padding:0;border:0;background:none;display:grid;place-items:center}
+.pista button::before{content:"";width:5px;height:5px;border-radius:50%;background:rgba(var(--fg-rgb),.42);transition:all .3s var(--ease)}
+.pista button[aria-pressed="true"]::before{width:3px;height:22px;border-radius:2px;background:var(--fg);box-shadow:0 0 12px rgba(var(--fg-rgb),.6)}
+.bases{display:flex;flex-wrap:wrap;gap:8px;padding:2px 4px 4px}
+.bases .cap{padding:7px 13px;font-size:12.5px;letter-spacing:.04em;background:rgba(var(--fg-rgb),.07)}
+
+.flota{position:fixed;z-index:5;right:clamp(14px,2vw,28px);bottom:clamp(14px,2vw,28px);display:flex;flex-direction:column;gap:12px}
+@media (max-width:900px){
+  .cab nav{display:none}.cab .btn{margin-left:auto}
+  .hero{grid-template-columns:minmax(0,1fr);align-items:start;padding-top:clamp(28px,6vh,60px)}
+  .flota{flex-direction:row}
+}
+.eje-d{position:absolute;width:2px;height:2px;pointer-events:none}
+.eje-m{display:none;height:clamp(110px,16svh,160px)}
+@media (max-width:900px){.eje-d{display:none}.eje-m{display:block}}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="luz" aria-hidden="true"><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="haz"></i></div>
+
+<div class="pag">
+  <header class="cab">
+    <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+    <nav class="vid cap" aria-label="Secciones"><a href="#">Buscar</a><a href="#">Lector</a><a href="#">Ramas</a><a href="#">Cálculos</a><a href="#">Fuentes</a></nav>
+    <a class="btn" href="#">Iniciar la consulta</a>
+  </header>
+  <div class="eje-m" id="ejeM" aria-hidden="true"></div>
+
+  <main class="hero">
+    <i class="eje-d" id="ejeD" style="left:50%;top:30%" aria-hidden="true"></i>
+    <div>
+      <p class="kic vid cap"><span class="pto"></span>11 bases oficiales · 106 fuentes</p>
+      <h1>Una consulta.<br><em>Todas las bases oficiales.</em></h1>
+      <p class="lede">Buscador integrado de repositorios judiciales oficiales y doctrina. Cada resultado remite al documento del organismo que lo dictó.</p>
+    </div>
+
+    <form class="busca vid" onsubmit="return false" aria-label="Consulta">
+      <div class="q">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="m13.5 13.5 3.5 3.5"/></svg>
+        <label class="sr" for="q">Tema</label><input id="q" placeholder="Escriba el tema" value="daño moral">
+        <button class="btn" type="submit">Buscar</button>
+      </div>
+      <div class="aj" data-aj="anios"><span>Años</span><div class="pista" role="group" aria-label="Desde qué año"></div><b>Todos</b></div>
+      <div class="aj" data-aj="juris"><span>Dónde</span><div class="pista" role="group" aria-label="Jurisdicción"></div><b>Todas</b></div>
+      <div class="bases" aria-label="Bases">
+        <span class="cap b-scjm"><i class="dot"></i>SCJM</span><span class="cap b-mzl"><i class="dot"></i>MZA LEGAL</span><span class="cap b-tsj"><i class="dot"></i>TSJ</span><span class="cap b-scba"><i class="dot"></i>SCBA</span>
+        <span class="cap b-csjn"><i class="dot"></i>CSJN</span><span class="cap b-saij"><i class="dot"></i>SAIJ</span><span class="cap b-dial"><i class="dot"></i>DIALNET</span><span class="cap b-idh"><i class="dot"></i>CORTE IDH</span>
+      </div>
+    </form>
+  </main>
+</div>
+
+<div class="flota">
+  <button class="circ vid" type="button" aria-label="Ampliar"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></button>
+  <button class="circ vid" type="button" aria-label="Preguntarle a Lexia"><svg viewBox="0 0 24 24"><path d="M12 3.5l1.7 4.8 4.8 1.7-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7zM18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></button>
+</div>
+
+<script>
+/* los dos ajustes de vidrio: puntos que se tocan y un marcador que se corre */
+(function(){
+  var D={
+    anios:{t:["Todos","2020","2015","2010","2000","1990","1980"],ini:0},
+    juris:{t:["Todas","Nación","Mendoza","CABA","Buenos Aires","Provincias","Internacional"],ini:0}
+  };
+  [].forEach.call(document.querySelectorAll(".aj"),function(fila){
+    var d=D[fila.getAttribute("data-aj")],pista=fila.querySelector(".pista"),out=fila.querySelector("b");
+    d.t.forEach(function(txt,i){
+      var b=document.createElement("button"); b.type="button"; b.setAttribute("aria-label",txt); b.setAttribute("aria-pressed",String(i===d.ini));
+      b.addEventListener("click",function(){ [].forEach.call(pista.children,function(x){ x.setAttribute("aria-pressed","false"); }); b.setAttribute("aria-pressed","true"); out.textContent=txt; });
+      pista.appendChild(b);
+    });
+  });
+})();
+</script>
+<script src="../../portada/shared.js"></script>
+<script src="prisma.js"></script>
+<script>
+prismaEn({host:'.pag',eje:function(){ return document.getElementById(matchMedia('(max-width:900px)').matches?'ejeM':'ejeD'); }});
+</script>
+</body>
+</html>

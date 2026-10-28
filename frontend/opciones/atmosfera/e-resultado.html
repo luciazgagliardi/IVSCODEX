@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · E · Resultado</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="base.css">
+<style>
+.luz{position:fixed;inset:0;z-index:0;overflow:hidden;background:var(--bg)}
+.luz i{position:absolute;border-radius:50%;filter:blur(84px);animation:deriva 30s ease-in-out infinite alternate}
+.l1{right:-8vw;top:-6vw;width:62vw;height:62vw;background:radial-gradient(circle,rgba(var(--ember),.8),rgba(var(--vino),.5) 50%,transparent 72%)}
+.l2{right:14vw;bottom:-22vw;width:46vw;height:46vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.7),transparent 70%);animation-duration:24s}
+.l3{left:-18vw;bottom:-18vw;width:42vw;height:42vw;background:radial-gradient(circle,rgba(var(--vino),.45),transparent 70%)}
+.luz::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(var(--bg-rgb),.75),transparent 55%)}
+@keyframes deriva{to{transform:translate3d(-5vw,4vh,0) scale(1.1)}}
+
+.pag{position:relative;z-index:2;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.cab{display:flex;align-items:center;gap:20px;padding:22px 0}
+.cab .btn{margin-left:auto;padding:11px 20px;font-size:14px}
+.cuerpo{flex:1;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,5vw,90px);align-items:center;padding:clamp(10px,3vh,40px) 0 clamp(84px,12vh,120px)}
+.kic{margin:0 0 22px}
+h1{margin:0 0 20px;font:400 clamp(42px,6.2vw,98px)/.97 var(--sans);letter-spacing:-.05em;text-wrap:balance}
+h1 em{font-style:normal;color:rgba(var(--fg-rgb),.58)}
+.lede{max-width:42ch;margin:0 0 30px;color:var(--mute);font-size:clamp(15px,1.3vw,18px)}
+.acc{display:flex;gap:10px;flex-wrap:wrap}
+
+/* las fichas de vidrio: lo que devuelve una consulta, como objetos */
+.mesa{position:relative;height:min(640px,70svh);min-height:520px}
+.f{position:absolute;border-radius:30px;padding:22px 24px;box-shadow:0 34px 80px rgba(0,0,0,.34);transition:transform .6s var(--ease)}
+.f1{left:8%;top:0;width:74%;transform:rotate(-2.4deg);opacity:.78;padding-bottom:70px}
+.f2{left:20%;top:23%;width:78%;transform:rotate(1.2deg);z-index:2;background:rgba(var(--fg-rgb),.14)}
+.f3{left:0;bottom:2%;width:62%;transform:rotate(-1deg);z-index:3}
+.fila{display:flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12.5px;color:var(--mute)}
+.fila .cap{padding:6px 12px;font-size:12px;letter-spacing:.04em;background:rgba(var(--fg-rgb),.12)}
+.fila small{margin-left:auto;font-size:12px}
+.f h3{margin:0 0 10px;font:500 clamp(17px,1.6vw,21px)/1.25 var(--sans);letter-spacing:-.02em}
+.pas{margin:0 0 20px;font-size:15px;line-height:1.55;color:var(--mute)}
+.pas mark{background:rgba(var(--gold-rgb),.3);color:var(--fg);padding:1px 5px;border-radius:6px}
+.pie{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pie .btn{padding:10px 18px;font-size:13.5px}
+.ok{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mute)}
+.ok b{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:rgba(var(--gold-rgb),.9);color:#14110a;font-size:11px}
+.v-in{display:flex;align-items:center;gap:10px;padding:5px 5px 5px 16px;border-radius:999px;background:rgba(var(--bg-rgb),.4);font-size:13.5px;color:var(--mute);margin-bottom:12px}
+.v-in span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v-in .btn{padding:9px 16px;font-size:13px}
+
+@media (max-width:900px){
+  .cuerpo{grid-template-columns:minmax(0,1fr);align-items:start}
+  .mesa{height:auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+  .f{position:relative;left:auto!important;top:auto!important;bottom:auto!important;width:auto!important;transform:none!important;opacity:1;padding-bottom:22px}
+  .f1{display:none}
+}
+.eje-d{position:absolute;width:2px;height:2px;pointer-events:none}
+.eje-m{display:none;height:clamp(110px,16svh,160px)}
+@media (max-width:900px){.eje-d{display:none}.eje-m{display:block}}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="luz" aria-hidden="true"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+
+<div class="pag">
+  <header class="cab">
+    <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+    <a class="btn" href="#">Iniciar la consulta</a>
+  </header>
+  <div class="eje-m" id="ejeM" aria-hidden="true"></div>
+
+  <main class="cuerpo">
+    <div>
+      <p class="kic vid cap"><span class="pto"></span>Cada resultado remite a su fuente</p>
+      <h1>Lo que busca, <em>con su fuente a la vista.</em></h1>
+      <p class="lede">Once bases oficiales en una sola consulta. Cada resultado trae el tribunal, la fecha, el pasaje exacto y el enlace al documento del organismo que lo dictó.</p>
+      <div class="acc"><a class="btn" href="#">Iniciar la consulta</a><a class="btn suave" href="#">Ver el catálogo de fuentes</a></div>
+    </div>
+
+    <div class="mesa" id="mesa" aria-label="Ejemplo de resultados">
+      <i class="eje-d" id="ejeD" style="left:-9%;top:44%" aria-hidden="true"></i>
+      <article class="f f1 vid b-saij">
+        <div class="fila"><span class="cap"><i class="dot"></i>SAIJ</span><small>2019</small></div>
+        <h3>Gómez c/ Banco Andino s/ incumplimiento</h3>
+        <p class="pas">…el incumplimiento contractual no genera por sí solo daño moral…</p>
+      </article>
+      <article class="f f2 vid b-csjn">
+        <div class="fila"><span class="cap"><i class="dot"></i>CSJN</span><span>Fallos 330:1234</span><small>2007</small></div>
+        <h3>Pérez c/ Provincia de Mendoza s/ daños y perjuicios</h3>
+        <p class="pas">…el <mark>daño moral</mark> debe ser reparado con criterio de razonabilidad, atendiendo a la entidad del padecimiento y no como una sanción…</p>
+        <div class="pie"><a class="btn" href="#">Ver en la fuente ↗</a><span class="ok"><b>✓</b>Documento oficial</span></div>
+      </article>
+      <article class="f f3 vid">
+        <div class="fila"><span class="cap">Verificar una cita</span></div>
+        <div class="v-in"><span>CSJN, Fallos 330:1234 (2007)</span><a class="btn" href="#">Comprobar</a></div>
+        <span class="ok"><b>✓</b>La cita existe en la base oficial</span>
+      </article>
+    </div>
+  </main>
+</div>
+
+<script>
+/* las fichas siguen apenas al puntero, como flotando sobre la mesa */
+(function(){
+  var m=document.getElementById("mesa"); if(!m||matchMedia("(max-width:900px)").matches||matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  var fs=[].slice.call(m.querySelectorAll(".f")), base=fs.map(function(f){ return getComputedStyle(f).transform; }), k=[10,16,22];
+  addEventListener("pointermove",function(e){
+    var x=(e.clientX/innerWidth-.5), y=(e.clientY/innerHeight-.5);
+    fs.forEach(function(f,i){ f.style.translate=(-x*k[i])+"px "+(-y*k[i])+"px"; });
+  });
+})();
+</script>
+<script src="../../portada/shared.js"></script>
+<script src="prisma.js"></script>
+<script>
+prismaEn({host:'.pag',eje:function(){ return document.getElementById(matchMedia('(max-width:900px)').matches?'ejeM':'ejeD'); }});
+</script>
+</body>
+</html>

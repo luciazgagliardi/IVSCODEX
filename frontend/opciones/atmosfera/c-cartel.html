@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · C · Cartel</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="base.css">
+<style>
+/* imagen de larga exposición hecha con luz: bandas verticales desenfocadas, inclinadas, que se corren muy despacio */
+.mov{position:fixed;inset:0;z-index:0;overflow:hidden;background:var(--bg)}
+.mov i{position:absolute;top:-12vh;transform:skewX(-13deg);filter:blur(62px);animation:corre 24s ease-in-out infinite alternate;will-change:transform}
+.m1{left:4%;width:36vw;height:66vh;background:linear-gradient(180deg,rgba(var(--gold-rgb),.95),rgba(var(--ember),.85) 70%,transparent)}
+.m2{left:30%;width:20vw;height:60vh;top:-4vh;background:linear-gradient(180deg,rgba(244,196,72,.85),rgba(233,135,46,.5) 70%,transparent);animation-duration:30s;animation-direction:alternate-reverse}
+.m3{left:46%;width:32vw;height:56vh;top:10vh;background:linear-gradient(180deg,rgba(var(--vino),.95),rgba(var(--agua),.6) 75%,transparent);animation-duration:27s}
+.m4{left:68%;width:24vw;height:48vh;top:2vh;background:linear-gradient(180deg,rgba(var(--ember),.8),rgba(var(--gold-rgb),.35) 80%,transparent);animation-duration:33s;animation-direction:alternate-reverse}
+.mov::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 38%,rgba(var(--bg-rgb),.7) 62%,var(--bg) 84%),linear-gradient(90deg,rgba(var(--bg-rgb),.35),transparent 30%,transparent 70%,rgba(var(--bg-rgb),.35))}
+@keyframes corre{to{transform:skewX(-13deg) translate3d(5vw,2vh,0)}}
+
+.pag{position:relative;z-index:2;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.cab{display:flex;align-items:center;gap:16px;padding:22px 0}
+.cab .circ{margin-left:auto;width:46px;height:46px}
+.cartel{flex:1;display:grid;grid-template-rows:1fr auto;align-content:end;padding-bottom:clamp(86px,12vh,120px)}
+.marca{margin:0 0 clamp(22px,4vh,40px);font-size:clamp(46px,14.2vw,226px);line-height:.9;filter:drop-shadow(0 0 .3em rgba(var(--gold-rgb),.28))}
+.pie{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px 40px;align-items:end;margin-bottom:clamp(22px,4vh,40px)}
+.etq{display:flex;flex-wrap:wrap;gap:8px;max-width:620px}
+.etq .cap{padding:8px 15px;font-size:13px;letter-spacing:.03em;background:rgba(var(--fg-rgb),.13)}
+.texto{margin:0;justify-self:end;max-width:40ch;text-align:right;color:var(--mute);font-size:clamp(15px,1.3vw,18px)}
+.texto b{font-weight:400;color:var(--fg)}
+.cta{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;max-width:640px;margin:0 auto;padding:20px 28px;border-radius:999px;background:var(--fg);color:var(--bg);font-size:16.5px;font-weight:500;transition:transform .35s var(--ease),background .3s}
+.cta:hover{transform:translateY(-2px);background:var(--gold)}
+.cta svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nota{margin:16px 0 0;text-align:center;font-size:12.5px;color:var(--dim)}
+@media (max-width:760px){
+  .pie{grid-template-columns:1fr;gap:18px}
+  .texto{justify-self:start;text-align:left}
+  .etq{order:2}
+  .marca{font-size:clamp(40px,14vw,120px)}
+}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="mov" aria-hidden="true"><i class="m1"></i><i class="m2"></i><i class="m3"></i><i class="m4"></i></div>
+
+<div class="pag">
+  <header class="cab">
+    <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+    <button class="circ vid" type="button" aria-label="Menú"><svg viewBox="0 0 24 24"><path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="2.6"/></svg></button>
+  </header>
+
+  <main class="cartel">
+    <h1 class="marca logo" aria-label="IVS CODEX"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></h1>
+
+    <div class="pie">
+      <div class="etq" aria-label="Bases">
+        <span class="cap b-scjm"><i class="dot"></i>Mendoza</span><span class="cap b-tsj"><i class="dot"></i>CABA</span><span class="cap b-csjn"><i class="dot"></i>La Nación</span>
+        <span class="cap b-scba"><i class="dot"></i>Provincias</span><span class="cap b-dial"><i class="dot"></i>Doctrina</span><span class="cap b-idh"><i class="dot"></i>Internacional</span>
+      </div>
+      <p class="texto"><b>Todas las bases oficiales, en una consulta.</b> Cada resultado remite al documento del organismo que lo dictó.</p>
+    </div>
+
+    <a class="cta" href="#">Iniciar la consulta <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <p class="nota">11 bases · 106 fuentes · Verifique siempre en la fuente</p>
+  </main>
+</div>
+<script src="../../portada/shared.js"></script>
+<script src="prisma.js"></script>
+<script>
+prismaEn({host:'.pag',eje:function(h){ var c=document.querySelector('.cab').getBoundingClientRect(), m=document.querySelector('.marca').getBoundingClientRect(); return {x:h.width/2,y:(c.bottom+m.top)/2-h.top}; }});
+</script>
+</body>
+</html>

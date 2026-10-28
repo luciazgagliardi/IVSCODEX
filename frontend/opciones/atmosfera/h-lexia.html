@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · H · Lexia</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="base.css">
+<style>
+/* el telón: un rojo de vino con luz que se mueve, como la referencia del asistente */
+.luz{position:fixed;inset:0;z-index:0;overflow:hidden;background:var(--bg)}
+.luz i{position:absolute;border-radius:50%;filter:blur(76px);animation:deriva 26s ease-in-out infinite alternate}
+.l1{left:-10vw;top:-12vw;width:62vw;height:62vw;background:radial-gradient(circle,rgba(var(--ember),.95),rgba(var(--vino),.6) 52%,transparent 74%)}
+.l2{right:-14vw;top:20vh;width:56vw;height:56vw;background:radial-gradient(circle,rgba(var(--vino),.9),rgba(var(--gold-rgb),.25) 58%,transparent 76%);animation-duration:32s}
+.l3{left:22vw;bottom:-26vw;width:56vw;height:56vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.75),transparent 70%);animation-duration:22s}
+.luz::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(var(--bg-rgb),.5),transparent 28%,transparent 60%,rgba(var(--bg-rgb),.66))}
+@keyframes deriva{to{transform:translate3d(5vw,-4vh,0) scale(1.12)}}
+
+.pag{position:relative;z-index:2;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.cab{display:flex;align-items:center;gap:20px;padding:22px 0}
+.cab .btn{margin-left:auto;padding:11px 20px;font-size:14px}
+.centro{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(18px,3.4vh,34px);padding:6px 0 clamp(80px,11vh,120px)}
+.nombre{margin:0;font-size:clamp(34px,5.4vw,70px);line-height:1;filter:drop-shadow(0 0 .3em rgba(var(--gold-rgb),.3))}
+
+/* la tarjeta de Lexia */
+.lx{position:relative;width:min(640px,100%);border-radius:38px;padding:clamp(20px,3vw,30px);background:linear-gradient(160deg,rgba(var(--fg-rgb),.2),rgba(var(--fg-rgb),.07));-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);box-shadow:0 40px 100px rgba(0,0,0,.36)}
+.lx-cab{display:flex;align-items:center;gap:12px;margin-bottom:clamp(20px,4vh,40px)}
+.lx-cab b{font-weight:500;font-size:16px}
+.lx-cab small{display:block;color:var(--mute);font-size:12.5px;margin-top:1px}
+.lx-cab .circ{margin-left:auto;width:42px;height:42px}
+.av{width:42px;height:42px;border-radius:50%;flex:none;background:radial-gradient(circle at 34% 30%,#ffe9bd,rgba(var(--gold-rgb),1) 45%,rgb(var(--ember)));box-shadow:0 0 22px rgba(var(--gold-rgb),.55)}
+.lx h1{margin:0 0 6px;font:400 clamp(30px,4.4vw,46px)/1.04 var(--sans);letter-spacing:-.04em}
+.lx p.s{margin:0 0 clamp(18px,3vh,28px);color:var(--mute);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:clamp(18px,3vh,26px)}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:9px 9px 9px 16px;border:0;border-radius:999px;background:rgba(var(--fg-rgb),.1);font-size:13.5px;text-align:left;transition:background .3s}
+.chip:hover{background:rgba(var(--fg-rgb),.2)}
+.chip i{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:rgba(var(--fg-rgb),.14);font-style:normal;font-size:15px;line-height:1}
+.ent{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 8px;border-radius:999px;background:rgba(var(--bg-rgb),.4)}
+.ent .av{width:38px;height:38px}
+.ent input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:15.5px;padding:10px 4px}
+.ent input::placeholder{color:var(--dim)}
+.ent button{display:grid;place-items:center;width:42px;height:42px;padding:0;border:0;border-radius:50%;background:var(--fg);color:var(--bg);transition:background .3s,transform .3s var(--ease)}
+.ent button:hover{background:var(--gold);transform:scale(1.05)}
+.ent button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.alt{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.alt .btn{padding:12px 22px;font-size:14px}
+.pie{text-align:center;font-size:12.5px;color:var(--dim);margin:0}
+@media (max-width:560px){.lx{border-radius:30px}.chip{font-size:13px}}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="luz" aria-hidden="true"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+
+<div class="pag">
+  <header class="cab">
+    <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+    <a class="btn" href="#">Iniciar la consulta</a>
+  </header>
+
+  <main class="centro">
+    <h1 class="nombre logo" aria-label="IVS CODEX"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></h1>
+
+    <section class="lx" aria-label="Lexia, la asistente">
+      <i id="ejeL" style="position:absolute;width:2px;height:2px;left:50%;top:36%" aria-hidden="true"></i>
+      <div class="lx-cab">
+        <i class="av" aria-hidden="true"></i>
+        <div><b>Lexia</b><small>asistente virtual</small></div>
+        <button class="circ vid" type="button" aria-label="Ampliar"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg></button>
+      </div>
+      <h1>¿Qué anda <br>buscando?</h1>
+      <p class="s">Busco jurisprudencia, explico los filtros y lo guío por la página.</p>
+      <div class="chips" id="chips">
+        <button class="chip" type="button" data-t="daño moral en Mendoza desde 2018">Daño moral en Mendoza <i>+</i></button>
+        <button class="chip" type="button" data-t="¿Cuánto dura el plazo para apelar?">Plazo para apelar <i>+</i></button>
+        <button class="chip" type="button" data-t="Verificar la cita CSJN, Fallos 330:1234">Verificar una cita <i>+</i></button>
+        <button class="chip" type="button" data-t="Guiarme por la página">Guiarme por la página <i>+</i></button>
+      </div>
+      <form class="ent" onsubmit="return false" aria-label="Escribirle a Lexia">
+        <i class="av" aria-hidden="true"></i>
+        <label class="sr" for="q">Su consulta</label><input id="q" placeholder="Escríbame lo que necesita…">
+        <button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+      </form>
+    </section>
+
+    <div class="alt"><a class="btn suave" href="#">Ver el catálogo de fuentes</a><a class="btn" href="#">Iniciar la consulta</a></div>
+    <p class="pie">11 bases · 106 fuentes · Verifique siempre en la fuente</p>
+  </main>
+</div>
+
+<script>
+/* tocar una sugerencia la pone en el campo */
+(function(){
+  var q=document.getElementById("q");
+  document.getElementById("chips").addEventListener("click",function(e){
+    var c=e.target.closest(".chip"); if(!c) return;
+    q.value=c.getAttribute("data-t"); q.focus();
+  });
+})();
+</script>
+<script src="../../portada/shared.js"></script>
+<script src="prisma.js"></script>
+<script>
+prismaEn({host:'.pag',eje:'#ejeL'});
+</script>
+</body>
+</html>
