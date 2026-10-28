@@ -1,0 +1,31 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Instrument+Sans:wght@400;500&display=swap"><link rel="stylesheet" href="base.css"><title>IVS CODEX · Índice</title>
+<style>
+/* 2 · ÍNDICE — la portada es el catálogo: las seis bases como un índice de libro.
+   El movimiento ocurre solo cuando se pasa por encima de una fila. */
+.ix{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(30px,6vw,110px);padding:clamp(24px,5vh,70px) var(--pad) clamp(60px,10vw,140px)}
+.ix-l{position:sticky;top:24px;align-self:start}
+.ix-l .o{margin:0 0 22px;font:500 12px/1 var(--caps);letter-spacing:.24em;color:var(--gold)}
+h1{margin:0 0 24px;font:500 clamp(34px,4.4vw,70px)/1.02 var(--sans);letter-spacing:-.04em;text-wrap:balance}
+.ix-l p{margin:0 0 30px;max-width:40ch;color:var(--mute)}
+.ix-r{border-top:1px solid var(--line)}
+.f{--c:var(--gold);position:relative;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:4px 18px;align-items:baseline;padding:clamp(18px,2.4vw,30px) 0;border-bottom:1px solid var(--line);transition:padding .5s var(--ease)}
+.f::before{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;background:var(--c);transition:width .7s var(--ease)}
+.f .n{font:300 15px/1 var(--caps);letter-spacing:.14em;color:var(--dim);font-variant-numeric:lining-nums}
+.f h2{margin:0;font:400 clamp(24px,2.6vw,38px)/1.1 var(--serif);letter-spacing:-.01em}
+.f .cod{font:500 12px/1 var(--caps);letter-spacing:.18em;color:var(--c)}
+.f p{grid-column:2;margin:6px 0 0;max-width:52ch;font-size:14.5px;color:var(--mute);max-height:0;opacity:0;overflow:hidden;transition:max-height .6s var(--ease),opacity .5s,margin .5s}
+.f:hover,.f:focus-visible{padding-left:14px}
+.f:hover::before,.f:focus-visible::before{width:100%}
+.f:hover p,.f:focus-visible p{max-height:90px;opacity:1}
+@media (hover:none){.f p{max-height:none;opacity:1}}
+@media (max-width:860px){.ix{grid-template-columns:1fr}.ix-l{position:static}}
+</style><script src="../tema.js"></script></head><body><div class="grano" aria-hidden="true"></div><header class="hdr"><a class="nom" href="#" aria-label="IVS CODEX">I<b>V</b>S<i></i>CODE<b>X</b></a><nav aria-label="Secciones"><a href="#">Consulta</a><a href="#">Lector</a><a href="#">Cálculos</a><a href="#">Fuentes</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<main class="ix"><div class="ix-l"><p class="o reveal" style="--d:80">INDEX</p>
+<h1 class="reveal" style="--d:180">Buscador integrado de repositorios judiciales oficiales y doctrina.</h1>
+<p class="reveal" style="--d:300">Una consulta recorre seis repositorios a la vez. Cada resultado conserva su procedencia y el enlace al documento de origen.</p>
+<div class="acciones reveal" style="--d:420"><a class="btn" href="#">Iniciar la consulta</a><a class="btn btn--sec" href="#">Verificar una cita</a></div></div>
+<div class="ix-r" id="lista"></div></main>
+<p class="pie"><strong>Verifique siempre en la fuente antes de citar.</strong> La ausencia de coincidencias no demuestra la falsedad del fallo.</p>
+<script src="fuentes.js"></script>
+<script>document.getElementById("lista").innerHTML=BASES.map(function(b,i){return '<a class="f reveal" href="#" style="--c:'+b.c+';--d:'+(300+i*90)+'"><span class="n">0'+(i+1)+'</span><h2>'+b.n+'</h2><span class="cod">'+b.cod+'</span><p>'+b.d+'</p></a>';}).join("");</script>
+</body></html>

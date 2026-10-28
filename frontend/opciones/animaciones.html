@@ -11,7 +11,7 @@
 /* Seis fondos animados para el interior del sello, en lugar de los renglones de texto.
    En todos, los fallos aparecen en distintos puntos del círculo y el fondo se aparta
    para dejarles lugar (y se cierra cuando se van). */
-:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.6);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.16);--gold:#d9a31b;
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(var(--fg-rgb,241,238,230),.6);--dim:rgba(var(--fg-rgb,241,238,230),.38);--line:rgba(var(--fg-rgb,241,238,230),.16);--gold:#d9a31b;
   --caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;--ease:cubic-bezier(.16,.84,.24,1)}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -40,14 +40,14 @@ body{height:100vh;height:100dvh;margin:0;background:var(--bg);color:var(--fg);fo
 .fb .n i{display:inline-block;font-style:normal;opacity:0;transform:translateY(5px);transition:opacity .9s var(--ease),transform .9s var(--ease);transition-delay:calc(var(--d) * 1ms)}
 .fb .d{font:400 27px/1.1 var(--sans);color:var(--gold);opacity:0;transition:opacity .9s var(--ease) .7s}
 .fb .f,.fb .a,.fb .c{margin:0;opacity:0;transform:translateY(4px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
-.fb .f{margin-top:12px;font-size:15px;line-height:19px;color:rgba(241,238,230,.82);transition-delay:1.3s}
+.fb .f{margin-top:12px;font-size:15px;line-height:19px;color:rgba(var(--fg-rgb,241,238,230),.82);transition-delay:1.3s}
 .fb .a{margin-top:9px;font-size:12.5px;line-height:17px;color:var(--mute);transition-delay:1.8s}
 .fb .c{margin-top:8px;font:500 13px/1.2 var(--caps);letter-spacing:.06em;color:var(--gold);transition-delay:2.3s}
 .fb.on .n i,.fb.on .d,.fb.on .f,.fb.on .a,.fb.on .c{opacity:1;transform:none}
 .fb.off .n i,.fb.off .d,.fb.off .f,.fb.off .a,.fb.off .c{opacity:0;transform:translateY(-3px);transition-duration:.55s;transition-delay:0s}
 @media (max-width:760px){.desc{margin-left:0}}
 </style>
-</head>
+<script src="tema.js"></script></head>
 <body>
 <div class="grano" aria-hidden="true"></div>
 <header class="top">

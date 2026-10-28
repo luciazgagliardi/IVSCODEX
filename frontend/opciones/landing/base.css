@@ -1,0 +1,42 @@
+/* Base común de las cinco propuestas de portada: mismos colores, tipografías,
+   grano quieto, cabecera y botones en cápsula. Lo que cambia es la composición
+   y la animación de cada una. */
+:root{
+  --bg:#100e0b;--fg:#f1eee6;--mute:rgba(var(--fg-rgb,241,238,230),.62);--dim:rgba(var(--fg-rgb,241,238,230),.36);--line:rgba(var(--fg-rgb,241,238,230),.14);
+  --gold:#d9a31b;--caps:"Cormorant SC","Trajan Pro",Georgia,serif;--serif:"Cormorant",Georgia,serif;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --pad:clamp(20px,4.2vw,64px);--ease:cubic-bezier(.16,.84,.24,1);
+  --f1:#d9a62a;--f2:#b58640;--f3:#d5873f;--f4:#c95836;--f5:#b03b42;--f6:#a04a68;
+  color-scheme:dark
+}
+*{box-sizing:border-box}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+::selection{background:var(--gold);color:var(--x14110a,#14110a)}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit}
+/* grano quieto y fino (una sola capa, sin movimiento) */
+.grano{position:fixed;inset:0;z-index:50;pointer-events:none;background:url("../../grano.png") 0 0/256px 256px repeat;opacity:.75}
+@media (max-width:760px){.grano{background-image:url("../../grano-m.png");background-size:128px 128px;opacity:.6}}
+
+.hdr{position:relative;z-index:10;display:flex;align-items:center;gap:clamp(20px,4vw,64px);padding:22px var(--pad)}
+.nom{font:500 18px/1 var(--caps);letter-spacing:.3em;white-space:nowrap}
+.nom b{font-weight:500;color:var(--gold)}
+.nom i{display:inline-block;width:.17em;height:.17em;margin:0 calc(.3em + .005em) 0 0;border-radius:50%;background:var(--gold);vertical-align:.24em}
+.hdr nav{display:flex;gap:clamp(16px,2vw,30px);font-size:15px;color:var(--mute)}
+.hdr nav a:hover{color:var(--gold)}
+.hdr .btn{margin-left:auto}
+@media (max-width:760px){.hdr nav{display:none}.hdr .btn{padding:9px 14px;font-size:13px}}
+
+.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 24px;border:1px solid var(--gold);border-radius:999px;background:var(--gold);color:var(--x14110a,#14110a);font:500 15px/1 var(--sans);cursor:pointer;transition:background .3s,border-color .3s,color .3s}
+.btn:hover{background:var(--fg);border-color:var(--fg)}
+.btn--sec{background:none;border-color:var(--line);color:var(--fg)}
+.btn--sec:hover{background:none;border-color:var(--gold);color:var(--gold)}
+.acciones{display:flex;flex-wrap:wrap;gap:12px}
+
+.pie{padding:clamp(40px,7vw,90px) var(--pad) 40px;color:var(--mute);font-size:14px;max-width:80ch}
+.pie strong{color:var(--fg);font-weight:500}
+
+.reveal{opacity:0;transform:translateY(16px);animation:entra .9s var(--ease) forwards;animation-delay:calc(var(--d,0) * 1ms)}
+@keyframes entra{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}

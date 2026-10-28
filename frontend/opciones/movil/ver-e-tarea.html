@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IVS CODEX · Celular E · Buscar, leer, citar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>/* Base para presentar flujos: varias pantallas de teléfono lado a lado. */
+:root{
+  --bg:#100e0b;--sup:#17140f;--sup2:#1e1a14;--fg:#f1eee6;--mute:rgba(var(--fg-rgb,241,238,230),.64);--dim:rgba(var(--fg-rgb,241,238,230),.4);
+  --line:rgba(var(--fg-rgb,241,238,230),.1);--line2:rgba(var(--fg-rgb,241,238,230),.18);--gold:#d9a31b;--gold-s:rgba(var(--gold-rgb,217,163,27),.14);--gold2:rgba(var(--gold-rgb,217,163,27),.5);
+  --c-mza:#d9a62a;--c-caba:#d5873f;--c-scba:#c06a2c;--c-csjn:#c95836;--c-saij:#b03b42;--c-idh:#5f7f9a;--ok:#7fb48a;
+  --caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--x100e0b,#0a0907);color:var(--fg);font:400 15px/1.45 var(--sans);-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+.presenta{max-width:1260px;margin:0 auto;padding:32px 16px 60px}
+.presenta>h1{margin:0 0 6px;font:500 24px/1.2 var(--sans)}
+.presenta>p{margin:0 0 26px;max-width:72ch;color:var(--mute);font-size:14.5px}
+.flujo{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+.paso{display:flex;flex-direction:column;gap:10px;align-items:center}
+.paso>figcaption{max-width:360px;font-size:13px;color:var(--mute);text-align:center}
+.paso>figcaption b{display:block;color:var(--fg);font-weight:500;margin-bottom:2px}
+.tel{position:relative;width:375px;height:780px;max-width:calc(100vw - 32px);border-radius:42px;overflow:hidden;background:var(--bg);border:1px solid var(--line2);transform:translateZ(0);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.pant{position:absolute;inset:0;overflow-y:auto;scrollbar-width:none}
+.pant::-webkit-scrollbar{display:none}
+.estado-sis{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font-size:13px;font-weight:500}
+mark{background:var(--gold-s);color:var(--fg);border-radius:3px;padding:0 2px}
+.marca{font:500 14px/1 var(--caps);letter-spacing:.28em}
+.marca b{color:var(--gold);font-weight:500}
+.marca i{display:inline-block;width:.2em;height:.2em;margin:0 .12em;border-radius:50%;background:var(--gold);vertical-align:.25em}
+.sigla{display:inline-flex;align-items:center;gap:6px;font:500 11px/1 var(--caps);letter-spacing:.14em;color:var(--mute)}
+.sigla::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c,var(--gold))}
+svg.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.cap{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:none;font-size:13.5px;white-space:nowrap}
+.cap.on{background:var(--fg);border-color:var(--fg);color:var(--x14110a,#14110a)}
+.cap .n{font-size:11.5px;opacity:.65}
+.oro{background:var(--gold);border-color:var(--gold);color:var(--x14110a,#14110a);font-weight:500}
+.tabbar{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 8px 26px;background:rgba(var(--bg-rgb,16,14,11),.96);border-top:1px solid var(--line);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.tabbar button{min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:0;background:none;color:var(--dim);font-size:11px}
+.tabbar button[aria-current]{color:var(--fg)}
+.tabbar button[aria-current] svg{color:var(--gold)}
+.ejemplo{margin-top:24px;text-align:center;font-size:12px;color:var(--dim)}
+</style>
+<style>
+/* E · Buscar, leer, citar. Decisiones de UI:
+   - El flujo real del abogado es lineal: escribe, elige, lee, cita. Cada
+     pantalla resuelve un paso y oculta lo demás.
+   - Mientras escribe, el autocompletado ya ofrece las formas equivalentes del
+     tesauro (la parte más valiosa de IVS CODEX, hoy escondida).
+   - Resultados agrupados por base, de a tres, con «Ver los 237»: se ve de un
+     vistazo qué base aporta qué, sin un carrusel interminable.
+   - El fallo se abre a pantalla completa (sin barra de pestañas), con un control
+     «2 de 7 ▲▼» para saltar entre coincidencias y una barra de acciones abajo:
+     Citar, Guardar, Compartir y Preguntar (Lexia sobre ESTE fallo).
+   - Lexia no flota: es la opción de la izquierda del buscador y la acción
+     «Preguntar» del lector. Aparece donde hace falta. */
+.top{display:flex;align-items:center;gap:10px;padding:4px 16px 10px}
+.volver{width:44px;height:44px;display:grid;place-items:center;border:0;background:none;color:var(--mute);margin-left:-10px}
+.buscador{flex:1;display:flex;align-items:center;gap:6px;height:46px;padding:0 6px 0 6px;border-radius:999px;border:1px solid var(--gold2);background:var(--sup)}
+.buscador .lx{display:flex;align-items:center;gap:6px;height:34px;padding:0 10px;border-radius:999px;background:var(--gold-s);font-size:12.5px;color:var(--gold)}
+.buscador .t{flex:1;font-size:15px}
+.buscador .t i{display:inline-block;width:1.5px;height:17px;background:var(--gold);vertical-align:-3px;margin-left:1px}
+.buscador .x{width:34px;height:34px;display:grid;place-items:center;color:var(--dim)}
+.grupo-t{margin:14px 20px 6px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.sug{display:flex;align-items:center;gap:12px;min-height:50px;padding:0 20px;font-size:15px}
+.sug .ic{color:var(--dim)}
+.sug small{display:block;font-size:12.5px;color:var(--dim)}
+.sug .ir{margin-left:auto;color:var(--dim)}
+.eq{margin:4px 16px 0;padding:14px;border-radius:16px;background:var(--sup)}
+.eq p{margin:0 0 10px;font-size:13.5px;color:var(--mute)}
+.eq .chips{display:flex;flex-wrap:wrap;gap:8px}
+.teclado{position:absolute;left:0;right:0;bottom:0;height:270px;background:var(--x1e1a14,#2a2620);display:grid;grid-template-rows:repeat(4,1fr);padding:8px 4px 34px;gap:8px}
+.teclado div{display:flex;gap:5px;justify-content:center}
+.teclado span{width:31px;border-radius:6px;background:#4a443a}
+/* resultados agrupados */
+.chips-f{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:0 16px 10px}
+.chips-f::-webkit-scrollbar{display:none}
+.base-g{margin:8px 0 2px;padding:14px 16px 4px;border-top:1px solid var(--line)}
+.base-g .cab{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.base-g .cab b{font-weight:600;font-size:14px}
+.base-g .cab a{color:var(--gold);font-size:13px;min-height:44px;display:flex;align-items:center}
+.fila-r{padding:10px 0;border-bottom:1px solid var(--line)}
+.fila-r:last-child{border-bottom:0}
+.fila-r h3{margin:0 0 4px;font:500 14.5px/1.35 var(--sans)}
+.fila-r p{margin:0;font-size:13.5px;line-height:1.5;color:var(--mute);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fila-r small{display:block;margin-top:4px;font-size:12px;color:var(--dim)}
+/* lector */
+.lector-cab{position:sticky;top:0;z-index:4;background:rgba(var(--bg-rgb,16,14,11),.96);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.lector-cab .l1{display:flex;align-items:center;gap:8px;padding:0 12px 8px}
+.lector-cab .tt{flex:1;min-width:0}
+.lector-cab .tt b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lector-cab .tt small{font-size:12px;color:var(--dim)}
+.nav-coin{display:flex;align-items:center;gap:6px;margin:0 12px 10px;padding:4px 4px 4px 14px;height:40px;border-radius:999px;background:var(--sup);font-size:13px;color:var(--mute)}
+.nav-coin b{color:var(--fg);font-weight:500}
+.nav-coin .fl{margin-left:auto;display:flex;gap:4px}
+.nav-coin .fl span{width:32px;height:32px;border-radius:50%;background:var(--sup2);display:grid;place-items:center;color:var(--fg)}
+.texto{padding:16px 20px 120px;font-size:16px;line-height:1.7;color:rgba(var(--fg-rgb,241,238,230),.86)}
+.texto p{margin:0 0 14px}
+.texto .num{color:var(--dim);font-size:13px;margin-right:6px}
+.texto mark.act{background:var(--gold);color:var(--x14110a,#14110a)}
+.acciones{position:absolute;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 8px 26px;background:rgba(var(--bg-rgb,16,14,11),.97);border-top:1px solid var(--line)}
+.acciones button{min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:0;background:none;font-size:11.5px;color:var(--mute)}
+.acciones button.lexia{color:var(--gold)}
+</style>
+<script src="../tema.js"></script></head>
+<body>
+<div class="presenta">
+  <h1>E · Buscar, leer, citar</h1>
+  <p>Cada pantalla resuelve un paso del trabajo y oculta lo demás. Lexia no flota: está a la izquierda del buscador y como acción «Preguntar» en el lector, donde hace falta. Mientras escribís, el autocompletado ya ofrece las formas equivalentes. Los resultados se agrupan por base, y el fallo se lee a pantalla completa, saltando entre coincidencias.</p>
+  <div class="flujo">
+
+    <figure class="paso"><div class="tel"><div class="pant">
+      <div class="estado-sis"><span>9:41</span><span>●●●</span></div>
+      <div class="top"><div class="buscador"><span class="lx"><span style="width:7px;height:7px;border-radius:50%;background:var(--gold)"></span>Lexia</span><span class="t">daño extrapat<i></i></span><span class="x">✕</span></div></div>
+      <div class="sug"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><span><b style="font-weight:500">daño extrapat</b>rimonial<small>Término del tesauro · rama Daños</small></span><span class="ir">↖</span></div>
+      <div class="sug"><svg class="ic" viewBox="0 0 24 24"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="8.5"/></svg><span>daño extrapatrimonial persona jurídica<small>Búsqueda reciente</small></span><span class="ir">↖</span></div>
+      <div class="eq"><p>Los tribunales también lo escriben así. Se buscan juntas:</p><div class="chips"><span class="cap on">daño moral ✓</span><span class="cap on">daño inmaterial ✓</span><span class="cap">agravio moral</span></div></div>
+    </div>
+    <div class="teclado"><div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div><span style="width:200px"></span><span style="width:80px;background:var(--gold)"></span></div></div>
+    </div><figcaption><b>1 · Escribiendo</b>El autocompletado ofrece el término del tesauro y sus equivalentes, ya marcados. «Lexia», a la izquierda del campo, convierte lo escrito en una pregunta.</figcaption></figure>
+
+    <figure class="paso"><div class="tel"><div class="pant">
+      <div class="estado-sis"><span>9:41</span><span>●●●</span></div>
+      <div class="top"><div class="buscador"><span class="lx">Lexia</span><span class="t">daño extrapatrimonial</span><span class="x">⚙︎</span></div></div>
+      <div class="chips-f"><span class="cap on">Todas las palabras</span><span class="cap">Cualquier año</span><span class="cap">Todo el país</span><span class="cap">Más recientes</span></div>
+      <div class="base-g"><div class="cab"><span class="sigla" style="--c:var(--c-scba)">SCBA · 237</span><a href="#">Ver los 237 ›</a></div>
+        <div class="fila-r"><h3>Tomás c/ Chevrolet SA de ahorro p/ fines determinados</h3><p>… ha de considerarse <mark>daño extrapatrimonial</mark> o moral a la lesión a derechos que afectan la tranquilidad …</p><small>Cámara Civil La Plata · 16 jul 2026</small></div>
+        <div class="fila-r"><h3>Suárez c/ Villar s/ daños y perjuicios</h3><p>… las afecciones a sus sentimientos y la <mark>indemnización</mark> del <mark>daño extrapatrimonial</mark> …</p><small>Cámara Civil La Plata · 25 mar 2021</small></div></div>
+      <div class="base-g"><div class="cab"><span class="sigla" style="--c:var(--c-saij)">SAIJ · 16</span><a href="#">Ver los 16 ›</a></div>
+        <div class="fila-r"><h3>Daño moral, indemnización</h3><p>… el <mark>daño extrapatrimonial</mark> debe valorarse según las satisfacciones sustitutivas …</p><small>Cámara Nacional Civil · 2019</small></div></div>
+      <div class="base-g"><div class="cab"><span class="sigla" style="--c:var(--c-idh)">Corte IDH · 11</span><a href="#">Ver los 11 ›</a></div>
+        <div class="fila-r"><h3>Caso María y otros Vs. Argentina</h3><p>… la indemnización del <mark>daño extrapatrimonial</mark> …</p><small>22 ago 2023 · también como «daño inmaterial»</small></div></div>
+      <div style="height:110px"></div>
+    </div>
+    <nav class="tabbar"><button aria-current="page"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>Buscar</button><button><svg class="ic" viewBox="0 0 24 24"><path d="M7 3h10v18l-5-4-5 4z"/></svg>Guardados</button><button><svg class="ic" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 7h6M9 12h6M9 16h3"/></svg>Herramientas</button><button><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="9" r="3.5"/><path d="M5 20c1.5-3.5 4-5 7-5s5.5 1.5 7 5"/></svg>Perfil</button></nav>
+    </div><figcaption><b>2 · Resultados por base</b>Tres por base con «Ver los N»: de un vistazo, qué aporta cada una. Los filtros son cápsulas que dicen su valor actual.</figcaption></figure>
+
+    <figure class="paso"><div class="tel"><div class="pant">
+      <div class="lector-cab"><div class="estado-sis"><span>9:41</span><span>●●●</span></div>
+        <div class="l1"><button class="volver">‹</button><div class="tt"><b>Tomás c/ Chevrolet SA de ahorro p/ fines determinados</b><small>SCBA · Cámara Civil La Plata · 16 jul 2026</small></div></div>
+        <div class="nav-coin">Coincidencia <b>2 de 7</b><span class="fl"><span>▲</span><span>▼</span></span></div></div>
+      <div class="texto">
+        <p><span class="num">IV.</span>Con relación al rubro reclamado, corresponde recordar que el actor sostuvo haber padecido una afectación que excede las molestias propias de todo incumplimiento contractual.</p>
+        <p>En términos generales ha de considerarse <mark class="act">daño extrapatrimonial</mark> o moral a la lesión a derechos que afectan la tranquilidad, la seguridad personal, el equilibrio psíquico, las afecciones legítimas y, en general, los sentimientos más íntimos de la persona.</p>
+        <p>Acreditado el incumplimiento y verificada su concreta incidencia en la esfera espiritual del acreedor, corresponde admitir su reparación (arts. 1738 y 1741 CCyC).</p>
+      </div>
+    </div>
+    <nav class="acciones"><button><svg class="ic" viewBox="0 0 24 24"><path d="M7 7h4v4H8c0 2 1 3 3 3M14 7h4v4h-3c0 2 1 3 3 3"/></svg>Citar</button><button><svg class="ic" viewBox="0 0 24 24"><path d="M7 3h10v18l-5-4-5 4z"/></svg>Guardar</button><button><svg class="ic" viewBox="0 0 24 24"><path d="M12 4v12M7 9l5-5 5 5M5 14v6h14v-6"/></svg>Compartir</button><button class="lexia"><svg class="ic" viewBox="0 0 24 24"><path d="M5 6h14v10H9l-4 3z"/></svg>Preguntar</button></nav>
+    </div><figcaption><b>3 · El fallo abierto</b>Pantalla completa, sin pestañas. Salta entre coincidencias con ▲▼. Abajo: Citar, Guardar, Compartir y Preguntar, que le consulta a Lexia sobre este fallo.</figcaption></figure>
+
+  </div>
+  <p class="ejemplo">Maqueta E · datos de ejemplo</p>
+</div>
+</body>
+</html>

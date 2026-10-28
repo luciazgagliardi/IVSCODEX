@@ -6,9 +6,9 @@
 <title>IVS CODEX · Cinco formas de Buscar</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&family=Cormorant:ital,wght@0,400;1,400&family=Instrument+Sans:wght@400;500&display=swap">
 <style>
-:root{--bg:#100e0b;--bg2:#15120e;--fg:#f1eee6;--mute:rgba(241,238,230,.6);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.14);--line2:rgba(241,238,230,.08);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif;--ease:cubic-bezier(.16,.84,.24,1)}
+:root{--bg:#100e0b;--bg2:#15120e;--fg:#f1eee6;--mute:rgba(var(--fg-rgb,241,238,230),.6);--dim:rgba(var(--fg-rgb,241,238,230),.38);--line:rgba(var(--fg-rgb,241,238,230),.14);--line2:rgba(var(--fg-rgb,241,238,230),.08);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif;--ease:cubic-bezier(.16,.84,.24,1)}
 *{box-sizing:border-box}
-body{margin:0;background:#1a1712;color:var(--fg);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--x1a1712,#1a1712);color:var(--fg);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
 button,input{font:inherit;color:inherit}
 .w{max-width:1280px;margin:0 auto;padding:clamp(24px,4vw,56px) clamp(14px,3vw,40px) 90px}
 h1{margin:0 0 12px;font:400 clamp(32px,4.6vw,60px)/1 Cormorant,serif;letter-spacing:-.02em}
@@ -58,7 +58,7 @@ h1 em{color:var(--dim)}
 .res-t .dot{transform:translateY(-1px)}
 .res-m{margin:2px 0 0 16px;font-size:12px;color:var(--dim)}
 .res p{margin:6px 0 0 16px;font-size:13.5px;color:var(--mute);line-height:1.5}
-.res p mark,.pas mark{background:rgba(217,163,27,.28);color:var(--fg);border-radius:3px;padding:0 2px}
+.res p mark,.pas mark{background:rgba(var(--gold-rgb,217,163,27),.28);color:var(--fg);border-radius:3px;padding:0 2px}
 .scroll{overflow:auto;min-height:0}
 .vacio{padding:40px 20px;text-align:center;color:var(--dim);font-size:14px}
 
@@ -92,7 +92,7 @@ h1 em{color:var(--dim)}
 .C aside h3{margin:0 0 8px;font:500 11px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
 .C .fa{display:flex;align-items:center;gap:9px;padding:7px 0;font-size:13.5px;cursor:pointer;border-bottom:1px solid var(--line2)}
 .C .fa .ck{width:15px;height:15px;border:1px solid var(--line);border-radius:5px;display:grid;place-items:center;flex:none;font-size:11px;line-height:1}
-.C .fa.on .ck{background:var(--c);border-color:var(--c);color:#100e0b}
+.C .fa.on .ck{background:var(--c);border-color:var(--c);color:var(--x100e0b,#100e0b)}
 .C .fa .n{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
 .C .fa.off{opacity:.45}
 .C .main{overflow:auto;padding:4px 22px 20px}
@@ -103,7 +103,7 @@ h1 em{color:var(--dim)}
 /* ===== D · columnas ===== */
 .D .top{padding:16px 20px;border-bottom:1px solid var(--line);display:grid;gap:10px;flex:none}
 .D .cols{flex:1;min-height:0;display:flex;gap:12px;overflow-x:auto;padding:14px 20px}
-.D .col{flex:0 0 280px;display:flex;flex-direction:column;min-height:0;border:1px solid var(--line);border-radius:16px;border-top:2px solid var(--c);background:rgba(241,238,230,.015)}
+.D .col{flex:0 0 280px;display:flex;flex-direction:column;min-height:0;border:1px solid var(--line);border-radius:16px;border-top:2px solid var(--c);background:rgba(var(--fg-rgb,241,238,230),.015)}
 .D .col.chica{flex-basis:92px}
 .D .col header{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line2);flex:none}
 .D .col header .st{margin-left:auto}
@@ -130,8 +130,8 @@ h1 em{color:var(--dim)}
 .E .lista{flex:1;min-height:0;overflow:auto;padding:0 20px 20px}
 .E .lista>div{max-width:860px;margin:0 auto}
 .E .res{cursor:pointer;padding:14px 12px;border-radius:12px;border-bottom:0;margin:2px 0}
-.E .res:hover,.E .res.act{background:rgba(241,238,230,.05)}
-.E .cajon{position:absolute;top:0;right:0;bottom:0;width:min(420px,92%);background:#15120e;border-left:1px solid var(--line);padding:20px 22px;transform:translateX(102%);transition:transform .4s var(--ease);overflow:auto;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
+.E .res:hover,.E .res.act{background:rgba(var(--fg-rgb,241,238,230),.05)}
+.E .cajon{position:absolute;top:0;right:0;bottom:0;width:min(420px,92%);background:var(--x15120e,#15120e);border-left:1px solid var(--line);padding:20px 22px;transform:translateX(102%);transition:transform .4s var(--ease);overflow:auto;box-shadow:-20px 0 60px rgba(0,0,0,.5)}
 .E .cajon.on{transform:none}
 .E .cajon h4{margin:0 0 4px;font-size:16px;font-weight:500;line-height:1.35}
 .E .cajon .res-m{margin:0 0 14px}
@@ -170,7 +170,7 @@ h1 em{color:var(--dim)}
 .C2 .gr.cerr>h3::after{content:"+"}
 .C2 .gr.cerr>.cuerpo{display:none}
 .C2 .fa{display:flex;align-items:center;gap:9px;padding:6px 0;font-size:13.5px;cursor:pointer}
-.C2 .fa .ck{width:15px;height:15px;border:1px solid var(--line);border-radius:5px;display:grid;place-items:center;flex:none;font-size:11px;line-height:1;color:#100e0b}
+.C2 .fa .ck{width:15px;height:15px;border:1px solid var(--line);border-radius:5px;display:grid;place-items:center;flex:none;font-size:11px;line-height:1;color:var(--x100e0b,#100e0b)}
 .C2 .fa.on .ck{background:var(--c,var(--gold));border-color:var(--c,var(--gold))}
 .C2 .fa .n{margin-left:auto;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
 .C2 .fa.off{opacity:.5}
@@ -196,7 +196,7 @@ h1 em{color:var(--dim)}
 .C2 .ficha{display:inline-block;padding:1px 9px;border:1px solid var(--line2);border-radius:999px;font-size:11px;color:var(--dim)}
 @media(max-width:900px){.A .grid{grid-template-columns:repeat(2,minmax(0,1fr))}.C .cols,.C2 .cols{grid-template-columns:1fr}.C aside,.C2 aside{display:none}.m-nav{display:none}}
 </style>
-</head>
+<script src="../tema.js"></script></head>
 <body><div class="w">
 <h1>Cinco formas de <em>Buscar.</em></h1>
 <p class="lead">Cinco ordenaciones de la sección Buscar, todas con la franja completa de filtros: <b style="color:var(--fg);font-weight:500">dónde buscar</b> (nacional, Mendoza, otras provincias con su buscador, internacional, doctrina), <b style="color:var(--fg);font-weight:500">cómo combinar</b>, <b style="color:var(--fg);font-weight:500">años</b>, <b style="color:var(--fg);font-weight:500">excluir</b> y, en «más filtros», instancia, fuero y tipo de documento. Los filtros son de verdad: pruebe elegir una provincia o un rango de años y el listado cambia. Los cinco comparten el mismo estado.</p>

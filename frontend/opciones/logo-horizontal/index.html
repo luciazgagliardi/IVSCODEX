@@ -6,9 +6,9 @@
 <title>IVS CODEX · Logos horizontales</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500;6..96,600&family=Cormorant:ital,wght@0,400;1,400&family=Cormorant+SC:wght@500&family=Instrument+Sans:wght@400;500;600&display=swap">
 <style>
-:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.6);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.14);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif}
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(var(--fg-rgb,241,238,230),.6);--dim:rgba(var(--fg-rgb,241,238,230),.38);--line:rgba(var(--fg-rgb,241,238,230),.14);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif}
 *{box-sizing:border-box}
-body{margin:0;background:#1a1712;color:var(--fg);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--x1a1712,#1a1712);color:var(--fg);font:400 15px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
 .w{max-width:1100px;margin:0 auto;padding:clamp(24px,4vw,56px) clamp(16px,3vw,40px) 90px}
 h1{margin:0 0 12px;font:400 clamp(32px,4.6vw,58px)/1 Cormorant,serif;letter-spacing:-.02em}
 h1 em{color:var(--dim)}
@@ -51,12 +51,12 @@ h1 em{color:var(--dim)}
 /* 5 · dos píldoras */
 .l5{gap:.35em;font-family:var(--sans)}
 .l5 .a,.l5 .b{display:inline-flex;align-items:center;height:1.55em;padding:0 .8em;border-radius:999px;font-size:.62em;letter-spacing:.2em;font-weight:600;line-height:1}
-.l5 .a{background:var(--gold);color:#14110a}
+.l5 .a{background:var(--gold);color:var(--x14110a,#14110a)}
 .l5 .b{border:1px solid var(--fg);color:var(--fg);font-weight:500}
 .papel .l5 .a{color:#f7f1e3}
 .nota{margin-top:36px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:13.5px;max-width:72ch}
 </style>
-</head>
+<script src="../tema.js"></script></head>
 <body><div class="w">
 <h1>Un logo para la barra, <em>horizontal.</em></h1>
 <p class="lead">El nombre actual, con las letras muy separadas y en una tipografía fina, se lee débil a tamaño de barra. Estas cinco son horizontales, más compactas y pensadas para verse bien chicas. Cada una se ve en la barra, en grande y sobre papel claro.</p>

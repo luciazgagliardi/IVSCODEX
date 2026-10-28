@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Libro mayor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+/* A · LIBRO MAYOR
+   De lo que se ve en Harvey y Pentagram: el titular enorme y asimétrico (el
+   texto chico y el botón quedan a la derecha, alineados con su última línea),
+   la interfaz escrita como una frase, y nada de tarjetas: una tabla de doble
+   entrada con filetes, como un libro de cuentas. Dos tonos de tinta (el
+   segundo, apagado) en lugar de dos tamaños. */
+:root{
+  --bg:#100e0b;--fg:#f1eee6;--dim:rgba(var(--fg-rgb,241,238,230),.38);--mute:rgba(var(--fg-rgb,241,238,230),.6);--line:rgba(var(--fg-rgb,241,238,230),.14);
+  --gold:#d9a31b;--serif:"Cormorant",Georgia,serif;--caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;
+  --pad:clamp(20px,3vw,44px);--ease:cubic-bezier(.16,.84,.24,1);
+  --f-mendoza:#d9a62a;--f-mendozalegal:#b58640;--f-caba:#d5873f;--f-csjn:#c95836;--f-saij:#b03b42;--f-dialnet:#a04a68
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+::selection{background:var(--gold);color:var(--bg)}
+button,input{font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+.grano{position:fixed;inset:-120px;z-index:-1;pointer-events:none;background:url("../grano.png") 0 0/256px 256px repeat;opacity:.05}
+
+/* cabecera: casi nada */
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:32px;padding:22px var(--pad)}
+.nom{font:500 18px/1 var(--caps);letter-spacing:.3em}
+.nom i{display:inline-block;width:.17em;height:.17em;margin:0 calc(.3em + .005em) 0 0;border-radius:50%;background:var(--gold);vertical-align:.24em;font-style:normal}
+.nom b{font-weight:500;color:var(--gold)}
+.hdr nav{display:flex;gap:clamp(18px,2vw,30px);font-size:15px;color:var(--mute)}
+.hdr nav a:hover,.hdr nav a[aria-current]{color:var(--gold)}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:13px 22px;border:1px solid var(--gold);border-radius:999px;background:var(--gold);color:var(--x14110a,#14110a);font:500 15px/1 var(--sans);cursor:pointer;transition:background .3s,border-color .3s}
+.btn:hover{background:var(--fg);border-color:var(--fg)}
+.btn--sec{background:none;border-color:var(--line);color:var(--fg)}
+.btn--sec:hover{background:none;border-color:var(--gold);color:var(--gold)}
+
+/* el titular: enorme, a la izquierda; lo demás, chico, a la derecha */
+.hero{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding:clamp(56px,11vh,130px) var(--pad) 0;align-items:end}
+.hero h1{grid-column:1/10;margin:0;font:400 clamp(46px,7.6vw,132px)/.94 var(--serif);letter-spacing:-.025em;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--dim)}
+.hero__lado{grid-column:10/13;padding-bottom:.9vw;display:grid;gap:22px;justify-items:start}
+.hero__lado p{margin:0;font-size:15px;color:var(--mute)}
+@media (max-width:980px){ .hero h1,.hero__lado{grid-column:1/-1} .hero__lado{margin-top:28px} }
+
+/* la consulta, escrita como una frase */
+.frase{padding:clamp(70px,12vh,150px) var(--pad) 0}
+.frase__rot{display:flex;align-items:baseline;gap:14px;margin-bottom:22px;font:500 12px/1 var(--sans);letter-spacing:.04em;color:var(--dim)}
+.frase__rot::after{content:"";flex:1;border-top:1px solid var(--line)}
+.frase__t{margin:0;font:400 clamp(26px,3.1vw,48px)/1.55 var(--serif);letter-spacing:-.01em}
+.frase__t .c{font-style:italic;color:var(--dim)}
+.frase input{width:var(--w,9ch);min-width:3ch;max-width:100%;padding:0 .12em .02em;border:0;border-bottom:1px solid var(--gold);border-radius:0;background:none;font:400 1em/1.2 var(--sans);letter-spacing:-.02em;color:var(--fg);caret-color:transparent;text-align:center}
+.frase input:focus{outline:none;border-bottom-width:2px}
+.frase .op{padding:.02em .5em .08em;margin:0 .08em;border:1px solid var(--line);border-radius:999px;background:none;font:400 .62em/1.3 var(--sans);letter-spacing:0;color:var(--mute);cursor:pointer;vertical-align:.12em;transition:all .3s}
+.frase .op[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.frase .op:hover{border-color:var(--gold)}
+.frase__ir{margin-top:34px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.frase__ir small{color:var(--dim);font-size:13px}
+
+/* el libro mayor */
+.libro{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;padding:clamp(70px,10vh,120px) var(--pad) 120px}
+.indice{grid-column:1/4;position:sticky;top:24px;align-self:start}
+.indice h2,.tabla h2{margin:0 0 18px;font:500 12px/1 var(--sans);letter-spacing:.04em;color:var(--dim)}
+.indice button{display:grid;grid-template-columns:10px 1fr auto;align-items:center;gap:12px;width:100%;padding:13px 0;border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer;transition:color .3s}
+.indice button:last-child{border-bottom:1px solid var(--line)}
+.indice .p{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.indice .n{font:500 12px/1 var(--caps);letter-spacing:.16em}
+.indice .v{font:400 15px/1 var(--sans);font-variant-numeric:tabular-nums}
+.indice .b{grid-column:2/4;height:2px;margin-top:2px;background:var(--line);overflow:hidden;border-radius:2px}
+.indice .b i{display:block;height:100%;background:var(--c);width:var(--a);transition:width 1s var(--ease)}
+.indice button[aria-pressed="false"]{color:var(--dim)}
+.tabla{grid-column:4/13}
+.tabla__cab{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px 30px;margin-bottom:6px}
+.tabla__cab p{margin:0;font:italic 400 clamp(22px,2vw,30px)/1.2 var(--serif)}
+.tabla__cab small{font-size:13px;color:var(--dim)}
+.fila{display:grid;grid-template-columns:54px minmax(0,1fr) 230px;column-gap:26px;padding:26px 0;border-top:1px solid var(--line);transition:border-color .4s;opacity:0;transform:translateY(14px);animation:entra .8s var(--ease) forwards;animation-delay:calc(var(--k) * 55ms)}
+@keyframes entra{to{opacity:1;transform:none}}
+.fila:hover{border-top-color:var(--c)}
+.fila__n{font:300 38px/1 var(--serif);color:var(--dim);font-variant-numeric:lining-nums}
+.fila__car{margin:0;font:400 clamp(22px,2.1vw,30px)/1.2 var(--serif);letter-spacing:-.005em}
+.fila__pas{margin:12px 0 0;max-width:62ch;font-size:15px;color:var(--mute)}
+.fila__pas mark{background:none;color:var(--fg);box-shadow:inset 0 -1px 0 var(--c)}
+.fila__meta{display:grid;gap:3px;align-content:start;font-size:13px;color:var(--mute);font-variant-numeric:tabular-nums}
+.fila__meta b{display:flex;align-items:center;gap:9px;margin-bottom:6px;font:500 12px/1 var(--caps);letter-spacing:.16em;color:var(--fg)}
+.fila__meta b i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.fila__ir{margin-top:12px;font-size:13px;color:var(--fg);opacity:0;transition:opacity .3s}
+.fila:hover .fila__ir{opacity:1}
+.fila__ir span{border-bottom:1px solid var(--c)}
+@media (max-width:980px){ .indice{grid-column:1/-1;position:static;margin-bottom:40px} .tabla{grid-column:1/-1} .fila{grid-template-columns:40px 1fr} .fila__meta{grid-column:2} }
+.ej{margin-top:40px;font-size:12.5px;color:var(--dim)}
+</style>
+<script src="tema.js"></script></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+
+<header class="hdr">
+  <a class="nom" href="#">I<b>V</b>S<i></i>CODE<b>X</b></a>
+  <nav><a href="#" aria-current="page">Consulta</a><a href="#">Lector</a><a href="#">Ramas</a><a href="#">Cálculos</a><a href="#">Fuentes</a><a href="#">Verificar</a></nav>
+  <a class="btn btn--sec" href="#">Todas las secciones ↓</a>
+</header>
+
+<section class="hero">
+  <h1>Jurisprudencia argentina, <em>reunida en una sola consulta.</em></h1>
+  <div class="hero__lado">
+    <p>Seis repositorios oficiales se interrogan a la vez. Cada resultado conserva su procedencia y el enlace al documento de origen.</p>
+    <a class="btn" href="#frase">Iniciar la consulta →</a>
+  </div>
+</section>
+
+<section class="frase" id="frase">
+  <div class="frase__rot">Consulta</div>
+  <p class="frase__t">
+    <span class="c">Buscar</span> <input id="q" value="daño moral" style="--w:9ch" aria-label="Términos de la búsqueda">
+    <span class="c">como</span> <button class="op" data-m="exacta" aria-pressed="true">frase exacta</button><button class="op" data-m="todas" aria-pressed="false">todas las palabras</button>
+    <span class="c">en</span> <button class="op" data-a="mza" aria-pressed="true">Mendoza</button><button class="op" data-a="nac" aria-pressed="true">la Nación</button><button class="op" data-a="otras" aria-pressed="true">otras provincias</button><button class="op" data-a="doc" aria-pressed="true">doctrina</button>
+    <span class="c">entre</span> <input id="d" value="2015" style="--w:4ch" inputmode="numeric" aria-label="Desde"> <span class="c">y</span> <span style="white-space:nowrap"><input id="h" value="2026" style="--w:4ch" inputmode="numeric" aria-label="Hasta"><span class="c">.</span></span>
+  </p>
+  <div class="frase__ir"><button class="btn" id="ir">Consultar las seis bases →</button><small id="cad"></small></div>
+</section>
+
+<section class="libro" id="libro" hidden>
+  <aside class="indice"><h2>Bases</h2><div id="indice"></div></aside>
+  <div class="tabla">
+    <div class="tabla__cab"><p id="tit"></p><small>Datos de ejemplo: no son fallos reales.</small></div>
+    <div id="filas"></div>
+  </div>
+</section>
+
+<script src="./datos.js"></script>
+<script>
+(function(){
+var $=function(s){return document.querySelector(s);};
+var COL={mendoza:"#d9a62a",mendozalegal:"#b58640",caba:"#d5873f",csjn:"#c95836",saij:"#b03b42",dialnet:"#a04a68"};
+var AMB={mza:["mendoza","mendozalegal"],nac:["csjn","saij"],otras:["caba"],doc:["dialnet"]};
+var est={modo:"exacta",amb:{mza:1,nac:1,otras:1,doc:1},base:""};
+function ancho(i){ i.style.setProperty("--w",Math.max(i.id==="q"?5:4,i.value.length+.6)+"ch"); }
+["q","d","h"].forEach(function(id){ var i=$("#"+id); ancho(i); i.addEventListener("input",function(){ancho(i);cad();}); });
+function activas(){ var o={}; Object.keys(est.amb).forEach(function(k){ if(est.amb[k]) AMB[k].forEach(function(b){o[b]=1;}); }); return o; }
+function cad(){ $("#cad").textContent=IC.cadena($("#q").value,est.modo,""); }
+document.querySelector(".frase__t").addEventListener("click",function(e){
+  var b=e.target.closest(".op"); if(!b) return;
+  if(b.dataset.m){ est.modo=b.dataset.m; document.querySelectorAll("[data-m]").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); }
+  else{ est.amb[b.dataset.a]=!est.amb[b.dataset.a]; b.setAttribute("aria-pressed",String(!!est.amb[b.dataset.a])); }
+  cad();
+});
+cad();
+function datos(){
+  var a=activas(),d=+$("#d").value||0,h=+$("#h").value||9999;
+  return IC.TODOS.filter(function(x){ return a[x.base]&&x.anio>=d&&x.anio<=h; });
+}
+function pintar(){
+  var q=$("#q").value.trim()||"daño moral",lista=datos(),todas=datos();
+  var por={}; IC.BASES.forEach(function(b){por[b.slug]=0;}); todas.forEach(function(x){por[x.base]++;});
+  var max=Math.max.apply(null,Object.keys(por).map(function(k){return por[k];}).concat([1]));
+  $("#indice").innerHTML=IC.BASES.map(function(b){
+    return '<button data-b="'+b.slug+'" aria-pressed="'+(!est.base||est.base===b.slug)+'" style="--c:'+COL[b.slug]+';--a:'+(por[b.slug]/max*100)+'%"><span class="p"></span><span class="n">'+IC.esc(b.cod)+'</span><span class="v">'+por[b.slug]+'</span><span class="b"><i></i></span></button>';
+  }).join("");
+  var vis=est.base?todas.filter(function(x){return x.base===est.base;}):todas;
+  $("#tit").textContent=vis.length+" documentos para «"+q+"»"+(est.base?" en "+IC.BASES.filter(function(b){return b.slug===est.base;})[0].corto:"")+".";
+  $("#filas").innerHTML=vis.slice(0,14).map(function(x,i){
+    var b=IC.BASES.filter(function(z){return z.slug===x.base;})[0];
+    return '<article class="fila" style="--c:'+COL[x.base]+';--k:'+i+'"><div class="fila__n">'+(i<9?"0":"")+(i+1)+'</div><div><h3 class="fila__car">'+IC.esc(x.car)+'</h3><p class="fila__pas">'+IC.resaltar(x.pasaje,q)+'</p><div class="fila__ir"><span>Abrir el original →</span> &nbsp;&nbsp; Llevar al Lector &nbsp;&nbsp; Citar</div></div>'+
+      '<div class="fila__meta"><b><i></i>'+IC.esc(b.cod)+'</b><span>'+IC.esc(x.trib)+'</span><span>'+IC.esc(x.fecha)+'</span><span>'+IC.esc(x.expte)+'</span></div></article>';
+  }).join("")||'<p class="ej">Ningún documento coincide con esos filtros.</p>';
+}
+$("#indice").addEventListener("click",function(e){ var b=e.target.closest("[data-b]"); if(!b) return; est.base=est.base===b.dataset.b?"":b.dataset.b; pintar(); });
+$("#ir").addEventListener("click",function(){ $("#libro").hidden=false; pintar(); $("#libro").scrollIntoView({behavior:"smooth",block:"start"}); });
+if(location.hash==="#resultados"){ $("#libro").hidden=false; pintar(); }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IVS CODEX · Celular B · Al alcance del pulgar</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="comun.css">
+<style>
+/* B · Al alcance del pulgar: la consulta se escribe abajo, como un mensaje;
+   arriba quedan la sección y las bases. Lexia es una tecla de esa barra. */
+.cab{position:sticky;top:0;z-index:20;padding:calc(12px + env(safe-area-inset-top)) 18px 10px;background:rgba(var(--bg-rgb,16,14,11),.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.cab .l1{display:flex;align-items:center;justify-content:space-between}
+.secc{display:inline-flex;align-items:center;gap:8px;padding:8px 14px 7px;border-radius:999px;border:1px solid var(--line2);background:none;font-size:13.5px}
+.secc .lat{font-size:10.5px}
+.bases{display:flex;gap:6px;margin-top:12px;overflow-x:auto;scrollbar-width:none}
+.bases::-webkit-scrollbar{display:none}
+.base{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:74px;padding:9px 12px 8px;border-radius:16px;border:1px solid var(--line);background:var(--bg2)}
+.base .sigla{font-size:10.5px}
+.base b{font:500 17px/1 var(--sans)}
+.base small{font-size:10.5px;color:var(--dim)}
+.base[aria-pressed=true]{border-color:var(--gold2)}
+main{padding:4px 18px calc(150px + env(safe-area-inset-bottom))}
+.res{padding:18px 0;border-bottom:1px solid var(--line)}
+.res .top{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--dim);margin-bottom:6px}
+.res h3{margin:0 0 8px;font:500 15.5px/1.35 var(--sans)}
+.res blockquote{margin:0;padding-left:12px;border-left:2px solid var(--gold2);font-size:14px;line-height:1.55;color:var(--mute)}
+.res .acc{display:flex;gap:16px;margin-top:10px;font-size:13px;color:var(--gold)}
+.consulta-anterior{margin:16px 0 4px;align-self:flex-end;display:flex;justify-content:flex-end}
+.consulta-anterior span{padding:9px 15px 8px;border-radius:18px 18px 4px 18px;background:var(--x1e1a14,#241f17);font-size:14px}
+.resumen{font-size:13px;color:var(--mute);margin:8px 0 2px}
+
+/* la barra del pulgar */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px 12px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(var(--bg-rgb,16,14,11),0),rgba(var(--bg-rgb,16,14,11),.96) 28%)}
+.ajustes{display:flex;gap:6px;margin:0 4px 8px;overflow-x:auto;scrollbar-width:none}
+.ajustes::-webkit-scrollbar{display:none}
+.aj{flex:none;padding:6px 12px 5px;border-radius:999px;border:1px solid var(--line);background:rgba(23,20,15,.9);font-size:12px;color:var(--mute)}
+.campo{display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;border:1px solid var(--line2);background:var(--x1a1712,#1b1712)}
+.campo input{flex:1;min-width:0;border:0;background:none;outline:none;font-size:15.5px;padding:8px 6px}
+.lexia{flex:none;display:flex;align-items:center;gap:7px;padding:10px 13px 9px;border-radius:999px;border:1px solid var(--gold2);background:none;font-size:13px;color:var(--fg)}
+.ir{flex:none;width:42px;height:42px;border-radius:50%;border:0;background:var(--gold);color:var(--x14110a,#14110a);display:grid;place-items:center}
+
+/* secciones: hoja desde arriba */
+.menu{position:fixed;left:0;right:0;top:0;z-index:40;padding:calc(16px + env(safe-area-inset-top)) 18px 22px;background:var(--x1a1712,#1b1712);border-radius:0 0 26px 26px;transform:translateY(-105%);transition:transform .45s var(--ease)}
+.menu.abierto{transform:none}
+.menu ul{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.menu li button{width:100%;text-align:left;padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:none}
+.menu li .lat{display:block;font-size:10px;margin-bottom:4px}
+.velo{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .4s}
+.velo.on{opacity:1;pointer-events:auto}
+</style>
+<script src="../tema.js"></script></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab">
+  <div class="l1"><span class="marca">I<b>V</b>S<i></i>CODE<b>X</b></span><button class="secc" id="abrir"><span class="lat">QVAESTIO</span>Buscar ▾</button></div>
+  <div class="bases" role="group" aria-label="Bases">
+    <button class="base" aria-pressed="true"><span class="sigla" style="--c:var(--gold)">TODAS</span><b>263</b><small>en 6 bases</small></button>
+    <button class="base"><span class="sigla" style="--c:var(--c-scba)">SCBA</span><b>237</b><small>2,1 s</small></button>
+    <button class="base"><span class="sigla" style="--c:var(--c-caba)">TSJ</span><b>6</b><small>1,4 s</small></button>
+    <button class="base"><span class="sigla" style="--c:var(--c-saij)">SAIJ</span><b>16</b><small>4,4 s</small></button>
+    <button class="base"><span class="sigla" style="--c:var(--c-csjn)">CSJN</span><b>4</b><small>7,1 s</small></button>
+    <button class="base"><span class="sigla" style="--c:var(--c-idh)">IDH</span><b>11</b><small>0,8 s</small></button>
+  </div>
+</header>
+<main>
+  <div class="consulta-anterior"><span>daño extrapatrimonial</span></div>
+  <p class="resumen">263 resultados. Incluí también «daño moral» y «daño inmaterial», que dicen lo mismo.</p>
+  <article class="res"><div class="top"><span class="sigla" style="--c:var(--c-scba)">SCBA</span>16/07/2026 · Cámara Civil La Plata</div>
+    <h3>Tomás, Leonardo N. c/ Chevrolet SA de ahorro para fines determinados</h3>
+    <blockquote>… ha de considerarse <mark>daño extrapatrimonial</mark> o moral a la lesión a derechos que afectan la tranquilidad …</blockquote>
+    <div class="acc"><a href="#">Leer</a><a href="#">Citar</a><a href="#">Guardar</a></div></article>
+  <article class="res"><div class="top"><span class="sigla" style="--c:var(--c-caba)">TSJ</span>12/11/2025</div>
+    <h3>Sancor Coop. de Seguros Ltda. y otros s/ queja</h3>
+    <blockquote>… los rubros «incapacidad física sobreviniente» y «<mark>daño extrapatrimonial</mark>» …</blockquote>
+    <div class="acc"><a href="#">Leer</a><a href="#">Citar</a><a href="#">Guardar</a></div></article>
+  <article class="res"><div class="top"><span class="sigla" style="--c:var(--c-idh)">CORTE IDH</span>22/08/2023</div>
+    <h3>Caso María y otros Vs. Argentina</h3>
+    <blockquote>… la indemnización del <mark>daño extrapatrimonial</mark> …</blockquote>
+    <div class="acc"><a href="#">Leer</a><a href="#">Citar</a><a href="#">Guardar</a></div></article>
+  <p class="ejemplo">Maqueta B · datos de ejemplo</p>
+</main>
+<div class="dock">
+  <div class="ajustes"><button class="aj">Todas las palabras</button><button class="aj">Cualquier año</button><button class="aj">Todo el país</button><button class="aj">Con equivalentes ✓</button></div>
+  <div class="campo">
+    <button class="lexia" aria-label="Preguntarle a Lexia"><span class="punto-lexia"></span>Lexia</button>
+    <input value="daño extrapatrimonial" aria-label="Consulta">
+    <button class="ir" aria-label="Buscar"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></button>
+  </div>
+</div>
+<div class="velo" id="velo"></div>
+<nav class="menu" id="menu" aria-label="Secciones">
+  <span class="marca">I<b>V</b>S<i></i>CODE<b>X</b></span>
+  <ul>
+    <li><button><span class="lat">QVAESTIO</span>Buscar</button></li><li><button><span class="lat">LECTIO</span>Lector</button></li>
+    <li><button><span class="lat">MATERIAE</span>Ramas</button></li><li><button><span class="lat">CALCVLVS</span>Cálculos</button></li>
+    <li><button><span class="lat">PROBATIO</span>Verificar</button></li><li><button><span class="lat">FONTES</span>Fuentes</button></li>
+    <li><button><span class="lat">TEMPVS</span>Plazos</button></li><li><button><span class="lat">PERSONA</span>Mi perfil</button></li>
+  </ul>
+</nav>
+<script>
+var m=document.getElementById('menu'),v=document.getElementById('velo');
+function t(on){m.classList.toggle('abierto',on);v.classList.toggle('on',on);}
+document.getElementById('abrir').onclick=function(){t(true)};v.onclick=function(){t(false)};
+</script>
+</body>
+</html>

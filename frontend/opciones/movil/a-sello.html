@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IVS CODEX · Celular A · El sello</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="comun.css">
+<style>
+/* A · El sello: Lexia es el centro de la barra, no un botón flotante. */
+.cab{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top)) 18px 12px;background:rgba(var(--bg-rgb,16,14,11),.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.cab .ayuda{width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);display:grid;place-items:center;color:var(--mute);background:none;font-size:14px}
+main{padding:6px 18px calc(110px + env(safe-area-inset-bottom))}
+.titulo{display:flex;align-items:baseline;gap:10px;margin:8px 0 14px}
+.titulo h1{margin:0;font:500 30px/1 var(--sans);letter-spacing:-.02em}
+.caja{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 16px;border:1px solid var(--line2);border-radius:999px;background:var(--bg2)}
+.caja input{flex:1;min-width:0;border:0;background:none;outline:none;font-size:15.5px;padding:8px 0}
+.caja .btn.oro{padding:10px 16px 9px}
+.fila{display:flex;gap:8px;margin:12px 0 0;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.fila::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:8px 14px 7px;border-radius:999px;border:1px solid var(--line2);background:none;font-size:13px;color:var(--mute);white-space:nowrap}
+.chip[aria-pressed=true]{border-color:var(--gold);color:var(--fg)}
+.estado{display:flex;justify-content:space-between;align-items:center;margin:18px 0 6px;font-size:12.5px;color:var(--dim)}
+.res{padding:16px 0;border-top:1px solid var(--line)}
+.res .top{display:flex;justify-content:space-between;gap:10px;margin-bottom:6px;font-size:12px;color:var(--dim)}
+.res h3{margin:0 0 8px;font:500 15.5px/1.35 var(--sans)}
+.res p{margin:0;font-size:14px;line-height:1.55;color:var(--mute)}
+.res .acc{display:flex;gap:8px;margin-top:12px}
+.res .acc .btn{padding:8px 14px 7px;font-size:12.5px}
+
+/* la barra: cuatro secciones y Lexia en el medio, como sello */
+.barra{position:fixed;left:0;right:0;bottom:0;z-index:30;display:grid;grid-template-columns:repeat(5,1fr);align-items:end;padding:8px 6px calc(8px + env(safe-area-inset-bottom));background:rgba(var(--bg-rgb,16,14,11),.94);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.barra button{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;color:var(--dim);font-size:11px;padding:4px 0}
+.barra button[aria-current=page]{color:var(--gold)}
+.barra .sello{position:relative;top:-14px;width:62px;height:62px;margin:0 auto;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f3cf6a,#d9a31b 55%,#9b7210);color:var(--x14110a,#14110a);justify-content:center;gap:2px;box-shadow:0 0 0 6px var(--bg),0 8px 28px rgba(var(--gold-rgb,217,163,27),.35)}
+.barra .sello b{font:500 12px/1 var(--caps);letter-spacing:.14em}
+.barra .sello span{font-size:9.5px;opacity:.8}
+
+/* Lexia abierta: hoja desde abajo */
+.hoja{position:fixed;left:0;right:0;bottom:0;z-index:40;border-radius:26px 26px 0 0;background:var(--x1a1712,#1b1712);border-top:1px solid var(--line2);padding:10px 18px calc(18px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .45s var(--ease)}
+.hoja.abierta{transform:none}
+.hoja .asa{width:40px;height:4px;border-radius:9px;background:var(--line2);margin:0 auto 14px}
+.hoja h2{margin:0 0 4px;font:500 18px/1.2 var(--sans);display:flex;align-items:center;gap:10px}
+.hoja p{margin:0 0 14px;font-size:13.5px;color:var(--mute)}
+.sug{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.velo{position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .4s}
+.velo.on{opacity:1;pointer-events:auto}
+</style>
+<script src="../tema.js"></script></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<b>V</b>S<i></i>CODE<b>X</b></span><button class="ayuda" aria-label="Cómo usar">?</button></header>
+<main>
+  <div class="titulo"><span class="lat">QVAESTIO</span><h1>Buscar.</h1></div>
+  <div class="caja"><input value="daño extrapatrimonial" aria-label="Consulta"><button class="btn oro">Buscar</button></div>
+  <div class="fila" role="group" aria-label="Bases">
+    <button class="chip" aria-pressed="true">Todas · 8</button><button class="chip">SCJM</button><button class="chip">TSJ</button><button class="chip">SCBA</button><button class="chip">CSJN</button><button class="chip">SAIJ</button><button class="chip">Corte IDH</button>
+  </div>
+  <div class="fila"><button class="chip">Todas las palabras ▾</button><button class="chip">Años ▾</button><button class="chip">Provincia ▾</button></div>
+  <div class="estado"><span>263 resultados en 6 bases</span><span>Más recientes ▾</span></div>
+  <article class="res"><div class="top"><span class="sigla" style="--c:var(--c-scba)">SCBA</span><span>16/07/2026</span></div>
+    <h3>Tomás, Leonardo N. c/ Chevrolet SA de ahorro para fines determinados s/ daños</h3>
+    <p>… ha de considerarse <mark>daño extrapatrimonial</mark> o moral a la lesión a derechos que afectan la tranquilidad, la seguridad personal …</p>
+    <div class="acc"><button class="btn">Leer el fallo</button><button class="btn">Citar</button></div></article>
+  <article class="res"><div class="top"><span class="sigla" style="--c:var(--c-caba)">TSJ</span><span>12/11/2025</span></div>
+    <h3>Sancor Coop. de Seguros Ltda. y otros s/ queja por recurso de inconstitucionalidad denegado</h3>
+    <p>… elevar los montos indemnizatorios de los rubros «incapacidad física sobreviniente» y «<mark>daño extrapatrimonial</mark>» …</p>
+    <div class="acc"><button class="btn">Leer el fallo</button><button class="btn">Citar</button></div></article>
+  <article class="res"><div class="top"><span class="sigla" style="--c:var(--c-idh)">Corte IDH</span><span>22/08/2023</span></div>
+    <h3>Caso María y otros Vs. Argentina. Fondo, reparaciones y costas</h3>
+    <p>… la indemnización del <mark>daño extrapatrimonial</mark> …</p>
+    <div class="acc"><button class="btn">Leer el fallo</button><button class="btn">Citar</button></div></article>
+  <p class="ejemplo">Maqueta A · datos de ejemplo</p>
+</main>
+<div class="velo" id="velo"></div>
+<section class="hoja" id="hoja" aria-label="Lexia">
+  <div class="asa"></div>
+  <h2><span class="punto-lexia"></span>Lexia</h2>
+  <p>¿En qué lo ayudo con esta búsqueda?</p>
+  <div class="sug"><button class="btn">Sólo fallos de Buenos Aires</button><button class="btn">Ordenar por fecha</button><button class="btn">¿Qué es «daño inmaterial»?</button></div>
+  <div class="caja"><input placeholder="Escriba a Lexia…" aria-label="Mensaje a Lexia"><button class="btn oro">Enviar</button></div>
+</section>
+<nav class="barra" aria-label="Secciones">
+  <button aria-current="page"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>Buscar</button>
+  <button><svg class="ic" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/></svg>Lector</button>
+  <button class="sello" id="lexia" aria-label="Abrir a Lexia"><b>LEXIA</b><span>pregunte</span></button>
+  <button><svg class="ic" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 7h6M9 12h1M12 12h1M15 12h0M9 16h1M12 16h1"/></svg>Cálculos</button>
+  <button><svg class="ic" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/></svg>Más</button>
+</nav>
+<script>
+var h=document.getElementById('hoja'),v=document.getElementById('velo');
+function t(on){h.classList.toggle('abierta',on);v.classList.toggle('on',on);}
+document.getElementById('lexia').onclick=function(){t(true)};v.onclick=function(){t(false)};
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IVS CODEX · Celular C · El índice</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Cormorant:ital,wght@0,400;1,400&family=Instrument+Sans:wght@400;500&display=swap">
+<link rel="stylesheet" href="comun.css">
+<style>
+/* C · El índice: la página como un libro. Arriba, el índice de secciones en
+   versalitas; los resultados numerados entre filetes; Lexia es la última línea
+   de la pantalla, una frase que se escribe, no un botón que tapa. */
+.cab{padding:calc(16px + env(safe-area-inset-top)) 18px 0;text-align:center}
+.cab .marca{font-size:16px}
+.indice{position:sticky;top:0;z-index:20;display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;padding:14px 18px 12px;margin-top:10px;background:rgba(var(--bg-rgb,16,14,11),.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.indice::-webkit-scrollbar{display:none}
+.indice a{flex:none;font:500 12px/1 var(--caps);letter-spacing:.22em;color:var(--dim);padding-bottom:6px}
+.indice a[aria-current=page]{color:var(--gold);box-shadow:inset 0 -1px 0 var(--gold)}
+main{padding:0 18px calc(96px + env(safe-area-inset-bottom))}
+h1{margin:26px 0 4px;font:400 44px/1 Cormorant,Georgia,serif;letter-spacing:-.01em}
+h1 em{color:var(--dim)}
+.campo{display:flex;align-items:flex-end;gap:10px;margin:18px 0 10px;border-bottom:1px solid var(--line2);padding-bottom:6px}
+.campo input{flex:1;min-width:0;border:0;background:none;outline:none;font:400 21px/1.3 var(--sans);padding:4px 0}
+.campo .btn.oro{padding:9px 16px 8px}
+.ajustes{font-size:13px;color:var(--mute);line-height:1.9}
+.ajustes button{border:0;background:none;padding:0;color:var(--fg);border-bottom:1px dotted var(--gold2)}
+.cuenta{display:flex;justify-content:space-between;margin:26px 0 0;padding-bottom:10px;border-bottom:1px solid var(--line2);font:500 11.5px/1 var(--caps);letter-spacing:.2em;color:var(--dim)}
+.res{display:grid;grid-template-columns:32px minmax(0,1fr);gap:0 10px;padding:16px 0;border-bottom:1px solid var(--line)}
+.res .n{font:400 22px/1 Cormorant,Georgia,serif;color:var(--dim)}
+.res .meta{display:flex;gap:10px;align-items:center;font-size:12px;color:var(--dim);margin-bottom:6px}
+.res h3{margin:0 0 6px;font:500 15px/1.35 var(--sans)}
+.res p{margin:0;font-size:14px;line-height:1.55;color:var(--mute)}
+.res .acc{margin-top:10px;font-size:12.5px;display:flex;gap:16px;color:var(--gold)}
+.mas{display:block;margin:18px auto 0}
+
+/* Lexia: la última línea de la pantalla */
+.lexia{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:30;display:flex;align-items:center;gap:10px;padding:13px 16px 12px;border-radius:999px;border:1px solid var(--gold2);background:rgba(27,23,18,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--mute);font-size:14px;text-align:left}
+.lexia b{color:var(--fg);font-weight:500}
+.lexia .fl{margin-left:auto;color:var(--gold)}
+</style>
+<script src="../tema.js"></script></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab"><span class="marca">I<b>V</b>S<i></i>CODE<b>X</b></span></header>
+<nav class="indice" aria-label="Secciones">
+  <a href="#" aria-current="page">QVAESTIO</a><a href="#">LECTIO</a><a href="#">MATERIAE</a><a href="#">CALCVLVS</a><a href="#">PROBATIO</a><a href="#">FONTES</a><a href="#">PERSONA</a>
+</nav>
+<main>
+  <h1>Buscar <em>en las ocho bases.</em></h1>
+  <div class="campo"><input value="daño extrapatrimonial" aria-label="Consulta"><button class="btn oro">Buscar</button></div>
+  <p class="ajustes">Con <button>todas las palabras</button>, en <button>todas las bases</button>, de <button>cualquier año</button>, incluyendo <button>daño moral y daño inmaterial</button>.</p>
+  <div class="cuenta"><span>263 RESULTADOS</span><span>POR FECHA</span></div>
+  <article class="res"><span class="n">1</span><div>
+    <div class="meta"><span class="sigla" style="--c:var(--c-scba)">SCBA</span>16 · VII · 2026</div>
+    <h3>Tomás, Leonardo N. c/ Chevrolet SA de ahorro para fines determinados</h3>
+    <p>… ha de considerarse <mark>daño extrapatrimonial</mark> o moral a la lesión a derechos que afectan la tranquilidad …</p>
+    <div class="acc"><a href="#">Leer</a><a href="#">Citar</a><a href="#">Guardar</a></div></div></article>
+  <article class="res"><span class="n">2</span><div>
+    <div class="meta"><span class="sigla" style="--c:var(--c-caba)">TSJ</span>12 · XI · 2025</div>
+    <h3>Sancor Coop. de Seguros Ltda. y otros s/ queja</h3>
+    <p>… los rubros «incapacidad física sobreviniente» y «<mark>daño extrapatrimonial</mark>» …</p>
+    <div class="acc"><a href="#">Leer</a><a href="#">Citar</a><a href="#">Guardar</a></div></div></article>
+  <article class="res"><span class="n">3</span><div>
+    <div class="meta"><span class="sigla" style="--c:var(--c-idh)">CORTE IDH</span>22 · VIII · 2023</div>
+    <h3>Caso María y otros Vs. Argentina</h3>
+    <p>… la indemnización del <mark>daño extrapatrimonial</mark> …</p>
+    <div class="acc"><a href="#">Leer</a><a href="#">Citar</a><a href="#">Guardar</a></div></div></article>
+  <button class="btn mas">Ver los siguientes 20</button>
+  <p class="ejemplo">Maqueta C · datos de ejemplo</p>
+</main>
+<button class="lexia"><span class="punto-lexia"></span><span><b>Lexia</b> · pregúntele lo que necesite…</span><span class="fl">→</span></button>
+</body>
+</html>

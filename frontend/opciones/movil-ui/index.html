@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Celular · tres composiciones</title>
+<style>
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:#9a9588;--mute2:#6f6b60;--gold:#d9a31b;--line:rgba(var(--fg-rgb,241,238,230),.14)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--x100e0b,#0b0a08);color:var(--fg);font:15px/1.4 system-ui,sans-serif;padding:26px 14px 60px}
+h1{font:500 21px/1.2 system-ui;margin-bottom:6px}.s{color:var(--mute);margin-bottom:22px;font-size:14px}
+.fila{display:flex;gap:26px;flex-wrap:wrap;justify-content:center}
+.op{width:300px}.op h2{font:600 12.5px/1 system-ui;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.op p.d{color:var(--mute);font-size:13px;margin-bottom:12px;min-height:58px}
+.tel{position:relative;width:300px;height:620px;border-radius:34px;border:1px solid var(--x1e1a14,#2a261e);overflow:hidden;background:var(--bg);font-size:13px}
+.hd{display:flex;align-items:center;gap:7px;padding:16px 14px 8px}
+.hd img{width:24px;height:24px;border-radius:50%;box-shadow:0 0 0 1px rgba(var(--fg-rgb,241,238,230),.24);background:radial-gradient(#333,#111)}
+.hd .lg{font:600 13px/1 system-ui;letter-spacing:-.02em;white-space:nowrap}.hd .lg i{display:inline-block;width:3px;height:3px;border-radius:50%;background:var(--gold);margin:0 4px 2px}.hd .lg span{font-weight:400;color:var(--mute)}
+.hd .sp{flex:1}
+.pl{white-space:nowrap;display:inline-flex;align-items:center;height:30px;padding:0 11px;border-radius:999px;border:1px solid var(--line);font:500 11.5px/1 system-ui}
+.pl.lx{border-color:rgba(var(--gold-rgb,217,163,27),.5);background:rgba(var(--gold-rgb,217,163,27),.12);color:var(--gold);gap:5px}.pl.lx::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.sc{position:absolute;inset:54px 0 84px;overflow:hidden;padding:0 14px}
+.bar{position:absolute;left:10px;right:10px;bottom:12px;height:58px;border-radius:999px;background:var(--bg);border:1px solid var(--gold);display:grid;grid-template-columns:repeat(5,1fr);align-items:center;text-align:center;font-size:9.5px;color:var(--mute2)}
+.bar b{font-weight:400;display:block}.bar .on{color:var(--gold)}.bar svg{width:18px;height:18px;display:block;margin:0 auto 2px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+h3{font:600 28px/1.1 system-ui;margin:8px 0 8px}
+.bus{display:flex;align-items:center;gap:6px;height:46px;padding:0 5px 0 15px;border:1px solid rgba(var(--gold-rgb,217,163,27),.45);border-radius:999px;color:var(--fg);font-size:14px}
+.bus span{flex:1;overflow:hidden;white-space:nowrap}.bus u{text-decoration:none;display:grid;place-items:center;height:36px;padding:0 15px;border-radius:999px;background:var(--gold);color:var(--x14110a,#1a1405);font-weight:600;font-size:13px}
+.ch{display:flex;gap:6px;overflow:hidden;margin:10px 0}
+.ch i{font-style:normal;flex:none;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border:1px solid var(--line);border-radius:999px;font:500 10.5px/1 system-ui;letter-spacing:.13em;text-transform:uppercase;color:var(--mute)}
+.ch i.on{background:rgba(var(--fg-rgb,241,238,230),.1);color:var(--fg)}.ch i em{width:6px;height:6px;border-radius:50%;background:var(--c,var(--gold))}
+.rs{border-top:1px solid var(--line);padding:11px 0}
+.rs .t{display:flex;gap:7px;align-items:center;font:500 10px/1 system-ui;letter-spacing:.13em;color:var(--mute);margin-bottom:6px;text-transform:uppercase}
+.rs .t em{width:6px;height:6px;border-radius:50%;background:var(--c)}.rs .t span{margin-left:auto;letter-spacing:0;color:var(--mute2);text-transform:none;font-size:10.5px}
+.rs b{display:block;font:500 14px/1.3 system-ui;margin-bottom:4px}
+.rs p{color:var(--mute);font-size:12.5px;line-height:1.5}.rs mark{background:none;color:var(--gold);box-shadow:inset 0 -1px rgba(var(--gold-rgb,217,163,27),.5)}
+.card{border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:9px;background:rgba(var(--fg-rgb,241,238,230),.02)}
+.card .t{display:flex;gap:7px;align-items:center;margin-bottom:7px}
+.cod{display:inline-grid;place-items:center;height:22px;padding:0 10px;border-radius:999px;border:1px solid var(--c);font:500 9.5px/1 system-ui;letter-spacing:.13em}
+.card .t span:not(.cod){margin-left:auto;font-size:10.5px;color:var(--mute2)}
+.sheet{position:absolute;left:0;right:0;bottom:0;border-radius:24px 24px 0 0;background:var(--x1a1712,#1a1712);border:1px solid var(--line);border-bottom:0;padding:12px 16px 90px;box-shadow:0 -20px 40px rgba(0,0,0,.5)}
+.sheet i.g{display:block;width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 12px}
+.fl{display:flex;align-items:center;justify-content:space-between;height:40px;border-top:1px solid var(--line);font-size:13px}.fl span{color:var(--gold)}
+.res{font-size:11.5px;color:var(--mute);margin:8px 0 2px}
+.dock{position:absolute;left:50%;transform:translateX(-50%);bottom:80px;display:flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:999px;background:var(--bg);border:1px solid var(--gold);color:var(--gold);font:500 12px/1 system-ui;box-shadow:0 10px 24px rgba(0,0,0,.6);white-space:nowrap}
+.dock b{display:grid;place-items:center;min-width:20px;height:20px;border-radius:10px;background:var(--gold);color:var(--x14110a,#1a1405);font-size:11px}
+</style><script src="../tema.js"></script></head><body>
+<h1>Celular · tres composiciones</h1>
+<p class="s">Las tres usan la misma barra dorada y los mismos textos, acortados para que entren y terminen en punto.</p>
+<div class="fila">
+
+<div class="op"><h2>Opción A</h2><p class="d"><b style="color:var(--xf1eee6,#f1eee6)">Buscador primero.</b> Sin título grande: el campo de búsqueda sube a lo más alto, las bases quedan en una fila y los resultados son tarjetas.</p>
+<div class="tel"><div class="hd"><img><div class="lg">IVS<i></i><span>CODEX</span></div><div class="sp"></div><div class="pl lx">Lexia</div><div class="pl">Cómo usar</div></div>
+<div class="sc"><div class="bus" style="margin-top:6px"><span>daño moral por incumpl…</span><u>Buscar</u></div>
+<div class="ch" style="margin-bottom:2px"><i>Filtros ▾</i><i style="border-color:rgba(var(--gold-rgb,217,163,27),.4);color:var(--gold)">Irrestricta</i><i>2000–2024</i></div>
+<div class="ch"><i class="on">Todas 3601</i><i style="--c:#d9a31b"><em></em>SCJM 273</i><i style="--c:#5fd07f"><em></em>TSJ</i></div>
+<p class="res">3.601 resultados · 3 de 8 bases.</p>
+<div class="card"><div class="t"><span class="cod" style="--c:#d9a31b">SCJM</span><span>12 mar 2021</span></div><b style="font:500 14px/1.3 system-ui">Pérez c/ Gómez p/ daño moral</b><p style="color:var(--mute);font-size:12.5px;margin-top:4px;line-height:1.5">La indemnización del <mark style="background:none;color:var(--gold)">daño moral</mark> no exige prueba específica.</p></div>
+<div class="card"><div class="t"><span class="cod" style="--c:#5fd07f">TSJ</span><span>3 nov 2019</span></div><b style="font:500 14px/1.3 system-ui">Díaz c/ Banco Sur</b><p style="color:var(--mute);font-size:12.5px;margin-top:4px;line-height:1.5">Se fija el <mark style="background:none;color:var(--gold)">daño moral</mark> con criterio prudencial.</p></div></div>
+<div class="bar"><div class="on"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><b>Buscar</b></div><div><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/></svg><b>Lector</b></div><div><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/></svg><b>Cálculos</b></div><div><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c1-4 3.6-6 7-6s6 2 7 6"/></svg><b>Perfil</b></div><div><svg viewBox="0 0 24 24"><path d="M5 8h14M5 12h14M5 16h14"/></svg><b>Más</b></div></div></div></div>
+
+<div class="op"><h2>Opción B</h2><p class="d"><b style="color:var(--xf1eee6,#f1eee6)">Lista editorial.</b> Título más chico, una sola frase, y los resultados como renglones con filetes: sin tarjetas, más texto a la vista.</p>
+<div class="tel"><div class="hd"><img><div class="lg">IVS<i></i><span>CODEX</span></div><div class="sp"></div><div class="pl lx">Lexia</div><div class="pl">Cómo usar</div></div>
+<div class="sc"><h3 style="font-size:24px">Buscar.</h3><p style="color:var(--mute);font-size:12.5px;margin-bottom:10px">Todas las bases, jurisdicciones y períodos.</p>
+<div class="bus"><span>daño moral</span><u>Buscar</u></div>
+<div class="ch" style="margin:10px 0 4px"><i>Filtros ▾</i><i class="on">Todas 3601</i><i style="--c:#d9a31b"><em></em>SCJM</i></div>
+<div class="rs"><div class="t"><em style="--c:#d9a31b"></em>SCJM · Mendoza<span>2021</span></div><b>Pérez c/ Gómez p/ daño moral</b><p>La indemnización del <mark>daño moral</mark> no exige prueba específica.</p></div>
+<div class="rs"><div class="t"><em style="--c:#5fd07f"></em>TSJ · Córdoba<span>2019</span></div><b>Díaz c/ Banco Sur</b><p>Se fija el <mark>daño moral</mark> con criterio prudencial.</p></div>
+<div class="rs"><div class="t"><em style="--c:#6aa9ff"></em>CSJN<span>2018</span></div><b>Fernández c/ Provincia</b><p>El <mark>daño moral</mark> procede ante la lesión de afectos.</p></div></div>
+<div class="bar"><div class="on"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><b>Buscar</b></div><div><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/></svg><b>Lector</b></div><div><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/></svg><b>Cálculos</b></div><div><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c1-4 3.6-6 7-6s6 2 7 6"/></svg><b>Perfil</b></div><div><svg viewBox="0 0 24 24"><path d="M5 8h14M5 12h14M5 16h14"/></svg><b>Más</b></div></div></div></div>
+
+<div class="op"><h2>Opción C</h2><p class="d"><b style="color:var(--xf1eee6,#f1eee6)">Resultados a pantalla completa.</b> Arriba solo el campo. Filtros y bases viven en una hoja que sube desde un botón flotante sobre la barra.</p>
+<div class="tel"><div class="hd"><img><div class="lg">IVS<i></i><span>CODEX</span></div><div class="sp"></div><div class="pl lx">Lexia</div><div class="pl">Cómo usar</div></div>
+<div class="sc"><div class="bus" style="margin-top:6px"><span>daño moral</span><u>Buscar</u></div><p class="res" style="margin:10px 0 0">3.601 resultados.</p>
+<div class="rs"><div class="t"><em style="--c:#d9a31b"></em>SCJM<span>2021</span></div><b>Pérez c/ Gómez p/ daño moral</b><p>La indemnización del <mark>daño moral</mark> no exige prueba específica.</p></div>
+<div class="rs"><div class="t"><em style="--c:#5fd07f"></em>TSJ<span>2019</span></div><b>Díaz c/ Banco Sur</b><p>Se fija el <mark>daño moral</mark> con criterio prudencial.</p></div>
+<div class="rs"><div class="t"><em style="--c:#6aa9ff"></em>CSJN<span>2018</span></div><b>Fernández c/ Provincia</b><p>El <mark>daño moral</mark> procede ante la lesión de afectos.</p></div></div>
+<div class="dock">Filtros y bases <b>8</b></div>
+<div class="bar"><div class="on"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg><b>Buscar</b></div><div><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/></svg><b>Lector</b></div><div><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/></svg><b>Cálculos</b></div><div><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c1-4 3.6-6 7-6s6 2 7 6"/></svg><b>Perfil</b></div><div><svg viewBox="0 0 24 24"><path d="M5 8h14M5 12h14M5 16h14"/></svg><b>Más</b></div></div></div></div>
+
+</div></body></html>
