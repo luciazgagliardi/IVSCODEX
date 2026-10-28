@@ -2,7 +2,7 @@
 (function(){
   var S=IVS4;
   var BASES=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["SCBA","--c-scba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"],["CORTE IDH","--c-idh"]];
-  var CAB='<header class="cab"><span class="lock"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></span><div class="acts"><span class="tema-seg" role="group" aria-label="Fondo del sitio"><button type="button" class="tema-op" data-tema-op="claro" aria-label="Día" title="Día" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.2v2M10 15.8v2M2.2 10h2M15.8 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button><button type="button" class="tema-op" data-tema-op="oscuro" aria-label="Noche" title="Noche" aria-pressed="true"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M16.2 12.3A6.7 6.7 0 0 1 7.7 3.8a6.7 6.7 0 1 0 8.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button></span><a class="btn sec" href="#" data-tab="fuentes">Ver el catálogo de fuentes</a><a class="btn" href="#" data-tab="buscar">Iniciar la consulta</a></div></header>';
+  var CAB='<header class="cab"><span class="lock"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></span><div class="acts"><span class="tema-seg" role="group" aria-label="Colores del sitio"><button type="button" class="tema-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Colores del sitio" title="Colores"></button><span class="tema-pop" role="menu" hidden><button type="button" class="tema-op" role="menuitemradio" data-tema-op="oscuro" aria-label="Noche" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M16.2 12.3A6.7 6.7 0 0 1 7.7 3.8a6.7 6.7 0 1 0 8.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><em>Noche</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="claro" aria-label="Día" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.2v2M10 15.8v2M2.2 10h2M15.8 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><em>Día</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="descanso" aria-label="Descanso · cuida la vista" aria-pressed="false"><i class="sw" style="--a:#2e231b;--b:#d4a04a"></i><em>Descanso · cuida la vista</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="azul" aria-label="Azul noche" aria-pressed="false"><i class="sw" style="--a:#161c27;--b:#d4a94a"></i><em>Azul noche</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="verde" aria-label="Verde bosque" aria-pressed="false"><i class="sw" style="--a:#14211d;--b:#cfae6a"></i><em>Verde bosque</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="bordo" aria-label="Bordó" aria-pressed="false"><i class="sw" style="--a:#26151a;--b:#dbb470"></i><em>Bordó</em></button></span></span><a class="btn sec" href="#" data-tab="fuentes">Ver el catálogo de fuentes</a><a class="btn" href="#" data-tab="buscar">Iniciar la consulta</a></div></header>';
   window.IVS6={
     BASES:BASES,
     /* monta la cabecera, el héroe del prisma y devuelve el contenedor <main> donde van las secciones */
@@ -30,14 +30,25 @@
       colocar();pr.medir();addEventListener("resize",function(){colocar();pr.medir();});
       /* el fondo (claro u oscuro) es el mismo que el de la aplicación: se guarda en «ivs-tema» */
       var ops=[].slice.call(document.querySelectorAll(".tema-op"));
-      function pon(c){
-        var r=document.documentElement;
-        if(c) r.setAttribute("data-tema","claro"); else r.removeAttribute("data-tema");
-        ops.forEach(function(op){ op.setAttribute("aria-pressed",String((op.getAttribute("data-tema-op")==="claro")===c)); });
+      var btn=document.querySelector(".tema-btn"),pop=document.querySelector(".tema-pop");
+      function abre(si){ if(!pop||!btn) return; if(si){ pop.removeAttribute("hidden"); pop.style.left=""; pop.style.right=""; if(pop.getBoundingClientRect().left<8){ pop.style.left="0"; pop.style.right="auto"; var q=pop.getBoundingClientRect().right-(innerWidth-8); if(q>0) pop.style.left=(-q)+"px"; } } else { pop.setAttribute("hidden",""); } btn.setAttribute("aria-expanded",String(!!si)); }
+      function icono(t){ var o=ops.filter(function(x){ return x.getAttribute("data-tema-op")===t; })[0]; if(!o||!btn) return; var i=o.querySelector("svg,.sw"); btn.innerHTML=i?i.outerHTML:""; btn.title="Colores: "+o.getAttribute("aria-label"); }
+      if(btn){
+        btn.addEventListener("click",function(e){ e.stopPropagation(); abre(pop.hasAttribute("hidden")); });
+        document.addEventListener("click",function(e){ if(pop&&!pop.hasAttribute("hidden")&&!pop.contains(e.target)) abre(false); });
+        document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&pop&&!pop.hasAttribute("hidden")){ abre(false); btn.focus(); } });
       }
-      pon(document.documentElement.getAttribute("data-tema")==="claro");
-      ops.forEach(function(op){ op.addEventListener("click",function(){ var c=op.getAttribute("data-tema-op")==="claro"; pon(c); try{ localStorage.setItem("ivs-tema",c?"claro":"oscuro"); }catch(e){} }); });
-      addEventListener("storage",function(e){ if(e.key==="ivs-tema") pon(e.newValue==="claro"); });
+      var TEMAS={claro:1,azul:1,verde:1,bordo:1,descanso:1};
+      function pon(t){
+        if(!TEMAS[t]) t="oscuro";
+        var r=document.documentElement;
+        if(t!=="oscuro") r.setAttribute("data-tema",t); else r.removeAttribute("data-tema");
+        ops.forEach(function(op){ op.setAttribute("aria-pressed",String(op.getAttribute("data-tema-op")===t)); });
+        icono(t);
+      }
+      pon(document.documentElement.getAttribute("data-tema"));
+      ops.forEach(function(op){ op.addEventListener("click",function(){ var t=op.getAttribute("data-tema-op"); pon(t); try{ localStorage.setItem("ivs-tema",t); }catch(e){} abre(false); }); });
+      addEventListener("storage",function(e){ if(e.key==="ivs-tema") pon(e.newValue); });
       window.IVS6.ponTema=pon;
       if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){colocar();pr.medir();});
       addEventListener("load",function(){colocar();pr.medir();});

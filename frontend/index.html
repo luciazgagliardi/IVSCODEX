@@ -6,7 +6,7 @@
 <title>IVS CODEX</title>
 <meta name="description" content="Buscador integrado de repositorios judiciales oficiales y doctrina. Arme la consulta y la plataforma lo lleva a las bases oficiales.">
 <meta name="theme-color" content="#100e0b">
-<script>try{if(localStorage.getItem("ivs-tema")==="claro")document.documentElement.setAttribute("data-tema","claro")}catch(e){}</script>
+<script>try{var t=localStorage.getItem("ivs-tema");if(t==="claro"||t==="azul"||t==="verde"||t==="bordo"||t==="descanso")document.documentElement.setAttribute("data-tema",t)}catch(e){}</script>
 <!-- Política de contenido: la página solo puede cargar scripts propios, hablar con su
      propio servidor (API), con el backend publicado, con SAIJ y con la API de
      series de datos.gob.ar, y nunca cargar plugins ni cambiar su base de enlaces. -->
@@ -106,16 +106,28 @@ html[data-tema="claro"]{
   --tx:31,27,20;--bg-rgb:245,241,231;--ov-rgb:40,34,20;--panel:#fbf8f1;
   color-scheme:light
 }
+/* Otras paletas oscuras: el mismo diseño, solo cambian los colores. «Noche» (sin atributo) es la de siempre. */
+html[data-tema="azul"]{--bg:#161c27;--fg:#ece8dc;--gold:#d4a94a;--gold-rgb:212,169,74;--tx:236,232,220;--bg-rgb:22,28,39;--ov-rgb:11,14,20;--panel:#1b2230;--humo:#929290}
+html[data-tema="verde"]{--bg:#14211d;--fg:#eee9db;--gold:#cfae6a;--gold-rgb:207,174,106;--tx:238,233,219;--bg-rgb:20,33,29;--ov-rgb:10,17,15;--panel:#192a25;--humo:#92958b}
+html[data-tema="descanso"]{--bg:#2e231b;--fg:#e8d9bd;--gold:#d4a04a;--gold-rgb:212,160,74;--tx:232,217,189;--bg-rgb:46,35,27;--ov-rgb:23,18,14;--panel:#35291f;--humo:#9a8d79}
+html[data-tema="bordo"]{--bg:#26151a;--fg:#f1e9dc;--gold:#dbb470;--gold-rgb:219,180,112;--tx:241,233,220;--bg-rgb:38,21,26;--ov-rgb:19,11,13;--panel:#2d191f;--humo:#9c908b}
 html[data-tema="claro"] .grano{opacity:.05;mix-blend-mode:multiply}
 html[data-tema="claro"] .tour-card,html[data-tema="claro"] .compartir-menu{background:var(--panel)}
 html[data-tema="claro"] *::-webkit-scrollbar-thumb{background:rgba(31,27,20,.22)}
 html[data-tema="claro"]{scrollbar-color:rgba(31,27,20,.28) transparent}
 html[data-tema="claro"] .perfil-menu,html[data-tema="claro"] .bq-drawer,html[data-tema="claro"] .asist__panel,html[data-tema="claro"] .tour-card{box-shadow:0 18px 50px rgba(60,45,10,.18)}
-/* interruptor de fondo: Día / Noche */
-.tema-seg{flex:none;display:inline-flex;align-items:center;padding:3px;border:1px solid var(--line);border-radius:999px}
-.tema-op{appearance:none;display:inline-flex;align-items:center;justify-content:center;width:29px;height:29px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--mute);transition:background .25s,color .25s}
-.tema-op svg{display:block}
-.tema-op:hover{color:var(--fg)}
+/* interruptor de colores: un círculo que abre una burbuja con las paletas */
+.tema-seg{position:relative;flex:none;display:inline-flex}
+.tema-btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;width:35px;height:35px;padding:0;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--fg);cursor:pointer;transition:border-color .25s}
+.tema-btn:hover,.tema-btn[aria-expanded="true"]{border-color:var(--gold-55)}
+.tema-btn svg{display:block}
+.tema-pop{position:absolute;z-index:80;top:calc(100% + 10px);right:0;display:flex;flex-direction:column;gap:2px;min-width:214px;padding:6px;border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:0 18px 44px rgba(0,0,0,.35)}
+.tema-pop[hidden]{display:none}
+.tema-op{appearance:none;display:flex;align-items:center;gap:11px;width:100%;padding:8px 16px 8px 10px;border:0;border-radius:999px;background:transparent;color:var(--fg);font:400 13.5px/1.2 var(--sans);text-align:left;cursor:pointer;transition:background .2s,color .2s}
+.tema-op em{font-style:normal}
+.tema-op svg{display:block;flex:none}
+.tema-op .sw,.tema-btn .sw{display:block;flex:none;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,var(--a) 50%,var(--b) 50%);box-shadow:inset 0 0 0 1px rgba(128,128,128,.55)}
+.tema-op:hover{background:rgba(128,128,128,.16)}
 .tema-op[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 
 *,*::before,*::after{box-sizing:border-box}
@@ -1528,6 +1540,17 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
   .her-lista li{gap:6px 10px}
   .her-nom{flex-basis:100%}
 }
+/* nada rectangular: campos en cápsula y cuadros con las esquinas redondeadas (compu y celular) */
+input[type=text],input[type=number],input[type=email],input[type=password],input[type=date],select{
+  border:1px solid var(--line);border-radius:999px;padding:11px 20px
+}
+input[type=text]:focus,input[type=number]:focus,input[type=email]:focus,input[type=password]:focus,input[type=date]:focus,select:focus{border-color:var(--gold)}
+select{padding-right:42px;background-position:calc(100% - 22px) 55%,calc(100% - 17px) 55%}
+textarea{border-radius:22px}
+.vacio{border-radius:22px}
+.out{border:1px solid var(--gold-55);border-radius:22px}
+.brief__summary{border-radius:22px}
+mark{border-radius:6px}
 /* sin barras de desplazamiento en ningún lado: se sigue desplazando con la rueda, el dedo y el teclado */
 *{scrollbar-width:none!important}
 *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
@@ -1546,14 +1569,14 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261026m" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261028f" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
   <div class="nav-wrap">
     <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
-    <div class="nav-fin"><button type="button" class="lx-chip" data-act="abrir-lexia" aria-label="Preguntarle a Lexia"><i></i>Lexia</button><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><span class="tema-seg" role="group" aria-label="Fondo del sitio"><button type="button" class="tema-op" data-tema-op="claro" aria-label="Día" title="Día" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.2v2M10 15.8v2M2.2 10h2M15.8 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button><button type="button" class="tema-op" data-tema-op="oscuro" aria-label="Noche" title="Noche" aria-pressed="true"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M16.2 12.3A6.7 6.7 0 0 1 7.7 3.8a6.7 6.7 0 1 0 8.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button></span><span class="perfil-wrap"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-act="tog-perfil" aria-haspopup="menu" aria-expanded="false"><span>Mi perfil</span><svg class="fsb-flecha" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="perfil-menu" id="perfil-menu" role="menu" hidden></div></span><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
+    <div class="nav-fin"><button type="button" class="lx-chip" data-act="abrir-lexia" aria-label="Preguntarle a Lexia"><i></i>Lexia</button><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><span class="tema-seg" role="group" aria-label="Colores del sitio"><button type="button" class="tema-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Colores del sitio" title="Colores"></button><span class="tema-pop" role="menu" hidden><button type="button" class="tema-op" role="menuitemradio" data-tema-op="oscuro" aria-label="Noche" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M16.2 12.3A6.7 6.7 0 0 1 7.7 3.8a6.7 6.7 0 1 0 8.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><em>Noche</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="claro" aria-label="Día" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.2v2M10 15.8v2M2.2 10h2M15.8 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><em>Día</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="descanso" aria-label="Descanso · cuida la vista" aria-pressed="false"><i class="sw" style="--a:#2e231b;--b:#d4a04a"></i><em>Descanso · cuida la vista</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="azul" aria-label="Azul noche" aria-pressed="false"><i class="sw" style="--a:#161c27;--b:#d4a94a"></i><em>Azul noche</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="verde" aria-label="Verde bosque" aria-pressed="false"><i class="sw" style="--a:#14211d;--b:#cfae6a"></i><em>Verde bosque</em></button><button type="button" class="tema-op" role="menuitemradio" data-tema-op="bordo" aria-label="Bordó" aria-pressed="false"><i class="sw" style="--a:#26151a;--b:#dbb470"></i><em>Bordó</em></button></span></span><span class="perfil-wrap"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-act="tog-perfil" aria-haspopup="menu" aria-expanded="false"><span>Mi perfil</span><svg class="fsb-flecha" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="perfil-menu" id="perfil-menu" role="menu" hidden></div></span><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
 </header>
 
@@ -10288,18 +10311,29 @@ window.IVS={
 <script>
 (function(){
   var ops=[].slice.call(document.querySelectorAll(".tema-op")); if(!ops.length) return;
-  function pon(c){
-    var r=document.documentElement;
-    if(c) r.setAttribute("data-tema","claro"); else r.removeAttribute("data-tema");
-    ops.forEach(function(o){ o.setAttribute("aria-pressed",String((o.getAttribute("data-tema-op")==="claro")===c)); });
-    try{ localStorage.setItem("ivs-tema",c?"claro":"oscuro"); }catch(e){}
-    var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",c?"#f5f1e7":"#100e0b");
+  var btn=document.querySelector(".tema-btn"),pop=document.querySelector(".tema-pop");
+  function abre(si){ if(!pop||!btn) return; if(si){ pop.removeAttribute("hidden"); pop.style.left=""; pop.style.right=""; if(pop.getBoundingClientRect().left<8){ pop.style.left="0"; pop.style.right="auto"; var q=pop.getBoundingClientRect().right-(innerWidth-8); if(q>0) pop.style.left=(-q)+"px"; } } else { pop.setAttribute("hidden",""); } btn.setAttribute("aria-expanded",String(!!si)); }
+  function icono(t){ var o=ops.filter(function(x){ return x.getAttribute("data-tema-op")===t; })[0]; if(!o||!btn) return; var i=o.querySelector("svg,.sw"); btn.innerHTML=i?i.outerHTML:""; btn.title="Colores: "+o.getAttribute("aria-label"); }
+  if(btn){
+    btn.addEventListener("click",function(e){ e.stopPropagation(); abre(pop.hasAttribute("hidden")); });
+    document.addEventListener("click",function(e){ if(pop&&!pop.hasAttribute("hidden")&&!pop.contains(e.target)) abre(false); });
+    document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&pop&&!pop.hasAttribute("hidden")){ abre(false); btn.focus(); } });
   }
-  pon(document.documentElement.getAttribute("data-tema")==="claro");
-  ops.forEach(function(o){ o.addEventListener("click",function(){ var c=o.getAttribute("data-tema-op")==="claro"; pon(c); portada(c); }); });
+  var TEMAS={claro:"#f5f1e7",azul:"#161c27",verde:"#14211d",bordo:"#26151a",descanso:"#2e231b"};
+  function pon(t){
+    if(!TEMAS[t]) t="oscuro";
+    var r=document.documentElement;
+    if(t!=="oscuro") r.setAttribute("data-tema",t); else r.removeAttribute("data-tema");
+    ops.forEach(function(o){ o.setAttribute("aria-pressed",String(o.getAttribute("data-tema-op")===t)); });
+    icono(t);
+    try{ localStorage.setItem("ivs-tema",t); }catch(e){}
+    var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",TEMAS[t]||"#100e0b");
+  }
+  pon(document.documentElement.getAttribute("data-tema"));
+  ops.forEach(function(o){ o.addEventListener("click",function(){ var t=o.getAttribute("data-tema-op"); pon(t); portada(t); abre(false); }); });
   // la portada (en su marco) lleva el mismo fondo; si se cambia allá, se cambia acá
-  function portada(c){ try{ var w=document.getElementById("portada-marco").contentWindow; if(w&&w.IVS6&&w.IVS6.ponTema) w.IVS6.ponTema(c); }catch(e){} }
-  addEventListener("storage",function(e){ if(e.key==="ivs-tema") pon(e.newValue==="claro"); });
+  function portada(t){ try{ var w=document.getElementById("portada-marco").contentWindow; if(w&&w.IVS6&&w.IVS6.ponTema) w.IVS6.ponTema(t); }catch(e){} }
+  addEventListener("storage",function(e){ if(e.key==="ivs-tema") pon(e.newValue); });
 })();
 </script>
 </body>
