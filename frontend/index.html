@@ -7994,7 +7994,7 @@ function montarAsistente(){
         return dice("Para el texto de una norma está «Norma» (desde InfoLeg). Si quiere los fallos que citan un artículo, dígame «fallos sobre el art. 1710».",[{t:"Abrir Norma",f:function(){ irA("norma"); }}]);
       }
     if(/\b(tutorial|recorrido|guiame|guiarme|guiado|ensename|explicame todo|explicame la pagina|explicame como se usa|como se usa|como (lo )?uso|como usar|como funciona (esto|la pagina|la plataforma|el sitio)|paso a paso|primera vez|no entiendo (nada|todo)|nada de esto|estoy perdid[oa]|me perdi|no se usar|no se como usar|no se por donde)\b/.test(t)&&!/\bfiltros?\b/.test(t))
-      return dice([pick("tour",["Con gusto. Puedo guiarlo por toda la página, señalando cada parte en pantalla. Son unos diez pasos y lo maneja usted.","Por supuesto. Le hago un recorrido por la página: le voy señalando cada parte y explicando para qué sirve."]),"¿Empezamos?"],[
+      return dice([pick("tour",["Con gusto. Puedo guiarlo por toda la página, señalando cada parte en pantalla. Son unos diez pasos y lo maneja usted.","Por supuesto. Le hago un recorrido por la página: le voy señalando cada parte y explicando para qué sirve."]) +" ¿Empezamos?"],[
         {t:"Sí, guíeme por toda la página",f:function(){ iniciarRecorrido("completo"); }},
         {t:"Sólo una parte",f:elegirRecorrido},
         {t:"Prefiero que me explique por escrito",suave:true,f:explicarEscrito}]);
@@ -8085,9 +8085,7 @@ function montarAsistente(){
   }
   function inicio(){
     var n=estado.usuario?nombreDe(estado.usuario):"";
-    dice([n?"Hola, "+n+". Soy Lexia.":"Hola, colega. Soy Lexia.",
-      "Puedo buscar jurisprudencia por usted, explicarle los filtros o guiarlo por la página paso a paso. Pruebe con algo como «daño moral en Mendoza desde 2018».",
-      "¿Qué anda buscando?"],opcionesInicio());
+    dice([(n?"Hola, "+n+". Soy Lexia.":"Hola, colega. Soy Lexia.")+" Busco jurisprudencia, explico los filtros y lo guío por la página. ¿Qué anda buscando?"],opcionesInicio());
   }
 
   /* ---- recorridos guiados: la página completa o una parte, «hacerlo juntos» ----
@@ -8254,9 +8252,9 @@ function montarAsistente(){
     document.removeEventListener("keydown",rec.tecla,true); window.removeEventListener("resize",rec.reubicar); window.removeEventListener("scroll",rec.reubicar,true);
     if(estado.perfilMenu){ estado.perfilMenu=false; pintarNav(); }
     estado.drawer=false; render();
-    abrir(true);
+    abrir(true,true);
     var completo=rec.clave==="completo";
-    dice(terminado?(completo?["Eso es todo el recorrido.","¿Le quedó alguna duda? Puedo repetirlo o hacer juntos una parte en particular."]:["Listo, lo hicimos juntos.","¿Seguimos con otra parte?"]):"Cuando quiera lo retomamos.",
+    dice(terminado?(completo?"Eso es todo el recorrido. ¿Le quedó alguna duda? Puedo repetirlo o hacer juntos una parte en particular.":"Listo, lo hicimos juntos. ¿Seguimos con otra parte?"):"Cuando quiera lo retomamos.",
       [{t:"Elegir otra parte",f:elegirRecorrido},{t:"Estoy bien, gracias",suave:true,f:function(){ dice("Un gusto. Éxitos con el caso."); }}]);
   }
   function sigPaso(dir){
@@ -8369,16 +8367,20 @@ function montarAsistente(){
     document.addEventListener("keydown",rec.tecla,true); window.addEventListener("resize",rec.reubicar); window.addEventListener("scroll",rec.reubicar,true);
     mostrarPaso(1);
   }
-  function elegirRecorrido(){
-    abrir(true);
+  /* «pidio»: lo que tocó la persona («Tutorial», «Cómo usar»…); queda en la conversación como mensaje suyo, aunque no lo haya escrito */
+  function elegirRecorrido(pidio){
+    abrir(true,true);
     /* si ya está preguntando o escribiendo lo mismo, no se repite el mensaje */
     var ult=log.lastElementChild;
-    if(corriendo||cola.length||(ult&&ult.classList.contains("asist__ops")&&/Recorrido completo/.test(ult.textContent))){ ir(); return; }
-    dice(["Con gusto. Puedo guiarlo por todas las funciones de la página, o hacer juntos sólo la parte que le cuesta.","¿Qué prefiere?"],[
+    if(ctx.pideTour||(ult&&ult.classList.contains("asist__ops")&&/Recorrido completo/.test(ult.textContent))){ ir(); return; }
+    if(typeof pidio==="string"&&pidio) dijo(pidio);
+    ctx.pideTour=true;
+    dice("Con gusto. Puedo guiarlo por todas las funciones de la página, o hacer juntos sólo la parte que le cuesta. ¿Qué prefiere?",[
       {t:"Recorrido completo",f:function(){ iniciarRecorrido("completo"); }},
       {t:"Una parte de Buscar",f:menuBuscar},
       {t:"Otra sección",f:menuSecciones},
       {t:"Mi perfil y lo guardado",suave:true,f:function(){ iniciarRecorrido("perfil"); }}]);
+    encolar(function(next){ ctx.pideTour=false; next(); });
   }
   function menuBuscar(){
     dice("¿Qué parte de Buscar?",[
@@ -8394,11 +8396,11 @@ function montarAsistente(){
   }
   document.addEventListener("click",function(ev){
     var t=ev.target.closest&&ev.target.closest("[data-tour]"); if(!t||rec.ov) return;
-    ev.preventDefault(); elegirRecorrido();
+    ev.preventDefault(); elegirRecorrido((t.textContent||"").replace(/\s+/g," ").trim()||"Tutorial");
   });
-  function abrir(on){
+  function abrir(on,sinSaludo){
     el.classList.toggle("is-on",on);
-    if(on){ if(!arranco){ arranco=true; inicio(); } setTimeout(function(){ entrada.focus(); },60); }
+    if(on){ if(!arranco){ arranco=true; if(!sinSaludo) inicio(); } setTimeout(function(){ entrada.focus(); },60); }
     else document.getElementById("asist-abrir").focus();
   }
   document.getElementById("asist-abrir").addEventListener("click",function(){ abrir(true); });
