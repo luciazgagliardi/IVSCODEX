@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · D · Halo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="base.css">
+<style>
+/* un halo dorado detrás del nombre, simétrico, con dos brasas a los costados */
+.luz{position:fixed;inset:0;z-index:0;overflow:hidden;background:var(--bg)}
+.luz i{position:absolute;border-radius:50%;filter:blur(80px)}
+.h1{left:50%;top:44%;width:78vmin;height:78vmin;margin:-39vmin 0 0 -39vmin;background:radial-gradient(circle,rgba(var(--gold-rgb),.85),rgba(var(--ember),.36) 46%,transparent 70%);animation:late 9s ease-in-out infinite alternate}
+.h2{left:-16vw;bottom:-20vw;width:50vw;height:50vw;background:radial-gradient(circle,rgba(var(--vino),.5),transparent 70%)}
+.h3{right:-16vw;top:-14vw;width:46vw;height:46vw;background:radial-gradient(circle,rgba(var(--ember),.42),transparent 70%)}
+.luz::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 46%,transparent 40%,rgba(var(--bg-rgb),.8))}
+@keyframes late{to{transform:scale(1.1);opacity:.85}}
+
+.pag{position:relative;z-index:2;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.cab{display:flex;align-items:center;gap:20px;padding:22px 0}
+.cab nav{margin:0 auto;gap:clamp(16px,2.2vw,32px);padding:11px 26px;color:var(--mute)}
+.cab nav a:hover{color:var(--fg)}
+.cab .btn{padding:11px 20px;font-size:14px}
+.centro{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:clamp(20px,4vh,50px) 0 clamp(90px,12vh,130px)}
+.kic{margin:0 0 clamp(18px,3.4vh,34px)}
+.nombre{margin:0;font-size:clamp(44px,11.6vw,176px);line-height:.9;filter:drop-shadow(0 0 .3em rgba(var(--gold-rgb),.35))}
+.eje{width:100%;height:clamp(120px,19svh,200px)}
+.sub{margin:0 auto clamp(26px,4.4vh,44px);max-width:44ch;color:var(--mute);font-size:clamp(15px,1.4vw,19px)}
+.busca{width:min(660px,100%);display:flex;align-items:center;gap:12px;padding:7px 7px 7px 24px;border-radius:999px;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.busca svg{width:19px;height:19px;flex:none;fill:none;stroke:var(--mute);stroke-width:1.7;stroke-linecap:round}
+.busca input{flex:1;min-width:0;border:0;outline:0;background:none;padding:12px 0;font-size:16.5px}
+.busca input::placeholder{color:var(--dim)}
+.busca .btn{padding:14px 28px}
+.ruta{margin:22px 0 0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 22px;font-size:13px;color:var(--dim)}
+.ruta a{display:inline-flex;align-items:center;gap:8px;transition:color .25s}
+.ruta a:hover{color:var(--fg)}
+.pie{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-size:12.5px;color:var(--dim)}
+@media (max-width:900px){.cab nav{display:none}.cab .btn{margin-left:auto}}
+@media (max-width:560px){.busca{padding-left:18px}.busca .btn{padding:13px 20px}}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="luz" aria-hidden="true"><i class="h1"></i><i class="h2"></i><i class="h3"></i></div>
+
+<div class="pag">
+  <header class="cab">
+    <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+    <nav class="vid cap" aria-label="Secciones"><a href="#">Buscar</a><a href="#">Lector</a><a href="#">Ramas</a><a href="#">Cálculos</a><a href="#">Fuentes</a></nav>
+    <a class="btn" href="#">Iniciar la consulta</a>
+  </header>
+
+  <main class="centro">
+    <p class="kic vid cap"><span class="pto"></span>11 bases oficiales · 106 fuentes</p>
+    <h1 class="nombre logo" aria-label="IVS CODEX"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></h1>
+    <div class="eje" id="eje" aria-hidden="true"></div>
+    <p class="sub">Buscador integrado de repositorios judiciales oficiales y doctrina.</p>
+    <form class="busca vid" onsubmit="return false" aria-label="Consulta">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="m13.5 13.5 3.5 3.5"/></svg>
+      <label class="sr" for="q">Tema</label><input id="q" placeholder="Escriba el tema, por ejemplo «daño moral»">
+      <button class="btn" type="submit">Buscar</button>
+    </form>
+    <p class="ruta" aria-label="Dónde buscar"><a href="#"><i class="dot b-scjm"></i>Mendoza</a><a href="#"><i class="dot b-tsj"></i>CABA</a><a href="#"><i class="dot b-csjn"></i>La Nación</a><a href="#"><i class="dot b-scba"></i>Provincias</a><a href="#"><i class="dot b-dial"></i>Doctrina</a><a href="#"><i class="dot b-idh"></i>Internacional</a></p>
+  </main>
+  <p class="pie">Verifique siempre en la fuente</p>
+</div>
+<script src="../../portada/shared.js"></script>
+<script src="prisma.js"></script>
+<script>
+prismaEn({host:'.pag',eje:'#eje'});
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · F · Horizonte</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="base.css">
+<style>
+/* un amanecer quieto: la luz asoma por una línea de horizonte, el nombre se apoya en ella y las bases son los puntos que la recorren */
+:root{--hz:58svh}
+.cielo{position:absolute;inset:0;z-index:-2;overflow:hidden;background:var(--bg)}
+.cielo .sol{position:absolute;left:50%;top:var(--hz);width:130vw;height:68vh;margin-left:-65vw;transform:translateY(-62%);background:radial-gradient(50% 50% at 50% 62%,rgba(255,205,110,.95),rgba(var(--gold-rgb),.7) 24%,rgba(var(--ember),.5) 48%,rgba(var(--vino),.22) 66%,transparent 78%);filter:blur(28px);animation:sale 14s ease-in-out infinite alternate}
+.cielo .linea{position:absolute;left:0;right:0;top:var(--hz);height:2px;background:linear-gradient(90deg,transparent,rgba(255,200,100,.9) 30%,rgba(255,226,150,1) 50%,rgba(255,200,100,.9) 70%,transparent);filter:blur(1.5px);box-shadow:0 0 30px 6px rgba(var(--gold-rgb),.55)}
+.cielo .agua{position:absolute;left:0;right:0;top:var(--hz);bottom:0;background:linear-gradient(rgba(var(--ember),.26),rgba(var(--bg-rgb),.9) 62%,var(--bg));-webkit-mask-image:linear-gradient(#000,transparent 92%);mask-image:linear-gradient(#000,transparent 92%)}
+.cielo::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(var(--bg-rgb),.82),transparent 40%)}
+@keyframes sale{to{transform:translateY(-66%) scale(1.06)}}
+
+.pag{position:relative;z-index:2;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding:0 var(--pad)}
+.cab{display:flex;align-items:center;gap:20px;padding:22px 0}
+.cab .circ{margin-left:auto;width:46px;height:46px}
+.escena{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center}
+.arriba{height:calc(var(--hz) - 74px);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:calc(min(100vw,100svh)*.1 + 28px)}
+.arriba .t{margin:0 0 clamp(10px,2vh,22px);font:400 12px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;color:var(--mute)}
+.nombre{margin:0;font-size:clamp(44px,12.6vw,196px);line-height:.92;filter:drop-shadow(0 0 .22em rgba(var(--gold-rgb),.4))}
+.bases{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(14px,3.2vw,52px);margin:30px 0 0}
+.bases a{display:grid;justify-items:center;gap:10px;font-size:11.5px;letter-spacing:.14em;color:var(--mute);transition:color .3s,transform .4s var(--ease)}
+.bases a i{width:13px;height:13px;border-radius:50%;background:var(--c);box-shadow:0 0 0 5px rgba(var(--fg-rgb),.06),0 0 22px 3px var(--c);transition:transform .4s var(--ease)}
+.bases a:hover{color:var(--fg);transform:translateY(-3px)}
+.bases a:hover i{transform:scale(1.5)}
+.busca{width:min(620px,100%);margin-top:clamp(26px,5vh,54px);display:flex;align-items:center;gap:12px;padding:7px 7px 7px 24px;border-radius:999px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.busca svg{width:19px;height:19px;flex:none;fill:none;stroke:var(--mute);stroke-width:1.7;stroke-linecap:round}
+.busca input{flex:1;min-width:0;border:0;outline:0;background:none;padding:12px 0;font-size:16.5px}
+.busca input::placeholder{color:var(--dim)}
+.busca .btn{padding:14px 28px}
+.nota{margin:18px 0 0;font-size:12.5px;color:var(--dim)}
+@media (max-width:760px){
+  :root{--hz:50svh}
+  .bases{gap:18px 22px}.bases a{font-size:10.5px}
+  .busca{padding-left:18px}.busca .btn{padding:13px 20px}
+}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+
+<div class="pag">
+  <div class="cielo" aria-hidden="true"><i class="sol"></i><i class="agua"></i><i class="linea"></i></div>
+  <header class="cab">
+    <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+    <button class="circ vid" type="button" aria-label="Menú" style="width:46px;height:46px"><svg viewBox="0 0 24 24"><path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="2.6"/></svg></button>
+  </header>
+
+  <main class="escena">
+    <div class="arriba">
+      <p class="t">Jurisprudencia argentina</p>
+      <h1 class="nombre logo" aria-label="IVS CODEX"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></h1>
+    </div>
+
+    <nav class="bases" aria-label="Las bases oficiales">
+      <a href="#" class="b-scjm" style="--c:#d9a62a"><i></i>SCJM</a><a href="#" class="b-mzl" style="--c:#b58640"><i></i>MZA LEGAL</a><a href="#" class="b-tsj" style="--c:#d5873f"><i></i>TSJ</a><a href="#" class="b-scba" style="--c:#c06a2c"><i></i>SCBA</a>
+      <a href="#" class="b-csjn" style="--c:#c95836"><i></i>CSJN</a><a href="#" class="b-saij" style="--c:#b03b42"><i></i>SAIJ</a><a href="#" class="b-dial" style="--c:#8a3853"><i></i>DIALNET</a><a href="#" class="b-idh" style="--c:#5f7f9a"><i></i>CORTE IDH</a>
+    </nav>
+
+    <form class="busca vid" onsubmit="return false" aria-label="Consulta">
+      <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="5.5"/><path d="m13.5 13.5 3.5 3.5"/></svg>
+      <label class="sr" for="q">Tema</label><input id="q" placeholder="Una consulta, todas las bases">
+      <button class="btn" type="submit">Buscar</button>
+    </form>
+    <p class="nota">11 bases · 106 fuentes · Verifique siempre en la fuente</p>
+  </main>
+</div>
+<script src="../../portada/shared.js"></script>
+<script src="prisma.js"></script>
+<script>
+prismaEn({host:'.pag',eje:'.cielo .linea'});
+</script>
+</body>
+</html>
