@@ -1,0 +1,41 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Instrument+Sans:wght@400;500&display=swap"><link rel="stylesheet" href="base.css"><title>IVS CODEX · La frase</title>
+<style>
+/* 3 · LA FRASE — la consulta ES la portada: se escribe como una oración.
+   Nada decorativo se mueve; la única animación es que aparezcan los resultados. */
+.fr{min-height:calc(100svh - 70px);display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,5vh,70px) var(--pad)}
+.fr-o{margin:0 0 clamp(18px,2.4vw,32px);max-width:48ch;color:var(--mute);font-size:15px}
+.fr-o b{color:var(--fg);font-weight:500}
+.fr-t{margin:0;max-width:20em;font:400 clamp(30px,5.2vw,82px)/1.32 var(--serif);letter-spacing:-.015em}
+.fr-t .c{font-style:italic;color:var(--dim)}
+.fr-t input{width:var(--w,8ch);max-width:100%;padding:0 .1em .02em;border:0;border-bottom:1px solid var(--gold);border-radius:0;background:none;font:400 .86em/1.1 var(--sans);letter-spacing:-.03em;color:var(--fg);caret-color:transparent;text-align:center}
+.fr-t input:focus{outline:none;border-bottom-width:2px}
+.chip{padding:.02em .5em .1em;margin:0 .06em;border:1px solid var(--line);border-radius:999px;background:none;font:400 .5em/1.3 var(--sans);letter-spacing:0;color:var(--mute);vertical-align:.18em;cursor:pointer;transition:all .3s}
+.chip[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.fr-acc{margin-top:clamp(26px,3.4vw,46px)}
+.res{padding:0 var(--pad) clamp(40px,8vw,110px)}
+.res h2{margin:0 0 6px;font:500 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 24px;padding:18px 0;border-top:1px solid var(--line);opacity:0;transform:translateY(12px)}
+.res.on .r{animation:entra .8s var(--ease) forwards;animation-delay:calc(var(--d) * 1ms)}
+.r h3{margin:0;font:400 clamp(20px,2vw,27px)/1.25 var(--serif)}
+.r small{display:flex;align-items:center;gap:8px;font:500 12px/1 var(--caps);letter-spacing:.16em;white-space:nowrap}
+.r small i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.r p{grid-column:1/-1;margin:2px 0 0;font-size:14px;color:var(--mute);max-width:70ch}
+.nota{margin-top:14px;font-size:12.5px;color:var(--dim)}
+</style><script src="../tema.js"></script></head><body><div class="grano" aria-hidden="true"></div><header class="hdr"><a class="nom" href="#" aria-label="IVS CODEX">I<b>V</b>S<i></i>CODE<b>X</b></a><nav aria-label="Secciones"><a href="#">Consulta</a><a href="#">Lector</a><a href="#">Cálculos</a><a href="#">Fuentes</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<main class="fr"><p class="fr-o reveal" style="--d:80"><b>Buscador integrado de repositorios judiciales oficiales y doctrina.</b> Escriba la consulta como una frase.</p>
+<p class="fr-t reveal" style="--d:220"><span class="c">Buscar</span> <input id="q" value="daño moral" style="--w:9ch" aria-label="Términos">
+<span class="c">como</span> <button class="chip" id="m1" aria-pressed="true">frase exacta</button><button class="chip" id="m2" aria-pressed="false">todas las palabras</button>
+<span class="c">en las seis bases, entre</span> <input id="d" value="2015" style="--w:4ch" inputmode="numeric" aria-label="Desde"> <span class="c">y</span> <span style="white-space:nowrap"><input id="h" value="2026" style="--w:4ch" inputmode="numeric" aria-label="Hasta"><span class="c">.</span></span></p>
+<div class="acciones fr-acc reveal" style="--d:420"><button class="btn" id="go">Consultar →</button><a class="btn btn--sec" href="#">Ver el catálogo de fuentes</a></div></main>
+<section class="res" id="res" aria-live="polite"><h2>Ejemplo de resultados</h2><div id="lista"></div><p class="nota">Datos de ejemplo, no son fallos reales. Verifique siempre en la fuente antes de citar.</p></section>
+<script>
+var R=[["Paredes c/ Transportes del Oeste S.A. s/ resolución contractual","SCJM","var(--f1)","Suprema Corte de Mendoza · 2024 · «…el daño moral exige prueba de la lesión espiritual…»"],
+["Gómez c/ Banco Provincia s/ daños y perjuicios","CSJN","var(--f4)","Corte Suprema de Justicia de la Nación · 2022 · «…su cuantificación queda librada a la prudente apreciación judicial…»"],
+["El daño moral en la responsabilidad contractual","DIALNET","var(--f6)","Doctrina · 2019 · Revista de Derecho Privado"],
+["López, Marta c/ Obra Social s/ amparo","TSJ","var(--f3)","Tribunal Superior de Justicia de la Ciudad · 2021"]];
+document.getElementById("lista").innerHTML=R.map(function(r,i){return '<div class="r" style="--c:'+r[2]+';--d:'+(i*120)+'"><h3>'+r[0]+'</h3><small><i></i>'+r[1]+'</small><p>'+r[3]+'</p></div>';}).join("");
+function w(i){i.style.setProperty("--w",Math.max(4,i.value.length+.5)+"ch");} ["q","d","h"].forEach(function(id){var e=document.getElementById(id);e.addEventListener("input",function(){w(e);});});
+[["m1","m2"],["m2","m1"]].forEach(function(p){document.getElementById(p[0]).onclick=function(){document.getElementById(p[0]).setAttribute("aria-pressed","true");document.getElementById(p[1]).setAttribute("aria-pressed","false");};});
+document.getElementById("go").onclick=function(){var s=document.getElementById("res");s.classList.remove("on");void s.offsetWidth;s.classList.add("on");s.scrollIntoView({behavior:"smooth",block:"start"});};
+if(location.hash==="#resultados"){document.getElementById("res").classList.add("on");}
+</script></body></html>

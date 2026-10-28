@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · El sello en la barra</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Cormorant:ital,wght@0,400;1,400&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(var(--fg-rgb,241,238,230),.6);--dim:rgba(var(--fg-rgb,241,238,230),.36);--line:rgba(var(--fg-rgb,241,238,230),.14);--gold:#d9a31b;--caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--x1a1712,#1a1712);color:var(--fg);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.w{max-width:1240px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(16px,3vw,44px) 100px}
+h1{margin:0 0 14px;font:400 clamp(34px,5vw,64px)/1 Cormorant,serif;letter-spacing:-.02em}
+h1 em{color:var(--dim)}
+.lead{max-width:64ch;color:var(--mute);margin:0 0 56px}
+.op{border-top:1px solid var(--line);padding:34px 0 46px}
+.op h2{margin:0 0 6px;font:400 clamp(24px,2.4vw,34px)/1.1 Cormorant,serif}
+.op h2 span{color:var(--dim);margin-right:12px}
+.op p{margin:0 0 22px;max-width:70ch;color:var(--mute);font-size:15px}
+.fila{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:18px;align-items:start}
+@media(max-width:900px){.fila{grid-template-columns:1fr}}
+.pant{background:var(--bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;position:relative}
+.pant.tel{max-width:300px}
+.hero{padding:42px 36px 70px;color:var(--dim);font:400 clamp(30px,3.4vw,48px)/1 Cormorant,serif;letter-spacing:-.02em}
+.tel .hero{padding:30px 20px 50px;font-size:30px}
+.hero em{color:var(--fg)}
+
+/* --- la barra, con las medidas de la real --- */
+.top{display:flex;align-items:center;gap:24px;padding:22px 32px;position:relative;z-index:2}
+.nav{display:flex;gap:26px;margin-left:34px}
+.nav b{font-weight:400;font-size:15px;color:var(--mute)}
+.nav b.on{color:var(--gold)}
+.pil{white-space:nowrap;flex:none;margin-left:auto;padding:10px 18px 9px;border:1px solid var(--line);border-radius:999px;font-size:13.5px}
+.tel .top{padding:16px 16px;gap:10px}
+.tel .nav{display:none}
+.tel .pil{padding:8px 14px 7px;font-size:12.5px}
+
+/* --- el nombre escrito, igual que el sitio --- */
+.marca{font-family:var(--caps);white-space:nowrap;font-weight:500;font-size:17px;letter-spacing:.3em;line-height:1.55;padding-right:.3em;--ls:.3em}
+.marca .v{color:var(--gold)}
+.m-punto{display:inline-block;width:.17em;height:.17em;border-radius:50%;background:var(--gold);vertical-align:.24em;margin:0 calc(var(--ls) + .005em) 0 0}
+.tel .marca{letter-spacing:.2em;--ls:.2em;font-size:15px}
+
+.lock{display:inline-flex;align-items:center}
+.sello{display:block;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(var(--fg-rgb,241,238,230),.24)}
+
+/* A · al lado */
+.a .sello{width:38px;height:38px}
+.a .lock{gap:14px}
+.tel.a .sello,.a.tel .sello{width:30px;height:30px}
+
+/* B · el sello es el punto */
+.b .marca img{box-shadow:0 0 0 1px rgba(var(--fg-rgb,241,238,230),.24);display:inline-block;width:1.75em;height:1.75em;border-radius:50%;vertical-align:-.5em;margin:0 calc(var(--ls) - .02em) 0 .1em}
+.tel.b .marca img{width:1.9em;height:1.9em}
+
+/* C · el sello gira */
+.c .sello{width:42px;height:42px;animation:gira 40s linear infinite}
+.c .lock{gap:14px}
+@keyframes gira{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.c .sello{animation:none}}
+
+/* D · el sello cuelga de la barra */
+.d .top{padding-top:14px;padding-bottom:14px}
+.d .lock{gap:16px;position:relative}
+.d .sello{width:84px;height:84px;margin:0 0 -40px;position:relative;z-index:3;box-shadow:0 12px 26px rgba(0,0,0,.65),0 0 0 1px rgba(var(--gold-rgb,217,163,27),.35)}
+.d .marca{margin-top:-18px}
+.d.tel .sello{width:56px;height:56px;margin-bottom:-24px}
+.d.tel .lock{gap:10px}
+.d.tel .marca{letter-spacing:.14em;--ls:.14em;font-size:14px}
+.d .top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--line)}
+
+/* E · cápsula */
+.e .lock{gap:12px;border:1px solid var(--line);border-radius:999px;padding:5px 22px 5px 5px;background:rgba(var(--fg-rgb,241,238,230),.03)}
+.e .sello{width:36px;height:36px}
+.e .marca{padding-right:0}
+.tel.e .lock{padding-right:14px}
+.tel.e .sello{width:30px;height:30px}
+
+.nota{margin-top:50px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:13.5px;max-width:72ch}
+</style>
+<script src="../tema.js"></script></head>
+<body><div class="w">
+<h1>El sello de la miniatura, <em>en la barra.</em></h1>
+<p class="lead">Todas usan el mismo <code>favicon.png</code> y el nombre escrito como hoy (la V, la X y el punto en dorado). Cambia la manera de ponerlos juntos. A tamaño de barra los anillos de letras se vuelven una textura fina: lo que se lee es el disco negro, el aro dorado y el punto.</p>
+
+<section class="op"><h2><span>A</span>Al lado</h2>
+<p>La más directa: el sello a la izquierda, el nombre a su derecha, centrados en la misma línea. Es la que menos cambia la barra y la que mejor aguanta en el teléfono.</p>
+<div class="fila a">
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b><b>Glosario</b></div><span class="pil">Secciones ▾</span></div><div class="hero">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+<div class="pant tel a"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><span class="pil">Secciones</span></div><div class="hero">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+</div></section>
+
+<section class="op"><h2><span>B</span>El sello es el punto</h2>
+<p>El punto dorado que separa IVS de CODEX se reemplaza por el sello, más grande, y el nombre queda atravesado por él: I V S (sello) C O D E X. Es la más de marca: no hay un ícono y un texto, hay una sola pieza. El punto del nombre ya es el centro dorado del sello, así que se entienden como lo mismo.</p>
+<div class="fila b">
+<div class="pant"><div class="top"><span class="marca">I<span class="v">V</span>S<img src="../../favicon.png" alt="">CODE<span class="v">X</span></span><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b><b>Glosario</b></div><span class="pil">Secciones ▾</span></div><div class="hero">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+<div class="pant tel b"><div class="top"><span class="marca">I<span class="v">V</span>S<img src="../../favicon.png" alt="">CODE<span class="v">X</span></span><span class="pil">Secciones</span></div><div class="hero">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+</div></section>
+
+<section class="op"><h2><span>C</span>El sello gira</h2>
+<p>Igual que A, pero el sello da una vuelta cada 40 segundos: las leyendas (AEQVI IVS EST ARS BONI ET AEQVI…) giran como un disco. Es el único movimiento de la barra, lento, y se apaga solo si la persona tiene activado «reducir movimiento». Se puede hacer que gire más rápido al pasar el cursor o mientras se baja la página.</p>
+<div class="fila c">
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b><b>Glosario</b></div><span class="pil">Secciones ▾</span></div><div class="hero">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+<div class="pant tel c"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt="" style="width:34px;height:34px"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><span class="pil">Secciones</span></div><div class="hero">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+</div></section>
+
+<section class="op"><h2><span>D</span>El sello colgante</h2>
+<p>El sello es grande (84 px) y cuelga del borde inferior de la barra, como un lacre prendido a un documento, con una sombra que lo despega de la página. El nombre queda a su lado, apoyado sobre la línea de la barra. Se vería el anillo de letras de verdad. Al bajar la página puede achicarse hasta quedar del tamaño de A.</p>
+<div class="fila d">
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b><b>Glosario</b></div><span class="pil">Secciones ▾</span></div><div class="hero" style="padding-top:70px">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+<div class="pant tel d"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><span class="pil">Secciones</span></div><div class="hero" style="padding-top:44px">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+</div></section>
+
+<section class="op"><h2><span>E</span>Cápsula</h2>
+<p>El sello y el nombre dentro de una píldora de filete fino, con el sello encajado en el extremo izquierdo. Usa la misma forma que los botones del sitio, de modo que la marca y «Secciones» parecen de la misma familia, una en cada extremo de la barra. También sirve de botón para volver a la portada.</p>
+<div class="fila e">
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b><b>Glosario</b></div><span class="pil">Secciones ▾</span></div><div class="hero">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+<div class="pant tel e"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><span class="pil">Secciones</span></div><div class="hero">Lo que dijo el tribunal, <em>con su texto.</em></div></div>
+</div></section>
+
+<p class="nota">Son maquetas: no modifican el sitio. Cuando elija una, se aplica en <code>index.html</code> (botón «marca-app» de la cabecera) y, si corresponde, en el pie de la portada.</p>
+</div></body>
+</html>

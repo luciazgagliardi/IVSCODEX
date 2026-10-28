@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Cinco tipografías</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=Marcellus&family=Forum&family=Jost:wght@300;400;500&family=Cormorant+SC:wght@400;500&family=Cormorant:ital,wght@0,400;1,400&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(var(--fg-rgb,241,238,230),.6);--dim:rgba(var(--fg-rgb,241,238,230),.36);--line:rgba(var(--fg-rgb,241,238,230),.14);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--x1a1712,#1a1712);color:var(--fg);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.w{max-width:1100px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(16px,3vw,44px) 100px}
+h1{margin:0 0 14px;font:400 clamp(34px,5vw,64px)/1 Cormorant,serif;letter-spacing:-.02em}
+h1 em{color:var(--dim)}
+.lead{max-width:64ch;color:var(--mute);margin:0 0 50px}
+.op{border-top:1px solid var(--line);padding:34px 0 40px}
+.op h2{margin:0 0 6px;font:400 clamp(24px,2.4vw,34px)/1.1 Cormorant,serif}
+.op h2 span{color:var(--dim);margin-right:12px}
+.op h2 small{font:400 13px var(--sans);color:var(--dim);margin-left:10px;letter-spacing:.02em}
+.op p{margin:0 0 20px;max-width:70ch;color:var(--mute);font-size:15px}
+.pant{background:var(--bg);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.top{display:flex;align-items:center;gap:24px;padding:20px 32px;border-bottom:1px solid var(--line)}
+.nav{display:flex;gap:26px;margin-left:34px}
+.nav b{font-weight:400;font-size:15px;color:var(--mute)}
+.nav b.on{color:var(--gold)}
+.pil{white-space:nowrap;margin-left:auto;padding:10px 18px 9px;border:1px solid var(--line);border-radius:999px;font-size:13.5px}
+.grande{padding:46px 32px;display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.lock{display:inline-flex;align-items:center;gap:14px}
+.sello{display:block;border-radius:50%;box-shadow:0 0 0 1px rgba(var(--fg-rgb,241,238,230),.24);flex:none}
+.top .sello{width:38px;height:38px}
+.grande .sello{width:92px;height:92px}
+.grande .lock{gap:30px}
+.papel{background:#ece6d8;color:var(--x14110a,#14110a);padding:30px 32px}
+.papel .marca .v,.papel .marca .m-punto{color:#a77a0c}
+.papel .m-punto{background:#a77a0c}
+.latin{padding:0 32px 30px;color:var(--dim);font-size:11px;letter-spacing:.22em;text-transform:uppercase}
+
+/* el nombre: cada tipografía fija --f, --w (peso), --ls (espaciado) y --cap (alto de mayúscula, medido) */
+.marca{font-family:var(--f);font-weight:var(--w,400);letter-spacing:var(--ls,.3em);white-space:nowrap;line-height:1.5;padding-right:var(--ls,.3em);font-size:17px}
+.marca .v{color:var(--gold)}
+.m-punto{display:inline-block;width:.17em;height:.17em;border-radius:50%;background:var(--gold);vertical-align:calc(var(--cap,.65)*.5em - .085em);margin:0 calc(var(--ls,.3em) + .005em) 0 0}
+.grande .marca{font-size:46px}
+.papel .marca{font-size:28px}
+
+.actual{opacity:.9}
+.f-cor{--f:"Cormorant SC",serif;--w:500}
+.f-cin{--f:"Cinzel",serif;--w:500;--ls:.26em}
+.f-bod{--f:"Bodoni Moda",serif;--w:500;--ls:.3em}
+.f-mar{--f:"Marcellus",serif;--w:400;--ls:.3em}
+.f-for{--f:"Forum",serif;--w:400;--ls:.32em}
+.f-jos{--f:"Jost",sans-serif;--w:400;--ls:.42em}
+.nota{margin-top:40px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:13.5px;max-width:72ch}
+</style>
+<script src="../tema.js"></script></head>
+<body><div class="w">
+<h1>Cinco tipografías <em>para el nombre.</em></h1>
+<p class="lead">Mismo sello, mismo orden y mismo dorado (la V, la X y el punto); sólo cambia la letra. Arriba, la actual, para comparar. Cada una se ve en la barra, grande y sobre papel claro, que es donde una tipografía fina suele flaquear.</p>
+
+<section class="op f-cor"><h2><span>·</span>Actual <small>Cormorant SC</small></h2>
+<p>Versalitas de contraste medio, muy finas en los trazos delgados. Elegante en grande; en la barra, a 17 px, los filetes se pierden sobre el negro.</p>
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b></div><span class="pil">Secciones ▾</span></div>
+<div class="grande"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div></div></div>
+<div class="pant papel"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div>
+</section>
+
+<section class="op f-cin"><h2><span>1</span>Cinzel <small>capitales romanas</small></h2>
+<p>Dibujada sobre las inscripciones de la Roma imperial (la columna de Trajano). Es literalmente la letra del latín del derecho: la V se escribe con la forma que tiene en «IVS». Trazo más firme que la actual, aguanta bien a tamaño chico. Es la más «clásica» y también la más reconocible, porque se usa mucho en lo jurídico.</p>
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b></div><span class="pil">Secciones ▾</span></div>
+<div class="grande"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div></div></div>
+<div class="pant papel"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div>
+</section>
+
+<section class="op f-bod"><h2><span>2</span>Bodoni Moda <small>didona</small></h2>
+<p>Contraste extremo entre trazos gruesos y filetes, como el logo original (la V con una pata gruesa y otra fina, la X cruzada por un hilo). Es la que más se parece al logo ya dibujado. Más editorial y «de moda»; a 17 px pide un peso 500 para no perder los filetes.</p>
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b></div><span class="pil">Secciones ▾</span></div>
+<div class="grande"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div></div></div>
+<div class="pant papel"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div>
+</section>
+
+<section class="op f-mar"><h2><span>3</span>Marcellus <small>inscripción con remates acampanados</small></h2>
+<p>Otra letra de inscripción romana, pero más amable: los remates se abren un poco, como grabados en piedra. Contraste bajo y trazo parejo; se lee muy bien en pantalla chica y no se vuelve «invitación de casamiento». Un punto medio entre Cinzel y la actual.</p>
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b></div><span class="pil">Secciones ▾</span></div>
+<div class="grande"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div></div></div>
+<div class="pant papel"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div>
+</section>
+
+<section class="op f-for"><h2><span>4</span>Forum <small>capitales romanas ligeras</small></h2>
+<p>Capitales romanas de trazo fino y proporciones amplias, más serenas y menos solemnes que Cinzel. Con el espaciado abierto queda casi como un friso. Buena para el nombre solo; para texto corrido no sirve, pero acá sólo se usa para la marca.</p>
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b></div><span class="pil">Secciones ▾</span></div>
+<div class="grande"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div></div></div>
+<div class="pant papel"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div>
+</section>
+
+<section class="op f-jos"><h2><span>5</span>Jost <small>geométrica sin remates</small></h2>
+<p>El giro: una sans geométrica (de la familia de Futura) con mucho espaciado. La V y la X quedan como dos figuras limpias, casi un símbolo, y el nombre pasa a hablar el mismo idioma que el resto de la interfaz, que ya está en una sans. Rompe con lo romano a propósito: el latín queda en el sello y en las leyendas.</p>
+<div class="pant"><div class="top"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div><div class="nav"><b class="on">Consulta</b><b>Fuentes</b><b>Ramas</b><b>Plazos</b></div><span class="pil">Secciones ▾</span></div>
+<div class="grande"><div class="lock"><img class="sello" src="../../favicon.png" alt=""><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div></div></div>
+<div class="pant papel"><span class="marca">I<span class="v">V</span>S<span class="m-punto"></span>CODE<span class="v">X</span></span></div>
+</section>
+
+<p class="nota">Maqueta: no modifica el sitio. La tipografía actual se declara en <code>--caps</code> (index.html); cambiarla es una línea.</p>
+</div>
+<script>
+/* centra el punto en la altura de las mayúsculas de cada tipografía */
+document.fonts.ready.then(function(){
+  document.querySelectorAll('.op').forEach(function(s){
+    var m=s.querySelector('.marca'),cs=getComputedStyle(m),c=document.createElement('canvas').getContext('2d');
+    c.font=cs.fontWeight+' 100px '+cs.fontFamily;
+    var t=c.measureText('H');
+    s.style.setProperty('--cap',(t.actualBoundingBoxAscent/100).toFixed(3));
+  });
+});
+</script>
+</body>
+</html>

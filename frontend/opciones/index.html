@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Tres direcciones</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Cormorant:ital,wght@0,400;1,400&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(var(--fg-rgb,241,238,230),.6);--dim:rgba(var(--fg-rgb,241,238,230),.36);--line:rgba(var(--fg-rgb,241,238,230),.14);--gold:#d9a31b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.6 "Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.w{max-width:1200px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(20px,3vw,44px) 100px}
+.nom{font:500 18px/1 "Cormorant SC",serif;letter-spacing:.3em}.nom b{color:var(--gold);font-weight:500}
+h1{margin:clamp(50px,9vh,110px) 0 18px;font:400 clamp(40px,6vw,92px)/.97 Cormorant,serif;letter-spacing:-.025em;max-width:14ch;text-wrap:balance}
+h1 em{color:var(--dim)}
+.lead{max-width:60ch;color:var(--mute);margin:0 0 60px}
+.op{display:grid;grid-template-columns:90px minmax(0,1fr) auto;gap:10px 32px;padding:34px 0;border-top:1px solid var(--line);align-items:start;transition:padding .4s cubic-bezier(.16,.84,.24,1)}
+.op:hover{padding-left:14px}
+.op .l{font:300 54px/1 Cormorant,serif;color:var(--dim)}
+.op h2{margin:0 0 6px;font:400 clamp(26px,2.6vw,38px)/1.1 Cormorant,serif}
+.op p{margin:0 0 10px;max-width:62ch;color:var(--mute);font-size:15px}
+.op small{display:block;max-width:62ch;color:var(--dim);font-size:13px}
+.btn{display:inline-block;padding:12px 22px;border:1px solid var(--gold);border-radius:999px;background:var(--gold);color:var(--x14110a,#14110a);font-weight:500;font-size:15px;white-space:nowrap}
+.btn:hover{background:var(--fg);border-color:var(--fg)}
+@media(max-width:760px){.op{grid-template-columns:1fr}}
+.nota{margin-top:50px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:13.5px;max-width:70ch}
+</style>
+<script src="tema.js"></script></head>
+<body><div class="w">
+<div class="nom">I<b>V</b>S·CODE<b>X</b></div>
+<h1>Tres direcciones, <em>no tres colores.</em></h1>
+<p class="lead">Cada una cambia la estructura de la página: qué se ve primero, cómo se escribe la consulta y de qué manera se leen los resultados. Los tres usan los mismos datos de ejemplo, botones redondeados, el grano y el oro de IVS CODEX. Ábralas de a una.</p>
+
+<a class="op" href="a-libro-mayor.html"><div class="l">A</div><div>
+<h2>Libro mayor</h2>
+<p>Titular enorme y asimétrico, con el texto chico y el botón al costado. La consulta se escribe como una frase que se completa. Los resultados son una tabla de doble entrada, con filetes y numeración, sin tarjetas; a la izquierda, un índice de bases con barras proporcionales.</p>
+<small>De Harvey: la asimetría del titular y la sobriedad. De Pentagram: la interfaz hecha frase. De los libros de cuentas: el orden por filetes.</small></div><span class="btn">Abrir →</span></a>
+
+<a class="op" href="b-mesa.html"><div class="l">B</div><div>
+<h2>Mesa de trabajo</h2>
+<p>No hay portada de venta: se entra directamente a la herramienta, en una sola pantalla de tres paneles (consulta, resultados, lector). Metadatos en monoespaciada, rótulos «FIG.», teclado con Ctrl K y flechas, y el fallo se lee sin cambiar de página.</p>
+<small>De Linear: el producto real como portada, la densidad y los rótulos técnicos. Pensada para quien consulta todos los días.</small></div><span class="btn">Abrir →</span></a>
+
+<a class="op" href="c-cartografia.html"><div class="l">C</div><div>
+<h2>Cartografía</h2>
+<p>El resultado no es una lista sino un plano: seis carriles (una base por carril) y un eje de años; cada documento es un punto. Se arrastra sobre el plano para acotar el período y se toca un punto para leer el pasaje en una hoja lateral. Papel claro y tinta oscura.</p>
+<small>De Linear: las líneas finas y las figuras precisas. De la cartografía y los atlas: leer de un vistazo dónde y cuándo se resolvió.</small></div><span class="btn">Abrir →</span></a>
+
+<p class="nota">Todo lo que se muestra son datos de ejemplo, no fallos reales. Ninguna de estas páginas modifica el sitio publicado: cuando elija una dirección, se aplica a la página real con todas sus secciones (Lector, Ramas, Cálculos, Plazos, Glosario, etc.).</p>
+</div></body>
+</html>

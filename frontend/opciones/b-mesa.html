@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Mesa de trabajo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@400;500&family=Cormorant:ital,wght@0,400;0,500;1,400&family=Instrument+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* B · MESA DE TRABAJO
+   De Linear y de Harvey: el producto real es la portada. No hay hero ni
+   texto de venta; se entra directamente a la herramienta, en una sola
+   pantalla de tres paneles (consulta · resultados · lector). Metadatos en
+   monoespaciada, etiquetas «FIG.», filetes de 1px, ninguna tarjeta. */
+:root{
+  --bg:#0f0e0c;--p1:#12110e;--p2:#151310;--fg:#ece8de;--mute:rgba(236,232,222,.58);--dim:rgba(236,232,222,.34);--line:rgba(236,232,222,.11);
+  --gold:#d9a31b;--serif:"Cormorant",Georgia,serif;--caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.16,.84,.24,1)
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 14px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow:hidden}
+::selection{background:var(--gold);color:var(--x14110a,#14110a)}
+button,input{font:inherit;color:inherit}
+.grano{position:fixed;inset:0;z-index:50;pointer-events:none;background:url("../grano.png") 0 0/256px 256px repeat;opacity:.045}
+
+.app{display:grid;grid-template-rows:48px 1fr 30px;height:100%}
+.bar{display:flex;align-items:center;gap:20px;padding:0 18px;border-bottom:1px solid var(--line)}
+.nom{font:500 15px/1 var(--caps);letter-spacing:.3em}
+.nom i{display:inline-block;width:.17em;height:.17em;margin:0 calc(.3em + .005em) 0 0;border-radius:50%;background:var(--gold);vertical-align:.24em}
+.nom b{font-weight:500;color:var(--gold)}
+.bar nav{display:flex;gap:4px;margin-left:12px}
+.bar nav a{padding:6px 13px;border-radius:999px;color:var(--mute);text-decoration:none;font-size:13px;transition:all .25s}
+.bar nav a:hover{color:var(--fg)}
+.bar nav a[aria-current]{background:rgba(236,232,222,.09);color:var(--fg)}
+.pal{margin-left:auto;display:flex;align-items:center;gap:10px;padding:6px 8px 6px 14px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);font-size:13px;cursor:pointer;min-width:260px;transition:border-color .25s}
+.pal:hover{border-color:var(--gold)}
+.pal kbd{margin-left:auto;padding:2px 8px;border-radius:999px;background:rgba(236,232,222,.09);font:400 11px var(--mono);color:var(--mute)}
+
+.cuerpo{display:grid;grid-template-columns:288px minmax(340px,.9fr) minmax(0,1.25fr);min-height:0}
+.panel{overflow:auto;min-height:0;scrollbar-width:thin;scrollbar-color:rgba(236,232,222,.15) transparent}
+.p1{border-right:1px solid var(--line);background:var(--p1);padding:20px 18px}
+.p2{border-right:1px solid var(--line)}
+.p3{background:var(--p2)}
+.fig{font:400 10.5px/1 var(--mono);letter-spacing:.1em;color:var(--dim);text-transform:uppercase}
+.fig b{color:var(--gold);font-weight:400}
+
+/* panel 1 */
+.cmp{margin:12px 0 22px}
+.cmp input{width:100%;padding:11px 16px;border:1px solid var(--line);border-radius:999px;background:none;font-size:15px;caret-color:var(--gold);transition:border-color .25s}
+.cmp input:focus{outline:none;border-color:var(--gold)}
+.seg{display:flex;padding:3px;border:1px solid var(--line);border-radius:999px;margin:12px 0 26px}
+.seg button{flex:1;padding:7px 4px;border:0;border-radius:999px;background:none;color:var(--mute);font-size:12.5px;cursor:pointer;transition:all .25s}
+.seg button[aria-pressed="true"]{background:var(--fg);color:var(--x14110a,#14110a)}
+.bases{display:grid;margin-top:12px}
+.bs{display:grid;grid-template-columns:8px 1fr auto;gap:10px;align-items:center;padding:10px 0;border:0;border-top:1px solid var(--line);background:none;text-align:left;cursor:pointer;color:var(--mute);transition:color .25s}
+.bs:last-child{border-bottom:1px solid var(--line)}
+.bs i{width:7px;height:7px;border-radius:50%;background:var(--c);transition:transform .3s var(--ease)}
+.bs .t{font:500 11.5px/1 var(--caps);letter-spacing:.16em;color:var(--fg)}
+.bs .m{font:400 10.5px/1 var(--mono);color:var(--dim);font-variant-numeric:tabular-nums}
+.bs[aria-pressed="false"]{opacity:.45}
+.bs[aria-pressed="false"] i{transform:scale(.5)}
+.bs:hover{color:var(--fg)}
+.cad{margin-top:22px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;font:400 11px/1.6 var(--mono);color:var(--mute);overflow-wrap:anywhere}
+
+/* panel 2 */
+.p2 .cab{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--bg);border-bottom:1px solid var(--line)}
+.r{display:grid;grid-template-columns:30px 1fr;gap:10px;width:100%;padding:15px 18px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer;position:relative;transition:background .2s}
+.r:hover{background:rgba(236,232,222,.035)}
+.r[aria-selected="true"]{background:rgba(var(--gold-rgb,217,163,27),.08)}
+.r[aria-selected="true"]::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold)}
+.r .n{font:400 10.5px/1.9 var(--mono);color:var(--dim)}
+.r h4{margin:0;font:500 14.5px/1.35 var(--sans);letter-spacing:-.005em;color:var(--fg)}
+.r .mt{display:flex;flex-wrap:wrap;gap:2px 12px;margin-top:6px;font:400 10.5px/1.6 var(--mono);color:var(--dim);font-variant-numeric:tabular-nums}
+.r .mt b{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:var(--mute)}
+.r .mt b i{width:6px;height:6px;border-radius:50%;background:var(--c)}
+
+/* panel 3: el lector */
+.lec{max-width:700px;margin:0 auto;padding:28px 40px 70px}
+.lec h2{margin:14px 0 6px;font:400 clamp(28px,2.6vw,40px)/1.1 var(--serif);letter-spacing:-.015em}
+.lec .dm{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0 0 26px;padding-bottom:18px;border-bottom:1px solid var(--line);font:400 11px/1.6 var(--mono);color:var(--mute)}
+.lec .cuerpo-f{font:400 17px/1.75 var(--serif);color:rgba(236,232,222,.82)}
+.lec .cuerpo-f p{margin:0 0 1.15em}
+.lec mark{background:none;color:var(--fg);box-shadow:inset 0 -1px 0 var(--gold),inset 0 -.55em 0 rgba(var(--gold-rgb,217,163,27),.16)}
+.lec .acc{display:flex;gap:8px;flex-wrap:wrap;margin-top:26px}
+.pill{padding:9px 16px;border:1px solid var(--line);border-radius:999px;background:none;font-size:13px;color:var(--fg);cursor:pointer;transition:all .25s}
+.pill:hover{border-color:var(--gold);color:var(--gold)}
+.pill--o{background:var(--gold);border-color:var(--gold);color:var(--x14110a,#14110a)}
+.pill--o:hover{background:var(--fg);border-color:var(--fg);color:var(--x14110a,#14110a)}
+.mini{position:relative;height:26px;margin:0 0 26px;border-radius:999px;background:rgba(236,232,222,.06)}
+.mini i{position:absolute;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:var(--gold)}
+
+.pie{display:flex;align-items:center;gap:22px;padding:0 18px;border-top:1px solid var(--line);font:400 10.5px/1 var(--mono);color:var(--dim)}
+.pie span:last-child{margin-left:auto}
+.pie .ok{display:inline-flex;align-items:center;gap:7px}
+.pie .ok i{width:6px;height:6px;border-radius:50%;background:#7aa86b}
+
+/* paleta de comandos */
+.vel{position:fixed;inset:0;z-index:40;display:none;place-items:start center;padding-top:14vh;background:rgba(10,9,7,.6)}
+.vel.on{display:grid}
+.cmd{width:min(560px,92vw);border:1px solid var(--line);border-radius:22px;background:var(--x17140f,#171511);overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.cmd input{width:100%;padding:18px 22px;border:0;border-bottom:1px solid var(--line);background:none;font-size:16px;caret-color:var(--gold)}
+.cmd input:focus{outline:none}
+.cmd button{display:flex;justify-content:space-between;width:100%;padding:12px 22px;border:0;background:none;text-align:left;font-size:14px;color:var(--mute);cursor:pointer}
+.cmd button:hover,.cmd button:first-of-type{background:rgba(236,232,222,.06);color:var(--fg)}
+.cmd button span:last-child{font:400 11px var(--mono);color:var(--dim)}
+
+@media (max-width:1060px){ body{overflow:auto} .app{height:auto} .cuerpo{grid-template-columns:1fr} .panel{overflow:visible} .p1,.p2{border-right:0;border-bottom:1px solid var(--line)} .bar nav,.pal{display:none} .pie{display:none} }
+</style>
+<script src="tema.js"></script></head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="app">
+  <header class="bar">
+    <a class="nom" href="#" style="text-decoration:none;color:inherit">I<b>V</b>S<i></i>CODE<b>X</b></a>
+    <nav><a href="#" aria-current="page">Consulta</a><a href="#">Lector</a><a href="#">Ramas</a><a href="#">Cálculos</a><a href="#">Fuentes</a><a href="#">Verificar</a></nav>
+    <button class="pal" id="abrirPal"><span>Ir a una sección o a una acción…</span><kbd>Ctrl K</kbd></button>
+  </header>
+
+  <main class="cuerpo">
+    <section class="panel p1" aria-label="Consulta">
+      <div class="fig"><b>FIG. 1</b> · Consulta</div>
+      <div class="cmp"><input id="q" value="daño moral" aria-label="Términos de la búsqueda"></div>
+      <div class="fig">Coincidencia</div>
+      <div class="seg" id="seg"><button data-m="exacta" aria-pressed="true">Frase exacta</button><button data-m="todas" aria-pressed="false">Todas</button><button data-m="alguna" aria-pressed="false">Alguna</button></div>
+      <div class="fig"><b>FIG. 2</b> · Bases consultadas</div>
+      <div class="bases" id="bases"></div>
+      <div class="cad" id="cad"></div>
+    </section>
+
+    <section class="panel p2" aria-label="Resultados">
+      <div class="cab"><div class="fig"><b>FIG. 3</b> · Resultados</div><div class="fig" id="tot"></div></div>
+      <div id="lista"></div>
+    </section>
+
+    <section class="panel p3" aria-label="Lector"><div class="lec" id="lec"></div></section>
+  </main>
+
+  <footer class="pie"><span class="ok"><i></i>Seis bases disponibles</span><span>Datos de ejemplo: no son fallos reales</span><span>Ctrl K · ↑ ↓ para recorrer</span></footer>
+</div>
+
+<div class="vel" id="vel"><div class="cmd"><input id="cmdq" placeholder="Escriba una sección o una acción…" autocomplete="off"><div id="cmdl"></div></div></div>
+
+<script src="./datos.js"></script>
+<script>
+(function(){
+var $=function(s){return document.querySelector(s);};
+var COL={mendoza:"#d9a62a",mendozalegal:"#b58640",caba:"#d5873f",csjn:"#c95836",saij:"#b03b42",dialnet:"#a04a68"};
+var est={modo:"exacta",on:{},sel:0};
+IC.BASES.forEach(function(b){est.on[b.slug]=true;});
+function base(s){return IC.BASES.filter(function(b){return b.slug===s;})[0];}
+function cad(){ $("#cad").textContent=IC.cadena($("#q").value,est.modo,""); }
+function visibles(){ return IC.TODOS.filter(function(x){return est.on[x.base];}); }
+function pBases(){
+  var c={}; IC.TODOS.forEach(function(x){c[x.base]=(c[x.base]||0)+1;});
+  $("#bases").innerHTML=IC.BASES.map(function(b){
+    return '<button class="bs" data-b="'+b.slug+'" aria-pressed="'+est.on[b.slug]+'" style="--c:'+COL[b.slug]+'"><i></i><span class="t">'+IC.esc(b.cod)+'</span><span class="m">'+(c[b.slug]||0)+'</span></button>';
+  }).join("");
+}
+function pLista(){
+  var v=visibles(); if(est.sel>=v.length) est.sel=0;
+  $("#tot").textContent=v.length+" documentos";
+  $("#lista").innerHTML=v.map(function(x,i){
+    var b=base(x.base);
+    return '<button class="r" data-i="'+i+'" aria-selected="'+(i===est.sel)+'" style="--c:'+COL[x.base]+'"><span class="n">'+String(i+1).padStart(2,"0")+'</span><span><h4>'+IC.esc(x.car)+'</h4><span class="mt"><b><i></i>'+IC.esc(b.cod)+'</b><span>'+IC.esc(x.fecha)+'</span><span>'+IC.esc(x.expte)+'</span></span></span></button>';
+  }).join("");
+  pLector();
+}
+function pLector(){
+  var x=visibles()[est.sel]; if(!x){ $("#lec").innerHTML='<p class="fig">Sin resultados con esas bases.</p>'; return; }
+  var b=base(x.base),q=$("#q").value.trim()||"daño moral";
+  var parr=[x.pasaje,"Que, en tales condiciones, corresponde examinar si el agravio expuesto por la parte recurrente guarda relación con la cuestión decidida en la instancia anterior y si la sentencia apelada se ajusta a la prueba producida.","Por ello, y habiendo dictaminado en lo pertinente, se resuelve conforme a lo que surge de los considerandos que anteceden."];
+  var pos=[18,41,66,83];
+  $("#lec").innerHTML='<div class="fig"><b>FIG. 4</b> · Lector</div><h2>'+IC.esc(x.car)+'</h2>'+
+    '<div class="dm"><span>'+IC.esc(b.nombre)+'</span><span>'+IC.esc(x.trib)+'</span><span>'+IC.esc(x.fecha)+'</span><span>'+IC.esc(x.expte)+'</span></div>'+
+    '<div class="fig" style="margin-bottom:8px">Mapa de coincidencias</div><div class="mini">'+pos.map(function(p){return '<i style="left:'+p+'%"></i>';}).join("")+'</div>'+
+    '<div class="cuerpo-f">'+parr.map(function(t){return '<p>'+IC.resaltar(t,q)+'</p>';}).join("")+'</div>'+
+    '<div class="acc"><button class="pill pill--o">Abrir el original</button><button class="pill">Guardar el pasaje</button><button class="pill">Citar</button><button class="pill">Exportar a Word</button></div>';
+}
+$("#bases").addEventListener("click",function(e){ var b=e.target.closest("[data-b]"); if(!b) return; est.on[b.dataset.b]=!est.on[b.dataset.b]; pBases(); pLista(); });
+$("#lista").addEventListener("click",function(e){ var r=e.target.closest("[data-i]"); if(!r) return; est.sel=+r.dataset.i; pLista(); });
+$("#seg").addEventListener("click",function(e){ var b=e.target.closest("[data-m]"); if(!b) return; est.modo=b.dataset.m; document.querySelectorAll("#seg button").forEach(function(x){x.setAttribute("aria-pressed",String(x===b));}); cad(); pLector(); });
+$("#q").addEventListener("input",function(){ cad(); pLector(); });
+document.addEventListener("keydown",function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){ e.preventDefault(); abrir(); return; }
+  if(e.key==="Escape") cerrar();
+  if(document.activeElement.tagName==="INPUT") return;
+  var n=visibles().length;
+  if(e.key==="ArrowDown"){ est.sel=Math.min(n-1,est.sel+1); pLista(); e.preventDefault(); }
+  if(e.key==="ArrowUp"){ est.sel=Math.max(0,est.sel-1); pLista(); e.preventDefault(); }
+});
+var ACC=[["Buscar en las seis bases","Consulta"],["Abrir el Lector","Lector"],["Calcular intereses","Cálculos"],["Calcular una indemnización por despido","Cálculos"],["Plazos procesales y calendario","Plazos"],["Verificar una cita","Verificar"],["Glosario de latín jurídico","Glosario"]];
+function abrir(){ $("#vel").classList.add("on"); $("#cmdq").value=""; lcmd(""); setTimeout(function(){$("#cmdq").focus();},10); }
+function cerrar(){ $("#vel").classList.remove("on"); }
+function lcmd(t){ t=t.toLowerCase(); $("#cmdl").innerHTML=ACC.filter(function(a){return a[0].toLowerCase().indexOf(t)>-1;}).map(function(a){return '<button><span>'+a[0]+'</span><span>'+a[1]+'</span></button>';}).join(""); }
+$("#abrirPal").addEventListener("click",abrir);
+$("#vel").addEventListener("click",function(e){ if(e.target===$("#vel")) cerrar(); });
+$("#cmdq").addEventListener("input",function(){ lcmd(this.value); });
+pBases(); cad(); pLista();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!doctype html><html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100e0b"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@300;400;500&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Instrument+Sans:wght@400;500&display=swap"><link rel="stylesheet" href="base.css"><title>IVS CODEX · Sello</title>
+<style>
+/* 5 · SELLO — composición simétrica y central. El único movimiento es el aro de texto,
+   casi imperceptible (una vuelta cada tres minutos). Todo lo demás está quieto. */
+main{display:flex;flex-direction:column;align-items:center;text-align:center;padding:clamp(10px,3vh,40px) var(--pad) clamp(50px,8vw,110px)}
+.sello{width:min(70vw,40svh,400px);aspect-ratio:1;margin:0 auto}
+.sello svg{width:100%;height:100%;overflow:visible}
+.aro{fill:none;stroke:var(--fg);stroke-opacity:.38}
+.giro{transform-origin:500px 500px;animation:gira 180s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.rt{font:400 33px var(--caps);letter-spacing:9px;fill:var(--fg);opacity:.78}
+.cent{fill:var(--gold)}
+.mk{font:300 64px/1 var(--caps);letter-spacing:.3em;fill:var(--fg)}
+h1{margin:clamp(24px,4vh,48px) auto 0;max-width:20ch;font:500 clamp(28px,4.2vw,58px)/1.06 var(--sans);letter-spacing:-.035em;text-wrap:balance}
+.sub{margin:16px auto 28px;max-width:50ch;color:var(--mute)}
+.bases{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:clamp(36px,5vw,64px);max-width:760px}
+.bases span{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid var(--line);border-radius:999px;font:500 11.5px/1 var(--caps);letter-spacing:.16em}
+.bases i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.aq{max-width:60ch;margin:clamp(50px,8vw,100px) auto 0;text-align:center}
+</style><script src="../tema.js"></script></head><body><div class="grano" aria-hidden="true"></div><header class="hdr"><a class="nom" href="#" aria-label="IVS CODEX">I<b>V</b>S<i></i>CODE<b>X</b></a><nav aria-label="Secciones"><a href="#">Consulta</a><a href="#">Lector</a><a href="#">Cálculos</a><a href="#">Fuentes</a></nav><a class="btn" href="#">Iniciar la consulta</a></header>
+<main><div class="sello reveal" style="--d:100"><svg viewBox="0 0 1000 1000" aria-hidden="true">
+<defs><path id="r" d="M500 56a444 444 0 1 1 0 888a444 444 0 1 1 0-888"/></defs>
+<circle class="aro" cx="500" cy="500" r="496"/><circle class="aro" cx="500" cy="500" r="412"/><circle class="aro" cx="500" cy="500" r="300" style="stroke-opacity:.2"/><circle class="aro" cx="500" cy="500" r="190" style="stroke-opacity:.14"/>
+<g class="giro"><text class="rt"><textPath href="#r" textLength="2765" lengthAdjust="spacing">IVS · CODEX · IVRISPRVDENTIA · LEGISLATIO · DOCTRINA · IVS · CODEX · IVRISPRVDENTIA · LEGISLATIO · DOCTRINA ·</textPath></text></g>
+<circle class="cent" cx="500" cy="500" r="9"/></svg></div>
+<h1 class="reveal" style="--d:320">Buscador integrado de repositorios judiciales oficiales y doctrina.</h1>
+<p class="sub reveal" style="--d:440">Seis repositorios oficiales, una sola consulta. Cada resultado conserva su procedencia.</p>
+<div class="acciones reveal" style="--d:560;justify-content:center"><a class="btn" href="#">Iniciar la consulta</a><a class="btn btn--sec" href="#">Ver el catálogo de fuentes</a></div>
+<div class="bases reveal" style="--d:700" id="b"></div>
+<p class="pie aq"><strong>Verifique siempre en la fuente antes de citar.</strong> La ausencia de coincidencias no demuestra la falsedad del fallo.</p></main>
+<script src="fuentes.js"></script><script>document.getElementById("b").innerHTML=BASES.map(function(b){return '<span style="--c:'+b.c+'"><i></i>'+b.cod+'</span>';}).join("");</script>
+</body></html>
