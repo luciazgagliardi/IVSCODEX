@@ -133,13 +133,23 @@
       var sh=sinH();
       B.forEach(function(b,i){
         if(sh&&(i===0||i===B.length-1))return;
-        var g=ctx.createLinearGradient(0,0,P.x,0);g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));
+        var g=ctx.createLinearGradient(0,0,P.x,0);
+        if(o.sobrio){g.addColorStop(0,rgba(b.c,0));g.addColorStop(.45,rgba(b.c,.34));g.addColorStop(1,rgba(b.c,.62));}
+        else{g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));}
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
-        ctx.strokeStyle=g;ctx.lineWidth=1.3;ctx.stroke();ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();
-        if(!quieto){b.next-=dt;if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}}
+        ctx.strokeStyle=g;ctx.lineWidth=o.sobrio?1:1.3;ctx.stroke();if(!o.sobrio){ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();}
+        if(!quieto&&!o.sobrio){b.next-=dt;if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}}
       });
       ctx.beginPath();out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
-      ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();
+      if(o.sobrio){ctx.strokeStyle=rgba(ORO,.7);ctx.lineWidth=1.5;ctx.stroke();}
+      else{ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();}
+      /* modo sobrio: una sola luz, de a una base por vez; entra por su hilo, cruza el prisma y sale dorada */
+      if(o.sobrio&&!quieto){
+        var cic=4.8,ent=cic*.62,ord=[3,0,6,2,5,1,7,4].filter(function(j){return !(sh&&(j===0||j===B.length-1));}),
+            kk=ord[Math.floor(tm/cic)%ord.length],ph=tm%cic;
+        if(ph<ent){var u=ph/ent;u=u*u*(3-2*u);var q=bez(kk,u);ctx.beginPath();ctx.arc(q[0],q[1],1.7,0,7);ctx.fillStyle=rgba(B[kk].c,.95*Math.sqrt(Math.sin(Math.PI*Math.min(1,u*1.2))));ctx.fill();}
+        else{var u2=(ph-ent)/(cic-ent);u2=u2*u2*(3-2*u2);if(u2<1){var q2=en(u2*total);ctx.beginPath();ctx.arc(q2[0],q2[1],1.9,0,7);ctx.fillStyle=rgba(CLARO,.95*(1-u2));ctx.fill();}}
+      }
       puls=puls.filter(function(p){
         if(!p.out){p.t+=p.v*dt;if(p.t>=1){p.out=true;p.s=0;}}else{p.s+=150*dt;if(p.s>=total)return false;}
         var c=p.out?ORO:B[p.i].c;
@@ -156,13 +166,13 @@
       /* el filete, fino: claro en el oscuro; en el claro, dorado */
       var co=Math.cos(ang),si=Math.sin(ang),pts=[[0,-s],[-s*.87,s*.5],[s*.87,s*.5]].map(function(q){return (P.x+q[0]*co-q[1]*si).toFixed(2)+","+(P.y+q[0]*si+q[1]*co).toFixed(2);}).join(" ");
       if(pts!==triPts){triPts=pts;poli.setAttribute("points",pts);}
-      poli.setAttribute("fill",cl?"rgba(255,250,235,.12)":"rgba(241,238,230,.035)");poli.setAttribute("stroke",cl?"rgba(148,106,6,.9)":"rgba(241,238,230,.6)");
+      poli.setAttribute("fill",o.sobrio?"none":cl?"rgba(255,250,235,.12)":"rgba(241,238,230,.035)");poli.setAttribute("stroke",cl?"rgba(148,106,6,.9)":o.sobrio?"rgba(241,238,230,.55)":"rgba(241,238,230,.6)");
       if(o.mouse&&vivo>0){var gc=ctx.createRadialGradient(mpx,mpy,0,mpx,mpy,170);gc.addColorStop(0,"rgba(255,226,150,"+(.13*Math.min(1,vivo*1.6)).toFixed(3)+")");gc.addColorStop(1,"rgba(217,163,27,0)");ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gc;ctx.beginPath();ctx.arc(mpx,mpy,170,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
       /* la luz que se filtra por el prisma: del mismo tamaño en los dos fondos; en el claro, más dorada para que se vea sobre el papel */
       var gl=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,s*1.3);
       if(cl){gl.addColorStop(0,"rgba(236,176,40,.62)");gl.addColorStop(.5,"rgba(225,165,30,.26)");}else gl.addColorStop(0,"rgba(255,226,150,.5)");
       gl.addColorStop(1,"rgba(217,163,27,0)");
-      ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";
+      if(!o.sobrio){ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       /* Sin el nombre de cada base sobre su haz (pedido de la portada): los
          haces conservan el color de su base; los nombres siguen en BASES_PRISMA

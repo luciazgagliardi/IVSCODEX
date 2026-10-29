@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · Diez prismas con otras líneas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../atmosfera/base.css">
+<style>
+.cab{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:18px;padding:14px var(--pad);background:linear-gradient(rgba(var(--bg-rgb),.92),rgba(var(--bg-rgb),0))}
+.cab .tt{font-size:13px;color:var(--mute)}
+.nav{display:flex;gap:6px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex:none;min-width:36px;text-align:center;padding:8px 12px;border-radius:999px;font-size:13px;color:var(--mute);background:rgba(var(--fg-rgb),.08);transition:background .3s,color .3s}
+.nav a:hover{background:rgba(var(--fg-rgb),.18);color:var(--fg)}
+.intro{padding:clamp(18px,4vh,48px) var(--pad) 26px;max-width:1000px}
+.intro h1{margin:0 0 14px;font:400 clamp(34px,5vw,72px)/.98 var(--sans);letter-spacing:-.05em;text-wrap:balance}
+.intro p{margin:0;max-width:64ch;color:var(--mute);font-size:clamp(15px,1.3vw,18px)}
+.st{position:relative;height:clamp(460px,78svh,720px);margin:0 0 10px;overflow:hidden;background:var(--bg);isolation:isolate}
+.st canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.rot{position:absolute;z-index:9;left:var(--pad);bottom:18px;display:flex;flex-direction:column;gap:6px;max-width:min(430px,calc(100% - 2*var(--pad)));padding:12px 18px;border-radius:22px;font-size:13px;line-height:1.45;color:var(--mute);background:rgba(var(--fg-rgb),.1);-webkit-backdrop-filter:blur(22px) saturate(1.4);backdrop-filter:blur(22px) saturate(1.4)}
+.rot b{font-weight:600;color:var(--fg);font-size:13.5px}
+@media (max-width:760px){.nav{max-width:50vw}.cab .tt{display:none}.rot{font-size:12px;padding:10px 14px}}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<header class="cab"><span class="tt">Diez prismas, diez maneras de dibujar las líneas</span><nav class="nav" aria-label="Versiones"></nav></header>
+<div class="intro">
+  <h1>El mismo prisma, líneas que no se parecen.</h1>
+  <p>En todas entran las ocho bases por la izquierda y sale el haz dorado por la derecha, con el triángulo fino de siempre. Lo que cambia es de qué están hechas las líneas: luz que se quiebra, humo de luz, un mapa de subte, ondas, puntadas, guirnaldas, texto, pantalla de LEDs, ondas de difracción y larga exposición.</p>
+</div>
+<main id="escenas"></main>
+
+<script>
+(function(){
+  var BASES=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["SCBA","--c-scba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"],["CORTE IDH","--c-idh"]];
+  var root=document.documentElement, quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var PAL=null, palKey="";
+  function pal(){
+    var k=root.getAttribute("data-tema")||"negro"; if(PAL&&k===palKey) return PAL;
+    var cs=getComputedStyle(root), claro=k==="claro";
+    PAL={claro:claro,
+      COL:BASES.map(function(b){ var h=cs.getPropertyValue(b[1]).trim(); return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]; }),
+      ORO:claro?[168,118,8]:[217,163,27], CLARO:claro?[148,106,6]:[255,226,150],
+      FG:(cs.getPropertyValue("--fg-rgb").trim()||"241,238,230").split(",").map(Number),
+      LUZ:claro?"source-over":"lighter"};
+    palKey=k; return PAL;
+  }
+  function rgb(c,a){ return "rgba("+Math.round(c[0])+","+Math.round(c[1])+","+Math.round(c[2])+","+a.toFixed(3)+")"; }
+  function mix(a,b,t){ return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t]; }
+  function col8(P,x){ x=((x%8)+8)%8; var i=Math.floor(x); return mix(P.COL[i],P.COL[(i+1)%8],x-i); }
+  function sm(x){ x=Math.max(0,Math.min(1,x)); return x*x*(3-2*x); }
+  function lerp(a,b,u){ return a+(b-a)*u; }
+  function hash(n){ var x=Math.sin(n*127.1+311.7)*43758.5453; return x-Math.floor(x); }
+
+  /* ---- geometría común: el prisma al centro, las ocho líneas entran por la izquierda ---- */
+  function geo(W,H){
+    var s=Math.min(W,H)*.11, P={x:W*(W<700?.6:.56),y:H*.5}, Y=[];
+    for(var i=0;i<8;i++) Y.push(H*(.36+i*(.28/7)));
+    return {W:W,H:H,P:P,s:s,Y:Y};
+  }
+  function quad(g,i,u){ var A={x:0,y:g.Y[i]},C={x:g.P.x*.55,y:g.Y[i]},m=1-u; return {x:m*m*A.x+2*m*u*C.x+u*u*g.P.x,y:m*m*A.y+2*m*u*C.y+u*u*g.P.y}; }
+  function trazo(x,pts){ x.beginPath(); pts.forEach(function(p,k){ if(k) x.lineTo(p.x,p.y); else x.moveTo(p.x,p.y); }); }
+  function curva(g,i,n){ var a=[]; for(var k=0;k<=n;k++) a.push(quad(g,i,k/n)); return a; }
+  function line(x,col,a,w,glow){ x.strokeStyle=rgb(col,a); x.lineWidth=w; x.stroke(); if(glow){ x.strokeStyle=rgb(col,a*.1); x.lineWidth=glow; x.stroke(); } }
+  function largo(a){ var l=0,r=[0]; for(var i=1;i<a.length;i++){ l+=Math.hypot(a[i].x-a[i-1].x,a[i].y-a[i-1].y); r.push(l); } return r; }
+  function en(a,cum,s){ for(var i=1;i<a.length;i++){ if(s<=cum[i]){ var u=(s-cum[i-1])/Math.max(1e-6,cum[i]-cum[i-1]); return {x:lerp(a[i-1].x,a[i].x,u),y:lerp(a[i-1].y,a[i].y,u),ang:Math.atan2(a[i].y-a[i-1].y,a[i].x-a[i-1].x)}; } } var q=a[a.length-1]; return {x:q.x,y:q.y,ang:0}; }
+
+  /* ---- el prisma: el triángulo fino y la luz que se filtra, igual que el de la portada ---- */
+  function prisma(x,g,P,modo){
+    var p=g.P,s=g.s, v=[[p.x,p.y-s],[p.x-.87*s,p.y+.5*s],[p.x+.87*s,p.y+.5*s]];
+    function tri(k){ x.beginPath(); v.forEach(function(q,i){ var X=p.x+(q[0]-p.x)*k,Y=p.y+(q[1]-p.y)*k; if(i) x.lineTo(X,Y); else x.moveTo(X,Y); }); x.closePath(); }
+    var gl=x.createRadialGradient(p.x,p.y,0,p.x,p.y,s*1.3);
+    if(P.claro){ gl.addColorStop(0,"rgba(236,176,40,.5)"); gl.addColorStop(.5,"rgba(225,165,30,.2)"); } else gl.addColorStop(0,"rgba(255,226,150,.42)");
+    gl.addColorStop(1,rgb(P.ORO,0));
+    if(modo!=="estela"){ x.globalCompositeOperation=P.LUZ; x.fillStyle=gl; x.beginPath(); x.arc(p.x,p.y,s*1.3,0,7); x.fill(); x.globalCompositeOperation="source-over"; }
+    tri(1);
+    if(modo==="vidrio"){ var f=x.createLinearGradient(p.x-s,p.y-s,p.x+s,p.y+s); f.addColorStop(0,rgb(P.FG,.2)); f.addColorStop(.5,rgb(P.FG,.03)); f.addColorStop(1,rgb(P.ORO,.14)); x.fillStyle=f; }
+    else x.fillStyle=rgb(P.FG,P.claro?.12:.035);
+    if(modo!=="estela") x.fill(); x.strokeStyle=rgb(P.claro?P.CLARO:P.FG,P.claro?.9:.6); x.lineWidth=1.1; x.stroke();
+    if(modo==="doble"){ tri(.72); x.strokeStyle=rgb(P.FG,.28); x.lineWidth=.8; x.stroke(); tri(1.28); x.strokeStyle=rgb(P.FG,.14); x.stroke(); }
+  }
+  /* el haz dorado recto, el de siempre */
+  function haz(x,g,P,a,w){ x.beginPath(); x.moveTo(g.P.x,g.P.y); x.lineTo(g.W,g.P.y); line(x,P.ORO,a==null?.8:a,w||2.4,20); }
+
+  var ESC=[
+  {n:"1 · Refracción",d:"Cada línea entra por una cara del prisma, se cruza adentro con las demás y sale abierta en abanico; al fondo, el haz dorado.",
+   f:function(x,g,t,P){
+     var p=g.P,s=g.s,bl={x:p.x-.87*s,y:p.y+.5*s},tp={x:p.x,y:p.y-s},br={x:p.x+.87*s,y:p.y+.5*s};
+     x.globalCompositeOperation=P.LUZ; x.lineCap="round"; x.lineJoin="round";
+     for(var i=0;i<8;i++){
+       var u=(i+.5)/8,F={x:lerp(bl.x,tp.x,u),y:lerp(bl.y,tp.y,u)},v=1-u,G={x:lerp(tp.x,br.x,v),y:lerp(tp.y,br.y,v)},c=P.COL[i];
+       var fin={x:g.W,y:p.y+(i-3.5)*g.H*.038*(1+.12*Math.sin(t*.6+i))};
+       var pts=[{x:0,y:g.Y[i]},F,G,fin];
+       trazo(x,pts); line(x,c,.7,1.2,7);
+       var q=en(pts,largo(pts),((t*.18+i*.125)%1)*largo(pts).slice(-1)[0]);
+       x.beginPath(); x.arc(q.x,q.y,2.2,0,7); x.fillStyle=rgb(c,.95); x.fill();
+     }
+     haz(x,g,P,.55,2.2);
+   },prisma:"vidrio"},
+
+  {n:"2 · Rayos de luz",d:"El haz dorado se abre como un cono de luz de cine, con motas de polvo flotando adentro.",
+   f:function(x,g,t,P){
+     x.globalCompositeOperation=P.LUZ; x.lineCap="round";
+     for(var i=0;i<8;i++){ x.beginPath(); for(var k=0;k<=40;k++){ var q=quad(g,i,k/40); if(k) x.lineTo(q.x,q.y); else x.moveTo(q.x,q.y); } line(x,P.COL[i],.7,1.1,6); }
+     var p=g.P,a=g.H*.2,gr=x.createLinearGradient(p.x,0,g.W,0); gr.addColorStop(0,rgb(P.ORO,.34)); gr.addColorStop(1,rgb(P.ORO,0));
+     x.fillStyle=gr; x.beginPath(); x.moveTo(p.x,p.y); x.lineTo(g.W,p.y-a); x.lineTo(g.W,p.y+a); x.closePath(); x.fill();
+     for(var k=-3;k<=3;k++){ var al=.1+.1*Math.sin(t*.7+k*1.7); x.beginPath(); x.moveTo(p.x,p.y); x.lineTo(g.W,p.y+k*a/3.2); x.strokeStyle=rgb(P.CLARO,Math.max(.02,al)); x.lineWidth=1; x.stroke(); }
+     for(var m=0;m<46;m++){ var r=hash(m),sp=14+hash(m+9)*26,px=p.x+((r*(g.W-p.x)+t*sp)%(g.W-p.x)),f=(px-p.x)/(g.W-p.x),py=p.y+(hash(m+4)-.5)*2*a*f+Math.sin(t*.8+m)*4; x.beginPath(); x.arc(px,py,.9+hash(m+2)*1.3,0,7); x.fillStyle=rgb(P.CLARO,(.25+.45*Math.sin(t*1.4+m*3)**2)*(1-f*.6)); x.fill(); }
+     haz(x,g,P,.7,2);
+   }},
+
+  {n:"3 · Mapa de subte",d:"Líneas rectas con quiebres a 45°, como un plano de subte: cada base es un ramal, con sus estaciones, y todas cortan en el prisma.",
+   f:function(x,g,t,P){
+     var p=g.P; x.lineCap="round"; x.lineJoin="round"; x.globalCompositeOperation=P.LUZ;
+     for(var i=0;i<8;i++){
+       var ye=p.y+(i-3.5)*7,dy=ye-g.Y[i],xs=p.x-g.s*1.3-Math.abs(dy)-i*12,xe=xs+Math.abs(dy),c=P.COL[i];
+       var pts=[{x:0,y:g.Y[i]},{x:xs,y:g.Y[i]},{x:xe,y:ye},{x:p.x,y:ye}];
+       trazo(x,pts); line(x,c,.9,3,10);
+       [pts[1],pts[2]].forEach(function(q){ x.beginPath(); x.arc(q.x,q.y,4.2,0,7); x.fillStyle=rgb(P.FG,.95); x.fill(); x.lineWidth=2; x.strokeStyle=rgb(c,1); x.stroke(); });
+       var cum=largo(pts),q=en(pts,cum,((t*.12+i*.11)%1)*cum[3]); x.beginPath(); x.arc(q.x,q.y,2.6,0,7); x.fillStyle=rgb(P.FG,.9); x.fill();
+     }
+     haz(x,g,P,.85,5); x.beginPath(); x.moveTo(p.x,p.y); x.lineTo(g.W,p.y); x.strokeStyle=rgb(P.CLARO,.7); x.lineWidth=1.3; x.stroke();
+     for(var k=1;k<=3;k++){ x.beginPath(); x.arc(p.x+(g.W-p.x)*k/4,p.y,4.2,0,7); x.fillStyle=rgb(P.FG,.95); x.fill(); x.strokeStyle=rgb(P.ORO,1); x.lineWidth=2; x.stroke(); }
+   }},
+
+  {n:"4 · Ondas",d:"Cada base es una onda con su propia frecuencia; al cruzar el prisma se suman y sale una sola señal dorada.",
+   f:function(x,g,t,P){
+     var p=g.P; x.lineCap="round"; x.lineJoin="round"; x.globalCompositeOperation=P.LUZ;
+     function w(i,X){ return Math.sin(X*(.026+.0036*i)-t*(1.1+.22*i)+i*1.7); }
+     for(var i=0;i<8;i++){
+       x.beginPath();
+       for(var X=0;X<=p.x;X+=4){ var u=X/p.x,base=lerp(g.Y[i],p.y,sm(u)),amp=(10+i*1.4)*4*sm(u)*(1-sm(u)); var Yy=base+amp*w(i,X); if(X) x.lineTo(X,Yy); else x.moveTo(X,Yy); }
+       line(x,P.COL[i],.75,1.2,6);
+     }
+     x.beginPath();
+     for(var X=p.x;X<=g.W;X+=4){ var u=(X-p.x)/(g.W-p.x),sum=0; for(var i=0;i<8;i++) sum+=w(i,X); var Yy=p.y+sum*3.2*(1-u*.55)*sm(u*4); if(X>p.x) x.lineTo(X,Yy); else x.moveTo(X,Yy); }
+     line(x,P.ORO,.85,2.4,18);
+   }},
+
+  {n:"5 · Puntadas",d:"Hilo cosido: líneas de puntadas que avanzan hacia el prisma, y una costura dorada doble que sale por el otro lado.",
+   f:function(x,g,t,P){
+     var p=g.P; x.lineCap="round"; x.globalCompositeOperation=P.LUZ;
+     for(var i=0;i<8;i++){
+       x.setLineDash([9,7]); x.lineDashOffset=-t*(22+i*2); x.beginPath(); for(var k=0;k<=50;k++){ var q=quad(g,i,k/50); if(k) x.lineTo(q.x,q.y); else x.moveTo(q.x,q.y); }
+       x.strokeStyle=rgb(P.COL[i],.9); x.lineWidth=1.9; x.stroke();
+     }
+     [-3.5,3.5].forEach(function(o,j){ x.setLineDash([16,6]); x.lineDashOffset=-t*40+j*11; x.beginPath(); x.moveTo(p.x,p.y+o); x.lineTo(g.W,p.y+o); x.strokeStyle=rgb(P.ORO,.9); x.lineWidth=2.2; x.stroke(); });
+     x.setLineDash([]);
+     for(var i=0;i<8;i++){ x.beginPath(); x.arc(5,g.Y[i],3,0,7); x.fillStyle=rgb(P.COL[i],.95); x.fill(); }
+   }},
+
+  {n:"6 · Guirnaldas",d:"Las líneas cuelgan como cables con focos que titilan, y se mecen apenas; el haz dorado también cuelga, más tenso.",
+   f:function(x,g,t,P){
+     var p=g.P; x.lineCap="round"; x.globalCompositeOperation=P.LUZ;
+     function cable(A,B,sag,c,n,ph){
+       var C={x:(A.x+B.x)/2,y:(A.y+B.y)/2+sag*2}; x.beginPath(); x.moveTo(A.x,A.y); x.quadraticCurveTo(C.x,C.y,B.x,B.y); line(x,c,.55,1,0);
+       for(var k=1;k<n;k++){ var u=k/n,m=1-u,q={x:m*m*A.x+2*m*u*C.x+u*u*B.x,y:m*m*A.y+2*m*u*C.y+u*u*B.y},b=.55+.45*Math.sin(t*2.1+ph+k*1.3);
+         x.beginPath(); x.arc(q.x,q.y,8,0,7); x.fillStyle=rgb(c,.1*b); x.fill(); x.beginPath(); x.arc(q.x,q.y,2.3,0,7); x.fillStyle=rgb(mix(c,P.CLARO,.45),.95*b); x.fill(); }
+     }
+     for(var i=0;i<8;i++){ var sag=16+i*3.4,sw=1+.22*Math.sin(t*.8+i*.9); cable({x:0,y:g.Y[i]},{x:p.x,y:p.y},sag*sw,P.COL[i],11,i*2); }
+     cable({x:p.x,y:p.y},{x:g.W,y:p.y},14*(1+.15*Math.sin(t*.7)),P.ORO,15,0);
+   }},
+
+  {n:"7 · Líneas de texto",d:"Las líneas están escritas: cada base lleva su nombre una y otra vez, y el haz dorado sale con lo que se busca: fallos, sumarios, doctrina.",
+   f:function(x,g,t,P){
+     var p=g.P; x.globalCompositeOperation=P.LUZ; x.textBaseline="middle"; x.textAlign="center";
+     function texto(a,str,off,c,al,fs){
+       x.font="500 "+fs+"px 'Instrument Sans',sans-serif"; var cum=largo(a),tot=cum[cum.length-1],adv=fs*.78,n=str.length;
+       for(var l=-(off%(adv*n));l<tot;l+=adv){ if(l<0) continue; var ch=str.charAt(Math.round((l+off)/adv)%n); if(ch===" ") continue; var q=en(a,cum,l); x.save(); x.translate(q.x,q.y); x.rotate(q.ang); x.fillStyle=rgb(c,al*sm(l/160)*(.35+.65*sm(l/(tot*.6)))); x.fillText(ch,0,0); x.restore(); }
+     }
+     for(var i=0;i<8;i++) texto(curva(g,i,60),(BASES[i][0]+"  ·  ").repeat(8),t*34+i*20,P.COL[i],1,11.5);
+     texto([{x:p.x,y:p.y},{x:g.W,y:p.y}],"FALLOS  ·  SUMARIOS  ·  DOCTRINA  ·  LEGISLACIÓN  ·  ",t*52,P.ORO,1,14);
+     x.beginPath(); x.moveTo(p.x,p.y+11); x.lineTo(g.W,p.y+11); line(x,P.ORO,.25,1,0);
+   }},
+
+  {n:"8 · Pantalla de LEDs",d:"Las líneas son puntos de una cartelera luminosa: una onda de luz los va encendiendo; el haz dorado sale en tres filas.",
+   f:function(x,g,t,P){
+     var p=g.P; x.globalCompositeOperation=P.LUZ;
+     function dot(X,Y,c,al,sz){ x.fillStyle=rgb(c,al); x.fillRect(Math.round(X/3)*3-sz/2,Math.round(Y/3)*3-sz/2,sz,sz); }
+     for(var i=0;i<8;i++){
+       var n=Math.floor(p.x/9);
+       for(var k=0;k<=n;k++){ var q=quad(g,i,k/n),pu=Math.max(0,Math.cos(k*.28-t*3+i*.8)); dot(q.x,q.y,P.COL[i],.12+.88*pu*pu*pu,3); }
+     }
+     for(var r=-1;r<=1;r++){ for(var X=p.x;X<g.W;X+=9){ var k=(X-p.x)/9,pu=Math.max(0,Math.cos(k*.22-t*3.4)); dot(X,p.y+r*9,P.ORO,(r===0?.2:.12)+(r===0?.8:.55)*pu*pu,r===0?4:3); } }
+   }},
+
+  {n:"9 · Ondas de difracción",d:"El prisma está rodeado de anillos que se expanden y cambian de color, uno por cada base, mientras las líneas siguen su camino.",
+   f:function(x,g,t,P){
+     var p=g.P; x.globalCompositeOperation=P.LUZ; x.lineCap="round";
+     for(var k=0;k<6;k++){ var ph=(t*.1+k/6)%1,r=g.s*.7+ph*Math.max(g.W,g.H)*.42,c=col8(P,k*1.4+t*.25); x.beginPath(); x.ellipse(p.x,p.y,r,r*.82,0,0,7); line(x,c,(1-ph)*.5,1.3,5); }
+     for(var i=0;i<8;i++){ x.beginPath(); for(var k=0;k<=40;k++){ var q=quad(g,i,k/40); if(k) x.lineTo(q.x,q.y); else x.moveTo(q.x,q.y); } line(x,P.COL[i],.6,1.1,0); }
+     haz(x,g,P,.85,2.4);
+   },prisma:"doble"},
+
+  {n:"10 · Larga exposición",d:"Como una foto de larga exposición: casi no hay líneas, sólo la estela de pequeñas luces que cruzan el prisma y salen doradas.",trail:true,prisma:"estela",
+   f:function(x,g,t,P,st){
+     var p=g.P,dt=Math.min(.05,t-(st.last||t)); st.last=t; st.ps=st.ps||[];
+     x.globalCompositeOperation="destination-out"; x.fillStyle="rgba(0,0,0,.075)"; x.fillRect(0,0,g.W,g.H);
+     x.globalCompositeOperation=P.LUZ; x.lineCap="round";
+     for(var i=0;i<8;i++){ x.beginPath(); for(var k=0;k<=40;k++){ var q=quad(g,i,k/40); if(k) x.lineTo(q.x,q.y); else x.moveTo(q.x,q.y); } x.strokeStyle=rgb(P.COL[i],.07); x.lineWidth=1; x.stroke(); }
+     if(Math.random()<.45&&st.ps.length<46) st.ps.push({i:Math.floor(Math.random()*8),u:0,v:.2+Math.random()*.16,out:false,s:0,a:(Math.random()-.5)*.34,px:null,py:null});
+     st.ps=st.ps.filter(function(q){
+       var X,Y,c;
+       if(!q.out){ q.u+=q.v*dt; if(q.u>=1){ q.out=true; q.s=0; } var z=quad(g,q.i,Math.min(1,q.u)); X=z.x; Y=z.y; c=P.COL[q.i]; }
+       else { q.s+=210*dt; X=p.x+Math.cos(q.a)*q.s; Y=p.y+Math.sin(q.a)*q.s; c=P.CLARO; if(X>g.W+20) return false; }
+       if(q.px!=null){ x.beginPath(); x.moveTo(q.px,q.py); x.lineTo(X,Y); x.strokeStyle=rgb(c,.9); x.lineWidth=q.out?1.8:1.4; x.stroke(); }
+       x.beginPath(); x.arc(X,Y,q.out?2.1:1.7,0,7); x.fillStyle=rgb(c,1); x.fill(); q.px=X; q.py=Y; return true;
+     });
+   }}
+  ];
+
+  /* ---- escenas ---- */
+  var cont=document.getElementById("escenas"),nav=document.querySelector(".nav"),vivas=[];
+  ESC.forEach(function(e,idx){
+    var a=document.createElement("a"); a.href="#e"+(idx+1); a.textContent=idx+1; a.title=e.n; nav.appendChild(a);
+    var sec=document.createElement("section"); sec.className="st"; sec.id="e"+(idx+1);
+    var cv=document.createElement("canvas"); sec.appendChild(cv);
+    var rot=document.createElement("div"); rot.className="rot"; rot.innerHTML="<b>"+e.n+"</b><span>"+e.d+"</span>"; sec.appendChild(rot);
+    cont.appendChild(sec);
+    var o={e:e,sec:sec,cv:cv,x:cv.getContext("2d"),st:{},ver:false,W:0,H:0,g:null};
+    function medir(){ var d=Math.min(devicePixelRatio||1,2),W=sec.clientWidth,H=sec.clientHeight; if(!W||!H) return; cv.width=W*d; cv.height=H*d; o.W=W;o.H=H;o.g=geo(W,H);o.d=d;o.st={}; }
+    medir(); new ResizeObserver(medir).observe(sec);
+    new IntersectionObserver(function(en){ o.ver=en[0].isIntersecting; if(o.ver&&quieto) pintar(o,3.2); }).observe(sec);
+    vivas.push(o);
+  });
+  function pintar(o,t){
+    if(!o.g) return; var x=o.x,P=pal(),reps=1;
+    x.setTransform(o.d,0,0,o.d,0,0);
+    if(!o.e.trail){ x.clearRect(0,0,o.W,o.H); }
+    if(quieto&&o.e.trail){ reps=110; }
+    for(var r=0;r<reps;r++){ o.e.f(x,o.g,quieto&&o.e.trail?t+r*.04:t,P,o.st); }
+    x.globalCompositeOperation="source-over";
+    prisma(x,o.g,P,o.e.prisma);
+  }
+  function bucle(now){
+    if(!quieto){ var t=now/1000; vivas.forEach(function(o){ if(!o.ver) return; if(o.e.trail){ /* la estela: se pinta el prisma encima de la luz, sin borrar */ } pintar(o,t); }); }
+    requestAnimationFrame(bucle);
+  }
+  requestAnimationFrame(bucle);
+  new MutationObserver(function(){ if(quieto) vivas.forEach(function(o){ if(o.ver) pintar(o,3.2); }); }).observe(root,{attributes:true,attributeFilter:["data-tema"]});
+})();
+</script>
+</body>
+</html>
