@@ -10,7 +10,7 @@
       document.body.insertAdjacentHTML("afterbegin",'<div class="luces" aria-hidden="true"><i></i><i></i><i></i></div><div class="grano" aria-hidden="true"></div>'+CAB+
         '<main id="m6"><section class="hero6" id="hero6"><canvas id="cv6" aria-hidden="true"></canvas>'+
         '<div class="h6t" id="h6t"><h1 class="t t-sw"><span class="sw a">'+S.TITULO+'</span><span class="sw b" aria-hidden="true">Más de 800.000 <em>fallos y sumarios.</em></span><span class="sw c" aria-hidden="true"><em>11 bases oficiales.</em></span><span class="sw d" aria-hidden="true">Mendoza, la Nación y <em>todo el país.</em></span></h1></div>'+
-        '<div class="h6d" id="h6d" aria-hidden="true">Desplace</div></section></main>');
+        '<div class="h6d" id="h6d" aria-hidden="true">Desplace<i></i></div></section></main>');
       /* el prisma va en el centro de la pantalla; «Desplace», centrado debajo, a la misma distancia del gráfico y de «Laboratorivm» */
       var d=document.getElementById("h6d"),mp=function(){return Math.min(120,Math.max(60,innerWidth*.09));};
       function banda(W,H){return Math.max(40,Math.min(H*.13,H*.5-110));}
