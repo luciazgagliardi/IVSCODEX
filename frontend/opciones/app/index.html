@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · La aplicación</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../atmosfera/base.css">
+<style>
+.fondo{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:var(--bg)}
+.fondo i{position:absolute;border-radius:50%;filter:blur(90px)}
+.fondo i:nth-child(1){left:-14vw;bottom:-20vw;width:58vw;height:58vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.42),rgba(var(--ember),.2) 52%,transparent 72%);animation:d1 40s ease-in-out infinite alternate}
+.fondo i:nth-child(2){right:-12vw;top:-10vw;width:52vw;height:52vw;background:radial-gradient(circle,rgba(var(--ember),.36),rgba(var(--vino),.22) 55%,transparent 74%);animation:d1 52s ease-in-out infinite alternate-reverse}
+.fondo i:nth-child(3){left:30vw;top:40vh;width:40vw;height:40vw;background:radial-gradient(circle,rgba(var(--vino),.3),transparent 70%);animation:d1 46s ease-in-out infinite alternate}
+@keyframes d1{to{transform:translate3d(5vw,-4vh,0) scale(1.1)}}
+#app{position:relative;z-index:2;min-height:100vh}
+
+/* barra */
+.top{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:12px;padding:14px var(--pad);background:rgba(var(--bg-rgb),.55);-webkit-backdrop-filter:blur(20px) saturate(1.3);backdrop-filter:blur(20px) saturate(1.3)}
+.top nav.sec{display:flex;gap:2px;margin-left:clamp(8px,2vw,28px)}
+.top nav.sec a{padding:9px 16px;border-radius:999px;font-size:14.5px;color:var(--mute);transition:background .3s,color .3s}
+.top nav.sec a:hover{background:rgba(var(--fg-rgb),.1);color:var(--fg)}
+.top nav.sec a[aria-current]{background:rgba(var(--gold-rgb),.2);color:var(--fg)}
+.top .der{display:flex;align-items:center;gap:8px;margin-left:auto}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border:0;border-radius:999px;background:rgba(var(--fg-rgb),.09);color:var(--fg);font-size:14px;transition:background .3s}
+.pill:hover{background:rgba(var(--fg-rgb),.17)}
+.pill .pto{width:7px;height:7px}
+.menu{position:absolute;z-index:70;top:calc(100% + 8px);right:var(--pad);width:min(300px,calc(100vw - 2*var(--pad)));padding:8px;border-radius:26px;display:none}
+.menu.on{display:block}
+.menu a{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 16px;border-radius:999px;font-size:14.5px;color:var(--mute)}
+.menu a:hover{background:rgba(var(--fg-rgb),.1);color:var(--fg)}
+.menu a small{font-size:11.5px;color:var(--dim)}
+@media (max-width:1080px){.top nav.sec{display:none}.top .der .pill.ch{display:none}}
+@media (max-width:560px){.top .der .pill:not(.todas){display:none}}
+
+/* vistas */
+.vista{display:none;padding:clamp(22px,4vh,44px) var(--pad) 140px;max-width:1260px;margin:0 auto}
+.vista.on{display:block}
+.hola{margin:0 0 22px;font-size:14px;color:var(--mute)}.hola b{color:var(--fg);font-weight:500}
+.cabeza{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-bottom:clamp(22px,3.4vh,40px)}
+.kic{display:inline-flex;align-items:center;gap:10px;margin:0 0 14px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.kic::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px 1px rgba(var(--gold-rgb),.7)}
+.kic span{color:var(--gold)}
+.vista h1{margin:0 0 12px;font:400 clamp(44px,7vw,104px)/.95 var(--sans);letter-spacing:-.055em}
+.vista .lead{margin:0;max-width:64ch;color:var(--mute);font-size:clamp(15px,1.25vw,17.5px);line-height:1.55}
+.vista .lead b{color:var(--fg);font-weight:500}
+.ico{width:clamp(80px,9vw,128px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:rgba(var(--fg-rgb),.07);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.ico svg{width:42%;height:42%;fill:none;stroke:var(--gold);stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:760px){.cabeza{grid-template-columns:1fr}.ico{display:none}}
+
+/* buscador */
+.barra{display:flex;align-items:center;gap:10px;padding:7px 7px 7px 24px;border-radius:999px;box-shadow:0 30px 80px rgba(0,0,0,.28)}
+.barra svg.lupa{width:20px;height:20px;flex:none;fill:none;stroke:var(--mute);stroke-width:1.7;stroke-linecap:round}
+.barra input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:17px;padding:13px 4px}
+.barra input::placeholder{color:var(--dim)}
+.barra .btn{padding:14px 28px}
+.sug{margin:22px 0 0;max-width:780px}
+.sug p{margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--mute)}
+.sug p b{color:var(--fg);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 17px;border:0;border-radius:999px;background:rgba(var(--fg-rgb),.08);color:var(--mute);font-size:13.5px;transition:background .3s,color .3s}
+.chip:hover{background:rgba(var(--fg-rgb),.15);color:var(--fg)}
+.chip.on{background:rgba(var(--gold-rgb),.24);color:var(--fg)}
+.chip.sol{background:var(--fg);color:var(--bg)}
+.nota{padding:14px 18px;border-radius:22px;background:rgba(var(--gold-rgb),.1);font-size:13.5px;line-height:1.55;color:var(--mute);font-style:italic}
+.irr{margin:20px 0 26px;font-size:13px;color:var(--dim)}
+.irr b{color:var(--mute);font-weight:500}
+.cuerpo{display:grid;grid-template-columns:minmax(300px,.72fr) minmax(0,2fr);gap:clamp(18px,2.6vw,36px);align-items:start}
+.rail{position:sticky;top:88px;border-radius:30px;padding:10px;background:rgba(var(--fg-rgb),.07);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px)}
+.rail h3{margin:8px 14px 8px;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;color:var(--mute)}
+.fila{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:20px;font-size:14px;transition:background .25s}
+.fila:hover{background:rgba(var(--fg-rgb),.07)}
+.fila b{font-weight:500;flex:1;min-width:0;letter-spacing:.03em;white-space:nowrap}
+.fila .st{font-size:12px;color:var(--dim);white-space:nowrap}
+.fila .mini{padding:6px 13px;border:0;border-radius:999px;background:rgba(var(--fg-rgb),.1);color:var(--fg);font-size:12px;transition:background .3s}
+.fila .mini:hover{background:var(--fg);color:var(--bg)}
+.rail .btn{width:100%;margin-top:8px}
+.vac{display:grid;place-items:center;text-align:center;min-height:240px;padding:30px;border-radius:30px;background:rgba(var(--fg-rgb),.05);color:var(--mute);font-size:15px}
+.vac b{display:block;margin-bottom:6px;color:var(--fg);font-weight:500;font-size:17px}
+.tot{margin:0 0 14px;font-size:14px;color:var(--mute)}.tot b{color:var(--fg);font-weight:500}
+.res{display:grid;gap:12px}
+.r{border-radius:28px;padding:20px 22px;background:rgba(var(--fg-rgb),.07);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);animation:ent .6s var(--ease) both}
+@keyframes ent{from{opacity:0;transform:translateY(10px)}}
+.r .fi{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:12.5px;color:var(--mute)}
+.r .fi .cap{padding:5px 12px;font-size:11.5px;letter-spacing:.05em;background:rgba(var(--fg-rgb),.1)}
+.r .fi small{margin-left:auto}
+.r h3{margin:0 0 8px;font:500 18px/1.25 var(--sans);letter-spacing:-.02em}
+.r p{margin:0 0 14px;font-size:14.5px;line-height:1.6;color:var(--mute)}
+.r mark{background:rgba(var(--gold-rgb),.3);color:var(--fg);padding:1px 5px;border-radius:6px}
+.r .ac{display:flex;gap:6px;flex-wrap:wrap}
+.r .ac a{padding:7px 14px;border-radius:999px;background:rgba(var(--fg-rgb),.08);font-size:12.5px;color:var(--mute);transition:background .3s,color .3s}
+.r .ac a:hover{background:rgba(var(--fg-rgb),.16);color:var(--fg)}
+@media (max-width:900px){.cuerpo{grid-template-columns:minmax(0,1fr)}.rail{position:static}}
+
+/* filtros */
+.dock{position:fixed;z-index:65;left:var(--pad);right:var(--pad);bottom:16px;max-width:1120px;margin:0 auto;padding:22px 24px;border-radius:34px;display:none;background:rgba(var(--bg-rgb),.62);-webkit-backdrop-filter:blur(30px) saturate(1.5);backdrop-filter:blur(30px) saturate(1.5);box-shadow:0 30px 90px rgba(0,0,0,.5)}
+.dock.on{display:block;animation:ent .4s var(--ease)}
+.dock .fl{display:grid;grid-template-columns:70px minmax(0,1fr);gap:10px;align-items:start;margin-bottom:14px}
+.dock .fl>span{padding-top:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.dock .chips{margin:0}
+.dock .chip{padding:7px 14px;font-size:13px}
+.dock input[type=text],.dock input[type=number]{padding:9px 16px;border:0;border-radius:999px;background:rgba(var(--fg-rgb),.09);color:var(--fg);font-size:13.5px;width:110px;outline:0}
+.dock .cons{margin:6px 0 14px;font-size:13px;color:var(--mute)}.dock .cons b{color:var(--gold);font-weight:500}
+.dock .pie{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dock .pie .btn{margin-left:auto;padding:11px 24px}
+.dock .pie .pill{padding:8px 15px;font-size:13px}
+@media (max-width:760px){.dock{max-height:80svh;overflow:auto;padding:18px}.dock .fl{grid-template-columns:1fr}.dock .fl>span{padding-top:0}}
+
+/* paneles y formularios */
+.panel{border-radius:32px;padding:clamp(18px,2.4vw,28px);background:rgba(var(--fg-rgb),.07);-webkit-backdrop-filter:blur(22px) saturate(1.3);backdrop-filter:blur(22px) saturate(1.3)}
+.panel h3{margin:0 0 6px;font:500 18px/1.2 var(--sans);letter-spacing:-.02em}
+.panel p.s{margin:0 0 16px;font-size:14px;line-height:1.55;color:var(--mute)}
+.campo{display:flex;align-items:center;gap:8px;padding:6px 6px 6px 22px;border-radius:999px;background:rgba(var(--bg-rgb),.45)}
+.campo input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:15.5px;padding:12px 4px}
+.campo input::placeholder{color:var(--dim)}
+.campo .btn{padding:12px 24px}
+textarea.cj{width:100%;min-height:220px;padding:20px 24px;border:0;border-radius:26px;background:rgba(var(--bg-rgb),.45);color:var(--fg);font:inherit;font-size:15px;line-height:1.6;resize:vertical;outline:0}
+.dos{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(16px,2.4vw,30px);align-items:start}
+@media (max-width:900px){.dos{grid-template-columns:minmax(0,1fr)}}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:16px 0}
+.form label{display:grid;gap:6px;font-size:12.5px;color:var(--mute)}
+.form input,.form select{padding:13px 18px;border:0;border-radius:999px;background:rgba(var(--bg-rgb),.45);color:var(--fg);font-size:15px;outline:0;appearance:none;-webkit-appearance:none;width:100%}
+.res-c{position:sticky;top:88px}
+.res-c .num{display:grid;gap:10px;margin-top:6px}
+.res-c .num div{display:flex;justify-content:space-between;gap:12px;padding:12px 18px;border-radius:999px;background:rgba(var(--fg-rgb),.07);font-size:14.5px;color:var(--mute)}
+.res-c .num div b{color:var(--fg);font-weight:500}
+.res-c .num .tt{background:rgba(var(--gold-rgb),.2)}
+.lector-txt{margin-top:18px;padding:24px 28px;border-radius:28px;background:rgba(var(--fg-rgb),.06);font-size:15.5px;line-height:1.75;color:var(--mute);white-space:pre-wrap}
+.lector-txt mark{background:rgba(var(--gold-rgb),.3);color:var(--fg);padding:1px 4px;border-radius:5px}
+.lector-txt mark.act{background:var(--gold);color:#14110a}
+.nav-m{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:13.5px;color:var(--mute)}
+.ramas{display:grid;grid-template-columns:minmax(210px,.5fr) minmax(0,2fr);gap:clamp(18px,2.6vw,36px);align-items:start}
+.ramas .lista{position:sticky;top:88px;border-radius:28px;padding:12px;background:rgba(var(--fg-rgb),.07);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.ramas .lista .campo{padding-left:18px;margin-bottom:8px}
+.ramas .lista a{display:block;padding:9px 16px;border-radius:999px;font-size:14px;color:var(--mute)}
+.ramas .lista a:hover,.ramas .lista a.on{background:rgba(var(--gold-rgb),.18);color:var(--fg)}
+.ramas .lista h4{margin:12px 16px 4px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;color:var(--dim)}
+.rama-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.rama{border-radius:28px;padding:22px;background:rgba(var(--fg-rgb),.07);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.rama h3{margin:0 0 6px;font:500 19px/1.2 var(--sans);letter-spacing:-.025em}
+.rama p{margin:0 0 14px;font-size:14px;line-height:1.5;color:var(--mute)}
+.rama small{display:block;margin-bottom:8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+@media (max-width:900px){.ramas{grid-template-columns:minmax(0,1fr)}.ramas .lista{position:static}}
+.grp{margin:22px 4px 8px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.cat .fila{padding:13px 16px}
+.cat .fila div{flex:1;min-width:0}.cat .fila small{display:block;margin-top:2px;white-space:normal}
+.tag{padding:4px 11px;border-radius:999px;background:rgba(var(--fg-rgb),.09);font-size:11.5px;color:var(--mute)}
+.tag.lib{background:rgba(var(--gold-rgb),.2);color:var(--fg)}
+.ok{display:none;align-items:center;gap:10px;padding:14px 20px;border-radius:24px;background:rgba(var(--gold-rgb),.16);font-size:15px;margin-top:16px}
+.ok.on{display:flex}
+.ok b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#14110a;font-size:13px;flex:none}
+.dat{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.dat span{padding:8px 15px;border-radius:999px;background:rgba(var(--fg-rgb),.08);font-size:13.5px;color:var(--mute)}
+.dat span b{font-weight:500;color:var(--fg)}
+
+/* Lexia */
+.lx-b{position:fixed;z-index:62;right:var(--pad);bottom:20px}
+.lx-b .pill{padding:13px 22px;font-size:15px;background:rgba(var(--bg-rgb),.6);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.lx-p{position:fixed;z-index:66;right:var(--pad);bottom:20px;width:min(380px,calc(100vw - 2*var(--pad)));padding:18px;border-radius:32px;display:none;background:linear-gradient(160deg,rgba(var(--fg-rgb),.2),rgba(var(--fg-rgb),.07));-webkit-backdrop-filter:blur(28px) saturate(1.5);backdrop-filter:blur(28px) saturate(1.5);box-shadow:0 30px 90px rgba(0,0,0,.45)}
+.lx-p.on{display:block;animation:ent .4s var(--ease)}
+.lx-p .cab{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.av{width:36px;height:36px;border-radius:50%;flex:none;background:radial-gradient(circle at 34% 30%,#ffe9bd,rgba(var(--gold-rgb),1) 45%,rgb(var(--ember)));box-shadow:0 0 20px rgba(var(--gold-rgb),.5)}
+.lx-p .cab b{font-weight:500}.lx-p .cab small{display:block;color:var(--mute);font-size:12px}
+.lx-p .cab button{margin-left:auto;width:34px;height:34px;border:0;border-radius:50%;background:rgba(var(--fg-rgb),.12);color:var(--fg)}
+.msg{display:grid;gap:8px;margin-bottom:12px}
+.m{max-width:90%;padding:10px 15px;border-radius:20px;font-size:14px;line-height:1.5}
+.m.b{background:rgba(var(--fg-rgb),.12)}.m.y{justify-self:end;background:var(--fg);color:var(--bg)}
+.ops{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.ops a{padding:8px 14px;border-radius:999px;background:rgba(var(--gold-rgb),.22);font-size:13px}
+.ent{display:flex;align-items:center;gap:8px;padding:5px 5px 5px 16px;border-radius:999px;background:rgba(var(--bg-rgb),.45)}
+.ent span{flex:1;color:var(--dim);font-size:14px}
+.ent button{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:50%;background:var(--fg);color:var(--bg)}
+.ent button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="fondo" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bus" viewBox="0 0 20 20"><circle cx="9" cy="9" r="5.5"/><path d="m13.5 13.5 3.5 3.5"/></symbol>
+  <symbol id="i-lec" viewBox="0 0 20 20"><path d="M3.5 4.5c2.5-.9 4.7-.7 6.5.7 1.8-1.4 4-1.6 6.5-.7v11c-2.5-.9-4.7-.7-6.5.7-1.8-1.4-4-1.6-6.5-.7z"/><path d="M10 5.2v10.8"/></symbol>
+  <symbol id="i-ram" viewBox="0 0 20 20"><circle cx="5" cy="4.5" r="1.7"/><circle cx="15" cy="9" r="1.7"/><circle cx="5" cy="15.5" r="1.7"/><path d="M5 6.2v7.6M6.4 5.4l7 2.9M6.4 14.6l7-4.4"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 20 20"><rect x="4" y="2.8" width="12" height="14.4" rx="2.4"/><path d="M7 6.5h6M7.5 10h.01M10 10h.01M12.5 10h.01M7.5 13h.01M10 13h.01M12.5 13h.01"/></symbol>
+  <symbol id="i-fue" viewBox="0 0 20 20"><ellipse cx="10" cy="5" rx="6" ry="2.4"/><path d="M4 5v10c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4V5M4 10c0 1.3 2.7 2.4 6 2.4s6-1.1 6-2.4"/></symbol>
+  <symbol id="i-ver" viewBox="0 0 20 20"><path d="M10 2.8l5.8 2.2v4.6c0 3.4-2.4 5.9-5.8 7.6-3.4-1.7-5.8-4.2-5.8-7.6V5z"/><path d="m7.4 10 1.9 1.9 3.4-3.7"/></symbol>
+  <symbol id="i-fl" viewBox="0 0 14 14"><path d="m5 2.5 4.5 4.5L5 11.5"/></symbol>
+</svg>
+
+<div id="app">
+<header class="top">
+  <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+  <nav class="sec" id="nav" aria-label="Secciones"><a href="#buscar">Buscar</a><a href="#lector">Lector</a><a href="#ramas">Ramas</a><a href="#calculos">Cálculos</a><a href="#fuentes">Fuentes</a><a href="#verificar">Verificar</a></nav>
+  <div class="der">
+    <button class="pill ch" type="button" id="b-lx"><i class="pto"></i>Lexia</button>
+    <button class="pill ch" type="button">Cómo usar</button>
+    <button class="pill ch" type="button">Mi perfil ▾</button>
+    <button class="pill todas" type="button" id="b-todas">Todas las secciones ↓</button>
+  </div>
+  <div class="menu vid" id="menu"><a href="#buscar">Buscar<small>investigar</small></a><a href="#lector">Lector<small>leer y citar</small></a><a href="#ramas">Ramas<small>voces</small></a><a href="#calculos">Cálculos<small>calcular</small></a><a href="#fuentes">Fuentes<small>catálogo</small></a><a href="#verificar">Verificar<small>comprobar</small></a><a href="#" style="opacity:.5">Plazos<small>en la plataforma</small></a><a href="#" style="opacity:.5">Norma<small>en la plataforma</small></a><a href="#" style="opacity:.5">Glosario<small>en la plataforma</small></a></div>
+</header>
+
+<!-- BUSCAR -->
+<section class="vista on" id="v-buscar">
+  <p class="hola">Bienvenido, <b>colega.</b></p>
+  <div class="cabeza"><div>
+    <p class="kic"><span>Qvaestio</span> Investigar</p>
+    <h1>Buscar.</h1>
+    <p class="lead">Escriba el tema y se consulta a la vez en las bases oficiales. A la izquierda ve cuál respondió y cuántos resultados trajo.</p>
+  </div><div class="ico"><svg viewBox="0 0 20 20"><use href="#i-bus"/></svg></div></div>
+
+  <form class="barra vid" id="fb" onsubmit="return false">
+    <svg class="lupa" viewBox="0 0 20 20" aria-hidden="true"><use href="#i-bus"/></svg>
+    <label class="sr" for="bq">Tema</label><input id="bq" value="daño moral" placeholder="Escriba el tema">
+    <button class="btn" type="submit">Buscar</button>
+    <button class="pill" type="button" id="b-fil">Filtros ▾</button>
+  </form>
+
+  <div class="sug">
+    <p><b>Los tribunales emplean distintas expresiones para referirse al mismo concepto,</b> lo que altera los resultados; limitar la búsqueda a un solo término excluye fallos relevantes.</p>
+    <div class="chips" id="sugs"><button class="chip" type="button">Daño Extrapatrimonial</button><button class="chip" type="button">Consecuencias No Patrimoniales</button><button class="chip" type="button">Agravio Moral</button><button class="chip" type="button">Daño Inmaterial</button></div>
+    <div class="chips"><button class="chip sol" type="button" id="b-tamb">Buscando también estas formas</button></div>
+    <p><b>Conceptos análogos.</b> Nociones jurídicas afines pero con presupuestos diferentes; se requiere verificar sus requisitos sustanciales antes de proceder a su uso.</p>
+    <div class="chips"><button class="chip" type="button">Daño Psicológico</button></div>
+    <div class="nota">El CCyC de 2015 unificó el concepto: por lo que la jurisprudencia previa utiliza el término «daño moral», mientras que los fallos posteriores alternan su denominación. Por su parte, la Corte IDH adopta la fórmula «daño inmaterial».</div>
+  </div>
+  <p class="irr"><b>Búsqueda irrestricta</b> · Todas las bases, jurisdicciones y períodos.</p>
+
+  <div class="cuerpo">
+    <aside class="rail"><h3>Todas las bases</h3><div id="bases"></div><button class="btn" type="button" id="b-todas-b">Buscar en todas</button></aside>
+    <div><p class="tot" id="tot"></p><div id="res" class="res"><div class="vac"><div><b>Todavía no hay resultados.</b>Toque «Buscar en todas» o «Buscar» en una base.</div></div></div></div>
+  </div>
+</section>
+
+<!-- LECTOR -->
+<section class="vista" id="v-lector">
+  <p class="hola">Bienvenido, <b>colega.</b></p>
+  <div class="cabeza"><div><p class="kic"><span>Lectio</span> Leer y citar</p><h1>Lector.</h1>
+    <p class="lead"><b>Cargue el fallo aquí para visualizarlo con su búsqueda destacada.</b> Puede proceder ingresando el enlace, subiendo el archivo o pegando el texto manualmente. El Lector opera directamente en su navegador y asegura total fidelidad al documento original.</p></div><div class="ico"><svg viewBox="0 0 20 20"><use href="#i-lec"/></svg></div></div>
+  <div class="panel" style="margin-bottom:14px"><h3>Traer por enlace</h3><p class="s">El servidor de extracción no está contando; así que la carga automática por enlace está apagada. Todo lo demás funciona igual.</p>
+    <div class="campo"><input placeholder="https://…" aria-label="Enlace del fallo" disabled><button class="btn suave" type="button" disabled>Traer</button></div></div>
+  <div class="panel"><h3>Pegar el texto del fallo</h3><p class="s">Consiste en abrir la resolución en la base de origen, seleccionar la totalidad del contenido, copiarlo y pegarlo en este espacio.</p>
+    <textarea class="cj" id="lt" aria-label="Texto de la sentencia">Pérez c/ Provincia de Mendoza s/ daños y perjuicios.
+
+CONSIDERANDO: Que la indemnización del daño moral no depende de la existencia de daño patrimonial. El daño moral debe ser reparado con criterio de razonabilidad, atendiendo a la entidad del padecimiento y no como una sanción.
+
+Que, en el caso, la lesión a las afecciones legítimas del actor resulta acreditada, y corresponde fijar una suma que compense el daño moral sufrido sin enriquecimiento indebido.</textarea>
+    <div class="campo" style="margin-top:14px"><input id="lb" value="daño moral" aria-label="Buscar dentro del texto"><button class="btn" type="button" id="b-lb">Resaltar</button></div>
+    <div class="nav-m" id="lnav"></div><div class="lector-txt" id="lout"></div></div>
+</section>
+
+<!-- RAMAS -->
+<section class="vista" id="v-ramas">
+  <p class="hola">Bienvenido, <b>colega.</b></p>
+  <div class="cabeza"><div><p class="kic"><span>Materiae</span> Investigar</p><h1>Ramas.</h1>
+    <p class="lead"><b>Las voces optimizan la búsqueda.</b> Los buscadores judiciales argentinos indexan mediante descriptores técnicos y no por lenguaje natural. Al seleccionar una voz, el sistema la añadirá automáticamente a la consulta de forma exacta.</p></div><div class="ico"><svg viewBox="0 0 20 20"><use href="#i-ram"/></svg></div></div>
+  <div class="chips" id="rg"><button class="chip on" type="button" data-g="">Todas</button><button class="chip" type="button" data-g="Derecho público">Derecho público 9</button><button class="chip" type="button" data-g="Derecho privado">Derecho privado 13</button><button class="chip" type="button" data-g="Derecho social">Derecho social 4</button></div>
+  <div class="ramas"><div class="lista"><div class="campo"><input id="rq" placeholder="Buscar rama…" aria-label="Buscar rama"></div><div id="rl"></div></div><div class="rama-g" id="rc"></div></div>
+</section>
+
+<!-- CÁLCULOS -->
+<section class="vista" id="v-calculos">
+  <p class="hola">Bienvenido, <b>colega.</b></p>
+  <div class="cabeza"><div><p class="kic"><span>Calcvlvs</span> Calcular</p><h1>Cálculos.</h1>
+    <p class="lead"><b>Cálculos con su base legal a la vista.</b> Cada resultado muestra la norma que lo sostiene y la fórmula aplicada. Las tasas, los índices y los valores de referencia los fija la norma o el tribunal del caso: los resultados son orientativos y deben verificarse antes de presentarse.</p></div><div class="ico"><svg viewBox="0 0 20 20"><use href="#i-cal"/></svg></div></div>
+  <div class="chips" id="ct"><button class="chip on" type="button">Intereses</button><button class="chip" type="button">Actualización</button><button class="chip" type="button">Despido</button><button class="chip" type="button">Incapacidad</button><button class="chip" type="button">Honorarios y tasa</button><button class="chip" type="button">Liquidación</button></div>
+  <div class="dos"><div class="panel"><h3>Intereses</h3><p class="s">Interés simple sobre un capital, entre dos fechas, con la tasa anual que corresponda.</p>
+    <div class="form"><label>Capital<input type="number" id="cc" value="1500000"></label><label>Tasa anual (%)<input type="number" id="ct2" value="62"></label></div>
+    <p class="s" style="margin-bottom:8px">Tasa aplicable</p><div class="chips" id="tasa"><button class="chip on" type="button" data-v="62">Activa del Banco de la Nación</button><button class="chip" type="button" data-v="48">Pasiva promedio del BCRA</button><button class="chip" type="button" data-v="0">Otra tasa que fije el tribunal</button></div>
+    <div class="form"><label>Desde<input type="date" id="cd" value="2024-03-01"></label><label>Hasta<input type="date" id="ch" value="2026-10-29"></label></div></div>
+    <div class="panel res-c"><h3>Resultado</h3><div class="num" id="cr"></div><p class="s" style="margin-top:14px">Base legal: art. 768 CCyC. Resultado orientativo; verifique la tasa fijada por el tribunal.</p></div></div>
+</section>
+
+<!-- FUENTES -->
+<section class="vista" id="v-fuentes">
+  <p class="hola">Bienvenido, <b>colega.</b></p>
+  <div class="cabeza"><div><p class="kic"><span>Fontes</span> Fuentes</p><h1>Fuentes.</h1>
+    <p class="lead"><b>Catálogo completo de fuentes.</b> Acceso a 106 bases de datos y buscadores públicos, verificados e identificados individualmente.</p></div><div class="ico"><svg viewBox="0 0 20 20"><use href="#i-fue"/></svg></div></div>
+  <div class="campo" style="max-width:560px;margin-bottom:12px"><input id="fq" placeholder="Buscar una fuente…" aria-label="Buscar una fuente"></div>
+  <div class="chips" id="fc"><button class="chip on" type="button" data-t="">Todas</button><button class="chip" type="button" data-t="Libre">Libres</button><button class="chip" type="button" data-t="Mixta">Mixtas</button></div>
+  <div class="cat" id="fl"></div>
+</section>
+
+<!-- VERIFICAR -->
+<section class="vista" id="v-verificar">
+  <p class="hola">Bienvenido, <b>colega.</b></p>
+  <div class="cabeza"><div><p class="kic"><span>Probatio</span> Comprobar</p><h1>Verificar.</h1>
+    <p class="lead"><b>Contraste una cita antes de presentarla.</b> Pegue la cita y se comprueba si existe en la base oficial del tribunal que la dictó.</p></div><div class="ico"><svg viewBox="0 0 20 20"><use href="#i-ver"/></svg></div></div>
+  <div class="panel"><form class="campo" id="vf" onsubmit="return false"><label class="sr" for="vi">Cita</label><input id="vi" value="CSJN, Fallos 328:2056 (2005), «Simón, Julio»"><button class="btn" type="submit">Comprobar</button></form>
+    <div class="ok" id="vok"><b>✓</b>La cita existe en la base oficial de la Corte Suprema.</div>
+    <div class="dat" id="vd" style="display:none"><span>Tribunal <b>Corte Suprema de Justicia de la Nación</b></span><span>Tomo:página <b>328:2056</b></span><span>Año <b>2005</b></span><span>Carátula <b>Simón, Julio</b></span></div>
+    <p class="s" style="margin:14px 0 0">Muestra simplificada: lee los datos de la cita. La verificación contra las bases oficiales se hace en la plataforma.</p></div>
+</section>
+</div>
+
+<!-- filtros -->
+<div class="dock" id="dock" role="dialog" aria-label="Filtros">
+  <div class="fl"><span>Dónde</span><div class="chips" id="f-d"><button class="chip on" type="button">Todas</button><button class="chip" type="button">Nacional y federal</button><button class="chip" type="button">Mendoza</button><button class="chip" type="button">Otras provincias</button><button class="chip" type="button">Internacional</button><button class="chip" type="button">Doctrina y editoriales</button><button class="chip" type="button">Una provincia ▾</button></div></div>
+  <div class="fl"><span>Fuente</span><div class="chips" id="f-f"></div></div>
+  <div class="fl"><span>Cómo</span><div class="chips" id="f-c" style="align-items:center"><button class="chip" type="button">Frase exacta</button><button class="chip on" type="button">Todas las palabras</button><button class="chip" type="button">Alguna palabra</button><input type="number" placeholder="Desde" aria-label="Año desde"><input type="number" placeholder="Hasta" aria-label="Año hasta"><input type="text" placeholder="Excluir" aria-label="Excluir"><button class="chip" type="button">Más filtros ▾</button></div></div>
+  <p class="cons">Consulta · <b id="cons">daño moral · MZA+NAC+PROV+INT+DOC</b></p>
+  <div class="pie"><button class="pill" type="button">Copiar</button><button class="pill" type="button">Compartir</button><button class="pill" type="button">Buscar con Google</button><button class="pill" type="button" id="b-lim">Limpiar filtros</button><button class="btn" type="button" id="b-apl">Aplicar</button></div>
+</div>
+
+<!-- Lexia -->
+<div class="lx-b" id="lxb"><button class="pill" type="button" id="b-lx2"><i class="pto"></i>Lexia</button></div>
+<div class="lx-p vid" id="lxp" role="dialog" aria-label="Lexia">
+  <div class="cab"><i class="av"></i><div><b>Lexia</b><small>asistente virtual</small></div><button type="button" id="b-lxx" aria-label="Cerrar">×</button></div>
+  <div class="msg"><div class="m y">Tutorial</div><div class="m b">Con gusto. Puedo guiarlo por todas las funciones de la página, o hacer juntos sólo la parte que le cuesta. ¿Qué prefiere?</div></div>
+  <div class="ops"><a href="#">Recorrido completo</a><a href="#">Una parte de Buscar</a><a href="#">Otra sección</a></div>
+  <div class="ent"><span>Escríbame lo que necesita…</span><button type="button" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div>
+</div>
+
+<script>
+(function(){
+  function $(s,r){ return (r||document).querySelector(s); } function $$(s,r){ return [].slice.call((r||document).querySelectorAll(s)); }
+  var FL='<svg class="fl" style="width:14px;height:14px;fill:none;stroke:var(--dim);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 14 14"><use href="#i-fl"/></svg>';
+  var BS=[["SCJM","Suprema Corte de Mendoza","b-scjm","Mendoza","Libre"],["MZA LEGAL","Mendoza Legal","b-mzl","Mendoza","Mixta"],["TSJ","Tribunal Superior de CABA","b-tsj","Nación","Libre"],["CSJN","Corte Suprema de la Nación","b-csjn","Nación","Libre"],["SAIJ","Sistema Argentino de Información Jurídica","b-saij","Nación","Libre"],["DIALNET","Dialnet · doctrina","b-dial","Doctrina","Libre"],["SCBA","Suprema Corte de Buenos Aires","b-scba","Provincias","Libre"],["JURISTECA","Juristeca · editorial","b-mzl","Doctrina","Mixta"],["CSJSF","Corte Suprema de Santa Fe","b-tsj","Provincias","Libre"],["PJRN","Poder Judicial de Río Negro","b-scba","Provincias","Libre"],["CORTE IDH","Corte Interamericana","b-idh","Internacional","Libre"]];
+
+  /* navegación */
+  var vistas=$$(".vista"),navA=$$("#nav a");
+  function ir(){ var h=(location.hash||"#buscar").slice(1),v=$("#v-"+h)?h:"buscar"; vistas.forEach(function(s){ s.classList.toggle("on",s.id==="v-"+v); }); navA.forEach(function(a){ if(a.getAttribute("href")==="#"+v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); }); $("#menu").classList.remove("on"); $("#dock").classList.remove("on"); scrollTo(0,0); }
+  addEventListener("hashchange",ir); ir();
+  $("#b-todas").addEventListener("click",function(e){ e.stopPropagation(); $("#menu").classList.toggle("on"); });
+  document.addEventListener("click",function(e){ if(!e.target.closest("#menu")) $("#menu").classList.remove("on"); });
+
+  /* buscar: las once bases */
+  $("#bases").innerHTML=BS.map(function(b,i){ return '<div class="fila '+b[2]+'"><i class="dot"></i><b>'+b[0]+'</b><span class="st" id="s'+i+'">en espera</span><button class="mini" type="button" data-i="'+i+'">Buscar</button></div>'; }).join("");
+  var RES=[[3,"Pérez c/ Provincia de Mendoza s/ daños y perjuicios","Fallos 330:1234 · 2007",'…el <mark>daño moral</mark> debe ser reparado con criterio de razonabilidad, atendiendo a la entidad del padecimiento y no como una sanción…'],
+           [0,"Gómez c/ Banco Andino s/ incumplimiento","Cámara Civil · 2020",'…el incumplimiento contractual no genera por sí solo <mark>daño moral</mark>: debe probarse la afectación espiritual…'],
+           [2,"Ledesma c/ GCBA s/ daños y perjuicios","Sala Contencioso · 2023",'La responsabilidad del Estado alcanza al <mark>daño moral</mark> cuando hay un obrar irregular verificado.'],
+           [4,"Ramírez c/ Telefónica s/ ordinario","Sala D · 2022",'Cuantificación del <mark>daño moral</mark>: valoración de la satisfacción sustitutiva que permita mitigar el sufrimiento…'],
+           [6,"Sosa c/ Municipalidad s/ daños","C. 123456 · 2021",'El <mark>daño moral</mark> no requiere prueba específica; se presume in re ipsa del hecho generador.'],
+           [10,"Caso Barrios Altos vs. Perú","Serie C · 2001",'El <mark>daño inmaterial</mark> comprende los sufrimientos y aflicciones causados a la víctima directa y a sus allegados…'],
+           [5,"Torres, M. «El daño moral en el CCyC»","Doctrina · 2019",'Estudio sobre la unificación del concepto de <mark>daño moral</mark> o consecuencias no patrimoniales…']];
+  var CNT=[12,8,15,18,21,4,9,5,7,3,6],busc=false;
+  function mostrar(idx){ var ls=RES.filter(function(r){ return !idx||idx.indexOf(r[0])>-1; }); var tot=0; idx=idx||BS.map(function(_,i){ return i; }); idx.forEach(function(i){ tot+=CNT[i]; });
+    $("#tot").innerHTML='<b>'+tot+' resultados</b> · '+idx.length+' de '+BS.length+' bases respondieron';
+    $("#res").innerHTML=ls.map(function(r,k){ var b=BS[r[0]]; return '<article class="r" style="animation-delay:'+(k*90)+'ms"><div class="fi"><span class="cap '+b[2]+'"><i class="dot"></i>'+b[0]+'</span><span>'+r[2]+'</span></div><h3>'+r[1]+'</h3><p>'+r[3]+'</p><div class="ac"><a href="#">Leer</a><a href="#">Citar</a><a href="#">Guardar</a><a href="#">Ver en la fuente ↗</a></div></article>'; }).join("")||'<div class="vac"><div><b>Sin coincidencias.</b>Pruebe con otra forma de decirlo.</div></div>'; }
+  function buscar(idx){ if(busc) return; busc=true; var lista=idx||BS.map(function(_,i){ return i; }),hechos=0; $("#res").innerHTML='<div class="vac"><div><b>Buscando…</b>Las bases responden de a una.</div></div>';
+    lista.forEach(function(i,k){ $("#s"+i).textContent="buscando…"; setTimeout(function(){ $("#s"+i).textContent=CNT[i]+" resultados"; hechos++; if(hechos===lista.length){ busc=false; mostrar(idx); } },400+k*230+Math.random()*250); }); }
+  $("#b-todas-b").addEventListener("click",function(){ buscar(); });
+  $("#fb").addEventListener("submit",function(){ buscar(); });
+  $("#bases").addEventListener("click",function(e){ var b=e.target.closest(".mini"); if(b) buscar([+b.getAttribute("data-i")]); });
+  $("#sugs").addEventListener("click",function(e){ var c=e.target.closest(".chip"); if(c){ c.classList.toggle("on"); } });
+  $("#b-tamb").addEventListener("click",function(){ var on=$$("#sugs .chip.on").length; $("#bq").value="daño moral"+(on?" "+$$("#sugs .chip.on").map(function(x){ return "OR «"+x.textContent+"»"; }).join(" "):""); buscar(); });
+  $$(".sug > .chips:nth-of-type(3) .chip").forEach(function(c){ c.addEventListener("click",function(){ c.classList.toggle("on"); }); });
+
+  /* filtros */
+  $("#f-f").innerHTML='<button class="chip on" type="button">Todas</button>'+BS.map(function(b){ return '<button class="chip" type="button"><i class="dot '+b[2]+'" style="display:inline-block;background:var(--c)"></i>'+b[0]+'</button>'; }).join("");
+  $("#dock").addEventListener("click",function(e){ var c=e.target.closest(".chip"); if(!c) return; var g=c.parentNode; if(g.id==="f-c"&&!c.textContent.match(/Frase|Todas|Alguna/)) return; if(g.id==="f-c"||c.textContent==="Todas"){ $$(".chip",g).forEach(function(x){ x.classList.remove("on"); }); c.classList.add("on"); } else { c.classList.toggle("on"); var t=$$(".chip",g)[0]; if(t&&t.textContent==="Todas") t.classList.remove("on"); } cons(); });
+  function cons(){ var f=$$("#f-f .chip.on").map(function(x){ return x.textContent.trim(); }),d=$$("#f-d .chip.on").map(function(x){ return x.textContent.replace(" ▾",""); }); $("#cons").textContent=$("#bq").value+" · "+((f.length&&f[0]!=="Todas")?f.join("+"):"MZA+NAC+PROV+INT+DOC")+(d.length&&d[0]!=="Todas"?" · "+d.join(", "):""); }
+  $("#b-fil").addEventListener("click",function(e){ e.stopPropagation(); cons(); $("#dock").classList.toggle("on"); });
+  $("#b-apl").addEventListener("click",function(){ $("#dock").classList.remove("on"); buscar(); });
+  $("#b-lim").addEventListener("click",function(){ $$("#dock .chip").forEach(function(c){ c.classList.toggle("on",c.textContent==="Todas"||c.textContent==="Todas las palabras"); }); cons(); });
+
+  /* lector */
+  var act=0;
+  function resaltar(){ var t=$("#lt").value,q=$("#lb").value.trim(),out=$("#lout"); if(!q){ out.textContent=t; $("#lnav").innerHTML=""; return; }
+    var re=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"gi"),n=0,html=t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(re,function(m){ return '<mark data-n="'+(n++)+'">'+m+'</mark>'; });
+    out.innerHTML=html; act=Math.min(act,Math.max(0,n-1)); nav(n); }
+  function nav(n){ var ms=$$("#lout mark"); ms.forEach(function(m,i){ m.classList.toggle("act",i===act); }); $("#lnav").innerHTML=n?'<button class="pill" type="button" id="lp">←</button><span>'+(act+1)+' de '+n+' coincidencias</span><button class="pill" type="button" id="ln">→</button>':'<span>Sin coincidencias.</span>'; if(n){ $("#lp").onclick=function(){ act=(act-1+n)%n; nav(n); ms[act].scrollIntoView({block:"center",behavior:"smooth"}); }; $("#ln").onclick=function(){ act=(act+1)%n; nav(n); ms[act].scrollIntoView({block:"center",behavior:"smooth"}); }; } }
+  $("#b-lb").addEventListener("click",function(){ act=0; resaltar(); }); $("#lt").addEventListener("input",resaltar); resaltar();
+
+  /* ramas */
+  var RM=[["Derecho público","Derecho Constitucional y Amparo","Control de constitucionalidad, amparo, derechos fundamentales, división de poderes.",["Amparo","Acción de inconstitucionalidad","Derechos fundamentales"]],
+          ["Derecho público","Derecho Administrativo","Acto administrativo, contrataciones, empleo público, responsabilidad del Estado, proceso administrativo.",["Responsabilidad del Estado","Acto administrativo","Empleo público"]],
+          ["Derecho público","Derecho Tributario","Obligación tributaria, determinación de oficio, prescripción, tasas y contribuciones.",["Determinación de oficio","Prescripción tributaria"]],
+          ["Derecho público","Derecho Penal","Teoría del delito, penas, delitos contra las personas y la propiedad.",["Homicidio","Estafa","Prescripción de la acción penal"]],
+          ["Derecho privado","Derecho de Daños","Responsabilidad civil, daño moral, cuantificación, causalidad, eximentes.",["Daño moral","Daño emergente","Lucro cesante","Nexo causal"]],
+          ["Derecho privado","Derecho de Familia","Divorcio, alimentos, régimen de comunicación, adopción, responsabilidad parental.",["Cuota alimentaria","Régimen de comunicación","Compensación económica"]],
+          ["Derecho privado","Contratos","Formación, incumplimiento, resolución, cláusula penal, contratos de consumo.",["Incumplimiento contractual","Cláusula penal","Contrato de consumo"]],
+          ["Derecho social","Derecho Laboral","Contrato de trabajo, despido, accidentes, indemnizaciones, prescripción laboral.",["Despido sin causa","Accidente de trabajo","Preaviso"]]];
+  var rg="",rq="";
+  function pintarRamas(){ var ls=RM.filter(function(r){ return (!rg||r[0]===rg)&&(!rq||(r[1]+" "+r[3].join(" ")).toLowerCase().indexOf(rq)>-1); });
+    $("#rc").innerHTML=ls.map(function(r){ return '<article class="rama"><small>'+r[0]+'</small><h3>'+r[1]+'</h3><p>'+r[2]+'</p><small style="margin-bottom:8px">Voces para buscar</small><div class="chips" style="margin:0">'+r[3].map(function(v){ return '<button class="chip" type="button" data-v="'+v+'">'+v+'</button>'; }).join("")+'</div></article>'; }).join("")||'<div class="vac"><div><b>Sin ramas.</b>Pruebe con otra palabra.</div></div>';
+    var g={}; ls.forEach(function(r){ (g[r[0]]=g[r[0]]||[]).push(r[1]); }); $("#rl").innerHTML='<a class="on" href="#ramas">Todas las ramas</a>'+Object.keys(g).map(function(k){ return '<h4>'+k+'</h4>'+g[k].map(function(x){ return '<a href="#ramas">'+x+'</a>'; }).join(""); }).join(""); }
+  $("#rg").addEventListener("click",function(e){ var c=e.target.closest(".chip"); if(!c) return; $$("#rg .chip").forEach(function(x){ x.classList.toggle("on",x===c); }); rg=c.getAttribute("data-g"); pintarRamas(); });
+  $("#rq").addEventListener("input",function(){ rq=this.value.toLowerCase(); pintarRamas(); });
+  $("#rc").addEventListener("click",function(e){ var c=e.target.closest(".chip"); if(!c) return; $("#bq").value=c.getAttribute("data-v"); location.hash="#buscar"; setTimeout(function(){ buscar(); },300); });
+  pintarRamas();
+
+  /* cálculos: interés simple real */
+  function calc(){ var cap=+$("#cc").value||0,tasa=+$("#ct2").value||0,d1=new Date($("#cd").value),d2=new Date($("#ch").value),dias=Math.max(0,Math.round((d2-d1)/864e5)),i=cap*tasa/100*dias/365,f=function(n){ return n.toLocaleString("es-AR",{style:"currency",currency:"ARS",maximumFractionDigits:0}); };
+    $("#cr").innerHTML='<div>Capital <b>'+f(cap)+'</b></div><div>Días <b>'+dias+'</b></div><div>Tasa anual <b>'+tasa+' %</b></div><div>Intereses <b>'+f(i)+'</b></div><div class="tt">Total <b>'+f(cap+i)+'</b></div>'; }
+  ["cc","ct2","cd","ch"].forEach(function(id){ $("#"+id).addEventListener("input",calc); });
+  $("#tasa").addEventListener("click",function(e){ var c=e.target.closest(".chip"); if(!c) return; $$("#tasa .chip").forEach(function(x){ x.classList.toggle("on",x===c); }); if(+c.getAttribute("data-v")) $("#ct2").value=c.getAttribute("data-v"); calc(); });
+  $("#ct").addEventListener("click",function(e){ var c=e.target.closest(".chip"); if(!c) return; $$("#ct .chip").forEach(function(x){ x.classList.toggle("on",x===c); }); });
+  calc();
+
+  /* fuentes */
+  var ft="",fq="";
+  function pintarFuentes(){ var ls=BS.filter(function(b){ return (!ft||b[4]===ft)&&(!fq||(b[0]+" "+b[1]).toLowerCase().indexOf(fq)>-1); }),g={}; ls.forEach(function(b){ (g[b[3]]=g[b[3]]||[]).push(b); });
+    $("#fl").innerHTML=Object.keys(g).map(function(k){ return '<p class="grp">'+k+'</p><div class="rail" style="position:static">'+g[k].map(function(b){ return '<div class="fila '+b[2]+'"><i class="dot"></i><div><b>'+b[1]+'</b><small class="st">'+b[0]+'</small></div><span class="tag'+(b[4]==="Libre"?" lib":"")+'">'+b[4]+'</span><button class="mini" type="button">Abrir buscador</button>'+FL+'</div>'; }).join("")+'</div>'; }).join("")||'<div class="vac"><div><b>Sin fuentes.</b></div></div>'; }
+  $("#fc").addEventListener("click",function(e){ var c=e.target.closest(".chip"); if(!c) return; $$("#fc .chip").forEach(function(x){ x.classList.toggle("on",x===c); }); ft=c.getAttribute("data-t"); pintarFuentes(); });
+  $("#fq").addEventListener("input",function(){ fq=this.value.toLowerCase(); pintarFuentes(); }); pintarFuentes();
+
+  /* verificar */
+  $("#vf").addEventListener("submit",function(){ $("#vok").classList.add("on"); $("#vd").style.display="flex"; });
+
+  /* lexia */
+  function lex(on){ $("#lxp").classList.toggle("on",on); $("#lxb").style.display=on?"none":""; }
+  $("#b-lx").addEventListener("click",function(){ lex(true); }); $("#b-lx2").addEventListener("click",function(){ lex(true); }); $("#b-lxx").addEventListener("click",function(){ lex(false); });
+})();
+</script>
+</body>
+</html>

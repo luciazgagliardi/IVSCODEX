@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · La página completa</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../atmosfera/base.css">
+<style>
+html{scroll-behavior:smooth}
+/* luces fijas: todo el fondo respira en naranja, amarillo, bordeaux y dorado */
+.fondo{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:var(--bg)}
+.fondo i{position:absolute;border-radius:50%;filter:blur(90px)}
+.fondo i:nth-child(1){left:-14vw;bottom:-20vw;width:58vw;height:58vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.5),rgba(var(--ember),.22) 52%,transparent 72%);animation:d1 40s ease-in-out infinite alternate}
+.fondo i:nth-child(2){right:-12vw;top:-10vw;width:52vw;height:52vw;background:radial-gradient(circle,rgba(var(--ember),.42),rgba(var(--vino),.24) 55%,transparent 74%);animation:d1 52s ease-in-out infinite alternate-reverse}
+.fondo i:nth-child(3){left:30vw;top:40vh;width:40vw;height:40vw;background:radial-gradient(circle,rgba(var(--vino),.34),transparent 70%);animation:d1 46s ease-in-out infinite alternate}
+@keyframes d1{to{transform:translate3d(5vw,-4vh,0) scale(1.1)}}
+main,header.top,footer{position:relative;z-index:2}
+
+/* barra superior */
+header.top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:16px;padding:16px var(--pad);transition:background .4s}
+header.top.fl{background:rgba(var(--bg-rgb),.62);-webkit-backdrop-filter:blur(20px) saturate(1.3);backdrop-filter:blur(20px) saturate(1.3);padding-top:12px;padding-bottom:12px}
+header.top nav{margin:0 auto;display:flex;gap:6px;padding:6px;border-radius:999px}
+header.top nav a{padding:8px 18px;border-radius:999px;font-size:14px;color:var(--mute);transition:background .3s,color .3s}
+header.top nav a:hover{background:rgba(var(--fg-rgb),.12);color:var(--fg)}
+header.top .btn{padding:11px 20px;font-size:14px}
+@media (max-width:900px){header.top nav{display:none}header.top .btn{margin-left:auto}}
+
+section{position:relative;padding:clamp(70px,12vh,130px) var(--pad)}
+section[id]{scroll-margin-top:30px}
+.w{max-width:1180px;margin:0 auto}
+.kic{display:inline-flex;align-items:center;gap:10px;margin:0 0 18px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.kic::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px 1px rgba(var(--gold-rgb),.7)}
+h2.t{margin:0 0 16px;font:400 clamp(36px,5.6vw,84px)/.97 var(--sans);letter-spacing:-.05em;text-wrap:balance}
+h2.t em{font-style:normal;color:rgba(var(--fg-rgb),.55)}
+.lead{margin:0;max-width:56ch;color:var(--mute);font-size:clamp(15px,1.3vw,18px)}
+
+/* portada */
+.hero{min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:110px}
+.t-sw{display:grid}
+.t-sw .sw{grid-area:1/1;align-self:center;animation:swA 18s ease-in-out infinite}
+.t-sw .sw.b{animation-name:swB;opacity:0}
+.t-sw .sw.c{animation-name:swC;opacity:0}
+@keyframes swA{0%,28%{opacity:1;transform:none;filter:none}33%,95%{opacity:0;transform:translateY(-10px);filter:blur(6px)}100%{opacity:1;transform:none;filter:none}}
+@keyframes swB{0%,30%{opacity:0;transform:translateY(10px);filter:blur(6px)}36%,61%{opacity:1;transform:none;filter:none}67%,100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
+@keyframes swC{0%,63%{opacity:0;transform:translateY(10px);filter:blur(6px)}69%,94%{opacity:1;transform:none;filter:none}100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
+.hero h1{margin:0;position:relative;z-index:3;font:400 clamp(32px,4.6vw,66px)/.98 var(--sans);letter-spacing:-.05em;max-width:19ch;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero .prisma{position:relative;width:100%;height:clamp(240px,38vh,360px);margin:clamp(10px,3vh,34px) 0}
+.hero canvas,.hero .vidrio-host{position:absolute;inset:0;width:100%;height:100%}
+.hero .acc{position:relative;z-index:3;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.hero .desp{margin-top:34px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.hero .desp i{display:block;width:1px;height:38px;margin:10px auto 0;background:linear-gradient(rgba(var(--gold-rgb),.9),transparent)}
+.cristal{position:absolute;clip-path:polygon(50% 0,100% 100%,0 100%);background:linear-gradient(155deg,rgba(255,240,215,.26),rgba(255,255,255,.03) 45%,rgba(255,200,120,.14));-webkit-backdrop-filter:blur(7px) saturate(1.5) brightness(1.12);backdrop-filter:blur(7px) saturate(1.5) brightness(1.12)}
+.cristal::after{content:"";position:absolute;inset:0;background:linear-gradient(112deg,transparent 36%,rgba(255,246,226,.5) 47%,transparent 58%);background-size:260% 100%;animation:destello 8s ease-in-out infinite}
+.cristal svg{position:absolute;inset:0;width:100%;height:100%}
+@keyframes destello{0%{background-position:150% 0}60%,100%{background-position:-50% 0}}
+.halo{position:absolute;border-radius:50%;pointer-events:none;filter:blur(10px);mix-blend-mode:screen;background:radial-gradient(circle,rgba(255,226,150,.26),rgba(240,190,64,.09) 40%,transparent 70%)}
+
+/* laboratorio */
+.panel{border-radius:36px;padding:clamp(18px,2.4vw,30px);margin-top:clamp(26px,4vh,44px);background:rgba(var(--fg-rgb),.07);-webkit-backdrop-filter:blur(26px) saturate(1.4);backdrop-filter:blur(26px) saturate(1.4);box-shadow:0 40px 100px rgba(0,0,0,.3)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+.tabs button{padding:10px 20px;border:0;border-radius:999px;background:rgba(var(--fg-rgb),.07);color:var(--mute);font-size:14px;transition:background .3s,color .3s}
+.tabs button:hover{background:rgba(var(--fg-rgb),.14);color:var(--fg)}
+.tabs button[aria-selected="true"]{background:var(--fg);color:var(--bg)}
+.pane[hidden]{display:none}
+.q{display:flex;align-items:center;gap:10px;padding:6px 6px 6px 22px;border-radius:999px;background:rgba(var(--bg-rgb),.45)}
+.q svg{width:19px;height:19px;flex:none;fill:none;stroke:var(--mute);stroke-width:1.7;stroke-linecap:round}
+.q input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:16.5px;padding:12px 4px}
+.q input::placeholder{color:var(--dim)}
+.q .btn{padding:13px 26px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 22px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:0;border-radius:999px;background:rgba(var(--fg-rgb),.08);color:var(--mute);font-size:13.5px;transition:background .3s,color .3s}
+.chip:hover{background:rgba(var(--fg-rgb),.15);color:var(--fg)}
+.chip.on{background:rgba(var(--gold-rgb),.22);color:var(--fg)}
+.cols{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);gap:clamp(16px,2.4vw,28px)}
+.grupo{border-radius:26px;background:rgba(var(--fg-rgb),.06);padding:6px}
+.fila{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:20px;font-size:14.5px;transition:background .25s}
+.fila:hover{background:rgba(var(--fg-rgb),.07)}
+.fila b{font-weight:500;flex:1;min-width:0}
+.fila small{color:var(--dim);font-size:12.5px;white-space:nowrap}
+.fila .st{display:inline-block;min-width:78px;text-align:right}
+.fila .fl{width:14px;height:14px;flex:none;fill:none;stroke:var(--dim);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tot{margin:12px 8px 0;font-size:13px;color:var(--mute)}
+.res{display:grid;gap:12px;align-content:start}
+.r{border-radius:26px;padding:18px 20px;background:rgba(var(--fg-rgb),.07);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);opacity:1;transition:opacity .6s,transform .6s var(--ease)}
+.r.off{opacity:.25;transform:translateY(6px)}
+.r .fi{display:flex;align-items:center;gap:10px;margin:0 0 10px;font-size:12.5px;color:var(--mute)}
+.r .fi .cap{padding:5px 12px;font-size:11.5px;letter-spacing:.05em;background:rgba(var(--fg-rgb),.1)}
+.r .fi small{margin-left:auto}
+.r h3{margin:0 0 8px;font:500 17px/1.25 var(--sans);letter-spacing:-.02em}
+.r p{margin:0 0 14px;font-size:14.5px;line-height:1.55;color:var(--mute)}
+.r mark{background:rgba(var(--gold-rgb),.3);color:var(--fg);padding:1px 5px;border-radius:6px}
+.r .ac{display:flex;gap:6px;flex-wrap:wrap}
+.r .ac a{padding:7px 14px;border-radius:999px;background:rgba(var(--fg-rgb),.08);font-size:12.5px;color:var(--mute);transition:background .3s,color .3s}
+.r .ac a:hover{background:rgba(var(--fg-rgb),.16);color:var(--fg)}
+.cita{display:grid;gap:14px}
+.ok{display:none;align-items:center;gap:10px;padding:14px 20px;border-radius:24px;background:rgba(var(--gold-rgb),.16);font-size:15px}
+.ok.on{display:flex}
+.ok b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#14110a;font-size:13px}
+.dat{display:flex;flex-wrap:wrap;gap:8px}
+.dat span{padding:8px 15px;border-radius:999px;background:rgba(var(--fg-rgb),.08);font-size:13.5px;color:var(--mute)}
+.dat span b{font-weight:500;color:var(--fg)}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.form label{display:grid;gap:6px;font-size:12.5px;color:var(--mute)}
+.form select,.form input[type=date]{padding:13px 18px;border:0;border-radius:999px;background:rgba(var(--bg-rgb),.45);color:var(--fg);font-size:15px;appearance:none;-webkit-appearance:none}
+
+/* servicios */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:clamp(28px,5vh,52px)}
+.tile{position:relative;display:flex;flex-direction:column;gap:12px;min-height:230px;padding:26px;border-radius:32px;background:rgba(var(--fg-rgb),.06);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);overflow:hidden;transition:transform .5s var(--ease),background .4s}
+.tile::before{content:"";position:absolute;inset:0;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(var(--gold-rgb),.28),rgba(var(--ember),.1) 45%,transparent 70%);opacity:0;transition:opacity .4s}
+.tile:hover{transform:translateY(-4px);background:rgba(var(--fg-rgb),.09)}
+.tile:hover::before{opacity:1}
+.tile>*{position:relative}
+.tile .ic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:rgba(var(--fg-rgb),.1)}
+.tile .ic svg{width:21px;height:21px;fill:none;stroke:var(--fg);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.tile h3{margin:6px 0 0;font:500 22px/1.1 var(--sans);letter-spacing:-.03em}
+.tile p{margin:0;color:var(--mute);font-size:14.5px;line-height:1.5;flex:1}
+.tile .go{align-self:flex-start;padding:8px 16px;border-radius:999px;background:rgba(var(--fg-rgb),.1);font-size:13px;opacity:.7;transition:opacity .3s,background .3s}
+.tile:hover .go{opacity:1;background:var(--fg);color:var(--bg)}
+
+/* fuentes */
+.fu{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(24px,5vw,80px);align-items:start}
+.fu .cifras{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.fu .cifras span{padding:10px 18px;border-radius:999px;background:rgba(var(--fg-rgb),.08);font-size:14px;color:var(--mute)}
+.fu .cifras b{color:var(--fg);font-weight:500}
+.fu .lista{display:grid;gap:12px}
+.fu .rot{margin:14px 12px 6px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.fu .rot:first-child{margin-top:0}
+.tag{padding:4px 11px;border-radius:999px;background:rgba(var(--fg-rgb),.09);font-size:11.5px;color:var(--mute)}
+.tag.lib{background:rgba(var(--gold-rgb),.2);color:var(--fg)}
+
+/* lexia */
+.lx{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(24px,5vw,80px);align-items:center}
+.lx .card{border-radius:38px;padding:clamp(20px,2.6vw,30px);background:linear-gradient(160deg,rgba(var(--fg-rgb),.17),rgba(var(--fg-rgb),.06));-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5);box-shadow:0 40px 100px rgba(0,0,0,.34)}
+.lx .cab{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.av{width:40px;height:40px;border-radius:50%;flex:none;background:radial-gradient(circle at 34% 30%,#ffe9bd,rgba(var(--gold-rgb),1) 45%,rgb(var(--ember)));box-shadow:0 0 22px rgba(var(--gold-rgb),.5)}
+.lx .cab b{font-weight:500}.lx .cab small{display:block;color:var(--mute);font-size:12.5px}
+.msg{display:grid;gap:10px;margin-bottom:16px}
+.m{max-width:88%;padding:12px 17px;border-radius:22px;font-size:14.5px;line-height:1.5}
+.m.b{background:rgba(var(--fg-rgb),.1)}
+.m.y{justify-self:end;background:var(--fg);color:var(--bg)}
+.ops{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.ops a{padding:9px 16px;border-radius:999px;background:rgba(var(--gold-rgb),.2);font-size:13.5px;transition:background .3s}
+.ops a:hover{background:rgba(var(--gold-rgb),.34)}
+.ent{display:flex;align-items:center;gap:10px;padding:6px;border-radius:999px;background:rgba(var(--bg-rgb),.4)}
+.ent .av{width:36px;height:36px}
+.ent span{flex:1;color:var(--dim);font-size:15px}
+.ent button{display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:50%;background:var(--fg);color:var(--bg)}
+.ent button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* principios */
+.pr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:clamp(28px,5vh,52px)}
+.pr div{padding:28px;border-radius:32px;background:rgba(var(--fg-rgb),.06);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.pr small{display:block;margin-bottom:26px;font-size:12px;letter-spacing:.22em;color:var(--gold)}
+.pr h3{margin:0 0 10px;font:500 24px/1.1 var(--sans);letter-spacing:-.03em}
+.pr p{margin:0;color:var(--mute);font-size:15px;line-height:1.55}
+
+/* cierre */
+.cierre{text-align:center;padding-bottom:60px}
+.cierre h2.t{max-width:14ch;margin-inline:auto}
+.cierre .acc{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.cierre .aviso{max-width:70ch;margin:44px auto 0;font-size:13px;line-height:1.6;color:var(--dim)}
+footer{padding:30px var(--pad) 40px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;color:var(--dim);font-size:13px}
+footer .marca2{font-size:15px}
+footer nav{margin-left:auto;display:flex;gap:20px}
+footer a:hover{color:var(--fg)}
+
+@media (max-width:900px){
+  .cols,.fu,.lx,.pr{grid-template-columns:minmax(0,1fr)}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}.q .btn{padding:12px 18px}.tile{min-height:0}}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<div class="fondo" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bus" viewBox="0 0 20 20"><circle cx="9" cy="9" r="5.5"/><path d="m13.5 13.5 3.5 3.5"/></symbol>
+  <symbol id="i-lec" viewBox="0 0 20 20"><path d="M3.5 4.5c2.5-.9 4.7-.7 6.5.7 1.8-1.4 4-1.6 6.5-.7v11c-2.5-.9-4.7-.7-6.5.7-1.8-1.4-4-1.6-6.5-.7z"/><path d="M10 5.2v10.8"/></symbol>
+  <symbol id="i-ram" viewBox="0 0 20 20"><circle cx="5" cy="4.5" r="1.7"/><circle cx="15" cy="9" r="1.7"/><circle cx="5" cy="15.5" r="1.7"/><path d="M5 6.2v7.6M6.4 5.4l7 2.9M6.4 14.6l7-4.4"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 20 20"><rect x="4" y="2.8" width="12" height="14.4" rx="2.4"/><path d="M7 6.5h6M7.5 10h.01M10 10h.01M12.5 10h.01M7.5 13h.01M10 13h.01M12.5 13h.01"/></symbol>
+  <symbol id="i-ver" viewBox="0 0 20 20"><path d="M10 2.8l5.8 2.2v4.6c0 3.4-2.4 5.9-5.8 7.6-3.4-1.7-5.8-4.2-5.8-7.6V5z"/><path d="m7.4 10 1.9 1.9 3.4-3.7"/></symbol>
+  <symbol id="i-her" viewBox="0 0 20 20"><path d="M4 3.5h8l4 4v9H4z"/><path d="M12 3.5v4h4M7 11h6M7 14h4"/></symbol>
+  <symbol id="i-fl" viewBox="0 0 14 14"><path d="m5 2.5 4.5 4.5L5 11.5"/></symbol>
+</svg>
+
+<header class="top" id="top">
+  <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+  <nav class="vid" aria-label="Secciones"><a href="#lab">Laboratorio</a><a href="#servicios">Servicios</a><a href="#fuentes">Fuentes</a><a href="#lexia">Lexia</a></nav>
+  <a class="btn" href="#lab">Iniciar la consulta</a>
+</header>
+
+<main>
+  <!-- PORTADA -->
+  <section class="hero" id="inicio">
+    <h1 class="t-sw"><span class="sw a">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></span><span class="sw b" aria-hidden="true">Mendoza, la Nación y <em>todo el país.</em></span><span class="sw c" aria-hidden="true">Más de 800.000 fallos y sumarios en <em>11 bases oficiales.</em></span></h1>
+    <div class="prisma" id="prisma" aria-hidden="true"></div>
+    <div class="acc"><a class="btn" href="#lab">Iniciar la consulta</a><a class="btn suave" href="#fuentes">Ver el catálogo de fuentes</a></div>
+    <div class="desp">Desplace<i></i></div>
+  </section>
+
+  <!-- LABORATORIO -->
+  <section id="lab"><div class="w">
+    <p class="kic">Laboratorio</p>
+    <h2 class="t">Pruébelo <em>aquí mismo.</em></h2>
+    <p class="lead">Siete herramientas de la plataforma, listas para probar. Los resultados son de ejemplo, pero la forma es la de verdad: cada uno trae el tribunal, la fecha, el pasaje exacto y el enlace a la fuente.</p>
+
+    <div class="panel">
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" data-p="consulta">Consulta</button>
+        <button role="tab" aria-selected="false" data-p="cita">Verificar una cita</button>
+        <button role="tab" aria-selected="false" data-p="plazo">Plazos</button>
+      </div>
+
+      <div class="pane" id="p-consulta">
+        <form class="q" id="fq" onsubmit="return false"><svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-bus"/></svg><label class="sr" for="qi">Tema</label><input id="qi" value="daño moral" placeholder="Escriba el tema"><button class="btn" type="submit">Buscar</button></form>
+        <div class="chips" id="chips"><button class="chip on" type="button">Todas las bases</button><button class="chip" type="button">Desde 2015</button><button class="chip" type="button">Frase exacta</button><button class="chip" type="button">Mendoza</button><button class="chip" type="button">Doctrina</button></div>
+        <div class="cols">
+          <div>
+            <div class="grupo" id="bases"></div>
+            <p class="tot" id="tot">En espera: toque «Buscar».</p>
+          </div>
+          <div class="res" id="res"></div>
+        </div>
+      </div>
+
+      <div class="pane cita" id="p-cita" hidden>
+        <form class="q" id="fc" onsubmit="return false"><svg viewBox="0 0 20 20" aria-hidden="true"><use href="#i-ver"/></svg><label class="sr" for="ci">Cita</label><input id="ci" value="CSJN, Fallos 330:2056 (2005), «Simón, Julio»"><button class="btn" type="submit">Comprobar</button></form>
+        <div class="ok" id="ok"><b>✓</b>La cita existe en la base oficial de la Corte Suprema.</div>
+        <div class="dat" id="dat"><span>Tribunal <b>Corte Suprema de Justicia de la Nación</b></span><span>Tomo:página <b>328:2056</b></span><span>Año <b>2005</b></span><span>Carátula <b>Simón, Julio</b></span></div>
+        <p class="tot">Muestra simplificada: la verificación contra las bases oficiales se hace en la plataforma.</p>
+      </div>
+
+      <div class="pane" id="p-plazo" hidden>
+        <div class="form">
+          <label>Tipo de plazo<select id="pz"><option value="15">Contestar demanda · 15 días</option><option value="5">Apelar · 5 días</option><option value="10">Oponer excepciones · 10 días</option></select></label>
+          <label>Fecha de inicio<input type="date" id="pf"></label>
+        </div>
+        <div class="ok on" id="pv" style="display:flex"><b>⏱</b><span id="pt"></span></div>
+        <p class="tot">Cuenta días hábiles sin sábados ni domingos. En la plataforma suma además el calendario judicial de cada jurisdicción.</p>
+      </div>
+    </div>
+  </div></section>
+
+  <!-- SERVICIOS -->
+  <section id="servicios"><div class="w">
+    <p class="kic">Servicios</p>
+    <h2 class="t">Todo lo que ofrece <em>la plataforma.</em></h2>
+    <p class="lead">Seleccione un servicio para abrirlo.</p>
+    <div class="grid" id="grid">
+      <a class="tile" href="#lab"><span class="ic"><svg viewBox="0 0 20 20"><use href="#i-bus"/></svg></span><h3>Consulta</h3><p>Se arma con los operadores de cada buscador oficial y se envía a las once bases a la vez.</p><span class="go">Abrir</span></a>
+      <a class="tile" href="#lab"><span class="ic"><svg viewBox="0 0 20 20"><use href="#i-lec"/></svg></span><h3>Lector</h3><p>El fallo con su búsqueda destacada, los pasajes recortados y la cita preparada para copiar.</p><span class="go">Abrir</span></a>
+      <a class="tile" href="#lab"><span class="ic"><svg viewBox="0 0 20 20"><use href="#i-ram"/></svg></span><h3>Ramas y voces</h3><p>Los descriptores técnicos con que indexan los buscadores judiciales, ordenados por rama del derecho.</p><span class="go">Abrir</span></a>
+      <a class="tile" href="#lab"><span class="ic"><svg viewBox="0 0 20 20"><use href="#i-cal"/></svg></span><h3>Cálculos y plazos</h3><p>Intereses, índices, despido, incapacidad, honorarios, plazos procesales y calendario judicial.</p><span class="go">Abrir</span></a>
+      <a class="tile" href="#lab"><span class="ic"><svg viewBox="0 0 20 20"><use href="#i-ver"/></svg></span><h3>Verificación</h3><p>Contrasta una cita jurisprudencial con los repositorios oficiales antes de presentarla.</p><span class="go">Abrir</span></a>
+      <a class="tile" href="#lab"><span class="ic"><svg viewBox="0 0 20 20"><use href="#i-her"/></svg></span><h3>Herramientas</h3><p>Unir, dividir, numerar y reducir PDF dentro del navegador: los archivos no salen de su computadora.</p><span class="go">Abrir</span></a>
+    </div>
+  </div></section>
+
+  <!-- FUENTES -->
+  <section id="fuentes"><div class="w fu">
+    <div>
+      <p class="kic">Fuentes</p>
+      <h2 class="t">Once bases, <em>ciento seis fuentes.</em></h2>
+      <p class="lead">Un catálogo completo de buscadores públicos, verificados e identificados uno por uno. Cada fuente indica si es libre, mixta o por suscripción.</p>
+      <div class="cifras"><span><b>11</b> bases</span><span><b>106</b> fuentes</span><span><b>8</b> en la consulta</span></div>
+      <p style="margin:26px 0 0"><a class="btn" href="#lab">Ver el catálogo de fuentes</a></p>
+    </div>
+    <div class="lista" id="lista"></div>
+  </div></section>
+
+  <!-- LEXIA -->
+  <section id="lexia"><div class="w lx">
+    <div>
+      <p class="kic">Asistente</p>
+      <h2 class="t">Lexia, <em>a un toque.</em></h2>
+      <p class="lead">Busca jurisprudencia con filtros, explica cada parte de la página y la recorre con usted paso a paso. Lo que escribe se procesa en su navegador. Orienta, no reemplaza el consejo de un abogado.</p>
+    </div>
+    <div class="card">
+      <div class="cab"><i class="av"></i><div><b>Lexia</b><small>asistente virtual</small></div></div>
+      <div class="msg">
+        <div class="m y">Tutorial</div>
+        <div class="m b">Con gusto. Puedo guiarlo por todas las funciones de la página, o hacer juntos sólo la parte que le cuesta. ¿Qué prefiere?</div>
+      </div>
+      <div class="ops"><a href="#">Recorrido completo</a><a href="#">Una parte de Buscar</a><a href="#">Otra sección</a><a href="#">Mi perfil y lo guardado</a></div>
+      <div class="ent"><i class="av"></i><span>Escríbame lo que necesita…</span><button type="button" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button></div>
+    </div>
+  </div></section>
+
+  <!-- PRINCIPIOS -->
+  <section id="principios"><div class="w">
+    <p class="kic">Principios</p>
+    <h2 class="t">Tres condiciones que ningún resultado <em>puede dejar de cumplir.</em></h2>
+    <div class="pr">
+      <div><small>FONS</small><h3>La fuente</h3><p>Todo resultado remite al documento del organismo que lo dictó. Lo que se lee nunca es una versión propia.</p></div>
+      <div><small>ORDO</small><h3>El orden</h3><p>Los resultados de las once bases se presentan juntos, con la misma forma y la procedencia a la vista.</p></div>
+      <div><small>FIDES</small><h3>La fe</h3><p>Una cita se contrasta con la base oficial antes de presentarse. Ante su ausencia, el antecedente se presume inexistente.</p></div>
+    </div>
+  </div></section>
+
+  <!-- CIERRE -->
+  <section class="cierre"><div class="w">
+    <h2 class="t">Verifique siempre <em>en la fuente.</em></h2>
+    <p class="lead" style="margin-inline:auto">Una consulta, todas las bases oficiales.</p>
+    <div class="acc"><a class="btn" href="#lab">Iniciar la consulta</a><a class="btn suave" href="#fuentes">Ver el catálogo de fuentes</a></div>
+    <p class="aviso">La ausencia de coincidencias no prueba falsedad; asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</p>
+  </div></section>
+</main>
+
+<footer>
+  <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+  <span>Orientación automática. No reemplaza el consejo de un abogado.</span>
+  <nav><a href="#lab">Laboratorio</a><a href="#servicios">Servicios</a><a href="#fuentes">Fuentes</a></nav>
+</footer>
+
+<script>
+(function(){
+  var BASES=[["SCJM","Suprema Corte de Mendoza","b-scjm","--c-mza"],["MZA LEGAL","Mendoza Legal","b-mzl","--c-mzl"],["TSJ","Tribunal Superior de CABA","b-tsj","--c-caba"],["SCBA","Suprema Corte de Buenos Aires","b-scba","--c-scba"],["CSJN","Corte Suprema de la Nación","b-csjn","--c-csjn"],["SAIJ","Sistema Argentino de Información","b-saij","--c-saij"],["DIALNET","Doctrina","b-dial","--c-dial"],["CORTE IDH","Corte Interamericana","b-idh","--c-idh"]];
+  var FL='<svg class="fl" viewBox="0 0 14 14"><use href="#i-fl"/></svg>';
+  function $(s,r){ return (r||document).querySelector(s); }
+
+  /* barra: se aclara al bajar */
+  var top=$("#top"); addEventListener("scroll",function(){ top.classList.toggle("fl",scrollY>30); },{passive:true});
+
+  /* pestañas */
+  [].forEach.call(document.querySelectorAll(".tabs button"),function(b){ b.addEventListener("click",function(){
+    [].forEach.call(document.querySelectorAll(".tabs button"),function(x){ x.setAttribute("aria-selected",String(x===b)); });
+    [].forEach.call(document.querySelectorAll(".pane"),function(p){ p.hidden=p.id!=="p-"+b.getAttribute("data-p"); }); }); });
+  $("#chips").addEventListener("click",function(e){ var c=e.target.closest(".chip"); if(c) c.classList.toggle("on"); });
+
+  /* consulta: las ocho bases responden de a una */
+  var bases=$("#bases"); bases.innerHTML=BASES.map(function(b,i){ return '<a class="fila '+b[2]+'" href="#"><i class="dot"></i><b>'+b[0]+'</b><small class="st" id="st'+i+'">en espera</small>'+FL+'</a>'; }).join("");
+  var RES=[
+    {b:4,t:"Pérez c/ Provincia de Mendoza s/ daños y perjuicios",f:"Fallos 330:1234 · 2007",p:'…el <mark>daño moral</mark> debe ser reparado con criterio de razonabilidad, atendiendo a la entidad del padecimiento y no como una sanción…'},
+    {b:0,t:"Gómez c/ Banco Andino s/ incumplimiento",f:"Cámara Civil · 2020",p:'…el incumplimiento contractual no genera por sí solo <mark>daño moral</mark>: debe probarse la afectación espiritual…'},
+    {b:2,t:"Ledesma c/ GCBA s/ daños y perjuicios",f:"Sala Contencioso · 2023",p:'La responsabilidad del Estado alcanza al <mark>daño moral</mark> cuando hay un obrar irregular verificado.'}];
+  var res=$("#res");
+  function pintarRes(on){ res.innerHTML=RES.map(function(r,i){ var b=BASES[r.b]; return '<article class="r'+(on?'':' off')+'"><div class="fi"><span class="cap '+b[2]+'"><i class="dot"></i>'+b[0]+'</span><span>'+r.f+'</span></div><h3>'+r.t+'</h3><p>'+r.p+'</p><div class="ac"><a href="#">Leer</a><a href="#">Citar</a><a href="#">Guardar</a><a href="#">Ver en la fuente ↗</a></div></article>'; }).join(""); }
+  pintarRes(false);
+  var cnt=[12,8,15,9,18,21,4,3],busy=false;
+  function buscar(){ if(busy) return; busy=true; pintarRes(false); var tot=0,ok=0;
+    BASES.forEach(function(b,i){ var e=$("#st"+i); e.textContent="buscando…"; setTimeout(function(){ e.textContent=cnt[i]+" resultados"; tot+=cnt[i]; ok++; $("#tot").textContent=tot+" resultados · "+ok+" de 8 bases respondieron"; if(ok===8){ busy=false; [].forEach.call(res.children,function(r,k){ setTimeout(function(){ r.classList.remove("off"); },k*160); }); } },500+i*330+Math.random()*300); }); }
+  $("#fq").addEventListener("submit",buscar); setTimeout(buscar,600);
+
+  /* verificar */
+  $("#fc").addEventListener("submit",function(){ $("#ok").classList.add("on"); });
+  /* plazos */
+  var pf=$("#pf"),hoy=new Date(); pf.value=hoy.toISOString().slice(0,10);
+  function plazo(){ var n=+$("#pz").value,d=new Date(pf.value+"T12:00:00"),k=0; while(k<n){ d.setDate(d.getDate()+1); var w=d.getDay(); if(w!==0&&w!==6) k++; }
+    $("#pt").textContent="Vence el "+d.toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long",year:"numeric"})+" · "+n+" días hábiles"; }
+  $("#pz").addEventListener("change",plazo); pf.addEventListener("change",plazo); plazo();
+
+  /* luz que sigue al puntero en cada servicio */
+  [].forEach.call(document.querySelectorAll(".tile"),function(t){ t.addEventListener("pointermove",function(e){ var r=t.getBoundingClientRect(); t.style.setProperty("--mx",(e.clientX-r.left)+"px"); t.style.setProperty("--my",(e.clientY-r.top)+"px"); }); });
+
+  /* fuentes por jurisdicción */
+  var GR=[["Mendoza",[[0,"Buscador de jurisprudencia de la SCJM","Libre"],[1,"Mendoza Legal · sumarios","Mixta"]]],["Ciudad de Buenos Aires",[[2,"Tribunal Superior de Justicia","Libre"]]],["La Nación",[[4,"Corte Suprema de Justicia","Libre"],[5,"SAIJ · fallos y legislación","Libre"]]],["Provincias",[[3,"Suprema Corte de Buenos Aires","Libre"]]],["Doctrina e internacional",[[6,"Dialnet · artículos y tesis","Libre"],[7,"Corte Interamericana de Derechos Humanos","Libre"]]]];
+  $("#lista").innerHTML=GR.map(function(g){ return '<p class="rot">'+g[0]+'</p><div class="grupo">'+g[1].map(function(r){ var b=BASES[r[0]]; return '<a class="fila '+b[2]+'" href="#"><i class="dot"></i><b>'+r[1]+'</b><span class="tag'+(r[2]==="Libre"?" lib":"")+'">'+r[2]+'</span>'+FL+'</a>'; }).join("")+'</div>'; }).join("");
+
+  /* portada: el prisma de siempre, en cristal, con ocho hilos */
+  var host=$("#prisma"),cv=document.createElement("canvas"),ctx=cv.getContext("2d"),W=0,H=0,D=1,g=null,quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  var COL=BASES.map(function(b){ var h=getComputedStyle(document.documentElement).getPropertyValue(b[3]).trim(); return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]; });
+  var ORO=[240,190,64],CLARO=[255,236,190],vid=null,hal=null;
+  function rgb(c,a){ return "rgba("+c[0]+","+c[1]+","+c[2]+","+a.toFixed(3)+")"; }
+  function lerp(a,b,t){ return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t}; }
+  function bez(a,b,c,d,u){ var m=1-u; return {x:m*m*m*a.x+3*m*m*u*b.x+3*m*u*u*c.x+u*u*u*d.x,y:m*m*m*a.y+3*m*m*u*b.y+3*m*u*u*c.y+u*u*u*d.y}; }
+  function stroke(pts,c,w,a,fx){ ctx.beginPath(); pts.forEach(function(p,i){ if(i) ctx.lineTo(p.x,p.y); else ctx.moveTo(p.x,p.y); }); if(fx){ var gr=ctx.createLinearGradient(0,0,fx,0); gr.addColorStop(0,rgb(c,0)); gr.addColorStop(.3,rgb(c,a*.6)); gr.addColorStop(1,rgb(c,a)); ctx.strokeStyle=gr; } else ctx.strokeStyle=rgb(c,a); ctx.lineWidth=w; ctx.lineCap="round"; ctx.stroke(); }
+  function hilo(f,n,c,w,a,fx,glow){ var p=[]; for(var k=0;k<=n;k++) p.push(f(k/n)); if(glow) stroke(p,c,w*5,glow,fx); stroke(p,c,w,a,fx); }
+  function bola(p,c,r,a){ ctx.beginPath(); ctx.arc(p.x,p.y,r*3.6,0,7); ctx.fillStyle=rgb(c,a*.15); ctx.fill(); ctx.beginPath(); ctx.arc(p.x,p.y,r,0,7); ctx.fillStyle=rgb(c,a); ctx.fill(); }
+  var NS="http://www.w3.org/2000/svg";
+  function medir(){
+    W=host.clientWidth; H=host.clientHeight; D=Math.min(devicePixelRatio||1,2); cv.width=W*D; cv.height=H*D; cv.style.cssText="position:absolute;inset:0;width:100%;height:100%"; ctx.setTransform(D,0,0,D,0,0);
+    var s=Math.min(H*.36,W*.16),P={x:W/2,y:H*.5}; g={s:s,P:P,T:{x:P.x,y:P.y-s},L:{x:P.x-.87*s,y:P.y+.5*s},R:{x:P.x+.87*s,y:P.y+.5*s}}; g.X=lerp(g.T,g.R,.5);
+    if(vid) vid.remove(); if(hal) hal.remove();
+    var w=g.R.x-g.L.x,h=g.L.y-g.T.y; vid=document.createElement("div"); vid.className="cristal"; vid.style.cssText="left:"+g.L.x+"px;top:"+g.T.y+"px;width:"+w+"px;height:"+h+"px";
+    var svg=document.createElementNS(NS,"svg"); svg.setAttribute("viewBox","0 0 "+w+" "+h); svg.setAttribute("preserveAspectRatio","none");
+    function e(t,a){ var n=document.createElementNS(NS,t); for(var k in a) n.setAttribute(k,a[k]); svg.appendChild(n); return n; }
+    var d=e("defs",{}),lg=document.createElementNS(NS,"linearGradient"); lg.setAttribute("id","hg"); lg.setAttribute("x1",0); lg.setAttribute("y1",0); lg.setAttribute("x2",1); lg.setAttribute("y2",1); d.appendChild(lg);
+    [[0,.98,"255,246,224"],[.55,.32,"255,230,180"],[1,.08,"255,230,180"]].forEach(function(s){ var st=document.createElementNS(NS,"stop"); st.setAttribute("offset",s[0]); st.setAttribute("stop-color","rgb("+s[2]+")"); st.setAttribute("stop-opacity",s[1]); lg.appendChild(st); });
+    var A=[w/2,2],B=[w-2,h-2],C=[2,h-2],G=[(A[0]+B[0]+C[0])/3,(A[1]+B[1]+C[1])/3],k=.6; function ad(q){ return [G[0]+(q[0]-G[0])*k,G[1]+(q[1]-G[1])*k]; } var a=ad(A),b=ad(B),c=ad(C);
+    e("polygon",{points:a+" "+b+" "+c,fill:"rgba(30,16,4,.12)",stroke:"rgba(255,244,222,.34)","stroke-width":.8,"stroke-linejoin":"round"});
+    [[A,a],[B,b],[C,c]].forEach(function(q){ e("line",{x1:q[0][0],y1:q[0][1],x2:q[1][0],y2:q[1][1],stroke:"rgba(255,244,222,.3)","stroke-width":.7}); });
+    e("line",{x1:a[0],y1:a[1],x2:c[0],y2:c[1],stroke:"rgba(255,250,236,.8)","stroke-width":1.4,"stroke-linecap":"round"});
+    e("polygon",{points:A+" "+B+" "+C,fill:"none",stroke:"url(#hg)","stroke-width":2.4,"stroke-linejoin":"round"});
+    vid.appendChild(svg); host.appendChild(cv); host.appendChild(vid);
+    var r=s*2.6; hal=document.createElement("div"); hal.className="halo"; hal.style.cssText="position:absolute;left:"+(P.x-r)+"px;top:"+(P.y-r)+"px;width:"+2*r+"px;height:"+2*r+"px"; host.appendChild(hal);
+  }
+  function ent(i){ return lerp(g.T,g.L,.36+i*.04); }
+  function frame(now){
+    if(!g){ requestAnimationFrame(frame); return; } var t=now/1000;
+    ctx.setTransform(D,0,0,D,0,0); ctx.clearRect(0,0,W,H); ctx.globalCompositeOperation="lighter";
+    COL.forEach(function(c,i){ var y0=g.P.y+(i-3.5)*H*.045,E=ent(i),o=Math.sin(t*.5+i*.9)*H*.016,f=function(u){ return bez({x:0,y:y0},{x:E.x*.4,y:y0+o},{x:E.x*.72,y:E.y-o*.5},E,u); };
+      hilo(f,50,c,1.1,.8,g.P.x,.08); bola(f((t*.1+i*.13)%1),c,2.2,.95); });
+    var fs=function(u){ return {x:g.X.x+(W-g.X.x)*u,y:g.X.y+Math.sin(u*8-t*2.2)*H*.01*u}; }; hilo(fs,60,ORO,1.4,.85,0,.1); bola(fs((t*.16)%1),CLARO,2.6,.95);
+    ctx.globalCompositeOperation="source-over";
+    if(!quieto) requestAnimationFrame(frame);
+  }
+  medir(); addEventListener("resize",medir); if(window.ResizeObserver) new ResizeObserver(medir).observe(host); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

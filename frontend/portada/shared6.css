@@ -11,6 +11,15 @@
 .cab .acts{margin-left:auto;display:flex;gap:10px;align-items:center}
 .cab .acts .btn{margin-left:0}
 @media (max-width:900px){.cab .acts .btn.sec{display:none}}
+/* el titular cambia solo: qué es, de dónde es y cuánto hay (los tres ocupan el mismo lugar) */
+.t-sw{display:grid}
+.t-sw .sw{grid-area:1/1;align-self:center;animation:swA 18s ease-in-out infinite}
+.t-sw .sw.b{animation-name:swB;opacity:0}
+.t-sw .sw.c{animation-name:swC;opacity:0}
+@keyframes swA{0%,28%{opacity:1;transform:none;filter:none}33%,95%{opacity:0;transform:translateY(-10px);filter:blur(6px)}100%{opacity:1;transform:none;filter:none}}
+@keyframes swB{0%,30%{opacity:0;transform:translateY(10px);filter:blur(6px)}36%,61%{opacity:1;transform:none;filter:none}67%,100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
+@keyframes swC{0%,63%{opacity:0;transform:translateY(10px);filter:blur(6px)}69%,94%{opacity:1;transform:none;filter:none}100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
+@media (prefers-reduced-motion:reduce){.t-sw .sw{animation:none}.t-sw .sw.b,.t-sw .sw.c{display:none}}
 @media (max-width:640px){.h6t{top:104px}}
 
 /* títulos de sección comunes */
@@ -31,3 +40,15 @@
 .cierre .marcaf{margin-top:clamp(40px,7vw,90px);font-size:clamp(46px,12vw,200px);color:rgba(241,238,230,.8);line-height:.86}
 .idx6{position:fixed;right:14px;bottom:14px;z-index:80;padding:9px 15px 8px;border:1px solid var(--line);border-radius:999px;background:rgba(16,14,11,.78);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-size:12.5px;color:var(--mute)}
 .idx6:hover{color:var(--gold);border-color:var(--gold)}
+
+/* luces de fondo: tres manchas cálidas (dorado, naranja y bordeaux), desenfocadas, que derivan muy despacio */
+.luces{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.luces i{position:absolute;border-radius:50%;filter:blur(90px)}
+.luces i:nth-child(1){left:-14vw;bottom:-20vw;width:58vw;height:58vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.5),rgba(201,88,54,.24) 52%,transparent 72%);animation:luzA 40s ease-in-out infinite alternate}
+.luces i:nth-child(2){right:-12vw;top:-10vw;width:52vw;height:52vw;background:radial-gradient(circle,rgba(201,88,54,.42),rgba(160,36,60,.24) 55%,transparent 74%);animation:luzA 52s ease-in-out infinite alternate-reverse}
+.luces i:nth-child(3){left:30vw;top:42vh;width:40vw;height:40vw;background:radial-gradient(circle,rgba(160,36,60,.36),transparent 70%);animation:luzA 46s ease-in-out infinite alternate}
+@keyframes luzA{to{transform:translate3d(5vw,-4vh,0) scale(1.1)}}
+@media (prefers-reduced-motion:reduce){.luces i{animation:none}}
+html[data-tema="claro"] .luces{opacity:.5}
+
+body{background:transparent}   /* el color lo pone <html>: así se ven las luces de fondo */
