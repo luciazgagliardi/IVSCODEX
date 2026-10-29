@@ -139,7 +139,7 @@ html{background:var(--bg)}
 /* clip y no hidden: con overflow-x:hidden en el body, el body pasa a ser
    un contenedor de scroll propio y la cabecera sticky deja de pegarse. */
 body{
-  background:var(--bg);color:var(--fg);font:400 16px/1.6 var(--sans);
+  background:transparent;color:var(--fg);font:400 16px/1.6 var(--sans);
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:clip
 }
 *::-webkit-scrollbar{width:10px;height:10px}
@@ -174,6 +174,16 @@ strong,b{font-weight:500}
   37.5%{background-position:-97px -19px}50%{background-position:18px 71px}62.5%{background-position:79px 14px}
   75%{background-position:-28px -63px}87.5%{background-position:57px 96px}100%{background-position:0 0}
 }
+
+/* luces de fondo: tres manchas cálidas (dorado, naranja y bordeaux), desenfocadas, que derivan muy despacio */
+.luces{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.luces i{position:absolute;border-radius:50%;filter:blur(90px)}
+.luces i:nth-child(1){left:-14vw;bottom:-20vw;width:58vw;height:58vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.5),rgba(201,88,54,.24) 52%,transparent 72%);animation:luzA 40s ease-in-out infinite alternate}
+.luces i:nth-child(2){right:-12vw;top:-10vw;width:52vw;height:52vw;background:radial-gradient(circle,rgba(201,88,54,.42),rgba(160,36,60,.24) 55%,transparent 74%);animation:luzA 52s ease-in-out infinite alternate-reverse}
+.luces i:nth-child(3){left:30vw;top:42vh;width:40vw;height:40vw;background:radial-gradient(circle,rgba(160,36,60,.36),transparent 70%);animation:luzA 46s ease-in-out infinite alternate}
+@keyframes luzA{to{transform:translate3d(5vw,-4vh,0) scale(1.1)}}
+@media (prefers-reduced-motion:reduce){.luces i{animation:none}}
+html[data-tema="claro"] .luces{opacity:.5}
 
 /* la marca escrita, con el punto redondo del logo y no el "·" de la fuente */
 .marca{font-family:"Cinzel","Trajan Pro",var(--caps);font-weight:500;white-space:nowrap}
@@ -1562,6 +1572,7 @@ mark{border-radius:6px}
 
 <div id="panic" role="alert"></div>
 <div class="grano" aria-hidden="true"></div>
+<div class="luces" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <!-- La portada: el afiche de sigillvm.com. Se cierra al elegir a dónde ir
      (cualquier botón con data-tab) o con Escape, y el nombre de la
@@ -1571,7 +1582,7 @@ mark{border-radius:6px}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261028h" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261029i" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">

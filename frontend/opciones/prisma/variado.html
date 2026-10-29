@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · Diez prismas distintos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../atmosfera/base.css">
+<style>
+.cab{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:18px;padding:16px var(--pad);background:linear-gradient(rgba(var(--bg-rgb),.9),rgba(var(--bg-rgb),0))}
+.nav{display:flex;gap:6px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex:none;min-width:36px;text-align:center;padding:8px 12px;border-radius:999px;font-size:13px;color:var(--mute);background:rgba(var(--fg-rgb),.08);transition:background .3s,color .3s}
+.nav a:hover{background:rgba(var(--fg-rgb),.18);color:var(--fg)}
+.intro{padding:clamp(18px,4vh,48px) var(--pad) 30px;max-width:1000px}
+.intro h1{margin:0 0 14px;font:400 clamp(34px,5vw,72px)/.98 var(--sans);letter-spacing:-.05em;text-wrap:balance}
+.intro p{margin:0;max-width:64ch;color:var(--mute);font-size:clamp(15px,1.3vw,18px)}
+.st{position:relative;height:clamp(480px,84svh,820px);margin:0 0 14px;overflow:hidden;background:var(--bg);isolation:isolate}
+.luces{position:absolute;inset:0;z-index:0;pointer-events:none}
+.luces i{position:absolute;border-radius:50%;filter:blur(80px)}
+.luces i:nth-child(1){left:-12vw;bottom:-22vw;width:54vw;height:54vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.55),rgba(var(--ember),.24) 52%,transparent 72%)}
+.luces i:nth-child(2){right:-10vw;top:-12vw;width:48vw;height:48vw;background:radial-gradient(circle,rgba(var(--ember),.45),rgba(var(--vino),.26) 55%,transparent 74%)}
+.luces i:nth-child(3){left:36vw;bottom:-16vw;width:36vw;height:36vw;background:radial-gradient(circle,rgba(var(--vino),.42),transparent 70%)}
+.st canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+.lz{position:absolute;inset:0;z-index:1}
+.lz>svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.rot{position:absolute;z-index:6;left:var(--pad);top:18px;padding:9px 18px;border-radius:999px;font-size:13.5px}
+.rot b{font-weight:600}
+.des{position:absolute;z-index:6;left:var(--pad);bottom:20px;max-width:min(500px,calc(100% - 2*var(--pad)));padding:12px 18px;border-radius:22px;font-size:13.5px;color:var(--mute);line-height:1.45}
+
+/* portal */
+.pt-in{position:absolute;clip-path:polygon(50% 0,100% 100%,0 100%);overflow:hidden}
+.pt-txt{position:absolute;left:50%;transform:translateX(-50%);text-align:center;width:72%}
+.pt-txt h2{margin:0;font:500 var(--f)/1.02 var(--sans);letter-spacing:-.05em}
+.pt-txt h2 em{font-style:normal;color:rgba(var(--fg-rgb),.55)}
+.pt-bus{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:calc(var(--f)*.5) auto 0;width:88%;padding:5px 5px 5px calc(var(--f)*.55);border-radius:999px;font-size:calc(var(--f)*.4);color:var(--mute);white-space:nowrap}
+.pt-bus b{font-weight:500;padding:calc(var(--f)*.28) calc(var(--f)*.6);border-radius:999px;background:var(--fg);color:var(--bg)}
+.halo{position:absolute;border-radius:50%;pointer-events:none;filter:blur(8px)}
+
+/* embudo */
+.emb{position:absolute;left:50%;transform:translateX(-50%);display:grid;justify-items:center;gap:7px}
+.bar{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;font-size:12px;letter-spacing:.06em;color:var(--fg);animation:enciende 6.4s ease-in-out infinite}
+.bar .dot{width:8px;height:8px}
+@keyframes enciende{0%,70%,100%{filter:brightness(.75);box-shadow:0 0 0 rgba(0,0,0,0)}8%,22%{filter:brightness(1.6);box-shadow:0 0 26px 2px var(--c)}}
+.rayo{position:absolute;left:50%;transform:translateX(-50%);width:3px;border-radius:3px;background:linear-gradient(0deg,rgba(255,236,190,1),rgba(var(--gold-rgb),.7) 40%,rgba(var(--gold-rgb),0));animation:rayo 6.4s ease-in-out infinite}
+@keyframes rayo{0%,60%,100%{opacity:.55}72%,84%{opacity:1}}
+
+/* lente */
+.len-t{position:absolute;white-space:pre;font:500 var(--f)/.98 var(--sans);letter-spacing:-.06em}
+.lente{position:absolute;left:0;top:0;overflow:hidden;clip-path:polygon(50% 0,100% 100%,0 100%);background:rgba(var(--bg-rgb),.78)}
+.lente .len-t{mix-blend-mode:screen}
+.len-b{position:absolute;left:0;top:0;pointer-events:none;filter:drop-shadow(0 0 10px rgba(var(--gold-rgb),.55))}
+
+/* columna */
+.nodo{position:absolute;display:flex;align-items:center;gap:10px;padding:11px 18px;border-radius:999px;font-size:14px;white-space:nowrap}
+.nodo small{color:var(--mute);font-size:12.5px}
+@keyframes viaja{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+@keyframes deriva{from{transform:translateY(0)}to{transform:translateY(-14px)}}
+@media (max-width:760px){.nav{max-width:58vw}.des{font-size:12.5px;padding:10px 14px}.nodo small{display:none}}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<div class="grano" aria-hidden="true"></div>
+<header class="cab">
+  <span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span>
+  <nav class="nav" aria-label="Versiones"></nav>
+</header>
+<div class="intro">
+  <h1>Diez prismas que no se parecen entre sí.</h1>
+  <p>Los anteriores eran todos la misma escena. Estos cambian la composición: el prisma vertical, radial, de fondo entero, hecho paisaje, como marco, como lente que sigue al puntero. Cambie de paleta abajo a la izquierda.</p>
+</div>
+<main id="escenas"></main>
+
+<script>
+(function(){
+  var BASES=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["SCBA","--c-scba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"],["CORTE IDH","--c-idh"]];
+  var cs0=getComputedStyle(document.documentElement);
+  var COL=BASES.map(function(b){ var h=cs0.getPropertyValue(b[1]).trim(); return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]; });
+  var ORO=[240,190,64], VINO=[160,36,60], NAR=[233,135,46], ASC=[217,163,27], CLARO=[255,236,190];
+  var CALIDOS=[ORO,NAR,VINO,ASC];
+  function rgb(c,a){ return "rgba("+c[0]+","+c[1]+","+c[2]+","+a.toFixed(3)+")"; }
+  function lerp(a,b,t){ return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t}; }
+  function sm(x){ x=Math.max(0,Math.min(1,x)); return x*x*(3-2*x); }
+  function bez(a,b,c,d,u){ var m=1-u; return {x:m*m*m*a.x+3*m*m*u*b.x+3*m*u*u*c.x+u*u*u*d.x,y:m*m*m*a.y+3*m*m*u*b.y+3*m*u*u*c.y+u*u*u*d.y}; }
+  function hash(a,b,c){ var h=Math.sin(a*127.1+b*311.7+(c||0)*74.7)*43758.5453; return h-Math.floor(h); }
+  function geom(W,H,fx,fy,k){ var s=Math.min(W,H)*k,P={x:W*fx,y:H*fy}; return {s:s,P:P,T:{x:P.x,y:P.y-s},L:{x:P.x-.87*s,y:P.y+.5*s},R:{x:P.x+.87*s,y:P.y+.5*s}}; }
+  function trazo(ctx,pts,c,w,a,fade){
+    ctx.beginPath(); pts.forEach(function(p,i){ if(i) ctx.lineTo(p.x,p.y); else ctx.moveTo(p.x,p.y); });
+    if(fade){ var gr=ctx.createLinearGradient(fade[0],fade[1],fade[2],fade[3]); gr.addColorStop(0,rgb(c,0)); gr.addColorStop(.3,rgb(c,a*.6)); gr.addColorStop(1,rgb(c,a)); ctx.strokeStyle=gr; } else ctx.strokeStyle=rgb(c,a);
+    ctx.lineWidth=w; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.stroke();
+  }
+  function hilo(ctx,f,n,c,w,a,fade,glow){ var pts=[]; for(var k=0;k<=n;k++) pts.push(f(k/n)); if(glow) trazo(ctx,pts,c,w*5,glow,fade); trazo(ctx,pts,c,w,a,fade); return pts; }
+  function bola(ctx,p,c,r,a){ ctx.beginPath(); ctx.arc(p.x,p.y,r*3.6,0,7); ctx.fillStyle=rgb(c,a*.15); ctx.fill(); ctx.beginPath(); ctx.arc(p.x,p.y,r,0,7); ctx.fillStyle=rgb(c,a); ctx.fill(); }
+  function prismaPunto(ctx,g,fuerza){
+    ctx.globalCompositeOperation="lighter";
+    var gl=ctx.createRadialGradient(g.P.x,g.P.y,0,g.P.x,g.P.y,g.s*2.2); gl.addColorStop(0,"rgba(255,214,120,"+(.36*(fuerza||1))+")"); gl.addColorStop(.45,"rgba(240,170,60,"+(.1*(fuerza||1))+")"); gl.addColorStop(1,"rgba(217,163,27,0)");
+    ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(g.P.x,g.P.y,g.s*2.2,0,7); ctx.fill();
+    ctx.globalCompositeOperation="source-over";
+    ctx.beginPath(); ctx.moveTo(g.T.x,g.T.y); ctx.lineTo(g.R.x,g.R.y); ctx.lineTo(g.L.x,g.L.y); ctx.closePath(); ctx.strokeStyle="rgba(255,244,222,.78)"; ctx.lineWidth=1.2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(g.P.x,g.P.y,3.2,0,7); ctx.fillStyle="rgba(255,236,190,1)"; ctx.fill();
+  }
+  function D(css,p,cls){ var e=document.createElement("div"); if(cls) e.className=cls; e.style.cssText="position:absolute;"+(css||""); if(p) p.appendChild(e); return e; }
+  var NS="http://www.w3.org/2000/svg";
+  function S(t,a,p){ var e=document.createElementNS(NS,t); for(var k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; }
+
+  var V=[];
+
+  /* 1 · Cascada: vertical, la luz cae desde arriba */
+  V.push({n:"1 · Cascada",d:"Vertical. Ocho cortinas de luz caen desde arriba hacia un prisma que se apoya abajo; sale un único haz dorado que se abre en un charco de luz.",
+    geo:function(W,H){ return geom(W,H,.5,.6,W<700?.16:.12); },
+    draw:function(ctx,W,H,t,g){
+      ctx.globalCompositeOperation="lighter";
+      COL.forEach(function(c,i){
+        var xs=W<700?W*(.08+i*.119):W*(.2+i*.086), izq=i<4, E=lerp(g.T,izq?g.L:g.R,.3+(i%4)*.1);
+        var f=function(u){ return bez({x:xs,y:0},{x:xs+(Math.sin(t*.4+i)*W*.012),y:E.y*.45},{x:E.x,y:E.y-H*.2},E,u); };
+        hilo(ctx,f,50,c,1.2,.8,[0,0,0,E.y],.09); bola(ctx,f((t*.11+i*.15)%1),c,2.3,.95);
+      });
+      var B={x:g.P.x,y:g.L.y}, gr=ctx.createLinearGradient(0,B.y,0,H); gr.addColorStop(0,"rgba(255,226,150,.28)"); gr.addColorStop(1,"rgba(240,170,60,0)");
+      ctx.fillStyle=gr; ctx.beginPath(); ctx.moveTo(B.x-4,B.y); ctx.lineTo(B.x-W*.1,H); ctx.lineTo(B.x+W*.1,H); ctx.lineTo(B.x+4,B.y); ctx.closePath(); ctx.fill();
+      hilo(ctx,function(u){ return {x:B.x+Math.sin(u*6-t*2)*3*u,y:B.y+(H-B.y)*u}; },40,ORO,1.6,.9,null,.1);
+      bola(ctx,{x:B.x,y:B.y+((t*.18)%1)*(H-B.y)},CLARO,2.8,.95);
+      var pool=ctx.createRadialGradient(B.x,H,0,B.x,H,W*.3); pool.addColorStop(0,"rgba(255,206,120,.5)"); pool.addColorStop(1,"rgba(217,163,27,0)"); ctx.save(); ctx.translate(0,H); ctx.scale(1,.28); ctx.translate(0,-H); ctx.fillStyle=pool; ctx.beginPath(); ctx.arc(B.x,H,W*.3,0,7); ctx.fill(); ctx.restore();
+      prismaPunto(ctx,g,1);
+    }});
+
+  /* 2 · Portal: el prisma es el marco */
+  V.push({n:"2 · Portal",d:"El prisma como marco. Un triángulo enorme, como una ventana de luz, y la propuesta de la página adentro.",
+    build:function(el,W,H){
+      var Ht=Math.min(H*.86,W*.92/1.1547),Wt=Ht*1.1547,cx=W/2,top=(H-Ht)/2-H*.01,L={x:cx-Wt/2,y:top+Ht},R={x:cx+Wt/2,y:top+Ht},T={x:cx,y:top};
+      var f=Wt*(W<700?.075:.058);
+      var inn=D("left:"+L.x+"px;top:"+top+"px;width:"+Wt+"px;height:"+Ht+"px","", "pt-in"); el.appendChild(inn);
+      inn.style.background="radial-gradient(70% 62% at 50% 86%,rgba(255,206,120,.55),rgba(233,135,46,.3) 40%,transparent 72%),radial-gradient(40% 30% at 50% 8%,rgba(240,190,64,.45),transparent 70%),linear-gradient(rgba(var(--bg-rgb),.5),rgba(var(--bg-rgb),.15))";
+      var tx=D("top:56%;--f:"+f+"px","", "pt-txt"); inn.appendChild(tx);
+      tx.innerHTML='<h2>Una consulta.<br><em>Todas las bases.</em></h2><div class="pt-bus vid"><span>daño moral</span><b>Buscar</b></div>';
+      var svg=S("svg",{width:W,height:H,viewBox:"0 0 "+W+" "+H},el),d=S("defs",{},svg),g=S("linearGradient",{id:"pg",gradientUnits:"userSpaceOnUse",x1:L.x,y1:0,x2:R.x,y2:0},d);
+      [[0,"rgba(240,190,64,1)"],[.5,"rgba(233,135,46,1)"],[1,"rgba(160,36,60,1)"]].forEach(function(s){ S("stop",{offset:s[0],"stop-color":s[1]},g); });
+      var fl=S("filter",{id:"pb",filterUnits:"userSpaceOnUse",x:0,y:0,width:W,height:H},d); S("feGaussianBlur",{stdDeviation:9},fl);
+      var pts=T.x+","+T.y+" "+R.x+","+R.y+" "+L.x+","+L.y;
+      S("polygon",{points:pts,fill:"none",stroke:"url(#pg)","stroke-width":10,filter:"url(#pb)",opacity:.55,"stroke-linejoin":"round"},svg);
+      S("polygon",{points:pts,fill:"none",stroke:"url(#pg)","stroke-width":1.6,"stroke-linejoin":"round"},svg);
+      [T,L,R].forEach(function(p){ D("left:"+(p.x-60)+"px;top:"+(p.y-60)+"px;width:120px;height:120px;background:radial-gradient(circle,rgba(255,226,150,.65),transparent 70%)",el,"halo"); });
+    }});
+
+  /* 3 · Cristales: el prisma hecho mosaico de fondo */
+  V.push({n:"3 · Cristales",d:"El prisma estallado en cientos de facetas que cubren toda la pantalla. Una ola de luz las enciende; de vez en cuando una destella con el color de una base.",
+    geo:function(W,H){ return geom(W,H,.5,.5,.13); },
+    draw:function(ctx,W,H,t,g){
+      var a=Math.max(54,W/15),h=a*.866,rows=Math.ceil(H/h)+2,cols=Math.ceil(W/a)+3;
+      ctx.globalCompositeOperation="lighter";
+      for(var r=-1;r<rows;r++) for(var c=-1;c<cols;c++){
+        var x0=c*a-(r%2)*a/2,y0=r*h;
+        [[{x:x0,y:y0+h},{x:x0+a,y:y0+h},{x:x0+a/2,y:y0}],[{x:x0+a/2,y:y0},{x:x0+1.5*a,y:y0},{x:x0+a,y:y0+h}]].forEach(function(tri,k){
+          var cx=(tri[0].x+tri[1].x+tri[2].x)/3,cy=(tri[0].y+tri[1].y+tri[2].y)/3,n=hash(r,c,k),col=CALIDOS[Math.floor(n*4)%4];
+          var w=Math.sin(cx*.0042+cy*.0032-t*.7+n*6),al=.028+.05*n+Math.max(0,w)*.17*(.5+n);
+          var fl=Math.sin(t*.45+n*60)>.993; if(fl){ col=COL[Math.floor(n*8)%8]; al+=.32; }
+          ctx.beginPath(); ctx.moveTo(tri[0].x,tri[0].y); ctx.lineTo(tri[1].x,tri[1].y); ctx.lineTo(tri[2].x,tri[2].y); ctx.closePath(); ctx.fillStyle=rgb(col,al); ctx.fill();
+          ctx.strokeStyle="rgba(255,240,210,.045)"; ctx.lineWidth=.7; ctx.stroke();
+        });
+      }
+      var gr=ctx.createRadialGradient(W/2,H/2,H*.1,W/2,H/2,Math.max(W,H)*.65); gr.addColorStop(0,"rgba(16,14,11,0)"); gr.addColorStop(1,"rgba(16,14,11,.7)"); ctx.globalCompositeOperation="source-over"; ctx.fillStyle=gr; ctx.fillRect(0,0,W,H);
+      prismaPunto(ctx,g,1.3);
+    }});
+
+  /* 4 · Rosa: radial, como una rosa de los vientos */
+  V.push({n:"4 · Rosa",d:"Radial. Las ocho bases en círculo, como los puntos de una rosa de los vientos, mandan su luz hacia el prisma del centro.",
+    geo:function(W,H){ return geom(W,H,.5,.5,.09); },
+    draw:function(ctx,W,H,t,g){
+      var R=Math.min(W*.32,H*.33); ctx.globalCompositeOperation="lighter";
+      [1,.62].forEach(function(k,i){ ctx.beginPath(); ctx.arc(g.P.x,g.P.y,R*k,0,7); ctx.strokeStyle="rgba(255,240,210,"+(i?.07:.12)+")"; ctx.lineWidth=1; ctx.stroke(); });
+      for(var k=0;k<96;k++){ var a=k/96*Math.PI*2-t*.04,r0=R*1.1,r1=R*(k%12===0?1.2:1.15); ctx.beginPath(); ctx.moveTo(g.P.x+Math.cos(a)*r0,g.P.y+Math.sin(a)*r0); ctx.lineTo(g.P.x+Math.cos(a)*r1,g.P.y+Math.sin(a)*r1); ctx.strokeStyle="rgba(255,240,210,"+(k%12===0?.4:.16)+")"; ctx.lineWidth=k%12===0?1.3:.8; ctx.stroke(); }
+      COL.forEach(function(c,i){
+        var a=-Math.PI/2+i*Math.PI/4,ca=Math.cos(a),sa=Math.sin(a),r0=g.s*1.25,f=function(u){ var r=r0+(R-r0)*u; return {x:g.P.x+ca*r,y:g.P.y+sa*r}; };
+        hilo(ctx,f,2,c,1.3,.85,[f(0).x,f(0).y,f(1).x,f(1).y],.07);
+        bola(ctx,f(1-((t*.12+i*.11)%1)),c,2.3,.95); bola(ctx,f(1),c,3,.95);
+        var tp=f(1.0); ctx.fillStyle="rgba(241,238,230,.65)"; ctx.font="500 "+(W<500?9.5:11.5)+"px 'Instrument Sans',sans-serif"; ctx.textBaseline="middle"; ctx.textAlign=ca>.3?"left":ca<-.3?"right":"center";
+        var lr=R*1.3; ctx.fillText(BASES[i][0],g.P.x+ca*lr,g.P.y+sa*lr+(Math.abs(ca)<.3?(sa>0?8:-8):0));
+      });
+      prismaPunto(ctx,g,1.2+.15*Math.sin(t*2));
+    }});
+
+  /* 5 · Ondas: el prisma como fuente de ecos */
+  V.push({n:"5 · Ondas",d:"Sin hilos. El prisma late y emite triángulos que se agrandan y se apagan, de a uno por base, como ecos en el agua.",
+    geo:function(W,H){ return geom(W,H,.5,.58,.07); },
+    draw:function(ctx,W,H,t,g){
+      var mx=Math.min(W*.58,H*.62)/1; ctx.globalCompositeOperation="lighter";
+      for(var i=0;i<16;i++){
+        var k=((t*.085+i/16)%1),sz=g.s+(mx-g.s)*k,al=Math.pow(1-k,1.5)*.85,c=COL[i%8],P=g.P;
+        ctx.beginPath(); ctx.moveTo(P.x,P.y-sz); ctx.lineTo(P.x+.87*sz,P.y+.5*sz); ctx.lineTo(P.x-.87*sz,P.y+.5*sz); ctx.closePath();
+        ctx.fillStyle=rgb(c,al*.045); ctx.fill(); ctx.strokeStyle=rgb(c,al); ctx.lineWidth=.5+1.6*(1-k); ctx.lineJoin="round"; ctx.stroke();
+      }
+      prismaPunto(ctx,g,1.4+.25*Math.sin(t*2.4));
+    }});
+
+  /* 6 · Embudo: pirámide de las ocho bases */
+  V.push({n:"6 · Embudo",d:"Vertical y didáctica. Las ocho bases forman una pirámide de cápsulas de vidrio; la luz las enciende de abajo hacia arriba y sale un rayo por la punta.",
+    build:function(el,W,H){
+      var n=8,hb=Math.min(42,H*.065),gap=7,total=n*hb+(n-1)*gap,top=Math.max(H*.2,(H-total)/2+H*.03),Wb=Math.min(W*.8,560);
+      var rayo=D("top:0;height:"+top+"px","", "rayo"); el.appendChild(rayo);
+      var emb=D("top:"+top+"px","", "emb"); el.appendChild(emb);
+      var orden=[3,4,5,2,6,1,7,0];
+      for(var k=0;k<n;k++){ var i=orden[k],w=Wb*(.18+.82*(k/(n-1))),b=document.createElement("div"); b.className="bar vid"; b.style.cssText="width:"+w+"px;height:"+hb+"px;--c:"+rgb(COL[i],.9)+";background:linear-gradient(90deg,"+rgb(COL[i],.28)+","+rgb(COL[i],.1)+");animation-delay:"+((n-1-k)*.32).toFixed(2)+"s";
+        b.innerHTML='<i class="dot" style="background:'+rgb(COL[i],1)+'"></i>'+(w>90?BASES[i][0]:""); emb.appendChild(b); }
+      D("left:"+(W/2-70)+"px;top:"+(top-26)+"px;width:140px;height:140px;background:radial-gradient(circle,rgba(255,226,150,.7),transparent 70%)",el,"halo");
+    }});
+
+  /* 7 · Lente: el prisma como cursor que descompone el texto */
+  V.push({n:"7 · Lente",d:"Interactivo. Un prisma de cristal sigue al puntero (o pasea solo) y, al pasar sobre el texto, lo descompone en tres colores cálidos, como una dispersión.",
+    build:function(el,W,H,it){
+      var f=Math.min(W*(W<700?.15:.105),H*.2),L=Math.min(W,H)*.34,Hh=L*.866;
+      var txt="Una consulta.\nTodas las bases.\nUn solo resultado.",pos={x:W*(W<700?.05:.07),y:(H-f*3*.98)/2};
+      var base=D("left:"+pos.x+"px;top:"+pos.y+"px;color:rgba(var(--fg-rgb),.92);--f:"+f+"px","", "len-t"); base.textContent=txt; el.appendChild(base);
+      var lente=D("width:"+L+"px;height:"+Hh+"px","", "lente"); el.appendChild(lente);
+      var cop=[[-9,"rgb(240,170,60)"],[0,"rgb(255,236,200)"],[9,"rgb(200,50,80)"]].map(function(c){ var q=D("left:"+pos.x+"px;top:"+pos.y+"px;color:"+c[1]+";--f:"+f+"px","", "len-t"); q.textContent=txt; lente.appendChild(q); return {q:q,dx:c[0]}; });
+      var borde=D("width:"+L+"px;height:"+Hh+"px","", "len-b"); el.appendChild(borde);
+      var sv=S("svg",{width:L,height:Hh,viewBox:"0 0 "+L+" "+Hh},borde); S("polygon",{points:(L/2)+",1 "+(L-1)+","+(Hh-1)+" 1,"+(Hh-1),fill:"none",stroke:"rgba(255,244,222,.8)","stroke-width":1.4,"stroke-linejoin":"round"},sv);
+      S("polygon",{points:(L/2)+",12 "+(L-14)+","+(Hh-8)+" 14,"+(Hh-8),fill:"none",stroke:"rgba(255,244,222,.22)","stroke-width":.8,"stroke-linejoin":"round"},sv);
+      var cur={x:W/2,y:H/2},obj={x:W/2,y:H/2},manual=0;
+      el.parentNode.onpointermove=function(e){ var r=el.getBoundingClientRect(); obj.x=e.clientX-r.left; obj.y=e.clientY-r.top; manual=performance.now(); };
+      it.tick=function(t){
+        if(performance.now()-manual>2500){ obj.x=W*.5+Math.sin(t*.45)*W*.34; obj.y=H*.5+Math.sin(t*.7+1)*H*.2; }
+        cur.x+=(obj.x-cur.x)*.12; cur.y+=(obj.y-cur.y)*.12;
+        var lx=cur.x-L/2,ly=cur.y-Hh*.6,tr="translate("+lx+"px,"+ly+"px)"; lente.style.transform=tr; borde.style.transform=tr;
+        cop.forEach(function(c){ c.q.style.transform="translate("+(-lx+c.dx)+"px,"+(-ly)+"px)"; });
+      };
+    }});
+
+  /* 8 · Columna: el haz como columna vertebral de la página */
+  V.push({n:"8 · Columna",d:"Es la página entera, no un dibujo. Las ocho fuentes se juntan en el prisma y la luz que sale baja como columna vertebral, con las secciones colgando de ella.",
+    build:function(el,W,H){
+      var Xs=W<700?W*.1:W*.2,Hm=H*.36,svg=S("svg",{width:W,height:H,viewBox:"0 0 "+W+" "+H},el),d=S("defs",{},svg);
+      var fl=S("filter",{id:"cb",filterUnits:"userSpaceOnUse",x:0,y:0,width:W,height:H},d); S("feGaussianBlur",{stdDeviation:8},fl);
+      COL.forEach(function(c,i){
+        var y0=H*.07+i*H*.04, path="M0 "+y0+" C "+(Xs*.55)+" "+y0+" "+Xs+" "+(y0+(Hm-y0)*.2)+" "+Xs+" "+Hm, gid="q"+i, g=S("linearGradient",{id:gid,gradientUnits:"userSpaceOnUse",x1:0,y1:0,x2:Xs,y2:0},d);
+        [[0,.0],[.4,.55],[1,.95]].forEach(function(s){ S("stop",{offset:s[0],"stop-color":rgb(c,s[1])},g); });
+        S("path",{d:path,fill:"none",stroke:"url(#"+gid+")","stroke-width":9,filter:"url(#cb)",opacity:.4},svg); S("path",{d:path,fill:"none",stroke:"url(#"+gid+")","stroke-width":1.3},svg);
+        var p=S("path",{d:path,pathLength:1000,fill:"none",stroke:rgb([Math.min(255,c[0]+70),Math.min(255,c[1]+70),Math.min(255,c[2]+70)],.95),"stroke-width":3,"stroke-linecap":"round","stroke-dasharray":"10 990"},svg);
+        p.style.animation="viaja "+(5+i*.5)+"s linear infinite"; p.style.animationDelay="-"+(i*1.1)+"s";
+      });
+      S("line",{x1:Xs,y1:Hm,x2:Xs,y2:H,stroke:"rgba(240,190,64,.9)","stroke-width":16,filter:"url(#cb)",opacity:.5},svg);
+      S("line",{x1:Xs,y1:Hm,x2:Xs,y2:H,stroke:"rgba(255,226,150,.95)","stroke-width":2},svg);
+      var pu=S("line",{x1:Xs,y1:Hm,x2:Xs,y2:H,pathLength:1000,stroke:"rgba(255,248,230,1)","stroke-width":4,"stroke-linecap":"round","stroke-dasharray":"12 988"},svg); pu.style.animation="viaja 4.5s linear infinite";
+      var s=Math.min(W,H)*.05; S("polygon",{points:Xs+","+(Hm-s)+" "+(Xs+.87*s)+","+(Hm+.5*s)+" "+(Xs-.87*s)+","+(Hm+.5*s),fill:"rgba(255,240,210,.08)",stroke:"rgba(255,244,222,.85)","stroke-width":1.3,"stroke-linejoin":"round"},svg);
+      D("left:"+(Xs-60)+"px;top:"+(Hm-60)+"px;width:120px;height:120px;background:radial-gradient(circle,rgba(255,226,150,.6),transparent 70%)",el,"halo");
+      [[.5,"Buscar","Once bases en una consulta"],[.62,"Lector","Un fallo con su búsqueda marcada"],[.74,"Plazos y cálculos","Días hábiles, intereses"]].forEach(function(n){
+        var y=H*n[0]; D("left:"+(Xs-5)+"px;top:"+(y-5)+"px;width:10px;height:10px;border-radius:50%;background:rgb(255,226,150);box-shadow:0 0 14px 3px rgba(240,190,64,.7)",el);
+        var c=D("left:"+(Xs+24)+"px;top:"+(y-21)+"px","", "nodo vid"); c.innerHTML='<b style="font-weight:500">'+n[1]+'</b><small>'+n[2]+'</small>'; el.appendChild(c); });
+    }});
+
+  /* 9 · Caleidoscopio */
+  V.push({n:"9 · Caleidoscopio",d:"El prisma como lo que es: un juego de espejos. Manchas de luz cálida reflejadas en doce gajos que giran muy despacio.",
+    geo:function(W,H){ return geom(W,H,.5,.5,.06); },
+    init:function(){ var c=document.createElement("canvas"); c.width=c.height=420; return {tx:c}; },
+    draw:function(ctx,W,H,t,g,s){
+      var tc=s.tx.getContext("2d"),N=12,ang=Math.PI*2/N,R=Math.min(W,H)*.5;
+      tc.globalCompositeOperation="source-over"; tc.fillStyle="rgb(34,8,16)"; tc.fillRect(0,0,420,420); tc.globalCompositeOperation="screen";
+      [NAR,VINO,ORO,[201,88,54],[200,40,70],ASC,[240,120,40],VINO].forEach(function(c,i){ var x=210+120*Math.sin(t*(.15+i*.045)+i*1.7),y=210+120*Math.cos(t*(.12+i*.04)+i*2.3),r=96+(i%3)*20,gr=tc.createRadialGradient(x,y,0,x,y,r); gr.addColorStop(0,rgb(c,.62)); gr.addColorStop(.55,rgb(c,.26)); gr.addColorStop(1,rgb(c,0)); tc.fillStyle=gr; tc.beginPath(); tc.arc(x,y,r,0,7); tc.fill(); });
+      for(var k=0;k<N;k++){
+        ctx.save(); ctx.translate(g.P.x,g.P.y); ctx.rotate(k*ang); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(R,0); ctx.arc(0,0,R,0,ang); ctx.closePath(); ctx.clip();
+        if(k%2){ ctx.rotate(ang); ctx.scale(1,-1); }
+        ctx.rotate(t*.07); ctx.drawImage(s.tx,-R,-R,R*2,R*2); ctx.restore();
+      }
+      var v=ctx.createRadialGradient(g.P.x,g.P.y,R*.55,g.P.x,g.P.y,R); v.addColorStop(0,"rgba(16,14,11,0)"); v.addColorStop(1,"rgba(16,14,11,1)"); ctx.fillStyle=v; ctx.beginPath(); ctx.arc(g.P.x,g.P.y,R+2,0,7); ctx.fill();
+      prismaPunto(ctx,g,1.1);
+    }});
+
+  /* 10 · Estratos: el prisma como paisaje */
+  V.push({n:"10 · Estratos",d:"Paisaje. Capas de picos triangulares con el sol detrás, en bordeaux, naranja y dorado; el pico del centro es el prisma, con su arista iluminada.",
+    build:function(el,W,H){
+      var svg=S("svg",{width:W,height:H,viewBox:"0 0 "+W+" "+H},el),d=S("defs",{},svg);
+      var sol=D("left:"+(W*.5-H*.5)+"px;top:"+(H*.02)+"px;width:"+H+"px;height:"+H+"px;background:radial-gradient(circle,rgba(255,226,150,.95),rgba(240,170,60,.55) 24%,rgba(201,88,54,.3) 46%,transparent 70%);filter:blur(14px);animation:deriva 9s ease-in-out infinite alternate",el);
+      el.insertBefore(sol,svg);
+      var cols=[[160,36,60,.5],[190,70,50,.46],[220,120,44,.4],[217,163,27,.26],[24,14,10,.95]],base=[.6,.66,.74,.82,.92],alt=[.36,.3,.25,.2,.12],npk=[2,3,3,4,5];
+      cols.forEach(function(c,L){
+        var gid="e"+L,g=S("linearGradient",{id:gid,x1:0,y1:0,x2:0,y2:1},d); S("stop",{offset:0,"stop-color":rgb(c,c[3])},g); S("stop",{offset:1,"stop-color":rgb([16,14,11],1)},g);
+        var n=npk[L],pts=["-20,"+H]; for(var k=0;k<=n;k++){ var x=-20+(W+40)*k/n,pk=hash(L,k,3); pts.push(x+","+(H*base[L]-H*alt[L]*(.45+.55*pk))); if(k<n) pts.push((x+(W+40)/n/2)+","+(H*base[L]+H*.03)); }
+        pts.push((W+20)+","+H); S("polygon",{points:pts.join(" "),fill:"url(#"+gid+")",stroke:rgb([255,214,120],L<4?.35-L*.06:0),"stroke-width":1,"stroke-linejoin":"round"},svg);
+      });
+      var Ht=H*.4,Wt=Ht*1.1547,cx=W/2,b=H*.68,pts=cx+","+(b-Ht)+" "+(cx+Wt/2)+","+b+" "+(cx-Wt/2)+","+b,g2=S("linearGradient",{id:"pr",x1:0,y1:0,x2:1,y2:1},d);
+      S("stop",{offset:0,"stop-color":"rgba(255,240,210,.32)"},g2); S("stop",{offset:1,"stop-color":"rgba(160,36,60,.18)"},g2);
+      S("polygon",{points:pts,fill:"url(#pr)",stroke:"rgba(255,244,222,.9)","stroke-width":1.6,"stroke-linejoin":"round"},svg);
+      S("line",{x1:cx,y1:b-Ht,x2:cx-Wt/2,y2:b,stroke:"rgba(255,248,230,.9)","stroke-width":2.4,"stroke-linecap":"round"},svg);
+    }});
+
+  /* ---------- armado ---------- */
+  var main=document.getElementById("escenas"),nav=document.querySelector(".nav"),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches,items=[],t0=performance.now();
+  V.forEach(function(v,i){
+    var id="v"+(i+1),st=document.createElement("section"); st.className="st"; st.id=id;
+    st.innerHTML='<div class="luces" aria-hidden="true"><i></i><i></i><i></i></div>'+(v.build?'<div class="lz"></div>':'<canvas aria-hidden="true"></canvas>')+'<div class="rot vid"><b>'+v.n+'</b></div><p class="des vid">'+v.d+'</p>';
+    main.appendChild(st);
+    var a=document.createElement("a"); a.href="#"+id; a.textContent=String(i+1); nav.appendChild(a);
+    var it={v:v,box:st,cv:st.querySelector("canvas"),lz:st.querySelector(".lz"),vis:false,W:0,H:0,D:1,g:null,s:null,tick:null}; if(it.cv) it.ctx=it.cv.getContext("2d"); items.push(it);
+  });
+  function medir(it){
+    var W=it.box.clientWidth,H=it.box.clientHeight; if(!W||!H) return; it.W=W; it.H=H;
+    if(it.v.build){ it.tick=null; it.lz.innerHTML=""; try{ it.v.build(it.lz,W,H,it); }catch(e){ console.error(it.v.n,e); } it.g=true; return; }
+    it.D=Math.min(devicePixelRatio||1,2); it.cv.width=W*it.D; it.cv.height=H*it.D; it.g=it.v.geo(W,H); it.s=it.v.init?it.v.init(W,H,it.g):null; pintar(it,(performance.now()-t0)/1000);
+  }
+  function pintar(it,t){ if(!it.g) return; if(it.v.build){ if(it.tick) it.tick(t); return; } var c=it.ctx; c.setTransform(it.D,0,0,it.D,0,0); c.clearRect(0,0,it.W,it.H); c.setLineDash([]); c.textAlign="left"; c.globalCompositeOperation="lighter"; try{ it.v.draw(c,it.W,it.H,t,it.g,it.s); }catch(e){ console.error(it.v.n,e); } }
+  if(window.ResizeObserver){ var ro=new ResizeObserver(function(es){ es.forEach(function(e){ var it=items.filter(function(x){ return x.box===e.target; })[0]; if(it&&Math.abs(it.W-e.target.clientWidth)>1) medir(it); }); }); items.forEach(function(it){ ro.observe(it.box); }); } else items.forEach(medir);
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ var it=items.filter(function(x){ return x.box===e.target; })[0]; if(it){ it.vis=e.isIntersecting; if(it.vis&&!it.g) medir(it); } }); },{rootMargin:"80px"}); items.forEach(function(it){ io.observe(it.box); });
+  function tick(now){ var t=(now-t0)/1000; items.forEach(function(it){ if(it.vis) pintar(it,t); }); if(!quieto) requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
