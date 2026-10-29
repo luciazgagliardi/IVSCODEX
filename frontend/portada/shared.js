@@ -162,7 +162,7 @@
         return true;
       });
       ctx.globalCompositeOperation="source-over";
-      var s=Math.min(W,H)*.1;
+      var s=Math.min(W,H)*(typeof o.tam==="function"?o.tam(W,H):(o.tam||.1));
       /* el filete, fino: claro en el oscuro; en el claro, dorado */
       var co=Math.cos(ang),si=Math.sin(ang),pts=[[0,-s],[-s*.87,s*.5],[s*.87,s*.5]].map(function(q){return (P.x+q[0]*co-q[1]*si).toFixed(2)+","+(P.y+q[0]*si+q[1]*co).toFixed(2);}).join(" ");
       if(pts!==triPts){triPts=pts;poli.setAttribute("points",pts);}

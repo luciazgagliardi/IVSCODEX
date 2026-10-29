@@ -22,7 +22,7 @@
 @keyframes swC{0%,50%{opacity:0;transform:translateY(10px);filter:blur(6px)}53%,72%{opacity:1;transform:none;filter:none}75%,100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
 @keyframes swD{0%,75%{opacity:0;transform:translateY(10px);filter:blur(6px)}78%,97%{opacity:1;transform:none;filter:none}100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
 @media (prefers-reduced-motion:reduce){.t-sw .sw{animation:none}.t-sw .sw.b,.t-sw .sw.c,.t-sw .sw.d{display:none}}
-@media (max-width:640px){.h6t{top:104px}}
+@media (max-width:640px){.h6t{top:122px}}
 
 /* títulos de sección comunes */
 .sec6{position:relative;padding:clamp(70px,11vw,150px) var(--pad)}

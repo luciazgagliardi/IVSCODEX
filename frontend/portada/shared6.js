@@ -21,10 +21,10 @@
       var cel=function(W){return W<=760;},t6=document.getElementById("h6t");
       function cyCel(W,H){
         if(!cel(W)) return .5;
-        var s=Math.min(W,H)*.1,arriba=t6.offsetTop+t6.offsetHeight,abajo=d.offsetTop;
+        var s=Math.min(W,H)*.115,arriba=t6.offsetTop+t6.offsetHeight,abajo=d.offsetTop;
         return Math.max(.2,Math.min(.7,((arriba+abajo)/2+s*.25)/H));
       }
-      var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:cyCel,sobrio:true,sinHaces:cel,
+      var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:cyCel,sobrio:true,tam:function(W){return cel(W)?.115:.1;},sinHaces:cel,
         band:function(W,H){var h=banda(W,H)*(cel(W)?.5:1),c=cyCel(W,H);   /* en el celular los hilos entran más juntos */
        return [c-h/H,c+h/H];},   /* las entradas se reparten alrededor del prisma, no del centro de la pantalla */
         out:function(P,w,h){return [[w,P.y]];}});
