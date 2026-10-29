@@ -16,12 +16,11 @@
       function banda(W,H){return Math.max(40,Math.min(H*.13,H*.5-110));}
       function colocar(){var H=document.getElementById("hero6").offsetHeight,W=innerWidth,fondo=H*.5+banda(W,H),sube=H*.27;   /* la sección siguiente sube un 27 % para acortar el espacio */
         d.style.top=((fondo+H+mp()-sube)/2-d.offsetHeight/2)+"px";}
-      /* celular: sin las líneas amarilla y celeste del costado izquierdo, y el prisma a la misma distancia del título y de «Desplace»
+      /* el prisma a la misma distancia del título y de «Desplace» (y en el celular, sin las líneas amarilla y celeste del costado izquierdo)
          (se mide el triángulo entero, que sube s sobre el centro y baja s/2 por debajo) */
       var cel=function(W){return W<=760;},t6=document.getElementById("h6t");
       function cyCel(W,H){
-        if(!cel(W)) return .5;
-        var s=Math.min(W,H)*.115,arriba=t6.offsetTop+t6.offsetHeight,abajo=d.offsetTop;
+        var s=Math.min(W,H)*(cel(W)?.115:.1),arriba=t6.offsetTop+t6.offsetHeight,abajo=d.offsetTop;
         return Math.max(.2,Math.min(.7,((arriba+abajo)/2+s*.25)/H));
       }
       var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:cyCel,sobrio:true,tam:function(W){return cel(W)?.115:.1;},sinHaces:cel,
