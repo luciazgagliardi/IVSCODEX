@@ -44,11 +44,11 @@
 .idx6:hover{color:var(--gold);border-color:var(--gold)}
 
 /* luces de fondo: tres manchas cálidas (dorado, naranja y bordeaux), desenfocadas, que derivan muy despacio */
-.luces{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.luces{position:fixed;inset:0;opacity:.55;z-index:-1;overflow:hidden;pointer-events:none}
 .luces i{position:absolute;border-radius:50%;filter:blur(90px)}
-.luces i:nth-child(1){left:-14vw;bottom:-20vw;width:58vw;height:58vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.5),rgba(201,88,54,.24) 52%,transparent 72%);animation:luzA 40s ease-in-out infinite alternate}
-.luces i:nth-child(2){right:-12vw;top:-10vw;width:52vw;height:52vw;background:radial-gradient(circle,rgba(201,88,54,.42),rgba(160,36,60,.24) 55%,transparent 74%);animation:luzA 52s ease-in-out infinite alternate-reverse}
-.luces i:nth-child(3){left:30vw;top:42vh;width:40vw;height:40vw;background:radial-gradient(circle,rgba(160,36,60,.36),transparent 70%);animation:luzA 46s ease-in-out infinite alternate}
+.luces i:nth-child(1){left:-8vw;bottom:-12vw;width:40vw;height:40vw;background:radial-gradient(circle,rgba(var(--gold-rgb),.5),rgba(201,88,54,.24) 52%,transparent 72%);animation:luzA 40s ease-in-out infinite alternate}
+.luces i:nth-child(2){right:-6vw;top:-6vw;width:36vw;height:36vw;background:radial-gradient(circle,rgba(201,88,54,.42),rgba(160,36,60,.24) 55%,transparent 74%);animation:luzA 52s ease-in-out infinite alternate-reverse}
+.luces i:nth-child(3){left:34vw;top:46vh;width:28vw;height:28vw;background:radial-gradient(circle,rgba(160,36,60,.36),transparent 70%);animation:luzA 46s ease-in-out infinite alternate}
 @keyframes luzA{to{transform:translate3d(5vw,-4vh,0) scale(1.1)}}
 @media (prefers-reduced-motion:reduce){.luces i{animation:none}}
 html[data-tema="claro"] .luces{opacity:.5}

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#100e0b">
+<title>IVS CODEX · Diez prismas sobrios</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../atmosfera/base.css">
+<style>
+.cab{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:18px;padding:14px var(--pad);background:linear-gradient(rgba(var(--bg-rgb),.92),rgba(var(--bg-rgb),0))}
+.cab .tt{font-size:13px;color:var(--mute)}
+.nav{display:flex;gap:6px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{flex:none;min-width:36px;text-align:center;padding:8px 14px;border-radius:999px;font-size:13px;color:var(--mute);background:rgba(var(--fg-rgb),.08);transition:background .3s,color .3s}
+.nav a:hover{background:rgba(var(--fg-rgb),.18);color:var(--fg)}
+.intro{padding:clamp(18px,4vh,48px) var(--pad) 26px;max-width:1000px}
+.intro h1{margin:0 0 14px;font:400 clamp(34px,5vw,72px)/.98 var(--sans);letter-spacing:-.05em;text-wrap:balance}
+.intro p{margin:0;max-width:64ch;color:var(--mute);font-size:clamp(15px,1.3vw,18px)}
+.st{position:relative;height:clamp(560px,100svh,860px);margin:0 0 10px;overflow:hidden;background:var(--bg);isolation:isolate}
+.st iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+.ov{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.ov canvas{position:absolute;left:0;top:0}
+.rot{position:absolute;z-index:9;left:var(--pad);bottom:18px;display:flex;flex-direction:column;gap:6px;max-width:min(430px,calc(100% - 2*var(--pad)));padding:12px 18px;border-radius:22px;font-size:13px;line-height:1.45;color:var(--mute)}
+.rot b{font-weight:600;color:var(--fg);font-size:13.5px}
+.aviso{margin:0 var(--pad) 18px;max-width:64ch;color:var(--dim);font-size:13px}
+@media (max-width:760px){.nav{max-width:50vw}.cab .tt{display:none}.rot{font-size:12px;padding:10px 14px}}
+</style>
+<script src="../tema.js?v=20261028b"></script>
+</head>
+<body>
+<header class="cab"><span class="tt">Diez prismas sobrios, con la portada real detrás</span><nav class="nav" aria-label="Versiones"></nav></header>
+<div class="intro">
+  <h1>Menos luz, más negro.</h1>
+  <p>La primera pantalla es la portada de hoy, para comparar. Las otras diez salen de lo que investigamos: una sola forma sobre el negro, filetes finos, un solo acento y mucho vacío. Sin halo y casi sin movimiento.</p>
+</div>
+<main id="escenas"></main>
+<p class="aviso">Si se ve el prisma doble, abrí esta página desde un servidor local (no desde un archivo): el navegador no deja leer la portada que está adentro.</p>
+
+<script>
+(function(){
+  var BASES=["--c-mza","--c-mzl","--c-caba","--c-scba","--c-csjn","--c-saij","--c-dial","--c-idh"];
+  var root=document.documentElement,quieto=matchMedia("(prefers-reduced-motion:reduce)").matches,PAL=null,palKey="";
+  function pal(){
+    var k=root.getAttribute("data-tema")||"negro"; if(PAL&&k===palKey) return PAL;
+    var cs=getComputedStyle(root),claro=k==="claro";
+    PAL={claro:claro,COL:BASES.map(function(b){ var h=cs.getPropertyValue(b).trim(); return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]; }),
+      ORO:claro?[168,118,8]:[217,163,27],CLARO:claro?[148,106,6]:[255,226,150],FG:(cs.getPropertyValue("--fg-rgb").trim()||"241,238,230").split(",").map(Number)};
+    palKey=k; return PAL;
+  }
+  function rgb(c,a){ return "rgba("+Math.round(c[0])+","+Math.round(c[1])+","+Math.round(c[2])+","+Math.max(0,a).toFixed(3)+")"; }
+  function sm(x){ x=Math.max(0,Math.min(1,x)); return x*x*(3-2*x); }
+  function lerp(a,b,u){ return a+(b-a)*u; }
+
+  /* geometría: el prisma donde lo dibuja la portada; las ocho entradas alrededor de su centro */
+  function geo(W,H,it){
+    var s=Math.min(W,H)*.1,h=Math.max(40,Math.min(H*.13,H*.5-110)),P={x:W*it.px,y:H*it.py},Y=[];
+    for(var i=0;i<8;i++) Y.push(P.y-h+i*(2*h/7));
+    return {W:W,H:H,P:P,s:s,Y:Y};
+  }
+  /* un hilo de la base i, desde x0 hasta el prisma; u0 es dónde empieza (0 = el borde) */
+  function hilo(g,i,x0,u){ var A={x:x0,y:g.Y[i]},C={x:x0+(g.P.x-x0)*.55,y:g.Y[i]},m=1-u; return {x:m*m*A.x+2*m*u*C.x+u*u*g.P.x,y:m*m*A.y+2*m*u*C.y+u*u*g.P.y}; }
+  function trazo(c,g,i,x0,u0,n){ c.beginPath(); for(var k=0;k<=n;k++){ var q=hilo(g,i,x0,lerp(u0,1,k/n)); if(k) c.lineTo(q.x,q.y); else c.moveTo(q.x,q.y); } }
+  /* el hilo se apaga hacia su origen: transparente en x0, pleno junto al prisma */
+  function hiloFino(c,g,i,x0,u0,a,P,w,col){ col=col||P.COL[i];
+    var q0=hilo(g,i,x0,u0),gr=c.createLinearGradient(q0.x,0,g.P.x,0);
+    gr.addColorStop(0,rgb(col,0)); gr.addColorStop(.45,rgb(col,a*.55)); gr.addColorStop(1,rgb(col,a));
+    trazo(c,g,i,x0,u0,48); c.strokeStyle=gr; c.lineWidth=w||1; c.stroke();
+  }
+  function vertices(g){ var p=g.P,s=g.s; return [[p.x,p.y-s],[p.x-.87*s,p.y+.5*s],[p.x+.87*s,p.y+.5*s]]; }
+  /* el triángulo fino, sin halo ni relleno */
+  function prisma(c,g,P,a,k){
+    var v=vertices(g),p=g.P; k=k||1; c.beginPath(); v.forEach(function(q,i){ var X=p.x+(q[0]-p.x)*k,Y=p.y+(q[1]-p.y)*k; if(i) c.lineTo(X,Y); else c.moveTo(X,Y); }); c.closePath();
+    c.strokeStyle=rgb(P.claro?P.CLARO:P.FG,a==null?(P.claro?.9:.55):a); c.lineWidth=1; c.lineJoin="round"; c.stroke();
+  }
+  /* una luz que recorre f(i,u) de la base i, y sale por la derecha */
+  function chispa(c,g,t,P,f,ciclo){
+    var n=Math.floor(t/ciclo),ph=t%ciclo,orden=[3,0,6,2,5,1,7,4],k=orden[n%8],ent=ciclo*.62;
+    c.globalCompositeOperation=P.claro?"source-over":"lighter";
+    if(ph<ent){ var u=sm(ph/ent),q=f(k,u); c.beginPath(); c.arc(q.x,q.y,1.7,0,7); c.fillStyle=rgb(P.COL[k],.95*Math.sqrt(Math.sin(Math.PI*Math.min(1,u*1.2)))); c.fill(); }
+    else { var u2=sm((ph-ent)/(ciclo-ent)); if(u2<1){ c.beginPath(); c.arc(lerp(g.P.x,g.W,u2),g.P.y,1.9,0,7); c.fillStyle=rgb(P.CLARO,.95*(1-u2)); c.fill(); } }
+    c.globalCompositeOperation="source-over";
+  }
+  function salida(c,g,P,hasta,a,degradado){
+    var p=g.P,x1=hasta==null?g.W:hasta,gr=c.createLinearGradient(p.x,0,x1,0);
+    gr.addColorStop(0,rgb(P.ORO,a)); gr.addColorStop(1,rgb(P.ORO,degradado?0:a));
+    c.beginPath(); c.moveTo(p.x,p.y); c.lineTo(x1,p.y); c.strokeStyle=gr; c.lineWidth=1.5; c.lineCap="round"; c.stroke();
+  }
+
+  var V=[
+  {n:"Hoy",d:"La portada tal cual está: halo, hilos con brillo y puntos que viajan. Sirve para comparar.",hoy:true},
+
+  {n:"A · El mismo prisma, más callado",d:"Sin halo ni relleno. Ocho hilos de un solo filete que se apagan hacia la izquierda. Una única luz recorre una base por vez, entra al prisma y sale dorada.",
+   draw:function(c,g,t,P){
+     for(var i=0;i<8;i++) hiloFino(c,g,i,0,0,.62,P,1);
+     salida(c,g,P,g.W,.7,false);
+     prisma(c,g,P);
+     chispa(c,g,t,P,function(i,u){ return hilo(g,i,0,u); },4.8);
+   }},
+
+  {n:"B · Trazos cortos que se desvanecen",d:"Los hilos no cruzan la pantalla: nacen del negro a poca distancia del prisma y se hacen visibles al acercarse. El haz dorado también se apaga. Casi sin movimiento: sólo respiran.",
+   draw:function(c,g,t,P){
+     var L=Math.min(g.W*.3,400),x0=g.P.x-L;
+     for(var i=0;i<8;i++) hiloFino(c,g,i,x0,0,.55+.2*Math.sin(t*.55+i*.8),P,1);
+     salida(c,g,P,g.P.x+L*1.1,.8,true);
+     prisma(c,g,P);
+   }},
+
+  {n:"C · El prisma solo",d:"En reposo sólo el triángulo, con un destello lento que le da la vuelta al borde. Las líneas aparecen al acercar el puntero (o solas, cada tanto) y crecen desde el prisma hacia afuera.",
+   init:function(it){ var st={k:0,last:0,mx:-1e4,my:-1e4,mv:-1e4}; try{ var w=it.fr.contentWindow; w.addEventListener("pointermove",function(e){ st.mx=e.clientX; st.my=e.clientY; st.mv=performance.now(); }); }catch(e){} return st; },
+   draw:function(c,g,t,P,st){
+     var dt=Math.min(.05,Math.max(0,t-(st.last||t))); st.last=t;
+     var cerca=(performance.now()-st.mv)<3500,tg;
+     if(cerca){ tg=sm(1-Math.hypot(st.mx-g.P.x,st.my-g.P.y)/(g.W*.4)); } else { tg=sm(.5-.5*Math.cos(t*Math.PI*2/16)); }
+     st.k+=(tg-st.k)*Math.min(1,dt*2.5); var k=st.k;
+     if(k>.01){
+       for(var i=0;i<8;i++) hiloFino(c,g,i,0,1-k,.62*k,P,1);
+       salida(c,g,P,g.P.x+k*(g.W-g.P.x),.7*k,false);
+     }
+     prisma(c,g,P,P.claro?.9:.45);
+     /* el destello: un tramo corto del borde, que da la vuelta cada siete segundos */
+     var v=vertices(g),seg=[],per=0; for(var a=0;a<3;a++){ var b=(a+1)%3,l=Math.hypot(v[b][0]-v[a][0],v[b][1]-v[a][1]); seg.push(l); per+=l; }
+     function pt(d){ d=((d%per)+per)%per; for(var a=0;a<3;a++){ if(d<=seg[a]){ var b=(a+1)%3,u=d/seg[a]; return [lerp(v[a][0],v[b][0],u),lerp(v[a][1],v[b][1],u)]; } d-=seg[a]; } return v[0]; }
+     var head=(t/7)*per,cola=per*.16,N=18;
+     c.lineCap="round"; c.lineWidth=1.4;
+     for(var j=0;j<N;j++){ var d0=head-cola*j/N,d1=head-cola*(j+1)/N,p0=pt(d0),p1=pt(d1); c.beginPath(); c.moveTo(p0[0],p0[1]); c.lineTo(p1[0],p1[1]); c.strokeStyle=rgb(P.claro?P.ORO:P.CLARO,.9*(1-j/N)); c.stroke(); }
+   }  },
+
+  {n:"D · Una luz que se abre",d:"La lectura de la tapa de Dark Side of the Moon: entra un solo filete claro y sale abierto en ocho, uno por base. Invierte lo de hoy (ocho entran, uno sale), así que es la más distinta.",
+   draw:function(c,g,t,P){
+     var p=g.P,sp=Math.min(g.H*.1,90);
+     var gr=c.createLinearGradient(0,0,p.x,0); gr.addColorStop(0,rgb(P.FG,0)); gr.addColorStop(1,rgb(P.FG,P.claro?.55:.7));
+     c.beginPath(); c.moveTo(0,p.y); c.lineTo(p.x,p.y); c.strokeStyle=gr; c.lineWidth=1.3; c.stroke();
+     for(var i=0;i<8;i++){
+       var yf=p.y+(i-3.5)*sp*2/7*(1+.05*Math.sin(t*.5+i)),g2=c.createLinearGradient(p.x,0,g.W,0); g2.addColorStop(0,rgb(P.COL[i],.8)); g2.addColorStop(1,rgb(P.COL[i],.12));
+       c.beginPath(); c.moveTo(p.x,p.y); c.lineTo(g.W,yf); c.strokeStyle=g2; c.lineWidth=1; c.stroke();
+     }
+     prisma(c,g,P);
+   }},
+
+  {n:"E · Rayitas",d:"Ocho trazos cortos del color de cada base frente al prisma y uno dorado detrás: casi una marca, más un símbolo que un dibujo. Se encienden de a uno, sin moverse.",
+   draw:function(c,g,t,P){
+     var p=g.P,s=g.s,L=Math.min(g.W*.06,64),x1=p.x-s*1.25;
+     c.lineCap="round"; c.lineWidth=1.8;
+     for(var i=0;i<8;i++){ var y=p.y-s*.85+i*(s*1.25/7)*1.0,a=.45+.4*(.5+.5*Math.sin(t*.9-i*.7)); c.beginPath(); c.moveTo(x1-L,y); c.lineTo(x1,p.y+(y-p.y)*.35); c.strokeStyle=rgb(P.COL[i],a); c.stroke(); }
+     c.beginPath(); c.moveTo(p.x+s*1.25,p.y); c.lineTo(p.x+s*1.25+L*1.4,p.y); c.strokeStyle=rgb(P.ORO,.85); c.lineWidth=2; c.stroke();
+     prisma(c,g,P);
+   }},
+
+  {n:"F · Ocho puntos",d:"No hay líneas de color: las ocho bases son ocho puntos sobre la cara del prisma, y sólo sale el filete dorado. Los puntos respiran de a uno.",
+   draw:function(c,g,t,P){
+     var p=g.P,s=g.s,bl={x:p.x-.87*s,y:p.y+.5*s},tp={x:p.x,y:p.y-s};
+     salida(c,g,P,g.W,.7,false); prisma(c,g,P);
+     for(var i=0;i<8;i++){ var u=(i+.5)/8,x=lerp(bl.x,tp.x,u),y=lerp(bl.y,tp.y,u),a=.55+.45*Math.max(0,Math.sin(t*.8-i*.8))**2; c.beginPath(); c.arc(x,y,2.6,0,7); c.fillStyle=rgb(P.COL[i],a); c.fill(); }
+   }},
+
+  {n:"G · Un solo acento",d:"Las ocho líneas son neutras, como el resto de la página, y sólo el filete dorado tiene color. Cada tanto una línea toma el color de su base y vuelve. Es la de la página de referencia con un único color.",
+   draw:function(c,g,t,P){
+     var ciclo=3.2,n=Math.floor(t/ciclo),ph=(t%ciclo)/ciclo,orden=[3,0,6,2,5,1,7,4],k=orden[n%8],e=Math.sin(Math.PI*ph)**2;
+     for(var i=0;i<8;i++){ if(i===k) continue; hiloFino(c,g,i,0,0,P.claro?.5:.4,P,1,P.FG); }
+     hiloFino(c,g,k,0,0,.35+.6*e,P,1+.4*e,[lerp(P.FG[0],P.COL[k][0],e),lerp(P.FG[1],P.COL[k][1],e),lerp(P.FG[2],P.COL[k][2],e)]);
+     salida(c,g,P,g.W,.8,false); prisma(c,g,P);
+   }},
+
+  {n:"H · Horizonte",d:"Un solo filete cruza la página, como los de la barra: neutro hasta el prisma y dorado después. Las ocho bases llegan como puntitos de color que se deslizan por él, uno tras otro.",
+   draw:function(c,g,t,P){
+     var p=g.P,s=g.s,gr=c.createLinearGradient(0,0,p.x,0); gr.addColorStop(0,rgb(P.FG,0)); gr.addColorStop(1,rgb(P.FG,.3));
+     c.beginPath(); c.moveTo(0,p.y); c.lineTo(p.x,p.y); c.strokeStyle=gr; c.lineWidth=1; c.stroke();
+     salida(c,g,P,g.W,.75,false); prisma(c,g,P);
+     for(var i=0;i<8;i++){ var u=((t/11)+i/8)%1,x=lerp(g.W*.04,p.x-s*.8,sm(u)); c.beginPath(); c.arc(x,p.y,2.1,0,7); c.fillStyle=rgb(P.COL[i],.95*Math.sin(Math.PI*u)); c.fill(); }
+   }},
+
+  {n:"I · Doble contorno",d:"El mismo triángulo con un segundo contorno más fino por dentro, como un sello grabado. Los ocho hilos y el haz, igual que en A pero todavía más delgados.",
+   draw:function(c,g,t,P){
+     for(var i=0;i<8;i++) hiloFino(c,g,i,0,0,.5,P,.8);
+     salida(c,g,P,g.W,.65,false);
+     prisma(c,g,P,P.claro?.9:.6,1); prisma(c,g,P,P.claro?.5:.28,.68);
+     chispa(c,g,t,P,function(i,u){ return hilo(g,i,0,u); },5.2);
+   }},
+
+  {n:"J · Partitura",d:"Ocho filetes paralelos, como un pentagrama, que llegan al prisma y se apoyan en su cara. Orden en vez de convergencia; una luz recorre una línea por vez.",
+   draw:function(c,g,t,P){
+     var p=g.P,s=g.s,Y=[]; for(var i=0;i<8;i++) Y.push(p.y-s*.85+i*(s*1.2/7));
+     function xc(y){ return p.x-.58*(y-p.y+s); }
+     for(var i=0;i<8;i++){ var x1=xc(Y[i]),gr=c.createLinearGradient(0,0,x1,0); gr.addColorStop(0,rgb(P.COL[i],0)); gr.addColorStop(.5,rgb(P.COL[i],.3)); gr.addColorStop(1,rgb(P.COL[i],.7)); c.beginPath(); c.moveTo(0,Y[i]); c.lineTo(x1,Y[i]); c.strokeStyle=gr; c.lineWidth=1; c.stroke(); }
+     c.beginPath(); c.moveTo(p.x+.58*s,p.y); c.lineTo(g.W,p.y); var g3=c.createLinearGradient(p.x,0,g.W,0); g3.addColorStop(0,rgb(P.ORO,.8)); g3.addColorStop(1,rgb(P.ORO,.8)); c.strokeStyle=g3; c.lineWidth=1.5; c.stroke();
+     prisma(c,g,P);
+     chispa(c,g,t,P,function(i,u){ return {x:lerp(0,xc(Y[i]),u),y:Y[i]}; },5.2);
+   }}
+  ];
+
+  /* ---- armado: portada real (sin su prisma) + el dibujo de cada propuesta ---- */
+  var main=document.getElementById("escenas"),nav=document.querySelector(".nav"),items=[],t0=performance.now();
+  V.forEach(function(v,i){
+    var id="s"+i,st=document.createElement("section"); st.className="st"; st.id=id;
+    st.innerHTML='<iframe title="Portada de IVS CODEX" loading="lazy"></iframe>'+(v.hoy?'':'<div class="ov" aria-hidden="true"></div>')+'<div class="rot vid"><b>'+v.n+'</b><span>'+v.d+'</span></div>';
+    main.appendChild(st);
+    var a=document.createElement("a"); a.href="#"+id; a.textContent=v.hoy?"Hoy":String.fromCharCode(64+i); a.title=v.n; nav.appendChild(a);
+    items.push({v:v,box:st,fr:st.querySelector("iframe"),ov:st.querySelector(".ov"),vis:false,cargado:false,px:.5,py:.5,W:0,H:0,ctx:null,g:null,s:null});
+  });
+  function medir(it){
+    try{ var d=it.fr.contentDocument,p=d.querySelector(".hero6 svg polygon"); if(p){ var pts=p.getAttribute("points").trim().split(/\s+/).map(function(q){ var a=q.split(","); return {x:+a[0],y:+a[1]}; }); if(pts.length===3){ var cx=(pts[0].x+pts[1].x+pts[2].x)/3,cy=(pts[0].y+pts[1].y+pts[2].y)/3,d2=d.documentElement; it.px=cx/d2.clientWidth; it.py=cy/d2.clientHeight; } } }catch(e){}
+  }
+  function ocultarPrismaReal(it){ try{ var d=it.fr.contentDocument,h=d.querySelector(".hero6"); if(h){ [].forEach.call(h.querySelectorAll("canvas,svg"),function(e){ e.style.display="none"; }); } d.documentElement.style.overflow="hidden"; d.body.style.overflow="hidden"; it.fr.contentWindow.scrollTo(0,0); }catch(e){} }
+  function armar(it){
+    if(it.v.hoy||!it.cargado) return; var W=it.box.clientWidth,H=it.box.clientHeight; if(!W) return;
+    var d=Math.min(devicePixelRatio||1,2); it.W=W; it.H=H; it.d=d; it.ov.innerHTML=""; var cv=document.createElement("canvas"); cv.width=W*d; cv.height=H*d; cv.style.cssText="width:"+W+"px;height:"+H+"px"; it.ov.appendChild(cv); it.ctx=cv.getContext("2d"); it.g=geo(W,H,it); it.s=it.v.init?it.v.init(it):null;
+  }
+  function cargar(it){ if(it.cargado||it.cargando) return; it.cargando=true; it.fr.addEventListener("load",function(){ setTimeout(function(){ if(!it.v.hoy){ medir(it); ocultarPrismaReal(it); } it.cargado=true; armar(it); },1200); }); it.fr.src="../../portada/index.html"; }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ var it=items.filter(function(x){ return x.box===e.target; })[0]; if(!it) return; it.vis=e.isIntersecting; if(it.vis) cargar(it); }); },{rootMargin:"300px"}); items.forEach(function(it){ io.observe(it.box); });
+  if(window.ResizeObserver) items.forEach(function(it){ new ResizeObserver(function(){ if(it.cargado&&!it.v.hoy&&Math.abs(it.W-it.box.clientWidth)>1) setTimeout(function(){ ocultarPrismaReal(it); medir(it); armar(it); },400); }).observe(it.box); });
+  function tick(now){
+    var t=(now-t0)/1000,P=pal();
+    items.forEach(function(it){
+      if(!it.vis||!it.cargado||!it.ctx) return;
+      try{ if(it.fr.contentWindow.scrollY>0) it.fr.contentWindow.scrollTo(0,0); }catch(e){}
+      var c=it.ctx; c.setTransform(it.d,0,0,it.d,0,0); c.clearRect(0,0,it.W,it.H); c.setLineDash([]); c.globalAlpha=1; c.globalCompositeOperation="source-over";
+      try{ it.v.draw(c,it.g,quieto?4.2:t,P,it.s); }catch(e){ console.error(e); }
+    });
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

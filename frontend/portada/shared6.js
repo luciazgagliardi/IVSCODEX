@@ -24,7 +24,7 @@
         var s=Math.min(W,H)*.1,arriba=t6.offsetTop+t6.offsetHeight,abajo=d.offsetTop;
         return Math.max(.2,Math.min(.7,((arriba+abajo)/2+s*.25)/H));
       }
-      var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:cyCel,sinHaces:cel,
+      var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:cyCel,sobrio:true,sinHaces:cel,
         band:function(W,H){var h=banda(W,H),c=cyCel(W,H);return [c-h/H,c+h/H];},   /* las entradas se reparten alrededor del prisma, no del centro de la pantalla */
         out:function(P,w,h){return [[w,P.y]];}});
       colocar();pr.medir();addEventListener("resize",function(){colocar();pr.medir();});
