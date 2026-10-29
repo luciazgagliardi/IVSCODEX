@@ -25,7 +25,8 @@
         return Math.max(.2,Math.min(.7,((arriba+abajo)/2+s*.25)/H));
       }
       var pr=IVSPrisma(document.getElementById("cv6"),{px:.5,cy:cyCel,sobrio:true,sinHaces:cel,
-        band:function(W,H){var h=banda(W,H),c=cyCel(W,H);return [c-h/H,c+h/H];},   /* las entradas se reparten alrededor del prisma, no del centro de la pantalla */
+        band:function(W,H){var h=banda(W,H)*(cel(W)?.5:1),c=cyCel(W,H);   /* en el celular los hilos entran más juntos */
+       return [c-h/H,c+h/H];},   /* las entradas se reparten alrededor del prisma, no del centro de la pantalla */
         out:function(P,w,h){return [[w,P.y]];}});
       colocar();pr.medir();addEventListener("resize",function(){colocar();pr.medir();});
       /* el fondo (claro u oscuro) es el mismo que el de la aplicación: se guarda en «ivs-tema» */
