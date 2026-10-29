@@ -13,13 +13,15 @@
 @media (max-width:900px){.cab .acts .btn.sec{display:none}}
 /* el titular cambia solo: qué es, de dónde es y cuánto hay (los tres ocupan el mismo lugar) */
 .t-sw{display:grid}
-.t-sw .sw{grid-area:1/1;align-self:center;animation:swA 18s ease-in-out infinite}
+.t-sw .sw{grid-area:1/1;align-self:center;animation:swA 20s ease-in-out infinite}
 .t-sw .sw.b{animation-name:swB;opacity:0}
 .t-sw .sw.c{animation-name:swC;opacity:0}
-@keyframes swA{0%,28%{opacity:1;transform:none;filter:none}33%,95%{opacity:0;transform:translateY(-10px);filter:blur(6px)}100%{opacity:1;transform:none;filter:none}}
-@keyframes swB{0%,30%{opacity:0;transform:translateY(10px);filter:blur(6px)}36%,61%{opacity:1;transform:none;filter:none}67%,100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
-@keyframes swC{0%,63%{opacity:0;transform:translateY(10px);filter:blur(6px)}69%,94%{opacity:1;transform:none;filter:none}100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
-@media (prefers-reduced-motion:reduce){.t-sw .sw{animation:none}.t-sw .sw.b,.t-sw .sw.c{display:none}}
+.t-sw .sw.d{animation-name:swD;opacity:0}
+@keyframes swA{0%{opacity:0;transform:translateY(10px);filter:blur(6px)}3%,22%{opacity:1;transform:none;filter:none}25%,100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
+@keyframes swB{0%,25%{opacity:0;transform:translateY(10px);filter:blur(6px)}28%,47%{opacity:1;transform:none;filter:none}50%,100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
+@keyframes swC{0%,50%{opacity:0;transform:translateY(10px);filter:blur(6px)}53%,72%{opacity:1;transform:none;filter:none}75%,100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
+@keyframes swD{0%,75%{opacity:0;transform:translateY(10px);filter:blur(6px)}78%,97%{opacity:1;transform:none;filter:none}100%{opacity:0;transform:translateY(-10px);filter:blur(6px)}}
+@media (prefers-reduced-motion:reduce){.t-sw .sw{animation:none}.t-sw .sw.b,.t-sw .sw.c,.t-sw .sw.d{display:none}}
 @media (max-width:640px){.h6t{top:104px}}
 
 /* títulos de sección comunes */
