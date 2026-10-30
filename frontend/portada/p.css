@@ -2,7 +2,7 @@
    Lo que cambia entre ellas es la composición y el movimiento. */
 :root{
   --bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.62);--dim:rgba(241,238,230,.36);--line:rgba(241,238,230,.15);
-  --gold:#d9a31b;--caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;
+  --gold:#d9a31b;--caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;--titulo:"Punto redondo","Instrument Sans",system-ui,sans-serif;
   --ease:cubic-bezier(.16,.84,.24,1);--pad:clamp(18px,3.2vw,48px);
   --c-mza:#d9a62a;--c-mzl:#b58640;--c-caba:#d5873f;--c-csjn:#c95836;--c-saij:#b03b42;--c-dial:#8a3853;--c-idh:#5f7f9a;--c-scba:#c06a2c
 }
@@ -47,3 +47,6 @@ button,input{font:inherit;color:inherit}
 /* aviso de muestra */
 .nota-muestra{position:fixed;left:var(--pad);bottom:14px;z-index:70;font-size:11.5px;color:var(--dim);max-width:60ch}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* El punto de los títulos es un círculo (un solo carácter, «.»; mide como el de Instrument Sans). */
+@font-face{font-family:"Punto redondo";src:url(../punto-redondo.woff) format("woff");font-weight:400;font-style:normal;unicode-range:U+002E;font-display:block}

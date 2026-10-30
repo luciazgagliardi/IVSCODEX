@@ -29,7 +29,7 @@
 /* títulos de sección comunes */
 .sec6{position:relative;padding:clamp(70px,11vw,150px) var(--pad)}
 .eyebrow{margin:0 0 16px;font:500 12px/1 var(--caps);letter-spacing:.28em;color:var(--gold)}
-.h2{margin:0;font:500 clamp(28px,4.4vw,64px)/1.02 var(--sans);letter-spacing:-.04em;text-wrap:balance}
+.h2{margin:0;font:400 clamp(28px,4.4vw,64px)/1.02 var(--titulo);letter-spacing:-.04em;text-wrap:balance}
 .h2 em{font-style:normal;color:var(--gold)}
 .lead6{margin:18px 0 0;max-width:54ch;color:var(--mute)}
 
@@ -38,7 +38,7 @@
 .cierre .bs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(34px,5vw,64px)}
 .cierre .bs span{display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;font:500 11.5px/1 var(--caps);letter-spacing:.16em}
 .cierre .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
-.cierre .adv{max-width:30ch;margin:0 0 28px;font:500 clamp(28px,4.4vw,62px)/1.02 var(--sans);letter-spacing:-.04em;text-wrap:balance}
+.cierre .adv{max-width:30ch;margin:0 0 28px;font:400 clamp(28px,4.4vw,62px)/1.02 var(--titulo);letter-spacing:-.04em;text-wrap:balance}
 .cierre .adv em{font-style:normal;color:var(--gold)}
 .cierre .sub{max-width:62ch;margin:0 0 30px;color:var(--mute);font-size:14.5px}
 .cierre .marcaf{margin-top:clamp(40px,7vw,90px);font-size:clamp(46px,12vw,200px);color:rgba(241,238,230,.8);line-height:.86}

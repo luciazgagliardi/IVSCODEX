@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Títulos elegantes, con aire</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&family=Cormorant+SC:wght@400;500&family=Urbanist:wght@200;300&family=Raleway:wght@200;300&family=Plus+Jakarta+Sans:wght@200;300&family=Fraunces:opsz,wght@9..144,200;9..144,300&display=swap">
+<style>
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.62);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.14);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif;--caps:"Cormorant SC",serif}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--fg);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;
+  background:radial-gradient(70% 50% at 100% 0,rgba(120,40,28,.28),transparent 70%),radial-gradient(60% 45% at 0 100%,rgba(150,105,20,.22),transparent 70%),var(--bg)}
+.w{max-width:1180px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(18px,4vw,48px) 90px}
+.marca{display:inline-flex;align-items:center;gap:.32em;font:600 16px/1 var(--sans);letter-spacing:-.02em}
+.marca i{width:.2em;height:.2em;border-radius:50%;background:var(--gold)}
+.marca span{font-weight:400;color:var(--mute)}
+.intro{margin:38px 0 0;max-width:64ch;color:var(--mute)}
+.intro b{color:var(--fg);font-weight:500}
+.op{margin-top:clamp(36px,5vw,64px);padding-top:26px;border-top:1px solid var(--line)}
+.cab{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-bottom:6px}
+.num{font:500 12px/1 var(--sans);letter-spacing:.18em;color:var(--gold)}
+.nom{font:500 18px/1.2 var(--sans)}
+.por{margin:0 0 4px;max-width:72ch;color:var(--mute);font-size:14.5px}
+.peso{margin:26px 0 12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.fila{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px clamp(20px,4vw,60px)}
+.rot{margin:0;font:400 12px/1 var(--caps);letter-spacing:.3em;color:var(--gold)}
+.h{margin:14px 0 0;line-height:1.1;font-size:clamp(44px,6.2vw,84px);overflow-wrap:anywhere}
+.lead{margin:.9em 0 0;max-width:36ch;font-size:15px;color:var(--mute)}
+.gran{margin:28px 0 0;max-width:24ch;line-height:1.14;font-size:clamp(30px,3.6vw,52px);text-wrap:balance}
+.gran em{font-style:normal;color:var(--gold)}
+/* cada una con su espaciado: abierto, sin apretar las letras */
+.f0 .h,.f0 .gran{font-family:"Urbanist",var(--sans);letter-spacing:.01em;word-spacing:.04em}
+.f1 .h,.f1 .gran{font-family:"Raleway",var(--sans);letter-spacing:.005em;word-spacing:.04em}
+.f2 .h,.f2 .gran{font-family:"Plus Jakarta Sans",var(--sans);letter-spacing:0;word-spacing:.02em}
+.f3 .h,.f3 .gran{font-family:"Fraunces",serif;letter-spacing:0;word-spacing:.03em;font-optical-sizing:auto}
+.ahora .h,.ahora .gran{font-family:"Urbanist",var(--sans);font-weight:200;letter-spacing:-.025em}
+.w200 .h,.w200 .gran{font-weight:200}
+.w300 .h,.w300 .gran{font-weight:300}
+.pie{margin-top:clamp(40px,6vw,80px);padding-top:22px;border-top:1px solid var(--line);color:var(--mute);font-size:14px;max-width:70ch}
+@media (max-width:760px){.fila{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+  <span class="marca"><b>IVS</b><i></i><span>CODEX</span></span>
+  <p class="intro"><b>Elegantes y con aire.</b> La versión anterior se veía seca porque, además de ser muy fina, tenía las letras demasiado juntas. Estas cuatro abren el espaciado entre letras y entre palabras. En todas el punto es un círculo. Arriba, la que está ahora, para comparar.</p>
+
+  <section class="op ahora">
+    <div class="cab"><span class="num">AHORA</span><span class="nom">Urbanist · 200, letras juntas</span></div>
+    <div class="fila" style="margin-top:14px">
+      <div><p class="rot">QVAESTIO</p><h2 class="h">Buscar.</h2></div>
+      <div><p class="rot">CALCVLVS</p><h2 class="h">Cálculos.</h2></div>
+    </div>
+    <p class="gran">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+  </section>
+
+  <section class="op f0">
+    <div class="cab"><span class="num">OPCIÓN 1</span><span class="nom">Urbanist, con aire</span></div>
+    <p class="por">La misma de recién, sin apretar: sólo se abre el espaciado. El cambio más chico.</p>
+    <div class="w200"><p class="peso">Extrafina · 200</p>
+      <div class="fila">
+        <div><p class="rot">QVAESTIO</p><h2 class="h">Buscar.</h2><p class="lead">Las once bases a la vez.</p></div>
+        <div><p class="rot">CALCVLVS</p><h2 class="h">Cálculos.</h2><p class="lead">Intereses, índices, despido y más.</p></div>
+      </div>
+      <p class="gran">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+    </div>
+    <div class="w300"><p class="peso">Fina · 300</p>
+      <div class="fila"><div><h2 class="h">Buscar.</h2></div><div><h2 class="h">Cálculos.</h2></div></div>
+      <p class="gran">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+    </div>
+  </section>
+
+  <section class="op f1">
+    <div class="cab"><span class="num">OPCIÓN 2</span><span class="nom">Raleway</span></div>
+    <p class="por">La más clásica de las finas: proporciones de inscripción romana, letras anchas y serenas. La que más combina con los rótulos en latín.</p>
+    <div class="w200"><p class="peso">Extrafina · 200</p>
+      <div class="fila">
+        <div><p class="rot">QVAESTIO</p><h2 class="h">Buscar.</h2><p class="lead">Las once bases a la vez.</p></div>
+        <div><p class="rot">CALCVLVS</p><h2 class="h">Cálculos.</h2><p class="lead">Intereses, índices, despido y más.</p></div>
+      </div>
+      <p class="gran">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+    </div>
+    <div class="w300"><p class="peso">Fina · 300</p>
+      <div class="fila"><div><h2 class="h">Buscar.</h2></div><div><h2 class="h">Cálculos.</h2></div></div>
+      <p class="gran">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+    </div>
+  </section>
+
+  <section class="op f2">
+    <div class="cab"><span class="num">OPCIÓN 3</span><span class="nom">Plus Jakarta Sans</span></div>
+    <p class="por">Contemporánea y amplia: letras generosas que respiran solas, sin tener que abrir el espaciado. La más moderna.</p>
+    <div class="w200"><p class="peso">Extrafina · 200</p>
+      <div class="fila">
+        <div><p class="rot">QVAESTIO</p><h2 class="h">Buscar.</h2><p class="lead">Las once bases a la vez.</p></div>
+        <div><p class="rot">CALCVLVS</p><h2 class="h">Cálculos.</h2><p class="lead">Intereses, índices, despido y más.</p></div>
+      </div>
+      <p class="gran">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+    </div>
+    <div class="w300"><p class="peso">Fina · 300</p>
+      <div class="fila"><div><h2 class="h">Buscar.</h2></div><div><h2 class="h">Cálculos.</h2></div></div>
+      <p class="gran">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+    </div>
+  </section>
+
+  <section class="op f3">
+    <div class="cab"><span class="num">OPCIÓN 4</span><span class="nom">Fraunces</span></div>
+    <p class="por">Con serifas, suave y liviana: la más editorial de las cuatro. Es el cambio mayor, porque pasa de palo seco a serif; los rótulos latinos ya están en versalitas con serifa y se acompañan.</p>
+    <div class="w200"><p class="peso">Extrafina · 200</p>
+      <div class="fila">
+        <div><p class="rot">QVAESTIO</p><h2 class="h">Buscar.</h2><p class="lead">Las once bases a la vez.</p></div>
+        <div><p class="rot">CALCVLVS</p><h2 class="h">Cálculos.</h2><p class="lead">Intereses, índices, despido y más.</p></div>
+      </div>
+      <p class="gran">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+    </div>
+    <div class="w300"><p class="peso">Fina · 300</p>
+      <div class="fila"><div><h2 class="h">Buscar.</h2></div><div><h2 class="h">Cálculos.</h2></div></div>
+      <p class="gran">Buscador integrado de repositorios judiciales oficiales y <em>doctrina.</em></p>
+    </div>
+  </section>
+
+  <p class="pie">Al elegir una, se aplica a todos los títulos de la aplicación y de la portada con el espaciado que se ve acá. El resto del texto sigue en Instrument Sans.</p>
+</div>
+</body>
+</html>

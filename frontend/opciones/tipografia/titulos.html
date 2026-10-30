@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Títulos más finos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&family=Cormorant+SC:wght@400;500&family=Hanken+Grotesk:wght@200;300&family=Urbanist:wght@200;300&family=Jost:wght@200;300&display=swap">
+<style>
+:root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.62);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.14);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif;--caps:"Cormorant SC",serif}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;color:var(--fg);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;
+  background:radial-gradient(70% 50% at 100% 0,rgba(120,40,28,.28),transparent 70%),radial-gradient(60% 45% at 0 100%,rgba(150,105,20,.22),transparent 70%),var(--bg)}
+.w{max-width:1180px;margin:0 auto;padding:clamp(28px,5vw,64px) clamp(18px,4vw,48px) 90px}
+.marca{display:inline-flex;align-items:center;gap:.32em;font:600 16px/1 var(--sans);letter-spacing:-.02em}
+.marca i{width:.2em;height:.2em;border-radius:50%;background:var(--gold)}
+.marca span{font-weight:400;color:var(--mute)}
+.intro{margin:38px 0 0;max-width:62ch;color:var(--mute)}
+.intro b{color:var(--fg);font-weight:500}
+.op{margin-top:clamp(36px,5vw,64px);padding-top:26px;border-top:1px solid var(--line)}
+.cab{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;margin-bottom:6px}
+.num{font:500 12px/1 var(--sans);letter-spacing:.18em;color:var(--gold)}
+.nom{font:500 18px/1.2 var(--sans)}
+.por{margin:0 0 4px;max-width:70ch;color:var(--mute);font-size:14.5px}
+.fila{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px clamp(20px,4vw,60px);margin-top:14px}
+.peso{grid-column:1/-1;margin:26px 0 12px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.rot{margin:0;font:400 12px/1 var(--caps);letter-spacing:.3em;color:var(--gold)}
+.h{margin:12px 0 0;line-height:1.02;font-size:clamp(44px,6.2vw,84px);overflow-wrap:anywhere}
+.lead{margin:.9em 0 0;max-width:36ch;font-size:15px;color:var(--mute)}
+.gran{margin:26px 0 0;line-height:1.05;font-size:clamp(30px,3.6vw,52px);text-wrap:balance}
+.gran em{font-style:normal;color:var(--gold)}
+.hoy .h{font-weight:500;letter-spacing:-.035em}
+.hoy .gran{font-weight:400;letter-spacing:-.035em}
+.f1 .h,.f1 .gran{font-family:"Hanken Grotesk",var(--sans);letter-spacing:-.02em}
+.f2 .h,.f2 .gran{font-family:"Urbanist",var(--sans);letter-spacing:-.02em}
+.f3 .h,.f3 .gran{font-family:"Jost",var(--sans);letter-spacing:-.015em}
+.w200 .h,.w200 .gran{font-weight:200}
+.w300 .h,.w300 .gran{font-weight:300}
+.pie{margin-top:clamp(40px,6vw,80px);padding-top:22px;border-top:1px solid var(--line);color:var(--mute);font-size:14px;max-width:70ch}
+@media (max-width:760px){.fila{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+  <span class="marca"><b>IVS</b><i></i><span>CODEX</span></span>
+  <p class="intro"><b>Títulos más finos, con el punto redondo.</b> Instrument Sans no trae pesos por debajo de 400, y su punto es cuadrado; por eso estas tres tipografías: las tres tienen el punto en forma de círculo, como el de la marca. Sólo cambian los títulos grandes; el resto de la aplicación sigue en Instrument Sans.</p>
+
+  <section class="op hoy">
+    <div class="cab"><span class="num">HOY</span><span class="nom">Instrument Sans · 500</span></div>
+    <p class="por">La de ahora, para comparar: trazo grueso y punto cuadrado.</p>
+    <div class="fila">
+      <div><p class="rot">QVAESTIO</p><h2 class="h">Buscar.</h2><p class="lead">Las once bases a la vez.</p></div>
+      <div><p class="rot">CALCVLVS</p><h2 class="h">Cálculos.</h2><p class="lead">Intereses, índices, despido y más.</p></div>
+    </div>
+    <p class="gran">Pruébelo <em>aquí mismo.</em></p>
+  </section>
+
+  <section class="op f1">
+    <div class="cab"><span class="num">OPCIÓN 1</span><span class="nom">Hanken Grotesk</span></div>
+    <p class="por">La más parecida a la actual: misma construcción de grotesca neutra, sólo que fina y con el punto redondo. Es el cambio más discreto.</p>
+    <div class="w200"><p class="peso">Extrafina · 200</p>
+      <div class="fila">
+        <div><p class="rot">QVAESTIO</p><h2 class="h">Buscar.</h2><p class="lead">Las once bases a la vez.</p></div>
+        <div><p class="rot">CALCVLVS</p><h2 class="h">Cálculos.</h2><p class="lead">Intereses, índices, despido y más.</p></div>
+      </div>
+      <p class="gran">Pruébelo <em>aquí mismo.</em></p>
+    </div>
+    <div class="w300"><p class="peso">Fina · 300</p>
+      <div class="fila">
+        <div><h2 class="h">Buscar.</h2></div>
+        <div><h2 class="h">Cálculos.</h2></div>
+      </div>
+      <p class="gran">Pruébelo <em>aquí mismo.</em></p>
+    </div>
+  </section>
+
+  <section class="op f2">
+    <div class="cab"><span class="num">OPCIÓN 2</span><span class="nom">Urbanist</span></div>
+    <p class="por">Geométrica y más suave: curvas circulares y mucho aire. La que más se siente «de estudio», sin dejar de ser sobria.</p>
+    <div class="w200"><p class="peso">Extrafina · 200</p>
+      <div class="fila">
+        <div><p class="rot">QVAESTIO</p><h2 class="h">Buscar.</h2><p class="lead">Las once bases a la vez.</p></div>
+        <div><p class="rot">CALCVLVS</p><h2 class="h">Cálculos.</h2><p class="lead">Intereses, índices, despido y más.</p></div>
+      </div>
+      <p class="gran">Pruébelo <em>aquí mismo.</em></p>
+    </div>
+    <div class="w300"><p class="peso">Fina · 300</p>
+      <div class="fila">
+        <div><h2 class="h">Buscar.</h2></div>
+        <div><h2 class="h">Cálculos.</h2></div>
+      </div>
+      <p class="gran">Pruébelo <em>aquí mismo.</em></p>
+    </div>
+  </section>
+
+  <section class="op f3">
+    <div class="cab"><span class="num">OPCIÓN 3</span><span class="nom">Jost</span></div>
+    <p class="por">De la familia de Futura: letras casi trazadas con compás, la más arquitectónica. Combina con las versalitas latinas de los rótulos.</p>
+    <div class="w200"><p class="peso">Extrafina · 200</p>
+      <div class="fila">
+        <div><p class="rot">QVAESTIO</p><h2 class="h">Buscar.</h2><p class="lead">Las once bases a la vez.</p></div>
+        <div><p class="rot">CALCVLVS</p><h2 class="h">Cálculos.</h2><p class="lead">Intereses, índices, despido y más.</p></div>
+      </div>
+      <p class="gran">Pruébelo <em>aquí mismo.</em></p>
+    </div>
+    <div class="w300"><p class="peso">Fina · 300</p>
+      <div class="fila">
+        <div><h2 class="h">Buscar.</h2></div>
+        <div><h2 class="h">Cálculos.</h2></div>
+      </div>
+      <p class="gran">Pruébelo <em>aquí mismo.</em></p>
+    </div>
+  </section>
+
+  <p class="pie">Al elegir una, se aplica a los títulos de la aplicación y de la portada. Todas se cargan desde Google Fonts, igual que Instrument Sans hoy.</p>
+</div>
+</body>
+</html>
