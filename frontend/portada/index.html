@@ -32,7 +32,7 @@
 .chip:hover{border-color:var(--gold)}
 .form label.check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--fg);cursor:pointer}.check input{accent-color:var(--gold);width:16px;height:16px}
 .sal{padding:clamp(14px,1.8vw,22px);border-radius:20px;background:color-mix(in srgb,var(--gold) 7%,transparent);border:1px solid color-mix(in srgb,var(--gold) 24%,transparent);font-size:14.5px;min-height:96px}
-.sal .gran{display:block;font:500 clamp(24px,2.8vw,40px)/1.1 var(--sans);letter-spacing:-.035em;color:var(--gold);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.sal .gran{display:block;font:500 clamp(24px,2.8vw,40px)/1.1 var(--sans);letter-spacing:-.035em;color:var(--gold);font-variant-numeric:tabular-nums;overflow-wrap:normal}
 .sal small{display:block;margin-top:4px;color:var(--mute);font-size:13px}
 .sal .mal{color:#e0a0a0}
 .sal table{width:100%;margin-top:12px;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
@@ -101,13 +101,14 @@ html::-webkit-scrollbar{display:none}
   .sal table,.sal tbody{display:block}
   .sal tr{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:0 14px;align-items:baseline}
   .sal td{min-width:0}
-  .sal td:last-child{white-space:normal;overflow-wrap:anywhere;padding-left:0}
+  .sal td:last-child{white-space:normal;overflow-wrap:normal;padding-left:0}
+  .sal .gran{font-size:clamp(22px,7vw,30px)}
   .sal tr.nota{grid-template-columns:minmax(0,1fr)}
   .sal tr.nota td:last-child{text-align:left;border-top:0;padding-top:0;color:var(--mute)}
 }
-</style><link rel="stylesheet" href="../celular-vidrio.css?v=20261030g">
+</style><link rel="stylesheet" href="../celular-vidrio.css?v=20261030h">
 </head><body>
-<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261029r"></script><script src="shared6.js?v=20261030g"></script><script src="calculos.js?v=20261024a"></script>
+<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261029r"></script><script src="shared6.js?v=20261030h"></script><script src="calculos.js?v=20261024a"></script>
 <script>
 var m=IVS6.montar(),O=IVS4.OFERTAS;
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}

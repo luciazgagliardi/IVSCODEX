@@ -528,7 +528,7 @@ html:not([data-tema="claro"]) .luces{display:none}   /* las luces desenfocadas s
 .tour-ov{position:fixed;inset:0;z-index:300;pointer-events:none}
 .tour-v{position:fixed;background:rgba(var(--ov-rgb),.8);pointer-events:auto}
 .tour-tapa{position:fixed;pointer-events:auto}
-.tour-foco{position:fixed;border-radius:16px;box-shadow:0 0 0 2px var(--gold),0 0 30px rgba(var(--gold-rgb),.25);pointer-events:none;transition:left .4s var(--ease),top .4s var(--ease),width .4s var(--ease),height .4s var(--ease)}
+.tour-foco{position:fixed;border-radius:16px;box-shadow:0 0 0 1px var(--gold-55);pointer-events:none;transition:left .4s var(--ease),top .4s var(--ease),width .4s var(--ease),height .4s var(--ease)}
 .tour-card{pointer-events:auto;z-index:2;position:fixed;padding:18px 20px 16px;background:#17140f;border:1px solid var(--gold-55);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.7);transition:left .4s var(--ease),top .4s var(--ease)}
 .tour-card h4{margin:2px 0 6px;font:500 17px/1.3 var(--sans);color:var(--fg)}
 .tour-card p{margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--mute)}
@@ -655,6 +655,9 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .menu__item[aria-current="page"] b::after{content:"";display:inline-block;width:7px;height:7px;margin-left:12px;border-radius:50%;background:var(--gold);vertical-align:.14em}
 .menu.is-on .menu__item{animation:entra .7s var(--ease) both;animation-delay:calc(var(--k) * 40ms)}
 @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes entrapag{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+.entra-pag{animation:entrapag .65s var(--ease) both}
+@media (prefers-reduced-motion:reduce){.entra-pag{animation:none}}
 @media (max-width:980px){ .menu__grid{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px} }
 @media (max-width:560px){ .menu__grid{grid-template-columns:minmax(0,1fr)} }
 
@@ -1155,7 +1158,7 @@ mark.actual{background:var(--gold);color:var(--bg)}
 .calc-sel__b:hover{color:var(--fg)}
 .calc-sel__b[aria-selected="true"]{background:var(--fg);color:var(--bg)}
 @media (max-width:640px){ .calc-sel{border:0;padding:0;gap:8px} .calc-sel__b{border:1px solid var(--line)} .calc-sel__b[aria-selected="true"]{border-color:var(--fg)} }
-.calc-total{margin:18px 0 0;font:400 clamp(28px,2.6vw,40px)/1.1 var(--sans);letter-spacing:-.025em;color:var(--fg);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.calc-total{margin:18px 0 0;font:400 clamp(28px,2.6vw,40px)/1.1 var(--sans);letter-spacing:-.025em;color:var(--fg);font-variant-numeric:tabular-nums;overflow-wrap:normal}
 .calc-total::first-letter{text-transform:uppercase}
 .calc-sub{margin:10px 0 0;font-size:14px;color:var(--mute)}
 .calc-vacio{margin:16px 0 0;color:var(--mute)}
@@ -1250,8 +1253,9 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 /* ---------- exportar ---------- */
 .pas-export{margin:14px 0 0}
-.pasaje,.pasaje .txt,.blk,.perfil-menu,.pm-cab{min-width:0;max-width:100%}
-.pasaje .txt,.blk p,.blk .vacio,.perfil-menu span,.pm-cab *{overflow-wrap:anywhere;word-break:break-word}
+.pasaje,.pasaje .txt,.blk{min-width:0;max-width:100%}
+.pasaje .txt,.blk p,.blk .vacio{overflow-wrap:anywhere;word-break:break-word}
+.perfil-menu,.pm-cab{overflow-wrap:break-word}
 
 /* El punto medio "·" de la tipografía cae alto (su centro está a 38,6 % del
    cuerpo; la mitad de una palabra, entre minúsculas y mayúsculas, está a
@@ -1612,7 +1616,7 @@ mark{border-radius:6px}
 *{scrollbar-width:none!important}
 *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 </style>
-<link rel="stylesheet" href="./celular-vidrio.css?v=20261030g">
+<link rel="stylesheet" href="./celular-vidrio.css?v=20261030h">
 </head>
 <body>
 
@@ -1628,7 +1632,7 @@ mark{border-radius:6px}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030g" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030h" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
@@ -4953,7 +4957,14 @@ function equivalentesDe(q){
   return e.variantes.filter(function(v){ return v.rel==="canonico"||v.rel==="equivalente"; })
     .map(function(v){ return v.t; }).slice(0,4);
 }
-function tiraEquivalentes(){
+/* La nota del tesauro («El CCyC de 2015 unificó el concepto…»): en la computadora va sola, en la pastilla de sugerencias. */
+function notaAnillo(){
+  if(estado.tab!=="buscar") return "";
+  var e=expandir(String(estado.q||"").trim());
+  return (e&&e.anillo&&e.anillo.nota)?'<p class="sug-nota" style="margin:0;font-style:italic">'+esc(e.anillo.nota)+'</p>':"";
+}
+function esCelular(){ return window.matchMedia&&matchMedia("(max-width:760px)").matches; }
+function tiraEquivalentes(sinNota){
   if(estado.tab!=="buscar") return "";
   var e=expandir(String(estado.q||"").trim());
   if(!e||!e.variantes.length) return "";
@@ -4972,7 +4983,7 @@ function tiraEquivalentes(){
         (estado.conEquivalentes?'Buscando también estas formas':'Buscar también estas formas')+'</button></div>':'')+
     (cer?'<p class="sug-nota" style="margin-top:10px"><b>Conceptos análogos.</b> Nociones jurídicas afines pero con presupuestos diferentes; '+
         'se requiere verificar sus requisitos sustanciales antes de proceder a su cita.</p><div class="chips">'+cer+'</div>':'')+
-    (e.anillo.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(e.anillo.nota)+'</p>':'')+
+    (!sinNota&&e.anillo.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(e.anillo.nota)+'</p>':'')+
     '</div>';
 }
 
@@ -5216,6 +5227,7 @@ function bloqueResultados(vis){
   return h;
 }
 /* Las sugerencias (voces, formas equivalentes, notas del tesauro) no ocupan lugar: una pastilla chica con una «i» las abre en una ventanita. */
+if(window.matchMedia){ var _mqc=matchMedia("(max-width:760px)"); var _cb=function(){ if(typeof render==="function"&&estado.tab==="buscar") render(); }; if(_mqc.addEventListener) _mqc.addEventListener("change",_cb); }
 function pastillaSug(inner){
   var a=!!estado.sugAbierta;
   return '<div class="sugpop'+(a?' abre':'')+'"><button type="button" class="sug-pill" data-act="tog-sug" aria-haspopup="dialog" aria-expanded="'+a+'">'+
@@ -5241,15 +5253,15 @@ function vistaBuscar(){
   }
   var vis=basesVisibles();
   if(estado.verBase&&!vis.some(function(f){return f.slug===estado.verBase;})) estado.verBase="";
-  var ac=filtrosActivos(), sugs=tiraSugerencias()+tiraEquivalentes()+tiraVariantes();
-  var tieneSug=!!(sug||sugs);
+  var ac=filtrosActivos(), cel=esCelular(), sugs=tiraSugerencias()+tiraEquivalentes(!cel)+tiraVariantes(), notaIA=cel?"":notaAnillo();
+  var tieneSug=!!(sug||sugs||notaIA);
   var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?cuantosDe(f,im):0); },0);
   var resp=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; }).length;
   return '<div class="bq" id="panel-buscar-form">'+
       '<div class="bq-barra"><label class="cq"><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
         '<button class="btn" data-act="buscar-todas">Buscar</button></label>'+
         '<button class="chip" data-act="tog-drawer" aria-pressed="'+(estado.drawer?"true":"false")+'"><span>Filtros</span>'+(ac.length?'<span class="fsb-n">'+ac.length+'</span>':'')+'<svg class="fsb-flecha" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>'+
-      (tieneSug?'<div class="bq-sug bq-sug--abajo">'+pastillaSug(sug+sugs)+'</div>':'')+
+      (tieneSug?'<div class="bq-sug bq-sug--abajo">'+(cel?pastillaSug(sug+sugs):sug+sugs+(notaIA?pastillaSug(notaIA):""))+'</div>':'')+
       '<div class="bq-sum">'+(ac.length?ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join(""):'<span><b>Búsqueda irrestricta</b> · Todas las bases, jurisdicciones y períodos.</span>')+
         '<span class="bq-cuenta">'+(resp?'<b>'+tot.toLocaleString("es-AR")+'</b> resultados':'')+'</span></div>'+
       (estado.api?avisoServidor():"")+
@@ -8194,8 +8206,8 @@ function montarAsistente(){
       {sel:".bq-sug",t:"Expresiones equivalentes",x:"Los buscadores oficiales indexan por voces técnicas. Aquí se indican las expresiones con que los tribunales denominan el tema; puede buscar por cualquiera de ellas o incluir todas las equivalentes.",antes:function(){ enBuscar(); cierraPanel(); }}
     ]; }},
     perfil:{n:"Mi perfil y lo guardado",pasos:function(){ return [
-      {sel:"#mi-perfil",t:"Seleccione «Mi perfil»",x:"Abre el menú de su cuenta.",hazlo:true,alTocar:true,antes:function(){ if(estado.perfilMenu){ estado.perfilMenu=false; pintarNav(); } }},
-      {sel:"#perfil-menu",t:"Su cuenta y lo guardado",x:"Su cuenta, las fuentes y pasajes guardados y sus búsquedas recientes, que puede repetir en cualquier momento. Con la sesión iniciada, también puede cerrarla desde aquí.",antes:function(){ if(!estado.perfilMenu){ estado.perfilMenu=true; pintarNav(); } }}
+      {sel:(esCelular()?"#bn-perfil":"#mi-perfil"),t:"Seleccione «Mi perfil»",x:"Abre el menú de su cuenta.",hazlo:true,alTocar:true,antes:function(){ if(estado.perfilMenu){ estado.perfilMenu=false; pintarNav(); } }},
+      {sel:(esCelular()?"#perfil-hoja":"#perfil-menu"),t:"Su cuenta y lo guardado",x:"Su cuenta, las fuentes y pasajes guardados y sus búsquedas recientes, que puede repetir en cualquier momento. Con la sesión iniciada, también puede cerrarla desde aquí.",antes:function(){ if(!estado.perfilMenu){ estado.perfilMenu=true; pintarNav(); } }}
     ]; }}
   };
 
@@ -8268,10 +8280,10 @@ function montarAsistente(){
   /* el completo: la barra, Buscar a fondo y un paso por cada una de las otras secciones */
   TOURS.completo.pasos=function(){
     var base=[
-      {sel:".marca-app",t:"Bienvenido a IVS CODEX",x:"Busca a la vez en las bases judiciales oficiales y le muestra los resultados con el pasaje donde está lo que busca. Voy a recorrer con usted todas las funciones.",antes:function(){ enBuscar(); cierraPanel(); }},
-      {sel:"#nav",t:"Las secciones principales",x:"Acceso directo a las secciones de uso más frecuente de la plataforma."},
-      {sel:"#abrir-menu",t:"Todas las secciones",x:"Aquí aparecen las quince secciones agrupadas por su función."},
-      {sel:"#mi-perfil",t:"Mi perfil",x:"Su cuenta y todo lo que guardó: fuentes, pasajes y búsquedas recientes, que puede repetir en cualquier momento."},
+      {sel:(esCelular()?"header.top .lx-chip":".marca-app"),t:"Bienvenido a IVS CODEX",x:"Busca a la vez en las bases judiciales oficiales y le muestra los resultados con el pasaje donde está lo que busca. Voy a recorrer con usted todas las funciones.",antes:function(){ enBuscar(); cierraPanel(); }},
+      {sel:(esCelular()?"#botnav":"#nav"),t:"Las secciones principales",x:"Acceso directo a las secciones de uso más frecuente de la plataforma."},
+      {sel:(esCelular()?"#abrir-menu-m":"#abrir-menu"),t:"Todas las secciones",x:"Aquí aparecen las quince secciones agrupadas por su función."},
+      {sel:(esCelular()?"#bn-perfil":"#mi-perfil"),t:"Mi perfil",x:"Su cuenta y todo lo que guardó: fuentes, pasajes y búsquedas recientes, que puede repetir en cualquier momento."},
       {sel:".cq",t:"Buscar: consulta",x:"Escriba el tema con sus palabras. Con Enter o «Buscar» se consulta a la vez en todas las bases seleccionadas.",antes:function(){ enBuscar(); cierraPanel(); }},
       {sel:".bq-barra [data-act=\"tog-drawer\"]",t:"Buscar: filtros",x:"Dónde (nación, provincias), fuentes, cómo combinar las palabras, años y restricciones aplicadas."},
       {sel:".bz-riel",t:"Buscador: bases",x:"Lista de fuentes con indicador, estado y botón de búsqueda.",antes:cierraPanel},
@@ -8282,7 +8294,7 @@ function montarAsistente(){
       var x=SEC[tab][0];
       return {sel:CABSEL,t:NOMBRES_SECCION[tab],x:x[2]+" Para instrucciones detalladas, consulte «"+NOMBRES_SECCION[tab]+"» en la sección «Cómo usar».",antes:en(tab)};
     });
-    var fin=[{sel:"#asist-abrir",t:"Y si se pierde…",x:"Estoy acá. Puedo hacer búsquedas con filtros, explicarle una parte o hacerla juntos con usted con «Cómo usar».",antes:function(){ enBuscar(); }}];
+    var fin=[{sel:(esCelular()?"header.top .lx-chip":"#asist-abrir"),t:"Y si se pierde…",x:"Estoy acá. Puedo hacer búsquedas con filtros, explicarle una parte o hacerla juntos con usted con «Cómo usar».",antes:function(){ enBuscar(); }}];
     return base.concat(resto,fin);
   };
   /* el rectángulo que une a uno o varios elementos (para iluminar desde el rótulo hasta la bajada) */
@@ -9421,10 +9433,13 @@ function render(){
            citas:vistaCitas,verificar:vistaVerificar,guardados:vistaGuardados,
            cuenta:vistaCuenta,calculos:vistaCalculos,plazos:vistaPlazos,glosario:vistaGlosario,
            herramientas:function(){ return window.vistaHerramientas?window.vistaHerramientas():'<div class="vacio">Cargando las herramientas…</div>'; }}[estado.tab]||vistaBuscar;
+    var cambio=(render._tab!==undefined&&render._tab!==estado.tab); render._tab=estado.tab;
     v.className="col v-"+estado.tab;
     v.innerHTML=f();
     document.body.classList.toggle("en-lector",estado.tab==="lector"&&!!estado.texto);
     pintarCabecera(v);
+    /* al abrir una sección, entra suave (la misma animación del menú) en vez de aparecer de golpe */
+    if(cambio){ var ent=[document.getElementById("cab"),v]; ent.forEach(function(x){ if(!x) return; x.classList.remove("entra-pag"); void x.offsetWidth; x.classList.add("entra-pag"); }); clearTimeout(render._ep); render._ep=setTimeout(function(){ ent.forEach(function(x){ if(x) x.classList.remove("entra-pag"); }); },900); }
     if(estado.tab==="calculos"||estado.tab==="plazos") pintarSalidaC();
     if(estado.tab==="lector") pintarLector();
     pintarCadena();
