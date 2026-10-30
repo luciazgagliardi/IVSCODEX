@@ -16,9 +16,9 @@
   body:has(header.top)::after,body:has(header.cab)::after{
     content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     background:
-      radial-gradient(circle 240px at 92% 13%,color-mix(in srgb,var(--gold) 13%,transparent) 0,color-mix(in srgb,var(--gold) 4%,transparent) 55%,transparent 100%),
-      radial-gradient(circle 210px at 3% 55%,color-mix(in srgb,var(--fg) 7%,transparent) 0,transparent 100%),
-      radial-gradient(circle 250px at 84% 91%,color-mix(in srgb,var(--gold) 10%,transparent) 0,transparent 100%)
+      radial-gradient(circle 230px at 92% 30%,color-mix(in srgb,var(--gold) 13%,transparent) 0,color-mix(in srgb,var(--gold) 4%,transparent) 55%,transparent 100%),
+      radial-gradient(circle 200px at 3% 52%,color-mix(in srgb,var(--fg) 7%,transparent) 0,transparent 100%),
+      radial-gradient(circle 230px at 84% 74%,color-mix(in srgb,var(--gold) 10%,transparent) 0,transparent 100%)
   }
   html[data-tema="claro"] body::after{display:none!important}   /* el blanco ya trae las suyas */
 
@@ -101,14 +101,8 @@
     background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding-left:8px!important;padding-right:8px!important
   }
   header.top #como-usar,.cab .btn.sec{color:var(--mute)!important}
-  header.top::before{
-    background:rgb(var(--bg-rgb))!important;bottom:-46px!important;opacity:.96;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-    -webkit-mask-image:linear-gradient(to bottom,#000 45%,transparent)!important;mask-image:linear-gradient(to bottom,#000 45%,transparent)!important
-  }
 
   /* abajo: degradé del fondo y cinco íconos finos */
-  html::after{content:"";position:fixed;left:0;right:0;bottom:0;height:110px;z-index:54;pointer-events:none;
-    background:linear-gradient(to top,rgb(var(--bg-rgb)) 40%,transparent)}
   .botnav{
     left:50%!important;right:auto!important;transform:translateX(-50%);width:auto!important;padding:0 4px!important;gap:6px!important;
     bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
@@ -237,4 +231,19 @@
       radial-gradient(circle 170px at 4% 62%,color-mix(in srgb,var(--fg) 7%,transparent) 0,transparent 100%),
       radial-gradient(circle 200px at 88% 98%,color-mix(in srgb,var(--gold) 11%,transparent) 0,transparent 100%),
       color-mix(in srgb,rgb(var(--bg-rgb)) 74%,transparent)!important}
+}
+
+/* ---- Franjas fijas: lo que se desplaza se corta antes de las barras y nunca se mezcla con ellas (también en Safari) ---- */
+.franja{display:none}
+@media (max-width:760px){
+  .franja{display:block;position:fixed;left:0;right:0;z-index:44;pointer-events:none;background:rgb(var(--bg-rgb))}
+  .franja-arriba{top:-40px;height:calc(40px + 69px + env(safe-area-inset-top,0px) + 34px);
+    -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 34px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 34px),transparent)}
+  .franja-abajo{bottom:-60px;height:calc(60px + 66px + env(safe-area-inset-bottom,0px) + 34px);
+    -webkit-mask-image:linear-gradient(to top,#000 calc(100% - 34px),transparent);mask-image:linear-gradient(to top,#000 calc(100% - 34px),transparent)}
+  body.en-lector .franja-abajo{display:none}
+  header.top::before{display:none!important}
+  /* la cinta de bases no suma espacio de más (el marco del recorrido la rodea parejo) */
+  .bz-riel{padding:0!important;margin:0 0 14px!important}
+  .lx-sub{margin-left:0!important}
 }
