@@ -185,6 +185,7 @@ strong,b{font-weight:500}
 @keyframes luzA{to{transform:translate3d(5vw,-4vh,0) scale(1.1)}}
 @media (prefers-reduced-motion:reduce){.luces i{animation:none}}
 html[data-tema="claro"] .luces{opacity:.5}
+html[data-tema="claro"] .luces i{animation:none!important}
 html:not([data-tema="claro"]) .luces{display:none}   /* las luces desenfocadas sólo quedan en el tema claro */
 
 /* la marca escrita, con el punto redondo del logo y no el "·" de la fuente */
@@ -281,6 +282,7 @@ html:not([data-tema="claro"]) .luces{display:none}   /* las luces desenfocadas s
 .bq-drawer.is-on{display:block}
 .bq-sug--abajo{margin:12px 0 0}
 .sugpop{position:relative;display:inline-block}
+.sugeridas+.sugpop,.panel+.sugpop{margin-top:16px}
 .sug-pill{appearance:none;display:inline-flex;align-items:center;gap:8px;padding:8px 15px 8px 11px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);font:400 13px/1 var(--sans);cursor:pointer;transition:border-color .25s,color .25s}
 .sug-pill:hover,.sugpop.abre .sug-pill{border-color:var(--gold-55);color:var(--fg)}
 .sug-pill svg{display:block;flex:none;color:var(--gold)}
@@ -307,10 +309,10 @@ html:not([data-tema="claro"]) .luces{display:none}   /* las luces desenfocadas s
 .bz-fila .rf-t{flex:none;font-size:11.5px;color:var(--mute-2);white-space:nowrap}
 .bz-lista{min-width:0}
 .rz-cab{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:0 0 12px;margin-bottom:0;font-size:14px}
-.en-vivo{position:relative;display:inline-block;margin-left:14px;padding-left:16px;font:400 13px/1.3 var(--sans);letter-spacing:0;color:var(--mute);white-space:nowrap;vertical-align:baseline}
+.en-vivo{display:inline-flex;align-items:center;gap:7px;margin-left:14px;padding-left:0;font:400 13px/1.3 var(--sans);letter-spacing:0;color:var(--mute);white-space:nowrap;vertical-align:middle}
 /* el punto verde, a la izquierda, sobre la misma línea y a la altura del centro de las letras */
-.en-vivo::before{content:"";position:absolute;left:0;top:50%;width:8px;height:8px;margin-top:-3.4px;border-radius:50%;background:#5fd07f;box-shadow:0 0 0 3px rgba(95,208,127,.18)}
-.en-vivo.local::before{background:var(--gold);box-shadow:0 0 0 3px rgba(var(--gold-rgb),.18)}
+.en-vivo::before{content:"";position:static;flex:none;width:5px;height:5px;margin:0;border-radius:50%;background:#5fd07f;box-shadow:0 0 0 2.5px rgba(95,208,127,.18)}
+.en-vivo.local::before{background:var(--gold);box-shadow:0 0 0 2.5px rgba(var(--gold-rgb),.18)}
 .rz-cab b{font-weight:500}
 .rz-ord{margin-left:auto;display:flex;flex-wrap:wrap;gap:6px}
 .rz-ord .chip{padding:5px 12px;font-size:12.5px}
@@ -644,7 +646,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
   opacity:0;visibility:hidden;transition:opacity .45s var(--ease),visibility 0s .45s
 }
 .menu.is-on{opacity:1;visibility:visible;transition:opacity .45s var(--ease)}
-.menu__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(24px,3vw,56px)}
+.menu__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(40px,5vw,64px) clamp(24px,3vw,56px)}
 .menu__grupo h2{margin:0;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:13px;font-weight:400;color:var(--mute-2)}
 .menu__item{display:block;width:100%;padding:18px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;transition:border-color .5s}
 .menu__item:hover{border-bottom-color:var(--gold-55)}
@@ -655,6 +657,13 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .menu__item[aria-current="page"] b::after{content:"";display:inline-block;width:7px;height:7px;margin-left:12px;border-radius:50%;background:var(--gold);vertical-align:.14em}
 .menu.is-on .menu__item{animation:entra .7s var(--ease) both;animation-delay:calc(var(--k) * 40ms)}
 @keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes desplegar{from{opacity:0;transform:translateY(-10px) scale(.92)}to{opacity:1;transform:none}}
+@keyframes desplegar-hoja{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+.perfil-menu:not([hidden]):not(.perfil-hoja),.compartir-menu,.bq-drawer.is-on{animation:desplegar .45s cubic-bezier(.2,1.15,.3,1) both;transform-origin:top right}
+.bq-drawer.is-on{transform-origin:top center}
+.perfil-hoja.perfil-menu:not([hidden]){animation:desplegar-hoja .5s cubic-bezier(.2,1.1,.3,1) both;transform-origin:bottom center}
+.rail.abierto .rail-cuerpo{animation:desplegar .4s cubic-bezier(.2,1.15,.3,1) both;transform-origin:top center}
+@media (prefers-reduced-motion:reduce){.perfil-menu,.compartir-menu,.bq-drawer.is-on,.rail.abierto .rail-cuerpo{animation:none!important}}
 @keyframes entrapag{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
 .entra-pag{animation:entrapag .65s var(--ease) both}
 @media (prefers-reduced-motion:reduce){.entra-pag{animation:none}}
@@ -942,7 +951,7 @@ body.en-recorrido .cab>*{animation:none}
 .lector-lado .lx-fila{grid-template-columns:78px minmax(0,1fr)}
 .lx-mini{border-color:var(--gold-55);color:var(--gold)}
 .lx-fallo{margin:28px 0 8px;padding:20px;border:1px solid var(--gold-55);border-radius:24px;background:rgba(var(--gold-rgb),.035);scroll-margin-top:150px}
-.verif{display:inline-flex;align-items:center;gap:6px;margin-left:6px;font-size:11px;font-weight:600;color:var(--acequia);vertical-align:middle}
+.verif{display:inline-flex;align-items:center;gap:7px;margin-left:6px;font-size:12px;font-weight:400;line-height:1;color:var(--acequia);vertical-align:middle}
 .verif svg{flex:none;display:block}
 .lx-pill{appearance:none;display:inline-flex;align-items:center;gap:9px;padding:9px 18px 8px 14px;border:1px solid var(--gold-55);border-radius:999px;background:rgba(var(--gold-rgb),.1);color:var(--gold);font:500 14px/1 var(--sans);cursor:pointer}
 .lx-sub{margin:8px 0 0 4px;font-size:12.5px;color:var(--mute-2)}
@@ -1089,8 +1098,8 @@ mark.actual{background:var(--gold);color:var(--bg)}
 
 /* ---------- estado de las bases (riel de Buscar) ---------- */
 .rail-resumen{display:flex;align-items:center;gap:8px;margin:-2px 0 12px;font-size:12.5px;color:var(--mute-2)}
-.rf-srv{width:6px;height:6px;border-radius:50%;background:var(--rojo);flex:none}
-.rf-srv.ok{background:var(--verde);box-shadow:0 0 0 3px rgba(143,191,154,.15)}
+.rf-srv{display:inline-block;width:5px;height:5px;margin-right:7px;vertical-align:middle;border-radius:50%;background:var(--rojo);flex:none}
+.rf-srv.ok{background:var(--verde);box-shadow:0 0 0 2.5px rgba(143,191,154,.15)}
 .rail-fuente .rf-t{flex:none;margin-left:8px;font-size:11.5px;color:var(--mute-2);font-variant-numeric:tabular-nums}
 .rail-fuente.consultando .rf-punto{animation:parpadeo 1s ease-in-out infinite alternate}
 .rail-fuente.consultando .rf-t{color:var(--gold)}
@@ -1616,7 +1625,7 @@ mark{border-radius:6px}
 *{scrollbar-width:none!important}
 *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 </style>
-<link rel="stylesheet" href="./celular-vidrio.css?v=20261030h">
+<link rel="stylesheet" href="./celular-vidrio.css?v=20261030j">
 </head>
 <body>
 
@@ -1632,7 +1641,7 @@ mark{border-radius:6px}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030h" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030j" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
