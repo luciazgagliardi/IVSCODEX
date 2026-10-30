@@ -87,6 +87,7 @@
 
   --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --titulo:"Punto redondo","Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;   /* títulos: Instrument Sans con el punto redondo (punto-redondo.woff cubre sólo «.») */
   --serif:var(--sans);
   --mono:var(--sans);
   --pad:clamp(18px,3vw,44px);
@@ -558,13 +559,23 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .fila>*{min-width:0}
 .acciones{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
 
+/* El punto de los títulos es un círculo: esta fuente trae un solo carácter («.») y mide como el cuadrado de Instrument Sans. */
+@font-face{font-family:"Punto redondo";src:url(./punto-redondo.woff) format("woff");font-weight:400;font-style:normal;unicode-range:U+002E;font-display:block}
+
 /* ================================================================== *
    CABECERA DE LA APLICACIÓN
  * ================================================================== */
 .top{
-  position:sticky;top:0;z-index:50;padding-top:env(safe-area-inset-top,0px);
-  background:rgba(var(--bg-rgb),.84);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)
+  position:sticky;top:0;z-index:50;padding-top:env(safe-area-inset-top,0px)
 }   /* sin línea separadora debajo, en ninguna sección */
+/* El fondo de la barra se funde hacia abajo (fondo y desenfoque con máscara): no deja un corte
+   contra las luces de color de la página, y al desplazarse el texto se desvanece sin borde. */
+.top::before{
+  content:"";position:absolute;left:0;right:0;top:0;bottom:-30px;z-index:-1;pointer-events:none;
+  background:rgba(var(--bg-rgb),.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,#000 58%,transparent 100%);
+  mask-image:linear-gradient(to bottom,#000 0,#000 58%,transparent 100%)
+}
 .nav-wrap{display:flex;align-items:center;gap:24px;padding:22px var(--pad)}   /* mismo margen izquierdo que el contenido: el nombre queda sobre el mismo borde que el título */
 /* Las medidas son las de sigillvm.com: la marca ocupa 180 × 44 px, el
    símbolo mide 24 px y la palabra va 12 px a su derecha. */
@@ -628,7 +639,7 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .menu__grupo h2{margin:0;padding-bottom:14px;border-bottom:1px solid var(--line);font-size:13px;font-weight:400;color:var(--mute-2)}
 .menu__item{display:block;width:100%;padding:18px 0;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;transition:border-color .5s}
 .menu__item:hover{border-bottom-color:var(--gold-55)}
-.menu__item b{display:block;font:400 clamp(24px,2.3vw,34px)/1.1 var(--sans);letter-spacing:-.02em;transition:color .3s}
+.menu__item b{display:block;font:400 clamp(24px,2.3vw,34px)/1.1 var(--titulo);letter-spacing:-.02em;transition:color .3s}
 .menu__item:hover b{color:var(--gold)}
 .menu__item span{display:block;margin-top:6px;font-size:13.5px;color:var(--mute)}
 .menu__item[aria-current="page"] b,.menu__item:active b{color:var(--gold)}
@@ -648,7 +659,7 @@ body.en-recorrido .cab>*{animation:none}
 .cab__saludo b{font-weight:400;color:var(--fg)}
 .cab__ojo{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0;font-size:14px;color:var(--mute)}
 .cab__lat{font:500 15px/1 var(--caps);letter-spacing:.24em;color:var(--gold)}
-.cab h1{margin:18px 0 0;font:500 clamp(36px,4.4vw,68px)/1.02 var(--sans);letter-spacing:-.035em}
+.cab h1{margin:18px 0 0;font:400 clamp(36px,4.4vw,68px)/1.02 var(--titulo);letter-spacing:-.035em}
 .cab__intro{max-width:46em;margin:22px 0 0;color:var(--mute)}
 /* El primer aviso de cada solapa sube a la cabecera y hace de bajada:
    es el mismo texto de siempre, sin caja. */
@@ -728,7 +739,7 @@ body.en-recorrido .cab>*{animation:none}
 .av-tit{display:block;margin-bottom:4px;color:var(--fg);font-weight:500}
 .av-oro{color:var(--gold)}
 .nota-suelta{margin:-30px 0 40px;font-size:13.5px;line-height:1.55;color:var(--mute-2)}
-.blk h3,.grupo>h3{margin:0 0 14px;font:500 clamp(24px,2.2vw,32px)/1.12 var(--sans);letter-spacing:-.025em}
+.blk h3,.grupo>h3{margin:0 0 14px;font:400 clamp(24px,2.2vw,32px)/1.12 var(--titulo);letter-spacing:-.025em}
 .blk p{margin:0 0 12px;color:var(--fg-82)}
 .blk ol,.blk ul{margin:0 0 12px;padding-left:20px;color:var(--fg-82)}
 .blk li{margin-bottom:6px}
@@ -1041,7 +1052,7 @@ mark{background:rgba(var(--gold-rgb),.26);color:var(--fg);padding:0 2px;border-r
 mark.actual{background:var(--gold);color:var(--bg)}
 /* Los pasajes, todos a la vista a la vez: una grilla de recortes debajo
    del fallo, cada uno con su contexto y sus acciones. */
-#doc-tit-pas{margin:clamp(48px,6vw,72px) 0 0;padding-bottom:16px;border-bottom:1px solid var(--line);font:500 clamp(24px,2.2vw,32px)/1.1 var(--sans);letter-spacing:-.025em;color:var(--fg)}
+#doc-tit-pas{margin:clamp(48px,6vw,72px) 0 0;padding-bottom:16px;border-bottom:1px solid var(--line);font:400 clamp(24px,2.2vw,32px)/1.1 var(--titulo);letter-spacing:-.025em;color:var(--fg)}
 #pasajes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:0 clamp(24px,3vw,48px)}
 .pasaje{margin:0;padding:22px 0;border:0;border-bottom:1px solid var(--line);background:none;border-radius:0;transition:border-color .5s}
 .pasaje:hover{border-bottom-color:var(--gold-55)}
@@ -1331,7 +1342,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 @keyframes gira{to{transform:rotate(360deg)}}
 .pt-copia{position:relative;flex:1;min-width:0;padding:clamp(110px,26vh,280px) var(--pad) 40px;display:flex;flex-direction:column;align-items:flex-start;pointer-events:none}
 .pt-copia>*{pointer-events:auto}
-.pt-titular{margin:0;max-width:20ch;font:400 clamp(30px,3.4vw,54px)/1.06 var(--sans);letter-spacing:-.02em}
+.pt-titular{margin:0;max-width:20ch;font:400 clamp(30px,3.4vw,54px)/1.06 var(--titulo);letter-spacing:-.02em}
 .pt-titular em{font-style:normal}
 .pt-datos{display:flex;flex-wrap:wrap;gap:8px 26px;margin:24px 0 0;font-size:13px;color:var(--mute)}
 .pt-datos>div{display:flex;align-items:baseline;gap:6px}
@@ -1356,9 +1367,9 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 @keyframes disuelve{0%,38%{opacity:1;filter:blur(0)}48%,60%{opacity:0;filter:blur(18px)}70%,100%{opacity:1;filter:blur(0)}}
 
 .pt-sec{position:relative;padding:clamp(100px,16vh,190px) var(--pad) 0}
-.pt-sec__tit{margin:0;font:500 clamp(36px,4.4vw,68px)/1.02 var(--sans);letter-spacing:-.035em}
+.pt-sec__tit{margin:0;font:400 clamp(36px,4.4vw,68px)/1.02 var(--titulo);letter-spacing:-.035em}
 .pt-sec__intro{margin:24px 0 0;max-width:46em;color:var(--mute)}
-.pt-parrafo{margin:0;max-width:24ch;font:400 clamp(30px,4.2vw,70px)/1.05 var(--sans);letter-spacing:-.03em}
+.pt-parrafo{margin:0;max-width:24ch;font:400 clamp(30px,4.2vw,70px)/1.05 var(--titulo);letter-spacing:-.03em}
 .pt-cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 clamp(24px,3vw,56px);margin-top:clamp(56px,8vh,110px)}
 .pt-cols--3{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:clamp(40px,5vw,64px)}
 .pt-col{min-width:0;padding-top:22px;border-top:1px solid var(--line);transition:border-color .5s}
@@ -1377,7 +1388,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .pt-entrada{margin:0;font-size:15px;color:var(--mute)}
 .pt-entrada span{margin:0 .5em;color:var(--gold)}
 .pt-nombre{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(32px,6vw,120px);margin-top:26px;padding-top:clamp(28px,4vw,48px);border-top:1px solid var(--line)}
-.pt-nombre h2{margin:0;max-width:21ch;font:400 clamp(28px,3vw,46px)/1.14 var(--sans);letter-spacing:-.02em}
+.pt-nombre h2{margin:0;max-width:21ch;font:400 clamp(28px,3vw,46px)/1.14 var(--titulo);letter-spacing:-.02em}
 .pt-nombre div{display:grid;gap:1.1em;color:var(--mute);max-width:40em}
 .pt-nombre p{margin:0}
 .pt-pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px 32px;margin-top:clamp(56px,7vw,88px);padding-top:28px;border-top:1px solid var(--line)}
@@ -1404,7 +1415,7 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .latido{animation:latido 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
 .pt-cierre{padding-bottom:clamp(110px,16vh,180px)}
-.pt-cierre__txt{margin:0;max-width:18ch;font:400 clamp(36px,5.4vw,92px)/1.02 var(--sans);letter-spacing:-.03em}
+.pt-cierre__txt{margin:0;max-width:18ch;font:400 clamp(36px,5.4vw,92px)/1.02 var(--titulo);letter-spacing:-.03em}
 .pt-cierre__txt em{font-style:normal;color:var(--gold)}
 .pt-ftr{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px;padding:34px var(--pad) calc(40px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);font-size:13px;color:var(--mute-2)}
 .pt-ftr .marca{font-size:12.5px;letter-spacing:.26em;--ls:.26em;color:var(--fg)}
@@ -1582,7 +1593,7 @@ mark{border-radius:6px}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261029u" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030b" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
