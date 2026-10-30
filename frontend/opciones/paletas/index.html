@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Paletas sin degradé</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+:root{--bg:#0b0a09;--fg:#f1eee6;--mute:rgba(241,238,230,.62);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.18);--gold:#d9a31b;--sans:"Instrument Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;display:flex;flex-direction:column;background:#0b0a09;color:var(--fg);font:400 15px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+.barra{flex:none;padding:18px clamp(14px,3vw,36px) 14px;display:grid;gap:12px}
+.fila{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.t{margin:0 14px 0 0;font:500 15px/1 var(--sans);letter-spacing:-.01em}
+.t i{display:inline-block;width:.32em;height:.32em;margin:0 .35em .12em;border-radius:50%;background:var(--gold)}
+.p{display:inline-flex;align-items:center;gap:9px;padding:9px 16px 8px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);font:400 14px/1 var(--sans);cursor:pointer;transition:border-color .25s,color .25s,background .25s}
+.p:hover{border-color:var(--fg);color:var(--fg)}
+.p[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:#14110a}
+.p i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.rot{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.sep{width:1px;height:22px;background:var(--line);margin:0 6px}
+.nota{margin:0;color:var(--mute);max-width:92ch}
+.nota b{color:var(--fg);font-weight:500}
+.fich{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;margin:0;font-size:13px;color:var(--dim)}
+.fich span{display:inline-flex;align-items:center;gap:7px}
+.fich i{width:14px;height:14px;border-radius:50%;border:1px solid rgba(241,238,230,.28);background:var(--c)}
+.vista{flex:1;min-height:0;padding:0 clamp(14px,3vw,36px) clamp(14px,3vw,36px)}
+iframe{display:block;width:100%;height:100%;border:1px solid var(--line);border-radius:26px;background:#0b0a09}
+</style>
+</head>
+<body>
+<div class="barra">
+  <div class="fila" id="op"><span class="t">IVS<i></i>CODEX · Paletas</span></div>
+  <div class="fila" id="vs">
+    <button class="p" data-v="portada" aria-pressed="true">Portada</button>
+    <button class="p" data-v="app" aria-pressed="false">Aplicación</button>
+  </div>
+  <p class="nota" id="nota"></p>
+  <p class="fich" id="fich"></p>
+</div>
+<div class="vista"><iframe id="marco" title="Vista previa"></iframe></div>
+<script src="datos.js"></script>
+<script>
+(function () {
+  var D = window.IVSPaletas, marco = document.getElementById('marco');
+  var sel = 'actual', vista = 'portada';
+  var cont = document.getElementById('op');
+  var grupos = { actual: '', tuyas: 'De tus imágenes', fria: 'Frías', calida: 'Cálidas' }, ultimo = null;
+  D.PAL.forEach(function (o) {
+    if (o.grupo !== ultimo) {
+      var s = document.createElement('span'); s.className = 'sep'; cont.appendChild(s);
+      if (grupos[o.grupo]) { var r = document.createElement('span'); r.className = 'rot'; r.textContent = grupos[o.grupo]; cont.appendChild(r); }
+      ultimo = o.grupo;
+    }
+    var b = document.createElement('button');
+    b.className = 'p'; b.dataset.id = o.id; b.style.setProperty('--c', o.acento);
+    b.innerHTML = '<i></i>' + o.nombre;
+    b.addEventListener('click', function () { sel = o.id; aplicar(); });
+    cont.appendChild(b);
+  });
+  [].forEach.call(document.querySelectorAll('#vs > .p'), function (b) {
+    b.addEventListener('click', function () { vista = b.dataset.v; cargar(); });
+  });
+
+  function aplicar() {
+    [].forEach.call(document.querySelectorAll('#op .p'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.id === sel)); });
+    [].forEach.call(document.querySelectorAll('#vs > .p'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.v === vista)); });
+    var o = D.PAL.filter(function (x) { return x.id === sel; })[0];
+    document.getElementById('nota').innerHTML = '<b>' + o.nombre + '.</b> ' + o.nota;
+    var c = function (h1, h2) { return D.contraste(h1, h2).toFixed(1).replace('.', ',') + ' a 1'; };
+    document.getElementById('fich').innerHTML =
+      '<span style="--c:' + o.bg + '"><i></i>Fondo ' + o.bg + '</span>' +
+      '<span style="--c:' + o.panel + '"><i></i>Panel ' + o.panel + '</span>' +
+      '<span style="--c:' + o.fg + '"><i></i>Texto y títulos ' + o.fg + ' · contraste ' + c(o.fg, o.bg) + '</span>' +
+      '<span style="--c:' + o.acento + '"><i></i>Acento ' + o.acento + ' · contraste ' + c(o.acento, o.bg) + '</span>';
+    try {
+      var doc = marco.contentDocument; if (!doc || !doc.head) return;
+      var st = doc.getElementById('paleta-prueba');
+      if (!st) { st = doc.createElement('style'); st.id = 'paleta-prueba'; doc.head.appendChild(st); }
+      st.textContent = D.css(sel);
+    } catch (e) {}
+  }
+  function cargar() {
+    marco.onload = function () {
+      aplicar();
+      if (vista === 'app') {
+        setTimeout(function () { try { marco.contentWindow.postMessage({ ivs: 'abrir', tab: 'calculos' }, location.origin); } catch (e) {} }, 900);
+      }
+    };
+    marco.src = vista === 'app' ? '../../index.html' : '../../portada/index.html';
+    aplicar();
+  }
+  cargar();
+})();
+</script>
+</body>
+</html>

@@ -1,8 +1,8 @@
 /* Base común de las cinco portadas: la misma paleta, el mismo grano y los mismos botones de cápsula.
    Lo que cambia entre ellas es la composición y el movimiento. */
 :root{
-  --bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.62);--dim:rgba(241,238,230,.36);--line:rgba(241,238,230,.15);
-  --gold:#d9a31b;--caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;--titulo:"Punto redondo","Instrument Sans",system-ui,sans-serif;
+  --bg:#1c1f24;--fg:#f2eee5;--mute:#9aa2af;--dim:rgba(242,238,229,.36);--line:rgba(242,238,229,.15);--bg-rgb:28,31,36;--ov-rgb:14,15,18;
+  --gold:#c49c5f;--caps:"Cormorant SC",Georgia,serif;--sans:"Instrument Sans",system-ui,sans-serif;--titulo:"Punto redondo","Instrument Sans",system-ui,sans-serif;
   --ease:cubic-bezier(.16,.84,.24,1);--pad:clamp(18px,3.2vw,48px);
   --c-mza:#d9a62a;--c-mzl:#b58640;--c-caba:#d5873f;--c-csjn:#c95836;--c-saij:#b03b42;--c-dial:#8a3853;--c-idh:#5f7f9a;--c-scba:#c06a2c
 }

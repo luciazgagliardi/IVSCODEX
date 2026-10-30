@@ -1,5 +1,5 @@
 /* Piezas comunes de la cuarta tanda: dibujos, libro y rótulos. La paleta, el grano y las cápsulas vienen de ../p.css. */
-.cab{position:fixed;left:0;right:0;top:0;z-index:60;background:linear-gradient(var(--bg) 20%,rgba(16,14,11,0))}
+.cab{position:fixed;left:0;right:0;top:0;z-index:60;background:linear-gradient(var(--bg) 20%,rgba(var(--bg-rgb),0))}
 .t{margin:0;font:400 clamp(26px,3.3vw,52px)/1.05 var(--titulo);letter-spacing:-.035em;text-wrap:balance}
 .t em{font-style:normal;color:var(--gold)}
 .acc{display:flex;gap:10px;flex-wrap:wrap}

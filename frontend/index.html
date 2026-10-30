@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>IVS CODEX</title>
 <meta name="description" content="Buscador integrado de repositorios judiciales oficiales y doctrina. Arme la consulta y la plataforma lo lleva a las bases oficiales.">
-<meta name="theme-color" content="#100e0b">
-<script>try{var t=localStorage.getItem("ivs-tema");if(t==="claro"||t==="azul"||t==="verde"||t==="bordo"||t==="descanso")document.documentElement.setAttribute("data-tema",t)}catch(e){}</script>
+<meta name="theme-color" content="#1c1f24">
+<script>try{var t=localStorage.getItem("ivs-tema");if(t==="claro"||t==="arena"||t==="salvia"||t==="marino"||t==="negro")document.documentElement.setAttribute("data-tema",t)}catch(e){}</script>
 <!-- Política de contenido: la página solo puede cargar scripts propios, hablar con su
      propio servidor (API), con el backend publicado, con SAIJ y con la API de
      series de datos.gob.ar, y nunca cargar plugins ni cambiar su base de enlaces. -->
@@ -39,20 +39,20 @@
    cada plantilla.
  * ------------------------------------------------------------------ */
 :root{
-  --bg:#100e0b;
-  --fg:#f1eee6;
+  --bg:#1c1f24;
+  --fg:#f2eee5;
   --fg-82:rgba(var(--tx),.82);
-  --mute:rgba(var(--tx),.6);
+  --mute:#9aa2af;
   --mute-2:rgba(var(--tx),.42);
   --line:rgba(var(--tx),.14);
   --line-2:rgba(var(--tx),.08);
-  --gold:#d9a31b;
+  --gold:#c49c5f;
   --gold-55:rgba(var(--gold-rgb),.55);
-  --gold-rgb:217,163,27;
-  --tx:241,238,230;
-  --bg-rgb:16,14,11;
-  --ov-rgb:8,7,5;
-  --panel:#15120e;
+  --gold-rgb:196,156,95;
+  --tx:242,238,229;
+  --bg-rgb:28,31,36;
+  --ov-rgb:14,15,18;
+  --panel:#262b33;
   --verde:#8fbf9a;
   --rojo:#dba196;
 
@@ -68,7 +68,7 @@
   --oro:var(--gold);
   --acequia:var(--verde);
   /* crema al 58% sobre el negro, opaco: 5:1 de contraste en letra chica */
-  --humo:#94918a;
+  --humo:#9aa2af;
   --linea:var(--line);
   --linea2:var(--line-2);
   /* Un tono por buscador, la misma rampa cálida de antes: ahora solo
@@ -107,11 +107,11 @@ html[data-tema="claro"]{
   --tx:31,27,20;--bg-rgb:245,241,231;--ov-rgb:40,34,20;--panel:#fbf8f1;
   color-scheme:light
 }
-/* Otras paletas oscuras: el mismo diseño, solo cambian los colores. «Noche» (sin atributo) es la de siempre. */
-html[data-tema="azul"]{--bg:#161c27;--fg:#ece8dc;--gold:#d4a94a;--gold-rgb:212,169,74;--tx:236,232,220;--bg-rgb:22,28,39;--ov-rgb:11,14,20;--panel:#1b2230;--humo:#929290}
-html[data-tema="verde"]{--bg:#14211d;--fg:#eee9db;--gold:#cfae6a;--gold-rgb:207,174,106;--tx:238,233,219;--bg-rgb:20,33,29;--ov-rgb:10,17,15;--panel:#192a25;--humo:#92958b}
-html[data-tema="descanso"]{--bg:#2e231b;--fg:#e8d9bd;--gold:#d4a04a;--gold-rgb:212,160,74;--tx:232,217,189;--bg-rgb:46,35,27;--ov-rgb:23,18,14;--panel:#35291f;--humo:#9a8d79}
-html[data-tema="bordo"]{--bg:#34101b;--fg:#f3e8dd;--gold:#dcb26c;--gold-rgb:220,178,108;--tx:243,232,221;--bg-rgb:52,16,27;--ov-rgb:26,8,14;--panel:#3c1621;--humo:#a38d8c}
+/* Paletas oscuras: el mismo diseño, solo cambian los colores. «Pizarra y oro» (sin atributo) es la de siempre; el resto lleva data-tema. Sin degradé de fondo. */
+html[data-tema="arena"]{--bg:#1e252d;--fg:#e6e9eb;--mute:rgba(230,233,235,.62);--gold:#bd995c;--gold-rgb:189,153,92;--tx:230,233,235;--bg-rgb:30,37,45;--ov-rgb:15,18,22;--panel:#29313b;--humo:#8c9196}
+html[data-tema="salvia"]{--bg:#181d1b;--fg:#e2e0cc;--mute:rgba(226,224,204,.62);--gold:#a3b3a9;--gold-rgb:163,179,169;--tx:226,224,204;--bg-rgb:24,29,27;--ov-rgb:12,14,14;--panel:#212825;--humo:#87887c}
+html[data-tema="marino"]{--bg:#1a2030;--fg:#f1efea;--mute:rgba(241,239,234,.62);--gold:#f0b430;--gold-rgb:240,180,48;--tx:241,239,234;--bg-rgb:26,32,48;--ov-rgb:13,16,24;--panel:#232a3d;--humo:#909296}
+html[data-tema="negro"]{--bg:#0b0b0c;--fg:#e4e4e6;--mute:rgba(228,228,230,.62);--gold:#b8a986;--gold-rgb:184,169,134;--tx:228,228,230;--bg-rgb:11,11,12;--ov-rgb:6,6,6;--panel:#151517;--humo:#828284}
 html[data-tema="claro"] .grano{opacity:.05;mix-blend-mode:multiply}
 html[data-tema="claro"] .tour-card,html[data-tema="claro"] .compartir-menu{background:var(--panel)}
 html[data-tema="claro"] *::-webkit-scrollbar-thumb{background:rgba(31,27,20,.22)}
@@ -185,6 +185,7 @@ strong,b{font-weight:500}
 @keyframes luzA{to{transform:translate3d(5vw,-4vh,0) scale(1.1)}}
 @media (prefers-reduced-motion:reduce){.luces i{animation:none}}
 html[data-tema="claro"] .luces{opacity:.5}
+html:not([data-tema="claro"]) .luces{display:none}   /* las luces desenfocadas sólo quedan en el tema claro */
 
 /* la marca escrita, con el punto redondo del logo y no el "·" de la fuente */
 .marca{font-family:"Cinzel","Trajan Pro",var(--caps);font-weight:500;white-space:nowrap}
@@ -1600,14 +1601,14 @@ mark{border-radius:6px}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030b" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030d" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
   <div class="nav-wrap">
     <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></button>
     <nav class="nav" id="nav" aria-label="Secciones principales"></nav>
-    <div class="nav-fin"><button type="button" class="lx-chip" data-act="abrir-lexia" aria-label="Preguntarle a Lexia"><i></i>Lexia</button><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><span class="tema-seg" role="group" aria-label="Colores del sitio"><button type="button" class="tema-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Colores del sitio" title="Colores"></button><span class="tema-pop" role="menu"><button type="button" class="tema-op" style="--i:0" role="menuitemradio" data-tema-op="oscuro" aria-label="Noche" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><path d="M16.2 12.3A6.7 6.7 0 0 1 7.7 3.8a6.7 6.7 0 1 0 8.5 8.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><em>Noche</em></button><button type="button" class="tema-op" style="--i:1" role="menuitemradio" data-tema-op="claro" aria-label="Día" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.2v2M10 15.8v2M2.2 10h2M15.8 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><em>Día</em></button><button type="button" class="tema-op" style="--i:2" role="menuitemradio" data-tema-op="descanso" aria-label="Descanso" aria-pressed="false"><i class="sw" style="--a:#2e231b;--b:#d4a04a"></i><em>Descanso</em></button><button type="button" class="tema-op" style="--i:3" role="menuitemradio" data-tema-op="azul" aria-label="Azul" aria-pressed="false"><i class="sw" style="--a:#161c27;--b:#d4a94a"></i><em>Azul</em></button><button type="button" class="tema-op" style="--i:4" role="menuitemradio" data-tema-op="verde" aria-label="Verde" aria-pressed="false"><i class="sw" style="--a:#14211d;--b:#cfae6a"></i><em>Verde</em></button><button type="button" class="tema-op" style="--i:5" role="menuitemradio" data-tema-op="bordo" aria-label="Bordeaux" aria-pressed="false"><i class="sw" style="--a:#34101b;--b:#dcb26c"></i><em>Bordeaux</em></button></span></span><span class="perfil-wrap"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-act="tog-perfil" aria-haspopup="menu" aria-expanded="false"><span>Mi perfil</span><svg class="fsb-flecha" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="perfil-menu" id="perfil-menu" role="menu" hidden></div></span><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
+    <div class="nav-fin"><button type="button" class="lx-chip" data-act="abrir-lexia" aria-label="Preguntarle a Lexia"><i></i>Lexia</button><button type="button" class="btn sec btn-perfil" id="como-usar" data-tour>Cómo usar</button><span class="tema-seg" role="group" aria-label="Colores del sitio"><button type="button" class="tema-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Colores del sitio" title="Colores"></button><span class="tema-pop" role="menu"><button type="button" class="tema-op" style="--i:0" role="menuitemradio" data-tema-op="oscuro" aria-label="Pizarra y oro" aria-pressed="false"><i class="sw" style="--a:#1c1f24;--b:#c49c5f"></i><em>Pizarra y oro</em></button><button type="button" class="tema-op" style="--i:1" role="menuitemradio" data-tema-op="arena" aria-label="Azul pizarra y arena" aria-pressed="false"><i class="sw" style="--a:#1e252d;--b:#bd995c"></i><em>Azul pizarra y arena</em></button><button type="button" class="tema-op" style="--i:2" role="menuitemradio" data-tema-op="salvia" aria-label="Salvia y crema" aria-pressed="false"><i class="sw" style="--a:#181d1b;--b:#a3b3a9"></i><em>Salvia y crema</em></button><button type="button" class="tema-op" style="--i:3" role="menuitemradio" data-tema-op="marino" aria-label="Marino y ámbar" aria-pressed="false"><i class="sw" style="--a:#1a2030;--b:#f0b430"></i><em>Marino y ámbar</em></button><button type="button" class="tema-op" style="--i:4" role="menuitemradio" data-tema-op="negro" aria-label="Negro" aria-pressed="false"><i class="sw" style="--a:#0b0b0c;--b:#b8a986"></i><em>Negro</em></button><button type="button" class="tema-op" style="--i:5" role="menuitemradio" data-tema-op="claro" aria-label="Día" aria-pressed="false"><svg viewBox="0 0 20 20" width="15" height="15" aria-hidden="true"><circle cx="10" cy="10" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 2.2v2M10 15.8v2M2.2 10h2M15.8 10h2M4.5 4.5l1.4 1.4M14.1 14.1l1.4 1.4M4.5 15.5l1.4-1.4M14.1 5.9l1.4-1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><em>Día</em></button></span></span><span class="perfil-wrap"><button type="button" class="btn sec btn-perfil" id="mi-perfil" data-act="tog-perfil" aria-haspopup="menu" aria-expanded="false"><span>Mi perfil</span><svg class="fsb-flecha" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><div class="perfil-menu" id="perfil-menu" role="menu" hidden></div></span><button type="button" class="btn sec btn-menu" id="abrir-menu" aria-expanded="false" aria-controls="menu"><span class="txt">Todas las secciones</span> <span class="fl" aria-hidden="true">↓</span></button></div>
   </div>
 </header>
 
@@ -10352,7 +10353,7 @@ window.IVS={
     document.addEventListener("click",function(e){ if(pop&&pop.classList.contains("abre")&&!pop.contains(e.target)) abre(false); });
     document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&pop&&pop.classList.contains("abre")){ abre(false); btn.focus(); } });
   }
-  var TEMAS={claro:"#f5f1e7",azul:"#161c27",verde:"#14211d",bordo:"#34101b",descanso:"#2e231b"};
+  var TEMAS={claro:"#f5f1e7",arena:"#1e252d",salvia:"#181d1b",marino:"#1a2030",negro:"#0b0b0c"};
   function pon(t){
     if(!TEMAS[t]) t="oscuro";
     var r=document.documentElement;
@@ -10360,7 +10361,7 @@ window.IVS={
     ops.forEach(function(o){ o.setAttribute("aria-pressed",String(o.getAttribute("data-tema-op")===t)); });
     icono(t);
     try{ localStorage.setItem("ivs-tema",t); }catch(e){}
-    var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",TEMAS[t]||"#100e0b");
+    var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",TEMAS[t]||"#1c1f24");
   }
   pon(document.documentElement.getAttribute("data-tema"));
   ops.forEach(function(o){ o.addEventListener("click",function(){ var t=o.getAttribute("data-tema-op"); pon(t); portada(t); abre(false); }); });
