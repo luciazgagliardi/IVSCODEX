@@ -42,7 +42,6 @@
     box-shadow:var(--vdborde);-webkit-backdrop-filter:var(--vdblur);backdrop-filter:var(--vdblur)
   }
   .brief__summary{margin-top:14px!important}
-  .brief__summary .brief__title{letter-spacing:.01em}
 
   /* resultados: tarjetas de vidrio; la primera lleva dos más asomando detrás */
   .rz{
@@ -255,5 +254,69 @@
   .sel-btn{background:var(--vd2)!important;border-color:transparent!important}
   .sel-lista{border:0!important;background:color-mix(in srgb,rgb(var(--bg-rgb)) 82%,transparent)!important;
     -webkit-backdrop-filter:blur(26px) saturate(1.4);backdrop-filter:blur(26px) saturate(1.4);box-shadow:0 18px 50px rgba(0,0,0,.4)!important}
+  .sel-lista button:hover,.sel-lista button:focus-visible{background:var(--vd2)}
+}
+
+/* ======================================================================
+   Computadora: el mismo vidrio y las mismas luces del celular (sólo eso: la composición no cambia).
+   Vidrio oscuro sin borde, esmerilado, con un brillo apenas en la esquina, y luces tenues con los colores de cada paleta detrás.
+   ====================================================================== */
+@media (min-width:761px){
+  :root{
+    --vd:color-mix(in srgb,var(--fg) 7%,transparent);
+    --vd2:color-mix(in srgb,var(--fg) 13%,transparent);
+    --vdbrillo:linear-gradient(135deg,color-mix(in srgb,var(--fg) 12%,transparent),transparent 46%);
+    --vdborde:0 12px 30px rgba(0,0,0,.26);
+    --vdblur:blur(24px) saturate(1.8) brightness(1.1);
+  }
+  html:not([data-tema="claro"]){
+    --vd:color-mix(in srgb,var(--fg) 3.5%,rgba(0,0,0,.2));
+    --vd2:color-mix(in srgb,var(--fg) 8%,rgba(0,0,0,.18));
+    --vdbrillo:linear-gradient(135deg,color-mix(in srgb,var(--fg) 5%,transparent),transparent 46%);
+    --vdblur:blur(24px) saturate(1.4) brightness(.92);
+  }
+
+  /* ---- luces del fondo: fijas, detrás de todo, en el acento y el texto de cada paleta ---- */
+  html:not([data-tema="claro"]) body:has(header.top)::after,html:not([data-tema="claro"]) body:has(header.cab)::after{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(circle 420px at 90% 26%,color-mix(in srgb,var(--gold) 13%,transparent) 0,color-mix(in srgb,var(--gold) 4%,transparent) 55%,transparent 100%),
+      radial-gradient(circle 380px at 4% 54%,color-mix(in srgb,var(--fg) 7%,transparent) 0,transparent 100%),
+      radial-gradient(circle 440px at 80% 82%,color-mix(in srgb,var(--gold) 10%,transparent) 0,transparent 100%)
+  }
+
+  /* ---- tarjetas de vidrio ---- */
+  .brief__form .panel,.brief__summary,.panel,.lab .panel{
+    border-color:transparent!important;border-radius:28px!important;background:var(--vdbrillo),var(--vd)!important;
+    box-shadow:var(--vdborde);-webkit-backdrop-filter:var(--vdblur);backdrop-filter:var(--vdblur)
+  }
+  .rz:hover{background:var(--vd2)}
+  .chip:not([aria-pressed="true"]):not(.on){background:var(--vd);border-color:transparent}
+  .campo input[type=text],.campo input[type=date],.campo input[type=number],.campo select,.campo textarea{
+    background:var(--vd2)!important;border-color:transparent!important;box-shadow:none!important
+  }
+  .sel-btn{background:var(--vd2)!important;border-color:transparent!important}
+
+  /* ---- paneles y menús flotantes: vidrio con sus propias luces, para que se vean siempre ---- */
+  .menu,.menu.is-on,.perfil-menu,.asist__panel,.bq-drawer,.sug-hoja,.sel-lista,.tour-card{
+    border-color:transparent!important;
+    -webkit-backdrop-filter:blur(28px) saturate(1.4) brightness(.92);backdrop-filter:blur(28px) saturate(1.4) brightness(.92);
+    background-repeat:no-repeat!important;background-clip:padding-box!important
+  }
+  .perfil-menu,.asist__panel,.bq-drawer,.sug-hoja,.tour-card{
+    background:
+      radial-gradient(circle 190px at 92% 6%,color-mix(in srgb,var(--gold) 15%,transparent) 0,transparent 100%),
+      radial-gradient(circle 170px at 4% 62%,color-mix(in srgb,var(--fg) 7%,transparent) 0,transparent 100%),
+      radial-gradient(circle 200px at 88% 98%,color-mix(in srgb,var(--gold) 11%,transparent) 0,transparent 100%),
+      color-mix(in srgb,rgb(var(--bg-rgb)) 62%,transparent)!important
+  }
+  .sel-lista{background:color-mix(in srgb,rgb(var(--bg-rgb)) 78%,transparent)!important}
+  .menu,.menu.is-on{background:color-mix(in srgb,rgb(var(--bg-rgb)) 60%,transparent)!important;-webkit-backdrop-filter:blur(30px) saturate(1.4) brightness(.92);backdrop-filter:blur(30px) saturate(1.4) brightness(.92)}
+  html[data-tema="claro"] .perfil-menu,html[data-tema="claro"] .asist__panel,html[data-tema="claro"] .bq-drawer,html[data-tema="claro"] .sug-hoja,html[data-tema="claro"] .tour-card{
+    background:color-mix(in srgb,rgb(var(--bg-rgb)) 78%,transparent)!important}
+  /* ---- dentro del vidrio: nada de bordes, los controles son un tono más claro ---- */
+  .asist__panel div>button,.asist__form input,.asist__tut,.asist__x,.sug-hoja .chip,.mini,.calc-sel__b:not([aria-selected="true"]),.tab:not([aria-selected="true"]){
+    border-color:transparent!important;background:var(--vd2)!important}
+  .asist__form,.pm-cab,.menu h2,.menu__item,.tramo{border-color:transparent!important}
   .sel-lista button:hover,.sel-lista button:focus-visible{background:var(--vd2)}
 }
