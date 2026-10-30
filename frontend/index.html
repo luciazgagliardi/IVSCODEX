@@ -799,7 +799,7 @@ body.en-recorrido .cab>*{animation:none}
 .brief__summary .btn--ancho{margin-top:26px}
 .brief__sub{margin:26px 0 0;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--mute-2)}
 .brief__summary .btn.sec{padding:8px 14px 7px;font-size:13px}
-.sugeridas{margin:0;padding:2px 0 2px 18px;border-left:1px solid var(--gold);background:none;border-radius:0}
+.sugeridas{margin:0;padding:2px 0;border:0;background:none;border-radius:0}
 .sug-nota{margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--mute);max-width:62ch}
 .sug-nota b{color:var(--fg);font-weight:500}
 @media (max-width:1180px){ .brief{grid-template-columns:minmax(0,1fr)} .brief__summary{position:static} }
@@ -1265,7 +1265,13 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 
 /* ---------- pie ---------- */
 .pie{padding:0 var(--pad) calc(40px + env(safe-area-inset-bottom,0px));font-size:13px;line-height:1.6;color:var(--mute-2)}
-.pie hr{margin:0 0 20px;border:0;border-top:1px solid var(--line)}
+.pie hr{display:none}
+/* El pie queda fijo abajo: no se ve al principio y aparece (sin volver a subir) cuando se baja. */
+.pie{position:fixed;left:0;right:0;bottom:0;z-index:50;padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom,0px));text-align:center;font-size:12px;line-height:1.5;
+  background:rgba(var(--bg-rgb),.88);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);opacity:0;transform:translateY(100%);pointer-events:none;transition:opacity .35s ease,transform .45s cubic-bezier(.2,1,.3,1)}
+.pie.on{opacity:1;transform:none;pointer-events:auto}
+body.en-lector .pie{bottom:0}
+@media (max-width:760px){.pie{bottom:calc(66px + env(safe-area-inset-bottom,0px));z-index:56;padding:8px var(--pad);font-size:11px;background:rgba(var(--bg-rgb),.82)}}
 .pie strong{color:var(--fg-82)}
 
 @media (max-width:860px){
@@ -1586,6 +1592,7 @@ mark{border-radius:6px}
 *{scrollbar-width:none!important}
 *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 </style>
+<link rel="stylesheet" href="./celular-vidrio.css?v=20261030e">
 </head>
 <body>
 
@@ -1601,7 +1608,7 @@ mark{border-radius:6px}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030d" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030e" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
 <header class="top">
@@ -1620,7 +1627,7 @@ mark{border-radius:6px}
   <button type="button" class="bn" id="abrir-menu-m" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg><span>Más</span></button>
 </nav>
 <div class="perfil-menu perfil-hoja" id="perfil-hoja" role="menu" hidden></div>
-<div class="menu" id="menu" aria-label="Índice de secciones"><div class="menu__grid" id="menu-grid"></div></div>
+<div class="menu" id="menu" aria-label="Índice de secciones"><div class="menu__grid" id="menu-grid"></div><button type="button" class="menu__portada" data-portada>Volver a la portada</button></div>
 
 <div class="cab" id="cab"></div>
 
@@ -1629,7 +1636,7 @@ mark{border-radius:6px}
   <div class="col" id="vista"></div>
 </main>
 
-<footer class="pie">
+<footer class="pie" id="pie">
   <hr>
   <p id="pie-txt"></p>
 </footer>
@@ -9397,7 +9404,7 @@ function render(){
     ajustarAlturaRail();
     guardarEnURL();
     document.getElementById("pie-txt").innerHTML=
-      "<strong>IVS CODEX</strong> — catálogo de "+F.length+" bases oficiales y "+RAMAS.length+
+      "<strong>IVS CODEX</strong> · catálogo de "+F.length+" bases oficiales y "+RAMAS.length+
       " ramas del derecho. "+
       "No almacena fallos ni genera contenido jurídico. Verifique siempre en la fuente antes de citar.";
   }catch(e){ panic(e&&e.message?e.message:"error de render"); }
@@ -10339,6 +10346,12 @@ window.IVS={
   render:function(){ render(); },
   abrirLector:function(texto){ estado.texto=texto; estado.tab="lector"; render(); window.scrollTo(0,0); }
 };
+})();
+</script>
+<script>
+(function(){ var p=document.getElementById("pie"); if(!p) return;
+  function ver(){ p.classList.toggle("on",(window.scrollY||document.documentElement.scrollTop)>160); }
+  addEventListener("scroll",ver,{passive:true}); addEventListener("resize",ver); ver();
 })();
 </script>
 <script src="./herramientas.js" defer></script>

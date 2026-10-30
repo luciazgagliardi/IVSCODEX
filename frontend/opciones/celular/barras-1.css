@@ -1,0 +1,18 @@
+/* Opción 1 · Contorno fino: sin fondo ni vidrio en las barras; sólo un filete. La de abajo es una cápsula angosta y baja,
+   y la sección activa se marca con el color y un punto, sin cápsula adentro. */
+@media (max-width:760px){
+  header.top .lx-chip,header.top #como-usar,header.top .tema-btn,.cab .tema-btn,.cab .btn.sec{
+    background:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    border:1px solid color-mix(in srgb,var(--fg) 22%,transparent)!important
+  }
+  .botnav{
+    left:50%!important;right:auto!important;transform:translateX(-50%);width:auto!important;padding:3px!important;gap:0!important;
+    bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;
+    background:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    border:1px solid color-mix(in srgb,var(--fg) 22%,transparent)!important
+  }
+  .bn{position:relative;width:44px!important;height:38px!important;flex:0 0 auto!important}
+  .bn svg{width:21px;height:21px}
+  .bn[aria-current="page"],.bn.on{flex:0 0 auto!important;width:44px!important;font-size:0!important;background:none!important;box-shadow:none!important;color:var(--gold)!important}
+  .bn[aria-current="page"]::after,.bn.on::after{content:"";position:absolute;left:50%;bottom:2px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--gold)}
+}

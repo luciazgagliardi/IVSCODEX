@@ -1,0 +1,22 @@
+/* Opción 3 · Degradé: sin círculos ni cápsulas. Arriba y abajo, un degradé del color del fondo separa las barras del resto de la página
+   (lo que pasa por debajo se funde), y los íconos quedan sueltos con su nombre chico debajo. */
+@media (max-width:760px){
+  header.top .lx-chip,header.top #como-usar,header.top .tema-btn,.cab .tema-btn,.cab .btn.sec{
+    background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding-left:8px!important;padding-right:8px!important
+  }
+  header.top #como-usar,.cab .btn.sec{color:var(--mute)!important}
+  header.top::before{
+    background:rgb(var(--bg-rgb))!important;bottom:-46px!important;opacity:.96;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    -webkit-mask-image:linear-gradient(to bottom,#000 45%,transparent)!important;mask-image:linear-gradient(to bottom,#000 45%,transparent)!important
+  }
+  html::after{content:"";position:fixed;left:0;right:0;bottom:0;height:118px;z-index:54;pointer-events:none;
+    background:linear-gradient(to top,rgb(var(--bg-rgb)) 38%,transparent)}
+  .botnav{
+    left:50%!important;right:auto!important;transform:translateX(-50%);width:auto!important;padding:0 6px!important;gap:6px!important;
+    bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;
+    background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important
+  }
+  .bn{width:54px!important;height:48px!important;flex:0 0 auto!important;flex-direction:column!important;gap:3px!important;font-size:10px!important;background:none!important;color:var(--mute)!important}
+  .bn svg{width:21px;height:21px}
+  .bn[aria-current="page"],.bn.on{flex:0 0 auto!important;width:54px!important;font-size:10px!important;font-weight:500;background:none!important;box-shadow:none!important;color:var(--gold)!important;gap:3px!important}
+}
