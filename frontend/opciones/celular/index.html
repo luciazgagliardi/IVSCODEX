@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IVS CODEX · Celular en vidrio</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+:root{--fg:#f1eee6;--mute:rgba(241,238,230,.62);--line:rgba(241,238,230,.18);--sans:"Instrument Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:#0d0e10;color:var(--fg);font:400 15px/1.5 var(--sans);-webkit-font-smoothing:antialiased;padding:22px clamp(14px,3vw,36px) 50px}
+.fila{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
+.t{margin:0 14px 0 0;font:500 15px/1 var(--sans)}
+.p{display:inline-flex;align-items:center;padding:9px 16px 8px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--mute);font:400 14px/1 var(--sans);cursor:pointer;transition:all .25s}
+.p:hover{border-color:var(--fg);color:var(--fg)}
+.p[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:#14110a}
+.nota{margin:6px 0 22px;color:var(--mute);max-width:80ch}
+.tel{display:flex;flex-wrap:wrap;gap:30px;justify-content:center}
+.m{width:344px;padding:9px;border-radius:50px;background:#050506;box-shadow:0 0 0 1px rgba(241,238,230,.14),0 20px 50px rgba(0,0,0,.5)}
+.m iframe{display:block;width:326px;height:700px;border:0;border-radius:42px;background:#1c1f24}
+</style>
+</head>
+<body>
+<div class="fila"><span class="t">IVS · CODEX · Celular en vidrio</span>
+  <button class="p" data-m="actual" aria-pressed="false">Actual</button>
+  <button class="p" data-m="vidrio" aria-pressed="true">Con vidrio</button></div>
+<div class="fila"><span class="t">Barras</span>
+  <button class="p" data-b="0" aria-pressed="true">Las de antes</button>
+  <button class="p" data-b="1" aria-pressed="false">1 · Contorno fino</button>
+  <button class="p" data-b="2" aria-pressed="false">2 · Sólo íconos</button>
+  <button class="p" data-b="3" aria-pressed="false">3 · Degradé</button>
+  <button class="p" data-b="4" aria-pressed="false">4 · Íconos con degradé</button></div>
+<p class="nota">Las tres pantallas son el sitio real a tamaño de celular. «Con vidrio» le superpone <b>vidrio.css</b>: tarjetas esmeriladas, luces detrás, barra flotante y títulos con subtítulo de letras separadas, con los mismos colores. Para ver Buscar con resultados, escriba una consulta en el segundo teléfono.</p>
+<div class="tel">
+  <div class="m"><iframe data-u="../../portada/index.html" title="Portada"></iframe></div>
+  <div class="m"><iframe data-u="../../index.html" data-tab="buscar" title="Buscar"></iframe></div>
+  <div class="m"><iframe data-u="../../index.html" data-tab="calculos" title="Cálculos"></iframe></div>
+</div>
+<script>
+(function () {
+  var css = '', barras = ['', '', '', '', ''], barra = 0, modo = 'vidrio', marcos = [].slice.call(document.querySelectorAll('iframe'));
+  function poner() {
+    [].forEach.call(document.querySelectorAll('.fila .p[data-m]'), function (b) { b.setAttribute('aria-pressed', String(b.dataset.m === modo)); });
+    [].forEach.call(document.querySelectorAll('.fila .p[data-b]'), function (b) { b.setAttribute('aria-pressed', String(Number(b.dataset.b) === barra)); });
+    marcos.forEach(function (f) {
+      try {
+        var d = f.contentDocument; if (!d || !d.head) return;
+        var s = d.getElementById('vidrio-prueba');
+        if (!s) { s = d.createElement('style'); s.id = 'vidrio-prueba'; d.head.appendChild(s); }
+        s.textContent = modo === 'vidrio' ? css + barras[barra] : '';
+      } catch (e) {}
+    });
+  }
+  [].forEach.call(document.querySelectorAll('.fila .p[data-m]'), function (b) { b.addEventListener('click', function () { modo = b.dataset.m; poner(); }); });
+  [].forEach.call(document.querySelectorAll('.fila .p[data-b]'), function (b) { b.addEventListener('click', function () { barra = Number(b.dataset.b); modo = 'vidrio'; poner(); }); });
+  Promise.all([1, 2, 3, 4].map(function (n) { return fetch('barras-' + n + '.css').then(function (r) { return r.text(); }); })).then(function (t) { barras = [''].concat(t); });
+  fetch('vidrio.css').then(function (r) { return r.text(); }).then(function (t) {
+    css = t;
+    marcos.forEach(function (f) {
+      f.addEventListener('load', function () {
+        poner();
+        if (f.dataset.tab) setTimeout(function () { try { f.contentWindow.postMessage({ ivs: 'abrir', tab: f.dataset.tab }, location.origin); } catch (e) {} }, 900);
+      });
+      f.src = f.dataset.u;
+    });
+  });
+})();
+</script>
+</body>
+</html>

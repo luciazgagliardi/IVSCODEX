@@ -1,0 +1,34 @@
+/* Opción 4 · Íconos con degradé de barra: sin círculos ni cápsulas; un degradé del color del fondo separa las barras del resto de la página.
+   Abajo, sólo íconos de trazo fino: al elegir uno no se mueve ni se subraya, sólo se pone dorado. Sin las luces de color: los colores son los del sitio. */
+@media (max-width:760px){
+  /* fuera las luces de color de atrás (el fondo queda en el color del sitio) */
+  body:has(header.top)::after,body:has(header.cab)::after{display:none!important}
+
+  /* arriba: texto y ícono sueltos */
+  header.top .lx-chip,header.top #como-usar,header.top .tema-btn,.cab .tema-btn,.cab .btn.sec{
+    background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding-left:8px!important;padding-right:8px!important
+  }
+  header.top #como-usar,.cab .btn.sec{color:var(--mute)!important}
+  header.top::before{
+    background:rgb(var(--bg-rgb))!important;bottom:-46px!important;opacity:.96;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    -webkit-mask-image:linear-gradient(to bottom,#000 45%,transparent)!important;mask-image:linear-gradient(to bottom,#000 45%,transparent)!important
+  }
+
+  /* abajo: degradé del fondo y cinco íconos finos */
+  html::after{content:"";position:fixed;left:0;right:0;bottom:0;height:110px;z-index:54;pointer-events:none;
+    background:linear-gradient(to top,rgb(var(--bg-rgb)) 40%,transparent)}
+  .botnav{
+    left:50%!important;right:auto!important;transform:translateX(-50%);width:auto!important;padding:0 4px!important;gap:6px!important;
+    bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;
+    background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important
+  }
+  .bn,.bn[aria-current="page"],.bn.on{
+    position:relative;flex:0 0 auto!important;width:50px!important;height:46px!important;padding:0!important;gap:0!important;
+    font-size:0!important;background:none!important;box-shadow:none!important;transition:color .25s;
+    color:color-mix(in srgb,var(--fg) 62%,transparent)!important
+  }
+  .bn svg{width:24px;height:24px;stroke-width:1.1}
+  .bn svg *{stroke-width:1.1}
+  .bn[aria-current="page"],.bn.on{color:var(--gold)!important}
+  .bn::after,.bn[aria-current="page"]::after,.bn.on::after{content:none!important}
+}

@@ -1,0 +1,19 @@
+/* Opción 2 · Sólo íconos: ninguna caja, borde ni círculo. Arriba, el nombre y tres botones de texto o ícono; abajo, cinco íconos
+   en fila angosta con una rayita bajo el activo. Un desenfoque apenas perceptible, sin color, para que lo que pasa por debajo no moleste. */
+@media (max-width:760px){
+  header.top .lx-chip,header.top #como-usar,header.top .tema-btn,.cab .tema-btn,.cab .btn.sec{
+    background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;padding-left:8px!important;padding-right:8px!important
+  }
+  header.top #como-usar,.cab .btn.sec{color:var(--mute)!important}
+  .botnav{
+    left:50%!important;right:auto!important;transform:translateX(-50%);width:auto!important;padding:2px 10px!important;gap:2px!important;
+    bottom:calc(16px + env(safe-area-inset-bottom,0px))!important;
+    background:none!important;border:0!important;box-shadow:none!important;
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    -webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent);mask-image:radial-gradient(closest-side,#000 70%,transparent)
+  }
+  .bn{position:relative;width:46px!important;height:40px!important;flex:0 0 auto!important;background:none!important}
+  .bn svg{width:22px;height:22px}
+  .bn[aria-current="page"],.bn.on{flex:0 0 auto!important;width:46px!important;font-size:0!important;background:none!important;box-shadow:none!important;color:var(--gold)!important}
+  .bn[aria-current="page"]::after,.bn.on::after{content:"";position:absolute;left:50%;bottom:1px;width:16px;height:2px;margin-left:-8px;border-radius:2px;background:var(--gold)}
+}
