@@ -230,7 +230,9 @@
       radial-gradient(circle 190px at 92% 6%,color-mix(in srgb,var(--gold) 15%,transparent) 0,transparent 100%),
       radial-gradient(circle 170px at 4% 62%,color-mix(in srgb,var(--fg) 7%,transparent) 0,transparent 100%),
       radial-gradient(circle 200px at 88% 98%,color-mix(in srgb,var(--gold) 11%,transparent) 0,transparent 100%),
-      color-mix(in srgb,rgb(var(--bg-rgb)) 74%,transparent)!important}
+      color-mix(in srgb,rgb(var(--bg-rgb)) 74%,transparent)!important;
+    /* sin esto, el fondo se repite en el borde y deja una rayita dorada a la izquierda */
+    background-repeat:no-repeat!important;background-clip:padding-box!important;border:0!important}
 }
 
 /* ---- Franjas fijas: lo que se desplaza se corta antes de las barras y nunca se mezcla con ellas (también en Safari) ---- */
