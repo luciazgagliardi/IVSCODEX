@@ -12,6 +12,16 @@
     --vdblur:blur(24px) saturate(1.8) brightness(1.1);
   }
 
+  /* ---- luces muy tenues, sólo con los colores de cada paleta (su acento y el color del texto): detrás del vidrio, para que se note ---- */
+  body:has(header.top)::after,body:has(header.cab)::after{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(circle 240px at 92% 13%,color-mix(in srgb,var(--gold) 13%,transparent) 0,color-mix(in srgb,var(--gold) 4%,transparent) 55%,transparent 100%),
+      radial-gradient(circle 210px at 3% 55%,color-mix(in srgb,var(--fg) 7%,transparent) 0,transparent 100%),
+      radial-gradient(circle 250px at 84% 91%,color-mix(in srgb,var(--gold) 10%,transparent) 0,transparent 100%)
+  }
+  html[data-tema="claro"] body::after{display:none!important}   /* el blanco ya trae las suyas */
+
   /* ---- cabecera: píldoras de vidrio ---- */
   header.top .lx-chip,header.top #como-usar,header.top .tema-btn,
   .cab .tema-btn,.cab .btn.sec{
@@ -120,10 +130,111 @@
   header.top .marca-app{display:none!important}
   header.top .nav-fin{display:contents!important}
   header.top .nav-fin .lx-chip{margin-right:auto!important}
-  .cab .lock{display:none}
-  .cab .acts{margin-left:auto}
-  .marca-hero{display:flex;justify-content:center;position:absolute;left:0;right:0;bottom:100%;margin-bottom:26px}
-  .marca-hero .marca2{font-size:22px}
   .menu__portada{display:flex;align-items:center;justify-content:center;margin:28px auto 0;padding:12px 22px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--fg);font:400 14px/1 var(--sans);cursor:pointer}
 }
-@media (min-width:761px){.marca-hero,.menu__portada{display:none}}
+@media (min-width:761px){.menu__portada{display:none}}
+
+/* ---- Ajuste: vidrio más oscuro, sin bordes ni franjas, menús que dejan ver las luces ---- */
+@media (max-width:760px){
+  /* más oscuro que el fondo de la paleta (en el blanco, Día, queda como estaba) */
+  html:not([data-tema="claro"]){
+    --vd:color-mix(in srgb,var(--fg) 3.5%,rgba(0,0,0,.2));
+    --vd2:color-mix(in srgb,var(--fg) 8%,rgba(0,0,0,.18));
+    --vdbrillo:linear-gradient(135deg,color-mix(in srgb,var(--fg) 5%,transparent),transparent 46%);
+    --vdblur:blur(24px) saturate(1.4) brightness(.92);
+  }
+  /* ningún borde, ni línea interior, ni franja asomando detrás */
+  .rz:first-of-type{margin-top:12px!important;box-shadow:var(--vdborde)!important}
+  /* la cinta de bases ya no queda pegada arriba ni lleva fondo: se va con la página, sin ninguna franja */
+  .bz-riel{position:static!important;background:none!important;border:0!important;margin:0 0 6px!important;padding:0 0 6px!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;-webkit-mask-image:none!important;mask-image:none!important}
+  .bz-riel button,.bz-riel .chip,.bz-riel [class*="bz-"]{border-color:transparent!important;box-shadow:none!important}
+  .asist__panel div>button{border-color:transparent!important;background:var(--vd2)!important}
+  .campo input[type=text],.campo input[type=date],.campo input[type=number],.campo select,.campo textarea,.asist__form input{
+    box-shadow:none!important;border-color:transparent!important;background:var(--vd2)!important}
+  .mini,.chip:not([aria-pressed="true"]):not(.on),.calc-sel__b:not([aria-selected="true"]),.tab:not([aria-selected="true"]),.asist__tut,.asist__x,.menu__portada{
+    border-color:transparent!important;background:var(--vd2)!important}
+  .tramo,.asist__form,.pm-cab,.menu h2,.menu__item{border-color:transparent!important}
+  .perfil-menu,.asist__panel,.bq-drawer,.tour-card,#perfil-hoja{border-color:transparent!important;box-shadow:0 -20px 50px rgba(0,0,0,.3)!important}
+
+  /* los menús (Más, Mi perfil, filtros, Lexia) son vidrio y dejan ver las luces de atrás */
+  .menu,.menu.is-on{
+    background:color-mix(in srgb,rgb(var(--bg-rgb)) 45%,transparent)!important;
+    -webkit-backdrop-filter:blur(30px) saturate(1.4) brightness(.92);backdrop-filter:blur(30px) saturate(1.4) brightness(.92)}
+  .perfil-menu,.perfil-hoja.perfil-menu,.asist__panel,.bq-drawer,.tour-card,#perfil-hoja{
+    background:color-mix(in srgb,rgb(var(--bg-rgb)) 55%,transparent)!important;
+    -webkit-backdrop-filter:blur(28px) saturate(1.4) brightness(.92);backdrop-filter:blur(28px) saturate(1.4) brightness(.92)}
+}
+
+/* ---- El menú de las tres rayitas se abre como Lexia: un panel de vidrio flotante, de esquinas muy redondas, sobre la página ---- */
+@media (max-width:760px){
+  .menu,.menu.is-on{
+    inset:auto!important;left:8px!important;right:8px!important;
+    top:calc(64px + env(safe-area-inset-top,0px))!important;bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+    padding:22px 22px 26px!important;border-radius:30px!important;border:0!important;
+    background:color-mix(in srgb,rgb(var(--bg-rgb)) 78%,transparent)!important;
+    box-shadow:0 -10px 50px rgba(0,0,0,.32)!important;
+    transform:translateY(14px) scale(.98);transition:opacity .35s var(--ease),transform .45s var(--ease),visibility 0s .45s
+  }
+  .menu.is-on{transform:none;transition:opacity .35s var(--ease),transform .45s var(--ease)}
+  .menu__grid{padding-bottom:6px!important;row-gap:14px!important}
+  .menu__grupo h2,.menu__item{border-bottom-color:transparent!important}
+  .menu__item{padding:12px 0!important}
+  .menu__portada{margin:8px auto 0!important}
+}
+
+/* ---- Sugerencias: pastilla chica con una «i» que abre una ventanita de vidrio, como las opciones de colores ---- */
+@media (max-width:760px){
+  .sug-pill{background:var(--vd2)!important;border-color:transparent!important;color:var(--fg)!important;padding:9px 16px 9px 12px}
+  .sug-hoja{
+    border:0!important;border-radius:26px!important;padding:18px 18px 20px!important;
+    background:color-mix(in srgb,rgb(var(--bg-rgb)) 80%,transparent)!important;
+    box-shadow:0 18px 50px rgba(0,0,0,.4)!important;
+    -webkit-backdrop-filter:blur(28px) saturate(1.4) brightness(.92);backdrop-filter:blur(28px) saturate(1.4) brightness(.92);
+    width:calc(100vw - 36px)!important
+  }
+  .sug-hoja .chip{background:var(--vd2)!important;border-color:transparent!important}
+  .sug-hoja .sugeridas,.sug-hoja .panel{border:0!important;background:none!important;box-shadow:none!important;padding:0!important}
+}
+
+/* ---- Ajustes de la última revisión ---- */
+@media (max-width:760px){
+  /* menú: el contenido se desliza dentro del panel y se funde arriba y abajo, sin cortarse contra el borde */
+  .menu,.menu.is-on{overflow:hidden!important;display:flex!important;flex-direction:column;padding:14px 22px 18px!important}
+  .menu__grid{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:18px 0 28px!important;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 30px,#000 calc(100% - 34px),transparent 100%);
+    mask-image:linear-gradient(to bottom,transparent 0,#000 30px,#000 calc(100% - 34px),transparent 100%)}
+  .menu__grid::-webkit-scrollbar{display:none}
+  .menu__portada{flex:none;margin:4px auto 0!important}
+
+  /* Lector: la barra de coincidencias — chevrones finos y centrados, sin círculos; el texto con aire a la izquierda */
+  body.en-lector .barra-doc [data-act="marca-ant"],body.en-lector .barra-doc [data-act="marca-sig"]{
+    width:40px;height:40px;min-height:40px!important;padding:0!important;border:0!important;background:none!important;box-shadow:none!important;
+    display:inline-flex;align-items:center;justify-content:center;font-size:0!important;color:var(--fg)}
+  body.en-lector .barra-doc [data-act="marca-ant"]::before,body.en-lector .barra-doc [data-act="marca-sig"]::before{
+    content:""!important;display:block;width:9px;height:9px;font-size:0;border:solid currentColor;border-width:0 1.2px 1.2px 0}
+  body.en-lector .barra-doc [data-act="marca-ant"]::before{transform:translateY(2px) rotate(-135deg)}
+  body.en-lector .barra-doc [data-act="marca-sig"]::before{transform:translateY(-2px) rotate(45deg)}
+  body.en-lector .barra-doc .campo input{padding:10px 20px!important}
+
+  /* Lector: la barra de abajo sin la línea horizontal */
+  body.en-lector .lector-acciones{border-top:0!important}
+
+  /* Lexia en el Lector: pastilla sin borde */
+  .lx-pill{border-color:transparent!important;background:var(--vd2)!important}
+  .lx-fallo.abre{border:0!important;background:var(--vd)!important;border-radius:28px!important}
+  .lx-form{border-color:transparent!important;background:var(--vd2)!important}
+  .lx-sug .chip{background:var(--vd2)!important;border-color:transparent!important}
+}
+
+/* ---- Los paneles de vidrio llevan sus propias luces, para que se vean siempre (menú, perfil, asistente, filtros, sugerencias) ---- */
+@media (max-width:760px){
+  html:not([data-tema="claro"]) .menu,html:not([data-tema="claro"]) .menu.is-on,
+  html:not([data-tema="claro"]) .perfil-menu,html:not([data-tema="claro"]) .perfil-hoja.perfil-menu,
+  html:not([data-tema="claro"]) .asist__panel,html:not([data-tema="claro"]) .bq-drawer,html:not([data-tema="claro"]) .sug-hoja,html:not([data-tema="claro"]) .tour-card{
+    background:
+      radial-gradient(circle 190px at 92% 6%,color-mix(in srgb,var(--gold) 15%,transparent) 0,transparent 100%),
+      radial-gradient(circle 170px at 4% 62%,color-mix(in srgb,var(--fg) 7%,transparent) 0,transparent 100%),
+      radial-gradient(circle 200px at 88% 98%,color-mix(in srgb,var(--gold) 11%,transparent) 0,transparent 100%),
+      color-mix(in srgb,rgb(var(--bg-rgb)) 74%,transparent)!important}
+}
