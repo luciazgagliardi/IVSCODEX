@@ -286,7 +286,7 @@
   }
 
   /* ---- tarjetas de vidrio ---- */
-  .brief__form .panel,.brief__summary,.panel,.lab .panel{
+  .op-caja,.op-caja.vivo,.brief__summary,.lab .panel{
     border-color:transparent!important;border-radius:28px!important;background:var(--vdbrillo),var(--vd)!important;
     box-shadow:var(--vdborde);-webkit-backdrop-filter:var(--vdblur);backdrop-filter:var(--vdblur)
   }
@@ -296,6 +296,10 @@
     background:var(--vd2)!important;border-color:transparent!important;box-shadow:none!important
   }
   .sel-btn{background:var(--vd2)!important;border-color:transparent!important}
+
+  .op-caja,.op-caja.vivo{border-radius:22px!important;padding:22px 28px 24px}
+
+  .her-zona,.vacio{border-color:transparent!important;background:var(--vdbrillo),var(--vd)!important;-webkit-backdrop-filter:var(--vdblur);backdrop-filter:var(--vdblur)}
 
   /* ---- paneles y menús flotantes: vidrio con sus propias luces, para que se vean siempre ---- */
   .menu,.menu.is-on,.perfil-menu,.asist__panel,.bq-drawer,.sug-hoja,.sel-lista,.tour-card{
