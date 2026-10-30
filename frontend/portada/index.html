@@ -99,16 +99,20 @@ html::-webkit-scrollbar{display:none}
   .lab>.tabs{max-width:none}
   /* resultados: cada fila es etiqueta + dato, y el dato baja de renglón en vez de empujar el cuadro hacia afuera */
   .sal table,.sal tbody{display:block}
-  .sal tr{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:0 14px;align-items:baseline}
+  .sal tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 14px;align-items:baseline}
+  .sal td.mon{white-space:nowrap;text-align:right}
+  .sal tr{border-top:1px solid var(--line)}
+  .sal td{border-top:0!important}
+  .sal tr.tot{border-top-color:var(--gold)}
   .sal td{min-width:0}
   .sal td:last-child{white-space:normal;overflow-wrap:normal;padding-left:0}
   .sal .gran{font-size:clamp(22px,7vw,30px)}
   .sal tr.nota{grid-template-columns:minmax(0,1fr)}
   .sal tr.nota td:last-child{text-align:left;border-top:0;padding-top:0;color:var(--mute)}
 }
-</style><link rel="stylesheet" href="../celular-vidrio.css?v=20261030h">
+</style><link rel="stylesheet" href="../celular-vidrio.css?v=20261030j">
 </head><body>
-<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261029r"></script><script src="shared6.js?v=20261030h"></script><script src="calculos.js?v=20261024a"></script>
+<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261029r"></script><script src="shared6.js?v=20261030j"></script><script src="calculos.js?v=20261024a"></script>
 <script>
 var m=IVS6.montar(),O=IVS4.OFERTAS;
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -134,7 +138,7 @@ $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if
 function campo(id,rot,val,extra){return '<label>'+rot+'<input type="text" id="'+id+'" value="'+esc(val)+'" '+(extra||"")+' autocomplete="off"></label>';}
 function fecha(id,rot,val){return '<label>'+rot+'<input type="date" id="'+id+'" value="'+esc(val)+'"></label>';}
 function chips(nombre,rot,vals,sel){return '<fieldset class="chips ancho"><legend>'+rot+'</legend>'+vals.map(function(v){return '<button type="button" class="chip" data-g="'+nombre+'" data-v="'+v[0]+'" aria-pressed="'+(sel===v[0])+'">'+v[1]+'</button>';}).join("")+'</fieldset>';}
-function fila(a,b,cls){return '<tr class="'+(cls||"")+'"><td>'+a+'</td><td>'+b+'</td></tr>';}
+function fila(a,b,cls){return '<tr class="'+(cls||"")+'"><td>'+a+'</td><td'+(/^\s*\$\s*[\d.,]+\s*$/.test(String(b))?' class="mon"':'')+'>'+b+'</td></tr>';}
 function nota(t){return '<p class="nota5">'+t+'</p>';}
 
 /* ---------- los siete instrumentos ---------- */

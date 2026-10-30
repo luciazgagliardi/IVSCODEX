@@ -54,6 +54,7 @@
 @keyframes luzA{to{transform:translate3d(5vw,-4vh,0) scale(1.1)}}
 @media (prefers-reduced-motion:reduce){.luces i{animation:none}}
 html[data-tema="claro"] .luces{opacity:.5}
+html[data-tema="claro"] .luces i{animation:none!important}
 html:not([data-tema="claro"]) .luces{display:none}
 
 body{background:transparent}   /* el color lo pone <html>: así se ven las luces de fondo */
