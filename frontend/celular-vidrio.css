@@ -249,3 +249,11 @@
   .bz-riel{padding:0!important;margin:0 0 14px!important}
   .lx-sub{margin-left:0!important}
 }
+
+/* ---- Listas desplegables y detalles de la última revisión ---- */
+@media (max-width:760px){
+  .sel-btn{background:var(--vd2)!important;border-color:transparent!important}
+  .sel-lista{border:0!important;background:color-mix(in srgb,rgb(var(--bg-rgb)) 82%,transparent)!important;
+    -webkit-backdrop-filter:blur(26px) saturate(1.4);backdrop-filter:blur(26px) saturate(1.4);box-shadow:0 18px 50px rgba(0,0,0,.4)!important}
+  .sel-lista button:hover,.sel-lista button:focus-visible{background:var(--vd2)}
+}
