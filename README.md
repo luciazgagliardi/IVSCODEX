@@ -1,436 +1,406 @@
-# Juris et de jure — extractor de sentencias
+<div align="center">
 
-Pegás el enlace de un fallo argentino (o internacional) de una base oficial, el servidor lo descarga,
-le saca el texto —sirve HTML y PDF— y te lo muestra en la página con tu búsqueda resaltada,
-los pasajes recortados con contexto y la cita armada.
+<a href="https://luciazgagliardi.github.io/IVSCODEX/"><img src="docs/img/cabecera.webp" alt="IVS · CODEX. Buscador integrado de repositorios judiciales oficiales y doctrina." width="100%"></a>
 
-**No genera ni resume jurisprudencia.** El texto que ves es el del documento oficial que indicaste.
+<br>
 
-El proyecto tiene dos mitades independientes, pensadas para desplegarse por separado:
+**Buscador integrado de repositorios judiciales oficiales y doctrina.**<br>
+Una consulta en once bases; cada resultado muestra el pasaje que coincide y remite al documento oficial.
 
-- **`frontend/`** — estático, sin build. Se puede abrir directo o publicar en GitHub Pages.
-- **`backend/`** — Express, con su propio `package.json`. Se despliega aparte (Render, Railway, Fly, tu
-  propio servidor, lo que sea) y expone la API que el frontend usa para traer un fallo por enlace.
+<sub>**11** bases oficiales &nbsp;·&nbsp; **15** secciones &nbsp;·&nbsp; **106** fuentes en el catálogo &nbsp;·&nbsp; **97** pruebas automáticas</sub>
 
-El frontend funciona igual sin el backend: lo único que se pierde es el botón "traer el fallo por
-enlace" del Lector. Todo lo demás —pegar el texto a mano, resaltar, armar citas, el catálogo de
-fuentes— es 100% archivo estático y anda sin ningún servidor.
+<br>
 
----
+[Qué es](#qué-es) · [Capturas](#capturas) · [Secciones](#las-quince-secciones) · [Bases](#las-once-bases) · [Cómo funciona](#cómo-funciona) · [Puesta en marcha](#puesta-en-marcha) · [Despliegue](#despliegue) · [Referencia](#referencia-técnica) · [Seguridad](#seguridad) · [Licencia](#licencia)
 
-## 1. Estructura de carpetas
+</div>
 
-```
-juris-et-de-jure/
-├── README.md                 Este archivo
-├── .gitignore
-│
-├── frontend/                  Estático — esto es lo que se publica en GitHub Pages
-│   ├── index.html             Página principal: buscador + Lector de fallos
-│   ├── clasico.html           Versión original del extractor (formulario simple)
-│   ├── catalogo.html          Catálogo de ~100 fuentes oficiales, standalone (no usa la API)
-│   ├── script.js               Lógica de clasico.html: llamada a la API, resaltado, cita
-│   ├── styles.css              Estilos de clasico.html
-│   └── emblemaaa.png           Emblema/favicon
-│
-├── backend/                    Express — se despliega aparte de frontend/
-│   ├── package.json            Manifiesto propio (dependencias, scripts)
-│   ├── .env.example            Plantilla de configuración (copiala como backend/.env)
-│   ├── index.js                CORS, rate limit, estáticos (sirve frontend/ en desarrollo), arranque
-│   ├── config.js               Variables de entorno y lista blanca de dominios
-│   │
-│   ├── routes/
-│   │   ├── extraer.js          POST /api/extraer y rutas auxiliares
-│   │   ├── indice.js           Búsquedas en vivo contra los buscadores oficiales
-│   │   └── citas.js            POST /api/verificar-cita y /api/leer-cita
-│   │
-│   ├── lib/
-│   │   ├── descargador.js      Descarga segura: SSRF, redirecciones, charset
-│   │   ├── extraerHtml.js      Readability + limpieza propia de respaldo
-│   │   ├── extraerPdf.js       pdf.js: líneas, párrafos, detección de escaneos
-│   │   ├── fuentes.js          Catálogo de los buscadores oficiales integrados
-│   │   ├── citas.js            Lee una cita pegada y saca sus campos
-│   │   ├── verificarCita.js    Busca esa cita en las fuentes y da un veredicto
-│   │   ├── cache.js            Caché en disco con vencimiento
-│   │   └── errores.js          Errores tipados con mensaje en castellano
-│   │
-│   ├── test/
-│   │   └── prueba.js           33 pruebas: extracción, seguridad, errores
-│   │
-│   └── cache/                  Se crea sola. Podés borrarla cuando quieras.
-```
+<br>
 
----
+## Qué es
 
-## 2. Puesta en marcha
+IVS · CODEX reúne en una sola pantalla la jurisprudencia y la doctrina de once bases oficiales. La consulta se escribe una vez; la plataforma la adapta al lenguaje de cada buscador, junta las respuestas y muestra, en cada resultado, el pasaje donde aparece lo buscado. Desde ahí se abre el fallo completo en un lector que deja la búsqueda resaltada, se arma la cita y se la contrasta con la fuente oficial antes de usarla.
 
-### Frontend — no necesita nada instalado
+> [!IMPORTANT]
+> **No genera ni resume jurisprudencia.** El texto que se muestra es el del documento oficial: la plataforma lo encuentra, lo recorta y lo señala, y cada resultado remite a su fuente. Lexia, el asistente del Lector, tampoco usa un modelo de lenguaje: aplica reglas sobre el texto del fallo abierto, dentro del navegador, y cada respuesta conserva el fragmento que la justifica.
 
-Es HTML/CSS/JS puro. Para probarlo:
+El proyecto se llamó antes *Juris et de jure*, y el repositorio, `IURIS`. Algunos nombres internos conservan ese origen: el paquete `juris-et-de-jure-backend` y la aplicación «IURIS» de Azure App Service.
 
-- **Directo:** abrí `frontend/index.html` con doble clic, o arrastralo a una pestaña del navegador.
-- **Publicado con GitHub Pages:** el repo ya trae `.github/workflows/pages.yml`, que publica el
-  contenido de `frontend/` solo (GitHub Pages, en su modo simple, no deja elegir una subcarpeta como
-  fuente — por eso el workflow). Activalo una sola vez: en el repo, Settings → Pages → "Build and
-  deployment" → Source: **GitHub Actions**. De ahí en más, cada push a `main` que toque `frontend/`
-  publica solo. No hace falta build ni backend para que funcione la búsqueda, el Lector con texto
-  pegado a mano, ni el catálogo.
+<br>
 
-Si además querés que el botón "traer el fallo por enlace" funcione una vez publicado (sin backend en el
-mismo origen), mirá la sección 3.
+## Capturas
 
-### Backend — Node 18.17 o superior
+<div align="center">
+
+<img src="docs/img/buscar.webp" alt="La sección Buscar con la consulta «daño moral»: a la izquierda las once bases con la cantidad de resultados de cada una; a la derecha los resultados con el pasaje resaltado." width="100%">
+
+<sub><b>QVAESTIO · Buscar.</b> Una consulta enviada a las once bases a la vez: la cantidad que devolvió cada una, los resultados intercalados y el pasaje con lo buscado resaltado.</sub>
+
+<br><br>
+
+<img src="docs/img/lector.webp" alt="El Lector con un fallo abierto: barra de coincidencias, panel de Lexia y texto completo." width="100%">
+
+<sub><b>LECTIO · Lector.</b> El fallo completo con las coincidencias señaladas en el texto y en el margen, los datos del documento y Lexia, que responde sobre el texto abierto sin enviarlo a ningún lado.</sub>
+
+<br><br>
+
+<img src="docs/img/verificar.webp" alt="El Verificador de citas con el resultado «Coincidencia encontrada» para una cita de la Corte Suprema, los datos leídos de la cita y los fallos candidatos." width="100%">
+
+<sub><b>PROBATIO · Verificar.</b> Una cita pegada tal como se la tiene: se lee, se busca en la fuente que corresponde al tribunal y el veredicto lista los candidatos con el enlace al documento oficial.</sub>
+
+<br><br>
+
+<img src="docs/img/calculos.webp" alt="La calculadora de intereses con un capital, un tramo de tasa y el desglose del resultado con su base legal." width="100%">
+
+<sub><b>CALCVLVS · Cálculos.</b> El resultado con su desglose por tramo y la norma que lo sostiene a la vista.</sub>
+
+</div>
+
+<br>
+
+## Las quince secciones
+
+Seis están siempre en la barra —Buscar, Lector, Ramas, Cálculos, Fuentes y Verificar—; el resto se abre desde «Todas las secciones». Cada una lleva su nombre latino. Además hay un recorrido guiado («Cómo usar») y seis paletas de color: Noche, Día, Descanso, Azul, Verde y Bordeaux.
+
+| Grupo | Latín | Sección | Qué hace |
+|---|---|---|---|
+| **Investigar** | `QVAESTIO` | Buscar | Las once bases a la vez, con voces sugeridas por rama. |
+| | `COLLATIO` | Comparar | Contrasta criterios de resolución por jurisdicción. |
+| | `MATERIAE` | Ramas | Las 28 ramas del derecho y las voces con que indexan los buscadores. |
+| | `REQVISITA` | Requisitos | Lo que exige cada trámite. |
+| | `LEX` | Norma | Los artículos de las normas, desde InfoLeg. |
+| **Leer y citar** | `LECTIO` | Lector | El fallo con su búsqueda destacada, por enlace, archivo o texto pegado. |
+| | `CITATIO` | Citar | Formateador de citas. |
+| | `PROBATIO` | Verificar | Contrasta una cita con las bases oficiales antes de presentarla. |
+| | `VERBA` | Glosario | Latín jurídico. |
+| **Calcular** | `CALCVLVS` | Cálculos | Intereses, actualización, despido, incapacidad, honorarios y tasa, liquidación. |
+| | `TEMPVS` | Plazos | Plazos, prescripción y calendario. |
+| **Preparar** | `INSTRVMENTA` | Herramientas | PDF listos para presentar: unir, dividir, foliar, reducir. Todo en el navegador. |
+| **Fuentes** | `FONTES` | Fuentes | Catálogo de 106 bases y buscadores públicos, para abrir a mano. |
+| **Archivo personal** | `THESAVRVS` | Guardados | Pasajes, fuentes y búsquedas guardadas. |
+| | `RATIO` | Cuenta | Sincronización entre dispositivos. |
+
+<br>
+
+## Las once bases
+
+Cada una tiene su propio cliente en [`backend/lib/`](backend/lib) (`indice<Base>.js`) y se registra en [`backend/lib/fuentes.js`](backend/lib/fuentes.js).
+
+| Base | Identificador | Qué reúne |
+|---|---|---|
+| Poder Judicial de Mendoza | `mendoza` | Suprema Corte (por defecto), Cámaras Civiles y Cámaras del Trabajo. |
+| Mendoza Legal | `mendozalegal` | Fallos elegidos por la revista del Colegio de Abogados de Mendoza, con resumen escrito por una persona y enlace al texto completo. Es una selección pequeña (unos 150 artículos). |
+| TSJ de la Ciudad de Buenos Aires | `caba` | Sentencias del Tribunal Superior de Justicia. |
+| SAIJ | `saij` | Sistema Argentino de Información Jurídica, del Ministerio de Justicia de la Nación: sumarios y fallos de todo el país. |
+| Corte Suprema de Justicia de la Nación | `csjn` | Se consulta a través de la faceta correspondiente de SAIJ, porque el sitio de la Corte exige reCAPTCHA. |
+| Suprema Corte de la Provincia de Buenos Aires | `scba` | JUBA: sumarios con su texto y el enlace al fallo completo. |
+| Cámaras de la Ciudad de Buenos Aires | `juristeca` | Juristeca, del Consejo de la Magistratura de la Ciudad: fallos de las cámaras con su PDF. |
+| Corte Suprema de Santa Fe | `santafe` | Sumarios con su texto y la sentencia completa en HTML. |
+| Poder Judicial de Río Negro | `rionegro` | Superior Tribunal, cámaras y juzgados; cada fallo en PDF con texto. |
+| Corte Interamericana de Derechos Humanos | `corteidh` | Sentencias, opiniones consultivas y resoluciones. |
+| Dialnet | `dialnet` | Doctrina en español: artículos, libros y tesis. |
+
+> [!NOTE]
+> Dialnet y Mendoza Legal no son tribunales: una es doctrina y la otra, una selección. Por eso no sirven para confirmar que un expediente existe, y el verificador de citas nunca las consulta.
+
+<br>
+
+## Cómo funciona
+
+<div align="center">
+
+<img src="docs/img/arquitectura.webp" alt="Diagrama: el frontend estático en el navegador (Buscar, Lector y Verificar, Lexia, Cálculos y plazos, Herramientas, Guardados) llama por /api al servidor Express (un cliente por base, extracción de documentos, verificador de citas, cuentas, y el acervo como copia propia), que consulta en vivo las once bases oficiales." width="100%">
+
+</div>
+
+- **Frontend sin compilar.** [`frontend/`](frontend) es HTML, CSS y JavaScript puro. Los cálculos, los plazos, el glosario, el catálogo y las herramientas de PDF funcionan sin servidor; el servidor se necesita para buscar, traer un fallo por enlace, verificar citas y tener cuenta.
+- **Pasajes con contexto.** Un mismo módulo ([`frontend/pasajes.js`](frontend/pasajes.js)) decide dónde coincide lo buscado, sin distinguir acentos ni mayúsculas y por la raíz de cada palabra; lo usan la lista de resultados, el Lector y el servidor.
+- **Acervo propio.** El servidor guarda una copia en SQLite, con índice de texto completo, de casi todo SAIJ y de las demás bases ([`backend/lib/acervo.js`](backend/lib/acervo.js)). Las tandas de datos viajan en la rama `acervo` y se importan al arrancar. Cuando un sitio oficial no responde, Buscar contesta con esa copia en lugar de quedarse sin resultados. Requiere Node 22.5 o superior (`node:sqlite`); sin él, el acervo queda apagado y todo lo demás sigue igual.
+- **Extracción de documentos.** El servidor descarga el enlace con las protecciones descritas en [Seguridad](#seguridad) y extrae el texto: HTML con Readability, PDF con pdf.js, DOC con word-extractor. Si el PDF es una imagen, ofrece reconocimiento óptico de caracteres (OCR).
+- **TSJ de CABA.** Su sitio responde con un desafío de Cloudflare a los servidores; [`backend/lib/navegadorCf.js`](backend/lib/navegadorCf.js) abre un Chrome sin interfaz para resolverlo y pedir los PDF.
+- **Cuentas.** La contraseña se guarda con scrypt y una sal por usuario; la sesión viaja como `Authorization: Bearer <token>`, no como cookie.
+
+<br>
+
+## Puesta en marcha
+
+Requisitos: **Node 18.17 o superior** para el servidor (22.5 o superior si se quiere el acervo; el servidor publicado usa Node 24). El frontend no necesita nada instalado.
+
+### Solo el frontend
+
+Abrir [`frontend/index.html`](frontend/index.html) en el navegador, o servir la carpeta con cualquier servidor estático. Sin servidor propio, la página prueba la misma dirección, `http://localhost:3000` y, por último, el servidor publicado.
+
+### Frontend y servidor
 
 ```bash
-node --version   # confirmá que sea 18.17+; si no, bajalo de nodejs.org (LTS)
-
-cd backend
-npm install                   # tarda un minuto la primera vez
-cp .env.example .env          # opcional: anda igual sin esto — en Windows: copy .env.example .env
+git clone https://github.com/luciazgagliardi/IVSCODEX.git
+cd IVSCODEX/backend
+npm install
 npm start
 ```
 
-Vas a ver:
+El servidor queda en `http://localhost:3000` y, en desarrollo, también sirve `frontend/` en la raíz: es la forma más simple de probar todo junto. Toda la configuración es opcional; para ajustarla se copia la plantilla (`cp .env.example .env`, o `copy` en Windows).
 
-```
-  Juris et de jure — servidor de extracción
-  ─────────────────────────────────────────
-  Interfaz   http://localhost:3000
-  API        http://localhost:3000/api/salud
-  Dominios   solo la lista blanca de config.js
-```
+| Comando (desde `backend/`) | Qué hace |
+|---|---|
+| `npm start` | Inicia el servidor. |
+| `npm run dev` | Lo reinicia solo al guardar cambios. |
+| `npm test` | Corre las 97 pruebas automáticas (unos 7 segundos). |
+| `npm run limpiar-cache` | Vacía `backend/cache`. |
 
-En desarrollo, el backend también sirve `frontend/` en la raíz (`http://localhost:3000`) — es la forma
-más simple de probar todo junto sin publicar nada. El punto verde arriba a la derecha de la página
-confirma que el frontend encontró la API.
+<br>
 
-### Comandos útiles (desde `backend/`)
+## Despliegue
 
-```bash
-npm run dev             # se reinicia solo al guardar cambios
-npm test                # corre las 33 pruebas
-npm run limpiar-cache   # vacía backend/cache
-```
+Las dos mitades se publican por separado, cada una con su flujo de GitHub Actions en [`.github/workflows/`](.github/workflows).
 
-Para cortar el servidor: **Ctrl+C**.
+| Parte | Destino | Flujo | Se dispara con cambios en |
+|---|---|---|---|
+| Frontend | [GitHub Pages](https://luciazgagliardi.github.io/IVSCODEX/) | `pages.yml` | `frontend/**` |
+| Servidor | Azure App Service | `azure-backend.yml` | `backend/**` y `frontend/pasajes.js` |
 
----
+- **Pages.** Se activa una sola vez, en *Settings → Pages → Build and deployment → Source: GitHub Actions*. El flujo publica únicamente el contenido de `frontend/`.
+- **Azure.** El flujo trae las tandas del acervo desde la rama `acervo`, copia `frontend/pasajes.js` a `backend/lib/pasajes.cjs` (el servidor usa el mismo módulo que la página), instala con `npm ci` en Node 24 y despliega con el secreto `AZURE_WEBAPP_PUBLISH_PROFILE`. En App Service los datos que deben sobrevivir a un despliegue —cuentas, índices, acervo— se guardan en `/home/datos`.
+- **Conexión.** La página elige el servidor al abrirse: la misma dirección (`/api`), después `http://localhost:3000/api` y, por último, la dirección publicada que figura en la función `detectarServidor()` de [`frontend/index.html`](frontend/index.html). Si el servidor vive en otro dominio, ese origen se agrega a `CORS_ORIGENES`; sin ello el navegador bloquea las respuestas.
+- **Acervo.** [`backend/scripts/actualizarAcervo.mjs`](backend/scripts/actualizarAcervo.mjs) vuelve a bajar de SAIJ los últimos tres meses, rearma las tandas y las publica; está pensado para correr una vez por mes.
 
-## 3. Conectar un frontend publicado con un backend desplegado
+<br>
 
-Cuando `frontend/` y `backend/` viven en dominios distintos (por ejemplo, frontend en GitHub Pages y
-backend en Render), dos cosas tienen que coincidir:
+## Referencia técnica
 
-1. **El frontend tiene que saber la URL del backend.** `frontend/index.html`
-   (función `detectarServidor()`) y `frontend/script.js` (constante `API`) ya prueban, en este orden:
-   mismo origen (`/api`) → `http://localhost:3000/api` (desarrollo) → un placeholder
-   (`https://TU-BACKEND-DESPLEGADO.example.com/api`). Reemplazá ese placeholder por la URL real de tu
-   backend una vez desplegado, en los dos archivos.
-2. **El backend tiene que aceptar ese origen.** Sumá la URL de tu frontend publicado (por ejemplo
-   `https://tu-usuario.github.io`) a `CORS_ORIGENES` en `backend/.env`, separada por coma del resto.
+<details>
+<summary><b>API</b></summary>
 
-Sin el paso 2, el navegador va a bloquear la respuesta aunque la URL esté bien apuntada — es la protección
-CORS del propio navegador, no algo que dependa de este código.
+<br>
 
----
-
-## 4. La API
+Todas las rutas cuelgan de `/api`. Ante un error siempre llega JSON con `codigo` (estable, para el frontend) y `mensaje` (en castellano), por ejemplo `DOMINIO_NO_PERMITIDO`, `PDF_ESCANEADO`, `HTML_SIN_TEXTO`, `TIEMPO_AGOTADO` o `RED_PRIVADA`.
 
 | Método | Ruta | Qué hace |
 |---|---|---|
-| `POST` | `/api/extraer` | Cuerpo `{ "url": "...", "refrescar": false }`. Devuelve el texto. |
-| `POST` | `/api/indice/<fuente>/buscar` | Cuerpo `{ "q": "...", "modo": "todas", "pagina": 1 }`. Busca en vivo en el buscador oficial de `<fuente>` (uno de: `mendoza`, `caba`, `saij`, `csjn`, `dialnet` — ver la solapa "Buscar" y `backend/lib/fuentes.js`). |
-| `POST` | `/api/verificar-cita` | Cuerpo `{ "texto": "CSJN, Fallos: 340:1084" }`. Busca esa cita en las fuentes y devuelve un veredicto (ver sección 9). |
-| `POST` | `/api/leer-cita` | Igual, pero solo parsea: no sale a la red. Sirve para ver qué entendió el lector de citas. |
-| `GET` | `/api/salud` | Estado del servidor. |
-| `GET` | `/api/dominios` | Lista blanca vigente. |
-| `GET` | `/api/verificar?url=` | Dice si un enlace es procesable, sin descargarlo. |
-| `DELETE` | `/api/cache` | Vacía la caché. |
+| `POST` | `/extraer` | Cuerpo `{ "url", "refrescar" }`. Descarga el documento y devuelve su texto. |
+| `POST` | `/extraer-archivo` | Lo mismo para un archivo subido (bytes en el cuerpo, nombre en `X-Nombre-Archivo`). |
+| `POST` | `/ocr`, `/ocr-archivo` | Reconocimiento de texto para PDF escaneados, por enlace o por archivo. |
+| `POST` | `/indice/<base>/buscar` | Busca en vivo en una base. Cuerpo: `q` y, opcionalmente, `modo`, `pagina`, `desde`, `tribunal`, `excluir`, `anioDesde`, `anioHasta`, `articulo`, `norma`, `provincia`. |
+| `POST` | `/indice/<base>/local` | La misma búsqueda sobre la copia local, sin consultar al sitio oficial. |
+| `POST` | `/indice/<base>/fragmentos` | Pasajes de una lista de enlaces para una consulta. |
+| `GET` | `/indice/<base>/estado` | Estado del índice de esa base. |
+| `POST` | `/verificar-cita` | Cuerpo `{ "texto" }`. Busca la cita en las fuentes y devuelve un veredicto. |
+| `POST` | `/leer-cita` | Solo interpreta la cita, sin consultar la red. |
+| `GET` | `/legislacion/normas`, `/legislacion/:norma/:articulo` | Normas y artículos. |
+| `GET` | `/series/:clave` | Serie oficial que el navegador no puede leer directamente (hoy, RIPTE). |
+| `GET` | `/tesauro/estado` · `POST /tesauro/proponer` | Tesauro de sinónimos; la propuesta de anillos nuevos requiere `ANTHROPIC_API_KEY`. |
+| `GET` | `/acervo/estado`, `/fuentes/estado` | Estado del acervo y de cada fuente. |
+| `POST` | `/auth/registro`, `/auth/login`, `/auth/logout` | Cuentas. |
+| `GET` · `PUT` | `/auth/yo`, `/auth/perfil`, `/mis-datos` · `POST /mis-datos/fusionar` | Perfil y datos personales; requieren sesión. |
+| `GET` | `/salud`, `/dominios`, `/verificar?url=` | Estado del servidor (el detalle solo para administración), lista blanca vigente y si un enlace es procesable. |
+| `DELETE` | `/cache` | Vacía la caché; exige `X-Admin-Token`. |
 
-Prueba rápida desde la terminal:
+`<base>` es uno de los identificadores de [Las once bases](#las-once-bases). Una prueba rápida desde la terminal:
 
 ```bash
-curl -X POST http://localhost:3000/api/extraer \
+curl -X POST http://localhost:3000/api/indice/saij/buscar \
   -H "Content-Type: application/json" \
-  -d '{"url":"https://www.cij.gov.ar/nota-33352-Bolet-n-de-jurisprudencia-de-la-C-mara-Federal-de-Mendoza.html"}'
+  -d '{"q":"daño moral"}'
 ```
 
-Respuesta:
+La respuesta de `/extraer` incluye, entre otros campos, `tipo` (el formato del documento), `titulo`, `texto`, `caracteres`, `palabras`, `metodo`, `desdeCache` y `ms`.
 
-```json
-{
-  "ok": true,
-  "tipo": "html",
-  "titulo": "…",
-  "texto": "…",
-  "caracteres": 18432,
-  "palabras": 2911,
-  "metodo": "readability",
-  "desdeCache": false,
-  "ms": 1840
-}
-```
+</details>
 
-Ante un error siempre llega JSON con `codigo` (estable, para el frontend) y `mensaje`
-(en castellano, para vos): `DOMINIO_NO_PERMITIDO`, `PDF_ESCANEADO`, `HTML_SIN_TEXTO`,
-`TIEMPO_AGOTADO`, `RESPUESTA_NO_OK`, `DEMASIADO_GRANDE`, `RED_PRIVADA`…
+<details>
+<summary><b>Configuración</b></summary>
 
-**Las seis fuentes con buscador propio** (solapa "Buscar", `backend/lib/fuentes.js`):
+<br>
 
-| slug | Qué es |
-|---|---|
-| `mendoza` | Poder Judicial de Mendoza — Corte, Cámaras Civiles o del Trabajo (se elige antes de buscar). |
-| `caba` | TSJ de la Ciudad de Buenos Aires. |
-| `saij` | SAIJ, casi un millón de documentos de todo el país. |
-| `csjn` | Corte Suprema, vía la faceta correspondiente de SAIJ (su propio sitio pide CAPTCHA). |
-| `dialnet` | Dialnet (España) — doctrina en español, no jurisprudencia: artículos, libros y tesis, sin carátula ni expediente. Ver `backend/lib/indiceDialnet.js`. |
-| `mendozalegal` | Mendoza Legal — la revista del Colegio de Abogados de Mendoza: fallos elegidos a mano, con resumen escrito por una persona y enlace al texto completo. Es una selección chica (unos 180 artículos), no una base: no encontrar algo ahí no significa nada. Se consulta por la API REST de WordPress del sitio. Ver `backend/lib/indiceMendozaLegal.js`. |
+Todo se ajusta con variables de entorno, normalmente en `backend/.env` (plantilla: [`backend/.env.example`](backend/.env.example)). Los valores de la tabla son los predeterminados de [`backend/config.js`](backend/config.js).
 
-Se sumaron después de probar a mano una lista más larga de sitios que en principio parecían
-candidatos: quedaron afuera los que exigen CAPTCHA (CSJN directo), los que están detrás de un
-challenge de bot (SciELO, "Bunny Shield") y los que, aun sin ninguna de esas dos cosas, no se
-pudieron terminar de scriptear con las herramientas de este entorno —sin navegador real, no hay
-forma de ver qué pedido exacto arma el JavaScript del sitio, y adivinarlo a ciegas contra un
-formulario ASP.NET con estado de sesión (SCBA/JUBA) o una aplicación Angular con su propia API
-(Poder Judicial de Jujuy) no dio resultado. Quedan como candidatos para retomar si en algún
-momento se puede capturar el pedido real desde un navegador.
-
----
-
-## 5. Configuración
-
-Todo se ajusta por variables de entorno en `backend/.env`. Lo más habitual:
-
-| Variable | Default | Para qué |
+| Variable | Valor predeterminado | Para qué sirve |
 |---|---|---|
-| `PORT` | `3000` | Puerto del servidor |
-| `CORS_ORIGENES` | localhost 3000 y 5500 | Desde dónde se puede llamar a la API (ver sección 3) |
-| `TIMEOUT_MS` | `25000` | Cuánto esperamos al sitio de origen |
-| `MAX_BYTES` | `26214400` (25 MB) | Tope de descarga |
-| `CACHE_HORAS` | `24` | Duración de la caché (`0` la desactiva) |
-| `DIR_CACHE` | `backend/cache` | Dónde se guarda la caché en disco |
-| `ESPERA_POR_HOST_MS` | `1500` | Pausa mínima entre pedidos al mismo sitio |
-| `PERMITIR_CUALQUIER_DOMINIO` | `false` | `true` acepta cualquier dominio público |
-| `PERMITIR_RED_PRIVADA` | `false` | Solo para los tests automáticos — nunca en producción |
-| `LIMITE_CITAS` | `30` | Verificaciones de cita por navegador y ventana (ver sección 9) |
-| `LIMITE_CITAS_VENTANA_MS` | `900000` (15 min) | Cada cuánto se reinicia esa cuenta |
+| `PORT` | `3000` | Puerto del servidor. |
+| `CORS_ORIGENES` | `localhost` y `127.0.0.1`, puertos 3000 y 5500 | Orígenes desde los que se puede llamar a la API. |
+| `TIMEOUT_MS` | `25000` | Espera máxima al sitio de origen. |
+| `MAX_BYTES` | `26214400` (25 MB) | Tamaño máximo de descarga. |
+| `MAX_REDIRECCIONES` | `5` | Redirecciones que se siguen, una por una. |
+| `CACHE_HORAS` | `24` | Duración de la caché (`0` la desactiva). |
+| `ESPERA_POR_HOST_MS` | `1500` | Pausa mínima entre dos pedidos al mismo sitio. |
+| `USER_AGENT` | `JurisEtDeJure/1.0 (…)` | Identificación ante los organismos; conviene poner un contacto real. |
+| `LIMITE_PETICIONES` · `LIMITE_VENTANA_MS` | `120` · `300000` | Límite general de pedidos por ventana (5 minutos). |
+| `LIMITE_CITAS` · `LIMITE_CITAS_VENTANA_MS` | `30` · `900000` | Verificaciones de cita por ventana (15 minutos). |
+| `OCR_HABILITADO` | `true` | `false` apaga el OCR sin tocar código. |
+| `OCR_MAX_PAGINAS` · `OCR_TIMEOUT_MS` | `6` · `180000` | Páginas y tiempo máximos por pedido de OCR. |
+| `PERMITIR_CUALQUIER_DOMINIO` | `false` | `true` acepta cualquier dominio público, no solo la lista blanca. |
+| `PERMITIR_RED_PRIVADA` | `false` | Solo para las pruebas automáticas; nunca en un servidor real. |
+| `ADMIN_TOKEN` | vacío | Clave para `DELETE /api/cache` y el detalle de `/api/salud` (cabecera `X-Admin-Token`). |
+| `ANTHROPIC_API_KEY` | vacío | Opcional: habilita proponer anillos nuevos del tesauro. Solo del lado del servidor. |
+| `SCRAPER_API_KEY` | vacío | Clave del proxy que usa el buscador del TSJ de CABA. |
+| `DIR_DATOS` | junto al código; `/home/datos` en App Service | Dónde viven cuentas, índices, caché y acervo. |
+| `DIR_CACHE`, `DIR_INDICE`, `DIR_OCR_CACHE`, `DIR_USUARIOS`, `DIR_ACERVO`, `DIR_ACERVO_DATOS` | subcarpetas de `DIR_DATOS` | Cada carpeta por separado, si hace falta moverla. |
+| `CHROME_PATH` | detección automática | Chrome local para el TSJ de CABA en una máquina propia. |
+| `ACERVO_COPIA_LOCAL`, `CORPUS_CORTEIDH`, `COSECHA_CABA` | activos en el servidor publicado | `1` o `0` para forzar la lectura desde la copia local, el índice de texto de la Corte IDH y la cosecha lenta del TSJ de CABA. |
+| `RELE_URL` · `RELE_CLAVE` | vacío | Relevo opcional de Cloudflare Workers (ver [`backend/relay/LEEME.md`](backend/relay/LEEME.md)); se probó y no resolvió el caso del TSJ, y queda como respaldo. |
 
-**Agregar una fuente:** abrí `backend/config.js`, sumá el dominio a `DOMINIOS_PERMITIDOS`
-y reiniciá. Acepta subdominios: poniendo `csjn.gov.ar` habilitás también `sjconsulta.csjn.gov.ar`.
+**Agregar una fuente a la lista blanca:** se suma el dominio a `DOMINIOS_PERMITIDOS` en `backend/config.js` y se reinicia. Acepta subdominios: con `csjn.gov.ar` queda habilitado también `sjconsulta.csjn.gov.ar`.
 
----
+</details>
 
-## 6. Seguridad: por qué la lista blanca no es un capricho
+<details>
+<summary><b>Estructura del repositorio</b></summary>
 
-Un servidor que descarga "cualquier URL que le manden" es una vulnerabilidad conocida
-llamada **SSRF**. Alguien te pasa `http://169.254.169.254/` (la IP de metadatos de AWS,
-Azure y Google Cloud) y tu propio servidor le trae las credenciales. O `http://192.168.1.1`
-y le mapea tu red.
+<br>
 
-Por eso, **antes de cada salto de red** el descargador:
+```text
+IVSCODEX/
+├── README.md
+├── docs/                         Imágenes del README y el script que las regenera
+│   ├── img/                      Cabecera, capturas y diagrama
+│   ├── arquitectura.html         Fuente del diagrama
+│   └── capturar.mjs              Vuelve a sacar las imágenes (ver «Imágenes del README»)
+├── .github/workflows/            pages.yml · azure-backend.yml
+│
+├── frontend/                     Estático, sin compilar: lo que se publica en GitHub Pages
+│   ├── index.html                La aplicación (buscador, lector, cálculos, etc.)
+│   ├── portada/                  La portada, que se muestra en un marco dentro de index.html
+│   ├── pasajes.js                Recorte de pasajes; el servidor usa el mismo módulo
+│   ├── analisis-fallo.js         Lexia: reglas sobre el texto del fallo abierto
+│   ├── lexia-picante.js          Lo que Lexia contesta a insultos, piropos y provocaciones
+│   ├── nombre-fallo.js           Buscar un fallo por su carátula
+│   ├── calculos.js               Núcleo de las calculadoras, sin pantalla
+│   ├── herramientas.js           Herramientas para preparar PDF
+│   ├── catalogo.html             Catálogo de fuentes independiente
+│   ├── clasico.html · script.js · styles.css   Primera versión, de formulario simple
+│   ├── datos/                    Tesauro de sinónimos y citas de fallos
+│   ├── vendor/                   pdf.js y pdf-lib
+│   └── opciones/ · portadas/ · rumbos/ …       Maquetas y exploraciones de diseño
+│
+└── backend/                      Express: se despliega aparte de frontend/
+    ├── index.js · config.js      Arranque, seguridad, límites y configuración
+    ├── routes/                   extraer · indice · citas · auth
+    ├── lib/                      Descarga, extracción, un cliente por base, acervo, verificador, OCR, cuentas
+    ├── scripts/                  Cosecha y armado del acervo
+    ├── respaldo/                 Copia de respaldo de cada base
+    ├── relay/                    Relevo opcional de Cloudflare Workers
+    └── test/                     Pruebas automáticas (97) y fallos de muestra
+```
 
-1. exige `http` o `https` — nada de `file:`, `ftp:`, `gopher:`
-2. exige que el dominio esté en la lista blanca
-3. resuelve el DNS y rechaza si apunta a una IP interna
-4. sigue las redirecciones **a mano**, repitiendo 1, 2 y 3 en cada salto
+</details>
 
-El punto 4 es el que se olvida siempre: un dominio público puede redirigir a `127.0.0.1`
-y, si dejás que `fetch` siga los redirects solo, no te enterás. Hay una prueba automática
-que verifica justamente eso.
+<details>
+<summary><b>Imágenes del README</b></summary>
 
-Si lo publicás en internet, activá HTTPS y no toques `PERMITIR_RED_PRIVADA`.
+<br>
 
----
-
-## 7. Ser buen vecino con los servidores oficiales
-
-Esto no es un scraper masivo: baja **un documento por vez, el que vos pediste**.
-Aun así trae tres cosas que conviene no sacar:
-
-- **Pausa entre pedidos al mismo sitio** (`ESPERA_POR_HOST_MS`), para no golpear.
-- **Caché de 24 h**, para no pedir dos veces lo mismo.
-- **User-Agent identificable.** Cambiá el mail en `.env` por el tuyo: si un organismo
-  ve tráfico raro, es mejor que tenga a quién escribirle antes de bloquear a ciegas.
-
-Los sitios oficiales pueden bloquearte si abusás, y están en su derecho. Uso personal,
-volumen bajo, y no redistribuyas bases enteras.
-
----
-
-## 8. Límites conocidos
-
-Hablemos claro de lo que **no** va a funcionar:
-
-**Buscadores que no exponen el fallo en una URL fija.** Varios sistemas judiciales
-argentinos muestran resultados por POST o dentro de una sesión. Si pegás la URL del
-buscador, vas a extraer el formulario, no la sentencia. Buscá el enlace del documento
-(suele estar en "ver fallo", "descargar PDF" o el ícono de impresión).
-
-**Páginas que se arman con JavaScript.** El servidor descarga el HTML pero no ejecuta
-scripts. Si el fallo se carga después por AJAX, llega vacío y vas a ver `HTML_SIN_TEXTO`.
-Se resuelve con Playwright, a costa de ~300 MB de navegador y bastante más complejidad;
-no lo puse porque para la mayoría de las fuentes no hace falta.
-
-**PDFs escaneados.** Mucha justicia provincial publica fotos de papel. No tienen capa de
-texto y `pdf.js` no puede inventarla. El sistema lo detecta y te avisa con `PDF_ESCANEADO`
-en vez de devolverte una página en blanco — pero en este caso hay una salida integrada:
-seguí leyendo.
-
-Para los otros dos, el plan B es el mismo y funciona siempre: abrí el enlace en el
-navegador, copiá el texto y pegalo en el Lector del frontend (funciona sin backend).
-
-### PDFs escaneados: OCR
-
-Cuando el Lector avisa `PDF_ESCANEADO`, aparece un botón **"Aplicar OCR"** que hace todo
-esto por vos: descarga el PDF, renderiza cada página como imagen y le corre
-[Tesseract](https://github.com/naptha/tesseract.js) en español para reconocer el texto.
-Tarda bastante más que una descarga normal —varios segundos por página, no
-milisegundos— así que es un botón aparte y no algo automático. El resultado queda
-cacheado igual que cualquier otro documento (ver `lib/cache.js`), así que solo se paga
-el costo una vez por URL.
-
-Detalles técnicos, por si hace falta tocar `lib/ocr.js`:
-
-- El render de página a imagen usa [`@hyzyla/pdfium`](https://github.com/hyzyla/pdfium)
-  (el motor de PDF de Chrome, compilado a WebAssembly), no `pdf.js` + un canvas nativo.
-  Se probó `pdf.js` + `@napi-rs/canvas` primero y hace un **segfault real** —tira abajo
-  el proceso entero, no es un error atajable— con PDFs reales; `node-canvas` (la
-  alternativa clásica) ni siquiera compila sin Cairo/Pango instalados en el sistema.
-  PDFium es WASM puro: cero binarios nativos, cero dependencia del sistema operativo,
-  portable a cualquier hosting sin instalar nada aparte.
-- `OCR_MAX_PAGINAS` (default 6) y `OCR_TIMEOUT_MS` (default 180000, 180s) limitan
-  cuánto puede tardar un pedido. El default es bajo a propósito: medido en vivo
-  contra el plan de Azure publicado, 6 páginas tardaron **170 segundos** (~28s por
-  página) — esa CPU compartida es unas 11 veces más lenta que una notebook común
-  para este trabajo. Con ese ritmo, 20 páginas tardarían ~9 minutos, bastante más de
-  lo que Azure App Service deja abierta una conexión inactiva (~230s): la plataforma
-  cortaría la conexión en silencio antes de que este código llegue a contestar. Si
-  tu hosting tiene más CPU (o corrés esto en tu máquina), subí `OCR_MAX_PAGINAS`
-  con confianza.
-- `OCR_HABILITADO=false` apaga la función entera sin tocar código, para un plan de
-  hosting chico donde renderizar páginas y correr Tesseract sale caro en CPU/memoria.
-
-Si preferís hacerlo vos mismo por fuera (mejor calidad, sin límite de páginas), la
-herramienta libre es `ocrmypdf`:
+La cabecera y las capturas salen de la aplicación real, con esquinas redondeadas y fondo transparente para que se vean bien en el tema claro y en el oscuro de GitHub. Cuando el diseño cambie, se regeneran con un solo comando, desde la raíz del repositorio y con el servidor en marcha:
 
 ```bash
-# macOS
-brew install ocrmypdf
+node docs/capturar.mjs
+```
 
-# Ubuntu / Debian
-sudo apt install ocrmypdf tesseract-ocr-spa
+Hace falta Chrome (`CHROME_PATH` si no está en la ruta de macOS) y conexión a internet: la búsqueda y la verificación consultan las bases oficiales de verdad. Con `API_REMOTA=https://…/api` las consultas las contesta el servidor publicado, que tiene el acervo completo; con `CONSULTA=…` se cambia la búsqueda de ejemplo. Se puede pedir una sola imagen por nombre (`cabecera`, `buscar`, `lector`, `verificar`, `calculos`, `arquitectura`).
 
-# Aplicar OCR en español
+</details>
+
+<br>
+
+## Seguridad
+
+Un servidor que descarga «cualquier enlace que le manden» es vulnerable a **SSRF**: alguien le pasa `http://169.254.169.254/` (la dirección de metadatos de AWS, Azure y Google Cloud) y el propio servidor le entrega las credenciales, o le pasa una dirección de la red interna y se la mapea. Por eso, **antes de cada salto de red**, el descargador ([`backend/lib/descargador.js`](backend/lib/descargador.js)):
+
+1. exige `http` o `https`; no acepta `file:`, `ftp:` ni `gopher:`;
+2. exige que el dominio esté en la lista blanca (`GET /api/dominios`);
+3. resuelve el DNS y rechaza la dirección si es interna;
+4. sigue las redirecciones **a mano**, repitiendo los tres controles en cada salto: un dominio público puede redirigir a `127.0.0.1`, y dejar que `fetch` lo haga solo es el descuido más común.
+
+Hay una prueba automática que verifica precisamente ese cuarto punto. Además:
+
+- **Cabeceras de seguridad.** `helmet` con política de contenido (CSP) cerrada, HSTS, `nosniff` y política de referencia; la página no puede incrustarse en otro sitio.
+- **Límites por tipo de pedido.** Un límite general (120 por cada 5 minutos) y otros más estrictos para inicio de sesión (12 cada 15 minutos), OCR (6), archivos subidos (20) y verificación de citas (30). Este último protege a los sitios oficiales más que al servidor: cada verificación dispara búsquedas reales contra ellos.
+- **Cuentas.** Contraseñas con scrypt y sal; el inicio de sesión tarda lo mismo si el correo existe o no, para que no se puedan enumerar cuentas midiendo tiempos.
+- **Rutas de administración.** `DELETE /api/cache` y el detalle de `/api/salud` exigen `X-Admin-Token`; sin esa clave configurada, solo responden desde la propia máquina y fuera de producción.
+- **Datos personales.** La carpeta de cuentas no entra al repositorio (`.gitignore`) y las respuestas que llevan tokens no se guardan en caché.
+
+**Buen trato con los servidores oficiales.** Esto no es un extractor masivo: baja el documento que se pidió. Aun así conserva una pausa entre pedidos al mismo sitio (`ESPERA_POR_HOST_MS`), una caché de 24 horas y un `User-Agent` identificable; conviene reemplazar el contacto de `USER_AGENT` por uno propio. Los organismos pueden bloquear el acceso si se abusa, y están en su derecho: uso personal, volumen bajo y sin redistribuir bases enteras.
+
+<br>
+
+## Límites conocidos
+
+<details>
+<summary><b>Qué no va a funcionar, y qué hacer entonces</b></summary>
+
+<br>
+
+- **Buscadores que no exponen el fallo en una dirección fija.** Varios sistemas judiciales muestran los resultados por `POST` o dentro de una sesión. Si se pega la dirección del buscador, se extrae el formulario y no la sentencia. Conviene buscar el enlace del documento (suele estar en «ver fallo», «descargar PDF» o el ícono de impresión).
+- **Páginas que se arman con JavaScript.** El servidor descarga el HTML pero no ejecuta scripts; si el fallo se carga después, llega vacío y aparece `HTML_SIN_TEXTO`. La única excepción es el TSJ de CABA, que se abre con Chrome.
+- **Bases con CAPTCHA o desafío de bot.** El sitio propio de la Corte Suprema exige reCAPTCHA (se la consulta por SAIJ) y otros, como SciELO, se protegen con un desafío. No se integraron.
+- **PDF escaneados.** No tienen capa de texto. El sistema lo detecta y responde `PDF_ESCANEADO`; el Lector ofrece entonces **«Aplicar OCR»**.
+- **La colección *Fallos* por tomo y página.** Ninguna fuente integrada la expone como campo buscable (el buscador de la Corte, que sí la tiene, exige reCAPTCHA). Una cita `Fallos: 340:1084` puede confirmarse si el fallo aparece por su carátula, pero no buscarse por tomo y página.
+
+En los dos primeros casos, el plan alternativo siempre funciona: abrir el enlace en el navegador, copiar el texto y pegarlo en el Lector, que no necesita servidor.
+
+#### OCR
+
+El OCR descarga el PDF, convierte cada página en imagen con [`@hyzyla/pdfium`](https://github.com/hyzyla/pdfium) (el motor de PDF de Chrome compilado a WebAssembly, sin dependencias nativas) y le aplica [Tesseract](https://github.com/naptha/tesseract.js) en español. Tarda varios segundos por página, por eso es un botón aparte y no algo automático; el resultado queda en la caché y solo se paga una vez por enlace.
+
+El límite predeterminado es bajo a propósito: medido en el plan publicado de Azure, **6 páginas tardaron 170 segundos** (unos 28 por página), y a ese ritmo 20 páginas superarían los 230 segundos que App Service deja abierta una conexión inactiva. Con más CPU, o en una máquina propia, se puede subir `OCR_MAX_PAGINAS`.
+
+Para un resultado de mejor calidad y sin tope de páginas, la herramienta libre es `ocrmypdf`:
+
+```bash
+brew install ocrmypdf                      # macOS
+sudo apt install ocrmypdf tesseract-ocr-spa  # Ubuntu o Debian
+
 ocrmypdf -l spa fallo.pdf fallo-con-texto.pdf
 ```
 
-Después subí el PDF resultante a algún lado accesible, o abrilo y copiá el texto.
+</details>
 
----
+<br>
 
-## 9. Verificar antes de citar
+## Verificar antes de citar
 
-El extractor te ahorra el copiar y pegar, no la verificación. Antes de que una cita
-entre en un escrito:
+La plataforma ahorra el copiar y pegar, no la verificación. Antes de que una cita entre en un escrito:
 
-1. Confirmá que la carátula existe en la base oficial del tribunal que la dictó.
-2. Cruzá tomo y página con la colección Fallos, o el número de expediente si es provincial.
-3. Leé el considerando completo, no solo el pasaje resaltado.
-4. Fijate quién votó y si hubo disidencia.
-5. Controlá que el criterio siga vigente.
-6. Guardá el PDF con la fecha de consulta.
+1. Confirmar que la carátula existe en la base oficial del tribunal que la dictó.
+2. Cruzar tomo y página con la colección *Fallos*, o el número de expediente si es provincial.
+3. Leer el considerando completo, no solo el pasaje resaltado.
+4. Revisar quién votó y si hubo disidencia.
+5. Controlar que el criterio siga vigente.
+6. Guardar el PDF con la fecha de consulta.
 
-Los datos que la interfaz detecta —carátula, tribunal, fecha, expediente— salen de
-patrones de texto, no de una base de datos. Están para ahorrarte tipeo, y hay que
-confirmarlos.
+Los datos que la interfaz detecta —carátula, tribunal, fecha, expediente— salen de patrones de texto, no de una base de datos: están para ahorrar tipeo y hay que confirmarlos.
 
-### El verificador de citas
+<details>
+<summary><b>El verificador de citas</b></summary>
 
-El paso 1 de esa lista está automatizado. En la solapa **Verificar** hay un cuadro
-donde pegás la cita como la tengas —`CSJN, Fallos: 340:1084`, `TSJ CABA, Expte.
-12345/2020`, `Cám. Nac. Civ., Sala A, "Pérez c/ Gómez s/ daños y perjuicios",
-12/03/2019`— y el servidor intenta encontrarla en las fuentes oficiales que sabe
-consultar. Nació por el problema de las **citas alucinadas**: un modelo de lenguaje
-produce citas con la forma exacta de una verdadera —tribunal que existe, carátula
-creíble, tomo y página en el rango correcto— y no hay manera de distinguirlas
-leyéndolas. La única manera es ir a la fuente.
+<br>
 
-Qué hace, en orden:
+El primer paso de esa lista está automatizado en la sección **Verificar**. Nació por el problema de las **citas alucinadas**: un modelo de lenguaje produce citas con la forma exacta de una verdadera —tribunal que existe, carátula creíble, tomo y página en el rango correcto— que no se distinguen leyéndolas. La única manera es ir a la fuente.
 
-1. **Lee la cita** (`lib/citas.js`): tribunal, número de expediente, tomo y página de
-   *Fallos*, carátula partida en actor / demandado / materia, fecha, y las palabras
-   que sirven para buscar. Es un montón de expresiones regulares y no un parser
-   formal, porque una cita argentina no tiene un formato: tiene el de cada tribunal,
-   el de cada revista y el que cada quien escribe de apuro. **Un campo que no se
-   reconoce vuelve vacío**: nunca se completa con lo que "seguramente quiso decir".
-2. **Elige a quién preguntarle** (`lib/fuentes.js`): si reconoció el tribunal, va a su
-   buscador y a ninguno más. Si no lo reconoció, tira una red ancha pero corta —SAIJ,
-   la única base con alcance nacional que hay integrada, más la faceta de la Corte—.
-   Nunca consulta más de dos fuentes por pedido: cada consulta es un pedido real al
-   servidor de un organismo (ver la sección 7).
-3. **Busca y puntúa**: cada resultado se compara con la cita. El expediente exacto y
-   el `tomo:página` exacto valen solos lo que todo el resto junto, porque son
-   identificadores: o coinciden o no. Los apellidos de las partes valen la mitad, se
-   comparan sin tildes ni mayúsculas (`lib/relevancia.js`) y no alcanzan por sí solos:
-   hay apellidos repetidos hasta el hartazgo.
-4. **Devuelve un veredicto**, con confianza (alta / media / baja), la explicación en
-   castellano de por qué llegó ahí, y los candidatos con su enlace a la fuente oficial.
+1. **Lee la cita** ([`backend/lib/citas.js`](backend/lib/citas.js)): tribunal, expediente, tomo y página de *Fallos*, carátula partida en actor, demandado y materia, fecha y palabras de búsqueda. Son expresiones regulares, no un analizador formal, porque una cita argentina no tiene un formato: tiene el de cada tribunal, el de cada revista y el que cada quien escribe de apuro. **Un campo que no se reconoce queda vacío**; nunca se completa con lo que «seguramente quiso decir».
+2. **Elige a quién preguntar** ([`backend/lib/verificarCita.js`](backend/lib/verificarCita.js)): si reconoce el tribunal, consulta su buscador y ninguno más; si no, tira una red ancha pero corta —SAIJ y la Corte vía SAIJ—. Cada consulta es un pedido real al servidor de un organismo, por eso el alcance es acotado y la pantalla lo declara.
+3. **Busca y puntúa.** El expediente exacto y el tomo y página exactos valen, cada uno, lo que todo lo demás junto, porque son identificadores: o coinciden o no. Los apellidos de las partes valen la mitad y no alcanzan por sí solos: hay apellidos repetidos hasta el hartazgo.
+4. **Devuelve un veredicto**, con su confianza, la explicación y los candidatos con el enlace a la fuente oficial.
 
-Los tres veredictos posibles, que están redactados con cuidado:
+| Veredicto | Rótulo en pantalla | Qué significa |
+|---|---|---|
+| `verificada` | Coincidencia encontrada | Apareció un fallo que coincide por un identificador exacto o por la carátula entera. Aun así se pide abrir el documento: que el fallo exista no significa que diga lo que la cita le atribuye. |
+| `no_encontrada` | No la encontramos | Se buscó y no apareció nada convincente. **Nunca dice que la cita sea falsa**: puede no estar indexada, estar cargada con otra carátula o no ser real, y las tres posibilidades siguen abiertas. |
+| `no_verificable` | No se pudo verificar | No se pudo ni intentar: el texto no tiene forma de cita, el tribunal no lo cubre ninguna fuente integrada o los buscadores no respondieron. **Una fuente caída nunca se informa como «no encontrada»**. |
 
-| Veredicto | Qué significa |
-|---|---|
-| `verificada` | Apareció un fallo que coincide por un identificador exacto, o por la carátula entera. Igual pide abrir el documento: que el fallo exista no significa que diga lo que la cita le atribuye. |
-| `no_encontrada` | Se buscó y no apareció nada convincente. **Nunca dice que la cita sea falsa.** Puede no estar indexada, estar cargada con otra carátula, o no ser real — las tres siguen abiertas. |
-| `no_verificable` | No se pudo ni intentar: el texto no tiene forma de cita, el tribunal es uno que ninguna fuente integrada cubre (los internacionales), o los buscadores oficiales no respondieron. Ojo con este último caso: **una fuente caída nunca se informa como "no encontrada"**. |
+Límites que conviene tener presentes: no existe un índice de *Fallos* por tomo y página; el alcance es el de las fuentes que cubren el tribunal reconocido, no «toda la jurisprudencia argentina»; Mendoza obliga a elegir el tribunal antes de buscar; y se examina la primera página de resultados, de modo que una carátula escrita de otra forma puede quedar afuera. El límite `LIMITE_CITAS` protege a los sitios oficiales, no a este servidor.
 
-Prueba rápida desde la terminal:
+Las pruebas ([`backend/test/citas.prueba.js`](backend/test/citas.prueba.js)) corren sin internet, con la búsqueda simulada. La más importante es la última: un veredicto negativo nunca usa la palabra «falsa».
 
-```bash
-curl -X POST http://localhost:3000/api/verificar-cita \
-  -H "Content-Type: application/json" \
-  -d '{"texto":"CSJN, \"Halabi, Ernesto c/ P.E.N. s/ amparo ley 16.986\", Fallos: 332:111, sentencia del 24 de febrero de 2009"}'
-```
+</details>
 
-Los límites honestos, que son varios y conviene tenerlos a mano:
+<br>
 
-- **No existe un índice de la colección *Fallos* por tomo y página.** Ninguna de las
-  cuatro fuentes integradas expone ese dato como campo buscable, y el buscador propio
-  de la Corte —el único que sí lo tiene— está detrás de un reCAPTCHA, o sea que pide
-  expresamente que del otro lado haya una persona (ver `lib/indiceSaij.js`). Un
-  `Fallos: 340:1084` se puede **confirmar** si el fallo aparece por carátula y el texto
-  trae ese número, pero **no se puede buscar por tomo y página**. Una cita que trae
-  solo eso termina casi siempre en `no_encontrada`, y por eso ese veredicto no afirma
-  nunca que algo no exista.
-- **El alcance es el catálogo de cuatro buscadores**, no "la jurisprudencia argentina".
-  Mendoza, TSJ CABA, SAIJ y la Corte vía SAIJ. La interfaz lo dice en pantalla, fijo,
-  arriba y abajo del resultado.
-- **Mendoza obliga a elegir el tribunal antes de buscar** y no tiene un "todos": se
-  elige uno leyendo la cita (Corte / Cámaras Civiles / Cámaras del Trabajo) y si se
-  eligió mal, no aparece.
-- **El buscador de Mendoza tiene dos campos de texto que no son intercambiables**,
-  descubierto probando en vivo: su campo de texto libre no encuentra nada apenas le
-  pedís dos palabras a la vez —ni "Ariana Lucia", dos nombres pegados uno al lado del
-  otro en un fallo real que sabíamos que existía—, mientras que el campo dedicado a
-  nombres de partes sí arma la búsqueda correcta (cada palabra exigida por separado en
-  actor/demandado). `lib/indiceMza.js` ya usa el campo correcto cuando el verificador
-  busca por carátula; el Buscador general sigue mandando texto libre como siempre,
-  porque ahí un campo de conceptos ("responsabilidad del estado") sí es lo que
-  corresponde.
-- **Se mira la primera página de resultados.** Un fallo real cuya carátula esté escrita
-  distinto —abreviada, con el segundo nombre, con la razón social completa— puede
-  quedar afuera.
-- `LIMITE_CITAS` (default 30 cada 15 minutos) es un límite aparte del general, igual
-  que el del OCR. No protege a este servidor —verificar una cita es barato acá—:
-  protege a los sitios oficiales, que son los que hacen el trabajo pesado.
+## Licencia
 
-Las pruebas están en `test/citas.prueba.js` y corren sin salir a internet: la búsqueda
-se inyecta simulada. La última de todas es la que más importa — que un veredicto
-negativo nunca use la palabra "falsa".
+MIT para el código. El contenido de los fallos pertenece a los organismos de origen y se rige por sus condiciones de uso.
 
----
+<br>
 
-## 10. Licencia
-
-MIT para el código. El contenido de los fallos pertenece a sus organismos de origen y se
-rige por sus condiciones de uso.
+<div align="center">
+<sub>IVS · CODEX</sub>
+</div>

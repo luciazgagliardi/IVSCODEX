@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<title>IVS · CODEX — cómo funciona</title>
+<!-- Fuente del diagrama del README. Se vuelve a dibujar con: node docs/capturar.mjs arquitectura -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+  :root{--bg:#100e0b;--fg:#f1eee6;--mute:rgba(241,238,230,.6);--dim:rgba(241,238,230,.38);--line:rgba(241,238,230,.14);--gold:#d9a31b}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg)}
+  body{width:1200px;height:520px;position:relative;overflow:hidden;color:var(--fg);font:400 16px/1.4 "Instrument Sans",system-ui,sans-serif;letter-spacing:-.005em}
+  /* luz cálida de fondo, la misma de la portada */
+  body::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 70% at 88% 6%,rgba(176,59,66,.2),transparent 70%),radial-gradient(50% 60% at 8% 100%,rgba(217,163,27,.1),transparent 70%)}
+  .col{position:absolute;top:44px;width:310px}
+  .c1{left:44px}.c2{left:445px}.c3{left:846px}
+  .eb{margin:0 0 6px;font:500 11.5px/1 "Instrument Sans",sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+  h2{margin:0 0 4px;font:400 25px/1.1 "Instrument Sans",sans-serif;letter-spacing:-.03em}
+  .sub{margin:0 0 20px;color:var(--mute);font-size:14.5px}
+  ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+  li{padding:12px 0 11px;border-bottom:1px solid var(--line)}
+  li b{display:block;font-weight:500;font-size:16.5px}
+  li span{display:block;margin-top:2px;color:var(--mute);font-size:13.5px}
+  .acervo{margin-top:20px;padding:15px 18px 14px;border:1px solid rgba(217,163,27,.5);border-radius:22px;background:rgba(217,163,27,.06)}
+  .acervo b{display:block;font-weight:500;font-size:16.5px}
+  .acervo span{display:block;margin-top:3px;color:var(--mute);font-size:13.5px}
+  .bases{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+  .bases li{display:flex;align-items:center;gap:10px;padding:10px 0 9px;font-size:14.5px}
+  .bases i{flex:none;width:8px;height:8px;border-radius:50%;background:var(--c)}
+  .nota{margin:16px 0 0;color:var(--dim);font-size:12.5px}
+  svg{position:absolute;inset:0;pointer-events:none}
+  /* la etiqueta de cada flecha, en cápsula, centrada sobre ella */
+  .rot{position:absolute;top:222px;width:91px;text-align:center}
+  .rot span{display:inline-block;padding:4px 11px 3px;border:1px solid var(--line);border-radius:999px;background:var(--bg);font-size:12px;color:var(--mute);white-space:nowrap}
+</style>
+</head>
+<body>
+  <svg width="1200" height="520" viewBox="0 0 1200 520" fill="none" stroke="#d9a31b" stroke-width="1" stroke-linecap="round">
+    <defs><marker id="p" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1l6 3-6 3" stroke="#d9a31b" stroke-width="1" fill="none"/></marker></defs>
+    <path d="M364 252H435" marker-end="url(#p)"/>
+    <path d="M765 252H836" marker-end="url(#p)"/>
+  </svg>
+  <div class="rot" style="left:354px"><span>/api</span></div>
+  <div class="rot" style="left:755px"><span>en vivo</span></div>
+
+  <section class="col c1">
+    <p class="eb">En el navegador</p>
+    <h2>frontend/</h2>
+    <p class="sub">Estático, sin compilar. GitHub Pages.</p>
+    <ul>
+      <li><b>Buscar, Lector y Verificar</b><span>pasajes con la coincidencia resaltada</span></li>
+      <li><b>Lexia</b><span>preguntas sobre el fallo abierto</span></li>
+      <li><b>Cálculos y plazos</b><span>intereses, despido, prescripción</span></li>
+      <li><b>Herramientas</b><span>PDF listos para presentar</span></li>
+      <li><b>Guardados</b><span>en el equipo o en la cuenta</span></li>
+    </ul>
+  </section>
+
+  <section class="col c2">
+    <p class="eb">En el servidor</p>
+    <h2>backend/</h2>
+    <p class="sub">Express. Azure App Service.</p>
+    <ul>
+      <li><b>Un cliente por base</b><span>arma la consulta de cada buscador</span></li>
+      <li><b>Extracción de documentos</b><span>HTML, PDF y DOC; OCR si es una foto</span></li>
+      <li><b>Verificador de citas</b><span>contrasta con la fuente del tribunal</span></li>
+      <li><b>Cuentas</b><span>scrypt con sal; sesión por token</span></li>
+    </ul>
+    <div class="acervo"><b>Acervo · copia propia</b><span>SQLite con índice de texto. Contesta cuando un sitio oficial no responde.</span></div>
+  </section>
+
+  <section class="col c3">
+    <p class="eb">Fuentes oficiales</p>
+    <h2>Once bases</h2>
+    <p class="sub">Consultadas una por una.</p>
+    <ul class="bases">
+      <li style="--c:#d9a62a"><i></i>Mendoza</li>
+      <li style="--c:#b58640"><i></i>Mendoza Legal</li>
+      <li style="--c:#d5873f"><i></i>TSJ CABA</li>
+      <li style="--c:#c06a2c"><i></i>SCBA · JUBA</li>
+      <li style="--c:#c95836"><i></i>CSJN</li>
+      <li style="--c:#b03b42"><i></i>SAIJ</li>
+      <li style="--c:#8a3853"><i></i>Dialnet</li>
+      <li style="--c:#5f7f9a"><i></i>Corte IDH</li>
+      <li style="--c:#7da05a"><i></i>Río Negro</li>
+      <li style="--c:#c07a3a"><i></i>Juristeca</li>
+      <li style="--c:#4f9a8f"><i></i>Santa Fe</li>
+    </ul>
+    <p class="nota">Cada resultado remite al documento oficial.</p>
+  </section>
+</body>
+</html>
