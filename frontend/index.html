@@ -1096,6 +1096,18 @@ body.en-recorrido .cab>*{animation:none}
 .meta-cat:first-child{padding-top:0;border-top:0}
 .meta-tags{display:flex;flex-wrap:wrap;gap:6px}
 .meta-tag{padding:4px 11px 3px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--fg-82);max-width:100%;overflow-wrap:anywhere}
+.meta-tag--norma{appearance:none;background:none;font-family:inherit;cursor:pointer;transition:border-color .3s,color .3s}
+.meta-tag--norma:hover,.meta-tag--norma.on{border-color:var(--gold-55);color:var(--fg)}
+.norma-hoja{position:fixed;z-index:120;top:14px;right:14px;bottom:14px;width:min(440px,calc(100vw - 28px));display:flex;flex-direction:column;padding:20px 20px 18px;border:1px solid var(--line);border-radius:26px;background:var(--panel);box-shadow:0 18px 54px rgba(0,0,0,.4);transform-origin:top right;opacity:0;visibility:hidden;transform:translateX(18px) scale(.96);transition:opacity .2s ease,transform .3s cubic-bezier(.4,0,.6,1),visibility 0s linear .3s}
+.norma-hoja.abre{opacity:1;visibility:visible;transform:none;transition:opacity .25s ease,transform .5s cubic-bezier(.2,1.15,.3,1),visibility 0s}
+.norma-hoja__cab{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.norma-hoja__norma{font-size:12px;color:var(--mute-2);margin-bottom:3px}
+.norma-hoja__tit{margin:0;font-size:17px;font-weight:400;line-height:1.3;color:var(--fg)}
+.norma-hoja__cuerpo{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:4px;scrollbar-width:thin}
+.norma-hoja__txt{white-space:pre-wrap;font-size:15px;line-height:1.65;color:var(--fg-82)}
+.norma-hoja__nota{margin:12px 0 0;font-size:12.5px;color:var(--mute)}
+.norma-hoja__pie{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+@media (max-width:700px){.norma-hoja{top:auto;left:10px;right:10px;bottom:10px;width:auto;height:min(72vh,620px);transform-origin:bottom center;transform:translateY(22px) scale(.97)}}
 .meta-bloque.pendiente h3{color:var(--mute);font-weight:400}
 .meta-bloque.pendiente .meta-tag{border-style:dashed;color:var(--mute-2)}
 .meta-acc{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
@@ -7161,6 +7173,56 @@ function rangoDeFuente(label){
   return RANGO_FUENTE.hasOwnProperty(label)?RANGO_FUENTE[label]:99;
 }
 
+/* La norma al lado del fallo: tocar un artículo del Lector abre una hoja con
+   su texto oficial (InfoLeg) sin tocar lo que se está leyendo. La hoja vive
+   fuera de render() para que sobreviva a los repintados del Lector. */
+var normaHoja={cache:{},clave:"",marca:null};
+function cerrarNormaHoja(){
+  var h=document.getElementById("norma-hoja"); if(!h) return;
+  h.classList.remove("abre"); normaHoja.clave="";
+  document.querySelectorAll(".meta-tag--norma.on").forEach(function(x){ x.classList.remove("on"); });
+}
+function abrirNormaHoja(fuente,art,btn){
+  var clave=NORMA_A_CLAVE[fuente],m=/art\.?\s*(\d+(?:\s*(?:bis|ter|qu[aá]ter|quinquies))?)/i.exec(art||"");
+  if(!clave||!m) return;
+  var num=m[1].toLowerCase(),k=clave+"/"+num;
+  var h=document.getElementById("norma-hoja");
+  if(!h){
+    h=document.createElement("aside"); h.id="norma-hoja"; h.className="norma-hoja"; h.setAttribute("aria-label","Texto de la norma");
+    document.body.appendChild(h);
+    document.addEventListener("keydown",function(e){ if(e.key==="Escape"&&h.classList.contains("abre")) cerrarNormaHoja(); });
+  }
+  document.querySelectorAll(".meta-tag--norma.on").forEach(function(x){ x.classList.remove("on"); });
+  if(btn) btn.classList.add("on");
+  normaHoja.clave=k;
+  function pintar(d,err){
+    if(normaHoja.clave!==k) return;
+    var cuerpo,pie="";
+    if(!d&&!err) cuerpo='<p class="norma-hoja__nota" style="margin:0">Buscando el texto en InfoLeg…</p>';
+    else if(err) cuerpo='<p class="norma-hoja__nota" style="margin:0">'+esc(err)+'</p>';
+    else{
+      cuerpo='<div class="norma-hoja__txt">'+esc(d.texto)+'</div>'+
+        (d.truncado?'<p class="norma-hoja__nota">El artículo sigue: se muestra el principio. Ábralo en InfoLeg para leerlo completo.</p>':"")+
+        (d.aviso?'<p class="norma-hoja__nota">'+esc(d.aviso)+'</p>':"");
+      pie='<div class="norma-hoja__pie"><a class="mini" href="'+escU(d.url)+'" target="_blank" rel="noopener noreferrer">Ver en InfoLeg</a></div>';
+    }
+    h.innerHTML='<div class="norma-hoja__cab"><div><div class="norma-hoja__norma">'+esc(d?d.norma:fuente)+'</div>'+
+      '<h2 class="norma-hoja__tit">Artículo '+esc(d?d.articulo:num)+(d&&d.rubrica?' · '+esc(d.rubrica):'')+'</h2></div>'+
+      '<button type="button" class="mini" data-act="norma-cerrar">Cerrar</button></div>'+
+      '<div class="norma-hoja__cuerpo">'+cuerpo+'</div>'+pie;
+  }
+  pintar(normaHoja.cache[k]||null);
+  void h.offsetWidth; h.classList.add("abre");
+  if(normaHoja.cache[k]) return;
+  if(!estado.api){ pintar(null,"Para traer el texto oficial hace falta el servidor."); return; }
+  fetch(estado.api+"/legislacion/"+encodeURIComponent(clave)+"/"+encodeURIComponent(num))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d&&d.ok){ normaHoja.cache[k]=d; pintar(d); }
+      else pintar(null,(d&&d.mensaje)||"El servidor no devolvió el artículo.");
+    })["catch"](function(){ pintar(null,"Se cortó la comunicación con el servidor."); });
+}
+
 function pintarLector(){
   if(estado.tab!=="lector"||!estado.texto) return;
   if(estado.lxFoco){
@@ -7179,10 +7241,7 @@ function pintarLector(){
     if(d.fecha) top.push(["Fecha",d.fecha]);
     if(d.exp) top.push(["Expediente",d.exp]);
     if(d.tomo&&d.pag) top.push(["Colección","Fallos: "+d.tomo+":"+d.pag]);
-    var infoDer=estado.infoDoc?esc(estado.infoDoc.tipo.toUpperCase()+
-      (estado.infoDoc.paginas?" · "+estado.infoDoc.paginas+" pág.":"")+
-      " · "+estado.infoDoc.caracteres.toLocaleString("es-AR")+" caracteres"+
-      (estado.infoDoc.desdeCache?" · desde caché":"")):"";
+    var infoDer=estado.infoDoc?esc(estado.infoDoc.caracteres.toLocaleString("es-AR")+" caracteres"):"";
 
     var htmlTop=(top.length||d.car||infoDer)?(
       '<div class="meta-top">'+
@@ -7227,7 +7286,9 @@ function pintarLector(){
     function bloqueNorma(g,claseExtra){
       return '<div class="meta-bloque'+(claseExtra?" "+claseExtra:"")+'"><h3>'+esc(g[0])+'</h3>'+
         '<div class="meta-tags">'+g[1].slice().sort(ordenArt).map(function(a){
-          return '<span class="meta-tag">'+esc(a)+'</span>';
+          return NORMA_A_CLAVE.hasOwnProperty(g[0])
+            ?'<button type="button" class="meta-tag meta-tag--norma" data-act="norma-abrir" data-f="'+esc(g[0])+'" data-a="'+esc(a)+'" title="Ver el texto de la norma">'+esc(a)+'</button>'
+            :'<span class="meta-tag">'+esc(a)+'</span>';
         }).join("")+'</div></div>';
     }
     function bloqueTags(items){
@@ -10183,6 +10244,8 @@ document.addEventListener("click",function(ev){
     if(lq&&!b.getAttribute("data-p")) lq.value="";
     lxPreguntar(lp); return;
   }
+  if(act==="norma-abrir"){ abrirNormaHoja(b.getAttribute("data-f"),b.getAttribute("data-a"),b); return; }
+  if(act==="norma-cerrar"){ cerrarNormaHoja(); return; }
   if(act==="lx-ir"){ lxIrA(b.getAttribute("data-s")); return; }
   if(act==="lx-abrir"){ var sec=document.getElementById("lx-fallo"); if(sec){ estado.lxAbierto=true; sec.classList.add("abre"); sec.scrollIntoView({behavior:"smooth",block:"start"}); var q2=document.getElementById("lx-q"); if(q2) setTimeout(function(){ q2.focus({preventScroll:true}); },400); } return; }
   if(act==="citar-lector"){ var cita=citaDelDoc(); if(cita){ copiar(cita); } else { var tp0=document.getElementById("doc-tit-pas"); if(tp0) tp0.scrollIntoView({behavior:"smooth",block:"start"}); } return; }
