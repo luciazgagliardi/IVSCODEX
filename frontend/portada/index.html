@@ -31,7 +31,7 @@
 .chip[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#14110a}
 .chip:hover{border-color:var(--gold)}
 .form label.check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--fg);cursor:pointer}.check input{accent-color:var(--gold);width:16px;height:16px}
-.sal{padding:clamp(14px,1.8vw,22px);border-radius:20px;background:rgba(217,163,27,.07);border:1px solid rgba(217,163,27,.25);font-size:14.5px;min-height:96px}
+.sal{padding:clamp(14px,1.8vw,22px);border-radius:20px;background:color-mix(in srgb,var(--gold) 7%,transparent);border:1px solid color-mix(in srgb,var(--gold) 24%,transparent);font-size:14.5px;min-height:96px}
 .sal .gran{display:block;font:500 clamp(24px,2.8vw,40px)/1.1 var(--sans);letter-spacing:-.035em;color:var(--gold);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .sal small{display:block;margin-top:4px;color:var(--mute);font-size:13px}
 .sal .mal{color:#e0a0a0}
@@ -95,10 +95,19 @@ html::-webkit-scrollbar{display:none}
   .form{grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr))}
   .panel input[type=text],.panel input[type=date],.panel input[type=number],.panel select{min-width:0;max-width:100%}
   .panel input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-height:46px;text-align:left}
+  /* la fila de pestañas ocupa todo el ancho (la regla de arriba la dejaba 36 px corta) */
+  .lab>.tabs{max-width:none}
+  /* resultados: cada fila es etiqueta + dato, y el dato baja de renglón en vez de empujar el cuadro hacia afuera */
+  .sal table,.sal tbody{display:block}
+  .sal tr{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:0 14px;align-items:baseline}
+  .sal td{min-width:0}
+  .sal td:last-child{white-space:normal;overflow-wrap:anywhere;padding-left:0}
+  .sal tr.nota{grid-template-columns:minmax(0,1fr)}
+  .sal tr.nota td:last-child{text-align:left;border-top:0;padding-top:0;color:var(--mute)}
 }
-</style><link rel="stylesheet" href="../celular-vidrio.css?v=20261030e">
+</style><link rel="stylesheet" href="../celular-vidrio.css?v=20261030g">
 </head><body>
-<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261029r"></script><script src="shared6.js?v=20261030e"></script><script src="calculos.js?v=20261024a"></script>
+<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261029r"></script><script src="shared6.js?v=20261030g"></script><script src="calculos.js?v=20261024a"></script>
 <script>
 var m=IVS6.montar(),O=IVS4.OFERTAS;
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -164,7 +173,7 @@ var P={
    if(ac[2]===0){$("out").innerHTML='<span class="gran">Imprescriptible</span><small>'+esc(ac[3])+'. '+esc(ac[4])+'</small>';return;}
    if(!d){$("out").innerHTML='<span class="mal">Indique la fecha de inicio del cómputo.</span>';return;}
    var su=parseInt($("ps").value,10)||0,v=masDias(masMeses(d,ac[2]),su),f=diasEntre(hoyUTC(),v),an=ac[2]/12;
-   $("out").innerHTML='<span class="gran">'+esc(fechaLarga(v))+'</span><small>'+(f>=0?"Faltan "+f+(f===1?" día":" días"):"Venció hace "+(-f)+(f===-1?" día":" días"))+'</small><table>'+fila("Acción",esc(ac[1]))+fila("Plazo",(an>=1&&an%1===0?an+(an===1?" año":" años"):ac[2]+" meses")+" · "+esc(ac[3]))+fila("Inicio",esc(fechaCorta(d)))+(ac[4]?fila("Nota",esc(ac[4])):"")+'</table>';}},
+   $("out").innerHTML='<span class="gran">'+esc(fechaLarga(v))+'</span><small>'+(f>=0?"Faltan "+f+(f===1?" día":" días"):"Venció hace "+(-f)+(f===-1?" día":" días"))+'</small><table>'+fila("Acción",esc(ac[1]))+fila("Plazo",(an>=1&&an%1===0?an+(an===1?" año":" años"):ac[2]+" meses")+" · "+esc(ac[3]))+fila("Inicio",esc(fechaCorta(d)))+(ac[4]?fila("Nota",esc(ac[4]),"nota"):"")+'</table>';}},
  glo:{f:function(){return '<div class="form">'+campo("gq","Buscar","",'placeholder="cosa juzgada, cautelar, prueba…" class="ancho"')+'</div><div id="out" aria-live="polite"></div>'+nota("Brocardos y expresiones de uso en los tribunales argentinos.");},
   c:function(){var q=sinTildes($("gq").value).trim(),L=GLOSARIO.filter(function(g){return !q||sinTildes(g.join(" ")).indexOf(q)!==-1;}),mas=L.length>6;L=L.slice(0,6);
    $("out").innerHTML=L.length?'<dl class="glos">'+L.map(function(g){return '<div><dt>'+esc(g[0])+'</dt><dd><small>«'+esc(g[1])+'»</small>'+esc(g[2])+'</dd></div>';}).join("")+'</dl>'+(mas?'<p class="nota5">Mostrando 6 de '+GLOSARIO.filter(function(g){return !q||sinTildes(g.join(" ")).indexOf(q)!==-1;}).length+'. Afine la búsqueda.</p>':""):'<div class="sal"><span class="mal">Ninguna expresión coincide con «'+esc($("gq").value)+'».</span></div>';}},
