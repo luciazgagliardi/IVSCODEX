@@ -527,10 +527,10 @@ html:not([data-tema="claro"]) .luces{display:none}   /* las luces desenfocadas s
 .asist__cabr{display:flex;align-items:center;gap:8px}
 .asist__tut{appearance:none;border:1px solid var(--gold-55);background:transparent;color:var(--gold);border-radius:999px;padding:5px 12px 4px;font:400 12px/1.2 var(--sans);cursor:pointer}
 .asist__tut:hover{background:rgba(var(--gold-rgb),.1);border-color:var(--gold)}
-.tour-ov{position:fixed;inset:0;z-index:300;pointer-events:none}
-.tour-v{position:fixed;background:rgba(var(--ov-rgb),.8);pointer-events:auto}
+.tour-ov{position:fixed;inset:0;z-index:300;pointer-events:none;overflow:hidden}
+.tour-v{position:fixed;background:transparent;pointer-events:auto}   /* sólo bloquean el toque: lo oscuro lo da el hueco redondeado del marco */
 .tour-tapa{position:fixed;pointer-events:auto}
-.tour-foco{position:fixed;border-radius:16px;box-shadow:0 0 0 1px var(--gold-55);pointer-events:none;transition:left .4s var(--ease),top .4s var(--ease),width .4s var(--ease),height .4s var(--ease)}
+.tour-foco{position:fixed;border-radius:16px;box-shadow:0 0 0 1px var(--gold-55),0 0 0 100vmax rgba(var(--ov-rgb),.8);pointer-events:none;transition:left .4s var(--ease),top .4s var(--ease),width .4s var(--ease),height .4s var(--ease)}
 .tour-card{pointer-events:auto;z-index:2;position:fixed;padding:18px 20px 16px;background:#17140f;border:1px solid var(--gold-55);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.7);transition:left .4s var(--ease),top .4s var(--ease)}
 .tour-card h4{margin:2px 0 6px;font:500 17px/1.3 var(--sans);color:var(--fg)}
 .tour-card p{margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--mute)}
@@ -954,7 +954,7 @@ body.en-recorrido .cab>*{animation:none}
 .verif{display:inline-flex;align-items:center;gap:7px;margin-left:6px;font-size:12px;font-weight:400;line-height:1;color:var(--acequia);vertical-align:middle}
 .verif svg{flex:none;display:block}
 .lx-pill{appearance:none;display:inline-flex;align-items:center;gap:9px;padding:9px 18px 8px 14px;border:1px solid var(--gold-55);border-radius:999px;background:rgba(var(--gold-rgb),.1);color:var(--gold);font:500 14px/1 var(--sans);cursor:pointer}
-.lx-sub{margin:8px 0 0 4px;font-size:12.5px;color:var(--mute-2)}
+.lx-sub{margin:9px 0 0;padding:0;font-size:12.5px;color:var(--mute-2)}
 .lx-fallo:not(.abre){padding:0;border:0;background:none}
 .lx-fallo .lx-cuerpo{display:none;margin-top:14px}
 .lx-fallo.abre .lx-cuerpo{display:block}
@@ -1059,7 +1059,7 @@ body.en-recorrido .cab>*{animation:none}
 .barra-doc .cnt b{color:var(--fg);font-weight:500}
 .barra-doc .campo{flex:1 1 260px;margin:0}
 .barra-doc .campo span{margin-bottom:2px;font-size:12.5px}
-.barra-doc .campo input{padding:2px 0 8px;font-size:18px}
+.barra-doc .campo input{padding:11px 22px 10px;font-size:18px}
 .lector-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:clamp(24px,3vw,48px);align-items:start;margin-bottom:12px}
 .meta{position:sticky;top:170px;max-height:calc(100vh - 200px);overflow:auto;overflow-x:hidden;padding:0 6px 0 0;border:0;background:none}
 .meta-top{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--line)}
@@ -1625,7 +1625,7 @@ mark{border-radius:6px}
 *{scrollbar-width:none!important}
 *::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
 </style>
-<link rel="stylesheet" href="./celular-vidrio.css?v=20261030j">
+<link rel="stylesheet" href="./celular-vidrio.css?v=20261030m">
 </head>
 <body>
 
@@ -1641,9 +1641,10 @@ mark{border-radius:6px}
 <section class="entrada" id="entrada" aria-label="Portada de IVS CODEX">
   <!-- La portada es una página aparte (portada/index.html) dentro de un marco: así sus estilos no se mezclan con los de la aplicación.
        Sus botones le piden a esta página que abra la sección elegida (ver el mensaje «ivs: abrir» más abajo). -->
-  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030j" title="Portada de IVS CODEX" loading="eager"></iframe>
+  <iframe id="portada-marco" class="portada-marco" src="./portada/index.html?v=20261030m" title="Portada de IVS CODEX" loading="eager"></iframe>
 </section>
 
+<div class="franja franja-arriba" aria-hidden="true"></div><div class="franja franja-abajo" aria-hidden="true"></div>
 <header class="top">
   <div class="nav-wrap">
     <button type="button" class="marca-app" data-portada aria-label="IVS CODEX, volver a la portada"><span class="marca2"><b>IVS</b><i class="m-pt"></i><span>CODEX</span></span></button>
@@ -3463,9 +3464,20 @@ function escU(u){ return esc(urlSegura(u)); }
 function flash(msg){
   /* Sin globos de aviso, ni claros ni oscuros: lo que antes se avisaba acá ya no se muestra. */
 }
+/* Sin globos: el aviso de que se copió va en el propio botón (cambia su texto un instante). */
+var ultimoToque=null;
+document.addEventListener("click",function(e){ ultimoToque=(e.target&&e.target.closest)?e.target.closest("button,a"):null; },true);
+function retro(btn,txt){
+  if(!btn) return;
+  var nodo=btn.querySelector("span")||btn; if(btn._orig===undefined) btn._orig=nodo.textContent;
+  nodo.textContent=txt; clearTimeout(btn._rt); btn._rt=setTimeout(function(){ nodo.textContent=btn._orig; btn._orig=undefined; },1700);
+}
+// lo último que se tuvo seleccionado en el texto (al tocar un botón, la selección se pierde)
+var ultimaSel="";
+document.addEventListener("selectionchange",function(){ var t=(window.getSelection&&String(window.getSelection()))||""; if(t.trim()) ultimaSel=t.trim(); });
 function copiar(txt){
-  if(!txt){flash("No hay nada para copiar todavía");return;}
-  var ok=function(){flash("Copiado");};
+  if(!txt){return;}
+  var ok=function(){ retro(ultimoToque,"Copiado"); };
   try{
     if(navigator.clipboard&&navigator.clipboard.writeText&&window.isSecureContext){
       navigator.clipboard.writeText(txt).then(ok,function(){legacy(txt,ok);});
@@ -4186,7 +4198,6 @@ function lxPanel(){
     '<button type="button" class="lx-pill" data-act="lx-tog" aria-expanded="'+ab+'"><span class="lx-punto"></span>Lexia</button>'+
     '<p class="lx-sub">Consulte al asistente virtual sobre este fallo</p>'+
     '<div class="lx-cuerpo">'+
-    '<p class="lx-nota">Lee el fallo en su navegador: no se envía a ningún lado ni tiene costo.</p>'+
     '<div class="lx-sug"><button type="button" class="chip" data-act="lx-identificar">Identificar lo importante</button>'+
       ['Explicame el fallo','¿Qué se resolvió?','¿Cuánto se indemnizó?','¿Hubo disidencias?','¿Qué normas aplica?'].map(function(s){ return '<button type="button" class="chip" data-act="lx-pregunta" data-p="'+esc(s)+'">'+esc(s)+'</button>'; }).join("")+'</div>'+
     '<div class="lx-form"><input type="text" id="lx-q" placeholder="Pregúntele algo sobre este fallo…" autocomplete="off" aria-label="Pregunta a Lexia sobre este fallo">'+
@@ -4345,7 +4356,7 @@ function menuCompartir(boton,texto,url){
   m.addEventListener("click",function(ev){
     var q=ev.target.closest&&ev.target.closest("[data-comp]");
     if(!q) return;
-    var que=q.getAttribute("data-comp"), todo=texto+"\n"+url;
+    var que=q.getAttribute("data-comp"), todo=url?(texto+"\n"+url):String(texto);
     cerrarMenuCompartir();
     if(que==="whatsapp"){ window.open("https://wa.me/?text="+encodeURIComponent(todo),"_blank","noopener"); return; }
     if(que==="mail"){ location.href="mailto:?subject="+encodeURIComponent(String(texto).split("\n")[0].slice(0,120))+
@@ -7083,7 +7094,7 @@ function vistaLector(){
     '</div>'+
     '<nav class="lector-acciones" aria-label="Acciones del fallo">'+
       '<button type="button" data-tab="buscar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>Volver</button>'+
-      '<button type="button" data-act="ir-pasajes"><svg viewBox="0 0 24 24"><path d="M7 7h4v4H8c0 2 1 3 3 3M14 7h4v4h-3c0 2 1 3 3 3"/></svg>Citar</button>'+
+      '<button type="button" data-act="citar-lector"><svg viewBox="0 0 24 24"><path d="M7 7h4v4H8c0 2 1 3 3 3M14 7h4v4h-3c0 2 1 3 3 3"/></svg><span>Citar</span></button>'+
       '<button type="button" data-act="compartir-lector"><svg viewBox="0 0 24 24"><path d="M12 4v12M7 9l5-5 5 5M5 14v6h14v-6"/></svg>Compartir</button>'+
       '<button type="button" class="lx" data-act="lx-abrir"><svg viewBox="0 0 24 24"><path d="M5 6h14v10H9l-4 3z"/></svg>Preguntar</button>'+
     '</nav>'+
@@ -8367,6 +8378,7 @@ function montarAsistente(){
     else if(rr.bottom>vh0-m) window.scrollBy(0,rr.bottom-(vh0-m));
     var n=rec.pasos.length, ult=rec.i===n-1;
     rec.hazlo=!!p.hazlo; rec.sel=p.sel;
+    rec.ov.setAttribute("data-sel",p.sel);
     rec.card.innerHTML='<div class="tour-n">Paso '+(rec.i+1)+' de '+n+(p.hazlo?' · puede realizarlo usted':'')+'</div><h4>'+esc(p.t)+'</h4><p>'+esc(p.x)+'</p>'+
       '<div class="tour-bt">'+(rec.i>0?'<button type="button" class="tour-b" data-t="ant">Anterior</button>':'')+
       '<button type="button" class="tour-b prim" data-t="sig">'+(ult?"Terminar":"Siguiente")+'</button>'+
@@ -8405,9 +8417,10 @@ function montarAsistente(){
   }
   function ubicar(){
     var r=rec.sel&&rectDe(rec.sel); if(!r||!rec.ov) return;
-    var pad=8, m=4, vw=document.documentElement.clientWidth||innerWidth, vh=innerHeight;
-    /* el borde dorado se mantiene dentro de la pantalla: si lo iluminado llega al borde, el cuadro no se corta */
-    var fL=Math.max(m,r.left-pad), fT=Math.max(m,r.top-pad), fR=Math.min(vw-m,r.right+pad), fB=Math.min(vh-m,r.bottom+pad);
+    var pad=8, m=2, vw=document.documentElement.clientWidth||innerWidth, vh=innerHeight;
+    /* el marco queda a la misma distancia de lo iluminado por los cuatro lados: si falta lugar de un lado, se achica de todos */
+    var pe=Math.max(0,Math.min(pad,r.left-m,r.top-m,vw-m-r.right,vh-m-r.bottom));
+    var fL=r.left-pe, fT=r.top-pe, fR=r.right+pe, fB=r.bottom+pe;
     var L=Math.max(0,fL), T=Math.max(0,fT), R=Math.min(vw,fR), B=Math.min(vh,fB);
     var f=rec.foco.style; f.left=fL+"px"; f.top=fT+"px"; f.width=(fR-fL)+"px"; f.height=(fB-fT)+"px";
     var v=rec.vel; // cuatro paneles alrededor del hueco: tapan y bloquean todo lo demás
@@ -9661,9 +9674,14 @@ document.addEventListener("click",function(ev){
     return;
   }
   if(act==="compartir-lector"){
-    var sel=(window.getSelection&&String(window.getSelection()))||"";
-    var cuerpoL=sel.trim()?('"'+sel.trim().slice(0,600)+'"'):(estado.fichaConocida?fichaLegible(estado.fichaConocida):"Fallo abierto en el Lector");
-    abrirCompartir(b, cuerpoL, estado.fuenteDe||location.href);
+    var sel=((window.getSelection&&String(window.getSelection()))||"").trim()||ultimaSel;
+    var ficha=estado.fichaConocida?fichaLegible(estado.fichaConocida):"";
+    var cita2="", car2=""; try{ cita2=citaDelDoc()||""; car2=(datosDoc(estado.texto||"").car)||""; }catch(e){}
+    if(/\[[^\]]+\]/.test(cita2)) cita2="";   /* una cita con campos sin completar («[tribunal]») no se comparte */
+    var cuerpoL=[ficha||car2||cita2, sel?('«'+sel.slice(0,600)+'»'):"", (ficha||car2)&&cita2?cita2:""].filter(Boolean).join("\n");
+    var urlL=/^https?:\/\//i.test(String(estado.fuenteDe||""))?estado.fuenteDe:"";
+    if(navigator.share&&esCelular()){ navigator.share({title:ficha||car2||"Fallo",text:cuerpoL,url:urlL||undefined})["catch"](function(){}); return; }
+    abrirCompartir(b, cuerpoL||"Fallo abierto en el Lector", urlL);
     return;
   }
   if(act==="compartir"){ menuCompartir(b,textoCompartir(),location.href); return; }
@@ -10122,6 +10140,7 @@ document.addEventListener("click",function(ev){
   }
   if(act==="lx-ir"){ lxIrA(b.getAttribute("data-s")); return; }
   if(act==="lx-abrir"){ var sec=document.getElementById("lx-fallo"); if(sec){ estado.lxAbierto=true; sec.classList.add("abre"); sec.scrollIntoView({behavior:"smooth",block:"start"}); var q2=document.getElementById("lx-q"); if(q2) setTimeout(function(){ q2.focus({preventScroll:true}); },400); } return; }
+  if(act==="citar-lector"){ var cita=citaDelDoc(); if(cita){ copiar(cita); } else { var tp0=document.getElementById("doc-tit-pas"); if(tp0) tp0.scrollIntoView({behavior:"smooth",block:"start"}); } return; }
   if(act==="ir-pasajes"){ var tp=document.getElementById("doc-tit-pas"); if(tp) tp.scrollIntoView({behavior:"smooth",block:"start"}); return; }
   if(act==="doc-otro"){ estado.texto=""; estado.fuenteDe=""; estado.marca=0; estado.infoDoc=null; estado.fichaConocida=null; estado.errorLink=null; render(); window.scrollTo(0,0); return; }
   if(act==="ir-marca"){
