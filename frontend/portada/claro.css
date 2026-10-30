@@ -3,7 +3,7 @@
    que comparte la elección guardada en localStorage («ivs-tema») con la aplicación. */
 html[data-tema="claro"]{
   --bg:#f5f1e7;--fg:#1f1b14;--mute:rgba(31,27,20,.64);--dim:rgba(31,27,20,.46);--line:rgba(31,27,20,.18);
-  --gold:#946a06;
+  --gold:#946a06;--bg-rgb:245,241,231;--ov-rgb:40,34,20;
   color-scheme:light
 }
 html[data-tema="claro"] ::selection{background:var(--gold);color:var(--bg)}
@@ -59,8 +59,8 @@ html[data-tema="claro"] .legal-velo{background:rgba(40,34,20,.45)}
 .tema-op:hover{background:rgba(128,128,128,.16)}
 .tema-op[aria-pressed="true"]{background:var(--fg);color:var(--bg)}
 
-/* Otras paletas oscuras (mismos colores que en ../index.html): solo cambian las variables de color. */
-html[data-tema="azul"]{--bg:#161c27;--fg:#ece8dc;--mute:rgba(236,232,220,.62);--dim:rgba(236,232,220,.36);--line:rgba(236,232,220,.15);--gold:#d4a94a}
-html[data-tema="verde"]{--bg:#14211d;--fg:#eee9db;--mute:rgba(238,233,219,.62);--dim:rgba(238,233,219,.36);--line:rgba(238,233,219,.15);--gold:#cfae6a}
-html[data-tema="bordo"]{--bg:#34101b;--fg:#f3e8dd;--mute:rgba(243,232,221,.62);--dim:rgba(243,232,221,.36);--line:rgba(243,232,221,.15);--gold:#dcb26c}
-html[data-tema="descanso"]{--bg:#2e231b;--fg:#e8d9bd;--mute:rgba(232,217,189,.62);--dim:rgba(232,217,189,.36);--line:rgba(232,217,189,.15);--gold:#d4a04a}
+/* Paletas oscuras (mismos colores que en ../index.html): solo cambian las variables de color. */
+html[data-tema="arena"]{--bg:#1e252d;--fg:#e6e9eb;--mute:rgba(230,233,235,.62);--dim:rgba(230,233,235,.36);--line:rgba(230,233,235,.15);--gold:#bd995c;--bg-rgb:30,37,45;--ov-rgb:15,18,22}
+html[data-tema="salvia"]{--bg:#181d1b;--fg:#e2e0cc;--mute:rgba(226,224,204,.62);--dim:rgba(226,224,204,.36);--line:rgba(226,224,204,.15);--gold:#a3b3a9;--bg-rgb:24,29,27;--ov-rgb:12,14,14}
+html[data-tema="marino"]{--bg:#1a2030;--fg:#f1efea;--mute:rgba(241,239,234,.62);--dim:rgba(241,239,234,.36);--line:rgba(241,239,234,.15);--gold:#f0b430;--bg-rgb:26,32,48;--ov-rgb:13,16,24}
+html[data-tema="negro"]{--bg:#0b0b0c;--fg:#e4e4e6;--mute:rgba(228,228,230,.62);--dim:rgba(228,228,230,.36);--line:rgba(228,228,230,.15);--gold:#b8a986;--bg-rgb:11,11,12;--ov-rgb:6,6,6}
