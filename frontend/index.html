@@ -1710,7 +1710,7 @@ mark{border-radius:6px}
 
 <div id="flash" role="status" aria-live="polite" hidden style="display:none!important"></div>
 
-<script src="./analisis-fallo.js?v=20261024"></script>
+<script src="./analisis-fallo.js?v=20261030a"></script>
 <script src="./calculos.js?v=20261024"></script>
 <script src="./nombre-fallo.js?v=20261024c"></script>
 <script src="./pasajes.js?v=20261025"></script>
@@ -3605,8 +3605,15 @@ var LETRA=/[a-z0-9]/;
 function coincidencias(texto){
   var q=String(estado.q||"").trim();
   if(!texto||!q) return [];
+  /* Una cita legal («ley 25.323 art. 2», «Constitución Provincial art. 160») se busca como norma, no como palabras sueltas. */
+  try{
+    if(coincNorma.t!==texto) coincNorma={t:texto,d:detectar(texto)};
+    var rn=coincNorma.d.coincidenciasNorma&&coincNorma.d.coincidenciasNorma(q);
+    if(rn&&rn.length) return rn;
+  }catch(e){}
   return IVSPasajes.coincidencias(texto,q,{modo:estado.modo,parcial:estado.parcial});
 }
+var coincNorma={t:null,d:null};
 var TOPE_MARCAS=1500;
 function textoResaltado(texto,cs){
   var h="",pos=0,i,n=Math.min(cs.length,TOPE_MARCAS);
@@ -7167,7 +7174,7 @@ var RANGO_FUENTE={
   "CCyC (vigente)":10,"Código Civil (derogado)":11,"Código de Comercio (derogado)":12,"Código Penal":13,
   "Ley de Contrato de Trabajo (LCT)":14,"Ley de Defensa del Consumidor (LDC)":15,"Ley de Seguros (LS)":16,
   "Ley General de Sociedades (LGS)":17,"Ley de Concursos y Quiebras (LCQ)":18,"Ley de Riesgos del Trabajo (LRT)":19,
-  "Constitución provincial":29,"CPCCN":30,"CPCCyT (Mendoza)":31,"CPC":32,"Código Procesal Penal":33,"Ley Arancelaria (LA)":34
+  "Constitución provincial":29,"Constitución de Mendoza":29,"Constitución de la Provincia de Buenos Aires":29,"CPCCN":30,"CPCCyT (Mendoza)":31,"CPC":32,"Código Procesal Penal":33,"Ley Arancelaria (LA)":34
 };
 function rangoDeFuente(label){
   return RANGO_FUENTE.hasOwnProperty(label)?RANGO_FUENTE[label]:99;

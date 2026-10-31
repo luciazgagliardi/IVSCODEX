@@ -155,7 +155,7 @@ test('normas: cada artículo con su norma, sin concatenar y sin atribuir por el 
   const g = Object.fromEntries(RU.d.artsPorFuente.map((x) => [x[0], x[1]]));
   assert.deepEqual(g['CCyC (vigente)'].slice().sort(), ['art. 1740', 'art. 1746', 'art. 1748', 'art. 765', 'art. 768']);
   assert.deepEqual(g['Ley de Seguros (LS)'], ['art. 118']);
-  assert.deepEqual(g['Constitución provincial'], ['art. 160']);
+  assert.deepEqual(g['Constitución de Mendoza'], ['art. 160'], '«Constitución Provincial» en un fallo de la SCJM es la de Mendoza');
   assert.ok(g['CPCCyT (Mendoza)'].includes('art. 36 inc. I'));
   assert.ok(g['CPCCyT (Mendoza)'].includes('art. 88 ap. III'));
   assert.deepEqual(g['Ley 9.131 — Aranceles de Abogados y Procuradores de Mendoza'].slice().sort(), ['art. 15', 'art. 16', 'art. 2', 'art. 3', 'art. 31', 'art. 4']);
@@ -369,4 +369,21 @@ test('TSJ con firma digital: «APELLIDO, NOMBRES / JUEZ/A», fecha de la firma, 
   assert.ok(persona(a, 'lozano').participacion.includes('voto_mayoria'));
   assert.ok(!persona(a, 'otamendi').participacion.includes('voto_mayoria'), 'quien no firma no integra la mayoría');
   assert.ok(a.votacion.detalle.some((x) => /deducido de las firmas/.test(x)));
+});
+
+test('Lector: las citas legales se buscan como normas (ley 25.323 art. 2, Constitución Provincial art. 160, CPCC y T de Mendoza, ley 9.131)', () => {
+  const T = 'SUPREMA CORTE DE JUSTICIA DE MENDOZA. Se aplica el art. 2 de la ley 25.323 y el art. 160 de la Constitución Provincial. ' +
+    'Ver Ley N° 25323; art. 48 del CPCC y T de Mendoza; costas art. 31 ley 9131 y Const. Prov. art. 144.';
+  const d = detectar(T);
+  const busca = (q) => (d.coincidenciasNorma(q) || []).map((x) => T.slice(x.a, x.b));
+  assert.deepEqual(busca('ley 25.323 artículo 2'), ['art. 2 de la ley 25.323']);
+  assert.deepEqual(busca('ley 25.323'), ['ley 25.323', 'Ley N° 25323']);
+  assert.deepEqual(busca('Constitución Provincial, artículo 160'), ['art. 160 de la Constitución Provincial']);
+  assert.deepEqual(busca('Constitución de Mendoza art 144'), ['Const. Prov. art. 144']);
+  assert.deepEqual(busca('CPCC y T de Mendoza art. 48'), ['art. 48 del CPCC y T']);
+  assert.deepEqual(busca('Ley 9.131'), ['ley 9131']);
+  assert.equal(d.coincidenciasNorma('daño moral'), null, 'lo que no es una norma se busca como palabras');
+  // la de Buenos Aires
+  const B = detectar('SUPREMA CORTE DE JUSTICIA DE LA PROVINCIA DE BUENOS AIRES. art. 15 de la Constitución Provincial.');
+  assert.deepEqual(B.artsPorFuente.map((x) => x[0]), ['Constitución de la Provincia de Buenos Aires']);
 });
