@@ -243,7 +243,7 @@ export const errores = {
   normaDesconocida: (clave) =>
     new ErrorApp(
       'NORMA_DESCONOCIDA',
-      `No tengo cargada la norma "${lim(clave, 40)}". Por ahora se pueden consultar el Código Civil y Comercial, la Constitución, la LCT, la Ley de Concursos, la de Procedimientos Administrativos y la de Amparo.`,
+      `No tengo cargada la norma "${lim(clave, 40)}". Pruebe con el nombre de una de las normas de la lista de «Norma» (códigos, leyes nacionales y normas de Mendoza y Buenos Aires).`,
       400
     ),
 

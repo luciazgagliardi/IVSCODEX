@@ -118,6 +118,23 @@ var LEYES_BASE={
   "24522":{nombre:"Ley de Concursos y Quiebras",cat:"fondo",vigente:true},
   "26485":{nombre:"Ley de Protección Integral a las Mujeres",cat:"fondo",vigente:true},
   "25323":{nombre:"Indemnizaciones laborales",cat:"fondo"},
+  "11723":{nombre:"Régimen Legal de la Propiedad Intelectual",cat:"leyes"},
+  "25675":{nombre:"Ley General del Ambiente",cat:"leyes"},
+  "24013":{nombre:"Ley Nacional de Empleo",cat:"fondo"},
+  "25345":{nombre:"Prevención de la Evasión Fiscal",cat:"leyes"},
+  "24241":{nombre:"Sistema Integrado Previsional Argentino (SIPA)",cat:"leyes"},
+  "23592":{nombre:"Actos Discriminatorios",cat:"leyes"},
+  "27348":{nombre:"Complementaria de la Ley de Riesgos del Trabajo",cat:"fondo"},
+  "11683":{nombre:"Procedimiento Tributario",cat:"leyes"},
+  "24449":{nombre:"Ley de Tránsito",cat:"leyes"},
+  "22250":{nombre:"Régimen de la Industria de la Construcción",cat:"fondo"},
+  "14250":{nombre:"Convenciones Colectivas de Trabajo",cat:"fondo"},
+  "23551":{nombre:"Asociaciones Sindicales",cat:"fondo"},
+  "25877":{nombre:"Régimen Laboral",cat:"fondo"},
+  "26773":{nombre:"Reparación de Daños de Accidentes de Trabajo",cat:"fondo"},
+  "26589":{nombre:"Mediación y Conciliación",cat:"provincial"},
+  "27423":{nombre:"Honorarios de Abogados y Procuradores (Nación)",cat:"provincial"},
+  "27063":{nombre:"Código Procesal Penal Federal",cat:"provincial"},
   "26994":{nombre:"Ley aprobatoria del Código Civil y Comercial",cat:"fondo",vigente:true},
   "17454":{nombre:"Código Procesal Civil y Comercial de la Nación (CPCCN)",cat:"provincial",vigente:true},
   "9001":{nombre:"Código Procesal Civil, Comercial y Tributario de Mendoza",cat:"provincial",vigente:true},
@@ -200,6 +217,13 @@ var NORMA_A_CLAVE={
   "Ley 25.323 — Indemnizaciones laborales":"ley25323","Constitución de Mendoza":"cmza","Constitución de la Provincia de Buenos Aires":"cpba",
   "CPCCyT (Mendoza)":"cpccyt-mza","Ley 9.131 — Aranceles de Abogados y Procuradores de Mendoza":"ley9131"
 };
+/* Las leyes que el servidor trae de InfoLeg (o de la copia provincial): número -> clave. Cada una abre su artículo
+   en la hoja del Lector con la etiqueta que le da etiquetaDeLey(). */
+var LEY_A_CLAVE={"11723":"ley11723","25675":"ley25675","24013":"ley24013","25345":"ley25345","24241":"ley24241","23592":"ley23592","27348":"ley27348","11683":"ley11683","26485":"ley26485","25326":"ley25326","26061":"ley26061","26657":"ley26657","26618":"ley26618","26743":"ley26743","24449":"ley24449","22250":"ley22250","14250":"ley14250","23551":"ley23551","25877":"ley25877","26773":"ley26773","17418":"ley17418","26589":"ley26589","27423":"ley27423","27063":"ley27063","25323":"ley25323","9131":"ley9131"};
+Object.keys(LEY_A_CLAVE).forEach(function(n){
+  var b=LEYES_BASE[n],g=n.length>3?n.replace(/\B(?=(\d{3})+(?!\d))/g,"."):n;
+  NORMA_A_CLAVE[LEY_A_NORMA[n]||("Ley "+g+(b?" — "+b.nombre+(b.vigente===false?" (derogada)":""):""))]=LEY_A_CLAVE[n];
+});
 function soloDigitos(s){ return String(s).replace(/\./g,"").replace(/^0+(?=\d)/,""); }
 function detectar(texto){
   // Los saltos de línea del documento original (el HTML de la SCJM corta
