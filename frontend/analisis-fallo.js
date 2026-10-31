@@ -117,6 +117,7 @@ var LEYES_BASE={
   "19550":{nombre:"Ley General de Sociedades",cat:"fondo",vigente:true},
   "24522":{nombre:"Ley de Concursos y Quiebras",cat:"fondo",vigente:true},
   "26485":{nombre:"Ley de Protección Integral a las Mujeres",cat:"fondo",vigente:true},
+  "25323":{nombre:"Indemnizaciones laborales",cat:"fondo"},
   "26994":{nombre:"Ley aprobatoria del Código Civil y Comercial",cat:"fondo",vigente:true},
   "17454":{nombre:"Código Procesal Civil y Comercial de la Nación (CPCCN)",cat:"provincial",vigente:true},
   "9001":{nombre:"Código Procesal Civil, Comercial y Tributario de Mendoza",cat:"provincial",vigente:true},
@@ -195,7 +196,9 @@ var NORMA_A_CLAVE={
   "CCyC (vigente)":"ccyc","Constitución Nacional":"cn","Ley de Contrato de Trabajo (LCT)":"lct",
   "Ley de Concursos y Quiebras (LCQ)":"lcq","Ley de Procedimientos Administrativos (LPA)":"lpa",
   "Ley de Defensa del Consumidor (LDC)":"ldc","Código Penal":"cp","CPCCN":"cpccn",
-  "Ley General de Sociedades (LGS)":"lgs","Ley de Riesgos del Trabajo (LRT)":"lrt","Ley 16.986":"amparo"
+  "Ley General de Sociedades (LGS)":"lgs","Ley de Riesgos del Trabajo (LRT)":"lrt","Ley 16.986":"amparo",
+  "Ley 25.323 — Indemnizaciones laborales":"ley25323","Constitución de Mendoza":"cmza","Constitución de la Provincia de Buenos Aires":"cpba",
+  "CPCCyT (Mendoza)":"cpccyt-mza","Ley 9.131 — Aranceles de Abogados y Procuradores de Mendoza":"ley9131"
 };
 function soloDigitos(s){ return String(s).replace(/\./g,"").replace(/^0+(?=\d)/,""); }
 function detectar(texto){

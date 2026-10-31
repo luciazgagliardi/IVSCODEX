@@ -28,6 +28,7 @@ import { leerCache, escribirCache } from './cache.js';
 import { errores } from './errores.js';
 
 const HOST = 'servicios.infoleg.gob.ar';
+const HOST_LEYES = 'https://leyes-ar.com';
 
 /**
  * Las normas que se pueden consultar. Cada URL fue verificada abriéndola y
@@ -62,6 +63,16 @@ export const NORMAS = [
     url: `https://${HOST}/infolegInternet/anexos/25000-29999/25553/texact.htm` },
   { clave: 'lrt', nombre: 'Ley de Riesgos del Trabajo (24.557)', sigla: 'LRT',
     url: `https://${HOST}/infolegInternet/anexos/25000-29999/27971/texact.htm` },
+  { clave: 'ley25323', nombre: 'Ley 25.323 (indemnizaciones laborales)', sigla: 'Ley 25.323',
+    url: `https://${HOST}/infolegInternet/anexos/60000-64999/64555/norma.htm`,
+    aviso: 'Texto original del año 2000. Puede haber sido modificada o derogada después (según otras fuentes, por la Ley 27.742 de 2024): revise la vigencia en InfoLeg.' },
+
+  /* Provinciales: no están en InfoLeg y Mendoza y Buenos Aires no publican sus textos artículo por artículo
+     en HTML. Se traen de leyes-ar.com, que sí lo hace, y se dice en el aviso que es una copia no oficial. */
+  { clave: 'cmza', nombre: 'Constitución de la Provincia de Mendoza', sigla: 'Const. Mendoza', porArticulo: `${HOST_LEYES}/constitucion_mendoza` },
+  { clave: 'cpba', nombre: 'Constitución de la Provincia de Buenos Aires', sigla: 'Const. Buenos Aires', porArticulo: `${HOST_LEYES}/constitucion_buenos_aires` },
+  { clave: 'cpccyt-mza', nombre: 'Código Procesal Civil, Comercial y Tributario de Mendoza (ley 9.001)', sigla: 'CPCCyT', porArticulo: `${HOST_LEYES}/codigo_procesal_civil_comercial_y_tributario_mendoza` },
+  { clave: 'ley9131', nombre: 'Aranceles de Abogados y Procuradores de Mendoza (ley 9.131)', sigla: 'Ley 9.131', porArticulo: `${HOST_LEYES}/regulan_aranceles_de_abogados_y_procuradores_mendoza` },
 ];
 
 export function normaPorClave(clave) {
@@ -161,6 +172,7 @@ export async function articuloDe(clave, numero) {
   if (!norma) throw errores.normaDesconocida(clave);
   const num = String(numero || '').trim();
   if (!/^\d{1,4}(\s*(bis|ter|quater))?$/i.test(num)) throw errores.articuloInvalido(num);
+  if (norma.porArticulo) return articuloDePagina(norma, num);
 
   const texto = await textoDeNorma(norma);
   const desde = posicionDelArticulo(texto, num);
@@ -216,4 +228,59 @@ export function rubricaDe(textoArticulo) {
   // ("tiene", "debe", "es") probablemente ya es el texto del artículo.
   if (/\b(tiene|debe|puede|es|son|se)\b/i.test(r)) return null;
   return r;
+}
+
+/**
+ * Las normas provinciales: cada artículo es una página (leyes-ar.com/<norma>/<n>.htm) con su texto en
+ * <div id="statya"> y la vigencia en <div id="law_valid">. No es una fuente oficial, y el aviso lo dice.
+ */
+async function articuloDePagina(norma, num) {
+  const url = `${norma.porArticulo}/${encodeURIComponent(num.toLowerCase().replace(/\s+/g, ' '))}.htm`;
+  const host = new URL(url).hostname;
+  let datos = await leerCache(url);
+  if (!datos || !datos.texto) {
+    await esperarTurno(host);
+    const control = new AbortController();
+    const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
+    let crudo;
+    try {
+      const resp = await fetch(url, { signal: control.signal, headers: { 'User-Agent': USER_AGENT, Accept: 'text/html,*/*;q=0.8' } });
+      if (resp.status === 404) throw errores.articuloNoEncontrado(num, norma.nombre);
+      if (!resp.ok) throw errores.indiceFuenteFalla('leyes-ar', `respuesta ${resp.status}`);
+      crudo = await resp.text();
+    } catch (e) {
+      if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
+      if (e?.codigo) throw e;
+      throw errores.indiceFuenteFalla('leyes-ar', e?.cause?.message || e?.message);
+    } finally {
+      clearTimeout(reloj);
+    }
+    const consolaMuda = new VirtualConsole();
+    consolaMuda.on('jsdomError', () => {});
+    const dom = new JSDOM(crudo, { virtualConsole: consolaMuda });
+    const doc = dom.window.document;
+    const caja = doc.getElementById('statya');
+    if (!caja) { dom.window.close(); throw errores.articuloNoEncontrado(num, norma.nombre); }
+    caja.querySelectorAll('h1, script, style').forEach((n) => n.remove());
+    // los renglones del artículo, con un salto entre párrafos y sin la leyenda del pie («Provincia de Mendoza Artículo 160 …»)
+    const partes = [...caja.querySelectorAll('p')].map((p) => (p.textContent || '').replace(/\s+/g, ' ').trim()).filter(Boolean);
+    const texto = (partes.length ? partes.join('\n') : (caja.textContent || '').replace(/\s+/g, ' ').trim())
+      .replace(/\s*(Provincia de [A-Za-zÁÉÍÓÚÑáéíóúñ ]+|Constitución|Código|Regulan)[^\n]*Art[íi]culo\s+\d+[^\n]*$/i, '').trim();
+    const vigencia = (doc.getElementById('law_valid')?.textContent || '').replace(/\s+/g, ' ').trim();
+    dom.window.close();
+    if (!texto) throw errores.articuloNoEncontrado(num, norma.nombre);
+    datos = { texto, vigencia };
+    await escribirCache(url, datos);
+  }
+  const limpio = datos.texto.length > MAX_ARTICULO ? datos.texto.slice(0, MAX_ARTICULO) : datos.texto;
+  return {
+    norma: norma.nombre,
+    sigla: norma.sigla,
+    articulo: num,
+    texto: limpio,
+    rubrica: null,
+    truncado: datos.texto.length > MAX_ARTICULO,
+    aviso: 'Copia no oficial (leyes-ar.com)' + (datos.vigencia ? ': ' + datos.vigencia.replace(/\.?\s*$/, '') : '') + '. Verifíquela en la fuente oficial antes de citar.',
+    url,
+  };
 }

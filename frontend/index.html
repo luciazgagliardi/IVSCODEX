@@ -1710,7 +1710,7 @@ mark{border-radius:6px}
 
 <div id="flash" role="status" aria-live="polite" hidden style="display:none!important"></div>
 
-<script src="./analisis-fallo.js?v=20261030a"></script>
+<script src="./analisis-fallo.js?v=20261030b"></script>
 <script src="./calculos.js?v=20261024"></script>
 <script src="./nombre-fallo.js?v=20261024c"></script>
 <script src="./pasajes.js?v=20261025"></script>
@@ -7205,13 +7205,13 @@ function abrirNormaHoja(fuente,art,btn){
   function pintar(d,err){
     if(normaHoja.clave!==k) return;
     var cuerpo,pie="";
-    if(!d&&!err) cuerpo='<p class="norma-hoja__nota" style="margin:0">Buscando el texto en InfoLeg…</p>';
+    if(!d&&!err) cuerpo='<p class="norma-hoja__nota" style="margin:0">Buscando el texto oficial…</p>';
     else if(err) cuerpo='<p class="norma-hoja__nota" style="margin:0">'+esc(err)+'</p>';
     else{
       cuerpo='<div class="norma-hoja__txt">'+esc(d.texto)+'</div>'+
-        (d.truncado?'<p class="norma-hoja__nota">El artículo sigue: se muestra el principio. Ábralo en InfoLeg para leerlo completo.</p>':"")+
+        (d.truncado?'<p class="norma-hoja__nota">El artículo sigue: se muestra el principio. Ábralo en la fuente para leerlo completo.</p>':"")+
         (d.aviso?'<p class="norma-hoja__nota">'+esc(d.aviso)+'</p>':"");
-      pie='<div class="norma-hoja__pie"><a class="mini" href="'+escU(d.url)+'" target="_blank" rel="noopener noreferrer">Ver en InfoLeg</a></div>';
+      pie='<div class="norma-hoja__pie"><a class="mini" href="'+escU(d.url)+'" target="_blank" rel="noopener noreferrer">'+(/infoleg/i.test(d.url)?'Ver en InfoLeg':'Ver en la fuente')+'</a></div>';
     }
     h.innerHTML='<div class="norma-hoja__cab"><div><div class="norma-hoja__norma">'+esc(d?d.norma:fuente)+'</div>'+
       '<h2 class="norma-hoja__tit">Artículo '+esc(d?d.articulo:num)+(d&&d.rubrica?' · '+esc(d.rubrica):'')+'</h2></div>'+
