@@ -92,7 +92,7 @@ var CATEGORIA_FUENTE={
   "CCyC (vigente)":"fondo","Código Civil (derogado)":"fondo","Código de Comercio (derogado)":"fondo",
   "Código Penal":"fondo","Ley de Contrato de Trabajo (LCT)":"fondo","Ley de Defensa del Consumidor (LDC)":"fondo","Ley de Seguros (LS)":"fondo",
   "Ley General de Sociedades (LGS)":"fondo","Ley de Riesgos del Trabajo (LRT)":"fondo","Ley de Concursos y Quiebras (LCQ)":"fondo",
-  "Ley de Procedimientos Administrativos (LPA)":"leyes","Constitución provincial":"provincial",
+  "Ley de Procedimientos Administrativos (LPA)":"leyes","Constitución provincial":"provincial","Constitución de Mendoza":"provincial","Constitución de la Provincia de Buenos Aires":"provincial","Constitución de Mendoza":"provincial","Constitución de la Provincia de Buenos Aires":"provincial",
   "CPCCN":"provincial","CPCCyT (Mendoza)":"provincial","CCAyT (CABA)":"provincial","CPC":"provincial","Código Procesal Penal":"provincial","Ley Arancelaria (LA)":"provincial"
 };
 function categoriaDeFuente(label,esProvincial){
@@ -293,7 +293,7 @@ function detectar(texto){
      está antes en esta lista. */
   var CODIGOS=[
     [/c[oó]digo\s+procesal\s+civil\s+y\s+comercial\s+de\s+la\s+naci[oó]n|c[oó]d\.?\s*proc\.?\s*civ\.?\s*y\s*com\.?\s*(?:de\s+la\s+)?naci[oó]n|\bcpccn\b|\bc\.\s*p\.\s*c\.\s*c\.\s*n\.?/i,"CPCCN"],
-    [/c[oó]digo\s+procesal\s+civil,?\s+comercial\s+y\s+tributario|\bcpcc?y?tm?\b|\bc\.\s*p\.\s*c\.\s*c\.\s*(?:y\s*)?t\.?(?:\s*m\.?)?/i,"CPCCyT (Mendoza)"],
+    [/c[oó]digo\s+procesal\s+civil,?\s+comercial\s+y\s+tributario|\bcpcc?y?tm?\b|\bc\.?\s*p\.?\s*c\.?\s*c\.?\s*y\.?\s*t\b\.?|\bc\.\s*p\.\s*c\.\s*c\.\s*(?:y\s*)?t\.?(?:\s*m\.?)?/i,"CPCCyT (Mendoza)"],
     [/c[oó]digo\s+procesal\s+civil(?:\s+y\s+comercial)?\b|c[oó]d\.?\s*proc\.?\s*civ\.?|\bcpcc?\b|\bc\.\s*p\.\s*c\.(?:\s*c\.)?/i,"CPC"],
     [/c[oó]digo\s+contencioso\s+administrativo\s+y\s+tributario|\bcc?ayt\b/i,"CCAyT (CABA)"],
     [/c[oó]digo\s+procesal\s+penal\b|\bcppn?\b|\bc\.\s*p\.\s*p\.(?:\s*n\.)?/i,"Código Procesal Penal"],
@@ -303,7 +303,9 @@ function detectar(texto){
     [/c[oó]digo\s+penal\b|\bcp\b/i,"Código Penal"],
     [/c[oó]digo\s+de\s+comercio\b|c[oó]d\.?\s*com\.?(?!\s*y)\b/i,"Código de Comercio (derogado)"],
     [/constituci[oó]n\s+(?:de\s+la\s+)?naci[oó]n(?:al)?(?:\s+argentina)?|const(?:\.|ituci[oó]n)\s*nac(?:\.|ional)|carta\s+magna|\bcn\b|\bc\.\s*n\.(?!\s*(?:a\.|civ|com|trab|fed|cont|crim|pen|apel|cas|elec|seg|t\.))/i,"Constitución Nacional"],
-    [/constituci[oó]n\s+(?:provincial|de\s+la\s+provincia(?:\s+de\s+[a-záéíóú]+(?:\s+[a-záéíóú]+)?)?|de\s+(?:mendoza|buenos\s+aires|c[oó]rdoba|santa\s+fe)|de\s+la\s+ciudad(?:\s+aut[oó]noma)?(?:\s+de\s+buenos\s+aires)?)|\bccaba\b/i,"Constitución provincial"],
+    [/constituci[oó]n\s+(?:provincial\s+)?(?:de\s+(?:la\s+)?(?:provincia\s+de\s+)?)?mendoza|const(?:\.|ituci[oó]n)?\s*(?:prov(?:\.|incial)?\s*)?(?:de\s+)?mza\b\.?/i,"Constitución de Mendoza"],
+    [/constituci[oó]n\s+(?:provincial\s+)?(?:de\s+(?:la\s+)?(?:provincia\s+de\s+)?)?buenos\s+aires|const(?:\.|ituci[oó]n)?\s*(?:de\s+la\s+)?(?:prov(?:\.|incial)?\s*|pcia\.?\s*)?(?:de\s+)?bs\.?\s*as\b\.?/i,"Constitución de la Provincia de Buenos Aires"],
+    [/constituci[oó]n\s+(?:provincial|de\s+la\s+provincia(?:\s+de\s+[a-záéíóú]+(?:\s+[a-záéíóú]+)?)?|de\s+(?:c[oó]rdoba|santa\s+fe)|de\s+la\s+ciudad(?:\s+aut[oó]noma)?(?:\s+de\s+buenos\s+aires)?)|const\.?\s*(?:prov(?:\.|incial)?|pcia\.?)(?![a-záéíóú])|\bccaba\b/i,"Constitución provincial"],
     [/ley\s+de\s+contrato\s+de\s+trabajo|\blct\b|\bl\.\s*c\.\s*t\./i,"Ley de Contrato de Trabajo (LCT)"],
     [/ley\s+de\s+defensa\s+(?:del|al)\s+consumidor|\bldc\b|\bl\.\s*d\.\s*c\./i,"Ley de Defensa del Consumidor (LDC)"],
     [/ley\s+de\s+riesgos\s+del\s+trabajo|\blrt\b|\bl\.\s*r\.\s*t\./i,"Ley de Riesgos del Trabajo (LRT)"],
@@ -347,6 +349,13 @@ function detectar(texto){
      nacionales vigentes que se citan llevan cinco dígitos. Antes las leyes
      9.041 y 9.516 de Mendoza aparecían como «Leyes nacionales». */
   var docProvincial=/^(scjm|scba|tsj)$/.test(d.tipo||"");
+  /* «Constitución Provincial» a secas es la de la provincia del tribunal: Mendoza o Buenos Aires. */
+  var provDoc=d.tipo==="scjm"?"Constitución de Mendoza":d.tipo==="scba"?"Constitución de la Provincia de Buenos Aires":null;
+  if(!provDoc&&d.tipo!=="tsj"){
+    var nM=(t.match(/mendoza/gi)||[]).length,nB=(t.match(/(?<!ciudad\s+(?:aut[oó]noma\s+)?de\s+)buenos\s+aires/gi)||[]).length;
+    if(nM>=2&&nM>=nB*2) provDoc="Constitución de Mendoza"; else if(nB>=2&&nB>=nM*2) provDoc="Constitución de la Provincia de Buenos Aires";
+  }
+  function rotular(f){ return f==="Constitución provincial"&&provDoc?provDoc:f; }
   function categoriaDeLey(etiqueta,n,esProv){
     if(CATEGORIA_FUENTE.hasOwnProperty(etiqueta)) return CATEGORIA_FUENTE[etiqueta];
     var b=LEYES_BASE[soloDigitos(n)];
@@ -378,7 +387,7 @@ function detectar(texto){
       var re=CODIGOS[i][2]; re.lastIndex=0;
       var mm=re.exec(v);
       if(mm&&CODIGOS[i][1]==="Código Civil (derogado)"&&/^c\.\s*c\.?$/i.test(mm[0].trim())&&/(?:^|[\s,])y\s*$/.test(v.slice(0,mm.index))) continue;
-      if(mm&&(!mejor||mm.index<mejor.i)&&soloConectores(v.slice(0,mm.index))) mejor={i:mm.index,f:CODIGOS[i][1],prov:false};
+      if(mm&&(!mejor||mm.index<mejor.i)&&soloConectores(v.slice(0,mm.index))) mejor={i:mm.index,f:rotular(CODIGOS[i][1]),prov:false};
     }
     return mejor;
   }
@@ -396,7 +405,7 @@ function detectar(texto){
       while((m=re.exec(v))){ ult=m; if(m[0]==="") re.lastIndex++; }
       if(ult){
         dist=v.slice(ult.index+ult[0].length);
-        if(dist.length<=30&&soloConectores(dist)&&(!mejor||dist.length<mejor.d)) mejor={d:dist.length,f:CODIGOS[i][1],prov:false};
+        if(dist.length<=30&&soloConectores(dist)&&(!mejor||dist.length<mejor.d)) mejor={d:dist.length,f:rotular(CODIGOS[i][1]),prov:false};
       }
     }
     return mejor;
@@ -410,7 +419,7 @@ function detectar(texto){
     while((m=re.exec(texto))) menciones.push({i:m.index,fin:m.index+m[0].length,f:etiquetaDeLey(m[2]),prov:!!(m[1]&&/provincial/i.test(m[1])),n:m[2]});
     CODIGOS.forEach(function(c){
       var r=c[2]; r.lastIndex=0;
-      while((m=r.exec(texto))){ menciones.push({i:m.index,fin:m.index+m[0].length,f:c[1],prov:false}); if(m[0]==="") r.lastIndex++; }
+      while((m=r.exec(texto))){ menciones.push({i:m.index,fin:m.index+m[0].length,f:rotular(c[1]),prov:false}); if(m[0]==="") r.lastIndex++; }
     });
     menciones.sort(function(a,b){ return a.i-b.i; });
   })();
@@ -531,6 +540,56 @@ function detectar(texto){
     if(grupos[k]) return; // ya tiene su propio grupo con artículos detectados
     grupos[k]=[]; ordenGrupos.push(k); catDeGrupo[k]=leyes[k];
   });
+  /* La búsqueda del Lector entiende una cita legal: «ley 25.323 artículo 2», «Constitución Provincial, art. 160»,
+     «CPCCyT de Mendoza». Marca esos artículos (con la norma que los acompaña) donde el fallo los cite, diga
+     «art. 2 de la ley 25.323», «Ley N° 25323, art. 2» o «artículo 2 de la misma». Nulo si lo buscado no es una norma. */
+  d.coincidenciasNorma=function(q){
+    var s=String(q||"").trim(); if(!s||s.length>120) return null;
+    var art=null,resto=s,mA=/\bart(?:[íi]culos?|s?\.?)\s*(?:n[°ºo]\.?\s*|nro\.?\s*)?(\d{1,4}(?:\.\d{3})?)(?:\s*(bis|ter|qu[áa]ter)\b)?/i.exec(s);
+    if(mA){ art=mA[1].replace(/\.(\d{3})/,"$1")+(mA[2]?" "+mA[2].toLowerCase().replace("á","a"):""); resto=s.slice(0,mA.index)+" "+s.slice(mA.index+mA[0].length); }
+    var f=null,num=null,mejor=null,m=reLeyEn.exec(resto);
+    if(m){ f=etiquetaDeLey(m[2]); num=soloDigitos(m[2]); mejor={i:m.index,l:m[0].length}; }
+    else{
+      for(var i=0;i<CODIGOS.length;i++){
+        var re=CODIGOS[i][2]; re.lastIndex=0; var mm=re.exec(resto);
+        if(mm&&mm[0]&&(!mejor||mm.index<mejor.i)){ mejor={i:mm.index,l:mm[0].length}; f=rotular(CODIGOS[i][1]); }
+      }
+    }
+    if(!f) return null;
+    var sobra=resto.slice(0,mejor.i)+" "+resto.slice(mejor.i+mejor.l);
+    var EXTRA=/^(mendoza|mza|buenos|aires|bs|as|pcia|provincia|provincial|ciudad|argentina|nacion|codigo|ley|n)$/i;
+    if(!sobra.replace(/[\s,;:()\-–—.°º"“”']+/g," ").trim().split(" ").every(function(w){ return !w||CONECTOR.test(w)||EXTRA.test(sinTildes(w))||/^\d{1,3}$/.test(w); })) return null;
+    var rs=[];
+    if(art){
+      citas.forEach(function(c){
+        if(c.f!==f||c.base!==art) return;
+        var a=c.pos,b=c.fin;
+        for(var k=0;k<menciones.length;k++){
+          var x=menciones[k];
+          if(x.f!==f) continue;
+          if(x.i>=b&&x.i-b<=40&&soloConectores(texto.slice(b,x.i))){ b=x.fin; break; }
+          if(x.fin<=a&&a-x.fin<=30&&soloConectores(texto.slice(x.fin,a))){ a=x.i; break; }
+        }
+        rs.push({a:a,b:b,k:0});
+      });
+    }else{
+      menciones.forEach(function(x){ if(x.f===f) rs.push({a:x.i,b:x.fin,k:0}); });
+      if(num&&num.length>=3){
+        var grupos=[],n=num;
+        while(n.length>3){ grupos.unshift(n.slice(-3)); n=n.slice(0,-3); }
+        grupos.unshift(n);
+        var rb=new RegExp(grupos.join("\\.?"),"g"),mb;
+        while((mb=rb.exec(texto))){
+          var ant=texto.charAt(mb.index-1),sig=texto.charAt(mb.index+mb[0].length);
+          if(!/\d/.test(ant)&&!(ant==="."&&/\d/.test(texto.charAt(mb.index-2)))&&!/\d/.test(sig)&&!(sig==="."&&/\d/.test(texto.charAt(mb.index+mb[0].length+1)))) rs.push({a:mb.index,b:mb.index+mb[0].length,k:0});
+        }
+      }
+    }
+    rs.sort(function(x,y){ return x.a-y.a||x.b-y.b; });
+    var out=[];
+    rs.forEach(function(c){ var u=out[out.length-1]; if(u&&c.a<=u.b){ if(c.b>u.b) u.b=c.b; } else out.push(c); });
+    return out;
+  };
   d.artsPorFuente=ordenGrupos.map(function(k){ return [k,grupos[k],catDeGrupo[k]]; });
   d.arts=[].concat.apply([],ordenGrupos.map(function(k){ return grupos[k]; }));
   var cit={},cs2=texto.match(/Fallos:?\s*\d{2,3}\s*:\s*\d{1,4}/gi)||[];
