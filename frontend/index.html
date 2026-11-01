@@ -6125,8 +6125,14 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   imBusco.cargando=false;
   if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
   imBusco.desdeNavegador=!!d.desdeNavegador;
-  imBusco.resultados=d.resultados||[];
-  imBusco.total=d.total||0;
+  // el mismo sumario con otro id (SAIJ lo publica así) se muestra una sola vez; el servidor ya lo hace con las demás bases
+  var vistosRes={};
+  imBusco.resultados=(d.resultados||[]).filter(function(r){
+    if(!r||(slug!=="saij"&&slug!=="csjn")) return true;
+    var k=[r.caratula,r.fecha,String(r.sumario||r.id||"").slice(0,80)].join("|").toLowerCase().replace(/\s+/g," ");
+    if(vistosRes[k]) return false; vistosRes[k]=1; return true;
+  });
+  imBusco.total=Math.max(0,(d.total||0)-((d.resultados||[]).length-imBusco.resultados.length));
   // Cuántos dice tener el SITIO con esas palabras. Es otra cosa que
   // "total": ese es cuántos pasaron el filtro entre los que se alcanzaron a
   // revisar. Puede venir null (respaldo local: no hay sitio que preguntar).

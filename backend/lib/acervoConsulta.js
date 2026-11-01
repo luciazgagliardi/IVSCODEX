@@ -107,8 +107,8 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   if (!expr) return { total: 0, resultados: [], siguienteDesde: null };
   const prov = PROVINCIA_DE_BASE[base];
   const junta = Boolean(prov && base !== 'saij');
-  // SAIJ publica el mismo sumario con más de un id: también ahí se cuenta una sola vez
-  const agrupa = junta || base === 'saij' || base === 'csjn';
+  // SAIJ publica el mismo sumario con más de un id, y Mendoza o la SCBA un renglón por sumario de cada fallo: se cuenta una sola vez
+  const porSumario = base === 'saij' || base === 'csjn';
   // el filtro de tipo (sumarios / fallos / doctrina…) de SAIJ: la copia no tiene doctrina, legislación ni dictámenes, y no debe contestar con otra cosa
   if (base === 'saij' && !tribunal) tribunal = 'sumarios'; // como en vivo: sin elegir, sumarios
   const tiposSaij = (base === 'saij' || base === 'csjn') && tribunal ? TIPO_SAIJ[tribunal] || (tribunal in { doctrina: 1, legislacion: 1, dictamenes: 1 } ? [] : null) : null;
@@ -126,14 +126,13 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   const trib = TRIBUNAL_DE[base]?.[tribunal];
   if (trib) { donde.push("(f.fuente <> ? OR upper(coalesce(f.tribunal, '')) LIKE ?)"); args.push(base, trib); }
   // MATERIALIZED: bm25() sólo vale dentro de la consulta al índice, y así SQLite no la «aplana» hacia afuera.
-  // Si se juntan dos orígenes, una fila por clave: la de mejor relevancia (SQLite devuelve con min() la fila de ese mínimo).
-  // Una sola base no repite fichas (el id es único): no hace falta agrupar, que es lo caro en las consultas amplias.
-  const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0${mag ? ', 1.0' : ''}) AS rel${agrupa
-    ? ", coalesce(lower(trim(f.caratula)), '') || '|' || coalesce(f.fecha, '') || '|' || substr(coalesce(f.sumario, f.id), 1, 80) AS clave" : ''}
+  // Una fila por clave: la de mejor relevancia (SQLite devuelve con min() la fila de ese mínimo).
+  // la clave de «el mismo resultado» (lib/claveFallo.js): SAIJ y la Corte, el mismo sumario; las demás, un resultado por fallo
+  const contenido = "coalesce(lower(trim(f.caratula)), '') || '|' || coalesce(f.fecha, '') || '|' || substr(coalesce(f.sumario, f.id), 1, 80)";
+  const clave = porSumario ? contenido : `coalesce(nullif(trim(f.linkFallo), ''), nullif(trim(f.linkFicha), ''), CASE WHEN coalesce(f.caratula, '') <> '' THEN lower(trim(f.caratula)) || '|' || coalesce(f.fecha, '') END, ${contenido})`;
+  const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0${mag ? ', 1.0' : ''}) AS rel, ${clave} AS clave
     FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}`;
-  const unicos = agrupa
-    ? `WITH m AS MATERIALIZED (${coinciden}), u AS (SELECT rid, min(rel) AS rel FROM m GROUP BY clave)`
-    : `WITH u AS MATERIALIZED (${coinciden})`;
+  const unicos = `WITH m AS MATERIALIZED (${coinciden}), u AS (SELECT rid, min(rel) AS rel FROM m GROUP BY clave)`;
   const pos = Math.max(0, Number(desde) || 0), n = Math.min(100, Math.max(1, Number(porPagina) || 20));
   // el total sale de la misma pasada (count() OVER), sin recorrer el índice dos veces
   const filas = db.prepare(`${unicos} SELECT f.*, count(*) OVER () AS total_ FROM u JOIN fallos f ON f.rid = u.rid ORDER BY u.rel, u.rid LIMIT ? OFFSET ?`).all(...args, n, pos);

@@ -21,6 +21,7 @@ import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js'
 import { estadoAcervo, textosDe, agregarAlAcervo, acervoCubre, buscarPagina, sumarVivos, copiaLista } from '../lib/acervo.js';
 import { IVSPasajes } from '../lib/pasajes.js';
 import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
+import { sinRepetidos } from '../lib/claveFallo.js';
 import { errores, ErrorApp } from '../lib/errores.js';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
 import { NORMAS, articuloDe, rubricaDe } from '../lib/legislacion.js';
@@ -241,7 +242,7 @@ async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta
   if (!p && acervoCubre(slug) && (copiaLista() || !respaldo)) return null;
   if (!p) {
     // sin acervo para esa base, o el hilo de la copia no contestó: lo guardado por las búsquedas, el acervo y el respaldo, también de a páginas
-    const lista = await buscarEnIndice(slug, consulta, o);
+    const lista = sinRepetidos(slug, await buscarEnIndice(slug, consulta, o));
     if (!lista.length) return null;
     const pos = Math.max(0, desde);
     p = { total: lista.length, resultados: lista.slice(pos, pos + porPagina), siguienteDesde: pos + porPagina < lista.length ? pos + porPagina : null };
@@ -404,9 +405,12 @@ for (const { slug, buscar } of FUENTES) {
         ? (await estadoIndice(slug)).guardados
         : await upsertRegistros(slug, resultados.map(({ variante, ...r }) => r)); // la marca de variante es de esta búsqueda, no del documento
 
+      // lo guardado conserva todos los sumarios; la lista que se muestra, un resultado por fallo (lib/claveFallo.js)
+      const unicos = sinRepetidos(slug, resultados);
+      const repetidos = resultados.length - unicos.length;
       res.json({
         ok: true,
-        total,
+        total: Math.max(0, total - repetidos),
         // Cuando el sitio de origen no sabe hacer el modo pedido, el filtro
         // corre de este lado: "total" es entonces lo verificado, no lo que
         // dice su contador. Ver lib/relevancia.js.
@@ -421,7 +425,7 @@ for (const { slug, buscar } of FUENTES) {
         totalParcial,
         revisados,
         aflojado,
-        resultados,
+        resultados: unicos,
         guardadosEnIndice: guardados,
         desdeIndiceLocal,
         avisoFalla,
