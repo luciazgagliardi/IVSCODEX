@@ -22,7 +22,7 @@ const REPO = path.resolve(BACKEND, '..');
 const TANDAS = path.join(BACKEND, 'acervo-datos');
 const RAMA_DIR = path.join(os.tmpdir(), 'iuris-acervo');
 const git = (args, cwd = REPO) => execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
-const firma = '\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>';
+const firma = '';
 
 if (!process.env.SIN_ARMAR) execFileSync(process.execPath, [path.join(aqui, 'armarAcervo.mjs')], { cwd: BACKEND, stdio: 'inherit' });
 const man = JSON.parse(await fs.readFile(path.join(TANDAS, 'manifiesto.json'), 'utf8'));
