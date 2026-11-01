@@ -5519,6 +5519,10 @@ function traerDocEnLector(url,opciones){
   opciones=opciones||{};
   if(!url||!estado.api) return;
   estado.cargando=true; estado.errorLink=null; estado.tab="lector";
+  // El anterior se suelta ya: si quedaba en pantalla, el nuevo parecía no abrirse (y si fallaba, tampoco se veía el aviso).
+  estado.texto=""; estado.fuenteDe=""; estado.infoDoc=null; estado.fichaConocida=null; estado.marca=0;
+  // Un pedido por documento: la respuesta de uno viejo no pisa al que se pidió después.
+  var pedidoDoc=estado.pedidoDoc=(estado.pedidoDoc||0)+1;
   if(opciones.qRestaurar!==undefined){ estado.q=opciones.qRestaurar; estado.marca=0; }
   if(opciones.modoRestaurar) estado.modo=opciones.modoRestaurar;
   render();
@@ -5528,6 +5532,7 @@ function traerDocEnLector(url,opciones){
     body:JSON.stringify(opciones.alternativa?{url:url,ficha:opciones.alternativa}:{url:url})
   }).then(function(r){ return r.json(); })
     .then(function(d){
+      if(pedidoDoc!==estado.pedidoDoc) return;
       estado.cargando=false;
       if((!d||!d.ok)&&opciones.respaldo&&!(d&&d.codigo==="PDF_ESCANEADO")){ abrirRespaldoEnLector(url,opciones); return; }
       if(!d||!d.ok){
@@ -5548,6 +5553,7 @@ function traerDocEnLector(url,opciones){
       render(); window.scrollTo(0,0);
       flash((d.desdeCache?"Traído del caché · ":"")+d.palabras.toLocaleString("es-AR")+" palabras");
     })["catch"](function(){
+      if(pedidoDoc!==estado.pedidoDoc) return;
       estado.cargando=false;
       if(opciones.respaldo){ abrirRespaldoEnLector(url,opciones); return; }
       estado.errorLink={mensaje:"Se cortó la comunicación con el servidor.",
