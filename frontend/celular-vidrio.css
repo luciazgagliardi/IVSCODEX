@@ -323,4 +323,7 @@
     border-color:transparent!important;background:var(--vd2)!important}
   .asist__form,.pm-cab,.menu h2,.menu__item,.tramo{border-color:transparent!important}
   .sel-lista button:hover,.sel-lista button:focus-visible{background:var(--vd2)}
+
+  /* el borde transparente deja ver el esmerilado de atrás y se nota como una rayita al costado: los cuadros de vidrio no llevan borde */
+  .op-caja,.op-caja.vivo,.brief__summary,.lab .panel,.her-zona,.vacio,.menu,.menu.is-on,.perfil-menu,.asist__panel,.bq-drawer,.sug-hoja,.sel-lista,.tour-card,.lx-fallo.abre{border:0!important}
 }
