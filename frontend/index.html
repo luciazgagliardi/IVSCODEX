@@ -6117,11 +6117,10 @@ var UMBRAL_PRECARGA_INDICE=5*POR_PAGINA_INDICE;
 
 function claveFallo(slug,r){
   var n=function(x){ return String(x==null?"":x).toLowerCase().replace(/\s+/g," ").trim(); };
-  var porContenido="c|"+n(r.caratula)+"|"+n(r.fecha)+"|"+n(r.sumario||r.id).slice(0,80);
-  if(slug==="saij"||slug==="csjn") return porContenido;
-  var enlace=n(r.linkFallo||r.linkFicha);
+  var enlace=(slug==="saij"||slug==="csjn")?"":n(r.linkFallo||r.linkFicha);
   if(enlace) return "l|"+enlace;
-  return r.caratula?"f|"+n(r.caratula)+"|"+n(r.fecha):porContenido;
+  if(n(r.caratula)) return "f|"+n(r.caratula)+"|"+n(r.fecha)+"|"+n(r.tribunal);
+  return "c|"+n(r.fecha)+"|"+n(r.sumario||r.id).slice(0,80);
 }
 /**
  * Vuelca la respuesta del servidor (fresca o de un caché de página) al

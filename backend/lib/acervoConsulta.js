@@ -108,7 +108,6 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   const prov = PROVINCIA_DE_BASE[base];
   const junta = Boolean(prov && base !== 'saij');
   // SAIJ publica el mismo sumario con más de un id, y Mendoza o la SCBA un renglón por sumario de cada fallo: se cuenta una sola vez
-  const porSumario = base === 'saij' || base === 'csjn';
   // el filtro de tipo (sumarios / fallos / doctrina…) de SAIJ: la copia no tiene doctrina, legislación ni dictámenes, y no debe contestar con otra cosa
   if (base === 'saij' && !tribunal) tribunal = 'sumarios'; // como en vivo: sin elegir, sumarios
   const tiposSaij = (base === 'saij' || base === 'csjn') && tribunal ? TIPO_SAIJ[tribunal] || (tribunal in { doctrina: 1, legislacion: 1, dictamenes: 1 } ? [] : null) : null;
@@ -127,9 +126,12 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   if (trib) { donde.push("(f.fuente <> ? OR upper(coalesce(f.tribunal, '')) LIKE ?)"); args.push(base, trib); }
   // MATERIALIZED: bm25() sólo vale dentro de la consulta al índice, y así SQLite no la «aplana» hacia afuera.
   // Una fila por clave: la de mejor relevancia (SQLite devuelve con min() la fila de ese mínimo).
-  // la clave de «el mismo resultado» (lib/claveFallo.js): SAIJ y la Corte, el mismo sumario; las demás, un resultado por fallo
+  // la clave de «el mismo resultado» (lib/claveFallo.js): un resultado por fallo. Un fallo con varios sumarios es UN resultado
+  // (se muestra el de mejor coincidencia); el enlace manda donde cada fallo tiene el suyo, y en SAIJ (cuyos enlaces son uno por sumario) la carátula, la fecha y el tribunal.
   const contenido = "coalesce(lower(trim(f.caratula)), '') || '|' || coalesce(f.fecha, '') || '|' || substr(coalesce(f.sumario, f.id), 1, 80)";
-  const clave = porSumario ? contenido : `coalesce(nullif(trim(f.linkFallo), ''), nullif(trim(f.linkFicha), ''), CASE WHEN coalesce(f.caratula, '') <> '' THEN lower(trim(f.caratula)) || '|' || coalesce(f.fecha, '') END, ${contenido})`;
+  const porFallo = "lower(trim(f.caratula)) || '|' || coalesce(f.fecha, '') || '|' || coalesce(lower(trim(f.tribunal)), '')";
+  const clave = `CASE WHEN f.fuente <> 'saij' AND coalesce(nullif(trim(f.linkFallo), ''), nullif(trim(f.linkFicha), '')) IS NOT NULL THEN coalesce(nullif(trim(f.linkFallo), ''), trim(f.linkFicha))
+    WHEN coalesce(trim(f.caratula), '') <> '' THEN ${porFallo} ELSE ${contenido} END`;
   const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0${mag ? ', 1.0' : ''}) AS rel, ${clave} AS clave
     FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}`;
   const unicos = `WITH m AS MATERIALIZED (${coinciden}), u AS (SELECT rid, min(rel) AS rel FROM m GROUP BY clave)`;
