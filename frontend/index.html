@@ -6115,6 +6115,14 @@ var POR_PAGINA_INDICE=20;
  */
 var UMBRAL_PRECARGA_INDICE=5*POR_PAGINA_INDICE;
 
+function claveFallo(slug,r){
+  var n=function(x){ return String(x==null?"":x).toLowerCase().replace(/\s+/g," ").trim(); };
+  var porContenido="c|"+n(r.caratula)+"|"+n(r.fecha)+"|"+n(r.sumario||r.id).slice(0,80);
+  if(slug==="saij"||slug==="csjn") return porContenido;
+  var enlace=n(r.linkFallo||r.linkFicha);
+  if(enlace) return "l|"+enlace;
+  return r.caratula?"f|"+n(r.caratula)+"|"+n(r.fecha):porContenido;
+}
 /**
  * Vuelca la respuesta del servidor (fresca o de un caché de página) al
  * estado de esa fuente y renderiza. Compartido entre "pedir de verdad" y
@@ -6125,11 +6133,15 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   imBusco.cargando=false;
   if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
   imBusco.desdeNavegador=!!d.desdeNavegador;
-  // el mismo sumario con otro id (SAIJ lo publica así) se muestra una sola vez; el servidor ya lo hace con las demás bases
+  // Un resultado por fallo, en la página y respecto de las anteriores: el servidor ya lo hace dentro de cada página, pero un fallo
+  // con varios sumarios puede quedar cortado entre dos páginas. (Misma regla que backend/lib/claveFallo.js.)
   var vistosRes={};
+  for(var pp=1;pp<pagina;pp++){
+    ((imBusco.paginas&&imBusco.paginas[pp]&&imBusco.paginas[pp].resultados)||[]).forEach(function(r){ vistosRes[claveFallo(slug,r)]=1; });
+  }
   imBusco.resultados=(d.resultados||[]).filter(function(r){
-    if(!r||(slug!=="saij"&&slug!=="csjn")) return true;
-    var k=[r.caratula,r.fecha,String(r.sumario||r.id||"").slice(0,80)].join("|").toLowerCase().replace(/\s+/g," ");
+    if(!r) return true;
+    var k=claveFallo(slug,r);
     if(vistosRes[k]) return false; vistosRes[k]=1; return true;
   });
   imBusco.total=Math.max(0,(d.total||0)-((d.resultados||[]).length-imBusco.resultados.length));
