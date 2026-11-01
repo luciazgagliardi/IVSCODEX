@@ -6331,7 +6331,9 @@ function buscarEnFuente(slug,pagina){
       if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
       vivoListo=true;
       // ya se está mostrando la copia: si el sitio no contestó, o si se está hojeando la copia, queda la copia
-      if(imBusco.porCopia&&(!d||!d.ok||imBusco.pagina>1)){ imBusco.cargando=false; render(); return; }
+      // (también si el sitio contestó «0»: a SAIJ y a la CSJN les pasa cuando se
+      // los consulta seguido, y no debe borrar lo que ya se estaba mostrando)
+      if(imBusco.porCopia&&(!d||!d.ok||imBusco.pagina>1||!(d.resultados&&d.resultados.length))){ imBusco.cargando=false; render(); return; }
       if(imBusco.porCopia&&esNueva){ imBusco.paginas={}; imBusco.cursores={1:0}; imBusco.porCopia=false; }
       imBusco.busco=true;
       if(!d||!d.ok){
