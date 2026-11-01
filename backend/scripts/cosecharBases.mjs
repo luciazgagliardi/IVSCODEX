@@ -37,7 +37,7 @@ const PAUSA_MS = Number(process.env.PAUSA_MS || 2000);
    anterior no alcanzó); `porPagina`: cuántos por pedido; `extra`: lo que el cliente de esa base además necesita (Mendoza:
    el tribunal, que es una consulta aparte por cada uno); `tope`: cuántos como máximo por consulta (Dialnet corta hacia los 10.000). */
 const BASES = {
-  mendoza: { porPagina: 100, consultas: ['de'], variantes: [{ tribunal: 'SC' }, { tribunal: 'CC' }, { tribunal: 'CT' }] },
+  mendoza: { porPagina: 50, consultas: ['de'], variantes: [{ tribunal: 'SC' }, { tribunal: 'CC' }, { tribunal: 'CT' }] },
   santafe: { porPagina: 30, consultas: ['recurso', 'sentencia', 'daños', 'c/', 'contrato', 'trabajo', 'penal', 'familia'] },
   scba: { porPagina: 20, salto: 10, consultas: ['sentencia', 'recurso', 'daños', 'alimentos', 'contrato', 'trabajo', 'penal'] },
   juristeca: { porPagina: 50, cursorOpaco: true, consultas: ['daños', 'contrato', 'sentencia', 'laboral', 'penal', 'familia', 'alimentos', 'sociedades', 'consumidor'] },
