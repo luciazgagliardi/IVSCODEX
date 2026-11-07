@@ -10,7 +10,7 @@
 <!-- Política de contenido: la página solo puede cargar scripts propios, hablar con su
      propio servidor (API), con el backend publicado, con SAIJ y con la API de
      series de datos.gob.ar, y nunca cargar plugins ni cambiar su base de enlaces. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:3000 https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net https://www.saij.gob.ar https://apis.datos.gob.ar https://api.bcra.gob.ar; frame-src 'self'; worker-src 'self' blob:; media-src 'none'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:3000 https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net https://iuris.azurewebsites.net https://www.saij.gob.ar https://apis.datos.gob.ar https://api.bcra.gob.ar; frame-src 'self'; worker-src 'self' blob:; media-src 'none'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <meta name="referrer" content="no-referrer">
 
 <link rel="preload" as="image" href="./grano.png" media="(min-width:761px)">
@@ -3327,8 +3327,12 @@ function detectarServidor(){
   var candidatos=[];
   if(location.protocol==="http:"||location.protocol==="https:") candidatos.push("/api");
   candidatos.push("http://localhost:3000/api");
-  var desplegado="https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api";
-  if(desplegado.indexOf("TU-BACKEND")===-1) candidatos.push(desplegado); // si nadie reemplazo el placeholder, ni lo intenta: ahorra el timeout de red a un dominio que sabemos que no existe
+  [
+    "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api",
+    "https://iuris.azurewebsites.net/api"
+  ].forEach(function(desplegado){
+    if(desplegado.indexOf("TU-BACKEND")===-1&&candidatos.indexOf(desplegado)===-1) candidatos.push(desplegado); // si nadie reemplazo el placeholder, ni lo intenta: ahorra el timeout de red a un dominio que sabemos que no existe
+  });
   var i=0;
   (function probar(){
     if(i>=candidatos.length){ estado.api=false; if(estado.tab==="lector"||estado.tab==="buscar"||estado.tab==="verificar") render(); return; }
