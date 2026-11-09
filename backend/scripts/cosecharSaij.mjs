@@ -162,10 +162,18 @@ if (RECIENTES > 0) {
   const hoy = new Date(), meses = [];
   for (let i = 0; i < RECIENTES; i++) { const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1); meses.push(`Fecha/${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`); }
   for (const tipo of TIPOS) {
-    for (const k of Object.keys(progreso.hechos)) if (meses.some((m) => k.startsWith(`${tipo}|${m}`))) delete progreso.hechos[k];
-    for (const m of meses) {
-      const n = await recorrer(tipo, [m], 'mes');
-      console.log(`${new Date().toTimeString().slice(0, 8)} ${tipo} ${m.slice(6)}: ${n}`);
+    // La actualización por provincia debe conservar la faceta provincial;
+    // antes RECIENTES la ignoraba y volvía a descargar el corpus nacional.
+    const tramos = meses.map((m) => [m, ...EXTRA]);
+    for (const partes of tramos) {
+      const raizClave = `${tipo}|${partes.join('|')}`;
+      // Limpiar la raíz y sus descendientes para reconsultar incluso meses
+      // que habían tenido resultados cero. No borrar el avance de otros ámbitos.
+      for (const k of Object.keys(progreso.hechos)) {
+        if (k === raizClave || k.startsWith(`${tipo}|${partes[0]}/`) && (!PROVINCIA || k.includes(EXTRA[0]))) delete progreso.hechos[k];
+      }
+      const n = await recorrer(tipo, partes, 'mes');
+      console.log(`${new Date().toTimeString().slice(0, 8)} ${tipo} ${partes.join(' · ')}: ${n}`);
     }
   }
   console.log(`fin: ${pedidos} consultas, ${((Date.now() - t0) / 60000).toFixed(0)} min`);
