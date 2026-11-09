@@ -15,5 +15,13 @@ const aqui = path.dirname(fileURLToPath(import.meta.url));
 const correr = (script, env = {}) => execFileSync(process.execPath, [path.join(aqui, script)], { cwd: path.resolve(aqui, '..'), stdio: 'inherit', env: { ...process.env, ...env } });
 
 console.log(`\n=== ${new Date().toISOString()} actualización del acervo ===`);
-correr('cosecharSaij.mjs', { RECIENTES: process.env.RECIENTES || '3', PAUSA_MS: process.env.PAUSA_MS || '2000' });
+const recientes = process.env.RECIENTES || '3';
+const pausa = process.env.PAUSA_MS || '2000';
+// Primero SAIJ nacional, después la faceta provincial específica. Esta última
+// mantiene sus propios archivos saij-*-mendoza y permite actualizar la copia
+// local incluso cuando el buscador judicial mendocino rechaza los pedidos.
+// Si una cosecha falla, execFileSync interrumpe todo: no se publica un acervo
+// que se presenta como actualizado sin haber terminado ambos recorridos.
+correr('cosecharSaij.mjs', { RECIENTES: recientes, PAUSA_MS: pausa, PROVINCIA: '' });
+correr('cosecharSaij.mjs', { RECIENTES: recientes, PAUSA_MS: pausa, PROVINCIA: 'Mendoza' });
 correr('publicarAcervo.mjs');
