@@ -1,0 +1,39 @@
+name: Incorporar sentencias oficiales publicas Mendoza
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/sentencias-oficiales-mendoza.yml'
+      - 'backend/scripts/cosecharSentenciasPublicasMendoza.mjs'
+      - 'backend/datos/mendoza-sentencias-oficiales.json'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias
+        working-directory: backend
+        run: npm ci
+      - name: Descargar y validar sentencias publicas
+        working-directory: backend
+        run: node scripts/cosecharSentenciasPublicasMendoza.mjs
+      - name: Conservar fuente y auditoria
+        uses: actions/upload-artifact@v4
+        with:
+          name: sentencias-oficiales-mendoza
+          retention-days: 30
+          path: |
+            backend/reporte-sentencias-oficiales-mendoza.json
+            backend/acervo-crudo/respaldo/mendoza.json.gz
