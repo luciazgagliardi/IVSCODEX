@@ -123,7 +123,10 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   if (provincia) { donde.push('f.provincia = ?'); args.push(provincia); }
   if (tiposSaij) { donde.push(`f.tipo IN (${tiposSaij.map(() => '?').join(',')})`); args.push(...tiposSaij); }
   const trib = TRIBUNAL_DE[base]?.[tribunal];
-  if (trib) { donde.push("(f.fuente <> ? OR upper(coalesce(f.tribunal, '')) LIKE ?)"); args.push(base, trib); }
+  // Aplicar el tribunal a TODO el conjunto, también a los fallos mendocinos de SAIJ.
+  // Sin esta condición, SAIJ eludía el filtro SC/CC/CT y contaminaba los resultados.
+  // Un tribunal no informado no permite atribuir el fallo a un fuero específico.
+  if (trib) { donde.push("upper(coalesce(f.tribunal, '')) LIKE ?"); args.push(trib); }
   // MATERIALIZED: bm25() sólo vale dentro de la consulta al índice, y así SQLite no la «aplana» hacia afuera.
   // Una fila por clave: la de mejor relevancia (SQLite devuelve con min() la fila de ese mínimo).
   // la clave de «el mismo resultado» (lib/claveFallo.js): un resultado por fallo. Un fallo con varios sumarios es UN resultado
