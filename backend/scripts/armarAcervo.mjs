@@ -68,9 +68,9 @@ if (DIR_BASE) {
   const man = JSON.parse(await fs.readFile(path.join(DIR_BASE, 'manifiesto.json'), 'utf8'));
   conteosBase = man.conteos || {};
   for (const nombre of man.archivos || []) {
-    if (!/^[a-z]+-\\d+\\.jsonl\\.gz$/.test(nombre)) throw new Error(`Tanda inválida en base: ${nombre}`);
+    if (!/^[a-z]+-\d+\.jsonl\.gz$/.test(nombre)) throw new Error(`Tanda inválida en base: ${nombre}`);
     const contenido = zlib.gunzipSync(await fs.readFile(path.join(DIR_BASE, nombre))).toString('utf8');
-    for (const linea of contenido.split('\\n')) if (linea.trim()) {
+    for (const linea of contenido.split('\n')) if (linea.trim()) {
       const r = JSON.parse(linea);
       if (!r.id || !r.fuente) throw new Error(`Registro de base sin id/fuente en ${nombre}`);
       poner(r);
