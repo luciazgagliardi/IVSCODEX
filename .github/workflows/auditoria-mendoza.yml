@@ -7,6 +7,7 @@ on:
       - 'backend/lib/acervoConsulta.js'
       - 'backend/scripts/cosecharBases.mjs'
       - 'backend/scripts/auditarMendoza.mjs'
+      - 'backend/scripts/sondearMendoza.mjs'
       - 'backend/test/acervoPaginas.prueba.js'
       - '.github/workflows/auditoria-mendoza.yml'
   workflow_dispatch: {}
@@ -54,6 +55,15 @@ jobs:
       - name: Auditar datos publicados
         working-directory: backend
         run: node scripts/auditarMendoza.mjs | tee auditoria-mendoza.json
+      - name: Sondear buscador oficial de Mendoza
+        working-directory: backend
+        continue-on-error: true
+        timeout-minutes: 5
+        run: node scripts/sondearMendoza.mjs | tee sondeo-mendoza.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sondeo-mendoza
+          path: backend/sondeo-mendoza.json
       - uses: actions/upload-artifact@v4
         with:
           name: auditoria-mendoza
