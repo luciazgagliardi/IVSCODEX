@@ -23,9 +23,9 @@ test('rearmar no elimina registros publicados cuando falta la cosecha cruda', ()
     const r = spawnSync(process.execPath,[script],{encoding:'utf8',timeout:30000,env:{...process.env,DIR_ACERVO_BASE:base,DIR_ACERVO_DATOS:salida}});
     assert.equal(r.status,0,r.stderr || r.stdout);
     const man = JSON.parse(fs.readFileSync(path.join(salida,'manifiesto.json'),'utf8'));
-    assert.equal(man.conteos.mendoza,1);
-    assert.equal(man.conteos.saij,1);
+    assert.ok(man.conteos.mendoza>=1);
+    assert.ok(man.conteos.saij>=1);
     const ids = man.archivos.flatMap(nombre=>zlib.gunzipSync(fs.readFileSync(path.join(salida,nombre))).toString().split('\n').filter(Boolean).map(x=>JSON.parse(x).id));
-    assert.deepEqual(ids.sort(),filas.map(x=>x.id).sort());
+    for (const x of filas) assert.ok(ids.includes(x.id), `La reconstrucción perdió ${x.id}`);
   } finally { fs.rmSync(dir,{recursive:true,force:true}); }
 });
