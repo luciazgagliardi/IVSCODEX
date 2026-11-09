@@ -12,6 +12,8 @@ on:
       - 'backend/scripts/actualizarAcervo.mjs'
       - 'backend/test/cosechaSaijMendoza.prueba.js'
       - 'backend/scripts/sondearSaijMendoza.mjs'
+      - 'backend/scripts/armarAcervo.mjs'
+      - 'backend/test/armarAcervoConBase.prueba.js'
       - 'backend/test/acervoPaginas.prueba.js'
       - '.github/workflows/auditoria-mendoza.yml'
   workflow_dispatch: {}
@@ -55,7 +57,7 @@ jobs:
         run: npm ci
       - name: Probar filtrado y paginación
         working-directory: backend
-        run: node --test test/acervoPaginas.prueba.js test/cosechaSaijMendoza.prueba.js
+        run: node --test test/acervoPaginas.prueba.js test/cosechaSaijMendoza.prueba.js test/armarAcervoConBase.prueba.js
       - name: Auditar datos publicados
         working-directory: backend
         run: node scripts/auditarMendoza.mjs | tee auditoria-mendoza.json
