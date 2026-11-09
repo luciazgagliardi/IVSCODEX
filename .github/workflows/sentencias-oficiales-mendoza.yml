@@ -9,6 +9,10 @@ on:
       - 'backend/datos/mendoza-sentencias-oficiales.json'
   workflow_dispatch: {}
 
+concurrency:
+  group: sentencias-oficiales-mendoza-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
