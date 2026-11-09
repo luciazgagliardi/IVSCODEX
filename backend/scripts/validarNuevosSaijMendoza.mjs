@@ -13,7 +13,7 @@ const raiz=path.resolve(process.env.DIR_ACERVO_BASE || path.join(backend,'acervo
 const crudo=path.join(backend,'acervo-crudo');
 const publicado=new Set();
 const man=JSON.parse(fs.readFileSync(path.join(raiz,'manifiesto.json'),'utf8'));
-for(const nombre of man.archivos.filter(x=>/^saij-\\d+\\.jsonl\\.gz$/.test(x))) {
+for(const nombre of man.archivos.filter(x=>/^saij-\d+\.jsonl\.gz$/.test(x))) {
  const flujo=readline.createInterface({input:fs.createReadStream(path.join(raiz,nombre)).pipe(zlib.createGunzip()),crlfDelay:Infinity});
  for await(const linea of flujo) if(linea) publicado.add(JSON.parse(linea).id);
 }
@@ -26,7 +26,7 @@ for(const tipo of ['fallos','sumarios']){
  const ids=new Set(),nuevos=[];
  for(const archivo of archivos) {
   const datos=zlib.gunzipSync(fs.readFileSync(path.join(dir,archivo))).toString('utf8');
-  for(const linea of datos.split('\\n')) if(linea.trim()) {
+  for(const linea of datos.split('\n')) if(linea.trim()) {
    const x=JSON.parse(linea);
    if(!x.id) throw Error(`Documento ${tipo} sin UUID en ${archivo}`);
    if(x.pr && x.pr.toLowerCase()!=='mendoza') throw Error(`Provincia ajena: ${x.pr}`);
