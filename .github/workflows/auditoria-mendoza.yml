@@ -56,6 +56,7 @@ jobs:
         working-directory: backend
         run: node scripts/auditarMendoza.mjs | tee auditoria-mendoza.json
       - name: Sondear buscador oficial de Mendoza
+        if: github.event_name == 'workflow_dispatch'
         working-directory: backend
         continue-on-error: true
         timeout-minutes: 5
