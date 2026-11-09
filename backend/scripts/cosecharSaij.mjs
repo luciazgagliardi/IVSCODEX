@@ -161,6 +161,11 @@ if (RECIENTES > 0) {
   // los últimos meses se vuelven a bajar enteros: SAIJ sigue cargando fallos de meses ya pasados
   const hoy = new Date(), meses = [];
   for (let i = 0; i < RECIENTES; i++) { const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1); meses.push(`Fecha/${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`); }
+  // Prueba del plan, sin tocar progreso ni realizar pedidos a SAIJ.
+  if (process.env.SOLO_PLAN === '1') {
+    console.log(JSON.stringify({ provincia: PROVINCIA, tramos: TIPOS.flatMap((tipo) => meses.map((m) => [tipo, m, ...EXTRA])) }));
+    process.exit(0);
+  }
   for (const tipo of TIPOS) {
     // La actualización por provincia debe conservar la faceta provincial;
     // antes RECIENTES la ignoraba y volvía a descargar el corpus nacional.
