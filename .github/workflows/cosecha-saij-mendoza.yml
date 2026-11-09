@@ -1,0 +1,48 @@
+name: Cosecha incremental validada SAIJ Mendoza
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/cosecha-saij-mendoza.yml'
+      - 'backend/scripts/cosecharSaij.mjs'
+      - 'backend/scripts/validarNuevosSaijMendoza.mjs'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  cosechar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Cosechar sumarios y fallos recientes de SAIJ Mendoza
+        working-directory: backend
+        env:
+          PROVINCIA: Mendoza
+          RECIENTES: '3'
+          TIPOS: sumarios,fallos
+          PAUSA_MS: '1500'
+          ESPERA_CORTE_MS: '30000'
+        run: node scripts/cosecharSaij.mjs
+      - name: Comprobar cosecha contra el acervo publicado
+        working-directory: backend
+        run: node scripts/validarNuevosSaijMendoza.mjs
+      - name: Guardar nueva cosecha para publicación controlada
+        uses: actions/upload-artifact@v4
+        with:
+          name: cosecha-saij-mendoza-verificada
+          retention-days: 30
+          path: |
+            backend/reporte-cosecha-mendoza.json
+            backend/acervo-crudo/saij-fallos-mendoza/*.jsonl.gz
+            backend/acervo-crudo/saij-sumarios-mendoza/*.jsonl.gz
