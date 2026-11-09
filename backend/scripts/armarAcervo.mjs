@@ -59,6 +59,30 @@ function poner(r) {
   if (!ya || (!ya.sumario && r.sumario) || ((r.sumario || '').length > (ya.sumario || '').length)) porId.set(r.id, ya ? { ...ya, ...sin(r) } : r);
 }
 
+// Conservar la versión publicada al reconstruir desde un runner nuevo.
+// Sin esta base, la ausencia de archivos ignorados por git puede eliminar
+// documentos antiguos aunque la cosecha incremental haya funcionado.
+const DIR_BASE = process.env.DIR_ACERVO_BASE ? path.resolve(process.env.DIR_ACERVO_BASE) : null;
+let conteosBase = null;
+if (DIR_BASE) {
+  const man = JSON.parse(await fs.readFile(path.join(DIR_BASE, 'manifiesto.json'), 'utf8'));
+  conteosBase = man.conteos || {};
+  for (const nombre of man.archivos || []) {
+    if (!/^[a-z]+-\\d+\\.jsonl\\.gz$/.test(nombre)) throw new Error(`Tanda inválida en base: ${nombre}`);
+    const contenido = zlib.gunzipSync(await fs.readFile(path.join(DIR_BASE, nombre))).toString('utf8');
+    for (const linea of contenido.split('\\n')) if (linea.trim()) {
+      const r = JSON.parse(linea);
+      if (!r.id || !r.fuente) throw new Error(`Registro de base sin id/fuente en ${nombre}`);
+      poner(r);
+    }
+  }
+  for (const [fuente, n] of Object.entries(conteosBase)) {
+    const reales = [...porId.values()].filter(r => fuente === 'csjn' ? r.corte : r.fuente === fuente).length;
+    if (reales < n) throw new Error(`Base incompleta: ${fuente}, manifiesto=${n}, cargados=${reales}`);
+  }
+  console.log(`Acervo base preservado: ${porId.size} registros, versión ${man.version}`);
+}
+
 // ---- SAIJ: fichas y sumarios ----
 const fichas = await leerCrudo('fallos');
 // los magistrados de cada fallo, desde su ficha completa (scripts/completarMagistradosSaij.mjs)
@@ -108,6 +132,18 @@ for (const [base, dir] of ['saij', 'csjn', 'scba', 'caba', 'mendoza', 'mendozale
     n++;
   }
   console.log(`${path.relative(RAIZ, dir)} ${base}: ${n}`);
+}
+
+// No destruir una fuente publicada durante una actualización parcial.
+if (conteosBase) {
+  const comparacion = {};
+  for (const r of porId.values()) {
+    comparacion[r.fuente] = (comparacion[r.fuente] || 0) + 1;
+    if (r.corte) comparacion.csjn = (comparacion.csjn || 0) + 1;
+  }
+  for (const [fuente, total] of Object.entries(conteosBase)) {
+    if ((comparacion[fuente] || 0) < total) throw new Error(`Pérdida de datos: ${fuente} pasaría de ${total} a ${comparacion[fuente] || 0}`);
+  }
 }
 
 // ---- tandas ----
