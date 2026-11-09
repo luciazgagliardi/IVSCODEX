@@ -148,6 +148,8 @@ async function recorrer(tipo, partes, nivel) {
   } else {
     n += await recorrer(tipo, partes, 'tope');
   }
+  if (total > 0 && n === 0)
+    throw new Error(`Tramo ${clave}: SAIJ informó ${total} resultados pero no se recuperaron registros; no registrar como completo`);
   await marcar(clave, n);
   return n;
 }
