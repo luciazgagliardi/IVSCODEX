@@ -1,0 +1,60 @@
+name: Auditoría acervo Mendoza
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/lib/acervoConsulta.js'
+      - 'backend/scripts/cosecharBases.mjs'
+      - 'backend/scripts/auditarMendoza.mjs'
+      - 'backend/test/acervoPaginas.prueba.js'
+      - '.github/workflows/auditoria-mendoza.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  auditar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-datos
+          sparse-checkout: |
+            manifiesto.json
+            mendoza-001.jsonl.gz
+            saij-001.jsonl.gz
+            saij-002.jsonl.gz
+            saij-003.jsonl.gz
+            saij-004.jsonl.gz
+            saij-005.jsonl.gz
+            saij-006.jsonl.gz
+            saij-007.jsonl.gz
+            saij-008.jsonl.gz
+            saij-009.jsonl.gz
+            saij-010.jsonl.gz
+            saij-011.jsonl.gz
+            saij-012.jsonl.gz
+            saij-013.jsonl.gz
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias
+        working-directory: backend
+        run: npm ci
+      - name: Probar filtrado y paginación
+        working-directory: backend
+        run: node --test test/acervoPaginas.prueba.js
+      - name: Auditar datos publicados
+        working-directory: backend
+        run: node scripts/auditarMendoza.mjs | tee auditoria-mendoza.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auditoria-mendoza
+          path: backend/auditoria-mendoza.json
