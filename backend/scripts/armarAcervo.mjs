@@ -146,6 +146,22 @@ if (conteosBase) {
   }
 }
 
+// Sentencias completas del Poder Judicial de Mendoza obtenidas de enlaces
+// públicos verificables; se conservan separadas del respaldo histórico.
+try {
+  const archivo = path.join(RAIZ, 'respaldo', 'mendoza-oficial.json.gz');
+  const lote = JSON.parse(zlib.gunzipSync(await fs.readFile(archivo)).toString('utf8'));
+  if (!Array.isArray(lote.registros)) throw new Error('Respaldo de sentencias oficiales inválido');
+  for (const r of lote.registros) {
+    if (!/^mza_oficial_\d+$/.test(r.id || '') || r.fuente !== 'mendoza' || !r.linkFallo?.startsWith('https://'))
+      throw new Error('Sentencia oficial con identificación o procedencia inválidas');
+    poner(r);
+  }
+  console.log('Sentencias oficiales nuevas de Mendoza: ' + lote.registros.length);
+} catch (e) {
+  if (e.code !== 'ENOENT') throw e;
+}
+
 // ---- tandas ----
 await fs.rm(SALIDA, { recursive: true, force: true });
 await fs.mkdir(SALIDA, { recursive: true });
