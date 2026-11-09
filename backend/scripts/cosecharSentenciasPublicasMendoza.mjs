@@ -28,7 +28,7 @@ async function descargar(ficha) {
   for (const e of dom.window.document.querySelectorAll('br,p,div,tr')) e.append('\n');
   const texto = limpiar(dom.window.document.body?.textContent || '');
   dom.window.close();
-  if (texto.length < 900 || !/PODER JUDICIAL MENDOZA/i.test(texto)) throw new Error(ficha.ide + ': HTML no judicial o incompleto');
+  if (texto.length < 900 || !/PODER\s+JUDICIAL\s+(?:DE\s+)?MENDOZA/i.test(texto)) throw new Error(ficha.ide + ': HTML no judicial o incompleto, caracteres=' + texto.length + ', inicio=' + JSON.stringify(texto.slice(0,260)));
   if (!norm(texto).includes(norm(ficha.cuij))) throw new Error(ficha.ide + ': CUIJ no coincide');
   if (ficha.tribunal.includes('TRABAJO') && !/CAMARA.*TRABAJO|CAMARA LABORAL/i.test(norm(texto.slice(0,1400)))) throw new Error(ficha.ide + ': tribunal laboral no coincide');
   if (ficha.tribunal.includes('CIVIL') && !/CIVIL/i.test(norm(texto.slice(0,1400)))) throw new Error(ficha.ide + ': tribunal civil no coincide');
