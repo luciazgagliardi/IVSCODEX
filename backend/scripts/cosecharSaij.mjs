@@ -190,6 +190,15 @@ if (RECIENTES > 0) {
   console.log(`fin: ${pedidos} consultas, ${((Date.now() - t0) / 60000).toFixed(0)} min`);
   process.exit(0);
 }
+// Releer los años provinciales recientes en cada ciclo mensual; SAIJ
+// puede incorporar fichas retroactivas. No invalidar la cosecha nacional.
+if (PROVINCIA && !RECIENTES && process.env.REFRESCAR_ANIOS === '1') {
+  for (const clave of Object.keys(progreso.hechos)) {
+    const m = /^(sumarios|fallos)\|Fecha\/(\d{4})(?:\/|\|)/.exec(clave);
+    if (m && TIPOS.includes(m[1]) && Number(m[2]) >= DESDE && Number(m[2]) <= HASTA && clave.includes(EXTRA[0]))
+      delete progreso.hechos[clave];
+  }
+}
 for (const tipo of TIPOS) {
   for (let anio = HASTA; anio >= DESDE; anio--) {
     const antes = pedidos;
