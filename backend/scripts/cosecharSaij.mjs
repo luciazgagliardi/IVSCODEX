@@ -105,9 +105,13 @@ async function bajarTramo(tipo, faceta, total) {
   const out = [];
   for (let o = 0; o < Math.min(total, 1000); o += 100) {
     const sr = await pedir(faceta, o, 100);
-    if (!sr) break;
-    for (const x of sr.documentResultList || []) { const r = aRegistro(tipo, x); if (r) out.push(r); }
-    if ((sr.documentResultList || []).length < 100) break;
+    if (!sr || !Array.isArray(sr.documentResultList) || !sr.documentResultList.length)
+      throw new Error(`SAIJ informó ${total} documentos pero la página offset=${o} llegó vacía; no marcar tramo como cosechado`);
+    const antes = out.length;
+    for (const x of sr.documentResultList) { const r = aRegistro(tipo, x); if (r) out.push(r); }
+    if (o === 0 && out.length === antes)
+      throw new Error(`SAIJ informó ${total} documentos, pero ninguno de la primera página pudo normalizarse`);
+    if (sr.documentResultList.length < 100) break;
   }
   return out;
 }
