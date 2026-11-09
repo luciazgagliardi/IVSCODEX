@@ -37,7 +37,7 @@ const PAUSA_MS = Number(process.env.PAUSA_MS || 2000);
    anterior no alcanzó); `porPagina`: cuántos por pedido; `extra`: lo que el cliente de esa base además necesita (Mendoza:
    el tribunal, que es una consulta aparte por cada uno); `tope`: cuántos como máximo por consulta (Dialnet corta hacia los 10.000). */
 const BASES = {
-  mendoza: { porPagina: 50, consultas: ['de'], variantes: [{ tribunal: 'SC' }, { tribunal: 'CC' }, { tribunal: 'CT' }] },
+  mendoza: { porPagina: 50, consultas: ['de', 'sentencia', 'responsabilidad', 'daño', 'despido', 'recurso'], variantes: [{ tribunal: 'SC' }, { tribunal: 'CC' }, { tribunal: 'CT' }] },
   santafe: { porPagina: 30, consultas: ['recurso', 'sentencia', 'daños', 'c/', 'contrato', 'trabajo', 'penal', 'familia'] },
   scba: { porPagina: 20, salto: 10, consultas: ['sentencia', 'recurso', 'daños', 'alimentos', 'contrato', 'trabajo', 'penal'] },
   juristeca: { porPagina: 50, cursorOpaco: true, consultas: ['daños', 'contrato', 'sentencia', 'laboral', 'penal', 'familia', 'alimentos', 'sociedades', 'consumidor'] },
@@ -51,7 +51,12 @@ const hoy = () => new Date().toISOString().slice(0, 10);
 const leerJson = async (f, def) => { try { return JSON.parse(await fs.readFile(f, 'utf8')); } catch { return def; } };
 
 async function cargar(base) {
-  try { return new Map(JSON.parse(zlib.gunzipSync(await fs.readFile(path.join(DIR, `${base}.json.gz`)))).registros.map((r) => [r.id, r])); } catch { return new Map(); }
+  let contenido;
+  try { contenido = await fs.readFile(path.join(DIR, `${base}.json.gz`)); }
+  catch (e) { if (e.code === 'ENOENT') return new Map(); throw e; }
+  const datos = JSON.parse(zlib.gunzipSync(contenido));
+  if (!Array.isArray(datos.registros)) throw new Error(`Respaldo inválido de ${base}: falta registros[]`);
+  return new Map(datos.registros.filter((r) => r?.id).map((r) => [r.id, r]));
 }
 async function guardar(base, mapa) {
   await fs.mkdir(DIR, { recursive: true });
@@ -73,8 +78,9 @@ async function cosechar(base) {
 
   for (const variante of variantes) for (const q of cfg.consultas) {
     const clave = `${q}|${JSON.stringify(variante)}`;
-    if (progreso.hechas[clave]) continue;
+    if (Object.hasOwn(progreso.hechas, clave)) continue;
     let desde = progreso.actual?.clave === clave ? progreso.actual.desde : 0, total = null, paginas = 0, nuevos = 0, vacias = 0;
+    let motivo = null;
     for (;;) {
       let r;
       for (let intento = 1; ; intento++) {
@@ -96,7 +102,10 @@ async function cosechar(base) {
       // sitios no avanza si una fila no se pudo leer): se sigue de largo, y sólo un buen rato sin nada corta la consulta
       vacias = (r.resultados || []).length ? 0 : vacias + 1;
       const sig = typeof r.siguienteDesde === 'number' && r.siguienteDesde > desde ? r.siguienteDesde : (r.siguienteDesde === null ? null : desde + (cfg.salto || cfg.porPagina));
-      if (sig === null || vacias > 40 || sig >= tope || (typeof total === 'number' && total > 0 && cfg.corteTotal !== false && sig >= total && !cfg.cursorOpaco)) break;
+      if (sig === null) { motivo = 'agotado'; break; }
+      if (vacias > 40) { motivo = 'paginas_vacias'; break; }
+      if (sig >= tope) { motivo = 'tope'; break; }
+      if (typeof total === 'number' && total > 0 && cfg.corteTotal !== false && sig >= total && !cfg.cursorOpaco) { motivo = 'total_alcanzado'; break; }
       desde = sig;
       progreso.actual = { clave, desde };
       if (paginas % 20 === 0) {
@@ -104,9 +113,12 @@ async function cosechar(base) {
         console.log(`  ${new Date().toTimeString().slice(0, 8)} ${base} «${q}» ${JSON.stringify(variante)}: ${desde}/${total ?? '?'} · ${mapa.size} guardados (+${nuevos})`);
       }
     }
-    progreso.hechas[clave] = nuevos; progreso.actual = null;
+    const completa = motivo === 'agotado' || motivo === 'total_alcanzado';
+    if (completa) { progreso.hechas[clave] = { nuevos, totalFuente: total, paginas, motivo }; progreso.actual = null; }
+    else { progreso.actual = { clave, desde, motivo, totalFuente: total, paginas }; }
     await guardar(base, mapa); await fs.writeFile(archivoProgreso, JSON.stringify(progreso));
-    console.log(`  ${base} «${q}» ${JSON.stringify(variante)} listo: ${total ?? '?'} en el sitio, +${nuevos} nuevos → ${mapa.size}`);
+    console.log(`  ${base} «${q}» ${JSON.stringify(variante)} ${completa ? 'completa' : 'interrumpida'} (${motivo}): ${total ?? '?'} en el sitio, +${nuevos} nuevos → ${mapa.size}`);
+    if (!completa) throw new Error(`${base} «${q}» ${JSON.stringify(variante)} interrumpida (${motivo}); reanudar antes de publicar`);
   }
   console.log(`=== ${base}: terminado, ${mapa.size} en total ===`);
 }
