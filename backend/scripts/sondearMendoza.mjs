@@ -19,4 +19,5 @@ for(const [tribunal,q] of consultas){
   } catch(e){salida.pruebas.push({tribunal,q,error:String(e.message),ms:Date.now()-inicio});}
 }
 console.log(JSON.stringify(salida,null,2));
-if(salida.pruebas.every(x=>x.error)) process.exitCode=2;
+// Un contador positivo sin fichas es un defecto, nunca un resultado cero válido.
+if(salida.pruebas.some(x=>x.error || (x.totalFuente > 0 && x.recibidos === 0))) process.exitCode=2;
