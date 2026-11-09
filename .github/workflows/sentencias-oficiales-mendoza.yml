@@ -43,7 +43,7 @@ jobs:
           DIR_ACERVO_BASE: acervo-base
         run: |
           node scripts/armarAcervo.mjs
-          node --input-type=module -e "import fs from 'node:fs'; const m=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json')); if(m.conteos.mendoza < 725 || m.conteos.saij < 764034) process.exit(1); console.log(JSON.stringify({version:m.version,mendoza:m.conteos.mendoza,saij:m.conteos.saij}));"
+          node --input-type=module -e "import fs from 'node:fs'; const m=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json')); if(m.conteos.mendoza < 726 || m.conteos.saij < 764034) process.exit(1); console.log(JSON.stringify({version:m.version,mendoza:m.conteos.mendoza,saij:m.conteos.saij}));"
       - name: Incorporar únicamente el nuevo respaldo a la rama de auditoría
         if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         env:
@@ -53,7 +53,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add backend/respaldo/mendoza-oficial.json.gz
           if ! git diff --cached --quiet; then
-            git commit -m "data(mendoza): incorporate six verified official full-text rulings"
+            git commit -m "data(mendoza): incorporate seven verified official full-text rulings"
             git push origin HEAD:"$BRANCH"
           fi
       - name: Conservar fuente y auditoria
