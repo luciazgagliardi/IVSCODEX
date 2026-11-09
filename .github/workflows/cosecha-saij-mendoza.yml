@@ -25,11 +25,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Cosechar sumarios y fallos recientes de SAIJ Mendoza
+      - name: Cosechar sumarios y fallos provinciales por año (2023-2025)
         working-directory: backend
         env:
           PROVINCIA: Mendoza
-          RECIENTES: '3'
+          RECIENTES: '0'
+          DESDE: '2023'
+          HASTA: '2025'
           TIPOS: sumarios,fallos
           PAUSA_MS: '1500'
           ESPERA_CORTE_MS: '30000'
