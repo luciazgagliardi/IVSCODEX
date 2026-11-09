@@ -1,0 +1,63 @@
+name: Publicar acervo Mendoza validado
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/respaldo/mendoza-oficial.json.gz'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: publicar-acervo-mendoza
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Rearmar la copia completa sin perder registros
+        working-directory: backend
+        env:
+          DIR_ACERVO_BASE: acervo-base
+        run: node scripts/armarAcervo.mjs
+      - name: Verificar crecimiento y conservación de todas las fuentes
+        working-directory: backend
+        run: |
+          node --input-type=module -e "import fs from 'node:fs'; const anterior=JSON.parse(fs.readFileSync('acervo-base/manifiesto.json')); const nuevo=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json')); for(const [f,n] of Object.entries(anterior.conteos)) if((nuevo.conteos[f]||0)<n) throw Error('Regresión en '+f); if(nuevo.conteos.mendoza<726) throw Error('Mendoza sin ampliación'); console.log(JSON.stringify({antes:anterior.version,despues:nuevo.version,mendoza:nuevo.conteos.mendoza,saij:nuevo.conteos.saij}));"
+      - name: Publicar nueva tanda del acervo, sin force push
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C backend/acervo-base config user.name 'github-actions[bot]'
+          git -C backend/acervo-base config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          find backend/acervo-base -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          cp backend/acervo-datos/* backend/acervo-base/
+          echo 'Tandas del acervo de IVS CODEX. Versión regenerada y verificada.' > backend/acervo-base/LEAME.md
+          git -C backend/acervo-base add -A
+          git -C backend/acervo-base commit -m "Acervo Mendoza: sentencias oficiales verificadas"
+          git -C backend/acervo-base push origin HEAD:acervo
+      - name: Registrar versión en main
+        run: |
+          node --input-type=module -e "import fs from 'node:fs';const m=JSON.parse(fs.readFileSync('backend/acervo-datos/manifiesto.json'));fs.writeFileSync('backend/acervo-version.txt',m.version+'\n');"
+          git add backend/acervo-version.txt
+          git commit -m "Publicar acervo Mendoza ampliado y validado"
+          git push origin HEAD:main
+      - name: Solicitar despliegue Azure del acervo renovado
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run azure-backend.yml --ref main

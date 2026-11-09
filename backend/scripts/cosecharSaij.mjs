@@ -105,9 +105,13 @@ async function bajarTramo(tipo, faceta, total) {
   const out = [];
   for (let o = 0; o < Math.min(total, 1000); o += 100) {
     const sr = await pedir(faceta, o, 100);
-    if (!sr) break;
-    for (const x of sr.documentResultList || []) { const r = aRegistro(tipo, x); if (r) out.push(r); }
-    if ((sr.documentResultList || []).length < 100) break;
+    if (!sr || !Array.isArray(sr.documentResultList) || !sr.documentResultList.length)
+      throw new Error(`SAIJ informó ${total} documentos pero la página offset=${o} llegó vacía; no marcar tramo como cosechado`);
+    const antes = out.length;
+    for (const x of sr.documentResultList) { const r = aRegistro(tipo, x); if (r) out.push(r); }
+    if (o === 0 && out.length === antes)
+      throw new Error(`SAIJ informó ${total} documentos, pero ninguno de la primera página pudo normalizarse`);
+    if (sr.documentResultList.length < 100) break;
   }
   return out;
 }
@@ -144,6 +148,8 @@ async function recorrer(tipo, partes, nivel) {
   } else {
     n += await recorrer(tipo, partes, 'tope');
   }
+  if (total > 0 && n === 0)
+    throw new Error(`Tramo ${clave}: SAIJ informó ${total} resultados pero no se recuperaron registros; no registrar como completo`);
   await marcar(clave, n);
   return n;
 }
@@ -161,15 +167,37 @@ if (RECIENTES > 0) {
   // los últimos meses se vuelven a bajar enteros: SAIJ sigue cargando fallos de meses ya pasados
   const hoy = new Date(), meses = [];
   for (let i = 0; i < RECIENTES; i++) { const d = new Date(hoy.getFullYear(), hoy.getMonth() - i, 1); meses.push(`Fecha/${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`); }
+  // Prueba del plan, sin tocar progreso ni realizar pedidos a SAIJ.
+  if (process.env.SOLO_PLAN === '1') {
+    console.log(JSON.stringify({ provincia: PROVINCIA, tramos: TIPOS.flatMap((tipo) => meses.map((m) => [tipo, m, ...EXTRA])) }));
+    process.exit(0);
+  }
   for (const tipo of TIPOS) {
-    for (const k of Object.keys(progreso.hechos)) if (meses.some((m) => k.startsWith(`${tipo}|${m}`))) delete progreso.hechos[k];
-    for (const m of meses) {
-      const n = await recorrer(tipo, [m], 'mes');
-      console.log(`${new Date().toTimeString().slice(0, 8)} ${tipo} ${m.slice(6)}: ${n}`);
+    // La actualización por provincia debe conservar la faceta provincial;
+    // antes RECIENTES la ignoraba y volvía a descargar el corpus nacional.
+    const tramos = meses.map((m) => [m, ...EXTRA]);
+    for (const partes of tramos) {
+      const raizClave = `${tipo}|${partes.join('|')}`;
+      // Limpiar la raíz y sus descendientes para reconsultar incluso meses
+      // que habían tenido resultados cero. No borrar el avance de otros ámbitos.
+      for (const k of Object.keys(progreso.hechos)) {
+        if (k === raizClave || k.startsWith(`${tipo}|${partes[0]}/`) && (!PROVINCIA || k.includes(EXTRA[0]))) delete progreso.hechos[k];
+      }
+      const n = await recorrer(tipo, partes, 'mes');
+      console.log(`${new Date().toTimeString().slice(0, 8)} ${tipo} ${partes.join(' · ')}: ${n}`);
     }
   }
   console.log(`fin: ${pedidos} consultas, ${((Date.now() - t0) / 60000).toFixed(0)} min`);
   process.exit(0);
+}
+// Releer los años provinciales recientes en cada ciclo mensual; SAIJ
+// puede incorporar fichas retroactivas. No invalidar la cosecha nacional.
+if (PROVINCIA && !RECIENTES && process.env.REFRESCAR_ANIOS === '1') {
+  for (const clave of Object.keys(progreso.hechos)) {
+    const m = /^(sumarios|fallos)\|Fecha\/(\d{4})(?:\/|\|)/.exec(clave);
+    if (m && TIPOS.includes(m[1]) && Number(m[2]) >= DESDE && Number(m[2]) <= HASTA && clave.includes(EXTRA[0]))
+      delete progreso.hechos[clave];
+  }
 }
 for (const tipo of TIPOS) {
   for (let anio = HASTA; anio >= DESDE; anio--) {

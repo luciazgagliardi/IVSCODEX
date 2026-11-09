@@ -62,7 +62,14 @@ test('total exacto, y recorrer todas las páginas no repite ni saltea', async ()
 test('años y tribunal', async () => {
   assert.equal((await buscarPagina('mendoza', 'despido', { anioDesde: 2020 })).total, 45 - registros.filter((r) => r.fuente === 'mendoza' && r.id !== 'mza_dup' && anioDe(r.fecha) < 2020).length + 1);
   const sc = await buscarPagina('mendoza', 'despido', { tribunal: 'SC', porPagina: 100 });
-  assert.ok(sc.resultados.every((r) => !r.id.startsWith('mza_') || /SUPREMA/.test(r.tribunal || '') || r.id === 'mza_vivo' || !r.tribunal));
+  // La selección SC/CC/CT debe alcanzar también a SAIJ y excluir los tribunales ausentes.
+  assert.ok(sc.resultados.every((r) => /SUPREMA/i.test(r.tribunal || '')));
+  assert.ok(!sc.resultados.some((r) => r.id.startsWith('saij_')), 'SAIJ sin tribunal identificado no debe atribuirse a SC');
+  const ct = await buscarPagina('mendoza', 'despido', { tribunal: 'CT', porPagina: 100 });
+  assert.ok(ct.resultados.length > 0);
+  assert.ok(ct.resultados.every((r) => /TRABAJO/i.test(r.tribunal || '')));
+  const cc = await buscarPagina('mendoza', 'despido', { tribunal: 'CC', porPagina: 100 });
+  assert.equal(cc.total, 0, 'ninguna ficha de este corpus de prueba identifica un tribunal civil');
 });
 
 test('lo que trae el sitio en vivo se suma a la copia, sin repetir', async () => {

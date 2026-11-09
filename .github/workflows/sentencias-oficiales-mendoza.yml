@@ -1,0 +1,70 @@
+name: Incorporar sentencias oficiales publicas Mendoza
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/sentencias-oficiales-mendoza.yml'
+      - 'backend/scripts/cosecharSentenciasPublicasMendoza.mjs'
+      - 'backend/datos/mendoza-sentencias-oficiales.json'
+  workflow_dispatch: {}
+
+concurrency:
+  group: sentencias-oficiales-mendoza-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias
+        working-directory: backend
+        run: npm ci
+      - name: Descargar y validar sentencias publicas
+        working-directory: backend
+        run: node scripts/cosecharSentenciasPublicasMendoza.mjs
+      - name: Guardar lote oficial en archivo independiente
+        run: cp backend/acervo-crudo/respaldo/mendoza.json.gz backend/respaldo/mendoza-oficial.json.gz
+      - name: Reconstruir contra el acervo vigente y verificar crecimiento
+        working-directory: backend
+        env:
+          DIR_ACERVO_BASE: acervo-base
+        run: |
+          node scripts/armarAcervo.mjs
+          node --input-type=module -e "import fs from 'node:fs'; const m=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json')); if(m.conteos.mendoza < 726 || m.conteos.saij < 764034) process.exit(1); console.log(JSON.stringify({version:m.version,mendoza:m.conteos.mendoza,saij:m.conteos.saij}));"
+      - name: Incorporar únicamente el nuevo respaldo a la rama de auditoría
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add backend/respaldo/mendoza-oficial.json.gz
+          if ! git diff --cached --quiet; then
+            git commit -m "data(mendoza): incorporate seven verified official full-text rulings"
+            git push origin HEAD:"$BRANCH"
+          fi
+      - name: Conservar fuente y auditoria
+        uses: actions/upload-artifact@v4
+        with:
+          name: sentencias-oficiales-mendoza
+          retention-days: 30
+          path: |
+            backend/reporte-sentencias-oficiales-mendoza.json
+            backend/acervo-crudo/respaldo/mendoza.json.gz

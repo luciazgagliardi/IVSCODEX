@@ -224,6 +224,10 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
     // El sitio hace el trabajo: su paginación ya es la de los resultados.
     const html = await traerFichas({ sql, pagina: Math.floor(arranque / porPagina) + 1, porPagina, total });
     const filas = parsearFichas(html);
+    // La fuente puede informar coincidencias y devolver una página sin fichas
+    // por bloqueo, cambio de HTML o paginación defectuosa. No informar cero.
+    if (!filas.length && arranque < total)
+      throw errores.indiceMzaFalla('la fuente informó coincidencias pero no devolvió fichas legibles');
     const todos = filas.filter(Boolean);
     const hasta = arranque + filas.length;
     return {
@@ -254,7 +258,10 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
     const html = await traerFichas({ sql, pagina: paginaSitio, porPagina: FICHAS_POR_TANDA, total });
     // Se descartan las fichas anteriores al offset pedido: el sitio solo
     // sabe arrancar en múltiplos del tamaño de página.
-    return parsearFichas(html).slice(sobran);
+    const filas = parsearFichas(html);
+    if (!filas.length && offset < total)
+      throw errores.indiceMzaFalla('la fuente informó coincidencias pero no devolvió fichas legibles');
+    return filas.slice(sobran);
   };
 
   const { resultados, revisados, siguienteDesde, aflojado } = await paginarFiltrado({
