@@ -21,7 +21,10 @@ const resumen = {
 };
 const ids = new Set();
 const controles = ['daño punitivo', 'punitivo', 'multa civil', 'daño moral', 'despido indirecto', 'horas extras', 'desvalorización venal', 'accidente de tránsito'];
-for (const q of controles) resumen.controles[q] = { mendoza: 0, saijMendoza: 0 };
+for (const q of controles) resumen.controles[q] = {
+  mendoza: 0, saijMendoza: 0,
+  porTribunal: { mendoza: { SC: 0, CC: 0, CT: 0, ambiguos: 0, sinTribunal: 0 }, saijMendoza: { SC: 0, CC: 0, CT: 0, ambiguos: 0, sinTribunal: 0 } },
+};
 function clase(tribunal) {
   if (!tribunal || !tribunal.trim()) return 'sinTribunal';
   const t = tribunal.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -40,7 +43,8 @@ for (const nombre of manifest.archivos) {
     const propio = r.fuente === 'mendoza';
     const g = propio ? resumen.mendoza : resumen.saijMendoza;
     g.total++;
-    g[clase(r.tribunal)]++;
+    const tribunal = clase(r.tribunal);
+    g[tribunal]++;
     if (propio) {
       if (ids.has(r.id)) g.duplicadosId++;
       ids.add(r.id);
@@ -50,7 +54,11 @@ for (const nombre of manifest.archivos) {
       if (!r.caratula) g.sinCaratula++;
     }
     const texto = [r.caratula, r.sumario, Array.isArray(r.voces) ? r.voces.join(' ') : r.voces].filter(Boolean).join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-    for (const q of controles) if (texto.includes(q.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) resumen.controles[q][propio ? 'mendoza' : 'saijMendoza']++;
+    for (const q of controles) if (texto.includes(q.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) {
+      const fuente = propio ? 'mendoza' : 'saijMendoza';
+      resumen.controles[q][fuente]++;
+      resumen.controles[q].porTribunal[fuente][tribunal]++;
+    }
   }
 }
 if (manifest.conteos?.mendoza != null && resumen.mendoza.total !== manifest.conteos.mendoza) {
