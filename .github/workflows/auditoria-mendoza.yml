@@ -11,6 +11,7 @@ on:
       - 'backend/scripts/cosecharSaij.mjs'
       - 'backend/scripts/actualizarAcervo.mjs'
       - 'backend/test/cosechaSaijMendoza.prueba.js'
+      - 'backend/scripts/sondearSaijMendoza.mjs'
       - 'backend/test/acervoPaginas.prueba.js'
       - '.github/workflows/auditoria-mendoza.yml'
   workflow_dispatch: {}
@@ -68,6 +69,10 @@ jobs:
         with:
           name: sondeo-mendoza
           path: backend/sondeo-mendoza.json
+      - name: Sondear SAIJ Mendoza
+        continue-on-error: true
+        working-directory: backend
+        run: node scripts/sondearSaijMendoza.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: auditoria-mendoza
