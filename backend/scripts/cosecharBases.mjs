@@ -78,7 +78,9 @@ async function cosechar(base) {
 
   for (const variante of variantes) for (const q of cfg.consultas) {
     const clave = `${q}|${JSON.stringify(variante)}`;
-    if (Object.hasOwn(progreso.hechas, clave)) continue;
+    // Los estados antiguos son números sin prueba de agotamiento; hay que verificarlos de nuevo.
+    const finalizada = progreso.hechas[clave];
+    if (finalizada && typeof finalizada === 'object' && ['agotado', 'total_alcanzado'].includes(finalizada.motivo)) continue;
     let desde = progreso.actual?.clave === clave ? progreso.actual.desde : 0, total = null, paginas = 0, nuevos = 0, vacias = 0;
     let motivo = null;
     for (;;) {
