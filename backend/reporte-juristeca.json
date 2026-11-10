@@ -1,0 +1,192 @@
+{
+  "fecha": "2026-11-10T04:13:07.986Z",
+  "consultas": [
+    {
+      "q": "daños",
+      "totalFuente": 7478,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 597,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "sentencia",
+      "totalFuente": 31561,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 401,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "contrato",
+      "totalFuente": 4545,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 386,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "consumidor",
+      "totalFuente": 2190,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 283,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "penal",
+      "totalFuente": 30799,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 225,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "familia",
+      "totalFuente": 3846,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 389,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "alimentos",
+      "totalFuente": 1934,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 435,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "laboral",
+      "totalFuente": 5517,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 175,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "despido",
+      "totalFuente": 651,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 415,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "recurso",
+      "totalFuente": 0,
+      "paginas": 1,
+      "fichasRecibidas": 0,
+      "nuevos": 0,
+      "estado": "agotada"
+    },
+    {
+      "q": "administrativo",
+      "totalFuente": 13123,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 120,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "amparo",
+      "totalFuente": 11195,
+      "paginas": 12,
+      "fichasRecibidas": 600,
+      "nuevos": 147,
+      "estado": "limite_de_paginas"
+    }
+  ],
+  "anteriores": 0,
+  "unicos": 3573,
+  "nuevos": 3573,
+  "errores": [],
+  "descartados": {
+    "sin_caratula": 21,
+    "sin_fecha": 11
+  },
+  "ejemplosDescartados": [
+    {
+      "id": "juristeca_63348",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_61776",
+      "motivo": "sin_fecha"
+    },
+    {
+      "id": "juristeca_61296",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_63348",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_63308",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_63203",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_63348",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_63203",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_62103",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_61776",
+      "motivo": "sin_fecha"
+    },
+    {
+      "id": "juristeca_58617",
+      "motivo": "sin_fecha"
+    },
+    {
+      "id": "juristeca_58599",
+      "motivo": "sin_fecha"
+    },
+    {
+      "id": "juristeca_62103",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_58617",
+      "motivo": "sin_fecha"
+    },
+    {
+      "id": "juristeca_63348",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_63308",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_63203",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_61296",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_61178",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_60240",
+      "motivo": "sin_fecha"
+    }
+  ],
+  "limitePaginas": 12
+}

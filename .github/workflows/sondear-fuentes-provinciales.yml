@@ -1,0 +1,32 @@
+name: Auditar fuentes provinciales del acervo
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/sondearCoberturaProvincial.mjs'
+      - '.github/workflows/sondear-fuentes-provinciales.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  fuentes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias
+        working-directory: backend
+        run: npm ci
+      - name: Sondear seis combinaciones públicas sin publicar
+        working-directory: backend
+        run: node scripts/sondearCoberturaProvincial.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagnostico-fuentes
+          path: backend/diagnostico-fuentes.json

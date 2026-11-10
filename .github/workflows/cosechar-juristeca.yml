@@ -1,0 +1,70 @@
+name: Cosechar Juristeca y validar crecimiento real
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/cosecharJuristeca.mjs'
+      - 'backend/test/cosechaJuristeca.prueba.js'
+      - '.github/workflows/cosechar-juristeca.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  cosechar:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias
+        working-directory: backend
+        run: npm ci
+      - name: Cosechar de la fuente oficial en lotes acotados
+        working-directory: backend
+        env:
+          MAX_PAGINAS: '12'
+          PAUSA_MS: '1750'
+        run: node scripts/cosecharJuristeca.mjs
+      - name: Verificar procedencia y consistencia
+        working-directory: backend
+        run: node --test test/cosechaJuristeca.prueba.js
+      - name: Reconstruir sobre el acervo vigente sin pérdidas
+        working-directory: backend
+        env:
+          DIR_ACERVO_BASE: acervo-base
+        run: |
+          node scripts/armarAcervo.mjs
+          node --input-type=module -e "import fs from 'node:fs';const antes=JSON.parse(fs.readFileSync('acervo-base/manifiesto.json'));const despues=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json'));for(const [f,n] of Object.entries(antes.conteos))if((despues.conteos[f]||0)<n)throw Error('Regresión '+f);if((despues.conteos.juristeca||0)<100)throw Error('Cosecha Juristeca insuficiente');console.log(JSON.stringify({antes:antes.conteos,despues:despues.conteos}));"
+      - name: Guardar informe verificable
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lote-juristeca-controlado
+          retention-days: 30
+          path: |
+            backend/reporte-juristeca.json
+            backend/respaldo/juristeca.json.gz
+      - name: Registrar el lote validado en la rama del PR
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          RAMA: ${{ github.head_ref }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f backend/respaldo/juristeca.json.gz
+          git add -f backend/reporte-juristeca.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data(juristeca): incorporar fallos oficiales validados"
+            git push origin HEAD:"$RAMA"
+          fi
