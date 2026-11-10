@@ -179,6 +179,13 @@ function parsear(html) {
  * (ver lib/fuentes.js). "todas" y "alguna" van tal cual (el sitio exige todas
  * las palabras); la frase exacta se filtra de este lado, sobre el sumario.
  */
+/** Cursor por posición física del sitio; los renglones ilegibles NO desplazan las páginas. */
+export function siguienteOffsetScba(desde, parseados, porPagina, total) {
+  const inicioPagina = Math.floor(desde / POR_PAGINA_SITIO) * POR_PAGINA_SITIO;
+  const hasta = parseados < porPagina ? inicioPagina + POR_PAGINA_SITIO : desde + parseados;
+  return hasta < total ? hasta : null;
+}
+
 export async function buscarScba({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
@@ -196,8 +203,13 @@ export async function buscarScba({ q, modo = 'todas', excluir = '', pagina = 1, 
   const filtrar = modo === 'exacta' || excluir || anioDesde || anioHasta;
   if (!filtrar) {
     const resultados = (await traer(arranque)).slice(0, porPagina);
-    const hasta = arranque + resultados.length;
-    return { total: totalSitio, totalFuente: totalSitio, siguienteDesde: hasta < totalSitio ? hasta : null, pagina, porPagina, resultados };
+    // SCBA pagina en posiciones físicas de 20, aunque el parser descarte una
+    // ficha ilegible. Con 19 fichas parseadas en la página 1, el antiguo
+    // cursor=19 repetía la página 1 y devolvía una falsa página vacía.
+    // Cuando se agotó el HTML de esa página, saltar a la siguiente posición
+    // física, no a la cantidad de fichas interpretadas.
+    const hasta = siguienteOffsetScba(arranque, resultados.length, porPagina, totalSitio);
+    return { total: totalSitio, totalFuente: totalSitio, siguienteDesde: hasta, pagina, porPagina, resultados };
   }
   const salida = await paginarFiltrado({
     traer,
