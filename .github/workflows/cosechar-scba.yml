@@ -1,0 +1,72 @@
+name: Cosechar SCBA y preservar el acervo
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/cosecharScbaIncremental.mjs'
+      - 'backend/test/cosechaScba.prueba.js'
+      - 'backend/test/scbaPaginacion.prueba.js'
+      - 'backend/lib/indiceScba.js'
+      - '.github/workflows/cosechar-scba.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  scba:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias
+        working-directory: backend
+        run: npm ci
+      - name: Ampliar sumarios oficiales JUBA
+        working-directory: backend
+        env:
+          MAX_PAGINAS: '15'
+          PAUSA_MS: '2000'
+        run: node scripts/cosecharScbaIncremental.mjs
+      - name: Validar documentos y procedencia
+        working-directory: backend
+        run: node --test test/cosechaScba.prueba.js test/scbaPaginacion.prueba.js
+      - name: Reconstruir acervo y medir crecimiento sin pérdidas
+        working-directory: backend
+        env:
+          DIR_ACERVO_BASE: acervo-base
+        run: |
+          node scripts/armarAcervo.mjs
+          node --input-type=module -e "import fs from 'node:fs';const a=JSON.parse(fs.readFileSync('acervo-base/manifiesto.json'));const b=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json'));for(const [f,n] of Object.entries(a.conteos))if((b.conteos[f]||0)<n)throw Error('Regresión '+f);if(b.conteos.scba<=a.conteos.scba)throw Error('SCBA no aumentó respecto al acervo');console.log(JSON.stringify({antes:a.conteos.scba,despues:b.conteos.scba}));"
+      - name: Guardar lote y evidencias
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lote-scba-validado
+          retention-days: 30
+          path: |
+            backend/reporte-scba.json
+            backend/respaldo/scba.json.gz
+      - name: Incorporar respaldo en la rama de expansión
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          RAMA: ${{ github.head_ref }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f backend/respaldo/scba.json.gz
+          git add -f backend/reporte-scba.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data(scba): incorporar nuevos sumarios oficiales JUBA"
+            git push origin HEAD:"$RAMA"
+          fi
