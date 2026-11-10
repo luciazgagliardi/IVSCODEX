@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { esSentenciaClasificada, esTextoJudicialSustantivo } from '../lib/clasificarActuacionMza.js';
 test('Mendoza: cada sentencia publicada tiene PDF oficial y texto judicial indexable',()=>{
  const lote=JSON.parse(zlib.gunzipSync(fs.readFileSync('respaldo/mendoza-listas.json.gz')).toString('utf8'));
  const reporte=JSON.parse(fs.readFileSync('reporte-mendoza-listas.json','utf8'));
@@ -20,6 +21,8 @@ test('Mendoza: cada sentencia publicada tiene PDF oficial y texto judicial index
   assert.match(r.linkFicha,/^https:\/\/www2\.jus\.mendoza\.gov\.ar\/listas\/proveidos\/vertexto\.php\?ide=\d+$/);
   assert.match(r.linkFallo,/^https:\/\/iol\.jus\.mendoza\.gov\.ar\/iol-api\/api\/public\/expedientes\/actuaciones\/pdf\?/);
   assert.ok(r.sumario&&r.sumario.length>=700,'texto de sentencia insuficiente: '+r.id);
+  assert.ok(esSentenciaClasificada(r.materia),'La ficha era un trámite, no una sentencia: '+r.id+' '+r.materia);
+  assert.ok(esTextoJudicialSustantivo(r.sumario),'El PDF no contiene texto judicial sustantivo: '+r.id);
   assert.ok(/\b(?:RESUELVE|FALLO|CONSIDERANDO|SENTENCIA DEFINITIVA|AUTOS Y VISTOS|VISTOS)\b/i.test(r.sumario));
  }
  assert.ok(reporte.jornadas.some(x=>x.agregados>0));
