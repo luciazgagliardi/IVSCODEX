@@ -1,77 +1,77 @@
 {
-  "fecha": "2026-11-10T04:13:07.986Z",
+  "fecha": "2026-11-10T04:47:28.698Z",
   "consultas": [
     {
       "q": "daños",
       "totalFuente": 7478,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 597,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 384,
       "estado": "limite_de_paginas"
     },
     {
       "q": "sentencia",
       "totalFuente": 31561,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 401,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 236,
       "estado": "limite_de_paginas"
     },
     {
       "q": "contrato",
       "totalFuente": 4545,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 386,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 544,
       "estado": "limite_de_paginas"
     },
     {
       "q": "consumidor",
       "totalFuente": 2190,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 283,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 594,
       "estado": "limite_de_paginas"
     },
     {
       "q": "penal",
       "totalFuente": 30799,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 225,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 200,
       "estado": "limite_de_paginas"
     },
     {
       "q": "familia",
       "totalFuente": 3846,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 389,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 465,
       "estado": "limite_de_paginas"
     },
     {
       "q": "alimentos",
       "totalFuente": 1934,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 435,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 758,
       "estado": "limite_de_paginas"
     },
     {
       "q": "laboral",
       "totalFuente": 5517,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 175,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 223,
       "estado": "limite_de_paginas"
     },
     {
       "q": "despido",
       "totalFuente": 651,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 415,
-      "estado": "limite_de_paginas"
+      "paginas": 14,
+      "fichasRecibidas": 651,
+      "nuevos": 51,
+      "estado": "agotada"
     },
     {
       "q": "recurso",
@@ -84,27 +84,27 @@
     {
       "q": "administrativo",
       "totalFuente": 13123,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 120,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 191,
       "estado": "limite_de_paginas"
     },
     {
       "q": "amparo",
       "totalFuente": 11195,
-      "paginas": 12,
-      "fichasRecibidas": 600,
-      "nuevos": 147,
+      "paginas": 28,
+      "fichasRecibidas": 1400,
+      "nuevos": 251,
       "estado": "limite_de_paginas"
     }
   ],
-  "anteriores": 0,
-  "unicos": 3573,
-  "nuevos": 3573,
+  "anteriores": 3573,
+  "unicos": 7470,
+  "nuevos": 3897,
   "errores": [],
   "descartados": {
-    "sin_caratula": 21,
-    "sin_fecha": 11
+    "sin_caratula": 30,
+    "sin_fecha": 49
   },
   "ejemplosDescartados": [
     {
@@ -120,6 +120,14 @@
       "motivo": "sin_caratula"
     },
     {
+      "id": "juristeca_60748",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_58599",
+      "motivo": "sin_fecha"
+    },
+    {
       "id": "juristeca_63348",
       "motivo": "sin_caratula"
     },
@@ -130,6 +138,18 @@
     {
       "id": "juristeca_63203",
       "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_62469",
+      "motivo": "sin_fecha"
+    },
+    {
+      "id": "juristeca_62103",
+      "motivo": "sin_caratula"
+    },
+    {
+      "id": "juristeca_61776",
+      "motivo": "sin_fecha"
     },
     {
       "id": "juristeca_63348",
@@ -156,37 +176,17 @@
       "motivo": "sin_fecha"
     },
     {
-      "id": "juristeca_62103",
-      "motivo": "sin_caratula"
-    },
-    {
-      "id": "juristeca_58617",
+      "id": "juristeca_57769",
       "motivo": "sin_fecha"
     },
     {
-      "id": "juristeca_63348",
+      "id": "juristeca_55721",
       "motivo": "sin_caratula"
     },
     {
-      "id": "juristeca_63308",
-      "motivo": "sin_caratula"
-    },
-    {
-      "id": "juristeca_63203",
-      "motivo": "sin_caratula"
-    },
-    {
-      "id": "juristeca_61296",
-      "motivo": "sin_caratula"
-    },
-    {
-      "id": "juristeca_61178",
-      "motivo": "sin_caratula"
-    },
-    {
-      "id": "juristeca_60240",
+      "id": "juristeca_54375",
       "motivo": "sin_fecha"
     }
   ],
-  "limitePaginas": 12
+  "limitePaginas": 28
 }
