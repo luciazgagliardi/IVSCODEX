@@ -1,0 +1,74 @@
+name: Recuperar y publicar lote judicial verificado Mendoza
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/depurarLoteMendoza.mjs'
+      - '.github/workflows/recuperar-lote-mendoza.yml'
+  workflow_dispatch: {}
+permissions:
+  actions: read
+  contents: write
+jobs:
+  recuperar:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Recuperar el artefacto íntegro de la primera cosecha verificada
+        uses: actions/download-artifact@v4
+        with:
+          name: mendoza-sentencias-publicas
+          repository: luciazgagliardi/IVSCODEX
+          run-id: 42757181159
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: backend
+      - name: Depurar trámites sin sentencia y calcular huellas de texto
+        working-directory: backend
+        run: node scripts/depurarLoteMendoza.mjs
+      - name: Verificar clases, PDFs, metadatos, deduplicación y texto
+        working-directory: backend
+        run: node --test test/clasificarActuacionMza.prueba.js test/cosechaListasMendoza.prueba.js
+      - name: Reconstruir todas las fuentes conservando el acervo vigente
+        working-directory: backend
+        env:
+          DIR_ACERVO_BASE: acervo-base
+        run: |
+          node scripts/armarAcervo.mjs
+          node --input-type=module -e "import fs from 'node:fs';const previo=JSON.parse(fs.readFileSync('acervo-base/manifiesto.json'));const nuevo=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json'));for(const [f,n] of Object.entries(previo.conteos))if((nuevo.conteos[f]||0)<n)throw Error('Se perderían documentos: '+f);if(nuevo.conteos.mendoza<=previo.conteos.mendoza)throw Error('La ampliación Mendoza no aumenta el acervo');console.log(JSON.stringify({mendozaAntes:previo.conteos.mendoza,mendozaDespues:nuevo.conteos.mendoza,version:nuevo.version}));"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mendoza-depurado-verificado
+          retention-days: 30
+          path: |
+            backend/respaldo/mendoza-listas.json.gz
+            backend/reporte-mendoza-listas.json
+      - name: Incorporar solamente datos depurados a la rama del PR
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          RAMA: ${{ github.head_ref }}
+        run: |
+          cp backend/respaldo/mendoza-listas.json.gz /tmp/mendoza-listas-verificado.json.gz
+          cp backend/reporte-mendoza-listas.json /tmp/mendoza-reporte-verificado.json
+          git fetch origin "$RAMA"
+          git reset --hard "origin/$RAMA"
+          mkdir -p backend/respaldo
+          cp /tmp/mendoza-listas-verificado.json.gz backend/respaldo/mendoza-listas.json.gz
+          cp /tmp/mendoza-reporte-verificado.json backend/reporte-mendoza-listas.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f backend/respaldo/mendoza-listas.json.gz backend/reporte-mendoza-listas.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data(mendoza): agregar sentencias verificadas y excluir trámites"
+            git push origin HEAD:"$RAMA"
+          fi
