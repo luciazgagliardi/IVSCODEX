@@ -1,0 +1,91 @@
+{
+  "generado": "2026-11-10T04:39:14.951Z",
+  "anteriores": 0,
+  "nuevos": 96,
+  "procesados": 208,
+  "candidatos": 208,
+  "comprobados": 96,
+  "descartados": {
+    "texto_insuficiente": 71,
+    "sin_estructura_judicial": 31
+  },
+  "errores": [],
+  "jornadas": [
+    {
+      "fecha": "07/09/2026",
+      "fuero": "CC",
+      "candidatos": 19,
+      "agregados": 6,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "07/09/2026",
+      "fuero": "CT",
+      "candidatos": 26,
+      "agregados": 11,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "08/09/2026",
+      "fuero": "CC",
+      "candidatos": 13,
+      "agregados": 8,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "08/09/2026",
+      "fuero": "CT",
+      "candidatos": 22,
+      "agregados": 11,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "09/09/2026",
+      "fuero": "CC",
+      "candidatos": 15,
+      "agregados": 6,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "09/09/2026",
+      "fuero": "CT",
+      "candidatos": 19,
+      "agregados": 11,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "10/09/2026",
+      "fuero": "CC",
+      "candidatos": 14,
+      "agregados": 4,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "10/09/2026",
+      "fuero": "CT",
+      "candidatos": 27,
+      "agregados": 17,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "11/09/2026",
+      "fuero": "CC",
+      "candidatos": 13,
+      "agregados": 1,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "11/09/2026",
+      "fuero": "CT",
+      "candidatos": 40,
+      "agregados": 21,
+      "estatus": "consultada"
+    }
+  ],
+  "limite": 270,
+  "datosRecuperables": 0,
+  "depuradosDelLoteAnterior": 10,
+  "depuracion": {
+    "tramite_no_sentencia": 10
+  }
+}

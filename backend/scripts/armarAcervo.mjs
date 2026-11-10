@@ -162,6 +162,29 @@ try {
   if (e.code !== 'ENOENT') throw e;
 }
 
+// Sentencias públicas de las listas diarias del Poder Judicial de Mendoza.
+// Su colección se incorpora únicamente con PDFs públicos, texto verificable
+// y sus metadatos de tribunal, fecha y expediente.
+// Se hace después de Mendoza oficial y de la base publicada; poner() conserva
+// un documento anterior si ya contenía mayor cantidad de texto.
+try {
+  const archivo = path.join(RAIZ, 'respaldo', 'mendoza-listas.json.gz');
+  const lote = JSON.parse(zlib.gunzipSync(await fs.readFile(archivo)).toString('utf8'));
+  if (!Array.isArray(lote.registros)) throw new Error('Cosecha de listas de Mendoza inválida');
+  let n = 0;
+  for (const r of lote.registros) {
+    if (!/^mza_oficial_\d+$/.test(r?.id || '') || r.fuente !== 'mendoza' ||
+        !/^https:\/\/iol\.jus\.mendoza\.gov\.ar\/iol-api\/api\/public\/expedientes\/actuaciones\/pdf\?/i.test(r.linkFallo || '') ||
+        (r.sumario || '').length < 700 || !r.expediente || !r.tribunal)
+      throw new Error('Resolución mendocina no verificable en las listas públicas: ' + (r?.id || '(sin id)'));
+    poner(r);
+    n++;
+  }
+  console.log('Sentencias de Mendoza desde listas diarias: ' + n);
+} catch (e) {
+  if (e.code !== 'ENOENT') throw e;
+}
+
 // ---- tandas ----
 await fs.rm(SALIDA, { recursive: true, force: true });
 await fs.mkdir(SALIDA, { recursive: true });

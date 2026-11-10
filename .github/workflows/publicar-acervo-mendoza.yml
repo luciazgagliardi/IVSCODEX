@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'backend/respaldo/mendoza-oficial.json.gz'
+      - 'backend/respaldo/mendoza-listas.json.gz'
       - 'backend/respaldo/juristeca.json.gz'
       - 'backend/respaldo/scba.json.gz'
   workflow_dispatch: {}

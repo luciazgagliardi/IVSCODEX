@@ -1,0 +1,82 @@
+name: Cosechar sentencias oficiales de Mendoza
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/cosecharListasMendoza.mjs'
+      - 'backend/scripts/armarAcervo.mjs'
+      - 'backend/test/cosechaListasMendoza.prueba.js'
+      - 'backend/test/clasificarActuacionMza.prueba.js'
+      - 'backend/lib/clasificarActuacionMza.js'
+      - '.github/workflows/cosechar-listas-mendoza.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: cosecha-listas-mendoza
+  cancel-in-progress: false
+jobs:
+  cosechar:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar PDF.js y parser del portal judicial
+        working-directory: backend
+        run: npm ci
+      - name: Cosechar sentencias civiles y laborales de Mendoza con texto completo
+        working-directory: backend
+        env:
+          FECHAS: '2026-09-07,2026-09-08,2026-09-09,2026-09-10,2026-09-11'
+          FUEROS: CC,CT
+          MAX_DOCS: '270'
+          PAUSA_MS: '1350'
+        run: node scripts/cosecharListasMendoza.mjs
+      - name: Verificar integridad, URLs y texto judicial extraído
+        working-directory: backend
+        run: node --test test/cosechaListasMendoza.prueba.js test/clasificarActuacionMza.prueba.js
+      - name: Reconstruir sobre el acervo vigente sin pérdidas
+        working-directory: backend
+        env:
+          DIR_ACERVO_BASE: acervo-base
+        run: |
+          node scripts/armarAcervo.mjs
+          node --input-type=module -e "import fs from 'node:fs';const a=JSON.parse(fs.readFileSync('acervo-base/manifiesto.json'));const b=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json'));for(const [fuente,n] of Object.entries(a.conteos))if((b.conteos[fuente]||0)<n)throw Error('Regresión '+fuente);if(b.conteos.mendoza<=a.conteos.mendoza)throw Error('Sin nuevos fallos de Mendoza');console.log(JSON.stringify({antes:a.conteos,despues:b.conteos}));"
+      - name: Conservar prueba de origen y lote validado
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mendoza-sentencias-publicas
+          retention-days: 30
+          path: |
+            backend/reporte-mendoza-listas.json
+            backend/respaldo/mendoza-listas.json.gz
+      - name: Versionar exclusivamente el lote validado en la rama
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          RAMA: ${{ github.head_ref }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f backend/respaldo/mendoza-listas.json.gz
+          git add -f backend/reporte-mendoza-listas.json
+          if ! git diff --cached --quiet; then
+            git commit -m "data(mendoza): añadir sentencias provinciales públicas verificadas"
+            # En la primera cosecha puede haber cambios en el PR mientras dura
+            # la extracción. Integrar esos commits antes de subir datos.
+            git fetch origin "$RAMA"
+            git rebase "origin/$RAMA"
+            git push origin HEAD:"$RAMA"
+          fi
