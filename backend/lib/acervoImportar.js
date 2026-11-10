@@ -36,7 +36,12 @@ for (const archivo of man.archivos) {
   d.exec('COMMIT');
 }
 d.exec("INSERT INTO fts(fts) VALUES('rebuild')");
-d.exec("INSERT INTO fts(fts) VALUES('optimize')");
+// Optimizar FTS5 es una compactación opcional, no un requisito para buscar.
+// Hacerla en cada arranque duplicaba trabajo de disco justo en el cuello de
+// botella de Azure (/home sobre almacenamiento de red). Los tests garantizan
+// que rebuild ya deja el índice funcional.
+if (process.env.ACERVO_OPTIMIZAR_FTS === '1')
+  d.exec("INSERT INTO fts(fts) VALUES('optimize')");
 const meta = d.prepare('INSERT OR REPLACE INTO meta(clave, valor) VALUES(?, ?)');
 meta.run('version', man.version);
 meta.run('esquema', ESQUEMA_V);
