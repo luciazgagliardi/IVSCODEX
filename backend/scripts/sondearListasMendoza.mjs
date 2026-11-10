@@ -41,3 +41,10 @@ try {
   .slice(0,12).map(m=>({nombre:m[1],valores:m[2].slice(0,260)}));
  console.log('FORMULARIO_JS '+JSON.stringify({inicio:cerca('function inicializar()'),codigos:cerca('cod_1='),menus},null,2));
 }catch(e){console.log('FORMULARIO_JS_ERROR '+String(e.message))}
+
+try {
+ const raw=await (await fetch(url,{signal:AbortSignal.timeout(15000)})).text();
+ const men=raw.indexOf('menu_0');
+ const cod=raw.indexOf('var codori=');
+ console.log('ARBOL_TRIBUNALES '+JSON.stringify({menuPrimer:men>=0?raw.slice(Math.max(0,men-120),men+1300):'',codOriginal:cod>=0?raw.slice(cod,cod+300):''}));
+}catch(e){console.log('ARBOL_TRIBUNALES '+String(e.message))}
