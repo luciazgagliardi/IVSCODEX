@@ -1,0 +1,27 @@
+name: Diagnosticar sentencias públicas de Mendoza
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/diagnosticarTextosListasMza.mjs'
+      - '.github/workflows/diagnosticar-listas-mza.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar parser HTML
+        working-directory: backend
+        run: npm ci
+      - name: Diagnosticar acceso a sentencias publicadas
+        working-directory: backend
+        run: node scripts/diagnosticarTextosListasMza.mjs
