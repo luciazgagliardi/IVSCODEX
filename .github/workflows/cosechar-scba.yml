@@ -15,7 +15,7 @@ jobs:
   scba:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,7 +35,7 @@ jobs:
       - name: Ampliar sumarios oficiales JUBA
         working-directory: backend
         env:
-          MAX_PAGINAS: '15'
+          MAX_PAGINAS: '24'
           PAUSA_MS: '2000'
         run: node scripts/cosecharScbaIncremental.mjs
       - name: Validar documentos y procedencia

@@ -1,13 +1,13 @@
 {
-  "fecha": "2026-11-10T04:14:59.092Z",
-  "anteriores": 7148,
+  "fecha": "2026-11-10T04:48:15.584Z",
+  "anteriores": 8006,
   "consultas": [
     {
       "q": "daño moral",
       "totalFuente": 2744,
-      "paginas": 15,
-      "recibidos": 289,
-      "nuevos": 156,
+      "paginas": 24,
+      "recibidos": 457,
+      "nuevos": 92,
       "estado": "limite_de_paginas"
     },
     {
@@ -15,24 +15,24 @@
       "totalFuente": 162,
       "paginas": 6,
       "recibidos": 109,
-      "nuevos": 4,
+      "nuevos": 0,
       "estado": "pagina_no_parseable",
       "error": "La página 7 no produjo fichas; fuente informó 162"
     },
     {
       "q": "responsabilidad civil",
       "totalFuente": 4098,
-      "paginas": 15,
-      "recibidos": 284,
-      "nuevos": 105,
+      "paginas": 24,
+      "recibidos": 453,
+      "nuevos": 78,
       "estado": "limite_de_paginas"
     },
     {
       "q": "accidente de tránsito",
       "totalFuente": 585,
-      "paginas": 15,
-      "recibidos": 253,
-      "nuevos": 64,
+      "paginas": 24,
+      "recibidos": 416,
+      "nuevos": 0,
       "estado": "limite_de_paginas"
     },
     {
@@ -40,55 +40,55 @@
       "totalFuente": 1187,
       "paginas": 4,
       "recibidos": 53,
-      "nuevos": 21,
+      "nuevos": 0,
       "estado": "pagina_no_parseable",
       "error": "La página 5 no produjo fichas; fuente informó 1187"
     },
     {
       "q": "alimentos",
       "totalFuente": 1876,
-      "paginas": 15,
-      "recibidos": 295,
-      "nuevos": 66,
+      "paginas": 24,
+      "recibidos": 473,
+      "nuevos": 51,
       "estado": "limite_de_paginas"
     },
     {
       "q": "amparo",
       "totalFuente": 3034,
-      "paginas": 15,
-      "recibidos": 291,
+      "paginas": 24,
+      "recibidos": 463,
       "nuevos": 115,
       "estado": "limite_de_paginas"
     },
     {
       "q": "contrato",
       "totalFuente": 10657,
-      "paginas": 15,
-      "recibidos": 293,
-      "nuevos": 103,
+      "paginas": 24,
+      "recibidos": 460,
+      "nuevos": 79,
       "estado": "limite_de_paginas"
     },
     {
       "q": "consumidor",
       "totalFuente": 1426,
-      "paginas": 15,
-      "recibidos": 300,
-      "nuevos": 92,
+      "paginas": 24,
+      "recibidos": 480,
+      "nuevos": 75,
       "estado": "limite_de_paginas"
     },
     {
       "q": "intereses",
       "totalFuente": 7613,
-      "paginas": 15,
-      "recibidos": 295,
-      "nuevos": 132,
+      "paginas": 24,
+      "recibidos": 471,
+      "nuevos": 69,
       "estado": "limite_de_paginas"
     }
   ],
-  "unicos": 8006,
-  "nuevos": 858,
+  "unicos": 8565,
+  "nuevos": 559,
   "descartados": {
-    "sin_enlace_oficial": 828
+    "sin_enlace_oficial": 1428
   },
   "ejemplosDescartados": [
     {
