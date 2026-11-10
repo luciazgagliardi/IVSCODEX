@@ -97,3 +97,20 @@ for(const fecha of ['11/09/2026','09/10/2026']){
  }catch(e){console.log('FECHA_HISTORICA '+JSON.stringify({fecha,error:String(e.message)}))}
  await new Promise(ok=>setTimeout(ok,2000));
 }
+
+try{
+ const body=new URLSearchParams({nom2:'1',nom3:'03',nom4:'99',tribunal:'01.03',sd:'11/09/2026',ed:'11/09/2026',numero:'',caratula:'',iduser:''});
+ const r=await fetch(url+'?consulta=1',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':'Mozilla/5.0 (compatible; IVS-CODEX; jurisprudencia abierta)'},body:body.toString(),signal:AbortSignal.timeout(20000)});
+ const html=await r.text();
+ const attrs=[...html.matchAll(/<button\b([^>]*)>/gi)].slice(0,5).map(x=>x[1]);
+ const inputs=[...html.matchAll(/<a\b([^>]*)>/gi)].slice(0,9).map(x=>x[1].slice(0,220));
+ const v=html.indexOf('vertexto.php'),v2=html.indexOf('ver_texto'),v3=html.indexOf('onclick=');
+ const funcs=[...html.matchAll(/function\s+([a-z_]*(?:texto|ver|abrir|mostrar|html)[a-z_]*)\s*\([^)]*\)/gi)].slice(0,20).map(x=>x[0]);
+ console.log('HTML_RESOLUCION '+JSON.stringify({buttons:attrs,links:inputs,funcs,
+  vertexto:v<0?'no':html.slice(Math.max(0,v-350),v+260),
+  verTexto:v2<0?'no':html.slice(Math.max(0,v2-180),v2+190),
+  onclick:v3<0?'no':html.slice(Math.max(0,v3-60),v3+180),
+  textoHTML:(html.match(/>HTML</gi)||[]).length,
+  scripts:[...html.matchAll(/<script[^>]*src=["']([^"']+)/gi)].map(x=>x[1]).slice(0,18),
+ }));
+}catch(e){console.log('HTML_RESOLUCION_ERROR '+String(e.message))}
