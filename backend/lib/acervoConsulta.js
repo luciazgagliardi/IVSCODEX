@@ -101,10 +101,22 @@ const TIPO_SAIJ = { sumarios: ['sumario'], fallos: ['fallo'], todo: ['sumario', 
  * juntan dos orígenes (Mendoza y lo de SAIJ de Mendoza), los duplicados exactos
  * —la misma carátula, fecha y texto— cuentan una sola vez.
  */
-export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', desde = 0, porPagina = 20 } = {}) {
+export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', variantes = [], desde = 0, porPagina = 20 } = {}) {
   const mag = ftsConMagistrados(db);
-  const expr = consultaFts(q, modo, excluir, mag ? apellidos(db) : null);
-  if (!expr) return { total: 0, resultados: [], siguienteDesde: null };
+  const principal = consultaFts(q, modo, excluir, mag ? apellidos(db) : null);
+  if (!principal) return { total: 0, resultados: [], siguienteDesde: null };
+
+  // En Mendoza la ruta normal prioriza la copia local. Antes se retornaba
+  // inmediatamente y se salteaban las variantes del tesauro que el frontend
+  // manda (daño moral / consecuencias no patrimoniales, por ejemplo).
+  // Un único MATCH combinado mantiene total, ranking, deduplicación y cursor
+  // coherentes; concatenar páginas de búsquedas distintas rompería todo eso.
+  const equivalentes = base === 'mendoza' && Array.isArray(variantes)
+    ? [...new Set(variantes.filter((v) => typeof v === 'string' && v.trim().length <= 100 && v.trim())
+      .map((v) => v.trim()).filter((v) => v.toLowerCase() !== String(q).trim().toLowerCase()))].slice(0, 4)
+    : [];
+  const expresiones = [principal, ...equivalentes.map((v) => consultaFts(v, modo, excluir, null)).filter(Boolean)];
+  const expr = expresiones.length === 1 ? principal : expresiones.map((x) => `(${x})`).join(' OR ');
   const prov = PROVINCIA_DE_BASE[base];
   const junta = Boolean(prov && base !== 'saij');
   // SAIJ publica el mismo sumario con más de un id, y Mendoza o la SCBA un renglón por sumario de cada fallo: se cuenta una sola vez
