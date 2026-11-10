@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'backend/scripts/auditarProvinciaSaij.mjs'
+      - 'backend/scripts/sondearListasMendoza.mjs'
       - '.github/workflows/auditar-provincia-saij.yml'
   workflow_dispatch: {}
 permissions:
@@ -24,6 +25,10 @@ jobs:
       - name: Identificar documentos SAIJ con jurisdicción mendocina pero sin metadato
         working-directory: backend
         run: node scripts/auditarProvinciaSaij.mjs
+      - name: Comprobar formulario público de listas diarias
+        working-directory: backend
+        continue-on-error: true
+        run: node scripts/sondearListasMendoza.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: auditoria-provincia-saij
