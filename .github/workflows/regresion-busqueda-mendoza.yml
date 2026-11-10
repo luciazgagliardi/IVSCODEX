@@ -1,0 +1,31 @@
+name: Regresión búsqueda Mendoza
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/index.html'
+      - 'backend/routes/indice.js'
+      - 'backend/test/mendozaBusquedaDefecto.prueba.js'
+      - '.github/workflows/regresion-busqueda-mendoza.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias
+        working-directory: backend
+        run: npm ci
+      - name: Verificar búsqueda y filtros Mendoza
+        working-directory: backend
+        run: node --test test/acervoPaginas.prueba.js test/mendozaOficial.prueba.js test/mendozaBusquedaDefecto.prueba.js
