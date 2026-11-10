@@ -3,7 +3,7 @@ name: Publicar frontend en GitHub Pages
 on:
   push:
     branches: [main]
-    paths: ["frontend/**"]
+    paths: ["frontend/**", ".github/workflows/pages.yml"]
   workflow_dispatch: {}
 
 permissions:
@@ -29,3 +29,6 @@ jobs:
           path: frontend
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          timeout: 1800000
+          reporting_interval: 10000
