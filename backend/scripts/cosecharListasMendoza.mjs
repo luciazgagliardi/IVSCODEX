@@ -13,6 +13,7 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { JSDOM } from 'jsdom';
 import { extraerPdf } from '../lib/extraerPdf.js';
+import { esSentenciaClasificada, esTextoJudicialSustantivo } from '../lib/clasificarActuacionMza.js';
 
 const raiz=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const LISTAS='https://www2.jus.mendoza.gov.ar/listas/proveidos/';
@@ -34,6 +35,9 @@ try {
  if(!Array.isArray(guardado.registros))throw Error('Respaldo de Mendoza sin registros[]');
  for(const r of guardado.registros){
   if(!/^mza_oficial_\d+$/.test(r?.id||''))throw Error('ID incorrecto en respaldo previo: '+r?.id);
+  // Revalidar también lotes antiguos: la primera versión admitía simples
+  // notificaciones y vistas por contener la palabra «sentencia».
+  if(!esSentenciaClasificada(r.materia)||!esTextoJudicialSustantivo(r.sumario))continue;
   mapa.set(r.id,r);
  }
 }catch(e){if(e.code!=='ENOENT')throw e;}
@@ -56,7 +60,7 @@ export function extraerCandidatos(html,fuero,fecha){
    if(td.length<7||!id||!FUEROS[fuero].regex.test(td[1]||''))continue;
    // La clase del proveído, NO el texto libre de la carátula.
    const clase=td[5]||'';
-   if(!/\bSENTENCIA\b/i.test(clase)||/\b(?:DECRETO|PROVEIDO|PROVEÍDO|AUTO INTERLOCUTORIO)\b/i.test(clase))continue;
+   if(!esSentenciaClasificada(clase))continue;
    const href=[...fila.querySelectorAll('a[href]')].map(a=>a.href).find(esPublicoPdf);
    if(!href)continue;
    const caratula=(td[4]||'').trim();
@@ -122,7 +126,7 @@ for(const dia of FECHAS){
      let texto=v.texto.replace(/\s+/g,' ').trim();
      // Prevenir fichas reducidas a carátula o a una providencia sin fundamentos.
      if(texto.length<700){rechazar('texto_insuficiente');continue;}
-     if(!/\b(?:RESUELVE|FALLO|CONSIDERANDO|SENTENCIA DEFINITIVA|AUTOS Y VISTOS|VISTOS)\b/i.test(texto)){
+     if(!esTextoJudicialSustantivo(texto)){
       rechazar('sin_estructura_judicial');continue;
      }
      if(texto.length>130000)texto=texto.slice(0,130000);
