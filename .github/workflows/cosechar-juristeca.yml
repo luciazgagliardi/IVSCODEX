@@ -13,7 +13,7 @@ jobs:
   cosechar:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,7 +33,7 @@ jobs:
       - name: Cosechar de la fuente oficial en lotes acotados
         working-directory: backend
         env:
-          MAX_PAGINAS: '12'
+          MAX_PAGINAS: '28'
           PAUSA_MS: '1750'
         run: node scripts/cosecharJuristeca.mjs
       - name: Verificar procedencia y consistencia
@@ -45,7 +45,7 @@ jobs:
           DIR_ACERVO_BASE: acervo-base
         run: |
           node scripts/armarAcervo.mjs
-          node --input-type=module -e "import fs from 'node:fs';const antes=JSON.parse(fs.readFileSync('acervo-base/manifiesto.json'));const despues=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json'));for(const [f,n] of Object.entries(antes.conteos))if((despues.conteos[f]||0)<n)throw Error('Regresión '+f);if((despues.conteos.juristeca||0)<100)throw Error('Cosecha Juristeca insuficiente');console.log(JSON.stringify({antes:antes.conteos,despues:despues.conteos}));"
+          node --input-type=module -e "import fs from 'node:fs';const antes=JSON.parse(fs.readFileSync('acervo-base/manifiesto.json'));const despues=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json'));for(const [f,n] of Object.entries(antes.conteos))if((despues.conteos[f]||0)<n)throw Error('Regresión '+f);if((despues.conteos.juristeca||0)<=(antes.conteos.juristeca||0))throw Error('Juristeca no aumentó respecto del acervo');console.log(JSON.stringify({antes:antes.conteos,despues:despues.conteos}));"
       - name: Guardar informe verificable
         if: always()
         uses: actions/upload-artifact@v4
