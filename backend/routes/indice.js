@@ -241,6 +241,7 @@ async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta
   // con acervo para esa base, la consulta de respaldo de acá no se hace: corre en el hilo principal y con muchas a la vez frenaría al servidor.
   // Salvo que la copia todavía no esté lista (los primeros minutos después de un reinicio) y el sitio no haya contestado: ahí es la única respuesta.
   if (!p && acervoCubre(slug) && (copiaLista() || !respaldo)) return null;
+  const respaldoParcial = !p;
   if (!p) {
     // sin acervo para esa base, o el hilo de la copia no contestó: lo guardado por las búsquedas, el acervo y el respaldo, también de a páginas
     const lista = sinRepetidos(slug, await buscarEnIndice(slug, consulta, o));
@@ -248,7 +249,11 @@ async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta
     const pos = Math.max(0, desde);
     p = { total: lista.length, resultados: lista.slice(pos, pos + porPagina), siguienteDesde: pos + porPagina < lista.length ? pos + porPagina : null };
   }
-  return { total: p.total, totalFuente: null, siguienteDesde: p.siguienteDesde, resultados: p.resultados, totalParcial: false, revisados: 0, aflojado: false, desdeIndiceLocal: true };
+  // Un índice de búsquedas guardadas NO garantiza el total exhaustivo del
+  // FTS; antes ambos se anunciaban como "total exacto", ocultando regresiones.
+  return { total: p.total, totalFuente: null, siguienteDesde: p.siguienteDesde, resultados: p.resultados,
+    totalParcial: respaldoParcial, origenAcervo: respaldoParcial ? 'indice_parcial' : 'sqlite_fts',
+    revisados: 0, aflojado: false, desdeIndiceLocal: true };
 }
 
 // El catálogo de fuentes vive en lib/fuentes.js: lo comparten estas rutas y
@@ -291,7 +296,9 @@ for (const { slug, buscar } of FUENTES) {
         if (loc && loc.resultados.length) {
           return res.json({
             ok: true, ...loc, fuente: slug, ms: Date.now() - arranque,
-            avisoFalla: 'Resultados verificados en el acervo local de Mendoza. La búsqueda oficial en vivo puede estar limitada.',
+            avisoFalla: loc.totalParcial
+              ? 'Resultados parciales de búsquedas guardadas. El índice completo de Mendoza no respondió a tiempo.'
+              : 'Resultados verificados en el acervo completo de Mendoza. La búsqueda oficial en vivo puede estar limitada.',
           });
         }
       }
