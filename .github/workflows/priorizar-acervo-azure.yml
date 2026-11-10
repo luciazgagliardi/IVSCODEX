@@ -1,0 +1,30 @@
+name: Regresión de arranque y disponibilidad del acervo
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/index.js'
+      - 'backend/lib/acervoArranque.js'
+      - 'backend/lib/acervoImportar.js'
+      - 'backend/test/acervoArranque.prueba.js'
+      - '.github/workflows/priorizar-acervo-azure.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verificar compuerta de cosechas y FTS bajo concurrencia
+        working-directory: backend
+        run: node --test test/acervoArranque.prueba.js test/acervoImportacionConcurrente.prueba.js
+      - name: Verificar sintaxis del servidor y el importador
+        working-directory: backend
+        run: |
+          node --check index.js
+          node --check lib/acervoImportar.js

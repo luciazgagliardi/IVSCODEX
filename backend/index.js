@@ -249,6 +249,7 @@ app.use(manejadorErrores);
 
 import { mudarDatosSiHaceFalta } from './lib/mudarDatos.js';
 import { prepararAcervo } from './lib/acervo.js';
+import { puedeIniciarCosechas } from './lib/acervoArranque.js';
 import { iniciarCosechaCaba } from './lib/cosechaCaba.js';
 import { actualizarCorpus } from './lib/corpusCorteidh.js';
 import { listarTodo } from './lib/indiceCorteidh.js';
@@ -259,9 +260,19 @@ const mudanza = await mudarDatosSiHaceFalta().catch((e) => ({ mudo: false, detal
 
 // El acervo (lib/acervo.js): la base grande en disco. Si las tandas que vinieron con
 // este despliegue son de otra versión, se importan de fondo; mientras tanto, el respaldo.
-prepararAcervo().then((e) => {
-  // en el servidor publicado: el TSJ de CABA se cosecha despacio desde acá (lib/cosechaCaba.js)
-  if (DATOS_PERSISTEN && process.env.COSECHA_CABA !== '0') iniciarCosechaCaba().catch((x) => console.warn('[cosecha CABA]', x.message)); if (e.activo || e.importando) console.log(`  Acervo     ${e.activo ? `versión ${e.version}` : 'sin base todavía'}${e.importando ? ' · importando la versión nueva de fondo' : ''}`); else if (e.error) console.log(`  Acervo     apagado: ${e.error}`); });
+// El HTTP sigue atendiendo durante la importación, pero no se inicia la
+// cosecha intensiva de CABA antes de que SQLite/FTS esté disponible.
+// Antes ambas competían por CPU, disco y memoria mientras importábamos
+// cientos de miles de decisiones; Azure mostraba importando=true por minutos.
+const inicioAcervo = prepararAcervo({ esperar: true }).catch((error) => ({
+  activo: false, importando: false, error: String(error.message || error),
+}));
+inicioAcervo.then((e) => {
+  if (e.activo) console.log(`  Acervo     versión ${e.version} · listo para búsquedas`);
+  else console.warn(`  Acervo     no listo: ${e.error || 'importación incompleta'}`);
+  if (DATOS_PERSISTEN && process.env.COSECHA_CABA !== '0' && puedeIniciarCosechas(e))
+    iniciarCosechaCaba().catch((x) => console.warn('[cosecha CABA]', x.message));
+});
 
 const servidor = app.listen(PUERTO, () => {
   console.log('');
@@ -289,8 +300,13 @@ const servidor = app.listen(PUERTO, () => {
 if (process.env.CORPUS_CORTEIDH === '1' || (DATOS_PERSISTEN && process.env.CORPUS_CORTEIDH !== '0')) {
   const correr = () =>
     actualizarCorpus(listarTodo, { log: (m) => console.log(m) }).catch((e) => console.error('[corteidh] falló la actualización:', e.message));
-  setTimeout(correr, 90_000).unref();
-  setInterval(correr, 24 * 60 * 60_000).unref();
+  // La Corte IDH puede procesar centenares de PDF; tampoco compite con el
+  // armado inicial de SQLite. Se mantiene el ciclo diario una vez listo.
+  inicioAcervo.then((e) => {
+    if (!puedeIniciarCosechas(e)) return;
+    setTimeout(correr, 90_000).unref();
+    setInterval(correr, 24 * 60 * 60_000).unref();
+  });
 }
 
 // Apagado ordenado: dejamos que terminen las peticiones en curso.
