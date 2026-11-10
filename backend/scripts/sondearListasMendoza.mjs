@@ -8,7 +8,7 @@ try {
  const r=await fetch(url,{headers:{Accept:'text/html','User-Agent':'Mozilla/5.0 (compatible; IVS-CODEX; consulta de acceso publico)'},signal:AbortSignal.timeout(20000)});
  const html=await r.text();
  const forms=[...html.matchAll(/<form\b([^>]*)>/gi)].map(m=>m[1].slice(0,350));
- const selects=[...html.matchAll(/<select\b([^>]*)>/gi)].map(m=>m[1].slice(0,250));
+ const selects=[...html.matchAll(/<select\b([^>]*)>([\s\S]*?)<\/select>/gi)].map(m=>({atributos:m[1].slice(0,250),opciones:[...m[2].matchAll(/<option\b([^>]*)>([\s\S]*?)<\/option>/gi)].slice(0,12).map(x=>({valor:/value=["']([^"']*)/.exec(x[1])?.[1],texto:x[2].replace(/<[^>]+>/g,' ').trim().slice(0,80)}))}));
  const inputs=[...html.matchAll(/<input\b([^>]*)>/gi)].map(m=>m[1].slice(0,250)).filter(x=>/name=/i.test(x)).slice(0,50);
  const scripts=[...html.matchAll(/<script\b[^>]*src=["']([^"']+)/gi)].map(m=>m[1]).slice(0,30);
  console.log(JSON.stringify({http:r.status,bytes:html.length,forms,selects,inputs,scripts,hasOfficialLinks:/vertexto\.php\?ide=/i.test(html),hasListas:/Consultar Lista|Listas de Tribunales/i.test(html)},null,2));
