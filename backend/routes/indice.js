@@ -279,6 +279,22 @@ for (const { slug, buscar } of FUENTES) {
       const desdeN = Number.isFinite(Number(desde)) && Number(desde) >= 0 ? Number(desde) : 0;
       const pedidoLocal = { modo, excluir, anioDesde, anioHasta, provincia, tribunal, desde: desdeN };
 
+      // Mendoza: el sitio externo respondió contadores positivos sin fichas y
+      // luego HTTP 403. Si nuestra copia tiene resultados, dar prioridad a
+      // su total exacto y a su paginación frente al falso cero del sitio.
+      // Esto también permite buscar todos los tribunales cuando no se eligió
+      // SC/CC/CT; el sitio oficial solo admite un tribunal por solicitud.
+      // Si no hay coincidencias en la copia, se conserva el intento vivo.
+      if (slug === 'mendoza' && acervoCubre(slug) && cuerpo.soloLocal !== true && cuerpo.local !== true) {
+        const loc = await paginaLocal(slug, consulta, pedidoLocal);
+        if (loc && loc.resultados.length) {
+          return res.json({
+            ok: true, ...loc, fuente: slug, ms: Date.now() - arranque,
+            avisoFalla: 'Resultados verificados en el acervo local de Mendoza. La búsqueda oficial en vivo puede estar limitada.',
+          });
+        }
+      }
+
       // la copia local, a pedido (o para seguir paginando lo que vino de ahí)
       if (cuerpo.soloLocal === true || cuerpo.local === true) {
         const loc = await paginaLocal(slug, consulta, pedidoLocal, { respaldo: cuerpo.local === true && !cuerpo.soloLocal && desdeN > 0 });
