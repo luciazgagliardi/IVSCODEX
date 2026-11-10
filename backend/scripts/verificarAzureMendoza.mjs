@@ -53,6 +53,7 @@ for(const q of ['daño moral','daño punitivo']){
   }));
   console.log('VERIFICACION NORMAL '+JSON.stringify({q,normal:{...normal,ids:normal.ids.slice(0,5)},local:{...local,ids:local.ids.slice(0,5)}}));
   if(!normal.ok || !local.ok || normal.total !== local.total || normal.total === 0)throw Error('Pérdida de resultados normales en '+q);
+  if(!String(normal.aviso||'').includes('Resultados verificados en el acervo local'))throw Error('Backend no está usando el resguardo local: '+q);
   if(q==='daño punitivo' && !normal.ids.includes('mza_oficial_12065977405')) {
     // La sentencia puede estar en páginas posteriores; exigir al menos 8
     // coincidencias confirma la búsqueda general, sin depender del orden.
