@@ -1,0 +1,26 @@
+name: Verificar etiquetado de cobertura FTS y respaldo
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/routes/indice.js'
+      - 'backend/test/mendozaBusquedaDefecto.prueba.js'
+      - '.github/workflows/verificar-cobertura-parcial.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Evitar anunciar resultados parciales como búsqueda completa
+        working-directory: backend
+        run: node --test test/mendozaBusquedaDefecto.prueba.js
+      - name: Verificar código de la ruta de búsqueda
+        working-directory: backend
+        run: node --check routes/indice.js
