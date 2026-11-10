@@ -1,10 +1,12 @@
-name: Publicar acervo Mendoza validado
+name: Publicar acervo jurisprudencial validado
 
 on:
   push:
     branches: [main]
     paths:
       - 'backend/respaldo/mendoza-oficial.json.gz'
+      - 'backend/respaldo/juristeca.json.gz'
+      - 'backend/respaldo/scba.json.gz'
   workflow_dispatch: {}
 
 permissions:
@@ -49,13 +51,13 @@ jobs:
           cp backend/acervo-datos/* backend/acervo-base/
           echo 'Tandas del acervo de IVS CODEX. Versión regenerada y verificada.' > backend/acervo-base/LEAME.md
           git -C backend/acervo-base add -A
-          git -C backend/acervo-base commit -m "Acervo Mendoza: sentencias oficiales verificadas"
+          git -C backend/acervo-base commit -m "Acervo: actualización jurisprudencial verificada"
           git -C backend/acervo-base push origin HEAD:acervo
       - name: Registrar versión en main
         run: |
           node --input-type=module -e "import fs from 'node:fs';const m=JSON.parse(fs.readFileSync('backend/acervo-datos/manifiesto.json'));fs.writeFileSync('backend/acervo-version.txt',m.version+'\n');"
           git add backend/acervo-version.txt
-          git commit -m "Publicar acervo Mendoza ampliado y validado"
+          git commit -m "Publicar acervo jurisprudencial ampliado y validado"
           git push origin HEAD:main
       - name: Solicitar despliegue Azure del acervo renovado
         env:
