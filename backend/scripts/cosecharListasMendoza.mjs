@@ -30,6 +30,7 @@ const PAUSA=Math.max(1000,Number(process.env.PAUSA_MS||1350));
 const dormir=ms=>new Promise(r=>setTimeout(r,ms));
 const fechaAr=d=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(d))throw Error('Fecha inválida '+d);const [a,m,dia]=d.split('-');return dia+'/'+m+'/'+a;};
 const mapa=new Map();
+let rechazadosPrevios=0;
 try {
  const guardado=JSON.parse(zlib.gunzipSync(await fs.readFile(DESTINO)).toString('utf8'));
  if(!Array.isArray(guardado.registros))throw Error('Respaldo de Mendoza sin registros[]');
@@ -37,12 +38,15 @@ try {
   if(!/^mza_oficial_\d+$/.test(r?.id||''))throw Error('ID incorrecto en respaldo previo: '+r?.id);
   // Revalidar también lotes antiguos: la primera versión admitía simples
   // notificaciones y vistas por contener la palabra «sentencia».
-  if(!esSentenciaClasificada(r.materia)||!esTextoJudicialSustantivo(r.sumario))continue;
+  if(!esSentenciaClasificada(r.materia)||!esTextoJudicialSustantivo(r.sumario)){
+    rechazadosPrevios++;
+    continue;
+  }
   mapa.set(r.id,r);
  }
 }catch(e){if(e.code!=='ENOENT')throw e;}
 const informe={generado:new Date().toISOString(),anteriores:mapa.size,nuevos:0,
- procesados:0,candidatos:0,comprobados:0,descartados:{},errores:[],jornadas:[],limite:MAX_DOCS,datosRecuperables:0};
+ procesados:0,candidatos:0,comprobados:0,depuradosDelRespaldoAnterior:rechazadosPrevios,descartados:{},errores:[],jornadas:[],limite:MAX_DOCS};
 const rechazar=(razon)=>{informe.descartados[razon]=(informe.descartados[razon]||0)+1;};
 const esPublicoPdf=u=>{
  try{const p=new URL(u);return p.protocol==='https:'&&p.hostname==='iol.jus.mendoza.gov.ar'&&p.pathname==='/iol-api/api/public/expedientes/actuaciones/pdf'&&p.searchParams.has('actId')&&p.searchParams.has('org')&&p.searchParams.has('expId');}
@@ -154,4 +158,7 @@ console.log('MENDOZA_RESUMEN '+JSON.stringify({
  candidatos:informe.candidatos,comprobados:informe.comprobados,descartados:informe.descartados,
  jornadas:informe.jornadas.map(x=>({fecha:x.fecha,fuero:x.fuero,agregados:x.agregados,estatus:x.estatus})),
 }));
-if(informe.nuevos<15)throw Error('Cosecha Mendoza insuficiente ('+informe.nuevos+'); no publicar');
+// Una ejecución repetida puede no hallar IDs nuevos: si ya existen
+// 15+ sentencias válidas, el lote sigue siendo utilizable y la reconstrucción
+// de CI decide si aporta algo al manifiesto. No marcarlo artificialmente cero.
+if(mapa.size<15)throw Error('Cosecha Mendoza insuficiente ('+mapa.size+' registros íntegros); no publicar');
