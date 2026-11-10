@@ -22,7 +22,7 @@ try {
  if(!Array.isArray(previo.registros))throw Error('Respaldo SCBA previo inválido');
  for(const r of previo.registros)if(r.id)mapa.set(r.id,r);
 } catch(e){if(e.code!=='ENOENT')throw e;}
-const estado={fecha:new Date().toISOString(),anteriores:mapa.size,consultas:[],unicos:mapa.size,nuevos:0};
+const estado={fecha:new Date().toISOString(),anteriores:mapa.size,consultas:[],unicos:mapa.size,nuevos:0,descartados:{},ejemplosDescartados:[]};
 async function guardar(){
  await fs.mkdir(path.dirname(archivo),{recursive:true});
  const temp=archivo+'.tmp';
@@ -47,8 +47,14 @@ for(const q of consultas){
   }
   const anterior=mapa.size;
   for(const x of r.resultados){
-   if(!x?.id || !/^scba_[A-Z]\d{6,8}$/.test(x.id) || !/^https:\/\/juba\.scba\.gov\.ar\/VerTextoCompleto\.aspx\?idFallo=\d+$/i.test(x.linkFallo||'')){
-    dato.estado='ficha_sin_enlace';error=q+' ficha sin ID o enlace oficial';break;
+   const motivo=!x?.id||!/^scba_[A-Z]\d{6,8}$/.test(x.id)?'id_invalido'
+    :!/^https:\/\/juba\.scba\.gov\.ar\/VerTextoCompleto\.aspx\?idFallo=\d+$/i.test(x.linkFallo||'')?'sin_enlace_oficial'
+    :!x.sumario||x.sumario.length<30?'sin_sumario'
+    :null;
+   if(motivo){
+    estado.descartados[motivo]=(estado.descartados[motivo]||0)+1;
+    if(estado.ejemplosDescartados.length<15)estado.ejemplosDescartados.push({id:x?.id,motivo});
+    continue;
    }
    const antiguo=mapa.get(x.id);
    const ficha={...x,fuente:'scba',procedencia:'JUBA/SCBA - fallo oficial'};
