@@ -43,3 +43,19 @@ for (const q of ['daño moral','daño punitivo']) {
     }catch(e){console.log('REGRESION '+JSON.stringify({q,tribunal,error:String(e)}))}
   }
 }
+
+for(const q of ['daño moral','daño punitivo']){
+  const body=JSON.stringify({q,tribunal:'',modo:'todas'});
+  const [normal,local]=await Promise.all(['buscar','local'].map(async ruta=>{
+    const r=await fetch(api+'/indice/mendoza/'+ruta,{method:'POST',headers:{'Content-Type':'application/json'},body,signal:AbortSignal.timeout(35000)});
+    const j=await r.json();
+    return {http:r.status,ok:j.ok,total:j.total,ids:(j.resultados||[]).map(x=>x.id),aviso:j.avisoFalla,codigo:j.codigo};
+  }));
+  console.log('VERIFICACION NORMAL '+JSON.stringify({q,normal:{...normal,ids:normal.ids.slice(0,5)},local:{...local,ids:local.ids.slice(0,5)}}));
+  if(!normal.ok || !local.ok || normal.total !== local.total || normal.total === 0)throw Error('Pérdida de resultados normales en '+q);
+  if(q==='daño punitivo' && !normal.ids.includes('mza_oficial_12065977405')) {
+    // La sentencia puede estar en páginas posteriores; exigir al menos 8
+    // coincidencias confirma la búsqueda general, sin depender del orden.
+    if(normal.total < 8)throw Error('Daño punitivo no recupera cobertura local');
+  }
+}
