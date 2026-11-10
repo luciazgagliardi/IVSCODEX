@@ -14,3 +14,19 @@ try {
  console.log(JSON.stringify({http:r.status,bytes:html.length,forms,selects,inputs,scripts,hasOfficialLinks:/vertexto\.php\?ide=/i.test(html),hasListas:/Consultar Lista|Listas de Tribunales/i.test(html)},null,2));
  if(!r.ok)process.exitCode=2;
 }catch(e){console.error(String(e));process.exitCode=2}
+
+
+const muestras=[];
+for(const fecha of ['09/11/2026','09-11-2026']){
+ try{
+  const params=new URLSearchParams({nom2:'01',nom3:'',nom4:'',tribunal:'',sd:fecha,ed:fecha,numero:'',caratula:'',iduser:''});
+  const resp=await fetch(url+'?consulta=1',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','User-Agent':'Mozilla/5.0 (compatible; IVS-CODEX; consulta de acceso publico)'},body:params.toString(),signal:AbortSignal.timeout(20000)});
+  const html=await resp.text();
+  muestras.push({fecha,http:resp.status,bytes:html.length,cantidadLinks:(html.match(/vertexto\.php\?ide=/g)||[]).length,
+   cantidadSentencias:(html.match(/\bSENTENCIA\b/gi)||[]).length,
+   reconoceLista:/Lista del|Total:|No hay datos/i.test(html),
+   encabezado:html.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,155)});
+ }catch(e){muestras.push({fecha,error:String(e.message)})}
+ await new Promise(ok=>setTimeout(ok,1500));
+}
+console.log('PRUEBAS_FECHA '+JSON.stringify(muestras));
