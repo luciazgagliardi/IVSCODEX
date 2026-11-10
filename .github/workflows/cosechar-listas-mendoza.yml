@@ -72,5 +72,9 @@ jobs:
           git add -f backend/reporte-mendoza-listas.json
           if ! git diff --cached --quiet; then
             git commit -m "data(mendoza): añadir sentencias provinciales públicas verificadas"
+            # En la primera cosecha puede haber cambios en el PR mientras dura
+            # la extracción. Integrar esos commits antes de subir datos.
+            git fetch origin "$RAMA"
+            git rebase "origin/$RAMA"
             git push origin HEAD:"$RAMA"
           fi
