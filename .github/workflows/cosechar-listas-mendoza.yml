@@ -6,6 +6,8 @@ on:
       - 'backend/scripts/cosecharListasMendoza.mjs'
       - 'backend/scripts/armarAcervo.mjs'
       - 'backend/test/cosechaListasMendoza.prueba.js'
+      - 'backend/test/clasificarActuacionMza.prueba.js'
+      - 'backend/lib/clasificarActuacionMza.js'
       - '.github/workflows/cosechar-listas-mendoza.yml'
   workflow_dispatch: {}
 permissions:
@@ -44,7 +46,7 @@ jobs:
         run: node scripts/cosecharListasMendoza.mjs
       - name: Verificar integridad, URLs y texto judicial extraído
         working-directory: backend
-        run: node --test test/cosechaListasMendoza.prueba.js
+        run: node --test test/cosechaListasMendoza.prueba.js test/clasificarActuacionMza.prueba.js
       - name: Reconstruir sobre el acervo vigente sin pérdidas
         working-directory: backend
         env:
