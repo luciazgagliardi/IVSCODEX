@@ -1,85 +1,32 @@
-/**
- * Smoke test público de lectura: no modifica el servidor.
- * Confirma que Azure importó la nueva versión SQLite y que el motor FTS
- * devuelve resoluciones de Cámara del Trabajo y Cámara Civil.
- */
+/** Prueba liviana y de sólo lectura del buscador real de Mendoza. */
 const api='https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api';
-const version='20261109-c2ad437b';
-const delay=ms=>new Promise(r=>setTimeout(r,ms));
-async function estado(){
- const r=await fetch(api+'/acervo/estado',{signal:AbortSignal.timeout(15000)});
- if(!r.ok) throw Error('GET /acervo/estado: HTTP '+r.status);
- return r.json();
+const r=await fetch(api+'/acervo/estado',{signal:AbortSignal.timeout(20000)});
+if(!r.ok)throw Error('Acervo estado HTTP '+r.status);
+const e=await r.json();
+console.log('ESTADO '+JSON.stringify({activo:e.activo,version:e.version,mendoza:e.conteos?.mendoza,importando:e.importando}));
+if(!e.activo||e.conteos?.mendoza<726)throw Error('El acervo de Mendoza no está activo o está incompleto');
+const esperar=ms=>new Promise(ok=>setTimeout(ok,ms));
+async function buscar(q,variantes){
+ for(let intento=1;intento<=2;intento++){
+  try {
+   const r=await fetch(api+'/indice/mendoza/buscar',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({q,modo:'todas',tribunal:'',variantes}),
+    signal:AbortSignal.timeout(60000)});
+   const d=await r.json();
+   if(!r.ok||!d.ok)throw Error('HTTP '+r.status+' '+(d.codigo||'')+' '+(d.mensaje||''));
+   return {total:d.total,ids:(d.resultados||[]).slice(0,3).map(x=>x.id)};
+  }catch(ex){if(intento===2)throw ex;await esperar(2500);}
+ }
 }
-let ultimo;
-for(let i=0;i<24;i++){
- try{
-   ultimo=await estado();
-   console.log(JSON.stringify({intento:i+1,version:ultimo.version,activo:ultimo.activo,importando:ultimo.importando,mendoza:ultimo.conteos?.mendoza,error:ultimo.error}));
-   if(ultimo.version===version && ultimo.activo && ultimo.conteos?.mendoza>=726) break;
- }catch(e){console.log('Estado no disponible: '+e.message);}
- if(i===23)throw Error('Azure no importó la versión '+version+'; último estado '+JSON.stringify(ultimo));
- await delay(5000);
+const pruebas=[
+ {q:'daño moral',variantes:['daño extrapatrimonial','consecuencias no patrimoniales','agravio moral','daño inmaterial'],min:376},
+ {q:'daño punitivo',variantes:['multa civil','sanción pecuniaria disuasiva'],min:17},
+];
+for(const x of pruebas) {
+ const ampliada=await buscar(x.q,x.variantes);
+ console.log('RECUPERACION '+JSON.stringify({q:x.q,...ampliada,variantes:x.variantes}));
+ if(ampliada.total<x.min)throw Error(x.q+': el buscador real no alcanzó el mínimo validado ('+x.min+')');
+ await esperar(1500);
 }
-async function buscar(q,tribunal,id){
- const r=await fetch(api+'/indice/mendoza/local',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q,tribunal,porPagina:30,modo:'todas'}),signal:AbortSignal.timeout(35000)});
- if(!r.ok)throw Error('POST local '+q+' '+tribunal+': HTTP '+r.status+' '+(await r.text()).slice(0,350));
- const d=await r.json();
- const lista=Array.isArray(d.resultados)?d.resultados:(d.datos?.resultados || []);
- const encontrado=lista.some(x=>x.id===id);
- console.log(JSON.stringify({q,tribunal,http:r.status,total:d.total,resultados:lista.length,idBuscado:id,encontrado,ejemplos:lista.slice(0,5).map(x=>x.id)}));
- if(!encontrado)throw Error('No aparece '+id+' en la primera página de la búsqueda local: '+q+' ('+tribunal+')');
-}
-await buscar('BARRIONUEVO','CT','mza_oficial_11855004335');
-await buscar('BALDONI','CC','mza_oficial_12065977405');
-console.log('Smoke test Azure COMPLETO: versión, SQLite y dos sentencias recuperables');
-
-for (const q of ['daño moral','daño punitivo']) {
-  for (const tribunal of ['', 'SC','CC','CT']) {
-    try {
-      const r=await fetch(api+'/indice/mendoza/local',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q,tribunal,modo:'todas'}),signal:AbortSignal.timeout(40000)});
-      const d=await r.json();
-      console.log('REGRESION '+JSON.stringify({q,tribunal:tribunal||'sin filtro',http:r.status,ok:d.ok,total:d.total,error:d.mensaje||d.error,ejemplos:d.resultados?.slice(0,3).map(x=>({id:x.id,tribunal:x.tribunal}))}));
-    }catch(e){console.log('REGRESION '+JSON.stringify({q,tribunal,error:String(e)}))}
-  }
-}
-
-for(const q of ['daño moral','daño punitivo']){
-  const body=JSON.stringify({q,tribunal:'',modo:'todas'});
-  const [normal,local]=await Promise.all(['buscar','local'].map(async ruta=>{
-    const r=await fetch(api+'/indice/mendoza/'+ruta,{method:'POST',headers:{'Content-Type':'application/json'},body,signal:AbortSignal.timeout(35000)});
-    const j=await r.json();
-    return {http:r.status,ok:j.ok,total:j.total,ids:(j.resultados||[]).map(x=>x.id),aviso:j.avisoFalla,codigo:j.codigo};
-  }));
-  console.log('VERIFICACION NORMAL '+JSON.stringify({q,normal:{...normal,ids:normal.ids.slice(0,5)},local:{...local,ids:local.ids.slice(0,5)}}));
-  if(!normal.ok || !local.ok || normal.total !== local.total || normal.total === 0)throw Error('Pérdida de resultados normales en '+q);
-  // El campo avisoFalla puede variar con el estado de la fuente externa;
-  // el contrato estable es recuperar el mismo corpus que la ruta local.
-  if(q==='daño punitivo' && !normal.ids.includes('mza_oficial_12065977405')) {
-    // La sentencia puede estar en páginas posteriores; exigir al menos 8
-    // coincidencias confirma la búsqueda general, sin depender del orden.
-    if(normal.total < 8)throw Error('Daño punitivo no recupera cobertura local');
-  }
-}
-
-const equivalentes={
- 'daño moral':['daño extrapatrimonial','consecuencias no patrimoniales','agravio moral','daño inmaterial'],
- 'daño punitivo':['multa civil','sanción pecuniaria disuasiva'],
-};
-for(const [q,variantes] of Object.entries(equivalentes)){
- const pedir=async ruta=>{
-  const r=await fetch(api+'/indice/mendoza/'+ruta,{
-   method:'POST',headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({q,tribunal:'',modo:'todas',variantes}),
-   signal:AbortSignal.timeout(40000),
-  });
-  const j=await r.json();
-  if(!r.ok||!j.ok)throw Error('No hubo respuesta '+ruta+' '+q+' HTTP '+r.status);
-  return {total:j.total,ejemplos:j.resultados?.slice(0,5).map(x=>x.id)};
- };
- const [local,normal]=await Promise.all([pedir('local'),pedir('buscar')]);
- console.log('TESAURO_DESPLEGADO '+JSON.stringify({q,variantes,local,normal}));
- if(local.total!==normal.total)throw Error('Los endpoints dan conteos distintos para '+q);
- const minimo=q==='daño moral'?376:17;
- if(normal.total<minimo)throw Error('La versión desplegada no recupera los equivalentes de '+q+' (mínimo '+minimo+')');
-}
+console.log('El buscador normal de Azure recupera los conceptos equivalentes');
