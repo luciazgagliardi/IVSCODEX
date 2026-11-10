@@ -40,3 +40,23 @@ for(const tr of doc.window.document.querySelectorAll('tr')){
 }
 console.log('ESTRUCTURA_FILAS '+JSON.stringify({candidatas:resumen.length,tipos:resumen.slice(0,10)}));
 doc.window.close();
+
+try{
+ const {extraerPdf}=await import('../lib/extraerPdf.js');
+ const params=new URLSearchParams({nom2:'1',nom3:'03',nom4:'99',tribunal:'01.03',sd:'11/09/2026',ed:'11/09/2026',numero:'',caratula:'',iduser:''});
+ const r=await fetch(base+'listas.php?consulta=1',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params,signal:AbortSignal.timeout(18000)});
+ const doc=new JSDOM(await r.text());
+ const tr=[...doc.window.document.querySelectorAll('tr')].find(x=>
+  x.querySelector('button[onclick*="vertex("]')&&[...x.querySelectorAll('td')].some(y=>/\bsentencia\b/i.test(y.textContent))
+  &&x.querySelector('a[href*="/public/expedientes/actuaciones/pdf?"]'));
+ if(tr){
+  const link=tr.querySelector('a[href*="/public/expedientes/actuaciones/pdf?"]').href;
+  const resp=await fetch(link,{signal:AbortSignal.timeout(20000)});
+  const b=Buffer.from(await resp.arrayBuffer());
+  let extracto;
+  try{const o=await extraerPdf(b);extracto={paginas:o.paginas,longitudTexto:o.texto.length,marcaResolutiva:/\bRESUELVE\b|\bFALLO\b/i.test(o.texto)}}
+  catch(e){extracto={error:String(e.message).slice(0,130)}}
+  console.log('PDF_OFICIAL '+JSON.stringify({http:resp.status,tipo:resp.headers.get('content-type'),bytes:b.length,...extracto}));
+ }
+ doc.window.close();
+}catch(e){console.log('PDF_OFICIAL '+JSON.stringify({error:String(e.message)}))}
