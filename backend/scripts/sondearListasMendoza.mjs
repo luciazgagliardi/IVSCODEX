@@ -54,3 +54,28 @@ try {
  const ver=t=>{const i=raw.indexOf(t);return i<0?'':raw.slice(i,i+1300)};
  console.log('CODIGOS_CAMARAS '+JSON.stringify({civil:ver('menu_0103'),laboral:ver('menu_0104'),cambioTribunal:ver('function cambio_nom4'),personal:ver('function cambio_personal')}).slice(0,4900));
 }catch(e){console.log('CODIGOS_ERROR '+String(e.message))}
+
+
+for (const [etiqueta,nom3,tribunal] of [['civil','03','01.03'],['laboral','04','01.04']]) {
+ try {
+  const campos=new URLSearchParams({
+   nom2:'1',nom3,nom4:'99',tribunal,sd:'09/11/2026',ed:'09/11/2026',
+   numero:'',caratula:'',iduser:'',
+  });
+  const respuesta=await fetch(url+'?consulta=1',{
+   method:'POST',body:campos.toString(),headers:{
+    'Content-Type':'application/x-www-form-urlencoded',
+    'User-Agent':'Mozilla/5.0 (compatible; IVS-CODEX; investigación de jurisprudencia publicada)',
+   },signal:AbortSignal.timeout(20000),
+  });
+  const html=await respuesta.text();
+  const enlaces=[...html.matchAll(/(?:href=["'][^"']*)?vertexto\.php\?ide=(\d+)/gi)].map(x=>x[1]);
+  console.log('SONDEO_TRIBUNAL '+JSON.stringify({
+   etiqueta,http:respuesta.status,htmlCaracteres:html.length,
+   enlacesUnicos:new Set(enlaces).size,aparicionesSentencia:(html.match(/\bSENTENCIA\b/gi)||[]).length,
+   tablas:(html.match(/<tr\b/gi)||[]).length,
+   pareceFormulario:/id="nom2"/.test(html),pareceListado:/dataTables|lista de tribunales/i.test(html),
+  }));
+ } catch(e){console.log('SONDEO_TRIBUNAL '+JSON.stringify({etiqueta,error:String(e.message)}));}
+ await new Promise(ok=>setTimeout(ok,2000));
+}
