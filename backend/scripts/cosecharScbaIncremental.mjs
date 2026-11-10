@@ -22,7 +22,7 @@ try {
  if(!Array.isArray(previo.registros))throw Error('Respaldo SCBA previo inválido');
  for(const r of previo.registros)if(r.id)mapa.set(r.id,r);
 } catch(e){if(e.code!=='ENOENT')throw e;}
-const estado={fecha:new Date().toISOString(),anteriores:mapa.size,consultas:[],unicos:mapa.size,nuevos:0,descartados:{},ejemplosDescartados:[]};
+const estado={fecha:new Date().toISOString(),anteriores:mapa.size,consultas:[],unicos:mapa.size,nuevos:0,descartados:{},ejemplosDescartados:[],advertencias:[]};
 async function guardar(){
  await fs.mkdir(path.dirname(archivo),{recursive:true});
  const temp=archivo+'.tmp';
@@ -43,7 +43,13 @@ for(const q of consultas){
   if(!r){dato.estado='error_fuente';dato.error=String(ultimoError?.message||ultimoError);error=dato.error;break;}
   dato.totalFuente ??= r.totalFuente ?? r.total ?? null;
   if(!Array.isArray(r.resultados)||((dato.totalFuente||0)>0&&!r.resultados.length)) {
-   dato.estado='pagina_sin_fichas';error=q+' no entregó fichas pese a '+dato.totalFuente;break;
+   // No afirmar que el término se agotó: JUBA devolvió una página HTML
+   // sin sumarios parseables, aunque haya resultados. Conservar las páginas
+   // anteriores y continuar con otra consulta independiente.
+   dato.estado='pagina_no_parseable';
+   dato.error='La página '+pagina+' no produjo fichas; fuente informó '+dato.totalFuente;
+   estado.advertencias.push({q,pagina,motivo:'pagina_no_parseable'});
+   break;
   }
   const anterior=mapa.size;
   for(const x of r.resultados){
@@ -65,7 +71,7 @@ for(const q of consultas){
   console.log(JSON.stringify({q,pagina,totalFuente:dato.totalFuente,recibidos:r.resultados.length,nuevos:dato.nuevos,acumulados:mapa.size}));
   if(r.siguienteDesde===null||r.siguienteDesde===undefined){dato.estado='agotado';break;}
   const siguiente=Number(r.siguienteDesde);
-  if(!Number.isSafeInteger(siguiente)||siguiente<=desde){dato.estado='cursor_invalido';error='SCBA no avanza cursor';break;}
+  if(!Number.isSafeInteger(siguiente)||siguiente<=desde){dato.estado='cursor_invalido';estado.advertencias.push({q,pagina,motivo:'cursor_invalido'});break;}
   desde=siguiente;
   await dormir(PAUSA_MS);
  }
