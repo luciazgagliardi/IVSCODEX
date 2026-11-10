@@ -11,7 +11,9 @@ try {
  const selects=[...html.matchAll(/<select\b([^>]*)>([\s\S]*?)<\/select>/gi)].map(m=>({atributos:m[1].slice(0,250),opciones:[...m[2].matchAll(/<option\b([^>]*)>([\s\S]*?)<\/option>/gi)].slice(0,12).map(x=>({valor:/value=["']([^"']*)/.exec(x[1])?.[1],texto:x[2].replace(/<[^>]+>/g,' ').trim().slice(0,80)}))}));
  const inputs=[...html.matchAll(/<input\b([^>]*)>/gi)].map(m=>m[1].slice(0,250)).filter(x=>/name=/i.test(x)).slice(0,50);
  const scripts=[...html.matchAll(/<script\b[^>]*src=["']([^"']+)/gi)].map(m=>m[1]).slice(0,30);
- console.log(JSON.stringify({http:r.status,bytes:html.length,forms,selects,inputs,scripts,hasOfficialLinks:/vertexto\.php\?ide=/i.test(html),hasListas:/Consultar Lista|Listas de Tribunales/i.test(html)},null,2));
+ const extraer=palabra=>{const i=html.indexOf(palabra);return i<0?null:html.slice(Math.max(0,i-200),i+900).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,900);};
+ const pistas={nom2:extraer('id="nom2"'),sd:extraer('id="sd"'),cambioNom2:extraer('function cambio_nom2'),cambioFecha:extraer('function cambio_fecha2'),consultar:extraer('Consultar Lista')};
+ console.log(JSON.stringify({http:r.status,bytes:html.length,forms,selects,inputs,scripts,hasOfficialLinks:/vertexto\.php\?ide=/i.test(html),hasListas:/Consultar Lista|Listas de Tribunales/i.test(html),pistas},null,2));
  if(!r.ok)process.exitCode=2;
 }catch(e){console.error(String(e));process.exitCode=2}
 
