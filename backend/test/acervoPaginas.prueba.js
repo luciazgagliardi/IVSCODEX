@@ -27,7 +27,7 @@ for (let i = 1; i <= 7; i++) registros.push({ id: `saij_m${i}`, fuente: 'saij', 
 registros.push({ id: 'saij_otra', fuente: 'saij', provincia: 'Córdoba', caratula: 'Ajeno c/ Fábrica s/ despido', fecha: '01/01/2019', sumario: 'Un despido de Córdoba.' });
 registros.push({ id: 'mza_dm_1', fuente: 'mendoza', caratula: 'Caso A s/ daños', tribunal: 'SUPREMA CORTE DE JUSTICIA', fecha: '10/02/2023', sumario: 'Corresponde indemnizar el daño moral.' });
 registros.push({ id: 'mza_dm_2', fuente: 'mendoza', caratula: 'Caso B s/ daños', tribunal: 'CAMARA CIVIL Y COMERCIAL', fecha: '11/02/2023', sumario: 'Se indemnizan las consecuencias no patrimoniales.' });
-registros.push({ id: 'saij_dm_3', fuente: 'saij', provincia: 'Mendoza', caratula: 'Caso C s/ daños', tribunal: 'CAMARA CIVIL Y COMERCIAL', fecha: '12/02/2023', sumario: 'El agravio moral debe ser reparado.' });
+registros.push({ id: 'saij_dm_3', fuente: 'saij', provincia: 'Mendoza', caratula: 'Caso C s/ responsabilidad', tribunal: 'CAMARA CIVIL Y COMERCIAL', fecha: '12/02/2023', sumario: 'El agravio moral debe ser reparado.' });
 registros.push({ id: 'saij_dm_4', fuente: 'saij', provincia: 'Córdoba', caratula: 'Caso D s/ daños', tribunal: 'CAMARA CIVIL', fecha: '13/02/2023', sumario: 'Se acreditó un daño extrapatrimonial.' });
 registros.push({ id: 'mza_dp_1', fuente: 'mendoza', caratula: 'Consumo A c/ B', tribunal: 'CAMARA CIVIL Y COMERCIAL', fecha: '14/02/2023', sumario: 'Procede el daño punitivo.' });
 registros.push({ id: 'mza_dp_2', fuente: 'mendoza', caratula: 'Consumo C c/ D', tribunal: 'CAMARA CIVIL Y COMERCIAL', fecha: '15/02/2023', sumario: 'Se aplica multa civil al proveedor.' });
