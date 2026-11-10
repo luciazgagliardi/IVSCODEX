@@ -79,3 +79,21 @@ for (const [etiqueta,nom3,tribunal] of [['civil','03','01.03'],['laboral','04','
  } catch(e){console.log('SONDEO_TRIBUNAL '+JSON.stringify({etiqueta,error:String(e.message)}));}
  await new Promise(ok=>setTimeout(ok,2000));
 }
+
+for(const fecha of ['11/09/2026','09/10/2026']){
+ try{
+  const body=new URLSearchParams({nom2:'1',nom3:'03',nom4:'99',tribunal:'01.03',
+   sd:fecha,ed:fecha,numero:'',caratula:'',iduser:''});
+  const respuesta=await fetch(url+'?consulta=1',{method:'POST',body:body.toString(),
+   headers:{'Content-Type':'application/x-www-form-urlencoded',
+    'User-Agent':'Mozilla/5.0 (compatible; IVS-CODEX; acceso publico judicial)'},
+   signal:AbortSignal.timeout(20000)});
+  const html=await respuesta.text();
+  console.log('FECHA_HISTORICA '+JSON.stringify({fecha,status:respuesta.status,
+   enlaces:(html.match(/vertexto\.php\?ide=\d+/g)||[]).length,
+   htmlChars:html.length,filas:(html.match(/<tr\b/gi)||[]).length,
+   sinDatos:/No hay datos con las opciones/i.test(html),
+   fechaEncontrada:html.includes(fecha)}));
+ }catch(e){console.log('FECHA_HISTORICA '+JSON.stringify({fecha,error:String(e.message)}))}
+ await new Promise(ok=>setTimeout(ok,2000));
+}
