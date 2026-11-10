@@ -48,3 +48,9 @@ try {
  const cod=raw.indexOf('var codori=');
  console.log('ARBOL_TRIBUNALES '+JSON.stringify({menuPrimer:men>=0?raw.slice(Math.max(0,men-120),men+1300):'',codOriginal:cod>=0?raw.slice(cod,cod+300):''}));
 }catch(e){console.log('ARBOL_TRIBUNALES '+String(e.message))}
+
+try {
+ const raw=await (await fetch(url,{signal:AbortSignal.timeout(15000)})).text();
+ const ver=t=>{const i=raw.indexOf(t);return i<0?'':raw.slice(i,i+1300)};
+ console.log('CODIGOS_CAMARAS '+JSON.stringify({civil:ver('menu_0103'),laboral:ver('menu_0104'),cambioTribunal:ver('function cambio_nom4'),personal:ver('function cambio_personal')}).slice(0,4900));
+}catch(e){console.log('CODIGOS_ERROR '+String(e.message))}
