@@ -1,0 +1,26 @@
+name: Verificar FTS sin snapshot en Azure
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/lib/acervo.js'
+      - 'backend/test/acervoSinSnapshot.prueba.js'
+      - '.github/workflows/verificar-fts-sin-snapshot.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Probar lectura FTS íntegra y paginación sin copia rápida
+        working-directory: backend
+        run: node --test test/acervoSinSnapshot.prueba.js test/acervoPaginas.prueba.js
+      - name: Verificar sintaxis
+        working-directory: backend
+        run: node --check lib/acervo.js
