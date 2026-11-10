@@ -1,0 +1,24 @@
+name: Regresión de importación SQLite concurrente
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/lib/acervo.js'
+      - 'backend/lib/acervoArchivos.js'
+      - 'backend/test/acervoImportacionConcurrente.prueba.js'
+      - '.github/workflows/acervo-importacion-concurrente.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  probar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Probar dos importaciones SQLite FTS simultáneas
+        working-directory: backend
+        run: node --test test/acervoImportacionConcurrente.prueba.js
