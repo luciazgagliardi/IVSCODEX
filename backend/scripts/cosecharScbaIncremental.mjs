@@ -47,7 +47,7 @@ for(const q of consultas){
   }
   const anterior=mapa.size;
   for(const x of r.resultados){
-   if(!x?.id || !x.linkFicha || !/^https:\/\//.test(x.linkFicha)){
+   if(!x?.id || !/^scba_[A-Z]\d{6,8}$/.test(x.id) || !/^https:\/\/juba\.scba\.gov\.ar\/VerTextoCompleto\.aspx\?idFallo=\d+$/i.test(x.linkFallo||'')){
     dato.estado='ficha_sin_enlace';error=q+' ficha sin ID o enlace oficial';break;
    }
    const antiguo=mapa.get(x.id);
