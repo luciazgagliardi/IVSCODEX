@@ -1,0 +1,167 @@
+{
+  "fecha": "2026-11-10T04:14:59.092Z",
+  "anteriores": 7148,
+  "consultas": [
+    {
+      "q": "daño moral",
+      "totalFuente": 2744,
+      "paginas": 15,
+      "recibidos": 289,
+      "nuevos": 156,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "daño punitivo",
+      "totalFuente": 162,
+      "paginas": 6,
+      "recibidos": 109,
+      "nuevos": 4,
+      "estado": "pagina_no_parseable",
+      "error": "La página 7 no produjo fichas; fuente informó 162"
+    },
+    {
+      "q": "responsabilidad civil",
+      "totalFuente": 4098,
+      "paginas": 15,
+      "recibidos": 284,
+      "nuevos": 105,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "accidente de tránsito",
+      "totalFuente": 585,
+      "paginas": 15,
+      "recibidos": 253,
+      "nuevos": 64,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "despido",
+      "totalFuente": 1187,
+      "paginas": 4,
+      "recibidos": 53,
+      "nuevos": 21,
+      "estado": "pagina_no_parseable",
+      "error": "La página 5 no produjo fichas; fuente informó 1187"
+    },
+    {
+      "q": "alimentos",
+      "totalFuente": 1876,
+      "paginas": 15,
+      "recibidos": 295,
+      "nuevos": 66,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "amparo",
+      "totalFuente": 3034,
+      "paginas": 15,
+      "recibidos": 291,
+      "nuevos": 115,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "contrato",
+      "totalFuente": 10657,
+      "paginas": 15,
+      "recibidos": 293,
+      "nuevos": 103,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "consumidor",
+      "totalFuente": 1426,
+      "paginas": 15,
+      "recibidos": 300,
+      "nuevos": 92,
+      "estado": "limite_de_paginas"
+    },
+    {
+      "q": "intereses",
+      "totalFuente": 7613,
+      "paginas": 15,
+      "recibidos": 295,
+      "nuevos": 132,
+      "estado": "limite_de_paginas"
+    }
+  ],
+  "unicos": 8006,
+  "nuevos": 858,
+  "descartados": {
+    "sin_enlace_oficial": 828
+  },
+  "ejemplosDescartados": [
+    {
+      "id": "scba_B862559",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5092882",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5092881",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5092234",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B2005871",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B2005862",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B2005844",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5089111",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5089109",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5089107",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5088882",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B862359",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5086114",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5086497",
+      "motivo": "sin_enlace_oficial"
+    },
+    {
+      "id": "scba_B5085692",
+      "motivo": "sin_enlace_oficial"
+    }
+  ],
+  "advertencias": [
+    {
+      "q": "daño punitivo",
+      "pagina": 7,
+      "motivo": "pagina_no_parseable"
+    },
+    {
+      "q": "despido",
+      "pagina": 5,
+      "motivo": "pagina_no_parseable"
+    }
+  ]
+}
