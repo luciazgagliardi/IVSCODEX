@@ -51,7 +51,8 @@ for(const q of consultas){
     dato.estado='ficha_sin_enlace';error=q+' ficha sin ID o enlace oficial';break;
    }
    const antiguo=mapa.get(x.id);
-   mapa.set(x.id,antiguo?{...antiguo,...Object.fromEntries(Object.entries(x).filter(([,v])=>v!==null&&v!==undefined&&v!==''))}:{...x});
+   const ficha={...x,fuente:'scba',procedencia:'JUBA/SCBA - fallo oficial'};
+   mapa.set(x.id,antiguo?{...antiguo,...Object.fromEntries(Object.entries(ficha).filter(([,v])=>v!==null&&v!==undefined&&v!==''))}:ficha);
   }
   if(error)break;
   dato.paginas++;dato.recibidos+=r.resultados.length;dato.nuevos+=mapa.size-anterior;
