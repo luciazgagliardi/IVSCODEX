@@ -22,6 +22,7 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
+import { rutaTemporalImportacion, rutaCopiaLectura, rutaCopiaTemporal } from './acervoArchivos.js';
 import zlib from 'node:zlib';
 import readline from 'node:readline';
 import { Worker } from 'node:worker_threads';
@@ -85,7 +86,9 @@ export async function prepararAcervo({ esperar = false } = {}) {
 async function importar(man) {
   estado.importando = true;
   const t0 = Date.now();
-  const nueva = path.join(DIR_BASE, `acervo-${man.version}.db.tmp`);
+  // El nombre anterior era el mismo en todos los procesos de Azure: un segundo
+  // arranque podía borrar el SQLite temporal de otro antes de su rename.
+  const nueva = rutaTemporalImportacion(DIR_BASE, man.version);
   for (const f of [nueva, `${nueva}-wal`, `${nueva}-shm`]) await fsp.rm(f, { force: true });
   // en un hilo aparte (lib/acervoImportar.js): mientras tanto contesta la base anterior
   const { conteos } = await new Promise((ok, mal) => {
@@ -94,6 +97,16 @@ async function importar(man) {
     w.once('error', mal);
     w.once('exit', (c) => { if (c) mal(new Error(`el armado terminó con código ${c}`)); });
   });
+  // Nunca cerrar la base vigente si el hilo no entregó un SQLite real.
+  const info = await fsp.stat(nueva);
+  if (!info.isFile() || info.size < 4096) throw new Error('SQLite temporal ausente o incompleto');
+  // Si durante la importación cambió el manifiesto del despliegue, no
+  // sustituir la base actual por una versión ya obsoleta.
+  if (leerManifiesto()?.version !== man.version) {
+    await fsp.rm(nueva, { force: true });
+    estado.importando = false;
+    return;
+  }
   // en lugar de la anterior
   const actual = path.join(DIR_BASE, 'acervo.db');
   if (db) { try { db.close(); } catch { /* ya cerrada */ } db = null; }
@@ -289,20 +302,24 @@ async function copiarParaLeer() {
   if (!COPIA_PARA_LEER || copiando || !db || !sqlite?.backup) return;
   copiando = true;
   const dir = path.join(os.tmpdir(), 'ivs-acervo');
-  const destino = path.join(dir, `acervo-${estado.version}.db`);
+  const destino = rutaCopiaLectura(dir, estado.version);
+  const temporal = rutaCopiaTemporal(dir, estado.version);
   try {
     await fsp.mkdir(dir, { recursive: true });
-    for (const viejo of await fsp.readdir(dir)) if (!viejo.startsWith(path.basename(destino))) await fsp.rm(path.join(dir, viejo), { force: true });
-    await fsp.rm(destino, { force: true });
+    // No borrar archivos de otros procesos: cada réplica comparte /tmp en el
+    // mismo host. El barrido anterior podía eliminar una copia aún en uso.
     const t0 = Date.now();
-    await sqlite.backup(db, `${destino}.tmp`, { rate: 2000 });
-    await fsp.rename(`${destino}.tmp`, destino);
+    await sqlite.backup(db, temporal, { rate: 2000 });
+    await fsp.rename(temporal, destino);
     archivoLectura = destino;
     console.log(`[acervo] copia de lectura en el disco local (${Math.round((Date.now() - t0) / 1000)} s)`);
   } catch (e) {
     estado.errorCopia = e.message;
     console.warn('[acervo] copia de lectura:', e.message);
-  } finally { copiando = false; }
+  } finally {
+    await fsp.rm(temporal, { force: true }).catch(() => {});
+    copiando = false;
+  }
 }
 
 /*
