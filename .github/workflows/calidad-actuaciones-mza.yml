@@ -1,0 +1,23 @@
+name: Calidad de actuaciones Mendoza
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/lib/clasificarActuacionMza.js'
+      - 'backend/test/clasificarActuacionMza.prueba.js'
+      - '.github/workflows/calidad-actuaciones-mza.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  calidad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Distinguir sentencias de notificaciones y vistas
+        working-directory: backend
+        run: node --test test/clasificarActuacionMza.prueba.js
