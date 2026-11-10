@@ -5,6 +5,8 @@ on:
     paths:
       - 'backend/scripts/cosecharScbaIncremental.mjs'
       - 'backend/test/cosechaScba.prueba.js'
+      - 'backend/test/scbaPaginacion.prueba.js'
+      - 'backend/lib/indiceScba.js'
       - '.github/workflows/cosechar-scba.yml'
   workflow_dispatch: {}
 permissions:
@@ -38,7 +40,7 @@ jobs:
         run: node scripts/cosecharScbaIncremental.mjs
       - name: Validar documentos y procedencia
         working-directory: backend
-        run: node --test test/cosechaScba.prueba.js
+        run: node --test test/cosechaScba.prueba.js test/scbaPaginacion.prueba.js
       - name: Reconstruir acervo y medir crecimiento sin pérdidas
         working-directory: backend
         env:
