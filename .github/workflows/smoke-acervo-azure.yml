@@ -1,0 +1,28 @@
+name: Verificar búsqueda real tras publicar Azure
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'ops/smoke-acervo-azure.mjs'
+      - '.github/workflows/smoke-acervo-azure.yml'
+  workflow_dispatch: {}
+  workflow_run:
+    workflows: ['Publicar backend en Azure App Service']
+    types: [completed]
+permissions:
+  contents: read
+concurrency:
+  group: smoke-acervo-azure
+  cancel-in-progress: true
+jobs:
+  smoke:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validar versión y corpus FTS en el servidor publicado
+        run: node ops/smoke-acervo-azure.mjs
