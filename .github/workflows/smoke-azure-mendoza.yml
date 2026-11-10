@@ -1,0 +1,24 @@
+name: Smoke test Azure acervo Mendoza
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/verificarAzureMendoza.mjs'
+      - '.github/workflows/smoke-azure-mendoza.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Comprobar SQLite Azure y fallos de Mendoza
+        run: node backend/scripts/verificarAzureMendoza.mjs
