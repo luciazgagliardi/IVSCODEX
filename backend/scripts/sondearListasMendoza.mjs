@@ -32,3 +32,12 @@ for(const fecha of ['09/11/2026','09-11-2026']){
  await new Promise(ok=>setTimeout(ok,1500));
 }
 console.log('PRUEBAS_FECHA '+JSON.stringify(muestras));
+
+
+try {
+ const raw=await (await fetch(url,{signal:AbortSignal.timeout(15000)})).text();
+ const cerca=palabra=>{const i=raw.indexOf(palabra);return i<0?null:raw.slice(Math.max(0,i-150),i+1400)};
+ const menus=[...raw.matchAll(/(?:var\s+)?(menu_[a-zA-Z0-9_]+)\s*=\s*(\[[^;]{0,1800}\])/g)]
+  .slice(0,12).map(m=>({nombre:m[1],valores:m[2].slice(0,260)}));
+ console.log('FORMULARIO_JS '+JSON.stringify({inicio:cerca('function inicializar()'),codigos:cerca('cod_1='),menus},null,2));
+}catch(e){console.log('FORMULARIO_JS_ERROR '+String(e.message))}
