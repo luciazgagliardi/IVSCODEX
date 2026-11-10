@@ -20,7 +20,7 @@ const MAX_PAGINAS=Math.min(80,Math.max(1,Number(process.env.MAX_PAGINAS||12)));
 const PAUSA_MS=Math.max(1100,Number(process.env.PAUSA_MS||1750));
 const consultas=(process.env.CONSULTAS||'daños,sentencia,contrato,consumidor,penal,familia,alimentos,laboral,despido,recurso,administrativo,amparo').split(',').map(q=>q.trim()).filter(Boolean);
 const dormir=ms=>new Promise(r=>setTimeout(r,ms));
-const resultado={fecha:new Date().toISOString(),consultas:[],anteriores:0,unicos:0,nuevos:0,errores:[],limitePaginas:MAX_PAGINAS};
+const resultado={fecha:new Date().toISOString(),consultas:[],anteriores:0,unicos:0,nuevos:0,errores:[],descartados:{},ejemplosDescartados:[],limitePaginas:MAX_PAGINAS};
 const mapa=new Map();
 try {
  const previo=JSON.parse(zlib.gunzipSync(await fs.readFile(archivo)).toString('utf8'));
@@ -67,8 +67,16 @@ for(const q of consultas) {
   }
   const anterior=mapa.size;
   for(const x of fichas){
-   if(!x?.id||!/^juristeca_\d+$/.test(x.id)||!/^https:\/\/juristeca\.jusbaires\.gob\.ar\/fallos\/[^?#]+\.pdf$/i.test(x.linkFallo||'')){
-    t.estado='ficha_invalida';t.error='ID o PDF oficial no validable';fatal=true;break;
+   const motivo=!x?.id||!/^juristeca_\d+$/.test(x.id)?'id_invalido'
+    :!/^https:\/\/juristeca\.jusbaires\.gob\.ar\/fallos\/[^?#]+\.pdf$/i.test(x.linkFallo||'')?'pdf_no_verificable'
+    :!x.caratula||x.caratula==='(sin carátula)'?'sin_caratula'
+    :!x.tribunal||x.tribunal.length<5?'sin_tribunal'
+    :!/(?:19|20)\d{2}/.test(x.fecha||'')?'sin_fecha'
+    :null;
+   if(motivo){
+    resultado.descartados[motivo]=(resultado.descartados[motivo]||0)+1;
+    if(resultado.ejemplosDescartados.length<20)resultado.ejemplosDescartados.push({id:x?.id,motivo});
+    continue;
    }
    // Mantener el mejor metadato si alguna consulta devolvió campos adicionales.
    const previo=mapa.get(x.id);
