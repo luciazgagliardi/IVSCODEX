@@ -33,3 +33,13 @@ async function buscar(q,tribunal,id){
 await buscar('BARRIONUEVO','CT','mza_oficial_11855004335');
 await buscar('BALDONI','CC','mza_oficial_12065977405');
 console.log('Smoke test Azure COMPLETO: versión, SQLite y dos sentencias recuperables');
+
+for (const q of ['daño moral','daño punitivo']) {
+  for (const tribunal of ['', 'SC','CC','CT']) {
+    try {
+      const r=await fetch(api+'/indice/mendoza/local',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q,tribunal,modo:'todas'}),signal:AbortSignal.timeout(40000)});
+      const d=await r.json();
+      console.log('REGRESION '+JSON.stringify({q,tribunal:tribunal||'sin filtro',http:r.status,ok:d.ok,total:d.total,error:d.mensaje||d.error,ejemplos:d.resultados?.slice(0,3).map(x=>({id:x.id,tribunal:x.tribunal}))}));
+    }catch(e){console.log('REGRESION '+JSON.stringify({q,tribunal,error:String(e)}))}
+  }
+}
