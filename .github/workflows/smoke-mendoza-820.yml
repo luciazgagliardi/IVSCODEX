@@ -1,0 +1,21 @@
+name: Verificar Azure y fallos nuevos Mendoza
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/comprobarAcervo820.mjs'
+      - '.github/workflows/smoke-mendoza-820.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validar Azure, los 820 fallos y la búsqueda de daños
+        run: node backend/scripts/comprobarAcervo820.mjs
