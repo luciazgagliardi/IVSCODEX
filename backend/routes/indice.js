@@ -228,8 +228,9 @@ function sondear(slug, buscarVivo) {
     .catch(() => sinAcceso.set(slug, Date.now() + SIN_ACCESO_MS));
 }
 /** Una página de la copia local, con la forma de la respuesta en vivo. null si la copia no tiene esa base. */
-async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, desde = 0, porPagina = 20 }, { respaldo = true } = {}) {
+async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes = [], desde = 0, porPagina = 20 }, { respaldo = true } = {}) {
   const o = { modo: MODOS.has(modo) ? modo : 'todas', excluir: typeof excluir === 'string' ? excluir.slice(0, 200) : '',
+    variantes: slug === 'mendoza' && Array.isArray(variantes) ? variantes : [],
     ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}), ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}) };
   // a pedido de la pantalla (vista previa) se espera poco; cuando el sitio no contestó, la copia es la respuesta y se la espera más
   let p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
@@ -277,7 +278,7 @@ for (const { slug, buscar } of FUENTES) {
 
       const arranque = Date.now();
       const desdeN = Number.isFinite(Number(desde)) && Number(desde) >= 0 ? Number(desde) : 0;
-      const pedidoLocal = { modo, excluir, anioDesde, anioHasta, provincia, tribunal, desde: desdeN };
+      const pedidoLocal = { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes, desde: desdeN };
 
       // Mendoza: el sitio externo respondió contadores positivos sin fichas y
       // luego HTTP 403. Si nuestra copia tiene resultados, dar prioridad a

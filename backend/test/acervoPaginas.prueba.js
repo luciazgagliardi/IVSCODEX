@@ -25,6 +25,12 @@ const registros = [];
 for (let i = 1; i <= 45; i++) registros.push({ id: `mza_${i}`, fuente: 'mendoza', caratula: `Actor ${i} c/ Empresa s/ despido`, tribunal: i % 3 ? 'SUPREMA CORTE DE JUSTICIA' : 'CAMARA DEL TRABAJO', fecha: `10/03/${2000 + (i % 25)} - Sentencia`, sumario: `El despido sin causa número ${i} obliga a indemnizar.` });
 for (let i = 1; i <= 7; i++) registros.push({ id: `saij_m${i}`, fuente: 'saij', provincia: 'Mendoza', caratula: `Otro ${i} c/ Bodega s/ despido`, fecha: `01/01/2019`, sumario: `Sumario de despido ${i} en Mendoza.` });
 registros.push({ id: 'saij_otra', fuente: 'saij', provincia: 'Córdoba', caratula: 'Ajeno c/ Fábrica s/ despido', fecha: '01/01/2019', sumario: 'Un despido de Córdoba.' });
+registros.push({ id: 'mza_dm_1', fuente: 'mendoza', caratula: 'Caso A s/ daños', tribunal: 'SUPREMA CORTE DE JUSTICIA', fecha: '10/02/2023', sumario: 'Corresponde indemnizar el daño moral.' });
+registros.push({ id: 'mza_dm_2', fuente: 'mendoza', caratula: 'Caso B s/ daños', tribunal: 'CAMARA CIVIL Y COMERCIAL', fecha: '11/02/2023', sumario: 'Se indemnizan las consecuencias no patrimoniales.' });
+registros.push({ id: 'saij_dm_3', fuente: 'saij', provincia: 'Mendoza', caratula: 'Caso C s/ responsabilidad', tribunal: 'CAMARA CIVIL Y COMERCIAL', fecha: '12/02/2023', sumario: 'El agravio moral debe ser reparado.' });
+registros.push({ id: 'saij_dm_4', fuente: 'saij', provincia: 'Córdoba', caratula: 'Caso D s/ daños', tribunal: 'CAMARA CIVIL', fecha: '13/02/2023', sumario: 'Se acreditó un daño extrapatrimonial.' });
+registros.push({ id: 'mza_dp_1', fuente: 'mendoza', caratula: 'Consumo A c/ B', tribunal: 'CAMARA CIVIL Y COMERCIAL', fecha: '14/02/2023', sumario: 'Procede el daño punitivo.' });
+registros.push({ id: 'mza_dp_2', fuente: 'mendoza', caratula: 'Consumo C c/ D', tribunal: 'CAMARA CIVIL Y COMERCIAL', fecha: '15/02/2023', sumario: 'Se aplica multa civil al proveedor.' });
 // la misma ficha dos veces, con otro id: cuenta una sola vez
 registros.push({ id: 'mza_dup', fuente: 'mendoza', caratula: 'Actor 1 c/ Empresa s/ despido', tribunal: 'SUPREMA CORTE DE JUSTICIA', fecha: '10/03/2001 - Sentencia', sumario: 'El despido sin causa número 1 obliga a indemnizar.' });
 fs.writeFileSync(path.join(process.env.DIR_ACERVO_DATOS, 'todo-001.jsonl.gz'), zlib.gzipSync(registros.map((r) => JSON.stringify(r)).join('\n')));
@@ -70,6 +76,34 @@ test('años y tribunal', async () => {
   assert.ok(ct.resultados.every((r) => /TRABAJO/i.test(r.tribunal || '')));
   const cc = await buscarPagina('mendoza', 'despido', { tribunal: 'CC', porPagina: 100 });
   assert.equal(cc.total, 0, 'ninguna ficha de este corpus de prueba identifica un tribunal civil');
+});
+
+test('las variantes del tesauro amplían Mendoza sin perder orden ni total estable', async () => {
+  const variantes = ['daño extrapatrimonial', 'consecuencias no patrimoniales', 'agravio moral', 'daño inmaterial'];
+  const base = await buscarPagina('mendoza', 'daño moral', { porPagina: 10 });
+  assert.equal(base.total, 1, 'sólo la expresión principal');
+  const ampliada = await buscarPagina('mendoza', 'daño moral', { variantes, porPagina: 10 });
+  assert.equal(ampliada.total, 3, 'dos fallos mendocinos adicionales por sinónimos');
+  assert.deepEqual(new Set(ampliada.resultados.map((r) => r.id)), new Set(['mza_dm_1','mza_dm_2','saij_dm_3']));
+  const civil = await buscarPagina('mendoza', 'daño moral', { variantes, tribunal: 'CC' });
+  assert.equal(civil.total, 2);
+  const otras = await buscarPagina('mendoza', 'daño moral', { variantes, porPagina: 1 });
+  const paginas = [otras.resultados[0].id];
+  let desde = otras.siguienteDesde;
+  while (desde !== null) {
+    const p = await buscarPagina('mendoza', 'daño moral', { variantes, porPagina: 1, desde });
+    paginas.push(...p.resultados.map((r) => r.id));
+    desde = p.siguienteDesde;
+  }
+  assert.equal(new Set(paginas).size, 3, 'paginación sin duplicados');
+  assert.equal(paginas.length, ampliada.total);
+});
+
+test('daño punitivo recupera multa civil si está activada como variante', async () => {
+  assert.equal((await buscarPagina('mendoza', 'daño punitivo')).total, 1);
+  const p = await buscarPagina('mendoza', 'daño punitivo', { variantes: ['multa civil'] });
+  assert.equal(p.total, 2);
+  assert.ok(p.resultados.some((r) => r.id === 'mza_dp_2'));
 });
 
 test('lo que trae el sitio en vivo se suma a la copia, sin repetir', async () => {
