@@ -10,7 +10,7 @@ async function estado(){
  return r.json();
 }
 let listo=false,ultima=null;
-for(let i=0;i<12;i++){
+for(let i=0;i<50;i++){
  try{
   ultima=await estado();
   console.log('ESTADO '+JSON.stringify({intento:i+1,version:ultima.version,activo:ultima.activo,mendoza:ultima.conteos?.mendoza,juristeca:ultima.conteos?.juristeca,importando:ultima.importando}));
