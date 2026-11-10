@@ -14,5 +14,8 @@ test('Mendoza ofrece todos los tribunales y los selecciona por defecto',()=>{
 test('las búsquedas normales priorizan la copia de Mendoza sin falsear un cero oficial',()=>{
   assert.match(rutas,/slug === 'mendoza' && acervoCubre\(slug\)/);
   assert.match(rutas,/if \(loc && loc\.resultados\.length\)/);
-  assert.match(rutas,/resultados verificados en el acervo local/i);
+  assert.match(rutas,/resultados verificados en el acervo completo/i);
+  assert.match(rutas,/totalParcial:\s*respaldoParcial/);
+  assert.match(rutas,/origenAcervo:\s*respaldoParcial\s*\?\s*'indice_parcial'\s*:\s*'sqlite_fts'/);
+  assert.match(rutas,/Resultados parciales de búsquedas guardadas/);
 });
