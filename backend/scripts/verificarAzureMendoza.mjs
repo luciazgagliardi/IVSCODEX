@@ -1,0 +1,35 @@
+/**
+ * Smoke test público de lectura: no modifica el servidor.
+ * Confirma que Azure importó la nueva versión SQLite y que el motor FTS
+ * devuelve resoluciones de Cámara del Trabajo y Cámara Civil.
+ */
+const api='https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api';
+const version='20261109-c2ad437b';
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+async function estado(){
+ const r=await fetch(api+'/acervo/estado',{signal:AbortSignal.timeout(15000)});
+ if(!r.ok) throw Error('GET /acervo/estado: HTTP '+r.status);
+ return r.json();
+}
+let ultimo;
+for(let i=0;i<24;i++){
+ try{
+   ultimo=await estado();
+   console.log(JSON.stringify({intento:i+1,version:ultimo.version,activo:ultimo.activo,importando:ultimo.importando,mendoza:ultimo.conteos?.mendoza,error:ultimo.error}));
+   if(ultimo.version===version && ultimo.activo && ultimo.conteos?.mendoza>=726) break;
+ }catch(e){console.log('Estado no disponible: '+e.message);}
+ if(i===23)throw Error('Azure no importó la versión '+version+'; último estado '+JSON.stringify(ultimo));
+ await delay(5000);
+}
+async function buscar(q,tribunal,id){
+ const r=await fetch(api+'/indice/mendoza/local',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q,tribunal,porPagina:30,modo:'todas'}),signal:AbortSignal.timeout(35000)});
+ if(!r.ok)throw Error('POST local '+q+' '+tribunal+': HTTP '+r.status+' '+(await r.text()).slice(0,350));
+ const d=await r.json();
+ const lista=Array.isArray(d.resultados)?d.resultados:(d.datos?.resultados || []);
+ const encontrado=lista.some(x=>x.id===id);
+ console.log(JSON.stringify({q,tribunal,http:r.status,total:d.total,resultados:lista.length,idBuscado:id,encontrado,ejemplos:lista.slice(0,5).map(x=>x.id)}));
+ if(!encontrado)throw Error('No aparece '+id+' en la primera página de la búsqueda local: '+q+' ('+tribunal+')');
+}
+await buscar('BARRIONUEVO','CT','mza_oficial_11855004335');
+await buscar('BALDONI','CC','mza_oficial_12065977405');
+console.log('Smoke test Azure COMPLETO: versión, SQLite y dos sentencias recuperables');
