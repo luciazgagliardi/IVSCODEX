@@ -61,3 +61,25 @@ for(const q of ['daño moral','daño punitivo']){
     if(normal.total < 8)throw Error('Daño punitivo no recupera cobertura local');
   }
 }
+
+const equivalentes={
+ 'daño moral':['daño extrapatrimonial','consecuencias no patrimoniales','agravio moral','daño inmaterial'],
+ 'daño punitivo':['multa civil','sanción pecuniaria disuasiva'],
+};
+for(const [q,variantes] of Object.entries(equivalentes)){
+ const pedir=async ruta=>{
+  const r=await fetch(api+'/indice/mendoza/'+ruta,{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({q,tribunal:'',modo:'todas',variantes}),
+   signal:AbortSignal.timeout(40000),
+  });
+  const j=await r.json();
+  if(!r.ok||!j.ok)throw Error('No hubo respuesta '+ruta+' '+q+' HTTP '+r.status);
+  return {total:j.total,ejemplos:j.resultados?.slice(0,5).map(x=>x.id)};
+ };
+ const [local,normal]=await Promise.all([pedir('local'),pedir('buscar')]);
+ console.log('TESAURO_DESPLEGADO '+JSON.stringify({q,variantes,local,normal}));
+ if(local.total!==normal.total)throw Error('Los endpoints dan conteos distintos para '+q);
+ const minimo=q==='daño moral'?376:17;
+ if(normal.total<minimo)throw Error('La versión desplegada no recupera los equivalentes de '+q+' (mínimo '+minimo+')');
+}
