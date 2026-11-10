@@ -1,0 +1,33 @@
+name: Medir recuperacion jurisprudencial Mendoza
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/lib/acervoConsulta.js'
+      - 'backend/scripts/compararCoberturaMendoza.mjs'
+      - '.github/workflows/medir-cobertura-mendoza.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  medir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Comparar dano moral y punitivo con corpus publicado
+        working-directory: backend
+        run: node scripts/compararCoberturaMendoza.mjs
+      - name: Guardar matriz de comparacion
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: matriz-cobertura-mendoza
+          path: backend/reporte-cobertura-mendoza.json
