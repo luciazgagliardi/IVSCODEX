@@ -15,7 +15,7 @@ const man=JSON.parse(fs.readFileSync(path.join(base,'manifiesto.json'),'utf8'));
 const db=new DatabaseSync(':memory:');
 db.exec(ESQUEMA);
 const ins=db.prepare('INSERT OR IGNORE INTO fallos(id,fuente,corte,provincia,caratula,tribunal,fecha,anio,expediente,sumario,voces,magistrados,materia,linkFicha,linkFallo,tipo,marca) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)');
-let total=0;
+let total=0;const porFuente={mendoza:0,saijMendoza:0};
 db.exec('BEGIN');
 for(const a of man.archivos.filter(x=>/^(mendoza|saij)-\d+\.jsonl\.gz$/.test(x))){
  const stream=readline.createInterface({input:fs.createReadStream(path.join(base,a)).pipe(zlib.createGunzip()),crlfDelay:Infinity});
@@ -27,6 +27,7 @@ for(const a of man.archivos.filter(x=>/^(mendoza|saij)-\d+\.jsonl\.gz$/.test(x))
     r.expediente||null,r.sumario||null,Array.isArray(r.voces)?r.voces.join(' · '):(r.voces||null),r.magistrados||null,r.materia||null,
     r.linkFicha||null,r.linkFallo||null,r.tipo||null,'zf'+r.fuente+(r.corte?' zfcsjn':''));
   total++;
+  if(r.fuente==='mendoza')porFuente.mendoza++;else porFuente.saijMendoza++;
  }
 }
 db.exec('COMMIT');
@@ -42,7 +43,7 @@ const pruebas=[
  medir('daño moral',['daño extrapatrimonial','consecuencias no patrimoniales','agravio moral','daño inmaterial']),
  medir('daño punitivo',['multa civil','sanción pecuniaria disuasiva']),
 ];
-const informe={version:man.version,registrosRevisados:total,pruebas};
+const informe={version:man.version,registrosRevisados:total,porFuente,pruebas};
 console.log(JSON.stringify(informe,null,2));
 fs.writeFileSync('reporte-cobertura-mendoza.json',JSON.stringify(informe,null,2));
 db.close();
