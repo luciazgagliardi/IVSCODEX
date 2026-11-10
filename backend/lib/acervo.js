@@ -302,6 +302,9 @@ const MAX_EN_COLA = 64;
 const COPIA_PARA_LEER = process.env.ACERVO_COPIA_LOCAL === '1' || Boolean(process.env.WEBSITE_SITE_NAME);
 let archivoLectura = null, copiando = false, generacion = 0;
 async function copiarParaLeer() {
+  // Diagnóstico/contingencia: permite servir FTS completo desde /home si
+  // /tmp no tiene espacio o la copia tarda demasiado. También lo prueba CI.
+  if (process.env.ACERVO_SIN_SNAPSHOT === '1') return;
   if (!COPIA_PARA_LEER || copiando || !db || !sqlite?.backup) return;
   copiando = true;
   const dir = path.join(os.tmpdir(), 'ivs-acervo');
