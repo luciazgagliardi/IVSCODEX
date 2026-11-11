@@ -20,7 +20,10 @@ async function consultar(url, p) {
         });
       muestra={totalFilasConVertex:filaDatos.length,coincidenciasSentencia:filaDatos.filter(x=>/sentencia/i.test(x.clase||'')).length,
         codigos:[...new Set(filaDatos.map(x=>x.codigo))].slice(0,14),
-        muestras:filaDatos.filter(x=>/sentencia/i.test(x.clase||'')).slice(0,5)};
+        muestras:filaDatos.filter(x=>/sentencia/i.test(x.clase||'')).slice(0,5),
+        selects:[...doc.window.document.querySelectorAll('select')].slice(0,8).map(sel=>({
+          id:sel.id,name:sel.name,opciones:[...sel.options].slice(0,18).map(o=>({v:o.value,t:o.text.trim().slice(0,65)}))
+        }))};
       doc.window.close();
     }
     return {http:res.status,bytes:txt.length,tieneSeparadorSQL:txt.includes('@@'),
@@ -53,3 +56,10 @@ for(const d of ['18/11/2025','10/11/2026']){
   }
 }
 console.log('PORTAL '+JSON.stringify(await consultar('https://wwwjuri.jus.mendoza.gov.ar/jurisprudencia/consultar/index.php')));
+
+console.log('FORMULARIO_LISTAS '+JSON.stringify(await consultar('https://www2.jus.mendoza.gov.ar/listas/proveidos/listas.php')));
+for (const [nom4, tribunal] of [['01','01.04'],['1','01.04'],['1CT1','1CT1'],['1CT1','01.04'],['99','1CT1']]) {
+  const p=new URLSearchParams({nom2:'1',nom3:'04',nom4,tribunal,sd:'18/11/2025',ed:'18/11/2025',numero:'',caratula:'',iduser:''});
+  console.log('DIVISION_CT '+JSON.stringify({nom4,tribunal,...await consultar('https://www2.jus.mendoza.gov.ar/listas/proveidos/listas.php?consulta=1',p)}));
+  await pausa(800);
+}
