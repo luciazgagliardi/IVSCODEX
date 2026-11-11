@@ -5,7 +5,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{}]": {
@@ -21,7 +21,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{}]": {
@@ -37,7 +37,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"teoría de la imprevisión\",{}]": {
@@ -53,7 +53,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"mora automática\",{}]": {
@@ -69,7 +69,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses moratorios\",{}]": {
@@ -85,7 +85,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"tasa activa\",{}]": {
@@ -101,7 +101,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"resolución contractual\",{}]": {
@@ -117,7 +117,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"seña\",{}]": {
@@ -133,7 +133,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"boleto de compraventa\",{}]": {
@@ -149,7 +149,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"locación de inmueble\",{}]": {
@@ -165,7 +165,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"desalojo falta de pago\",{}]": {
@@ -181,7 +181,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"obligación de valor\",{}]": {
@@ -383,7 +383,295 @@
       "paginas": 0,
       "errores": 1,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"servidumbre de paso\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"medianería\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"posesión y tenencia\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"desalojo por intrusión\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"boleto y oponibilidad\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"conjunto inmobiliario\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"tiempo compartido\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"compensación económica\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cuidado personal compartido\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"régimen de comunicación\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cuota alimentaria\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"alimentos provisorios\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"atribución del hogar\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"liquidación de la comunidad\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"unión convivencial\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"filiación por trha\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"adopción plena\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"impedimento de contacto\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"violencia familiar medidas\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"interés superior del niño\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"autonomía progresiva\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"declaratoria de herederos\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"colación\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"legítima hereditaria\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"acción de reducción\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"partición de herencia\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"testamento ológrafo\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"indignidad\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cesión de derechos hereditarios\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"administrador de la sucesión\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"sucesión ab intestato\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"relación de consumo\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"trato digno\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"deber de información\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cláusulas abusivas\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"publicidad engañosa\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     }
   },
-  "indiceTerminos": 36
+  "indiceTerminos": 72
 }
