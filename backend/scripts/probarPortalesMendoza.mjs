@@ -63,3 +63,21 @@ for (const [nom4, tribunal] of [['01','01.04'],['1','01.04'],['1CT1','1CT1'],['1
   console.log('DIVISION_CT '+JSON.stringify({nom4,tribunal,...await consultar('https://www2.jus.mendoza.gov.ar/listas/proveidos/listas.php?consulta=1',p)}));
   await pausa(800);
 }
+
+const buscador='https://wwwjuri.jus.mendoza.gov.ar/bib/jurisprudencia/funciones/consultar.php';
+for(const libre of ['daño moral','despido']) {
+  const p=new URLSearchParams(armador);p.set('libre',libre);
+  try {
+    const a=await fetch(buscador,{method:'POST',headers:{...headers,'Content-Type':'application/x-www-form-urlencoded'},body:p,signal:AbortSignal.timeout(20000)});
+    const t=await a.text();const k=t.indexOf('@@');if(k<0){console.log('BUSCAR '+JSON.stringify({libre,error:'sin_SQL',body:t.slice(0,120)}));continue;}
+    const total=Number((t.slice(0,k).match(/(\\d+)\\s*$/)||[])[1]||0),sql=t.slice(k+2);
+    const p2=new URLSearchParams({funcion:'buscar',next_p:'1',total:String(total),mostrar:'20',sql});
+    const b=await fetch(buscador,{method:'POST',headers:{...headers,'Content-Type':'application/x-www-form-urlencoded'},body:p2,signal:AbortSignal.timeout(20000)});
+    const html=await b.text();
+    console.log('BUSCAR '+JSON.stringify({libre,contador:total,http:b.status,bytes:html.length,
+      fichas:(html.match(/class=["'][^"']*ficha/g)||[]).length,
+      ids:(html.match(/id=["'][^"']{3,40}/g)||[]).slice(0,8),
+      inicial:html.slice(0,260)}));
+  }catch(e){console.log('BUSCAR '+JSON.stringify({libre,error:String(e?.message||e)}))}
+  await pausa(800);
+}
