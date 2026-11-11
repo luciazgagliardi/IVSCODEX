@@ -9,6 +9,8 @@ test('no confundir un límite local con el agotamiento de una fuente', () => {
   assert.deepEqual(siguienteCursor(0, { siguienteDesde: 'id-990' }), { agotada: false, desde: 'id-990' });
   assert.throws(() => siguienteCursor(20, { siguienteDesde: 20 }), /Cursor/);
   assert.throws(() => siguienteCursor(30, { siguienteDesde: 10 }), /Cursor/);
+  assert.deepEqual(siguienteCursor(3100, { siguienteDesde: 2980 }, { cursorDescendente: true }), { agotada: false, desde: 2980 });
+  assert.throws(() => siguienteCursor(2980, { siguienteDesde: 3100 }, { cursorDescendente: true }), /Cursor/);
   assert.throws(() => siguienteCursor('id-990', { siguienteDesde: 'id-990' }), /Cursor/);
   assert.throws(() => siguienteCursor(0, { siguienteDesde: NaN }), /Cursor/);
 });
