@@ -86,6 +86,8 @@ if (!PLAN[base]) {
   }
   const informeCosecha = { fuente: base, fecha: new Date().toISOString(), anteriores: antes, procesadas: 0, paginas: 0, errores: [], agotadas: 0 };
   let ultimo = 0;
+  let rechazosDeAcceso = 0;
+  const pareceBloqueoDeRed = (mensaje) => /(?:respuesta 403|UND_ERR_CONNECT_TIMEOUT|ETIMEDOUT|ENETUNREACH|ECONNREFUSED)/i.test(mensaje);
   async function guardar() {
     const contenido = zlib.gzipSync(JSON.stringify({ fuente: base, generado: new Date().toISOString(), registros: [...registros.values()] }), { level: 8 });
     await fs.writeFile(archivo + '.tmp', contenido);
@@ -126,6 +128,11 @@ if (!PLAN[base]) {
       } catch (e) {
         estado.errores = (estado.errores || 0) + 1;
         estado.ultimoError = String(e?.message || e).slice(0, 200);
+        // Cuatro consultas independientes con bloqueo de red y ninguna página
+        // obtenida indican que esta ejecución no puede cosechar desde su IP.
+        // No marcar ninguna consulta como agotada: se reintentará en la próxima.
+        if (informeCosecha.paginas === 0 && pareceBloqueoDeRed(estado.ultimoError)) rechazosDeAcceso++;
+        else rechazosDeAcceso = 0;
         informeCosecha.errores.push({ q, variante, error: estado.ultimoError });
         // Se conserva el cursor y no se marca agotamiento. Otras consultas
         // independientes pueden seguir, incluso si esta fuente falla en una.
@@ -133,6 +140,14 @@ if (!PLAN[base]) {
       }
     }
     progreso.tareas[clave] = estado;
+    if (rechazosDeAcceso >= 4) {
+      informeCosecha.bloqueada = true;
+      informeCosecha.causaBloqueo = estado.ultimoError;
+      console.log('FUENTE_BLOQUEADA ' + JSON.stringify({ fuente: base, causa: estado.ultimoError,
+        intentosIndependientes: rechazosDeAcceso, cursorPreservado: true }));
+      await guardar();
+      break;
+    }
     await guardar();
   }
   // Avanzar la ventana sólo tras completar una ronda; mantener cada término
