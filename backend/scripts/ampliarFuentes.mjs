@@ -11,7 +11,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { FUENTES } from '../lib/fuentes.js';
-import { siguienteCursor, combinarRegistro } from '../lib/avanceCosecha.js';
+import { siguienteCursor, combinarRegistro, idDocumentalValido } from '../lib/avanceCosecha.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = path.resolve(RAIZ, process.env.DIR_COSECHA || 'acervo-crudo/respaldo');
@@ -112,7 +112,7 @@ if (!PLAN[base]) {
           throw new Error('Página vacía con resultados informados por el sitio');
         const cursor = siguienteCursor(estado.desde, respuesta, { cursorDescendente: base === 'juristeca' });
         for (const r of respuesta.resultados) {
-          if (!r?.id || !/^[A-Za-z0-9_-]{3,160}$/.test(String(r.id))) continue;
+          if (!idDocumentalValido(r?.id)) continue;
           const limpio = limpiar({ ...r, fuente: base });
           registros.set(r.id, combinarRegistro(registros.get(r.id), limpio));
         }
