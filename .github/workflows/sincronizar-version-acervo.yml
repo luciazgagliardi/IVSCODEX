@@ -1,0 +1,39 @@
+name: Sincronizar versión publicada del acervo con Azure
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sincronizar-version-acervo.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: sincronizar-version-acervo
+  cancel-in-progress: false
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Obtener el manifiesto vigente de la rama acervo
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin acervo
+          mkdir -p backend/acervo-datos
+          git show origin/acervo:manifiesto.json > backend/acervo-datos/manifiesto.json
+          node -e "const m=require('./backend/acervo-datos/manifiesto.json');if(!m.version||!m.conteos?.saij)process.exit(1);console.log('Versión oficial del acervo:',m.version)"
+      - name: Actualizar referencia main sin tocar archivos no publicados
+        shell: bash
+        run: bash ops/publicar-version-acervo.sh
+      - name: Solicitar despliegue explícito de la versión en Azure
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run azure-backend.yml --ref main
