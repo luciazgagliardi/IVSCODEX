@@ -1,0 +1,27 @@
+name: Verificar cápsulas de vidrio de las fuentes
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/index.html'
+      - 'frontend/test/fuentes-vidrio.test.mjs'
+      - '.github/workflows/verificar-fuentes-vidrio.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/index.html'
+      - 'frontend/test/fuentes-vidrio.test.mjs'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  interfaz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verificar siglas, títulos, cápsulas y las once bases
+        run: node --test frontend/test/fuentes-vidrio.test.mjs
