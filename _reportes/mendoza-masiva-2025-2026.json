@@ -1,0 +1,115 @@
+{
+  "fecha": "2026-11-11T21:23:07.738Z",
+  "fuente": "Listas oficiales Poder Judicial Mendoza",
+  "mesesRecibidos": 21,
+  "registrosAntes": 576,
+  "registrosDespues": 5326,
+  "registrosAdicionales": 4750,
+  "lotes": [
+    {
+      "mes": "2025-01",
+      "extraidos": 576,
+      "incorporadosAlRespaldo": 0
+    },
+    {
+      "mes": "2025-02",
+      "extraidos": 576,
+      "incorporadosAlRespaldo": 0
+    },
+    {
+      "mes": "2025-03",
+      "extraidos": 576,
+      "incorporadosAlRespaldo": 0
+    },
+    {
+      "mes": "2025-04",
+      "extraidos": 576,
+      "incorporadosAlRespaldo": 0
+    },
+    {
+      "mes": "2025-05",
+      "extraidos": 576,
+      "incorporadosAlRespaldo": 0
+    },
+    {
+      "mes": "2025-06",
+      "extraidos": 576,
+      "incorporadosAlRespaldo": 0
+    },
+    {
+      "mes": "2025-07",
+      "extraidos": 609,
+      "incorporadosAlRespaldo": 33
+    },
+    {
+      "mes": "2025-08",
+      "extraidos": 934,
+      "incorporadosAlRespaldo": 358
+    },
+    {
+      "mes": "2025-09",
+      "extraidos": 1007,
+      "incorporadosAlRespaldo": 431
+    },
+    {
+      "mes": "2025-10",
+      "extraidos": 1034,
+      "incorporadosAlRespaldo": 458
+    },
+    {
+      "mes": "2025-11",
+      "extraidos": 964,
+      "incorporadosAlRespaldo": 388
+    },
+    {
+      "mes": "2025-12",
+      "extraidos": 956,
+      "incorporadosAlRespaldo": 380
+    },
+    {
+      "mes": "2026-01",
+      "extraidos": 576,
+      "incorporadosAlRespaldo": 0
+    },
+    {
+      "mes": "2026-02",
+      "extraidos": 890,
+      "incorporadosAlRespaldo": 314
+    },
+    {
+      "mes": "2026-03",
+      "extraidos": 1002,
+      "incorporadosAlRespaldo": 426
+    },
+    {
+      "mes": "2026-04",
+      "extraidos": 1000,
+      "incorporadosAlRespaldo": 424
+    },
+    {
+      "mes": "2026-05",
+      "extraidos": 922,
+      "incorporadosAlRespaldo": 346
+    },
+    {
+      "mes": "2026-06",
+      "extraidos": 973,
+      "incorporadosAlRespaldo": 397
+    },
+    {
+      "mes": "2026-07",
+      "extraidos": 778,
+      "incorporadosAlRespaldo": 202
+    },
+    {
+      "mes": "2026-08",
+      "extraidos": 938,
+      "incorporadosAlRespaldo": 362
+    },
+    {
+      "mes": "2026-09",
+      "extraidos": 807,
+      "incorporadosAlRespaldo": 231
+    }
+  ]
+}
