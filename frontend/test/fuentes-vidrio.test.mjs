@@ -15,6 +15,9 @@ test('el rótulo principal recupera la sigla a la izquierda del nombre de cada b
   assert.match(css, /border-radius:999px/);
   assert.match(css, /backdrop-filter:blur\(14px\)/);
   assert.doesNotMatch(css, /border:1px|outline:1px/);
+  assert.match(css, /height:36px;padding:0 13px/);
+  assert.match(css, /font:500 11px\/1 "Cinzel","Trajan Pro",var\(--caps\)/);
+  assert.match(html, /\.rotulo-fuente::before\{height:32px;padding:0 10px;font-size:10px\}/);
 });
 
 test('catálogo y comparación vuelven a mostrar sus pastillas originales, sin contorno', () => {
@@ -29,6 +32,8 @@ test('catálogo y comparación vuelven a mostrar sus pastillas originales, sin c
   assert.match(css, /border:0;outline:0/);
   assert.match(css, /backdrop-filter:blur\(14px\)/);
   assert.match(css, /rgba\(var\(--tx\)/);
+  assert.match(css, /padding:6px 10px/);
+  assert.match(css, /font:500 11px\/1\.1 "Cinzel","Trajan Pro",var\(--caps\)/);
 });
 
 test('las 11 bases conservan nombres, siglas y funcionalidades', () => {
