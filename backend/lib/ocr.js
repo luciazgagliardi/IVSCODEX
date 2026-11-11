@@ -29,6 +29,7 @@ import { PDFiumLibrary } from '@hyzyla/pdfium';
 import { PNG } from 'pngjs';
 import { createWorker } from 'tesseract.js';
 import { errores } from './errores.js';
+import { enCola } from './almacen.js';
 import { OCR_MAX_PAGINAS, OCR_TIMEOUT_MS, DIR_OCR_CACHE } from '../config.js';
 
 /**
@@ -38,14 +39,19 @@ import { OCR_MAX_PAGINAS, OCR_TIMEOUT_MS, DIR_OCR_CACHE } from '../config.js';
  */
 const ESCALA = 300 / 72;
 
-let libreria = null;
-/** La librería WASM se inicializa una sola vez y se reutiliza entre pedidos. */
-async function pdfium() {
-  if (!libreria) libreria = await PDFiumLibrary.init();
-  return libreria;
+let promesaPdfium = null;
+/** Compartir la inicialización de WASM: dos pedidos no crean dos motores. */
+function pdfium() {
+  if (!promesaPdfium) {
+    promesaPdfium = PDFiumLibrary.init().catch((error) => {
+      promesaPdfium = null;
+      throw error;
+    });
+  }
+  return promesaPdfium;
 }
 
-let worker = null;
+let promesaWorker = null;
 /**
  * Un solo worker de Tesseract reutilizado entre pedidos: crearlo de nuevo
  * cada vez (carga el modelo del idioma, unos megabytes) es lo más lento de
@@ -53,16 +59,17 @@ let worker = null;
  * hacen uno detrás del otro, no en paralelo — aceptable para una función
  * que ya viene con su propio límite de uso (ver limiteOcr en index.js).
  */
-async function workerEspanol() {
-  if (!worker) {
-    // cachePath: sin esto, Tesseract tira el modelo del idioma suelto en el
-    // directorio desde donde arrancó el proceso en vez de un lugar propio.
-    // La carpeta tiene que existir de antemano, si no Tesseract no la crea
-    // sola y sigue funcionando igual, pero sin guardar nada entre reinicios.
-    await fs.mkdir(DIR_OCR_CACHE, { recursive: true }).catch(() => {});
-    worker = await createWorker('spa', undefined, { cachePath: DIR_OCR_CACHE });
+function workerEspanol() {
+  if (!promesaWorker) {
+    promesaWorker = (async () => {
+      await fs.mkdir(DIR_OCR_CACHE, { recursive: true });
+      return createWorker('spa', undefined, { cachePath: DIR_OCR_CACHE });
+    })().catch((error) => {
+      promesaWorker = null;
+      throw error;
+    });
   }
-  return worker;
+  return promesaWorker;
 }
 
 /** RGBA crudo (lo que da PDFium) -> PNG (lo que entiende Tesseract). */
@@ -77,20 +84,23 @@ function aPng({ data, width, height }) {
  * @returns {Promise<{texto: string, paginas: number, paginasProcesadas: number, metodo: string}>}
  */
 export async function ocrPdf(buffer) {
-  // El trabajo en si (renderizar + reconocer, pagina por pagina) puede
-  // tardar mucho mas en un plan de hosting con poca CPU que en desarrollo:
-  // sin este limite, un pedido lento se queda esperando mas alla incluso
-  // del timeout de la propia plataforma (Azure corta las conexiones
-  // inactivas cerca de los 230s) y quien lo pidio nunca recibe respuesta.
+  // Limitar tiempo de respuesta NO cancela Promise.race() ni el worker WASM.
+  // Mantener el trabajo real dentro de la cola evita que el siguiente OCR
+  // utilice simultáneamente el mismo Tesseract después del timeout.
   let vencido = false;
-  const reloj = setTimeout(() => { vencido = true; }, OCR_TIMEOUT_MS);
+  let reloj;
+  const limite = new Promise((_, reject) => {
+    reloj = setTimeout(() => {
+      vencido = true;
+      reject(errores.ocrTiempoAgotado(OCR_TIMEOUT_MS));
+    }, OCR_TIMEOUT_MS);
+  });
+  const trabajo = enCola('ocr-pdf-compartido', async () => {
+    if (vencido) throw errores.ocrTiempoAgotado(OCR_TIMEOUT_MS);
+    return ocrPdfSinLimite(buffer, () => vencido);
+  });
   try {
-    return await Promise.race([
-      ocrPdfSinLimite(buffer, () => vencido),
-      new Promise((_, reject) => {
-        setTimeout(() => reject(errores.ocrTiempoAgotado(OCR_TIMEOUT_MS)), OCR_TIMEOUT_MS);
-      }),
-    ]);
+    return await Promise.race([trabajo, limite]);
   } finally {
     clearTimeout(reloj);
   }
