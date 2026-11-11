@@ -10,6 +10,8 @@ on:
       - 'backend/lib/ocr.js'
       - 'backend/index.js'
       - 'backend/test/appsecRegresion.prueba.js'
+      - 'backend/test/limitesAppsec.prueba.js'
+      - 'backend/lib/consumoIA.js'
       - '.github/workflows/appsec-regresion.yml'
       - 'ops/publicar-version-acervo.sh'
       - '.github/workflows/ampliacion-integral.yml'
@@ -25,6 +27,8 @@ on:
       - 'backend/lib/ocr.js'
       - 'backend/index.js'
       - 'backend/test/appsecRegresion.prueba.js'
+      - 'backend/test/limitesAppsec.prueba.js'
+      - 'backend/lib/consumoIA.js'
       - '.github/workflows/appsec-regresion.yml'
       - 'ops/publicar-version-acervo.sh'
   workflow_dispatch: {}
@@ -51,6 +55,8 @@ jobs:
           node --check backend/routes/auth.js
           node --check backend/lib/datosUsuario.js
           node --check backend/lib/almacen.js
+          node --check backend/lib/ocr.js
+          node --check backend/lib/consumoIA.js
       - name: Pruebas de integridad, autenticación y regresión
         working-directory: backend
-        run: node --test test/appsecRegresion.prueba.js test/auth.prueba.js test/seguridad.prueba.js
+        run: node --test test/appsecRegresion.prueba.js test/limitesAppsec.prueba.js test/auth.prueba.js test/seguridad.prueba.js
