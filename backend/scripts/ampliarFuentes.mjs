@@ -102,7 +102,7 @@ if (!PLAN[base]) {
         if (!Array.isArray(respuesta?.resultados)) throw new Error('Sin resultados[]');
         if (!respuesta.resultados.length && (respuesta.totalFuente || respuesta.total || 0) > 0)
           throw new Error('Página vacía con resultados informados por el sitio');
-        const cursor = siguienteCursor(estado.desde, respuesta);
+        const cursor = siguienteCursor(estado.desde, respuesta, { cursorDescendente: base === 'juristeca' });
         for (const r of respuesta.resultados) {
           if (!r?.id || !/^[\\w-]{3,160}$/.test(String(r.id))) continue;
           const limpio = limpiar({ ...r, fuente: base });
