@@ -199,7 +199,7 @@ router.put('/mis-datos', requiereSesion, async (req, res, next) => {
 router.post('/mis-datos/fusionar', requiereSesion, async (req, res, next) => {
   try {
     const { fav, hist, pasajes, anillos } = req.body || {};
-    res.json({ ok: true, ...(await fusionarDatos(req.usuarioId, { fav, hist, pasajes })) });
+    res.json({ ok: true, ...(await fusionarDatos(req.usuarioId, { fav, hist, pasajes, anillos })) });
   } catch (e) {
     next(e);
   }
