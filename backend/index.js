@@ -134,6 +134,22 @@ const limite = rateLimit({
 });
 app.use('/api/', limite);
 
+// Las búsquedas sobre FTS5 no consultan sitios externos pero consumen CPU y
+// memoria. Antes estaban excluidas de cualquier límite de peticiones.
+const limiteFTSLocal = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 60,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    codigo: 'DEMASIADAS_PETICIONES',
+    mensaje: 'Demasiadas consultas al índice local. Reintente en un minuto.',
+  },
+});
+app.use(/^\/api\/indice\/[a-z]+\/local$/, limiteFTSLocal);
+
+
 // Login y registro se limitan aparte y más estricto: son el blanco típico
 // de la fuerza bruta de contraseñas.
 const limiteAuth = rateLimit({
