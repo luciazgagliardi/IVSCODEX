@@ -70,7 +70,8 @@ for(const libre of ['daño moral','despido']) {
   try {
     const a=await fetch(buscador,{method:'POST',headers:{...headers,'Content-Type':'application/x-www-form-urlencoded'},body:p,signal:AbortSignal.timeout(20000)});
     const t=await a.text();const k=t.indexOf('@@');if(k<0){console.log('BUSCAR '+JSON.stringify({libre,error:'sin_SQL',body:t.slice(0,120)}));continue;}
-    const total=Number((t.slice(0,k).match(/(\\d+)\\s*$/)||[])[1]||0),sql=t.slice(k+2);
+    const total=Number(t.slice(0,k).trim().match(/[0-9]+$/)?.[0]||0),sql=t.slice(k+2);
+    const cookie=a.headers.get('set-cookie')?.split(';')[0]||'';
     const p2=new URLSearchParams({funcion:'buscar',next_p:'1',total:String(total),mostrar:'20',sql});
     const b=await fetch(buscador,{method:'POST',headers:{...headers,'Content-Type':'application/x-www-form-urlencoded', ...(cookie?{Cookie:cookie}:{})},body:p2,signal:AbortSignal.timeout(20000)});
     const html=await b.text();
