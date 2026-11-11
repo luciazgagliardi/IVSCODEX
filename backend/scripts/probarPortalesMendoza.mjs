@@ -1,4 +1,5 @@
 /** Sondeo público no intrusivo de rutas de jurisprudencia y listas históricas Mendoza. */
+import { JSDOM } from 'jsdom';
 const pausa = ms => new Promise(resolve => setTimeout(resolve, ms));
 const headers = { 'User-Agent':'IVS-CODEX/1.0 (investigacion de interoperabilidad publica)',Accept:'text/html, */*;q=0.7' };
 async function consultar(url, p) {
@@ -6,6 +7,22 @@ async function consultar(url, p) {
     const res = await fetch(url, {method:p?'POST':'GET',headers:p?{...headers,'Content-Type':'application/x-www-form-urlencoded'}:headers,
       body:p?.toString(),signal:AbortSignal.timeout(20000)});
     const txt=await res.text();
+    let muestra;
+    if(url.includes('/listas/proveidos/')) {
+      const doc=new JSDOM(txt);
+      const filaDatos=[...doc.window.document.querySelectorAll('tr')]
+        .filter(tr=>tr.querySelector('button[onclick*="vertex("]'))
+        .map(tr=>{
+          const td=[...tr.querySelectorAll('td')].map(x=>x.textContent.replace(/\\s+/g,' ').trim());
+          const urls=[...tr.querySelectorAll('a[href]')].map(a=>a.href);
+          return {td:td.length,codigo:td[1],clase:td[5],fecha:td[3],
+            pdf:urls.some(u=>u.includes('iol-api/api/public/expedientes/actuaciones/pdf'))};
+        });
+      muestra={totalFilasConVertex:filaDatos.length,coincidenciasSentencia:filaDatos.filter(x=>/sentencia/i.test(x.clase||'')).length,
+        codigos:[...new Set(filaDatos.map(x=>x.codigo))].slice(0,14),
+        muestras:filaDatos.filter(x=>/sentencia/i.test(x.clase||'')).slice(0,5)};
+      doc.window.close();
+    }
     return {http:res.status,bytes:txt.length,tieneSeparadorSQL:txt.includes('@@'),
       fichas:(txt.match(/class=["'][^"']*ficha/g)||[]).length,
       filas:(txt.match(/<tr\b/gi)||[]).length,
