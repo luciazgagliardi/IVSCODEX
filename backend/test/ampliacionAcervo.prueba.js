@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { siguienteCursor, combinarRegistro } from '../lib/avanceCosecha.js';
+import { siguienteCursor, combinarRegistro, idDocumentalValido } from '../lib/avanceCosecha.js';
+import { cookieDeSesion } from '../lib/sesionMza.js';
 
 test('no confundir un límite local con el agotamiento de una fuente', () => {
   assert.deepEqual(siguienteCursor(20, { siguienteDesde: 40 }), { agotada: false, desde: 40 });
@@ -35,4 +36,20 @@ test('la expansión contempla las ocho fuentes paginadas, más SAIJ y Corte IDH'
   assert.match(armado, /DIR_BASE/);
   assert.match(archivo, /avance-/);
   assert.match(archivo, /MAX_PAGINAS/);
+});
+
+test('ids reales de Mendoza, CABA, SCBA y Río Negro se incorporan, no se descartan', () => {
+  for(const id of ['sc_1014929_35314', 'mza_oficial_12399000248', 'caba_00123', 'juristeca-42',
+    'scba_987654', 'rionegro_16482', 'aBcDEF123'])
+    assert.equal(idDocumentalValido(id), true, id);
+  for(const id of [null, '', ' ', '../escape', 'x', 'x'.repeat(161)])
+    assert.equal(idDocumentalValido(id), false, String(id));
+});
+
+test('la búsqueda judicial conserva cookie PHP al pedir las fichas', () => {
+  const sesion=cookieDeSesion(new Headers({'set-cookie':'PHPSESSID=abcd1234; path=/; HttpOnly'}));
+  assert.equal(sesion,'PHPSESSID=abcd1234');
+  assert.equal(cookieDeSesion(new Headers(),sesion),sesion);
+  assert.equal(cookieDeSesion(new Headers({'set-cookie':'evil=invalid;other=value'}),sesion),'evil=invalid');
+  assert.equal(cookieDeSesion(new Headers({'set-cookie':'no-es-cookie'}),sesion),sesion);
 });
