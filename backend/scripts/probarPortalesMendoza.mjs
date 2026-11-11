@@ -31,6 +31,7 @@ async function consultar(url, p) {
       hrefPdf:(txt.match(/iol-api\/api\/public\/expedientes\/actuaciones\/pdf/g)||[]).length,
       enlaces:(txt.match(/(?:href|src)=["']([^"']+)/gi)||[]).slice(0,15).map(x=>x.slice(0,90)),
       totalSQL:(txt.match(/(\d+)\s*@@/)||[])[1]||null,
+      muestra,
     };
   }catch(e){return {error:String(e.message||e).slice(0,180)};}
 }
