@@ -1,0 +1,36 @@
+name: Auditoría continua de dependencias npm
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/package.json'
+      - 'backend/package-lock.json'
+      - '.github/workflows/auditoria-dependencias.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'backend/package.json'
+      - 'backend/package-lock.json'
+      - '.github/workflows/auditoria-dependencias.yml'
+  schedule:
+    - cron: '35 6 * * 1'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  vulnerabilidades:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar exactamente las dependencias versionadas
+        working-directory: backend
+        run: npm ci --ignore-scripts
+      - name: Bloquear dependencias de producción con vulnerabilidades altas o críticas
+        working-directory: backend
+        run: npm audit --omit=dev --audit-level=high
