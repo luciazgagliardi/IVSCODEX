@@ -1,5 +1,5 @@
 /** Utilidades puras para cosechas con paginación verificable. */
-export function siguienteCursor(actual, respuesta) {
+export function siguienteCursor(actual, respuesta, { cursorDescendente = false } = {}) {
   const valor = respuesta?.siguienteDesde;
   if (valor == null) return { agotada: true };
   if ((typeof valor !== 'string' && typeof valor !== 'number') ||
@@ -7,7 +7,7 @@ export function siguienteCursor(actual, respuesta) {
     throw new Error('Cursor inválido o repetido');
   if (typeof valor === 'number' &&
       (!Number.isSafeInteger(valor) || valor < 0 ||
-        (typeof actual === 'number' && valor <= actual)))
+        (typeof actual === 'number' && actual !== 0 && (cursorDescendente ? valor >= actual : valor <= actual))))
     throw new Error('Cursor numérico no progresivo');
   return { agotada: false, desde: valor };
 }
