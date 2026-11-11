@@ -24,6 +24,8 @@ import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
 import { sinRepetidos } from '../lib/claveFallo.js';
 import { errores, ErrorApp } from '../lib/errores.js';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
+import { requiereSesion } from './auth.js';
+import { reservarConsultaIA } from '../lib/consumoIA.js';
 import { NORMAS, articuloDe, rubricaDe } from '../lib/legislacion.js';
 import { serieOficial } from '../lib/series.js';
 
@@ -566,7 +568,7 @@ router.get('/tesauro/estado', (_req, res) => {
  * modelo acá no busca ni afirma nada sobre ningún fallo — su única salida
  * son términos de búsqueda (ver la nota grande de lib/proponerAnillo.js).
  */
-router.post('/tesauro/proponer', async (req, res, next) => {
+router.post('/tesauro/proponer', requiereSesion, async (req, res, next) => {
   try {
     const termino = String(req.body?.termino || '').trim();
     if (!termino) throw errores.consultaVacia();
@@ -579,6 +581,8 @@ router.post('/tesauro/proponer', async (req, res, next) => {
       ? req.body.yaEnTesauro.filter((x) => typeof x === 'string').slice(0, 200)
       : [];
 
+    if (!hayModelo()) throw errores.modeloNoConfigurado();
+    await reservarConsultaIA(req.usuarioId);
     res.json({ ok: true, propuesta: await proponerAnillo(termino, { ramas, yaEnTesauro }) });
   } catch (e) {
     next(e);
