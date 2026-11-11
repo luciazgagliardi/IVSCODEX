@@ -1,0 +1,27 @@
+name: Verificar títulos limpios de las fuentes
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/index.html'
+      - 'frontend/test/fuentes-sin-sellos.test.mjs'
+      - '.github/workflows/verificar-fuentes-sin-sellos.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/index.html'
+      - 'frontend/test/fuentes-sin-sellos.test.mjs'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  interfaz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Comprobar rótulos, catálogo y vista comparativa
+        run: node --test frontend/test/fuentes-sin-sellos.test.mjs
