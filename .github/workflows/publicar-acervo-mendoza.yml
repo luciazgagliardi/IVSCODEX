@@ -48,7 +48,7 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git -C backend/acervo-base config user.name 'github-actions[bot]'
           git -C backend/acervo-base config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          find backend/acervo-base -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          find backend/acervo-base -maxdepth 1 -type f -name '*.jsonl.gz' -delete
           cp backend/acervo-datos/* backend/acervo-base/
           echo 'Tandas del acervo de IVS CODEX. Versión regenerada y verificada.' > backend/acervo-base/LEAME.md
           git -C backend/acervo-base add -A
