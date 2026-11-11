@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"de\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"incumplimiento contractual\",{}]": {
       "desde": 0,
@@ -26,9 +26,9 @@
     },
     "[\"recurso\",{}]": {
       "desde": 60,
-      "pagina": 5,
-      "completas": true,
-      "paginas": 4
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 0,
@@ -275,223 +275,8 @@
       "pagina": 2,
       "completas": true,
       "paginas": 1
-    },
-    "[\"servidumbre de paso\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"medianería\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"posesión y tenencia\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"desalojo por intrusión\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"boleto y oponibilidad\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"conjunto inmobiliario\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"tiempo compartido\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"compensación económica\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"cuidado personal compartido\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"régimen de comunicación\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"cuota alimentaria\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"alimentos provisorios\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"atribución del hogar\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"liquidación de la comunidad\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"unión convivencial\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"filiación por trha\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"adopción plena\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"impedimento de contacto\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"violencia familiar medidas\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"interés superior del niño\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"autonomía progresiva\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"declaratoria de herederos\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"colación\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"legítima hereditaria\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"acción de reducción\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"partición de herencia\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"testamento ológrafo\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"indignidad\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"cesión de derechos hereditarios\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"administrador de la sucesión\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"sucesión ab intestato\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"relación de consumo\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"trato digno\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"deber de información\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"cláusulas abusivas\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"publicidad engañosa\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
     }
   },
-  "indiceTerminos": 72
+  "indiceTerminos": 36,
+  "versionIds": 2
 }

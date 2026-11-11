@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"sentencia\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"incumplimiento contractual\",{}]": {
       "desde": 60,
@@ -13,10 +13,10 @@
       "paginas": 3
     },
     "[\"daños\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"pacto comisorio\",{}]": {
       "desde": 0,
@@ -25,10 +25,12 @@
       "paginas": 1
     },
     "[\"recurso\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 0,
+      "pagina": 1,
       "completas": false,
-      "paginas": 6
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 0,
@@ -37,10 +39,10 @@
       "paginas": 1
     },
     "[\"responsabilidad\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"mora automática\",{}]": {
       "desde": 40,
@@ -49,10 +51,10 @@
       "paginas": 3
     },
     "[\"contrato\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"intereses moratorios\",{}]": {
       "desde": 60,
@@ -61,10 +63,10 @@
       "paginas": 3
     },
     "[\"despido\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"tasa activa\",{}]": {
       "desde": 60,
@@ -73,10 +75,10 @@
       "paginas": 3
     },
     "[\"consumidor\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"resolución contractual\",{}]": {
       "desde": 60,
@@ -85,10 +87,10 @@
       "paginas": 3
     },
     "[\"familia\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"seña\",{}]": {
       "desde": 0,
@@ -97,10 +99,10 @@
       "paginas": 1
     },
     "[\"alimentos\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"boleto de compraventa\",{}]": {
       "desde": 20,
@@ -109,10 +111,10 @@
       "paginas": 2
     },
     "[\"amparo\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 0,
+      "pagina": 1,
       "completas": false,
-      "paginas": 3,
+      "paginas": 0,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -123,10 +125,12 @@
       "paginas": 3
     },
     "[\"administrativo\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 0,
+      "pagina": 1,
       "completas": false,
-      "paginas": 6
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"desalojo falta de pago\",{}]": {
       "desde": 40,
@@ -135,10 +139,10 @@
       "paginas": 3
     },
     "[\"penal\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 6
+      "paginas": 3
     },
     "[\"obligación de valor\",{}]": {
       "desde": 60,
@@ -289,227 +293,8 @@
       "pagina": 2,
       "completas": true,
       "paginas": 1
-    },
-    "[\"servidumbre de paso\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"medianería\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"posesión y tenencia\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"desalojo por intrusión\",{}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
-      "errores": 1,
-      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
-    },
-    "[\"boleto y oponibilidad\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"conjunto inmobiliario\",{}]": {
-      "desde": 40,
-      "pagina": 4,
-      "completas": true,
-      "paginas": 3
-    },
-    "[\"tiempo compartido\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"compensación económica\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"cuidado personal compartido\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"régimen de comunicación\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"cuota alimentaria\",{}]": {
-      "desde": 40,
-      "pagina": 4,
-      "completas": true,
-      "paginas": 3
-    },
-    "[\"alimentos provisorios\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"atribución del hogar\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"liquidación de la comunidad\",{}]": {
-      "desde": 40,
-      "pagina": 4,
-      "completas": true,
-      "paginas": 3
-    },
-    "[\"unión convivencial\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"filiación por trha\",{}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
-      "errores": 1,
-      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
-    },
-    "[\"adopción plena\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"impedimento de contacto\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"violencia familiar medidas\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"interés superior del niño\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"autonomía progresiva\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"declaratoria de herederos\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"colación\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"legítima hereditaria\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"acción de reducción\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"partición de herencia\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"testamento ológrafo\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"indignidad\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"cesión de derechos hereditarios\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"administrador de la sucesión\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"sucesión ab intestato\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
-    },
-    "[\"relación de consumo\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"trato digno\",{}]": {
-      "desde": 20,
-      "pagina": 3,
-      "completas": true,
-      "paginas": 2
-    },
-    "[\"deber de información\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"cláusulas abusivas\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
-    },
-    "[\"publicidad engañosa\",{}]": {
-      "desde": 0,
-      "pagina": 2,
-      "completas": true,
-      "paginas": 1
     }
   },
-  "indiceTerminos": 72
+  "indiceTerminos": 36,
+  "versionIds": 2
 }
