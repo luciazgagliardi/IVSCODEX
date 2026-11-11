@@ -18,7 +18,7 @@ import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
-import { estadoAcervo, textosDe, agregarAlAcervo, acervoCubre, buscarPagina, sumarVivos, copiaLista } from '../lib/acervo.js';
+import { estadoAcervo, textosDe, acervoCubre, buscarPagina, sumarVivos, copiaLista } from '../lib/acervo.js';
 import { IVSPasajes } from '../lib/pasajes.js';
 import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
 import { sinRepetidos } from '../lib/claveFallo.js';
@@ -42,7 +42,6 @@ const MODOS = new Set(['exacta', 'todas', 'alguna']);
 const hostDe = (u) => { try { return new URL(u).hostname; } catch { return ''; } };
 
 /** Las bases cuyo texto leído del documento se guarda en el acervo (las que no mandan texto con el resultado). */
-const GUARDAN_TEXTO = new Set(['caba', 'juristeca', 'rionegro']);
 
 /** Cuántos documentos como mucho se traen en un mismo pedido de fragmentos. */
 const MAX_FRAGMENTOS = 6;
@@ -489,10 +488,9 @@ for (const { slug, buscar } of FUENTES) {
 
       const arranque = Date.now();
       if (slug === 'caba') marcarUsoCaba();
-      // los datos de cada resultado (opcional), para guardar su texto en el acervo
-      const registrosPorUrl = new Map((Array.isArray(req.body?.registros) ? req.body.registros : []).slice(0, MAX_FRAGMENTOS)
-        .filter((r) => r && typeof r.id === 'string' && typeof r.url === 'string' && /^[a-z]+_[\w-]{1,80}$/.test(r.id))
-        .map((r) => [r.url, { id: r.id, caratula: String(r.caratula || '').slice(0, 400), fecha: String(r.fecha || '').slice(0, 20), tribunal: String(r.tribunal || '').slice(0, 200), expediente: String(r.expediente || '').slice(0, 80) }]));
+      // Nunca aceptar metadatos de fallos del cliente para persistirlos.
+      // La ruta pública solo puede devolver pasajes; la cosecha oficial
+      // del servidor realiza su propia verificación de procedencia.
       const pedidas = urls.filter((u) => typeof u === 'string' && u && u.length <= 2048).slice(0, MAX_FRAGMENTOS);
 
       const fragmentos = [];
@@ -523,12 +521,6 @@ for (const { slug, buscar } of FUENTES) {
           if (cerrado) { porUrl.set(url, { url, fragmento: '', error: cerrado.mensaje }); return; }
           const doc = await obtenerDocumento(url);
           porUrl.set(url, { url, fragmento: recortarPasaje(doc.texto, q, { exigir: slug === 'dialnet' }), error: null });
-          // el texto leído queda en el acervo: la próxima vez ese fallo sale con su pasaje al instante
-          const reg = registrosPorUrl.get(url);
-          if (reg && GUARDAN_TEXTO.has(slug) && doc.texto && doc.texto.length > 200) {
-            const t = doc.texto.replace(/\s+/g, ' ').trim();
-            agregarAlAcervo([{ ...reg, fuente: slug, linkFallo: url, sumario: t.length > 6000 ? `${t.slice(0, 6000).replace(/\s+\S*$/, '')} …` : t }]).catch(() => {});
-          }
         } catch (e) {
           const mensaje = e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.';
           if (e?.codigo === 'RESPUESTA_NO_OK' && [401, 403].includes(e.extra?.estadoOrigen)) {
