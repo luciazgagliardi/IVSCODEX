@@ -1,16 +1,16 @@
-name: Verificar títulos limpios de las fuentes
+name: Verificar cápsulas de vidrio de las fuentes
 on:
   pull_request:
     branches: [main]
     paths:
       - 'frontend/index.html'
-      - 'frontend/test/fuentes-sin-sellos.test.mjs'
-      - '.github/workflows/verificar-fuentes-sin-sellos.yml'
+      - 'frontend/test/fuentes-vidrio.test.mjs'
+      - '.github/workflows/verificar-fuentes-vidrio.yml'
   push:
     branches: [main]
     paths:
       - 'frontend/index.html'
-      - 'frontend/test/fuentes-sin-sellos.test.mjs'
+      - 'frontend/test/fuentes-vidrio.test.mjs'
   workflow_dispatch: {}
 permissions:
   contents: read
@@ -23,5 +23,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Comprobar rótulos, catálogo y vista comparativa
-        run: node --test frontend/test/fuentes-sin-sellos.test.mjs
+      - name: Verificar siglas, títulos, cápsulas y las once bases
+        run: node --test frontend/test/fuentes-vidrio.test.mjs
