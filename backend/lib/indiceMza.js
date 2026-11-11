@@ -42,12 +42,13 @@ import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
+import { cookieDeSesion } from './sesionMza.js';
 
 const HOST = 'wwwjuri.jus.mendoza.gov.ar';
 const URL_CONSULTA = `https://${HOST}/bib/jurisprudencia/funciones/consultar.php`;
 
 /** Pedido POST comun a los dos pasos, con la misma cortesia que el descargador. */
-async function pedirConsulta(parametros) {
+async function pedirConsulta(parametros, cookie = '') {
   await esperarTurno(HOST);
 
   const control = new AbortController();
@@ -60,11 +61,12 @@ async function pedirConsulta(parametros) {
         'User-Agent': USER_AGENT,
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         Accept: 'text/html, */*;q=0.8',
+        ...(cookie ? { Cookie: cookie } : {}),
       },
       body: parametros.toString(),
     });
     if (!resp.ok) throw errores.indiceMzaFalla(`respuesta ${resp.status}`);
-    return await resp.text();
+    return { texto: await resp.text(), cookie: cookieDeSesion(resp.headers, cookie) };
   } catch (e) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e; // ya es un ErrorApp
@@ -98,7 +100,7 @@ async function armarSql({ libre, partes = '', tribunal }) {
     competencia: '',
   });
 
-  const cuerpo = await pedirConsulta(p);
+  const { texto: cuerpo, cookie } = await pedirConsulta(p);
   const marca = cuerpo.indexOf('@@');
   if (marca === -1) throw errores.indiceMzaFalla('no devolvió el separador "@@" esperado');
 
@@ -107,11 +109,11 @@ async function armarSql({ libre, partes = '', tribunal }) {
   const antes = cuerpo.slice(0, marca).match(/(\d+)\s*$/);
   if (!antes) throw errores.indiceMzaFalla('no se encontró el contador de resultados');
 
-  return { total: parseInt(antes[1], 10), sql: cuerpo.slice(marca + 2) };
+  return { total: parseInt(antes[1], 10), sql: cuerpo.slice(marca + 2), cookie };
 }
 
 /** Paso 2: con el SQL del paso 1, trae las fichas ya renderizadas en HTML. */
-function traerFichas({ sql, pagina, porPagina, total }) {
+async function traerFichas({ sql, pagina, porPagina, total, cookie }) {
   const p = new URLSearchParams({
     funcion: 'buscar',
     next_p: String(pagina),
@@ -119,7 +121,7 @@ function traerFichas({ sql, pagina, porPagina, total }) {
     mostrar: String(porPagina),
     sql,
   });
-  return pedirConsulta(p);
+  return (await pedirConsulta(p, cookie)).texto;
 }
 
 /** Saca el prefijo "Etiqueta: " que el sitio antepone a varios campos. */
@@ -214,7 +216,7 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
   // comillas rompen la consulta en vez de hacer frase, y el OR lo ignora),
   // así que siempre se le manda el texto pelado y los otros modos se
   // resuelven acá con lo que devolvió.
-  const { total, sql } = await armarSql({ libre, partes, tribunal });
+  const { total, sql, cookie } = await armarSql({ libre, partes, tribunal });
   if (total <= 0) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
   const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim() || anioDesde || anioHasta;
@@ -222,7 +224,7 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
 
   if (!hayQueFiltrar) {
     // El sitio hace el trabajo: su paginación ya es la de los resultados.
-    const html = await traerFichas({ sql, pagina: Math.floor(arranque / porPagina) + 1, porPagina, total });
+    const html = await traerFichas({ sql, pagina: Math.floor(arranque / porPagina) + 1, porPagina, total, cookie });
     const filas = parsearFichas(html);
     // La fuente puede informar coincidencias y devolver una página sin fichas
     // por bloqueo, cambio de HTML o paginación defectuosa. No informar cero.
@@ -255,7 +257,7 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
   const traer = async (offset) => {
     const paginaSitio = Math.floor(offset / FICHAS_POR_TANDA) + 1;
     const sobran = offset % FICHAS_POR_TANDA;
-    const html = await traerFichas({ sql, pagina: paginaSitio, porPagina: FICHAS_POR_TANDA, total });
+    const html = await traerFichas({ sql, pagina: paginaSitio, porPagina: FICHAS_POR_TANDA, total, cookie });
     // Se descartan las fichas anteriores al offset pedido: el sitio solo
     // sabe arrancar en múltiplos del tamaño de página.
     const filas = parsearFichas(html);
