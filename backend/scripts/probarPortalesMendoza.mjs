@@ -1,0 +1,37 @@
+/** Sondeo público no intrusivo de rutas de jurisprudencia y listas históricas Mendoza. */
+const pausa = ms => new Promise(resolve => setTimeout(resolve, ms));
+const headers = { 'User-Agent':'IVS-CODEX/1.0 (investigacion de interoperabilidad publica)',Accept:'text/html, */*;q=0.7' };
+async function consultar(url, p) {
+  try {
+    const res = await fetch(url, {method:p?'POST':'GET',headers:p?{...headers,'Content-Type':'application/x-www-form-urlencoded'}:headers,
+      body:p?.toString(),signal:AbortSignal.timeout(20000)});
+    const txt=await res.text();
+    return {http:res.status,bytes:txt.length,tieneSeparadorSQL:txt.includes('@@'),
+      fichas:(txt.match(/class=["'][^"']*ficha/g)||[]).length,
+      filas:(txt.match(/<tr\b/gi)||[]).length,
+      vertex:(txt.match(/vertex\(/g)||[]).length,
+      sentencias:(txt.match(/\bsentencia\b/gi)||[]).length,
+      hrefPdf:(txt.match(/iol-api\/api\/public\/expedientes\/actuaciones\/pdf/g)||[]).length,
+      enlaces:(txt.match(/(?:href|src)=["']([^"']+)/gi)||[]).slice(0,15).map(x=>x.slice(0,90)),
+      totalSQL:(txt.match(/(\d+)\s*@@/)||[])[1]||null,
+    };
+  }catch(e){return {error:String(e.message||e).slice(0,180)};}
+}
+const armador = new URLSearchParams({funcion:'armarSql',mostrar:'20',tesauro:'',libre:'daño moral',materia:'0',
+  tribunal:'SC',expediente:'',partes:'',preopinante:'',cota:'0',fecha:'',ubica:'0',libro:'',
+  fojas:'',norma:'0',numero:'',articulo:'',tribu:'SC',competencia:''});
+for(const url of [
+  'https://wwwjuri.jus.mendoza.gov.ar/bib/jurisprudencia/funciones/consultar.php',
+  'https://wwwjuri.jus.mendoza.gov.ar/jurisprudencia/consultar/funciones/consultar.php',
+  'https://wwwjuri.jus.mendoza.gov.ar/jurisprudencia/funciones/consultar.php',
+  'https://wwwjuri.jus.mendoza.gov.ar/jurisprudencia/consultar.php',
+]){console.log('CONSULTA '+JSON.stringify({url,...await consultar(url,armador)}));await pausa(800);}
+for(const d of ['18/11/2025','10/11/2026']){
+  for(const fuero of ['03','04']){
+    const p=new URLSearchParams({nom2:'1',nom3:fuero,nom4:'99',tribunal:'01.'+fuero,
+      sd:d,ed:d,numero:'',caratula:'',iduser:''});
+    console.log('LISTA '+JSON.stringify({fecha:d,fuero,...await consultar('https://www2.jus.mendoza.gov.ar/listas/proveidos/listas.php?consulta=1',p)}));
+    await pausa(800);
+  }
+}
+console.log('PORTAL '+JSON.stringify(await consultar('https://wwwjuri.jus.mendoza.gov.ar/jurisprudencia/consultar/index.php')));
