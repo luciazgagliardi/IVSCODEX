@@ -852,27 +852,27 @@ body.en-recorrido .cab>*{animation:none}
   display:flex;align-items:center;gap:18px;margin:0 0 6px;padding:0;border-bottom:0;
   font:500 18px/1.3 var(--sans);letter-spacing:-.01em;color:var(--fg);min-width:0;overflow-wrap:anywhere
 }
-/* Cápsula más estrecha, vidrio neutro y misma tipografía Cinzel del logo: las siglas conservan
-   la posición original antes del título, en todas las bases. */
+/* Siglas con la tipografía del logotipo visible de IVS CODEX (.marca2):
+   Instrument Sans semibold, espaciado ajustado; cristal sin bordes. */
 .rotulo-fuente::before{
   content:attr(data-cod);flex:none;display:grid;place-items:center;
-  height:36px;padding:0 13px;box-sizing:border-box;border:0;outline:0;
+  height:36px;padding:0 17px;box-sizing:border-box;border:0;outline:0;
   border-radius:999px;background:linear-gradient(145deg,rgba(var(--tx),.105),rgba(var(--tx),.035));
   -webkit-backdrop-filter:blur(14px) saturate(115%);
   backdrop-filter:blur(14px) saturate(115%);
   box-shadow:0 5px 18px rgba(0,0,0,.055);
-  font:500 11px/1 "Cinzel","Trajan Pro",var(--caps);letter-spacing:.065em;text-align:center;
+  font:600 11px/1 var(--sans);letter-spacing:-.02em;text-align:center;
   white-space:nowrap;color:var(--fg);overflow-wrap:normal
 }
 /* La misma textura vítrea en las tarjetas del catálogo y comparación. */
 .cod.fuente-vidrio{
   display:inline-flex;align-items:center;justify-content:center;flex:none;
-  padding:6px 10px;border:0;outline:0;border-radius:999px;
+  padding:6px 14px;border:0;outline:0;border-radius:999px;
   background:linear-gradient(145deg,rgba(var(--tx),.105),rgba(var(--tx),.035));
   -webkit-backdrop-filter:blur(14px) saturate(115%);
   backdrop-filter:blur(14px) saturate(115%);
   box-shadow:0 5px 18px rgba(0,0,0,.055);
-  font:500 11px/1.1 "Cinzel","Trajan Pro",var(--caps);letter-spacing:.065em;
+  font:600 11px/1.1 var(--sans);letter-spacing:-.02em;
   color:var(--fg);white-space:nowrap
 }
 .panel .fuente{padding:22px 0;margin:0;border:0;border-bottom:1px solid var(--line);background:none;transition:border-color .5s}
@@ -1579,7 +1579,7 @@ body.en-lector .pie{bottom:0}
   header.top .nav-fin .lx-chip i{width:7px;height:7px}
   /* La cápsula sigue a la izquierda, con el mismo orden que en escritorio. */
   .rotulo-fuente{align-items:center;gap:14px}
-  .rotulo-fuente::before{height:32px;padding:0 10px;font-size:10px}
+  .rotulo-fuente::before{height:32px;padding:0 14px;font-size:10px}
   .rotulo-fuente>span{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-width:0;line-height:1.25}
   .rotulo-fuente .en-vivo{margin-left:0}
   .bz-riel{top:calc(69px + env(safe-area-inset-top,0px))}
