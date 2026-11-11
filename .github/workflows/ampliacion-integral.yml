@@ -1,0 +1,247 @@
+name: Ampliación integral del acervo jurisprudencial
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/ampliacion-integral.yml'
+      - 'backend/scripts/ampliarFuentes.mjs'
+      - 'backend/scripts/ampliarCorteidh.mjs'
+      - 'backend/scripts/armarAcervo.mjs'
+      - 'backend/lib/avanceCosecha.js'
+      - 'backend/test/ampliacionAcervo.prueba.js'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ampliacion-integral.yml'
+      - 'backend/scripts/ampliarFuentes.mjs'
+      - 'backend/scripts/ampliarCorteidh.mjs'
+      - 'backend/scripts/armarAcervo.mjs'
+      - 'backend/lib/avanceCosecha.js'
+  workflow_dispatch: {}
+  schedule:
+    - cron: '17 5 * * 0'
+
+permissions:
+  contents: write
+  actions: write
+
+# Compartir cerrojo con la publicación mendocina: dos escritores no pueden
+# partir de manifiestos distintos y pisar la rama acervo.
+concurrency:
+  group: publicar-acervo-mendoza
+  cancel-in-progress: false
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Comprobar sintaxis, deduplicación y cobertura
+        working-directory: backend
+        run: |
+          node --check scripts/ampliarFuentes.mjs
+          node --check scripts/ampliarCorteidh.mjs
+          node --check scripts/armarAcervo.mjs
+          node --test test/ampliacionAcervo.prueba.js
+
+  fuentes:
+    if: github.event_name != 'pull_request'
+    needs: pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    strategy:
+      fail-fast: false
+      matrix:
+        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, corteidh]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias y extraer el avance anterior
+        working-directory: backend
+        env:
+          FUENTE: ${{ matrix.fuente }}
+        run: |
+          npm ci
+          mkdir -p acervo-crudo/respaldo
+          if test -f "acervo-base/_fuentes/${FUENTE}.json.gz"; then
+            cp "acervo-base/_fuentes/${FUENTE}.json.gz" "acervo-crudo/respaldo/${FUENTE}.json.gz"
+          elif test -f "respaldo/${FUENTE}.json.gz"; then
+            cp "respaldo/${FUENTE}.json.gz" "acervo-crudo/respaldo/${FUENTE}.json.gz"
+          fi
+          if test -f "acervo-base/_avance/${FUENTE}.json"; then
+            cp "acervo-base/_avance/${FUENTE}.json" "acervo-crudo/respaldo/avance-${FUENTE}.json"
+          fi
+      - name: Cosechar con paginación y conservación de originales
+        working-directory: backend
+        env:
+          FUENTE: ${{ matrix.fuente }}
+          MAX_PAGINAS: '120'
+          MAX_TERMINOS: '36'
+          PAGINAS_POR_TAREA: '3'
+          MAX_PDFS: '70'
+          PAUSA_MS: '2000'
+        run: |
+          if test "$FUENTE" = corteidh; then
+            node scripts/ampliarCorteidh.mjs
+          else
+            node scripts/ampliarFuentes.mjs "$FUENTE"
+          fi
+      - name: Retener los datos y el informe verificable de esta fuente
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuente-${{ matrix.fuente }}
+          retention-days: 14
+          if-no-files-found: warn
+          path: backend/acervo-crudo/respaldo/
+
+  saij:
+    if: github.event_name != 'pull_request'
+    needs: pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Recuperar avance nacional y provincial
+        run: |
+          mkdir -p backend/acervo-crudo
+          if test -f backend/acervo-base/_avance/progreso-saij.json; then
+            cp backend/acervo-base/_avance/progreso-saij.json backend/acervo-crudo/progreso-saij.json
+          fi
+      - name: Incorporar meses recientes de SAIJ, CSJN y Mendoza vía SAIJ
+        working-directory: backend
+        env:
+          RECIENTES: '2'
+          TIPOS: sumarios,fallos
+          PAUSA_MS: '1400'
+          ESPERA_CORTE_MS: '30000'
+        run: |
+          set +e
+          PROVINCIA='' node scripts/cosecharSaij.mjs
+          NACIONAL=$?
+          PROVINCIA=Mendoza node scripts/cosecharSaij.mjs
+          MENDOZA=$?
+          echo "Estado cosecha nacional: $NACIONAL; Mendoza: $MENDOZA"
+          if test "$NACIONAL" -ne 0 || test "$MENDOZA" -ne 0; then
+            echo "::warning::SAIJ respondió parcialmente; sólo se integran tandas disponibles, preservando el acervo anterior"
+          fi
+          exit 0
+      - name: Guardar tandas SAIJ y avance, aunque la fuente haya cortado
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuente-saij
+          retention-days: 14
+          if-no-files-found: warn
+          path: backend/acervo-crudo/
+
+  publicar:
+    if: github.event_name != 'pull_request'
+    needs: [fuentes, saij]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Recuperar lotes de las nueve fuentes independientes
+        uses: actions/download-artifact@v4
+        with:
+          pattern: fuente-*
+          path: backend/acervo-crudo/_lotes
+      - name: Unificar cosechas sin mezclar fuentes
+        run: |
+          mkdir -p backend/acervo-crudo/respaldo
+          for d in backend/acervo-crudo/_lotes/fuente-*; do
+            test -d "$d" || continue
+            if test "${d##*/}" = fuente-saij; then
+              cp -a "$d"/. backend/acervo-crudo/
+            else
+              cp -a "$d"/. backend/acervo-crudo/respaldo/
+            fi
+          done
+          rm -rf backend/acervo-crudo/_lotes
+      - name: Construir FTS sobre la versión anterior, nunca desde cero
+        working-directory: backend
+        env:
+          DIR_ACERVO_BASE: acervo-base
+        run: node scripts/armarAcervo.mjs
+      - name: Verificar que ninguna fuente retroceda
+        working-directory: backend
+        run: |
+          node --input-type=module -e "
+          import fs from 'node:fs';
+          const a=JSON.parse(fs.readFileSync('acervo-base/manifiesto.json'));
+          const b=JSON.parse(fs.readFileSync('acervo-datos/manifiesto.json'));
+          for(const [s,n] of Object.entries(a.conteos))
+            if((b.conteos[s]||0)<n) throw Error('Pérdida de registros: '+s);
+          if(!b.conteos.saij || !b.conteos.csjn) throw Error('No se conservó SAIJ/CSJN');
+          console.log(JSON.stringify({anterior:a.conteos,ampliado:b.conteos}));"
+      - name: Publicar tandas y conservar respaldos y cursores reanudables
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C backend/acervo-base config user.name 'github-actions[bot]'
+          git -C backend/acervo-base config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          find backend/acervo-base -maxdepth 1 -type f -name '*.jsonl.gz' -delete
+          cp backend/acervo-datos/* backend/acervo-base/
+          mkdir -p backend/acervo-base/_fuentes backend/acervo-base/_avance
+          for archivo in backend/acervo-crudo/respaldo/*.json.gz; do
+            test -f "$archivo" || continue
+            cp "$archivo" backend/acervo-base/_fuentes/
+          done
+          for archivo in backend/acervo-crudo/respaldo/avance-*.json; do
+            test -f "$archivo" || continue
+            nombre="${archivo##*/}"; fuente="${nombre#avance-}"
+            cp "$archivo" "backend/acervo-base/_avance/$fuente"
+          done
+          if test -f backend/acervo-crudo/progreso-saij.json; then
+            cp backend/acervo-crudo/progreso-saij.json backend/acervo-base/_avance/progreso-saij.json
+          fi
+          git -C backend/acervo-base add -A
+          if ! git -C backend/acervo-base diff --cached --quiet; then
+            git -C backend/acervo-base commit -m "Acervo integral: cosechas oficiales con avance reanudable"
+            git -C backend/acervo-base push origin HEAD:acervo
+          fi
+      - name: Registrar nueva versión y solicitar despliegue Azure
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NUEVA=$(node -p "require('./backend/acervo-datos/manifiesto.json').version")
+          ACTUAL=$(cat backend/acervo-version.txt)
+          if test "$NUEVA" != "$ACTUAL"; then
+            git pull --rebase origin main
+            printf '%s\n' "$NUEVA" > backend/acervo-version.txt
+            git add backend/acervo-version.txt
+            git commit -m "Publicar expansión integral del acervo $NUEVA"
+            git push origin HEAD:main
+            gh workflow run azure-backend.yml --ref main
+          else
+            echo "Sin cambios documentales; sólo se conservaron los cursores de cosecha."
+          fi
