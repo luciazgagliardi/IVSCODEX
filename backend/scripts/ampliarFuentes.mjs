@@ -11,7 +11,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { FUENTES } from '../lib/fuentes.js';
-import { siguienteCursor, combinarRegistro } from '../lib/avanceCosecha.js';
+import { siguienteCursor, combinarRegistro, idDocumentalValido } from '../lib/avanceCosecha.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = path.resolve(RAIZ, process.env.DIR_COSECHA || 'acervo-crudo/respaldo');
@@ -60,6 +60,14 @@ if (!PLAN[base]) {
   const antes = registros.size;
   const progreso = await leerJson(avance, { tareas: {}, indiceTerminos: 0 });
   if (!progreso.tareas || typeof progreso.tareas !== 'object') throw new Error('Avance inválido');
+  // Las ejecuciones anteriores descartaban TODOS los ids por una expresión
+  // regular mal escapada. Sus cursores no equivalen a documentos cosechados:
+  // recorrer de nuevo desde la primera página, una única vez por fuente.
+  if (progreso.versionIds !== 2) {
+    progreso.tareas = {};
+    progreso.indiceTerminos = 0;
+    progreso.versionIds = 2;
+  }
   const extras = await leerJson(path.join(RAIZ, 'datos', 'terminos-cosecha.json'), []);
   const palabras = Array.isArray(extras) ? [...new Set(extras.filter((x) => typeof x === 'string').map((x) => x.trim()).filter((x) => x.length > 2 && x.length <= 90))] : [];
   const indiceInicial = progreso.indiceTerminos || 0;
@@ -104,7 +112,7 @@ if (!PLAN[base]) {
           throw new Error('Página vacía con resultados informados por el sitio');
         const cursor = siguienteCursor(estado.desde, respuesta, { cursorDescendente: base === 'juristeca' });
         for (const r of respuesta.resultados) {
-          if (!r?.id || !/^[\\w-]{3,160}$/.test(String(r.id))) continue;
+          if (!idDocumentalValido(r?.id)) continue;
           const limpio = limpiar({ ...r, fuente: base });
           registros.set(r.id, combinarRegistro(registros.get(r.id), limpio));
         }

@@ -24,3 +24,8 @@ export function combinarRegistro(anterior, nuevo) {
   }
   return combinados;
 }
+
+/** Acepta identificadores realmente usados por los tribunales y repositorios. */
+export function idDocumentalValido(id) {
+  return /^[A-Za-z0-9_-]{3,160}$/.test(String(id ?? ''));
+}
