@@ -20,5 +20,6 @@ jobs:
       - name: Sondear formularios públicos oficiales sin autenticación
         working-directory: backend
         run: |
+          npm ci
           node --check scripts/probarPortalesMendoza.mjs
           node scripts/probarPortalesMendoza.mjs
