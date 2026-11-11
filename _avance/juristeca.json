@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"daños\",{}]": {
-      "desde": 63225,
-      "pagina": 4,
+      "desde": 61777,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"incumplimiento contractual\",{}]": {
       "desde": 56889,
@@ -13,10 +13,10 @@
       "paginas": 3
     },
     "[\"sentencia\",{}]": {
-      "desde": 63657,
-      "pagina": 4,
+      "desde": 63086,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"pacto comisorio\",{}]": {
       "desde": 0,
@@ -25,10 +25,10 @@
       "paginas": 1
     },
     "[\"contrato\",{}]": {
-      "desde": 62587,
-      "pagina": 4,
+      "desde": 59473,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 0,
@@ -37,10 +37,10 @@
       "paginas": 1
     },
     "[\"laboral\",{}]": {
-      "desde": 62970,
-      "pagina": 4,
+      "desde": 60945,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"mora automática\",{}]": {
       "desde": 0,
@@ -49,10 +49,10 @@
       "paginas": 1
     },
     "[\"penal\",{}]": {
-      "desde": 63583,
-      "pagina": 4,
+      "desde": 63117,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"intereses moratorios\",{}]": {
       "desde": 40071,
@@ -61,10 +61,10 @@
       "paginas": 3
     },
     "[\"familia\",{}]": {
-      "desde": 62599,
-      "pagina": 4,
+      "desde": 59632,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"tasa activa\",{}]": {
       "desde": 58998,
@@ -73,10 +73,10 @@
       "paginas": 3
     },
     "[\"alimentos\",{}]": {
-      "desde": 59586,
-      "pagina": 4,
+      "desde": 53505,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"resolución contractual\",{}]": {
       "desde": 0,
@@ -85,10 +85,10 @@
       "paginas": 1
     },
     "[\"consumidor\",{}]": {
-      "desde": 61864,
-      "pagina": 4,
+      "desde": 57360,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"seña\",{}]": {
       "desde": 36057,
@@ -97,10 +97,10 @@
       "paginas": 3
     },
     "[\"amparo\",{}]": {
-      "desde": 62928,
-      "pagina": 4,
+      "desde": 61171,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"boleto de compraventa\",{}]": {
       "desde": 15175,
@@ -109,10 +109,10 @@
       "paginas": 3
     },
     "[\"sociedades\",{}]": {
-      "desde": 54850,
-      "pagina": 4,
+      "desde": 36142,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"locación de inmueble\",{}]": {
       "desde": 0,
@@ -121,10 +121,10 @@
       "paginas": 1
     },
     "[\"administrativo\",{}]": {
-      "desde": 63344,
-      "pagina": 4,
+      "desde": 61870,
+      "pagina": 10,
       "completas": false,
-      "paginas": 3
+      "paginas": 9
     },
     "[\"desalojo falta de pago\",{}]": {
       "desde": 0,
@@ -281,8 +281,1208 @@
       "pagina": 2,
       "completas": true,
       "paginas": 1
+    },
+    "[\"servidumbre de paso\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medianería\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"posesión y tenencia\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"desalojo por intrusión\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"boleto y oponibilidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"conjunto inmobiliario\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"tiempo compartido\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"compensación económica\",{}]": {
+      "desde": 27823,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"cuidado personal compartido\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"régimen de comunicación\",{}]": {
+      "desde": 50768,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"cuota alimentaria\",{}]": {
+      "desde": 26560,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"alimentos provisorios\",{}]": {
+      "desde": 27281,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"atribución del hogar\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"liquidación de la comunidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"unión convivencial\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"filiación por trha\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"adopción plena\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"impedimento de contacto\",{}]": {
+      "desde": 38005,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"violencia familiar medidas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"interés superior del niño\",{}]": {
+      "desde": 56660,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"autonomía progresiva\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"declaratoria de herederos\",{}]": {
+      "desde": 30915,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"colación\",{}]": {
+      "desde": 57819,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"legítima hereditaria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acción de reducción\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"partición de herencia\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"testamento ológrafo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"indignidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cesión de derechos hereditarios\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"administrador de la sucesión\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sucesión ab intestato\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"relación de consumo\",{}]": {
+      "desde": 57190,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"trato digno\",{}]": {
+      "desde": 46266,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"deber de información\",{}]": {
+      "desde": 36313,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cláusulas abusivas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"publicidad engañosa\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medicina prepaga cobertura\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"servicio de telefonía\",{}]": {
+      "desde": 32225,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"plan de ahorro previo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"tarjeta de crédito\",{}]": {
+      "desde": 30933,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"sobreendeudamiento del consumidor\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"garantía legal\",{}]": {
+      "desde": 43039,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"in dubio pro consumidor\",{}]": {
+      "desde": 47783,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"inoponibilidad de la personalidad jurídica\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acción social de responsabilidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"impugnación de asamblea\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"exclusión de socio\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sociedad de la sección iv\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pagaré de consumo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ejecución de cheque\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fideicomiso de garantía\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"contrato de franquicia\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuenta corriente bancaria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"abuso de mayoría\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"verificación de créditos\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pronto pago laboral\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"período de sospecha\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acción revocatoria concursal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cramdown\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"salvataje\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"extensión de quiebra\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"privilegio concursal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"incidente de revisión\",{}]": {
+      "desde": 17665,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"acuerdo preventivo extrajudicial\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fuero de atracción\",{}]": {
+      "desde": 14268,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"citación en garantía\",{}]": {
+      "desde": 46038,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"franquicia transporte público\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"exclusión de cobertura\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"declaración del riesgo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reticencia\",{}]": {
+      "desde": 789,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"seguro de vida colectivo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pronunciamiento del asegurador\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"carga del asegurado\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"oponibilidad de la franquicia\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"seguro de responsabilidad civil\",{}]": {
+      "desde": 7886,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"despido indirecto\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"injuria laboral\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"indemnización art. 245\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"relación de dependencia\",{}]": {
+      "desde": 46882,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"trabajo no registrado\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"multa registral\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"solidaridad art. 30\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"intereses tasa activa laboral\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"jornada extraordinaria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"empleo público de hecho\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"despido discriminatorio\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"principio de irrenunciabilidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"monotributista dependencia encubierta\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"tutela sindical\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"exclusión de tutela\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"práctica desleal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"encuadramiento sindical\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"convenio colectivo aplicable\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho de huelga\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"delegado de personal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"paritarias\",{}]": {
+      "desde": 43212,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"ultraactividad del convenio\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente in itinere\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"enfermedad profesional\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"comisión médica\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"incapacidad laboral permanente\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley 27.348 constitucionalidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acción civil contra art\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"baremo\",{}]": {
+      "desde": 35590,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"prestaciones dinerarias\",{}]": {
+      "desde": 22418,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"actualización ripte\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reagravación\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reajuste de haberes\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"movilidad jubilatoria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"caso badaro\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pensión derivada\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"haber mínimo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reconocimiento de servicios\",{}]": {
+      "desde": 39831,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"tareas penosas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cómputo de aportes\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"retroactividad previsional\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"incapacidad y retiro por invalidez\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"dolo eventual\",{}]": {
+      "desde": 28532,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"legítima defensa\",{}]": {
+      "desde": 20322,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"estado de necesidad\",{}]": {
+      "desde": 1018,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"tentativa inidónea\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"autoría mediata\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"concurso real e ideal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"determinación de la pena\",{}]": {
+      "desde": 7107,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"reincidencia\",{}]": {
+      "desde": 58502,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"homicidio agravado por el vínculo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"estafa procesal\",{}]": {
+      "desde": 29391,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"abuso sexual con acceso carnal\",{}]": {
+      "desde": 54224,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"tenencia de estupefacientes con fines de comercialización\",{}]": {
+      "desde": 53072,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"violencia de género femicidio\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"lesiones culposas\",{}]": {
+      "desde": 42811,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"prisión preventiva peligro de fuga\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nulidad del allanamiento\",{}]": {
+      "desde": 11812,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"cadena de custodia\",{}]": {
+      "desde": 21990,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"plazo razonable del proceso\",{}]": {
+      "desde": 17213,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"doble conforme\",{}]": {
+      "desde": 50216,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"juicio abreviado\",{}]": {
+      "desde": 48247,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"juicio por jurados\",{}]": {
+      "desde": 30557,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"suspensión del juicio a prueba\",{}]": {
+      "desde": 56590,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"testigo único\",{}]": {
+      "desde": 17723,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"valoración de la prueba indiciaria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"in dubio pro reo\",{}]": {
+      "desde": 50145,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"exclusión probatoria\",{}]": {
+      "desde": 19469,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"libertad condicional\",{}]": {
+      "desde": 55387,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"libertad asistida\",{}]": {
+      "desde": 32774,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"salidas transitorias\",{}]": {
+      "desde": 7361,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"régimen de progresividad\",{}]": {
+      "desde": 27648,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"prisión domiciliaria\",{}]": {
+      "desde": 52317,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"hábeas corpus correctivo\",{}]": {
+      "desde": 37713,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"condiciones de detención\",{}]": {
+      "desde": 58124,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cómputo de pena\",{}]": {
+      "desde": 38696,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"sanciones disciplinarias\",{}]": {
+      "desde": 22307,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"nulidad del acto administrativo\",{}]": {
+      "desde": 24957,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"agotamiento de la vía administrativa\",{}]": {
+      "desde": 857,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"silencio de la administración\",{}]": {
+      "desde": 43007,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"responsabilidad del estado\",{}]": {
+      "desde": 52165,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"empleo público estabilidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"contrato administrativo\",{}]": {
+      "desde": 30081,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sanción disciplinaria\",{}]": {
+      "desde": 34048,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"habilitación de instancia\",{}]": {
+      "desde": 38798,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"medida cautelar contra el estado\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acción procesal administrativa\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"determinación de oficio\",{}]": {
+      "desde": 26502,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"ingresos brutos convenio multilateral\",{}]": {
+      "desde": 40365,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"prescripción tributaria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"repetición de impuestos\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"multa por defraudación fiscal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ejecución fiscal excepciones\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"impuesto de sellos\",{}]": {
+      "desde": 27779,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"tasa municipal servicio efectivo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"confiscatoriedad\",{}]": {
+      "desde": 37199,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"solve et repete\",{}]": {
+      "desde": 30202,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"acción de amparo\",{}]": {
+      "desde": 58045,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"amparo colectivo\",{}]": {
+      "desde": 27561,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"control de constitucionalidad de oficio\",{}]": {
+      "desde": 13933,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"cuestión política no justiciable\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho a la salud amparo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medida cautelar innovativa\",{}]": {
+      "desde": 548,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"legitimación colectiva\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"arbitrariedad de sentencia\",{}]": {
+      "desde": 51160,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"recurso extraordinario federal\",{}]": {
+      "desde": 46560,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"gravedad institucional\",{}]": {
+      "desde": 47970,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"per saltum\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"control de convencionalidad\",{}]": {
+      "desde": 48038,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"lesa humanidad imprescriptibilidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"desaparición forzada\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"garantías judiciales art. 8 cadh\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"protección judicial art. 25 cadh\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reparación integral\",{}]": {
+      "desde": 49110,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"medidas provisionales\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho a la verdad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"debida diligencia reforzada\",{}]": {
+      "desde": 54390,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"principio pro persona\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño ambiental de incidencia colectiva\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"principio precautorio\",{}]": {
+      "desde": 27938,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"evaluación de impacto ambiental\",{}]": {
+      "desde": 35771,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"recomposición del ambiente\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación amplia ambiental\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"audiencia pública ambiental\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"presupuestos mínimos\",{}]": {
+      "desde": 45732,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
     }
   },
-  "indiceTerminos": 36,
+  "indiceTerminos": 236,
   "versionIds": 2
 }

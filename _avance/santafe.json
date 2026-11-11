@@ -5,7 +5,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{}]": {
@@ -21,7 +21,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{}]": {
@@ -383,8 +383,24 @@
       "paginas": 0,
       "errores": 1,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"servidumbre de paso\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"medianería\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     }
   },
-  "indiceTerminos": 36,
+  "indiceTerminos": 106,
   "versionIds": 2
 }
