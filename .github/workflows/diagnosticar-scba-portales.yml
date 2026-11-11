@@ -1,0 +1,24 @@
+name: Diagnosticar portales publicos SCBA
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/diagnosticarScbaPortales.mjs'
+      - '.github/workflows/diagnosticar-scba-portales.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  prueba:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verificar portales institucionales y sus interfaces publicas
+        working-directory: backend
+        run: |
+          node --check scripts/diagnosticarScbaPortales.mjs
+          node scripts/diagnosticarScbaPortales.mjs
