@@ -1,0 +1,179 @@
+name: Cosecha masiva de sentencias Mendoza 2025-2026
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/cosecha-mendoza-masiva.yml'
+      - 'backend/scripts/consolidarLotesMendoza.mjs'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cosecha-mendoza-masiva.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Sintaxis y clasificación estricta de actuaciones judiciales
+        working-directory: backend
+        run: |
+          node --check scripts/consolidarLotesMendoza.mjs
+          node --check scripts/cosecharListasMendoza.mjs
+          node --test test/clasificarActuacionMza.prueba.js
+
+  cosechar:
+    if: github.event_name != 'pull_request'
+    needs: validar
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        mes: [2025-01, 2025-02, 2025-03, 2025-04, 2025-05, 2025-06, 2025-07, 2025-08, 2025-09, 2025-10, 2025-11, 2025-12, 2026-01, 2026-02, 2026-03, 2026-04, 2026-05, 2026-06, 2026-07, 2026-08, 2026-09]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar extracción de PDFs de sentencias
+        working-directory: backend
+        run: npm ci
+      - name: Generar jornadas hábiles del mes e inspeccionar dos fueros
+        working-directory: backend
+        env:
+          MES: ${{ matrix.mes }}
+          FUEROS: CC,CT
+          MAX_DOCS: '900'
+          PAUSA_MS: '1700'
+        shell: bash
+        run: |
+          set -euo pipefail
+          FECHAS="$(node -e 'const [y,m]=process.env.MES.split("-").map(Number);const f=[];for(let d=1;d<=new Date(Date.UTC(y,m,0)).getUTCDate();d++){const dt=new Date(Date.UTC(y,m-1,d));if(dt.getUTCDay()!==0&&dt.getUTCDay()!==6)f.push(dt.toISOString().slice(0,10))}process.stdout.write(f.join(","))')"
+          test -n "$FECHAS"
+          echo "Mes $MES: $(echo "$FECHAS" | tr ',' '\n' | wc -l) jornadas"
+          FECHAS="$FECHAS" node scripts/cosecharListasMendoza.mjs
+      - name: Conservar incluso avances parciales comprobados
+        if: always()
+        env:
+          MES: ${{ matrix.mes }}
+        shell: bash
+        run: |
+          mkdir -p "backend/acervo-crudo/meses/$MES"
+          if test -f backend/respaldo/mendoza-listas.json.gz; then
+            cp backend/respaldo/mendoza-listas.json.gz "backend/acervo-crudo/meses/$MES/lote.json.gz"
+          fi
+          if test -f backend/reporte-mendoza-listas.json; then
+            cp backend/reporte-mendoza-listas.json "backend/acervo-crudo/meses/$MES/reporte.json"
+          fi
+      - name: Guardar lote judicial verificable y auditoría
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mendoza-mes-${{ matrix.mes }}
+          if-no-files-found: warn
+          retention-days: 30
+          path: backend/acervo-crudo/meses/${{ matrix.mes }}/
+
+  publicar:
+    if: ${{ always() && github.event_name != 'pull_request' }}
+    needs: [validar, cosechar]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      group: publicar-acervo-mendoza
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Recuperar cosechas mensuales terminadas
+        uses: actions/download-artifact@v4
+        with:
+          pattern: mendoza-mes-*
+          path: backend/acervo-crudo/descargas
+      - name: Consolidar todas las sentencias íntegras y deduplicar
+        working-directory: backend
+        run: node scripts/consolidarLotesMendoza.mjs
+      - name: Reconstruir contra el acervo anterior completo
+        working-directory: backend
+        env:
+          DIR_ACERVO_BASE: acervo-base
+        run: node scripts/armarAcervo.mjs
+      - name: Exigir incremento real de fallos sin pérdidas en ninguna provincia
+        working-directory: backend
+        shell: bash
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const a=JSON.parse(fs.readFileSync("acervo-base/manifiesto.json","utf8"));
+            const b=JSON.parse(fs.readFileSync("acervo-datos/manifiesto.json","utf8"));
+            const detalle=JSON.parse(fs.readFileSync("reporte-mendoza-masiva.json","utf8"));
+            for(const [s,n] of Object.entries(a.conteos)) {
+              if((b.conteos[s]||0)<n) throw Error("Regresión: "+s);
+            }
+            if(b.conteos.mendoza<=a.conteos.mendoza) throw Error("Sin nuevos documentos distintos");
+            console.log(JSON.stringify({antes:a.conteos.mendoza,despues:b.conteos.mendoza,
+              crecimiento:b.conteos.mendoza-a.conteos.mendoza,
+              meses:detalle.mesesRecibidos,extraidos:detalle.registrosAdicionales}));
+          '
+      - name: Publicar índices y documentos fuente sin eliminar otros respaldos
+        shell: bash
+        run: |
+          set -euo pipefail
+          git -C backend/acervo-base config user.name 'github-actions[bot]'
+          git -C backend/acervo-base config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          find backend/acervo-base -maxdepth 1 -type f -name '*.jsonl.gz' -delete
+          cp backend/acervo-datos/* backend/acervo-base/
+          mkdir -p backend/acervo-base/_fuentes backend/acervo-base/_reportes
+          cp backend/respaldo/mendoza-listas.json.gz backend/acervo-base/_fuentes/mendoza-listas-masiva.json.gz
+          cp backend/reporte-mendoza-masiva.json backend/acervo-base/_reportes/mendoza-masiva-2025-2026.json
+          git -C backend/acervo-base add -A
+          if ! git -C backend/acervo-base diff --cached --quiet; then
+            git -C backend/acervo-base commit -m "Acervo Mendoza: sentencias públicas de 21 meses, PDF y FTS verificados"
+            git -C backend/acervo-base push origin HEAD:acervo
+          fi
+      - name: Actualizar versión pública para despliegue en Azure
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git pull --rebase origin main
+          NUEVA=$(node -p "require('./backend/acervo-datos/manifiesto.json').version")
+          printf '%s\n' "$NUEVA" > backend/acervo-version.txt
+          git add backend/acervo-version.txt
+          if ! git diff --cached --quiet; then
+            git commit -m "Publicar cosecha masiva de sentencias Mendoza $NUEVA"
+            git push origin HEAD:main
+          fi
+      - name: Conservar el informe verificable
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: informe-cosecha-masiva-mendoza
+          retention-days: 30
+          if-no-files-found: warn
+          path: |
+            backend/reporte-mendoza-masiva.json
+            backend/acervo-datos/manifiesto.json
