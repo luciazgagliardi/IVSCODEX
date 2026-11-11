@@ -120,7 +120,7 @@ if (!PLAN[base]) {
           throw new Error('Página vacía con resultados informados por el sitio');
         const cursor = siguienteCursor(estado.desde, respuesta);
         for (const r of respuesta.resultados) {
-          if (!r?.id || !String(r.id).startsWith(base + '_')) continue;
+          if (!r?.id || !/^[\\w-]{3,160}$/.test(String(r.id))) continue;
           const limpio = limpiar({ ...r, fuente: base });
           registros.set(r.id, mejor(registros.get(r.id), limpio));
         }
