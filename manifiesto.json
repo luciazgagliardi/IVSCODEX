@@ -1,6 +1,6 @@
 {
- "version": "20261110-7053623d",
- "generado": "2026-11-10T18:48:32.430Z",
+ "version": "20261111-d33d0397",
+ "generado": "2026-11-11T02:56:11.953Z",
  "archivos": [
   "caba-001.jsonl.gz",
   "dialnet-001.jsonl.gz",
@@ -24,12 +24,12 @@
  ],
  "conteos": {
   "caba": 6582,
-  "csjn": 61730,
+  "csjn": 61782,
   "dialnet": 1832,
   "juristeca": 7470,
   "mendoza": 920,
   "mendozalegal": 146,
-  "saij": 764034,
+  "saij": 764115,
   "scba": 9138
  }
 }

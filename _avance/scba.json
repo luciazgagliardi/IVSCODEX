@@ -1,0 +1,271 @@
+{
+  "tareas": {
+    "[\"sentencia\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"incumplimiento contractual\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"recurso\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
+    },
+    "[\"pacto comisorio\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"daño moral\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"teoría de la imprevisión\",{}]": {
+      "desde": 40,
+      "pagina": 3,
+      "completas": false,
+      "paginas": 2,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"responsabilidad civil\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"mora automática\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"despido\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"intereses moratorios\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"accidente de trabajo\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"tasa activa\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"alimentos\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"resolución contractual\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"contrato\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"seña\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"consumidor\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"boleto de compraventa\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"familia\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"locación de inmueble\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"sucesiones\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"desalojo falta de pago\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"intereses\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"obligación de valor\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"amparo\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"novación\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"cesión de créditos\",{}]": {
+      "desde": 40,
+      "pagina": 3,
+      "completas": false,
+      "paginas": 2,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"buena fe contractual\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"consecuencias no patrimoniales\",{}]": {
+      "desde": 40,
+      "pagina": 3,
+      "completas": false,
+      "paginas": 2,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"incapacidad sobreviniente\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"fórmula acciarri\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pérdida de chance\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"daño punitivo\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"riesgo de la cosa\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"accidente de tránsito\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"mala praxis médica\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"relación de causalidad\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"eximentes de responsabilidad\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"culpa de la víctima\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"valor vida\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    },
+    "[\"gastos de tratamiento futuro\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación activa daño moral\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prescripción adquisitiva\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
+    }
+  },
+  "indiceTerminos": 36
+}

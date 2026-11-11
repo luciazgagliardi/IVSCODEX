@@ -1,0 +1,341 @@
+{
+  "tareas": {
+    "[\"daños\",{}]": {
+      "desde": 63694,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"incumplimiento contractual\",{}]": {
+      "desde": 61994,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"sentencia\",{}]": {
+      "desde": 63959,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"pacto comisorio\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"contrato\",{}]": {
+      "desde": 63584,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"teoría de la imprevisión\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"laboral\",{}]": {
+      "desde": 63595,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"mora automática\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"penal\",{}]": {
+      "desde": 63752,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"intereses moratorios\",{}]": {
+      "desde": 48608,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"familia\",{}]": {
+      "desde": 63350,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"tasa activa\",{}]": {
+      "desde": 62733,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"alimentos\",{}]": {
+      "desde": 62604,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"resolución contractual\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"consumidor\",{}]": {
+      "desde": 63281,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"seña\",{}]": {
+      "desde": 52167,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"amparo\",{}]": {
+      "desde": 63605,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"boleto de compraventa\",{}]": {
+      "desde": 41962,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"sociedades\",{}]": {
+      "desde": 57984,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"locación de inmueble\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"administrativo\",{}]": {
+      "desde": 63838,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"desalojo falta de pago\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"obligación de valor\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"novación\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cesión de créditos\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"buena fe contractual\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño moral\",{}]": {
+      "desde": 63131,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"consecuencias no patrimoniales\",{}]": {
+      "desde": 55590,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"incapacidad sobreviniente\",{}]": {
+      "desde": 61196,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"fórmula acciarri\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pérdida de chance\",{}]": {
+      "desde": 56952,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"daño punitivo\",{}]": {
+      "desde": 62220,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"riesgo de la cosa\",{}]": {
+      "desde": 57929,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"accidente de tránsito\",{}]": {
+      "desde": 46867,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"mala praxis médica\",{}]": {
+      "desde": 47510,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"relación de causalidad\",{}]": {
+      "desde": 62742,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"eximentes de responsabilidad\",{}]": {
+      "desde": 34470,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"culpa de la víctima\",{}]": {
+      "desde": 59147,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"valor vida\",{}]": {
+      "desde": 34238,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"gastos de tratamiento futuro\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación activa daño moral\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prescripción adquisitiva\",{}]": {
+      "desde": 43591,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"usucapión veinteañal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acción reivindicatoria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"interdicto de recobrar\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"propiedad horizontal\",{}]": {
+      "desde": 55992,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
+    },
+    "[\"expensas comunes\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    }
+  },
+  "indiceTerminos": 36
+}

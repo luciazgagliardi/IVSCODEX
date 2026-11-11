@@ -1,0 +1,757 @@
+{
+  "tareas": {
+    "[\"sentencia\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"incumplimiento contractual\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"sentencia\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"incumplimiento contractual\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"recurso\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"pacto comisorio\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"recurso\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"pacto comisorio\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"daños\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"teoría de la imprevisión\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"daños\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"teoría de la imprevisión\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"despido\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"mora automática\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"despido\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"mora automática\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"responsabilidad civil\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"intereses moratorios\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"responsabilidad civil\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"intereses moratorios\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"alimentos\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"tasa activa\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"alimentos\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"tasa activa\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"familia\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"resolución contractual\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"familia\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"resolución contractual\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"contrato\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"seña\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"contrato\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"seña\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"amparo\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"boleto de compraventa\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"amparo\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"boleto de compraventa\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"penal\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"locación de inmueble\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"penal\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"locación de inmueble\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"accidente\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"desalojo falta de pago\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"accidente\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"desalojo falta de pago\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"obligación de valor\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"obligación de valor\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"novación\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"novación\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cesión de créditos\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cesión de créditos\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"buena fe contractual\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"buena fe contractual\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"daño moral\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"daño moral\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"consecuencias no patrimoniales\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"consecuencias no patrimoniales\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"incapacidad sobreviniente\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"incapacidad sobreviniente\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"fórmula acciarri\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"fórmula acciarri\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"pérdida de chance\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"pérdida de chance\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"daño punitivo\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"daño punitivo\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"riesgo de la cosa\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"riesgo de la cosa\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"accidente de tránsito\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"accidente de tránsito\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"mala praxis médica\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"mala praxis médica\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"relación de causalidad\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"relación de causalidad\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"eximentes de responsabilidad\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"eximentes de responsabilidad\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"culpa de la víctima\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"culpa de la víctima\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"valor vida\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"valor vida\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"gastos de tratamiento futuro\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"gastos de tratamiento futuro\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"legitimación activa daño moral\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"legitimación activa daño moral\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"prescripción adquisitiva\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"prescripción adquisitiva\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"usucapión veinteañal\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"usucapión veinteañal\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"acción reivindicatoria\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"acción reivindicatoria\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"interdicto de recobrar\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"interdicto de recobrar\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"propiedad horizontal\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"propiedad horizontal\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"expensas comunes\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"expensas comunes\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    }
+  },
+  "indiceTerminos": 36
+}
