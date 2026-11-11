@@ -1,6 +1,6 @@
 {
- "version": "20261111-ead6f813",
- "generado": "2026-11-11T21:23:32.699Z",
+ "version": "20261111-545ac60b",
+ "generado": "2026-11-11T23:59:24.748Z",
  "archivos": [
   "caba-001.jsonl.gz",
   "dialnet-001.jsonl.gz",
@@ -23,13 +23,13 @@
   "scba-001.jsonl.gz"
  ],
  "conteos": {
-  "caba": 7518,
+  "caba": 8017,
   "csjn": 61782,
-  "dialnet": 2176,
-  "juristeca": 14400,
-  "mendoza": 10262,
+  "dialnet": 2501,
+  "juristeca": 17484,
+  "mendoza": 13013,
   "mendozalegal": 179,
   "saij": 764115,
-  "scba": 10786
+  "scba": 11788
  }
 }

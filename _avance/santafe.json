@@ -5,7 +5,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 2,
+      "errores": 3,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{}]": {
@@ -21,7 +21,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 2,
+      "errores": 3,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{}]": {
@@ -399,8 +399,24 @@
       "paginas": 0,
       "errores": 1,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"seguro de vida colectivo\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"pronunciamiento del asegurador\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     }
   },
-  "indiceTerminos": 106,
+  "indiceTerminos": 176,
   "versionIds": 2
 }
