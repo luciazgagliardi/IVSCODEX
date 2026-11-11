@@ -60,8 +60,11 @@ export async function leerDatos(usuarioId) {
       anillos: Array.isArray(dato?.anillos) ? dato.anillos : [],
       actualizadoEn: dato?.actualizadoEn || null,
     };
-  } catch {
-    return { fav: {}, hist: [], pasajes: [], anillos: [] }; // todavia no guardo nada
+  } catch (e) {
+    // No borrar la información existente al confundir EACCES o JSON roto con
+    // una cuenta nueva. Solo ENOENT significa que todavía no guardó nada.
+    if (e?.code === 'ENOENT') return { fav: {}, hist: [], pasajes: [], anillos: [] };
+    throw new Error('No se pudieron leer los datos de usuario', { cause: e });
   }
 }
 
@@ -215,5 +218,8 @@ export async function fusionarDatos(usuarioId, local) {
   // distintas que igual vale la pena conservar.
   const pasajes = [...(local?.pasajes || []), ...servidor.pasajes];
 
-  return guardarDatos(usuarioId, { fav, hist, pasajes });
+  // Una sincronización entre dispositivos conserva los anillos del servidor;
+  // prioriza los del navegador cuando se repite el mismo término canónico.
+  const anillos = [...(Array.isArray(local?.anillos) ? local.anillos : []), ...servidor.anillos];
+  return guardarDatos(usuarioId, { fav, hist, pasajes, anillos });
 }

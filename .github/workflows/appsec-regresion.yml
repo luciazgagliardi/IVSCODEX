@@ -1,0 +1,56 @@
+name: AppSec y regresiones de datos persistentes
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/routes/indice.js'
+      - 'backend/routes/auth.js'
+      - 'backend/lib/almacen.js'
+      - 'backend/lib/datosUsuario.js'
+      - 'backend/lib/ocr.js'
+      - 'backend/index.js'
+      - 'backend/test/appsecRegresion.prueba.js'
+      - '.github/workflows/appsec-regresion.yml'
+      - 'ops/publicar-version-acervo.sh'
+      - '.github/workflows/ampliacion-integral.yml'
+      - '.github/workflows/cosecha-mendoza-masiva.yml'
+      - '.github/workflows/publicar-acervo-mendoza.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'backend/routes/indice.js'
+      - 'backend/routes/auth.js'
+      - 'backend/lib/almacen.js'
+      - 'backend/lib/datosUsuario.js'
+      - 'backend/lib/ocr.js'
+      - 'backend/index.js'
+      - 'backend/test/appsecRegresion.prueba.js'
+      - '.github/workflows/appsec-regresion.yml'
+      - 'ops/publicar-version-acervo.sh'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  seguridad:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Dependencias reproducibles
+        working-directory: backend
+        run: npm ci
+      - name: Comprobación sintáctica de scripts y rutas
+        run: |
+          bash -n ops/publicar-version-acervo.sh
+          node --check backend/routes/indice.js
+          node --check backend/routes/auth.js
+          node --check backend/lib/datosUsuario.js
+          node --check backend/lib/almacen.js
+      - name: Pruebas de integridad, autenticación y regresión
+        working-directory: backend
+        run: node --test test/appsecRegresion.prueba.js test/auth.prueba.js test/seguridad.prueba.js

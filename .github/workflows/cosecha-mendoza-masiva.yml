@@ -153,20 +153,13 @@ jobs:
             git -C backend/acervo-base commit -m "Acervo Mendoza: sentencias públicas de 21 meses, PDF y FTS verificados"
             git -C backend/acervo-base push origin HEAD:acervo
           fi
-      - name: Actualizar versión pública para despliegue en Azure
+      - name: Actualizar versión pública desde un worktree limpio
         shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git pull --rebase origin main
-          NUEVA=$(node -p "require('./backend/acervo-datos/manifiesto.json').version")
-          printf '%s\n' "$NUEVA" > backend/acervo-version.txt
-          git add backend/acervo-version.txt
-          if ! git diff --cached --quiet; then
-            git commit -m "Publicar cosecha masiva de sentencias Mendoza $NUEVA"
-            git push origin HEAD:main
-          fi
+        run: bash ops/publicar-version-acervo.sh
+      - name: Desplegar versión verificada en Azure
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run azure-backend.yml --ref main
       - name: Conservar el informe verificable
         if: always()
         uses: actions/upload-artifact@v4

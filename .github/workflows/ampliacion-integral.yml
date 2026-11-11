@@ -231,19 +231,9 @@ jobs:
             git -C backend/acervo-base commit -m "Acervo integral: cosechas oficiales con avance reanudable"
             git -C backend/acervo-base push origin HEAD:acervo
           fi
-      - name: Registrar nueva versión y solicitar despliegue Azure
+      - name: Registrar nueva versión desde un worktree limpio
+        run: bash ops/publicar-version-acervo.sh
+      - name: Solicitar despliegue Azure
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          NUEVA=$(node -p "require('./backend/acervo-datos/manifiesto.json').version")
-          ACTUAL=$(cat backend/acervo-version.txt)
-          if test "$NUEVA" != "$ACTUAL"; then
-            git pull --rebase origin main
-            printf '%s\n' "$NUEVA" > backend/acervo-version.txt
-            git add backend/acervo-version.txt
-            git commit -m "Publicar expansión integral del acervo $NUEVA"
-            git push origin HEAD:main
-            gh workflow run azure-backend.yml --ref main
-          else
-            echo "Sin cambios documentales; sólo se conservaron los cursores de cosecha."
-          fi
+        run: gh workflow run azure-backend.yml --ref main

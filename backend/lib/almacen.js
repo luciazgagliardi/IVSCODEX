@@ -36,12 +36,13 @@ export async function escribirJsonAtomico(archivo, dato) {
   }
 }
 
-/** Lee un JSON; si no existe devuelve `vacio`, y si está corrupto lo avisa y devuelve `vacio`. */
+/** Un archivo ausente puede iniciarse vacío; corrupción y errores de permisos NO. */
 export async function leerJson(archivo, vacio = {}) {
   try {
     return JSON.parse(await fs.readFile(archivo, 'utf8'));
   } catch (e) {
-    if (e && e.code !== 'ENOENT') console.error('[almacen] no se pudo leer', archivo.split(/[\\/]/).pop());
-    return vacio;
+    if (e?.code === 'ENOENT') return vacio;
+    console.error('[almacen] error de lectura, no se sobrescribirá', archivo.split(/[\\/]/).pop());
+    throw new Error('Almacenamiento persistente ilegible', { cause: e });
   }
 }

@@ -54,12 +54,8 @@ jobs:
           git -C backend/acervo-base add -A
           git -C backend/acervo-base commit -m "Acervo: actualización jurisprudencial verificada"
           git -C backend/acervo-base push origin HEAD:acervo
-      - name: Registrar versión en main
-        run: |
-          node --input-type=module -e "import fs from 'node:fs';const m=JSON.parse(fs.readFileSync('backend/acervo-datos/manifiesto.json'));fs.writeFileSync('backend/acervo-version.txt',m.version+'\n');"
-          git add backend/acervo-version.txt
-          git commit -m "Publicar acervo jurisprudencial ampliado y validado"
-          git push origin HEAD:main
+      - name: Registrar versión en main usando un worktree limpio
+        run: bash ops/publicar-version-acervo.sh
       - name: Solicitar despliegue Azure del acervo renovado
         env:
           GH_TOKEN: ${{ github.token }}
