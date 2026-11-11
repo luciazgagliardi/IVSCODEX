@@ -1,84 +1,303 @@
 {
-  "generado": "2026-11-10T05:17:15.719Z",
-  "anteriores": 96,
-  "nuevos": 100,
-  "procesados": 100,
-  "candidatos": 100,
-  "comprobados": 100,
+  "generado": "2026-11-11T16:56:31.629Z",
+  "anteriores": 196,
+  "nuevos": 380,
+  "procesados": 382,
+  "candidatos": 385,
+  "comprobados": 380,
   "depuradosDelRespaldoAnterior": 0,
-  "descartados": {},
+  "descartados": {
+    "sin_estructura_judicial": 2
+  },
   "errores": [],
   "jornadas": [
     {
-      "fecha": "14/09/2026",
+      "fecha": "10/11/2026",
+      "fuero": "CC",
+      "candidatos": 4,
+      "agregados": 4,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "10/11/2026",
+      "fuero": "CT",
+      "candidatos": 16,
+      "agregados": 16,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "09/11/2026",
+      "fuero": "CC",
+      "candidatos": 0,
+      "agregados": 0,
+      "estatus": "sin_entradas_verificables"
+    },
+    {
+      "fecha": "09/11/2026",
+      "fuero": "CT",
+      "candidatos": 0,
+      "agregados": 0,
+      "estatus": "sin_entradas_verificables"
+    },
+    {
+      "fecha": "06/11/2026",
       "fuero": "CC",
       "candidatos": 13,
       "agregados": 13,
       "estatus": "consultada"
     },
     {
-      "fecha": "14/09/2026",
-      "fuero": "CT",
-      "candidatos": 9,
-      "agregados": 9,
-      "estatus": "consultada"
-    },
-    {
-      "fecha": "15/09/2026",
-      "fuero": "CC",
-      "candidatos": 3,
-      "agregados": 3,
-      "estatus": "consultada"
-    },
-    {
-      "fecha": "15/09/2026",
+      "fecha": "06/11/2026",
       "fuero": "CT",
       "candidatos": 11,
       "agregados": 11,
       "estatus": "consultada"
     },
     {
-      "fecha": "16/09/2026",
+      "fecha": "05/11/2026",
       "fuero": "CC",
-      "candidatos": 7,
-      "agregados": 7,
+      "candidatos": 4,
+      "agregados": 4,
       "estatus": "consultada"
     },
     {
-      "fecha": "16/09/2026",
+      "fecha": "05/11/2026",
       "fuero": "CT",
-      "candidatos": 14,
-      "agregados": 14,
+      "candidatos": 15,
+      "agregados": 15,
       "estatus": "consultada"
     },
     {
-      "fecha": "17/09/2026",
+      "fecha": "04/11/2026",
       "fuero": "CC",
-      "candidatos": 5,
-      "agregados": 5,
+      "candidatos": 8,
+      "agregados": 8,
       "estatus": "consultada"
     },
     {
-      "fecha": "17/09/2026",
+      "fecha": "04/11/2026",
+      "fuero": "CT",
+      "candidatos": 13,
+      "agregados": 13,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "03/11/2026",
+      "fuero": "CC",
+      "candidatos": 4,
+      "agregados": 4,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "03/11/2026",
       "fuero": "CT",
       "candidatos": 18,
       "agregados": 18,
       "estatus": "consultada"
     },
     {
-      "fecha": "18/09/2026",
+      "fecha": "02/11/2026",
+      "fuero": "CC",
+      "candidatos": 5,
+      "agregados": 5,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "02/11/2026",
+      "fuero": "CT",
+      "candidatos": 16,
+      "agregados": 16,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "30/10/2026",
+      "fuero": "CC",
+      "candidatos": 3,
+      "agregados": 3,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "30/10/2026",
+      "fuero": "CT",
+      "candidatos": 11,
+      "agregados": 11,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "29/10/2026",
+      "fuero": "CC",
+      "candidatos": 6,
+      "agregados": 6,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "29/10/2026",
+      "fuero": "CT",
+      "candidatos": 14,
+      "agregados": 14,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "28/10/2026",
+      "fuero": "CC",
+      "candidatos": 8,
+      "agregados": 8,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "28/10/2026",
+      "fuero": "CT",
+      "candidatos": 16,
+      "agregados": 16,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "27/10/2026",
+      "fuero": "CC",
+      "candidatos": 10,
+      "agregados": 9,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "27/10/2026",
+      "fuero": "CT",
+      "candidatos": 17,
+      "agregados": 17,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "26/10/2026",
+      "fuero": "CC",
+      "candidatos": 3,
+      "agregados": 3,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "26/10/2026",
+      "fuero": "CT",
+      "candidatos": 14,
+      "agregados": 14,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "23/10/2026",
+      "fuero": "CC",
+      "candidatos": 4,
+      "agregados": 4,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "23/10/2026",
+      "fuero": "CT",
+      "candidatos": 15,
+      "agregados": 15,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "22/10/2026",
       "fuero": "CC",
       "candidatos": 10,
       "agregados": 10,
       "estatus": "consultada"
     },
     {
-      "fecha": "18/09/2026",
+      "fecha": "22/10/2026",
       "fuero": "CT",
-      "candidatos": 10,
-      "agregados": 10,
+      "candidatos": 8,
+      "agregados": 8,
       "estatus": "consultada"
+    },
+    {
+      "fecha": "21/10/2026",
+      "fuero": "CC",
+      "candidatos": 4,
+      "agregados": 4,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "21/10/2026",
+      "fuero": "CT",
+      "candidatos": 12,
+      "agregados": 12,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "20/10/2026",
+      "fuero": "CC",
+      "candidatos": 3,
+      "agregados": 3,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "20/10/2026",
+      "fuero": "CT",
+      "candidatos": 16,
+      "agregados": 16,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "19/10/2026",
+      "fuero": "CC",
+      "candidatos": 4,
+      "agregados": 4,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "19/10/2026",
+      "fuero": "CT",
+      "candidatos": 19,
+      "agregados": 19,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "16/10/2026",
+      "fuero": "CC",
+      "candidatos": 8,
+      "agregados": 8,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "16/10/2026",
+      "fuero": "CT",
+      "candidatos": 17,
+      "agregados": 17,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "15/10/2026",
+      "fuero": "CC",
+      "candidatos": 2,
+      "agregados": 2,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "15/10/2026",
+      "fuero": "CT",
+      "candidatos": 8,
+      "agregados": 8,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "14/10/2026",
+      "fuero": "CC",
+      "candidatos": 4,
+      "agregados": 3,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "14/10/2026",
+      "fuero": "CT",
+      "candidatos": 8,
+      "agregados": 8,
+      "estatus": "consultada"
+    },
+    {
+      "fecha": "13/10/2026",
+      "fuero": "CC",
+      "candidatos": 14,
+      "agregados": 11,
+      "estatus": "limite_documentos"
     }
   ],
-  "limite": 270
+  "limite": 380
 }
