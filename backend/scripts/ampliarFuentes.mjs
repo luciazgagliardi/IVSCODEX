@@ -11,6 +11,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { FUENTES } from '../lib/fuentes.js';
+import { siguienteCursor, combinarRegistro } from '../lib/avanceCosecha.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = path.resolve(RAIZ, process.env.DIR_COSECHA || 'acervo-crudo/respaldo');
@@ -35,23 +36,6 @@ const dormir = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const leerJson = async (file, fallback) => { try { return JSON.parse(await fs.readFile(file, 'utf8')); } catch (e) { if (e.code === 'ENOENT') return fallback; throw e; } };
 const claveDe = (q, variante) => JSON.stringify([q, variante]);
 const limpiar = (r) => Object.fromEntries(Object.entries(r).filter(([k, v]) => !k.startsWith('_') && v != null && v !== ''));
-const mejor = (anterior, nuevo) => {
-  if (!anterior) return nuevo;
-  const juntos = { ...anterior };
-  for (const [k, v] of Object.entries(nuevo))
-    if (v != null && v !== '' && (!juntos[k] || (typeof v === 'string' && v.length > String(juntos[k]).length)))
-      juntos[k] = v;
-  return juntos;
-};
-export function siguienteCursor(actual, r) {
-  const s = r?.siguienteDesde;
-  if (s == null) return { agotada: true };
-  if ((typeof s !== 'number' && typeof s !== 'string') || !String(s).trim() || String(s) === String(actual))
-    throw new Error('Cursor inválido o repetido');
-  if (typeof s === 'number' && (!Number.isSafeInteger(s) || s < 0 || (typeof actual === 'number' && s <= actual)))
-    throw new Error('Cursor numérico no progresivo');
-  return { agotada: false, desde: s };
-}
 const base = process.argv[2];
 if (!PLAN[base]) {
   console.error('Fuente: ' + Object.keys(PLAN).join(', '));
@@ -122,7 +106,7 @@ if (!PLAN[base]) {
         for (const r of respuesta.resultados) {
           if (!r?.id || !/^[\\w-]{3,160}$/.test(String(r.id))) continue;
           const limpio = limpiar({ ...r, fuente: base });
-          registros.set(r.id, mejor(registros.get(r.id), limpio));
+          registros.set(r.id, combinarRegistro(registros.get(r.id), limpio));
         }
         estado.paginas++;
         informeCosecha.paginas++;
@@ -145,7 +129,7 @@ if (!PLAN[base]) {
   }
   // Avanzar la ventana sólo tras completar una ronda; mantener cada término
   // con su propio cursor, para reanudar la paginación en futuras ejecuciones.
-  if (informeCosecha.paginas < MAX_PAGINAS && palabras.length)
+  if (palabras.length)
     progreso.indiceTerminos = (indiceInicial + ventana.length) % palabras.length;
   await guardar();
   console.log(JSON.stringify({ ...informeCosecha, nuevos: registros.size - antes, total: registros.size, siguienteTermino: progreso.indiceTerminos }));
