@@ -155,8 +155,10 @@ jobs:
           path: backend/acervo-crudo/
 
   publicar:
-    if: github.event_name != 'pull_request'
-    needs: [fuentes, saij]
+    # Al fallar una fuente no perder los lotes válidos de las otras ocho.
+    # Solo el fracaso de las pruebas impide publicar.
+    if: ${{ always() && github.event_name != 'pull_request' && needs.pruebas.result == 'success' }}
+    needs: [pruebas, fuentes, saij]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
