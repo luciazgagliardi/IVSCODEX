@@ -52,7 +52,7 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: pruebas
     runs-on: ubuntu-latest
-    timeout-minutes: 80
+    timeout-minutes: 110
     strategy:
       fail-fast: false
       matrix:
@@ -87,9 +87,9 @@ jobs:
         working-directory: backend
         env:
           FUENTE: ${{ matrix.fuente }}
-          MAX_PAGINAS: '120'
-          MAX_TERMINOS: '36'
-          PAGINAS_POR_TAREA: '3'
+          MAX_PAGINAS: ${{ matrix.fuente == 'juristeca' && '700' || matrix.fuente == 'mendoza' && '300' || matrix.fuente == 'caba' && '220' || matrix.fuente == 'scba' && '220' || '120' }}
+          MAX_TERMINOS: ${{ matrix.fuente == 'juristeca' && '200' || matrix.fuente == 'mendoza' && '100' || '70' }}
+          PAGINAS_POR_TAREA: '6'
           MAX_PDFS: '70'
           PAUSA_MS: '2000'
         run: |
