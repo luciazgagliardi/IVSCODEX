@@ -23,3 +23,12 @@ test('un clic fuera de Buscar desactiva el cursor sin tocar la búsqueda', () =>
   assert.match(html, /q\.blur\(\)/);
   assert.match(html, /function buscarEnTodas\(\)/);
 });
+
+test('el campo vacío enfocado usa una línea vertical completa en vez del caret recortado', () => {
+  assert.match(html, /\.cq\{position:relative;/);
+  assert.match(html, /\.cq:has\(> #q:focus:placeholder-shown\)::after\{/);
+  assert.match(html, /width:1px;height:1\.15em/);
+  assert.match(html, /\.cq #q:focus:placeholder-shown\{caret-color:transparent\}/);
+  assert.match(html, /@keyframes cursorBuscar/);
+  assert.match(html, /@media\(max-width:760px\)\{\.cq:has/);
+});
