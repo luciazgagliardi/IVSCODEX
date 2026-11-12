@@ -267,13 +267,25 @@ html:not([data-tema="claro"]) .luces{display:none}   /* las luces desenfocadas s
 /* ---------- Buscar: barra compacta, riel de bases y lista ---------- */
 .bq{display:block;position:relative;margin-bottom:16px}
 .bq-barra{display:flex;align-items:center;gap:10px;position:relative}
-.cq{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 22px;background:rgba(var(--tx),.03);transition:border-color .3s}
+.cq{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 22px;background:rgba(var(--tx),.03);transition:border-color .3s}
 .cq:focus-within{border-color:var(--gold-55)}
 .cq input[type=text]{flex:1;min-width:0;width:auto;border:0;box-sizing:border-box;height:39px;padding:0;line-height:39px;font-size:18px;background:transparent}
-/* Al enfocar Buscar sin texto, ocultar el ejemplo y dejar el cursor vertical nativo. */
+/* Cursor completo en la búsqueda vacía: el caret nativo se recorta
+   junto al placeholder en algunos navegadores. Lo dibujamos sólo vacío;
+   al empezar a escribir vuelve el cursor nativo, sin duplicarlo. */
 #q{caret-color:transparent}
 #q:focus{caret-color:var(--fg)}
 #q:focus::placeholder{color:transparent}
+.cq:has(> #q:focus:placeholder-shown)::after{
+  content:"";position:absolute;z-index:1;left:22px;top:50%;
+  width:1px;height:1.15em;transform:translateY(-50%);
+  background:var(--fg);pointer-events:none;
+  animation:cursorBuscar 1s steps(1,end) infinite
+}
+.cq #q:focus:placeholder-shown{caret-color:transparent}
+@keyframes cursorBuscar{0%,49%{opacity:1}50%,100%{opacity:0}}
+@media(max-width:760px){.cq:has(> #q:focus:placeholder-shown)::after{left:16px}}
+@media(prefers-reduced-motion:reduce){.cq:has(> #q:focus:placeholder-shown)::after{animation:none}}
 .cq .btn{flex:none;padding:11px 24px}
 .bq-barra>.chip{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:9px;box-sizing:border-box;height:39px;padding:0 18px;line-height:1}
 .fsb-flecha{flex:none;display:block;transition:transform .25s}
