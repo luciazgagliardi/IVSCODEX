@@ -1,0 +1,27 @@
+name: Verificar cursor del buscador
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/index.html'
+      - 'frontend/test/cursor-buscador.test.mjs'
+      - '.github/workflows/verificar-cursor-buscador.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/index.html'
+      - 'frontend/test/cursor-buscador.test.mjs'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  buscador:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verificar línea vertical y salida de foco del campo
+        run: node --test frontend/test/cursor-buscador.test.mjs
