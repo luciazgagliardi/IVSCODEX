@@ -858,6 +858,13 @@ body.en-recorrido .cab>*{animation:none}
 .sugeridas{margin:0;padding:2px 0;border:0;background:none;border-radius:0}
 .sug-nota{margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--mute);max-width:62ch}
 .sug-nota b{color:var(--fg);font-weight:500}
+/* Los avisos del tesauro aprovechan todo el ancho de Buscar, en lugar
+   de partirse por el límite general de 62 caracteres. En escritorio
+   amplio se ven en una sola línea; pantallas estrechas ajustan solas. */
+.sugeridas .sug-nota--anillo{max-width:none}
+@media(min-width:1500px){
+  .bq-sug .sugeridas .sug-nota--anillo{white-space:nowrap}
+}
 @media (max-width:1180px){ .brief{grid-template-columns:minmax(0,1fr)} .brief__summary{position:static} }
 
 /* ---------- resultados en vivo: cada base con su sello de procedencia ---------- */
@@ -5087,11 +5094,11 @@ function tiraEquivalentes(sinNota){
   var eq=chips("canonico")+chips("equivalente"), cer=chips("relacionado");
   if(!eq&&!cer) return "";
   return '<div class="sugeridas">'+
-    (eq?'<p class="sug-nota"><b>Los tribunales emplean distintas expresiones para referirse al mismo concepto</b>, lo que altera los resultados; '+
+    (eq?'<p class="sug-nota sug-nota--anillo"><b>Los tribunales emplean distintas expresiones para referirse al mismo concepto</b>, lo que altera los resultados; '+
         'limitar la búsqueda a un solo término excluye fallos relevantes.</p><div class="chips">'+eq+'</div>'+
         '<div class="chips" style="margin-top:8px"><button class="chip" data-act="tog-equivalentes" aria-pressed="'+(estado.conEquivalentes?"true":"false")+'">'+
         (estado.conEquivalentes?'Buscando también estas formas':'Buscar también estas formas')+'</button></div>':'')+
-    (cer?'<p class="sug-nota" style="margin-top:10px"><b>Conceptos análogos.</b> Nociones jurídicas afines pero con presupuestos diferentes; '+
+    (cer?'<p class="sug-nota sug-nota--anillo" style="margin-top:10px"><b>Conceptos análogos.</b> Nociones jurídicas afines pero con presupuestos diferentes; '+
         'se requiere verificar sus requisitos sustanciales antes de proceder a su cita.</p><div class="chips">'+cer+'</div>':'')+
     (!sinNota&&e.anillo.nota?'<p class="sug-nota" style="margin:9px 0 0;font-style:italic">'+esc(e.anillo.nota)+'</p>':'')+
     '</div>';
