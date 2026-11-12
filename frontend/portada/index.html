@@ -59,7 +59,10 @@
 .ofr h3{margin:0 0 6px;font:500 clamp(18px,1.8vw,24px)/1.1 var(--sans);letter-spacing:-.03em}.ofr .cel p{margin:0 auto;max-width:34ch;color:var(--mute);font-size:14px}
 .pie9{margin-top:clamp(70px,10vw,140px);padding:clamp(40px,6vw,80px) var(--pad) 30px;border-top:1px solid var(--line)}
 .pie9 .bs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 clamp(30px,4vw,50px)}
-.pie9 .bs span{display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;font:500 11.5px/1 var(--caps);letter-spacing:.16em}.pie9 .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
+.pie9 .bs a{display:inline-flex;align-items:center;gap:8px;padding:8px 15px;border:1px solid var(--line);border-radius:999px;font:500 11.5px/1 var(--caps);letter-spacing:.16em;color:inherit;text-decoration:none;cursor:pointer;transition:border-color .25s,color .25s,background .25s}
+.pie9 .bs a:hover,.pie9 .bs a:focus-visible{border-color:var(--gold);color:var(--fg);background:rgba(var(--tx),.035)}
+.pie9 .bs a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.pie9 .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
 .pie9 .adv{max-width:24ch;margin:0 0 22px;font:400 clamp(28px,4.2vw,58px)/1.02 var(--titulo);letter-spacing:-.04em;text-wrap:balance}.pie9 .adv em{font-style:normal;color:var(--gold)}
 .pie9 .aviso{max-width:70ch;margin:0 0 28px;color:var(--mute);font-size:14px}
 .legal-velo{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:clamp(16px,5vh,60px) 16px;background:rgba(var(--ov-rgb),.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);overflow:auto}
@@ -233,7 +236,7 @@ var SERV=[["buscar","Buscar","Búsqueda simultánea en los ocho motores de la pl
 var of=document.createElement("section");of.className="ofr";of.id="servicios";of.innerHTML='<h2 class="h2">Servicios.</h2><p class="lead6">Todo lo que ofrece la plataforma. Seleccione un servicio para abrirlo.</p><div class="rej">'+SERV.map(function(f){return '<a class="cel" href="#" data-tab="'+f[0]+'" style="--c:var('+f[3]+')">'+IVS4.dibujo(f[0])+'<h3>'+f[1]+'</h3><p>'+f[2]+'</p></a>';}).join("")+'</div>';m.appendChild(of);
 /* pie: sin el nombre grande; aviso, derechos reservados y contacto */
 var pie=document.createElement("footer");pie.className="pie9";
-pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<span style="--c:var('+b[1]+')"><i></i>'+b[0]+'</span>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</p>'+IVS4.BOTONES+
+pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<a href="#" data-tab="buscar" style="--c:var('+b[1]+')" aria-label="Ir al buscador de IVS CODEX desde '+b[0]+'" title="Abrir buscador de IVS CODEX"><i aria-hidden="true"></i>'+b[0]+'</a>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</p>'+IVS4.BOTONES+
  '<div class="legal"><p><b>© 2026 IVS CODEX.</b> Todos los derechos reservados.</p><nav aria-label="Información legal"><a href="#terminos" data-legal="terminos">Términos de uso</a><a href="#privacidad" data-legal="privacidad">Política de privacidad</a><a href="#" data-tab="fuentes">Fuentes oficiales</a></nav>'+
  '<div class="ct"><span>Contacto: <a href="#" style="color:var(--fg)">contacto@su-dominio.com</a></span><span>Mendoza, Argentina</span></div></div>';
 m.appendChild(pie);
