@@ -270,9 +270,10 @@ html:not([data-tema="claro"]) .luces{display:none}   /* las luces desenfocadas s
 .cq{flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:999px;padding:5px 5px 5px 22px;background:rgba(var(--tx),.03);transition:border-color .3s}
 .cq:focus-within{border-color:var(--gold-55)}
 .cq input[type=text]{flex:1;min-width:0;width:auto;border:0;box-sizing:border-box;height:39px;padding:0;line-height:39px;font-size:18px;background:transparent}
-/* El cursor vertical solo aparece al editar la búsqueda, nunca en reposo. */
+/* Al enfocar Buscar sin texto, ocultar el ejemplo y dejar el cursor vertical nativo. */
 #q{caret-color:transparent}
 #q:focus{caret-color:var(--fg)}
+#q:focus::placeholder{color:transparent}
 .cq .btn{flex:none;padding:11px 24px}
 .bq-barra>.chip{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:9px;box-sizing:border-box;height:39px;padding:0 18px;line-height:1}
 .fsb-flecha{flex:none;display:block;transition:transform .25s}
