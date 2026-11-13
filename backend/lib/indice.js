@@ -74,7 +74,7 @@ export async function upsertRegistros(fuente, registros) {
  * es exactamente cuando tenia que servir. Ahora usa el mismo filtro por
  * modo que el resto de la app (lib/relevancia.js).
  */
-const PROVINCIA_DE = { mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires' };
+const PROVINCIA_DE = { mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires', catamarca: 'Catamarca' };
 export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '' } = {}) {
   const q = String(texto || '').trim();
   if (!q) return [];

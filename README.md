@@ -5,13 +5,13 @@
 <br>
 
 **Buscador integrado de repositorios judiciales oficiales y doctrina.**<br>
-Una consulta en once bases; cada resultado muestra el pasaje que coincide y remite al documento oficial.
+Una consulta en doce bases; cada resultado muestra el pasaje que coincide y remite al documento oficial.
 
-<sub>**11** bases oficiales &nbsp;·&nbsp; **15** secciones &nbsp;·&nbsp; **106** fuentes en el catálogo &nbsp;·&nbsp; **97** pruebas automáticas</sub>
+<sub>**12** fuentes integradas &nbsp;·&nbsp; **15** secciones &nbsp;·&nbsp; **106** fuentes en el catálogo &nbsp;·&nbsp; pruebas automáticas</sub>
 
 <br>
 
-[Qué es](#qué-es) · [Capturas](#capturas) · [Secciones](#las-quince-secciones) · [Bases](#las-once-bases) · [Cómo funciona](#cómo-funciona) · [Puesta en marcha](#puesta-en-marcha) · [Despliegue](#despliegue) · [Referencia](#referencia-técnica) · [Seguridad](#seguridad) · [Licencia](#licencia)
+[Qué es](#qué-es) · [Capturas](#capturas) · [Secciones](#las-quince-secciones) · [Bases](#las-doce-bases) · [Cómo funciona](#cómo-funciona) · [Puesta en marcha](#puesta-en-marcha) · [Despliegue](#despliegue) · [Referencia](#referencia-técnica) · [Seguridad](#seguridad) · [Licencia](#licencia)
 
 </div>
 
@@ -19,7 +19,7 @@ Una consulta en once bases; cada resultado muestra el pasaje que coincide y remi
 
 ## Qué es
 
-IVS · CODEX reúne en una sola pantalla la jurisprudencia y la doctrina de once bases oficiales. La consulta se escribe una vez; la plataforma la adapta al lenguaje de cada buscador, junta las respuestas y muestra, en cada resultado, el pasaje donde aparece lo buscado. Desde ahí se abre el fallo completo en un lector que deja la búsqueda resaltada, se arma la cita y se la contrasta con la fuente oficial antes de usarla.
+IVS · CODEX reúne en una sola pantalla la jurisprudencia y la doctrina de doce bases oficiales. La consulta se escribe una vez; la plataforma la adapta al lenguaje de cada buscador, junta las respuestas y muestra, en cada resultado, el pasaje donde aparece lo buscado. Desde ahí se abre el fallo completo en un lector que deja la búsqueda resaltada, se arma la cita y se la contrasta con la fuente oficial antes de usarla.
 
 > [!IMPORTANT]
 > **No genera ni resume jurisprudencia.** El texto que se muestra es el del documento oficial: la plataforma lo encuentra, lo recorta y lo señala, y cada resultado remite a su fuente. Lexia, el asistente del Lector, tampoco usa un modelo de lenguaje: aplica reglas sobre el texto del fallo abierto, dentro del navegador, y cada respuesta conserva el fragmento que la justifica.
@@ -32,9 +32,9 @@ El proyecto se llamó antes *Juris et de jure*, y el repositorio, `IURIS`. Algun
 
 <div align="center">
 
-<img src="docs/img/buscar.webp" alt="La sección Buscar con la consulta «daño moral»: a la izquierda las once bases con la cantidad de resultados de cada una; a la derecha los resultados con el pasaje resaltado." width="100%">
+<img src="docs/img/buscar.webp" alt="La sección Buscar con la consulta «daño moral»: a la izquierda las doce bases con la cantidad de resultados de cada una; a la derecha los resultados con el pasaje resaltado." width="100%">
 
-<sub><b>QVAESTIO · Buscar.</b> Una consulta enviada a las once bases a la vez: la cantidad que devolvió cada una, los resultados intercalados y el pasaje con lo buscado resaltado.</sub>
+<sub><b>QVAESTIO · Buscar.</b> Una consulta enviada a las doce bases a la vez: la cantidad que devolvió cada una, los resultados intercalados y el pasaje con lo buscado resaltado.</sub>
 
 <br><br>
 
@@ -64,7 +64,7 @@ Seis están siempre en la barra —Buscar, Lector, Ramas, Cálculos, Fuentes y V
 
 | Grupo | Latín | Sección | Qué hace |
 |---|---|---|---|
-| **Investigar** | `QVAESTIO` | Buscar | Las once bases a la vez, con voces sugeridas por rama. |
+| **Investigar** | `QVAESTIO` | Buscar | Las doce bases a la vez, con voces sugeridas por rama. |
 | | `COLLATIO` | Comparar | Contrasta criterios de resolución por jurisdicción. |
 | | `MATERIAE` | Ramas | Las 28 ramas del derecho y las voces con que indexan los buscadores. |
 | | `REQVISITA` | Requisitos | Lo que exige cada trámite. |
@@ -82,7 +82,7 @@ Seis están siempre en la barra —Buscar, Lector, Ramas, Cálculos, Fuentes y V
 
 <br>
 
-## Las once bases
+## Las doce bases
 
 Cada una tiene su propio cliente en [`backend/lib/`](backend/lib) (`indice<Base>.js`) y se registra en [`backend/lib/fuentes.js`](backend/lib/fuentes.js).
 
@@ -97,6 +97,7 @@ Cada una tiene su propio cliente en [`backend/lib/`](backend/lib) (`indice<Base>
 | Cámaras de la Ciudad de Buenos Aires | `juristeca` | Juristeca, del Consejo de la Magistratura de la Ciudad: fallos de las cámaras con su PDF. |
 | Corte Suprema de Santa Fe | `santafe` | Sumarios con su texto y la sentencia completa en HTML. |
 | Poder Judicial de Río Negro | `rionegro` | Superior Tribunal, cámaras y juzgados; cada fallo en PDF con texto. |
+| Poder Judicial de Catamarca | `catamarca` | Sentencias y sumarios de la Corte de Justicia de Catamarca, extraídos de sus páginas públicas y enlazados al documento oficial. Su copia se actualiza por tandas: la cobertura no es necesariamente exhaustiva. |
 | Corte Interamericana de Derechos Humanos | `corteidh` | Sentencias, opiniones consultivas y resoluciones. |
 | Dialnet | `dialnet` | Doctrina en español: artículos, libros y tesis. |
 
@@ -109,7 +110,7 @@ Cada una tiene su propio cliente en [`backend/lib/`](backend/lib) (`indice<Base>
 
 <div align="center">
 
-<img src="docs/img/arquitectura.webp" alt="Diagrama: el frontend estático en el navegador (Buscar, Lector y Verificar, Lexia, Cálculos y plazos, Herramientas, Guardados) llama por /api al servidor Express (un cliente por base, extracción de documentos, verificador de citas, cuentas, y el acervo como copia propia), que consulta en vivo las once bases oficiales." width="100%">
+<img src="docs/img/arquitectura.webp" alt="Diagrama: el frontend estático en el navegador (Buscar, Lector y Verificar, Lexia, Cálculos y plazos, Herramientas, Guardados) llama por /api al servidor Express (un cliente por base, extracción de documentos, verificador de citas, cuentas, y el acervo como copia propia), que consulta en vivo las doce bases oficiales." width="100%">
 
 </div>
 
@@ -145,7 +146,7 @@ El servidor queda en `http://localhost:3000` y, en desarrollo, también sirve `f
 |---|---|
 | `npm start` | Inicia el servidor. |
 | `npm run dev` | Lo reinicia solo al guardar cambios. |
-| `npm test` | Corre las 97 pruebas automáticas (unos 7 segundos). |
+| `npm test` | Corre las pruebas automáticas (unos 7 segundos). |
 | `npm run limpiar-cache` | Vacía `backend/cache`. |
 
 <br>
@@ -195,7 +196,7 @@ Todas las rutas cuelgan de `/api`. Ante un error siempre llega JSON con `codigo`
 | `GET` | `/salud`, `/dominios`, `/verificar?url=` | Estado del servidor (el detalle solo para administración), lista blanca vigente y si un enlace es procesable. |
 | `DELETE` | `/cache` | Vacía la caché; exige `X-Admin-Token`. |
 
-`<base>` es uno de los identificadores de [Las once bases](#las-once-bases). Una prueba rápida desde la terminal:
+`<base>` es uno de los identificadores de [Las doce bases](#las-doce-bases). Una prueba rápida desde la terminal:
 
 ```bash
 curl -X POST http://localhost:3000/api/indice/saij/buscar \

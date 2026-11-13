@@ -84,6 +84,7 @@
   --f-rionegro:#7d8f4a;
   --f-juristeca:#a3623a;
   --f-santafe:#4f8a7a;
+   --f-catamarca:#b17d65;
 
   --caps:"Cormorant SC","Trajan Pro",Georgia,serif;
   --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -772,6 +773,7 @@ body.en-recorrido .cab>*{animation:none}
 .f-rionegro{--punto:var(--f-rionegro)}
 .f-juristeca{--punto:var(--f-juristeca)}
 .f-santafe{--punto:var(--f-santafe)}
+ .f-catamarca{--punto:var(--f-catamarca)}
 
 /* ---------- sin cajas: un filete arriba y aire ---------- */
 .panel,.blk,.rama,.aviso{
@@ -862,7 +864,7 @@ body.en-recorrido .cab>*{animation:none}
 @media (max-width:1180px){ .brief{grid-template-columns:minmax(0,1fr)} .brief__summary{position:static} }
 
 /* ---------- resultados en vivo: cada base con su sello de procedencia ---------- */
-.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet,.panel.f-corteidh,.panel.f-scba,.panel.f-rionegro,.panel.f-juristeca,.panel.f-santafe{
+.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet,.panel.f-corteidh,.panel.f-scba,.panel.f-rionegro,.panel.f-juristeca,.panel.f-santafe,.panel.f-catamarca{
   margin:0 0 64px;padding:0;border-top:0
 }
 .rotulo-fuente{
@@ -3280,6 +3282,9 @@ var FUENTES_INDICE=[
  {slug:"santafe",cod:"CSJSF",clase:"prov",boton:"la Corte Suprema de Santa Fe",
   nombre:"Corte Suprema de Justicia de Santa Fe",
   nota:"Sumarios de la Corte Suprema de la Provincia de Santa Fe desde 1983, con su texto, las voces del tesauro y la sentencia completa para el Lector."},
+ {slug:"catamarca",cod:"CAT",clase:"prov",boton:"la Justicia de Catamarca",
+  nombre:"Poder Judicial de Catamarca",
+  nota:"Sentencias y sumarios oficiales de la Corte de Justicia de Catamarca, con enlace al texto íntegro. La consulta utiliza la copia jurisprudencial indexada, incorporada por tandas periódicas, y no una API de búsqueda en vivo."},
  {slug:"rionegro",cod:"PJRN",clase:"prov",boton:"el Poder Judicial de Río Negro",
   nombre:"Poder Judicial de Río Negro",
   nota:"Sentencias del Superior Tribunal y de las cámaras y juzgados de Río Negro, buscadas en su texto completo, con los pasajes donde aparece lo buscado y el fallo entero para el Lector.",
@@ -5148,7 +5153,7 @@ function tiraVariantes(){
 /* Buscar, ordenado en columnas: arriba la consulta y los filtros; abajo una
    columna por base, cada una con su punto de color, su estado, su botón
    para buscar sólo ahí y sus resultados. */
-var PROV_DE={mendoza:"Mendoza",mendozalegal:"Mendoza",caba:"Ciudad Autónoma de Buenos Aires",scba:"Buenos Aires",rionegro:"Río Negro",juristeca:"Ciudad Autónoma de Buenos Aires",santafe:"Santa Fe"};
+var PROV_DE={mendoza:"Mendoza",mendozalegal:"Mendoza",caba:"Ciudad Autónoma de Buenos Aires",scba:"Buenos Aires",rionegro:"Río Negro",juristeca:"Ciudad Autónoma de Buenos Aires",santafe:"Santa Fe",catamarca:"Catamarca"};
 function basesVisibles(){
   return FUENTES_INDICE.filter(function(f){
     if(!estado.ambitos[f.clase]) return false;
@@ -6915,6 +6920,7 @@ var GRUPOS_COMPARAR=[
   ["Ciudad de Buenos Aires", ["caba","juristeca"]],
   ["Buenos Aires", ["scba"]],
   ["Santa Fe", ["santafe"]],
+  ["Catamarca", ["catamarca"]],
   ["Río Negro", ["rionegro"]],
   ["Internacional", ["corteidh"]],
   ["Doctrina", ["dialnet"]]

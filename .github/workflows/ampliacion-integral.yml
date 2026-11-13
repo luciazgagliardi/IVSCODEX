@@ -5,6 +5,9 @@ on:
     paths:
       - '.github/workflows/ampliacion-integral.yml'
       - 'backend/scripts/ampliarFuentes.mjs'
+      - 'backend/scripts/cosecharCatamarca.mjs'
+      - 'backend/lib/indiceCatamarca.js'
+      - 'backend/test/catamarca.prueba.js'
       - 'backend/scripts/ampliarCorteidh.mjs'
       - 'backend/scripts/armarAcervo.mjs'
       - 'backend/lib/avanceCosecha.js'
@@ -34,16 +37,21 @@ concurrency:
 jobs:
   pruebas:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Instalar dependencias para las pruebas de la nueva fuente
+        working-directory: backend
+        run: npm ci
       - name: Comprobar sintaxis, deduplicación y cobertura
         working-directory: backend
         run: |
           node --check scripts/ampliarFuentes.mjs
+          node --check scripts/cosecharCatamarca.mjs
+          node --test test/catamarca.prueba.js
           node --check scripts/ampliarCorteidh.mjs
           node --check scripts/armarAcervo.mjs
           node --test test/ampliacionAcervo.prueba.js
@@ -56,7 +64,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, corteidh]
+        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, corteidh]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
@@ -87,7 +95,7 @@ jobs:
         working-directory: backend
         env:
           FUENTE: ${{ matrix.fuente }}
-          MAX_PAGINAS: ${{ matrix.fuente == 'juristeca' && '700' || matrix.fuente == 'mendoza' && '300' || matrix.fuente == 'caba' && '220' || matrix.fuente == 'scba' && '220' || '120' }}
+          MAX_PAGINAS: ${{ matrix.fuente == 'juristeca' && '700' || matrix.fuente == 'catamarca' && '180' || matrix.fuente == 'mendoza' && '300' || matrix.fuente == 'caba' && '220' || matrix.fuente == 'scba' && '220' || '120' }}
           MAX_TERMINOS: ${{ matrix.fuente == 'juristeca' && '200' || matrix.fuente == 'mendoza' && '100' || '70' }}
           PAGINAS_POR_TAREA: '6'
           MAX_PDFS: '70'
@@ -95,6 +103,8 @@ jobs:
         run: |
           if test "$FUENTE" = corteidh; then
             node scripts/ampliarCorteidh.mjs
+          elif test "$FUENTE" = catamarca; then
+            MAX_DETALLES=80 node scripts/cosecharCatamarca.mjs
           else
             node scripts/ampliarFuentes.mjs "$FUENTE"
           fi
@@ -172,7 +182,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Recuperar lotes de las nueve fuentes independientes
+      - name: Recuperar lotes de las diez fuentes independientes
         uses: actions/download-artifact@v4
         with:
           pattern: fuente-*
