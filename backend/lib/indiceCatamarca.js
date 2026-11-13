@@ -59,7 +59,16 @@ export function parsearDetalleCatamarca(html, id) {
   const dom = new JSDOM(String(html || ''));
   try {
     const d = dom.window.document;
-    const visible = limpiar(d.body?.textContent);
+    // textContent concatena <p> contiguos sin separadores, lo que rompe
+    // las etiquetas "Tribunal", "Materia" y "Fecha" del portal.
+    const segmentos = [];
+    const walker = d.createTreeWalker(d.body, dom.window.NodeFilter.SHOW_TEXT);
+    let nodo;
+    while ((nodo = walker.nextNode())) {
+      if (nodo.parentElement?.closest('script,style,noscript')) continue;
+      if (nodo.textContent?.trim()) segmentos.push(nodo.textContent);
+    }
+    const visible = limpiar(segmentos.join(' '));
     const h = [...d.querySelectorAll('h1,h2,h3,h4,h5')];
     const titulo = h.map(textoNodo).find(t => t && !/^(Texto de la Sentencia|Sumarios|Consulta Jurisprudencia)$/i.test(t) && t.length >= 15);
     const fecha = /\bFecha:\s*((?:19|20)\d{2}-\d{2}-\d{2})/.exec(visible)?.[1] || '';
