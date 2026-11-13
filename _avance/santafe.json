@@ -5,7 +5,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 3,
+      "errores": 4,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{}]": {
@@ -21,7 +21,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 3,
+      "errores": 4,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{}]": {
@@ -415,8 +415,24 @@
       "paginas": 0,
       "errores": 1,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"valoración de la prueba indiciaria\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"in dubio pro reo\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     }
   },
-  "indiceTerminos": 176,
+  "indiceTerminos": 246,
   "versionIds": 2
 }

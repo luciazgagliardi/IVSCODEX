@@ -5,7 +5,7 @@
       "pagina": 9,
       "completas": false,
       "paginas": 8,
-      "errores": 2,
+      "errores": 3,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{}]": {
@@ -19,7 +19,7 @@
       "pagina": 10,
       "completas": false,
       "paginas": 9,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{}]": {
@@ -29,10 +29,10 @@
       "paginas": 1
     },
     "[\"recurso\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 240,
+      "pagina": 13,
       "completas": false,
-      "paginas": 6,
+      "paginas": 12,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -43,10 +43,10 @@
       "paginas": 1
     },
     "[\"responsabilidad\",{}]": {
-      "desde": 180,
-      "pagina": 10,
+      "desde": 300,
+      "pagina": 16,
       "completas": false,
-      "paginas": 9,
+      "paginas": 15,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -57,10 +57,10 @@
       "paginas": 3
     },
     "[\"contrato\",{}]": {
-      "desde": 200,
-      "pagina": 11,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 10,
+      "paginas": 16,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -71,10 +71,10 @@
       "paginas": 3
     },
     "[\"despido\",{}]": {
-      "desde": 180,
-      "pagina": 10,
+      "desde": 300,
+      "pagina": 16,
       "completas": false,
-      "paginas": 9,
+      "paginas": 15,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -85,10 +85,10 @@
       "paginas": 3
     },
     "[\"consumidor\",{}]": {
-      "desde": 140,
-      "pagina": 8,
+      "desde": 260,
+      "pagina": 14,
       "completas": false,
-      "paginas": 7,
+      "paginas": 13,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -99,10 +99,10 @@
       "paginas": 3
     },
     "[\"familia\",{}]": {
-      "desde": 80,
-      "pagina": 5,
+      "desde": 200,
+      "pagina": 11,
       "completas": false,
-      "paginas": 4,
+      "paginas": 10,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -113,10 +113,10 @@
       "paginas": 1
     },
     "[\"alimentos\",{}]": {
-      "desde": 260,
-      "pagina": 14,
+      "desde": 380,
+      "pagina": 20,
       "completas": false,
-      "paginas": 13,
+      "paginas": 19,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -127,10 +127,10 @@
       "paginas": 2
     },
     "[\"amparo\",{}]": {
-      "desde": 240,
-      "pagina": 13,
+      "desde": 360,
+      "pagina": 19,
       "completas": false,
-      "paginas": 12,
+      "paginas": 18,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -141,10 +141,10 @@
       "paginas": 3
     },
     "[\"administrativo\",{}]": {
-      "desde": 240,
-      "pagina": 13,
+      "desde": 360,
+      "pagina": 19,
       "completas": false,
-      "paginas": 12,
+      "paginas": 18,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -155,10 +155,10 @@
       "paginas": 3
     },
     "[\"penal\",{}]": {
-      "desde": 300,
-      "pagina": 16,
+      "desde": 420,
+      "pagina": 22,
       "completas": false,
-      "paginas": 15
+      "paginas": 21
     },
     "[\"obligación de valor\",{}]": {
       "desde": 60,
@@ -1159,8 +1159,252 @@
       "pagina": 3,
       "completas": false,
       "paginas": 2
+    },
+    "[\"valoración de la prueba indiciaria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"in dubio pro reo\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"exclusión probatoria\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"libertad condicional\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"libertad asistida\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"salidas transitorias\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"régimen de progresividad\",{}]": {
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"prisión domiciliaria\",{}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"hábeas corpus correctivo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"condiciones de detención\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cómputo de pena\",{}]": {
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"sanciones disciplinarias\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"nulidad del acto administrativo\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"agotamiento de la vía administrativa\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"silencio de la administración\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"responsabilidad del estado\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
+    },
+    "[\"empleo público estabilidad\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"contrato administrativo\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sanción disciplinaria\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"habilitación de instancia\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"medida cautelar contra el estado\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"acción procesal administrativa\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"determinación de oficio\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"ingresos brutos convenio multilateral\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"prescripción tributaria\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"repetición de impuestos\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"multa por defraudación fiscal\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"ejecución fiscal excepciones\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"impuesto de sellos\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"tasa municipal servicio efectivo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"confiscatoriedad\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"solve et repete\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acción de amparo\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"amparo colectivo\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"control de constitucionalidad de oficio\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cuestión política no justiciable\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"derecho a la salud amparo\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
+    },
+    "[\"medida cautelar innovativa\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"legitimación colectiva\",{}]": {
+      "desde": 80,
+      "pagina": 5,
+      "completas": false,
+      "paginas": 4
     }
   },
-  "indiceTerminos": 176,
+  "indiceTerminos": 246,
   "versionIds": 2
 }

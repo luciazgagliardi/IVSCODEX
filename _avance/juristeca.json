@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"daños\",{}]": {
-      "desde": 60349,
-      "pagina": 16,
+      "desde": 58521,
+      "pagina": 22,
       "completas": false,
-      "paginas": 15
+      "paginas": 21
     },
     "[\"incumplimiento contractual\",{}]": {
       "desde": 56889,
@@ -13,10 +13,10 @@
       "paginas": 3
     },
     "[\"sentencia\",{}]": {
-      "desde": 62037,
-      "pagina": 22,
+      "desde": 61520,
+      "pagina": 28,
       "completas": false,
-      "paginas": 21
+      "paginas": 27
     },
     "[\"pacto comisorio\",{}]": {
       "desde": 0,
@@ -25,10 +25,10 @@
       "paginas": 1
     },
     "[\"contrato\",{}]": {
-      "desde": 56696,
-      "pagina": 16,
+      "desde": 53899,
+      "pagina": 22,
       "completas": false,
-      "paginas": 15
+      "paginas": 21
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 0,
@@ -37,10 +37,10 @@
       "paginas": 1
     },
     "[\"laboral\",{}]": {
-      "desde": 59105,
-      "pagina": 16,
+      "desde": 56940,
+      "pagina": 22,
       "completas": false,
-      "paginas": 15
+      "paginas": 21
     },
     "[\"mora automática\",{}]": {
       "desde": 0,
@@ -49,10 +49,10 @@
       "paginas": 1
     },
     "[\"penal\",{}]": {
-      "desde": 62659,
-      "pagina": 16,
+      "desde": 62161,
+      "pagina": 22,
       "completas": false,
-      "paginas": 15
+      "paginas": 21
     },
     "[\"intereses moratorios\",{}]": {
       "desde": 40071,
@@ -61,10 +61,10 @@
       "paginas": 3
     },
     "[\"familia\",{}]": {
-      "desde": 56688,
-      "pagina": 16,
+      "desde": 54439,
+      "pagina": 22,
       "completas": false,
-      "paginas": 15
+      "paginas": 21
     },
     "[\"tasa activa\",{}]": {
       "desde": 58998,
@@ -73,10 +73,10 @@
       "paginas": 3
     },
     "[\"alimentos\",{}]": {
-      "desde": 46818,
-      "pagina": 16,
+      "desde": 31032,
+      "pagina": 28,
       "completas": false,
-      "paginas": 15
+      "paginas": 27
     },
     "[\"resolución contractual\",{}]": {
       "desde": 0,
@@ -85,10 +85,10 @@
       "paginas": 1
     },
     "[\"consumidor\",{}]": {
-      "desde": 54155,
-      "pagina": 16,
+      "desde": 48784,
+      "pagina": 22,
       "completas": false,
-      "paginas": 15
+      "paginas": 21
     },
     "[\"seña\",{}]": {
       "desde": 36057,
@@ -97,10 +97,10 @@
       "paginas": 3
     },
     "[\"amparo\",{}]": {
-      "desde": 57795,
-      "pagina": 22,
+      "desde": 56477,
+      "pagina": 28,
       "completas": false,
-      "paginas": 21
+      "paginas": 27
     },
     "[\"boleto de compraventa\",{}]": {
       "desde": 15175,
@@ -121,10 +121,10 @@
       "paginas": 1
     },
     "[\"administrativo\",{}]": {
-      "desde": 60615,
-      "pagina": 16,
+      "desde": 59476,
+      "pagina": 22,
       "completas": false,
-      "paginas": 15
+      "paginas": 21
     },
     "[\"desalojo falta de pago\",{}]": {
       "desde": 0,
@@ -2663,8 +2663,832 @@
       "pagina": 6,
       "completas": true,
       "paginas": 5
+    },
+    "[\"prueba testimonial\",{}]": {
+      "desde": 52312,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"pena\",{}]": {
+      "desde": 62879,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sentencia definitiva\",{}]": {
+      "desde": 62439,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"concurso preventivo\",{}]": {
+      "desde": 42684,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"cuestión federal\",{}]": {
+      "desde": 38564,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sentencia no definitiva\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"coronavirus\",{}]": {
+      "desde": 41379,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"responsabilidad civil\",{}]": {
+      "desde": 53027,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"abuso sexual\",{}]": {
+      "desde": 54224,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"efectos entre partes\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"emergencia sanitaria\",{}]": {
+      "desde": 47953,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"ejecución de sentencia\",{}]": {
+      "desde": 49399,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"corte suprema de justicia nacional\",{}]": {
+      "desde": 15399,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"sobreseimiento\",{}]": {
+      "desde": 60367,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"fundamentación del recurso\",{}]": {
+      "desde": 40259,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"rechazo del recurso\",{}]": {
+      "desde": 61124,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"excepciones procesales\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nulidad procesal\",{}]": {
+      "desde": 29076,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sociedades comerciales\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"arbitrariedad\",{}]": {
+      "desde": 62582,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"falta de fundamentación\",{}]": {
+      "desde": 58292,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"asegurador por riesgos del trabajo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nulidad de sentencia\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cobro de sumas de dinero\",{}]": {
+      "desde": 36901,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"plazo\",{}]": {
+      "desde": 63317,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"ejecución fiscal\",{}]": {
+      "desde": 56832,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"comisiones médicas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medios de prueba\",{}]": {
+      "desde": 38976,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"monto del juicio\",{}]": {
+      "desde": 26326,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"facultades del juez\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"juristeca\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"grupos vulnerables\",{}]": {
+      "desde": 44750,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"incidentes\",{}]": {
+      "desde": 55764,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"calificación legal\",{}]": {
+      "desde": 61302,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"competencia federal\",{}]": {
+      "desde": 35546,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"competencia contravencional y de faltas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación procesal\",{}]": {
+      "desde": 50013,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cesantía\",{}]": {
+      "desde": 58892,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cuestiones procesales\",{}]": {
+      "desde": 46382,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"tipo penal\",{}]": {
+      "desde": 60217,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"contrato de trabajo\",{}]": {
+      "desde": 45411,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"diferencias salariales\",{}]": {
+      "desde": 53613,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"inexistencia de cuestión federal suficiente\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestión constitucional\",{}]": {
+      "desde": 59806,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"procesamiento\",{}]": {
+      "desde": 45493,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cuestiones de hecho y prueba\",{}]": {
+      "desde": 56251,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"situación de vulnerabilidad\",{}]": {
+      "desde": 59542,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"compraventa de automotores\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"principio de congruencia\",{}]": {
+      "desde": 57179,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"competencia de la corte suprema\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"notificación\",{}]": {
+      "desde": 61853,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"decreto de necesidad y urgencia\",{}]": {
+      "desde": 41398,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"cuestión abstracta\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"crédito laboral\",{}]": {
+      "desde": 42686,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"jurisprudencia\",{}]": {
+      "desde": 63088,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"pago\",{}]": {
+      "desde": 62717,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"automotores\",{}]": {
+      "desde": 46784,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"procedencia parcial\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"actualización monetaria\",{}]": {
+      "desde": 34527,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"honorarios del abogado\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"procesos de conocimiento\",{}]": {
+      "desde": 29955,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"embargo\",{}]": {
+      "desde": 63353,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"constitucionalidad\",{}]": {
+      "desde": 59617,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"derechos de las partes\",{}]": {
+      "desde": 33174,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"medicina prepaga\",{}]": {
+      "desde": 25650,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"personas con discapacidad\",{}]": {
+      "desde": 56206,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"prueba pericial\",{}]": {
+      "desde": 52145,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"obligaciones de las partes\",{}]": {
+      "desde": 40384,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"derechos del consumidor\",{}]": {
+      "desde": 33908,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"código penal\",{}]": {
+      "desde": 62674,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"valoración probatoria\",{}]": {
+      "desde": 54011,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"competencia criminal y correccional\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"restitución de sumas de dinero\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acción de responsabilidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"procesos de ejecución\",{}]": {
+      "desde": 3932,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"jueces\",{}]": {
+      "desde": 63424,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"control de constitucionalidad\",{}]": {
+      "desde": 35154,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"menores\",{}]": {
+      "desde": 60889,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"juez\",{}]": {
+      "desde": 63477,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"verosimilitud del derecho invocado\",{}]": {
+      "desde": 48467,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"constitución provincial\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prescripción de la acción penal\",{}]": {
+      "desde": 46969,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"peligro en la demora\",{}]": {
+      "desde": 58604,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"ley de contrato de trabajo\",{}]": {
+      "desde": 40170,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"gravamen irreparable\",{}]": {
+      "desde": 62145,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"derivación no razonada del derecho vigente\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad del banco\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"control de razonabilidad\",{}]": {
+      "desde": 53784,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"producción de la prueba\",{}]": {
+      "desde": 49837,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"derecho de defensa\",{}]": {
+      "desde": 62484,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"incapacidad laboral\",{}]": {
+      "desde": 33928,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"depósito previo\",{}]": {
+      "desde": 41544,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"remuneración\",{}]": {
+      "desde": 56568,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"competencia penal\",{}]": {
+      "desde": 12397,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"recusación\",{}]": {
+      "desde": 54939,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"violencia familiar\",{}]": {
+      "desde": 54850,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"ley provincial\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley arancelaria\",{}]": {
+      "desde": 48372,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"costas en el orden causado\",{}]": {
+      "desde": 52124,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"indemnización laboral\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"división de poderes\",{}]": {
+      "desde": 57991,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"amenazas\",{}]": {
+      "desde": 62166,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"libertad de expresión\",{}]": {
+      "desde": 26853,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"sentencia absolutoria\",{}]": {
+      "desde": 36508,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"delitos\",{}]": {
+      "desde": 62600,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"presentación extemporánea\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"expresión de agravios\",{}]": {
+      "desde": 59670,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"competencia por la materia\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"remisión del expediente\",{}]": {
+      "desde": 33965,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cosa juzgada\",{}]": {
+      "desde": 56133,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"derecho de propiedad\",{}]": {
+      "desde": 54864,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"competencia originaria\",{}]": {
+      "desde": 32064,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"admisibilidad formal\",{}]": {
+      "desde": 61423,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"declaración de incompetencia\",{}]": {
+      "desde": 45724,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"habeas corpus\",{}]": {
+      "desde": 59703,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sociedad anónima\",{}]": {
+      "desde": 42893,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"facultades jurisdiccionales\",{}]": {
+      "desde": 42347,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"legitimación activa\",{}]": {
+      "desde": 47227,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"impulso procesal\",{}]": {
+      "desde": 24218,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"garantías constitucionales\",{}]": {
+      "desde": 62317,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"acción de nulidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"impuesto sobre los ingresos brutos\",{}]": {
+      "desde": 42608,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"resoluciones inapelables\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reajuste jubilatorio\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acceso a la justicia\",{}]": {
+      "desde": 57817,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"ministerio público fiscal\",{}]": {
+      "desde": 63384,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"compraventa\",{}]": {
+      "desde": 22761,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"pagaré\",{}]": {
+      "desde": 25486,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"resoluciones irrecurribles\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"impuesto a las ganancias\",{}]": {
+      "desde": 23985,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"código procesal civil y comercial\",{}]": {
+      "desde": 59070,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"locación\",{}]": {
+      "desde": 49393,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"demanda\",{}]": {
+      "desde": 62888,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"acción judicial\",{}]": {
+      "desde": 38017,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"responsabilidad penal\",{}]": {
+      "desde": 52142,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"principio de legalidad\",{}]": {
+      "desde": 61089,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"interpretación restrictiva\",{}]": {
+      "desde": 60015,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"competencia ordinaria\",{}]": {
+      "desde": 46606,
+      "pagina": 3,
+      "completas": false,
+      "paginas": 2
     }
   },
-  "indiceTerminos": 436,
+  "indiceTerminos": 636,
   "versionIds": 2
 }
