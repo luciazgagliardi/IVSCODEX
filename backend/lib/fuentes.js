@@ -39,6 +39,7 @@ import { buscarScba } from './indiceScba.js';
 import { buscarRioNegro } from './indiceRioNegro.js';
 import { buscarJuristeca } from './indiceJuristeca.js';
 import { buscarSantaFe } from './indiceSantaFe.js';
+import { buscarCatamarca } from './indiceCatamarca.js';
 
 /**
  * Cómo pedirle a cada buscador los fallos que citan un artículo.
@@ -75,6 +76,7 @@ const COMO_SE_CITA = {
   rionegro: (n) => `art. ${n}`,
   juristeca: (n) => `art. ${n}`,
   santafe: (n) => `artículo ${n}`,
+  catamarca: (n) => `artículo ${n}`,
 };
 
 /** La consulta con la que ESTE buscador encuentra citas de un artículo. */
@@ -169,6 +171,13 @@ export const FUENTES = [
     nombre: 'Corte Suprema de Justicia de Santa Fe',
     tribunalPorDefecto: null,
     buscar: (args) => buscarSantaFe(args),
+  },
+  {
+    slug: 'catamarca',
+    nombre: 'Poder Judicial de Catamarca · sentencias y sumarios',
+    tribunalPorDefecto: null,
+    // Captura de páginas oficiales: la búsqueda se hace sobre el acervo local.
+    buscar: (args) => buscarCatamarca(args),
   },
   {
     slug: 'scba',
