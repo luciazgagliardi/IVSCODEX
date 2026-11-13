@@ -278,6 +278,7 @@ export const DOMINIOS_PERMITIDOS = [
   'scba.gov.ar',
   'justiciacordoba.gob.ar',
   'justiciasantafe.gov.ar',
+  'juscatamarca.gob.ar',
   'jussanjuan.gov.ar',
   'justiciasanluis.gov.ar',
   'jusneuquen.gov.ar',
