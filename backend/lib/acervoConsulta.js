@@ -87,7 +87,7 @@ export function consultaFts(q, modo = 'todas', excluir = '', apellidosConocidos 
  * suman lo que SAIJ publica de su provincia (los tribunales locales que SAIJ
  * recoge); la Corte es lo de SAIJ marcado como de la Corte.
  */
-export const PROVINCIA_DE_BASE = { mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires', santafe: 'Santa Fe', rionegro: 'Río Negro' };
+export const PROVINCIA_DE_BASE = { mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires', santafe: 'Santa Fe', rionegro: 'Río Negro', catamarca: 'Catamarca' };
 /* El selector de tribunal de Mendoza (SC, CC, CT), por el nombre del tribunal que trae cada ficha. */
 const TRIBUNAL_DE = { mendoza: { SC: '%SUPREMA%', CC: '%CIVIL%', CT: '%TRABAJO%' } };
 /* Los «tipos» de SAIJ (sumarios, fallos, doctrina…): lo que el acervo guarda de SAIJ es sólo jurisprudencia, en sumarios y fallos. */
