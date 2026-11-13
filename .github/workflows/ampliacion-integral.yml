@@ -36,12 +36,15 @@ concurrency:
 jobs:
   pruebas:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Instalar dependencias para las pruebas de la nueva fuente
+        working-directory: backend
+        run: npm ci
       - name: Comprobar sintaxis, deduplicación y cobertura
         working-directory: backend
         run: |
