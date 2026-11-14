@@ -5,7 +5,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 4,
+      "errores": 5,
       "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{\"tribunal\":\"STJ\"}]": {
@@ -21,7 +21,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 4,
+      "errores": 5,
       "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{\"tribunal\":\"CJ\"}]": {
@@ -799,8 +799,24 @@
       "paginas": 0,
       "errores": 1,
       "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"uso del suelo rural\",{\"tribunal\":\"STJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"uso del suelo rural\",{\"tribunal\":\"CJ\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"rionegro\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     }
   },
-  "indiceTerminos": 246,
+  "indiceTerminos": 316,
   "versionIds": 2
 }
