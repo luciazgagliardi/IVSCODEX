@@ -117,8 +117,11 @@ de cada Poder Judicial. Cada resultado conserva su identificador y enlace SAIJ.
 - La consulta en vivo utiliza la faceta `Jurisdicción/Local/<Provincia>` de SAIJ.
 - La consulta local usa SQLite/FTS5 para filtrar por provincia sin duplicar fallos.
 - El flujo de ampliación incorpora sumarios y fichas de los años 2024–2026,
-  con cursores provinciales reanudables; se mantienen los documentos históricos
-  ya existentes y las nuevas tandas no reducen la cobertura anterior.
+  con cursores provinciales reanudables para estas seis provincias y también
+  **Santa Fe y Río Negro**, donde el acceso automatizado a los portales
+  judiciales directos está bloqueado o no responde desde el servidor.
+  Se mantienen los documentos históricos existentes y nunca se reemplaza
+  una fuente provincial oficial por material falsamente atribuido a ella.
 - Si SAIJ no responde y todavía no hay documentos locales de esa provincia,
   la interfaz no debe presentar un cero como ausencia de jurisprudencia.
 - Los totales de estas vistas se superponen con SAIJ nacional: **no deben
