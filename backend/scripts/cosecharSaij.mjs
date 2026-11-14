@@ -30,10 +30,12 @@ import { fileURLToPath } from 'node:url';
 
 const aqui = path.dirname(fileURLToPath(import.meta.url));
 const CRUDO = path.join(aqui, '..', 'acervo-crudo');
-const PROGRESO = path.join(CRUDO, 'progreso-saij.json');
 const PROVINCIA = process.env.PROVINCIA || '';
 const EXTRA = PROVINCIA ? [`Jurisdicción/Local/${PROVINCIA}`] : [];
 const sufijo = PROVINCIA ? `-${PROVINCIA.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]+/g, '-')}` : '';
+// Cada jurisdicción tiene cursor propio: nunca compartir el JSON nacional
+// entre cosechas concurrentes ni perder lo avanzado al fusionar artifacts.
+const PROGRESO = path.join(CRUDO, `progreso-saij${sufijo}.json`);
 const URL_SAIJ = 'https://www.saij.gob.ar/busqueda';
 const Q = 'que la de el y en';
 const PAUSA_MS = Number(process.env.PAUSA_MS || 2000);

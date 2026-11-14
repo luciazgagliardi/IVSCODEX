@@ -106,6 +106,30 @@ Cada una tiene su propio cliente en [`backend/lib/`](backend/lib) (`indice<Base>
 
 <br>
 
+## Vistas provinciales específicas de SAIJ
+
+Además de las doce fuentes documentales, Buscar ofrece seis accesos territoriales
+para **Córdoba, Entre Ríos, Neuquén, Tucumán, Chaco y Corrientes**. Son vistas
+de la jurisprudencia judicial provincial publicada por el **Sistema Argentino
+de Información Jurídica (SAIJ)**, no conexiones independientes a los buscadores
+de cada Poder Judicial. Cada resultado conserva su identificador y enlace SAIJ.
+
+- La consulta en vivo utiliza la faceta `Jurisdicción/Local/<Provincia>` de SAIJ.
+- La consulta local usa SQLite/FTS5 para filtrar por provincia sin duplicar fallos.
+- El flujo de ampliación incorpora sumarios y fichas de los años 2024–2026,
+  con cursores provinciales reanudables para estas seis provincias y también
+  **Santa Fe y Río Negro**, donde el acceso automatizado a los portales
+  judiciales directos está bloqueado o no responde desde el servidor.
+  Se mantienen los documentos históricos existentes y nunca se reemplaza
+  una fuente provincial oficial por material falsamente atribuido a ella.
+- Si SAIJ no responde y todavía no hay documentos locales de esa provincia,
+  la interfaz no debe presentar un cero como ausencia de jurisprudencia.
+- Los totales de estas vistas se superponen con SAIJ nacional: **no deben
+  sumarse para calcular la cantidad de fallos únicos del repositorio**.
+
+La cobertura por provincia es parcial y depende de los documentos publicados
+por SAIJ y de las cosechas efectivamente completadas.
+
 ## Cómo funciona
 
 <div align="center">

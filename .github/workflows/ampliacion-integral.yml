@@ -6,6 +6,9 @@ on:
       - '.github/workflows/ampliacion-integral.yml'
       - 'backend/scripts/ampliarFuentes.mjs'
       - 'backend/scripts/cosecharCatamarca.mjs'
+      - 'backend/lib/indiceProvincialSaij.js'
+      - 'backend/scripts/cosecharSaij.mjs'
+      - 'backend/test/provinciasSaij.prueba.js'
       - 'backend/lib/indiceCatamarca.js'
       - 'backend/test/catamarca.prueba.js'
       - 'backend/scripts/ampliarCorteidh.mjs'
@@ -51,6 +54,8 @@ jobs:
         run: |
           node --check scripts/ampliarFuentes.mjs
           node --check scripts/cosecharCatamarca.mjs
+          node --check scripts/cosecharSaij.mjs
+          node --test test/provinciasSaij.prueba.js
           node --test test/catamarca.prueba.js
           node --check scripts/ampliarCorteidh.mjs
           node --check scripts/armarAcervo.mjs
@@ -134,9 +139,11 @@ jobs:
       - name: Recuperar avance nacional y provincial
         run: |
           mkdir -p backend/acervo-crudo
-          if test -f backend/acervo-base/_avance/progreso-saij.json; then
-            cp backend/acervo-base/_avance/progreso-saij.json backend/acervo-crudo/progreso-saij.json
-          fi
+          for archivo in backend/acervo-base/_avance/progreso-saij.json backend/acervo-base/_avance/progreso-saij-mendoza.json; do
+            if test -f "$archivo"; then
+              cp "$archivo" "backend/acervo-crudo/${archivo##*/}"
+            fi
+          done
       - name: Incorporar meses recientes de SAIJ, CSJN y Mendoza vía SAIJ
         working-directory: backend
         env:
@@ -164,11 +171,71 @@ jobs:
           if-no-files-found: warn
           path: backend/acervo-crudo/
 
+  saij_provincial:
+    # Barridos por provincia (incluidos Santa Fe y Río Negro como respaldo)
+    # con cursores separados: se incorporan al mismo
+    # corpus SAIJ (UUID original), no se replican seis bases completas.
+    if: github.event_name != 'pull_request'
+    needs: pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 105
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - { slug: cordoba, provincia: Córdoba }
+          - { slug: entrerrios, provincia: Entre Ríos }
+          - { slug: neuquen, provincia: Neuquén }
+          - { slug: tucuman, provincia: Tucumán }
+          - { slug: chaco, provincia: Chaco }
+          - { slug: corrientes, provincia: Corrientes }
+          # Respaldo provincial oficial: los portales directos actualmente bloquean la cosecha
+          - { slug: santafe, provincia: Santa Fe }
+          - { slug: rionegro, provincia: Río Negro }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Recuperar avance provincial anterior
+        env:
+          SLUG: ${{ matrix.slug }}
+        run: |
+          mkdir -p backend/acervo-crudo
+          archivo="backend/acervo-base/_avance/progreso-saij-${SLUG}.json"
+          if test -f "$archivo"; then cp "$archivo" backend/acervo-crudo/; fi
+      - name: Incorporar sumarios y fichas provinciales recientes e históricas
+        working-directory: backend
+        env:
+          PROVINCIA: ${{ matrix.provincia }}
+          TIPOS: sumarios,fallos
+          DESDE: '2024'
+          HASTA: '2026'
+          PAUSA_MS: '1750'
+          ESPERA_CORTE_MS: '30000'
+        run: |
+          node scripts/cosecharSaij.mjs
+      - name: Guardar avance parcial y documentos con enlaces SAIJ
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuente-saij-${{ matrix.slug }}
+          retention-days: 14
+          if-no-files-found: warn
+          path: |
+            backend/acervo-crudo/saij-*
+            backend/acervo-crudo/progreso-saij-*.json
+
   publicar:
     # Al fallar una fuente no perder los lotes válidos de las otras ocho.
     # Solo el fracaso de las pruebas impide publicar.
     if: ${{ always() && github.event_name != 'pull_request' && needs.pruebas.result == 'success' }}
-    needs: [pruebas, fuentes, saij]
+    needs: [pruebas, fuentes, saij, saij_provincial]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -192,7 +259,7 @@ jobs:
           mkdir -p backend/acervo-crudo/respaldo
           for d in backend/acervo-crudo/_lotes/fuente-*; do
             test -d "$d" || continue
-            if test "${d##*/}" = fuente-saij; then
+            if [[ "${d##*/}" == fuente-saij* ]]; then
               cp -a "$d"/. backend/acervo-crudo/
             else
               cp -a "$d"/. backend/acervo-crudo/respaldo/
@@ -233,9 +300,10 @@ jobs:
             nombre="${archivo##*/}"; fuente="${nombre#avance-}"
             cp "$archivo" "backend/acervo-base/_avance/$fuente"
           done
-          if test -f backend/acervo-crudo/progreso-saij.json; then
-            cp backend/acervo-crudo/progreso-saij.json backend/acervo-base/_avance/progreso-saij.json
-          fi
+          for archivo in backend/acervo-crudo/progreso-saij*.json; do
+            test -f "$archivo" || continue
+            cp "$archivo" backend/acervo-base/_avance/
+          done
           git -C backend/acervo-base add -A
           if ! git -C backend/acervo-base diff --cached --quiet; then
             git -C backend/acervo-base commit -m "Acervo integral: cosechas oficiales con avance reanudable"

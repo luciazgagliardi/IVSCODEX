@@ -55,8 +55,19 @@ const caratulaDe = (f) => [f.a, f.d].filter(Boolean).join(' c/ ') + (f.s ? `${f.
 const porId = new Map();
 function poner(r) {
   const ya = porId.get(r.id);
-  // el que trae texto gana; si los dos, el más largo
-  if (!ya || (!ya.sumario && r.sumario) || ((r.sumario || '').length > (ya.sumario || '').length)) porId.set(r.id, ya ? { ...ya, ...sin(r) } : r);
+  if (!ya) { porId.set(r.id, r); return; }
+  // La misma ficha nacional de SAIJ puede volver desde una cosecha provincial
+  // con idéntico texto pero una provincia que antes faltaba. Conservar todos
+  // los datos nuevos, no sólo cuando el texto crece; no acortar sumarios.
+  const combinado = { ...ya };
+  for (const [clave, valor] of Object.entries(sin({ ...r }))) {
+    const previo = combinado[clave];
+    if (previo == null || previo === '' ||
+      (clave === 'sumario' && String(valor).length > String(previo).length) ||
+      (clave === 'voces' && Array.isArray(valor) && valor.length > (Array.isArray(previo) ? previo.length : 0)))
+      combinado[clave] = valor;
+  }
+  porId.set(r.id, combinado);
 }
 
 // Conservar la versión publicada al reconstruir desde un runner nuevo.
