@@ -208,11 +208,34 @@ async function sumarIndiceGuardado() {
 }
 /** Suma al acervo lo que trajo una búsqueda en vivo (sólo lo que todavía no estaba). */
 export async function sumarVivos(fuente, registros) {
-  if (!BASES_DEL_ACERVO.has(fuente) || !db || !estado.activo) return 0;
-  const regs = (registros || []).filter((r) => r?.id && (r.caratula || r.sumario)).map(({ variante, desdeAcervo, ...r }) => ({ ...r, fuente }));
+  // Las vistas provinciales devuelven ids SAIJ: jamás guardarlos bajo otra
+  // fuente, porque un mismo UUID debe tener un solo registro documental.
+  const provincia = PROVINCIA_DE_BASE[fuente];
+  const territorial = Boolean(provincia && fuente !== 'mendoza' && fuente !== 'scba' &&
+    fuente !== 'caba' && fuente !== 'santafe' && fuente !== 'rionegro' && fuente !== 'catamarca');
+  const origen = territorial ? 'saij' : fuente;
+  if (!BASES_DEL_ACERVO.has(origen) || !db || !estado.activo) return 0;
+  const regs = (registros || []).filter((r) => r?.id && (r.caratula || r.sumario))
+    .filter(r => !territorial || /^saij_[A-Za-z0-9-]+$/.test(r.id))
+    .map(({ variante, desdeAcervo, procedencia, ...r }) => ({
+      ...r, fuente: origen, ...(territorial ? { provincia } : {}),
+    }));
   if (!regs.length) return 0;
-  const ya = new Set(db.prepare(`SELECT id FROM fallos WHERE id IN (${regs.map(() => '?').join(',')})`).all(...regs.map((r) => r.id)).map((x) => x.id));
-  return agregarAlAcervo(regs.filter((r) => !ya.has(r.id)));
+  const existentes = db.prepare(`SELECT id, provincia FROM fallos WHERE id IN (${regs.map(() => '?').join(',')})`)
+    .all(...regs.map(r => r.id));
+  const ya = new Set(existentes.map(x => x.id));
+  if (territorial) {
+    // En SAIJ la búsqueda nacional no siempre trae provincia. Completarla
+    // con la faceta comprobada permite encontrar documentos ya cosechados
+    // sin volver a insertarlos ni incrementar artificialmente los totales.
+    const actualiza = db.prepare("UPDATE fallos SET provincia = ? WHERE id = ? AND (provincia IS NULL OR provincia = '')");
+    db.exec('BEGIN');
+    try {
+      for (const x of existentes) if (!x.provincia) actualiza.run(provincia, x.id);
+      db.exec('COMMIT');
+    } catch (e) { db.exec('ROLLBACK'); throw e; }
+  }
+  return agregarAlAcervo(regs.filter(r => !ya.has(r.id)));
 }
 
 /** El texto guardado de esos fallos (id → sumario), para los resultados en vivo que llegan sin texto. */
