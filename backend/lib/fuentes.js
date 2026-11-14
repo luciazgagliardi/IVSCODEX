@@ -40,6 +40,7 @@ import { buscarRioNegro } from './indiceRioNegro.js';
 import { buscarJuristeca } from './indiceJuristeca.js';
 import { buscarSantaFe } from './indiceSantaFe.js';
 import { buscarCatamarca } from './indiceCatamarca.js';
+import { buscarProvinciaSaij, PROVINCIAS_PRIORIZADAS } from './indiceProvincialSaij.js';
 
 /**
  * Cómo pedirle a cada buscador los fallos que citan un artículo.
@@ -77,6 +78,7 @@ const COMO_SE_CITA = {
   juristeca: (n) => `art. ${n}`,
   santafe: (n) => `artículo ${n}`,
   catamarca: (n) => `artículo ${n}`,
+  ...Object.fromEntries(Object.keys(PROVINCIAS_PRIORIZADAS).map(slug => [slug, n => `artículo ${n}`])),
 };
 
 /** La consulta con la que ESTE buscador encuentra citas de un artículo. */
@@ -179,6 +181,15 @@ export const FUENTES = [
     // Captura de páginas oficiales: la búsqueda se hace sobre el acervo local.
     buscar: (args) => buscarCatamarca(args),
   },
+  // Vistas adicionales sobre SAIJ. No se presentan como repositorios
+  // autónomos de los Poderes Judiciales locales: la fuente de cada ficha
+  // sigue siendo SAIJ y la faceta oficial evita mezclar jurisdicciones.
+  ...Object.entries(PROVINCIAS_PRIORIZADAS).map(([slug, provincia]) => ({
+    slug,
+    nombre: 'Jurisprudencia de ' + provincia + ' (vía SAIJ)',
+    tribunalPorDefecto: 'sumarios',
+    buscar: (args) => buscarProvinciaSaij(slug, args),
+  })),
   {
     slug: 'scba',
     nombre: 'Suprema Corte de la Provincia de Buenos Aires (JUBA)',
