@@ -172,7 +172,8 @@ jobs:
           path: backend/acervo-crudo/
 
   saij_provincial:
-    # Barridos por provincia con cursores separados: se incorporan al mismo
+    # Barridos por provincia (incluidos Santa Fe y Río Negro como respaldo)
+    # con cursores separados: se incorporan al mismo
     # corpus SAIJ (UUID original), no se replican seis bases completas.
     if: github.event_name != 'pull_request'
     needs: pruebas
@@ -189,6 +190,9 @@ jobs:
           - { slug: tucuman, provincia: Tucumán }
           - { slug: chaco, provincia: Chaco }
           - { slug: corrientes, provincia: Corrientes }
+          # Respaldo provincial oficial: los portales directos actualmente bloquean la cosecha
+          - { slug: santafe, provincia: Santa Fe }
+          - { slug: rionegro, provincia: Río Negro }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
