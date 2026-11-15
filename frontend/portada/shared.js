@@ -173,7 +173,11 @@
       ctx.globalCompositeOperation="source-over";
       var s=Math.min(W,H)*(typeof o.tam==="function"?o.tam(W,H):(o.tam||.1));
       /* el filete, fino: claro en el oscuro; en el claro, dorado */
-      var co=Math.cos(ang),si=Math.sin(ang),pts=[[0,-s],[-s*.87,s*.5],[s*.87,s*.5]].map(function(q){return (P.x+q[0]*co-q[1]*si).toFixed(2)+","+(P.y+q[0]*si+q[1]*co).toFixed(2);}).join(" ");
+      var co=Math.cos(ang),si=Math.sin(ang);
+      var triVertices=[[0,-s],[-s*.87,s*.5],[s*.87,s*.5]].map(function(q){
+        return [P.x+q[0]*co-q[1]*si,P.y+q[0]*si+q[1]*co];
+      });
+      var pts=triVertices.map(function(q){return q[0].toFixed(2)+","+q[1].toFixed(2);}).join(" ");
       if(pts!==triPts){triPts=pts;poli.setAttribute("points",pts);}
       poli.setAttribute("fill",o.sobrio?"none":cl?"rgba(255,250,235,.12)":"rgba(241,238,230,.035)");poli.setAttribute("stroke",cl?"rgba(148,106,6,.9)":o.sobrio?"rgba(241,238,230,.55)":"rgba(241,238,230,.6)");
       if(o.mouse&&vivo>0){var gc=ctx.createRadialGradient(mpx,mpy,0,mpx,mpy,170);gc.addColorStop(0,"rgba(255,226,150,"+(.13*Math.min(1,vivo*1.6)).toFixed(3)+")");gc.addColorStop(1,"rgba(217,163,27,0)");ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gc;ctx.beginPath();ctx.arc(mpx,mpy,170,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
@@ -182,17 +186,20 @@
       if(cl){gl.addColorStop(0,"rgba(236,176,40,.62)");gl.addColorStop(.5,"rgba(225,165,30,.26)");}else gl.addColorStop(0,"rgba(255,226,150,.5)");
       gl.addColorStop(1,"rgba(217,163,27,0)");
       if(!o.sobrio){ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
-      /* Núcleo blanco tenue y pequeño en la convergencia: no altera los haces ni crea un fogonazo. */
+      /* Los haces de entrada y salida se detienen en el contorno del prisma.
+         Borramos únicamente la luz del interior usando el MISMO polígono del filete SVG.
+         Así el encuentro queda nítido incluso al cambiar el tamaño de pantalla. */
       if(o.sobrio){
-        var radioNucleo=Math.max(6,Math.min(10,s*.12));
-        var nucleo=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,radioNucleo);
-        nucleo.addColorStop(0,cl?"rgba(255,255,255,.78)":"rgba(255,255,255,.62)");
-        nucleo.addColorStop(.32,cl?"rgba(255,255,255,.30)":"rgba(255,255,255,.24)");
-        nucleo.addColorStop(.75,"rgba(255,255,255,.04)");
-        nucleo.addColorStop(1,"rgba(255,255,255,0)");
-        ctx.globalCompositeOperation=LUZ;
-        ctx.fillStyle=nucleo;ctx.beginPath();ctx.arc(P.x,P.y,radioNucleo,0,Math.PI*2);ctx.fill();
-        ctx.globalCompositeOperation="source-over";
+        ctx.save();
+        ctx.globalCompositeOperation="destination-out";
+        ctx.fillStyle="#000";
+        ctx.beginPath();
+        ctx.moveTo(triVertices[0][0],triVertices[0][1]);
+        ctx.lineTo(triVertices[1][0],triVertices[1][1]);
+        ctx.lineTo(triVertices[2][0],triVertices[2][1]);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
       }
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       /* Sin el nombre de cada base sobre su haz (pedido de la portada): los
