@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"de\",{\"tribunal\":\"SC\"}]": {
-      "desde": 540,
-      "pagina": 28,
+      "desde": 660,
+      "pagina": 34,
       "completas": false,
-      "paginas": 27
+      "paginas": 33
     },
     "[\"incumplimiento contractual\",{\"tribunal\":\"SC\"}]": {
       "desde": 60,
@@ -17,7 +17,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{\"tribunal\":\"CC\"}]": {
@@ -33,7 +33,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{\"tribunal\":\"CT\"}]": {
@@ -61,7 +61,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{\"tribunal\":\"CC\"}]": {
@@ -77,7 +77,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{\"tribunal\":\"CT\"}]": {
@@ -105,7 +105,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"teoría de la imprevisión\",{\"tribunal\":\"CC\"}]": {
@@ -121,7 +121,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"teoría de la imprevisión\",{\"tribunal\":\"CT\"}]": {
@@ -131,10 +131,10 @@
       "paginas": 1
     },
     "[\"responsabilidad civil\",{\"tribunal\":\"SC\"}]": {
-      "desde": 540,
-      "pagina": 28,
+      "desde": 780,
+      "pagina": 40,
       "completas": false,
-      "paginas": 27
+      "paginas": 39
     },
     "[\"mora automática\",{\"tribunal\":\"SC\"}]": {
       "desde": 20,
@@ -147,7 +147,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"mora automática\",{\"tribunal\":\"CC\"}]": {
@@ -163,7 +163,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"mora automática\",{\"tribunal\":\"CT\"}]": {
@@ -175,10 +175,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"despido\",{\"tribunal\":\"SC\"}]": {
-      "desde": 540,
-      "pagina": 28,
+      "desde": 660,
+      "pagina": 34,
       "completas": false,
-      "paginas": 27
+      "paginas": 33
     },
     "[\"intereses moratorios\",{\"tribunal\":\"SC\"}]": {
       "desde": 60,
@@ -191,7 +191,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses moratorios\",{\"tribunal\":\"CC\"}]": {
@@ -207,7 +207,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses moratorios\",{\"tribunal\":\"CT\"}]": {
@@ -219,10 +219,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"indemnización\",{\"tribunal\":\"SC\"}]": {
-      "desde": 660,
-      "pagina": 34,
+      "desde": 780,
+      "pagina": 40,
       "completas": false,
-      "paginas": 33
+      "paginas": 39
     },
     "[\"tasa activa\",{\"tribunal\":\"SC\"}]": {
       "desde": 60,
@@ -235,7 +235,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"tasa activa\",{\"tribunal\":\"CC\"}]": {
@@ -251,7 +251,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"tasa activa\",{\"tribunal\":\"CT\"}]": {
@@ -263,10 +263,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"accidente de trabajo\",{\"tribunal\":\"SC\"}]": {
-      "desde": 540,
-      "pagina": 28,
+      "desde": 660,
+      "pagina": 34,
       "completas": false,
-      "paginas": 27
+      "paginas": 33
     },
     "[\"resolución contractual\",{\"tribunal\":\"SC\"}]": {
       "desde": 40,
@@ -279,7 +279,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"resolución contractual\",{\"tribunal\":\"CC\"}]": {
@@ -295,7 +295,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"resolución contractual\",{\"tribunal\":\"CT\"}]": {
@@ -308,9 +308,9 @@
     },
     "[\"familia\",{\"tribunal\":\"SC\"}]": {
       "desde": 540,
-      "pagina": 28,
-      "completas": false,
-      "paginas": 27
+      "pagina": 29,
+      "completas": true,
+      "paginas": 28
     },
     "[\"seña\",{\"tribunal\":\"SC\"}]": {
       "desde": 60,
@@ -323,7 +323,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"seña\",{\"tribunal\":\"CC\"}]": {
@@ -339,7 +339,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"seña\",{\"tribunal\":\"CT\"}]": {
@@ -367,7 +367,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"boleto de compraventa\",{\"tribunal\":\"CC\"}]": {
@@ -383,7 +383,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"boleto de compraventa\",{\"tribunal\":\"CT\"}]": {
@@ -411,7 +411,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"locación de inmueble\",{\"tribunal\":\"CC\"}]": {
@@ -427,7 +427,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"locación de inmueble\",{\"tribunal\":\"CT\"}]": {
@@ -439,10 +439,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"contrato\",{\"tribunal\":\"SC\"}]": {
-      "desde": 540,
-      "pagina": 28,
+      "desde": 660,
+      "pagina": 34,
       "completas": false,
-      "paginas": 27
+      "paginas": 33
     },
     "[\"desalojo falta de pago\",{\"tribunal\":\"SC\"}]": {
       "desde": 20,
@@ -455,7 +455,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"desalojo falta de pago\",{\"tribunal\":\"CC\"}]": {
@@ -471,7 +471,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"desalojo falta de pago\",{\"tribunal\":\"CT\"}]": {
@@ -481,10 +481,10 @@
       "paginas": 1
     },
     "[\"prescripción\",{\"tribunal\":\"SC\"}]": {
-      "desde": 540,
-      "pagina": 28,
+      "desde": 660,
+      "pagina": 34,
       "completas": false,
-      "paginas": 27
+      "paginas": 33
     },
     "[\"obligación de valor\",{\"tribunal\":\"SC\"}]": {
       "desde": 60,
@@ -497,7 +497,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"obligación de valor\",{\"tribunal\":\"CC\"}]": {
@@ -513,7 +513,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"obligación de valor\",{\"tribunal\":\"CT\"}]": {
@@ -541,7 +541,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"novación\",{\"tribunal\":\"CC\"}]": {
@@ -557,7 +557,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"novación\",{\"tribunal\":\"CT\"}]": {
@@ -569,10 +569,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses\",{\"tribunal\":\"SC\"}]": {
-      "desde": 660,
-      "pagina": 34,
+      "desde": 780,
+      "pagina": 40,
       "completas": false,
-      "paginas": 33
+      "paginas": 39
     },
     "[\"cesión de créditos\",{\"tribunal\":\"SC\"}]": {
       "desde": 20,
@@ -585,7 +585,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"cesión de créditos\",{\"tribunal\":\"CC\"}]": {
@@ -601,7 +601,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 6,
+      "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"cesión de créditos\",{\"tribunal\":\"CT\"}]": {
@@ -613,10 +613,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"recurso\",{\"tribunal\":\"SC\"}]": {
-      "desde": 540,
-      "pagina": 28,
+      "desde": 660,
+      "pagina": 34,
       "completas": false,
-      "paginas": 27
+      "paginas": 33
     },
     "[\"buena fe contractual\",{\"tribunal\":\"SC\"}]": {
       "desde": 40,
@@ -629,7 +629,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"buena fe contractual\",{\"tribunal\":\"CC\"}]": {
@@ -645,7 +645,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"buena fe contractual\",{\"tribunal\":\"CT\"}]": {
@@ -6311,8 +6311,1026 @@
       "pagina": 5,
       "completas": false,
       "paginas": 4
+    },
+    "[\"prueba testimonial\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"prueba testimonial\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"prueba testimonial\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"pena\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"pena\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"pena\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"sentencia definitiva\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sentencia definitiva\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"sentencia definitiva\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"concurso preventivo\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"concurso preventivo\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"concurso preventivo\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cuestión federal\",{\"tribunal\":\"SC\"}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"cuestión federal\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cuestión federal\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia no definitiva\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sentencia no definitiva\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"sentencia no definitiva\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"coronavirus\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"coronavirus\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"coronavirus\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"abuso sexual\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"abuso sexual\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"abuso sexual\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"efectos entre partes\",{\"tribunal\":\"SC\"}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"efectos entre partes\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"efectos entre partes\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"emergencia sanitaria\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"emergencia sanitaria\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"emergencia sanitaria\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"ejecución de sentencia\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"ejecución de sentencia\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"ejecución de sentencia\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"corte suprema de justicia nacional\",{\"tribunal\":\"SC\"}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"corte suprema de justicia nacional\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"corte suprema de justicia nacional\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"sobreseimiento\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sobreseimiento\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"sobreseimiento\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"fundamentación del recurso\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"fundamentación del recurso\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"fundamentación del recurso\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"rechazo del recurso\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"rechazo del recurso\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"rechazo del recurso\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"excepciones procesales\",{\"tribunal\":\"SC\"}]": {
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"excepciones procesales\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"excepciones procesales\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"nulidad procesal\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"nulidad procesal\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"nulidad procesal\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"sociedades comerciales\",{\"tribunal\":\"SC\"}]": {
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"sociedades comerciales\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"sociedades comerciales\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"arbitrariedad\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"arbitrariedad\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"arbitrariedad\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"falta de fundamentación\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"falta de fundamentación\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"falta de fundamentación\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"asegurador por riesgos del trabajo\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"asegurador por riesgos del trabajo\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"asegurador por riesgos del trabajo\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"nulidad de sentencia\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"nulidad de sentencia\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"nulidad de sentencia\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cobro de sumas de dinero\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cobro de sumas de dinero\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cobro de sumas de dinero\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"plazo\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"plazo\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"plazo\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"ejecución fiscal\",{\"tribunal\":\"SC\"}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"ejecución fiscal\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"ejecución fiscal\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"comisiones médicas\",{\"tribunal\":\"SC\"}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"comisiones médicas\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"comisiones médicas\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"medios de prueba\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"medios de prueba\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"medios de prueba\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"monto del juicio\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"monto del juicio\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"monto del juicio\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"facultades del juez\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"facultades del juez\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"facultades del juez\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"grupos vulnerables\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"grupos vulnerables\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"grupos vulnerables\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"incidentes\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"incidentes\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"incidentes\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"calificación legal\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"calificación legal\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"calificación legal\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"competencia federal\",{\"tribunal\":\"SC\"}]": {
+      "desde": 100,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"competencia federal\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"competencia federal\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"competencia contravencional y de faltas\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia contravencional y de faltas\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia contravencional y de faltas\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación procesal\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"legitimación procesal\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"legitimación procesal\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cesantía\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cesantía\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cesantía\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cuestiones procesales\",{\"tribunal\":\"SC\"}]": {
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"cuestiones procesales\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cuestiones procesales\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"tipo penal\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"tipo penal\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"tipo penal\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"contrato de trabajo\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"contrato de trabajo\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"contrato de trabajo\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"diferencias salariales\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"diferencias salariales\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"diferencias salariales\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"inexistencia de cuestión federal suficiente\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"inexistencia de cuestión federal suficiente\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"inexistencia de cuestión federal suficiente\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestión constitucional\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cuestión constitucional\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cuestión constitucional\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"procesamiento\",{\"tribunal\":\"SC\"}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"procesamiento\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"procesamiento\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestiones de hecho y prueba\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cuestiones de hecho y prueba\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"cuestiones de hecho y prueba\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"situación de vulnerabilidad\",{\"tribunal\":\"SC\"}]": {
+      "desde": 100,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"situación de vulnerabilidad\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"situación de vulnerabilidad\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"compraventa de automotores\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"compraventa de automotores\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"compraventa de automotores\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"principio de congruencia\",{\"tribunal\":\"SC\"}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"principio de congruencia\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"principio de congruencia\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"competencia de la corte suprema\",{\"tribunal\":\"SC\"}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
     }
   },
-  "indiceTerminos": 436,
+  "indiceTerminos": 536,
   "versionIds": 2
 }

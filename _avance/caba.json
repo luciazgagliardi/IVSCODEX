@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"sentencia\",{}]": {
-      "desde": 280,
-      "pagina": 15,
+      "desde": 400,
+      "pagina": 21,
       "completas": false,
-      "paginas": 14,
+      "paginas": 20,
       "errores": 3,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -15,10 +15,10 @@
       "paginas": 3
     },
     "[\"daños\",{}]": {
-      "desde": 300,
-      "pagina": 16,
+      "desde": 420,
+      "pagina": 22,
       "completas": false,
-      "paginas": 15,
+      "paginas": 21,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -29,10 +29,10 @@
       "paginas": 1
     },
     "[\"recurso\",{}]": {
-      "desde": 360,
-      "pagina": 19,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 18,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -47,7 +47,7 @@
       "pagina": 22,
       "completas": false,
       "paginas": 21,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"mora automática\",{}]": {
@@ -57,10 +57,10 @@
       "paginas": 3
     },
     "[\"contrato\",{}]": {
-      "desde": 440,
-      "pagina": 23,
+      "desde": 560,
+      "pagina": 29,
       "completas": false,
-      "paginas": 22,
+      "paginas": 28,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -71,10 +71,10 @@
       "paginas": 3
     },
     "[\"despido\",{}]": {
-      "desde": 420,
-      "pagina": 22,
-      "completas": false,
-      "paginas": 21,
+      "desde": 500,
+      "pagina": 27,
+      "completas": true,
+      "paginas": 26,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -85,10 +85,10 @@
       "paginas": 3
     },
     "[\"consumidor\",{}]": {
-      "desde": 260,
-      "pagina": 14,
+      "desde": 380,
+      "pagina": 20,
       "completas": false,
-      "paginas": 13,
+      "paginas": 19,
       "errores": 3,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -99,10 +99,10 @@
       "paginas": 3
     },
     "[\"familia\",{}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 440,
+      "pagina": 23,
       "completas": false,
-      "paginas": 16,
+      "paginas": 22,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -113,10 +113,10 @@
       "paginas": 1
     },
     "[\"alimentos\",{}]": {
-      "desde": 500,
-      "pagina": 26,
-      "completas": false,
-      "paginas": 25,
+      "desde": 540,
+      "pagina": 29,
+      "completas": true,
+      "paginas": 28,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -127,10 +127,10 @@
       "paginas": 2
     },
     "[\"amparo\",{}]": {
-      "desde": 480,
-      "pagina": 25,
+      "desde": 720,
+      "pagina": 37,
       "completas": false,
-      "paginas": 24,
+      "paginas": 36,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -145,7 +145,7 @@
       "pagina": 25,
       "completas": false,
       "paginas": 24,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"desalojo falta de pago\",{}]": {
@@ -155,10 +155,10 @@
       "paginas": 3
     },
     "[\"penal\",{}]": {
-      "desde": 540,
-      "pagina": 28,
+      "desde": 660,
+      "pagina": 34,
       "completas": false,
-      "paginas": 27
+      "paginas": 33
     },
     "[\"obligación de valor\",{}]": {
       "desde": 60,
@@ -1709,8 +1709,274 @@
       "pagina": 2,
       "completas": false,
       "paginas": 1
+    },
+    "[\"despido sin causa\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"empleo no registrado\",{}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"relación laboral no registrada\",{}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"responsabilidad médica\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"praxis médica\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"consentimiento informado\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"probation\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"suspensión del proceso a prueba\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"obligación alimentaria\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"prestación alimentaria\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"multa civil\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sanción pecuniaria disuasiva\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"régimen de visitas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho de comunicación\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"cuidado personal\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"tenencia de los hijos\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"accidente en el trayecto\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente in itínere\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"autodespido\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"enfermedad laboral\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"enfermedad accidente\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"pérdida de oportunidad\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"chance frustrada\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"siniestro vial\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente de tránsito automotor\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"vicio o riesgo de la cosa\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"responsabilidad objetiva\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"sucesión intestada\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"porción legítima\",{}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"carta de pobreza\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"prisión preventiva\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"detención preventiva\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"excarcelación\",{}]": {
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"divorcio vincular\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"adopción guarda\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"usucapión prescripción adquisitiva\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"desalojo\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"daño moral procedencia\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"escrituración boleto de compraventa\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sucesión testamentaria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"amparo procedencia\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"medida cautelar\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"recurso extraordinario federal admisibilidad\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6
+    },
+    "[\"hábeas corpus\",{}]": {
+      "desde": 40,
+      "pagina": 3,
+      "completas": false,
+      "paginas": 2
     }
   },
-  "indiceTerminos": 316,
+  "indiceTerminos": 386,
   "versionIds": 2
 }
