@@ -134,14 +134,23 @@
       B.forEach(function(b,i){
         if(sh&&(i===0||i===B.length-1))return;
         var g=ctx.createLinearGradient(0,0,P.x,0);
-        if(o.sobrio){g.addColorStop(0,rgba(b.c,0));g.addColorStop(.45,rgba(b.c,.34));g.addColorStop(1,rgba(b.c,.62));}
+        if(o.sobrio){
+          /* Las entradas se atenúan antes de confluir: la suma aditiva de sus colores ya no crea un foco blanco. */
+          g.addColorStop(0,rgba(b.c,0));g.addColorStop(.45,rgba(b.c,.34));
+          g.addColorStop(.82,rgba(b.c,.46));g.addColorStop(.94,rgba(b.c,.19));g.addColorStop(1,rgba(b.c,.04));
+        }
         else{g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));}
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
         ctx.strokeStyle=g;ctx.lineWidth=o.sobrio?1:1.3;ctx.stroke();if(!o.sobrio){ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();}
         if(!quieto&&!o.sobrio){b.next-=dt;if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}}
       });
       ctx.beginPath();out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
-      if(o.sobrio){ctx.strokeStyle=rgba(ORO,.7);ctx.lineWidth=1.5;ctx.stroke();}
+      if(o.sobrio){
+        /* El haz dorado emerge suavemente de la confluencia, sin un punto de luz duro en el vértice. */
+        var gSalida=ctx.createLinearGradient(P.x,P.y,P.x+Math.min(90,(W-P.x)*.28),P.y);
+        gSalida.addColorStop(0,rgba(ORO,.12));gSalida.addColorStop(.4,rgba(ORO,.5));gSalida.addColorStop(1,rgba(ORO,.7));
+        ctx.strokeStyle=gSalida;ctx.lineWidth=1.5;ctx.stroke();
+      }
       else{ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();}
       /* modo sobrio: una sola luz, de a una base por vez; entra por su hilo, cruza el prisma y sale dorada */
       if(o.sobrio&&!quieto){
