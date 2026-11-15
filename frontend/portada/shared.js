@@ -182,6 +182,24 @@
       if(cl){gl.addColorStop(0,"rgba(236,176,40,.62)");gl.addColorStop(.5,"rgba(225,165,30,.26)");}else gl.addColorStop(0,"rgba(255,226,150,.5)");
       gl.addColorStop(1,"rgba(217,163,27,0)");
       if(!o.sobrio){ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
+      /* Núcleo dorado discreto en el cruce de los haces de la portada: sin halo blanco ni punto duro. */
+      if(o.sobrio){
+        var radioNucleo=Math.max(9,Math.min(14,s*.19));
+        var nucleo=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,radioNucleo);
+        if(cl){
+          nucleo.addColorStop(0,"rgba(168,118,8,.68)");
+          nucleo.addColorStop(.3,"rgba(188,134,21,.34)");
+          nucleo.addColorStop(.72,"rgba(188,134,21,.08)");
+        }else{
+          nucleo.addColorStop(0,"rgba(236,173,60,.60)");
+          nucleo.addColorStop(.3,"rgba(217,163,27,.32)");
+          nucleo.addColorStop(.72,"rgba(217,163,27,.08)");
+        }
+        nucleo.addColorStop(1,"rgba(217,163,27,0)");
+        ctx.globalCompositeOperation=LUZ;
+        ctx.fillStyle=nucleo;ctx.beginPath();ctx.arc(P.x,P.y,radioNucleo,0,Math.PI*2);ctx.fill();
+        ctx.globalCompositeOperation="source-over";
+      }
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       /* Sin el nombre de cada base sobre su haz (pedido de la portada): los
          haces conservan el color de su base; los nombres siguen en BASES_PRISMA
