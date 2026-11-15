@@ -723,7 +723,7 @@ body.en-recorrido .cab>*{animation:none}
 .cab__saludo b{font-weight:400;color:var(--fg)}
 .cab__ojo{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;margin:0;font-size:14px;color:var(--mute)}
 .cab__lat{font:500 15px/1 var(--caps);letter-spacing:.24em;color:var(--gold)}
-.cab h1{margin:18px 0 0;font:400 clamp(36px,4.4vw,68px)/1.02 var(--titulo);letter-spacing:-.035em}
+.cab h1{margin:6px 0 0;font:400 clamp(36px,4.4vw,68px)/1.02 var(--titulo);letter-spacing:-.035em}
 .cab__intro{max-width:46em;margin:22px 0 0;color:var(--mute)}
 /* El primer aviso de cada solapa sube a la cabecera y hace de bajada:
    es el mismo texto de siempre, sin caja. */
@@ -4879,7 +4879,8 @@ function pintarCabecera(v){
   var s=SECCIONES[t[0]];
   c.classList.toggle("quieta",c.getAttribute("data-tab")===t[0]);
   c.setAttribute("data-tab",t[0]);
-  c.innerHTML=dibujoSeccion(t[0])+saludoHTML()+'<p class="cab__ojo"><span class="cab__lat">'+s[0]+'</span>'+esc(s[1])+'</p>'+
+  /* Cabecera limpia: sin etiqueta latina dorada ni categoría secundaria. */
+  c.innerHTML=dibujoSeccion(t[0])+saludoHTML()+
     '<h1>'+esc(t[1])+'.</h1>'+
     (t[0]==="buscar"?'<p class="cab__intro">La plataforma interroga de forma simultánea los repositorios oficiales integrados, '+
       'extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, '+
