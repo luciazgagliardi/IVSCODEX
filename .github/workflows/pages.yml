@@ -27,6 +27,10 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: frontend
+      # GitHub Pages puede tardar unos segundos en indexar el artefacto recién subido.
+      # Esperar evita que deploy-pages consulte el artefacto antes de que sea visible.
+      - name: Esperar indexación del artefacto
+        run: sleep 20
       - id: deployment
         uses: actions/deploy-pages@v4
         with:
