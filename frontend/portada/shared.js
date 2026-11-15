@@ -182,20 +182,14 @@
       if(cl){gl.addColorStop(0,"rgba(236,176,40,.62)");gl.addColorStop(.5,"rgba(225,165,30,.26)");}else gl.addColorStop(0,"rgba(255,226,150,.5)");
       gl.addColorStop(1,"rgba(217,163,27,0)");
       if(!o.sobrio){ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
-      /* Núcleo dorado discreto en el cruce de los haces de la portada: sin halo blanco ni punto duro. */
+      /* Núcleo blanco tenue y pequeño en la convergencia: no altera los haces ni crea un fogonazo. */
       if(o.sobrio){
-        var radioNucleo=Math.max(9,Math.min(14,s*.19));
+        var radioNucleo=Math.max(6,Math.min(10,s*.12));
         var nucleo=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,radioNucleo);
-        if(cl){
-          nucleo.addColorStop(0,"rgba(168,118,8,.68)");
-          nucleo.addColorStop(.3,"rgba(188,134,21,.34)");
-          nucleo.addColorStop(.72,"rgba(188,134,21,.08)");
-        }else{
-          nucleo.addColorStop(0,"rgba(236,173,60,.60)");
-          nucleo.addColorStop(.3,"rgba(217,163,27,.32)");
-          nucleo.addColorStop(.72,"rgba(217,163,27,.08)");
-        }
-        nucleo.addColorStop(1,"rgba(217,163,27,0)");
+        nucleo.addColorStop(0,cl?"rgba(255,255,255,.78)":"rgba(255,255,255,.62)");
+        nucleo.addColorStop(.32,cl?"rgba(255,255,255,.30)":"rgba(255,255,255,.24)");
+        nucleo.addColorStop(.75,"rgba(255,255,255,.04)");
+        nucleo.addColorStop(1,"rgba(255,255,255,0)");
         ctx.globalCompositeOperation=LUZ;
         ctx.fillStyle=nucleo;ctx.beginPath();ctx.arc(P.x,P.y,radioNucleo,0,Math.PI*2);ctx.fill();
         ctx.globalCompositeOperation="source-over";
