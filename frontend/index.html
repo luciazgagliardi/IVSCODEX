@@ -684,8 +684,8 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .esp-opcion{appearance:none;display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border:0;border-radius:12px;background:none;color:var(--fg-82);font:400 14px/1.35 var(--sans);text-align:left;cursor:pointer;transition:background .2s,color .2s}
 .esp-opcion:hover,.esp-opcion:focus-visible{background:rgba(var(--tx),.07);color:var(--fg)}
 .esp-opcion[aria-checked="true"]{background:rgba(var(--gold-rgb),.09);color:var(--fg)}
-.esp-marca{display:grid;place-items:center;flex:none;width:17px;height:17px;border:1px solid var(--line);border-radius:5px;color:transparent}
-.esp-opcion[aria-checked="true"] .esp-marca{border-color:var(--gold);background:var(--gold);color:var(--bg)}
+.esp-opcion>.esp-marca{display:grid;place-items:center;flex:none;width:17px;height:17px;margin:0;border:1px solid var(--line);border-radius:5px;color:transparent}
+.esp-opcion[aria-checked="true"]>.esp-marca{border-color:var(--gold);background:var(--gold);color:var(--bg)}
 .esp-marca svg{display:block}
 .esp-opcion>span:last-child{margin:0;color:inherit;font-size:inherit}
 .esp-ui .esp-instruccion{margin:6px 10px 8px;color:var(--mute);font-size:12px}
@@ -10120,12 +10120,12 @@ document.addEventListener("click",function(ev){
   }
   if(act==="auth-modo"){ estado.authModo=b.getAttribute("data-modo"); estado.authError=null; render(); return; }
   if(act==="auth-registro"||act==="auth-login"){
-    if(!estado.api){ flash("El servidor no está disponible ahora"); return; }
+    if(!estado.api){ flash("El servicio de autenticación no se encuentra disponible. Inténtelo nuevamente más tarde."); return; }
     enviarAuth(act==="auth-registro"?"registro":"login");
     return;
   }
   if(act==="perfil-guardar"){
-    if(!estado.api||!estado.token){ flash("El servidor no está disponible ahora"); return; }
+    if(!estado.api||!estado.token){ flash("El servicio de autenticación no se encuentra disponible. Inténtelo nuevamente más tarde."); return; }
     var gp=function(id){ return ((document.getElementById(id)||{}).value||"").trim(); };
     var especialidades=(estado.perfilEsps===null?especialidadesDe(estado.usuario):estado.perfilEsps).slice();
     var marcado=document.querySelector('input[name="perfil-trato"]:checked');
