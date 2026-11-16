@@ -687,6 +687,8 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
 .esp-marca{display:grid;place-items:center;flex:none;width:17px;height:17px;border:1px solid var(--line);border-radius:5px;color:transparent}
 .esp-opcion[aria-checked="true"] .esp-marca{border-color:var(--gold);background:var(--gold);color:var(--bg)}
 .esp-marca svg{display:block}
+.esp-opcion>span:last-child{margin:0;color:inherit;font-size:inherit}
+.esp-ui .esp-instruccion{margin:6px 10px 8px;color:var(--mute);font-size:12px}
 .trato-campo{margin:0 0 24px;padding:0;border:0;min-width:0}
 .trato-campo legend{padding:0 0 10px;font-size:14px;color:var(--mute)}
 .trato-campo small{font-size:12px;color:var(--mute-2)}
@@ -3537,6 +3539,20 @@ function intentarRestaurarSesion(){
   });
 }
 
+/* Mensajes formales y específicos para los códigos de error de la cuenta. */
+function mensajeErrorCuenta(d,porDefecto){
+  var porCodigo={
+    EMAIL_FALTANTE:"Ingrese su correo electrónico.",
+    EMAIL_INVALIDO:"Ingrese una dirección de correo electrónico válida.",
+    EMAIL_YA_REGISTRADO:"Esta dirección de correo electrónico ya se encuentra registrada. Inicie sesión o utilice otra dirección.",
+    PASSWORD_DEBIL:"La contraseña no cumple los requisitos de seguridad. Debe tener entre 8 y 128 caracteres y no coincidir con el correo ni con contraseñas de uso común.",
+    CREDENCIALES_INVALIDAS:"El correo electrónico o la contraseña ingresados son incorrectos. Verifique los datos e inténtelo nuevamente.",
+    DEMASIADOS_INTENTOS:"Se ha superado el número de intentos permitidos. Inténtelo nuevamente dentro de unos minutos.",
+    NO_AUTENTICADO:"Su sesión ha caducado. Inicie sesión nuevamente.",
+    PEDIDO_INVALIDO:"Los datos enviados no tienen un formato válido. Revise el formulario e inténtelo nuevamente."
+  };
+  return (d&&porCodigo[d.codigo])||(d&&typeof d.mensaje==="string"&&d.mensaje.trim())||porDefecto;
+}
 /* Registro y login pegan al mismo lugar, solo cambia la ruta. */
 function enviarAuth(ruta){
   var email=(document.getElementById("auth-email")||{}).value||"";
@@ -3560,14 +3576,14 @@ function enviarAuth(ruta){
   }).then(function(r){ return r.json(); })
     .then(function(d){
       estado.authCargando=false;
-      if(!d||!d.ok){ estado.authError=(d&&d.mensaje)||"El servidor no respondió."; render(); return; }
+      if(!d||!d.ok){ estado.authError=mensajeErrorCuenta(d,"No fue posible completar la solicitud. Inténtelo nuevamente."); render(); return; }
       estado.token=d.token; estado.usuario=d.usuario; estado.authError=null;
       store.set("jedj:token",d.token);
       traerDatosDeCuenta(true); // suma lo que ya había en este navegador
       render();
     })["catch"](function(){
       estado.authCargando=false;
-      estado.authError="Se cortó la comunicación con el servidor.";
+      estado.authError="No fue posible establecer conexión con el servidor. Verifique su conexión e inténtelo nuevamente.";
       render();
     });
 }
@@ -8878,7 +8894,7 @@ function vistaCuenta(){
         '<button class="chip" data-act="auth-modo" data-modo="registro" aria-pressed="'+(esRegistro?"true":"false")+'">Crear cuenta</button>'+
         '<button class="chip" data-act="auth-modo" data-modo="login" aria-pressed="'+(!esRegistro?"true":"false")+'">Ya tengo cuenta</button>'+
       '</div>'+
-      (estado.authError?'<div class="aviso" style="margin-bottom:14px"><strong>No se pudo.</strong> '+esc(estado.authError)+'</div>':'')+
+      (estado.authError?'<div class="aviso" role="alert" style="margin-bottom:14px"><strong>'+(esRegistro?"Error al crear la cuenta.":"Error al iniciar sesión.")+'</strong> '+esc(estado.authError)+'</div>':'')+
       (esRegistro?
         '<label class="campo"><span>Nombre</span>'+
           '<input type="text" id="auth-nombre" value="'+esc(estado.authNombre)+'" maxlength="60" autocomplete="given-name" placeholder="Cómo quiere que le digamos"></label>':'')+
@@ -9898,6 +9914,27 @@ document.addEventListener("click",function(ev){
   if(etiqueta) ev.preventDefault();
 });
 
+/* El menú múltiple se cierra al tocar fuera o pulsar Escape; la selección permanece. */
+function cerrarEspecialidades(){
+  [].forEach.call(document.querySelectorAll(".esp-ui.abre"),function(ui){
+    ui.classList.remove("abre","hacia-arriba");
+    var boton=ui.querySelector(".esp-btn");if(boton)boton.setAttribute("aria-expanded","false");
+  });
+}
+document.addEventListener("click",function(ev){
+  if(!(ev.target.closest&&ev.target.closest(".esp-ui")))cerrarEspecialidades();
+});
+document.addEventListener("keydown",function(ev){
+  if(ev.key==="Escape"&&document.querySelector(".esp-ui.abre")){
+    cerrarEspecialidades();ev.stopPropagation();
+  }
+});
+document.addEventListener("change",function(ev){
+  var el=ev.target;if(!el||el.type!=="radio")return;
+  if(el.name==="auth-trato")estado.authTrato=el.value;
+  if(el.name==="perfil-trato")estado.perfilTrato=el.value;
+});
+
 // El menú de ramas del celular se cierra al tocar cualquier otra cosa.
 document.addEventListener("click",function(ev){
   var rl=document.getElementById("rail");
@@ -10053,6 +10090,34 @@ document.addEventListener("click",function(ev){
     guardarEnCuenta(); // con sesión iniciada, también queda en la cuenta
     render(); return;
   }
+  if(act==="esp-abrir"){
+    var ui=b.closest(".esp-ui"),abierta=ui&&!ui.classList.contains("abre");
+    [].forEach.call(document.querySelectorAll(".esp-ui.abre"),function(x){
+      x.classList.remove("abre","hacia-arriba");
+      var boton=x.querySelector(".esp-btn");if(boton)boton.setAttribute("aria-expanded","false");
+    });
+    if(ui&&abierta){
+      ui.classList.add("abre");b.setAttribute("aria-expanded","true");
+      var caja=ui.getBoundingClientRect(),abajo=innerHeight-caja.bottom;
+      if(abajo<220&&caja.top>abajo+120)ui.classList.add("hacia-arriba");
+    }
+    return;
+  }
+  if(act==="esp-elegir"){
+    var selector=b.closest(".esp-ui");if(!selector)return;
+    var tipo=selector.getAttribute("data-esp-tipo"),nombre=b.getAttribute("data-esp");
+    var lista=tipo==="auth"?estado.authEsps:
+      (estado.perfilEsps===null?especialidadesDe(estado.usuario):estado.perfilEsps);
+    lista=lista.slice();
+    var ix=lista.indexOf(nombre);
+    if(ix>=0)lista.splice(ix,1);else if(lista.length<12)lista.push(nombre);
+    else{flash("Puede seleccionar hasta 12 especialidades.");return;}
+    if(tipo==="auth")estado.authEsps=lista;else estado.perfilEsps=lista;
+    b.setAttribute("aria-checked",String(lista.indexOf(nombre)!==-1));
+    var resumen=selector.querySelector(".esp-resumen");
+    if(resumen)resumen.textContent=resumenEspecialidades(lista);
+    return;
+  }
   if(act==="auth-modo"){ estado.authModo=b.getAttribute("data-modo"); estado.authError=null; render(); return; }
   if(act==="auth-registro"||act==="auth-login"){
     if(!estado.api){ flash("El servidor no está disponible ahora"); return; }
@@ -10062,16 +10127,28 @@ document.addEventListener("click",function(ev){
   if(act==="perfil-guardar"){
     if(!estado.api||!estado.token){ flash("El servidor no está disponible ahora"); return; }
     var gp=function(id){ return ((document.getElementById(id)||{}).value||"").trim(); };
-    var datosPerfil={nombre:gp("perfil-nombre"),especialidad:gp("perfil-esp"),actualizaciones:!!(document.getElementById("perfil-act")||{}).checked};
+    var especialidades=(estado.perfilEsps===null?especialidadesDe(estado.usuario):estado.perfilEsps).slice();
+    var marcado=document.querySelector('input[name="perfil-trato"]:checked');
+    var tratamiento=marcado?marcado.value:(estado.perfilTrato===null?(estado.usuario.tratamiento||""):estado.perfilTrato);
+    var datosPerfil={nombre:gp("perfil-nombre"),especialidad:especialidades[0]||"",
+      especialidades:especialidades,tratamiento:tratamiento,
+      actualizaciones:!!(document.getElementById("perfil-act")||{}).checked};
     estado.perfilCargando=true; estado.perfilAviso=""; render();
     fetch(estado.api+"/auth/perfil",{method:"PUT",headers:{"Content-Type":"application/json",authorization:"Bearer "+estado.token},
       body:JSON.stringify(datosPerfil)})
       .then(function(r){ return r.json(); })
       .then(function(d){
         estado.perfilCargando=false;
-        if(d&&d.ok){ estado.usuario=d.usuario; estado.perfilAviso="Guardado."; } else estado.perfilAviso=(d&&d.mensaje)||"No se pudo guardar.";
+        if(d&&d.ok){
+          estado.usuario=d.usuario; estado.perfilEsps=null; estado.perfilTrato=null;
+          estado.perfilAviso="Los cambios del perfil se guardaron correctamente.";
+        }else estado.perfilAviso=mensajeErrorCuenta(d,"No fue posible guardar los cambios del perfil. Inténtelo nuevamente.");
         render();
-      })["catch"](function(){ estado.perfilCargando=false; estado.perfilAviso="Se cortó la comunicación con el servidor."; render(); });
+      })["catch"](function(){
+        estado.perfilCargando=false;
+        estado.perfilAviso="No fue posible establecer conexión con el servidor. Inténtelo nuevamente.";
+        render();
+      });
     return;
   }
   if(act==="auth-logout"){
