@@ -103,11 +103,11 @@ export async function requiereSesion(req, res, next) {
 
 router.post('/auth/registro', async (req, res, next) => {
   try {
-    const { email, password, nombre, especialidad, actualizaciones } = req.body || {};
+    const { email, password, nombre, especialidad, especialidades, tratamiento, actualizaciones } = req.body || {};
     validarEmailYPassword(email, password);
     let usuario;
     try {
-      usuario = await crearUsuario({ email, password, nombre, especialidad, actualizaciones });
+      usuario = await crearUsuario({ email, password, nombre, especialidad, especialidades, tratamiento, actualizaciones });
     } catch (e) {
       if (e && e.codigo === 'EMAIL_YA_REGISTRADO') throw errores.emailYaRegistrado();
       throw e;
