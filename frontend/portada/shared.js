@@ -125,6 +125,12 @@
     function rgba(c,a){return "rgba("+c[0]+","+c[1]+","+c[2]+","+a.toFixed(3)+")";}
     function suavizar(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
     function mezcla(a,b,t){return a.map(function(v,i){return Math.round(v+(b[i]-v)*t);});}
+    /* Compensa la luminosidad percibida de cada color sin alterar su tono:
+       el amarillo no sobresale sobre los demás hilos de la izquierda. */
+    function nivelHaz(c){
+      var l=.2126*c[0]+.7152*c[1]+.0722*c[2];
+      return Math.max(.78,Math.min(1.35,132/Math.max(1,l)));
+    }
     /* Prueba geométrica compartida por el desvanecimiento de entrada y salida. */
     function dentroTri(q,vertices){
       var positivo=false,negativo=false;
@@ -179,9 +185,12 @@
           var xInicio=Math.max(0,xFin-Math.max(36,s*.52));
           var inicio=Math.max(.06,Math.min(.88,xInicio/Math.max(1,P.x)));
           var fin=Math.max(inicio+.02,Math.min(.98,xFin/Math.max(1,P.x)));
+          var nivel=nivelHaz(b.c);
+          /* El haz completo conserva el mismo halo y el fundido en ambos
+             extremos; el brillo se equilibra entre bases según el color. */
           g.addColorStop(0,rgba(b.c,0));
-          g.addColorStop(inicio*.7,rgba(b.c,.34));
-          g.addColorStop(inicio,rgba(b.c,.46));
+          g.addColorStop(inicio*.7,rgba(b.c,.34*nivel));
+          g.addColorStop(inicio,rgba(b.c,.46*nivel));
           g.addColorStop(fin,rgba(b.c,0));
           g.addColorStop(1,rgba(b.c,0));
         }
