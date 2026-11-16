@@ -123,21 +123,30 @@
     }
     function bez(i,t){var A=[0,Y[i]],C=[P.x*.55,Y[i]],u=1-t;return [u*u*A[0]+2*u*t*C[0]+t*t*P.x,u*u*A[1]+2*u*t*C[1]+t*t*P.y];}
     function rgba(c,a){return "rgba("+c[0]+","+c[1]+","+c[2]+","+a.toFixed(3)+")";}
+    function mezclaColor(a,b,t){return a.map(function(v,i){return Math.round(v+(b[i]-v)*t);});}
+    function suave(t){t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);}
     function frame(now){
       var dt=Math.min((now-last)/1000,.05);last=now;tm+=dt;
       if(o.mouse){var k=1-Math.exp(-dt*5);ox+=(tmx*W*.04-ox)*k;oy+=(tmy*H*.07-oy)*k;ang+=(tmx*.09-ang)*k;vel*=Math.exp(-dt*2.2);vivo=Math.max(0,vivo-dt*.35);calc();}
       ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
       /* en el fondo claro la luz no suma (no hay negro sobre el que brillar): se pinta normal y en oro más hondo */
-      var cl=document.documentElement.getAttribute("data-tema")==="claro",LUZ=cl?"source-over":"lighter",ORO=cl?[168,118,8]:ORO0,CLARO=cl?[148,106,6]:CLARO0;
-      ctx.globalCompositeOperation=LUZ;ctx.lineCap="round";ctx.lineJoin="round";
+      var cl=document.documentElement.getAttribute("data-tema")==="claro",LUZ=cl?"source-over":"lighter",ORO=cl?[168,118,8]:ORO0,CLARO=cl?[148,106,6]:CLARO0,
+          NARANJA=cl?[184,107,30]:[234,135,45];
+      /* En la portada los hilos NO se suman aditivamente: evita la mancha blanca al converger. */
+      ctx.globalCompositeOperation=o.sobrio?"source-over":LUZ;ctx.lineCap="round";ctx.lineJoin="round";
       var sh=sinH();
       B.forEach(function(b,i){
         if(sh&&(i===0||i===B.length-1))return;
         var g=ctx.createLinearGradient(0,0,P.x,0);
         if(o.sobrio){
-          /* Las entradas se atenúan antes de confluir: la suma aditiva de sus colores ya no crea un foco blanco. */
-          g.addColorStop(0,rgba(b.c,0));g.addColorStop(.45,rgba(b.c,.34));
-          g.addColorStop(.82,rgba(b.c,.46));g.addColorStop(.94,rgba(b.c,.19));g.addColorStop(1,rgba(b.c,.04));
+          /* El color original se aproxima al centro, vira a naranja y se funde sin blanquear.
+             Todas las curvas terminan EXACTAMENTE en P; ninguna se recorta ni desplaza. */
+          g.addColorStop(0,rgba(b.c,0));
+          g.addColorStop(.45,rgba(b.c,.34));
+          g.addColorStop(.82,rgba(b.c,.48));
+          g.addColorStop(.93,rgba(mezclaColor(b.c,NARANJA,.55),.30));
+          g.addColorStop(.982,rgba(NARANJA,.20));
+          g.addColorStop(1,rgba(NARANJA,.18));
         }
         else{g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));}
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
@@ -146,18 +155,46 @@
       });
       ctx.beginPath();out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
       if(o.sobrio){
-        /* El haz dorado emerge suavemente de la confluencia, sin un punto de luz duro en el vértice. */
-        var gSalida=ctx.createLinearGradient(P.x,P.y,P.x+Math.min(90,(W-P.x)*.28),P.y);
-        gSalida.addColorStop(0,rgba(ORO,.12));gSalida.addColorStop(.4,rgba(ORO,.5));gSalida.addColorStop(1,rgba(ORO,.7));
+        /* Mismo punto P y misma recta de siempre: arranca naranja al confluir
+           y se convierte gradualmente en el amarillo/dorado definitivo. */
+        var dSalida=Math.min(105,(W-P.x)*.27);
+        var gSalida=ctx.createLinearGradient(P.x,P.y,P.x+dSalida,P.y);
+        gSalida.addColorStop(0,rgba(NARANJA,.58));
+        gSalida.addColorStop(.22,rgba(mezclaColor(NARANJA,ORO,.42),.7));
+        gSalida.addColorStop(.65,rgba(ORO,.74));
+        gSalida.addColorStop(1,rgba(ORO,.7));
         ctx.strokeStyle=gSalida;ctx.lineWidth=1.5;ctx.stroke();
       }
       else{ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();}
-      /* modo sobrio: una sola luz, de a una base por vez; entra por su hilo, cruza el prisma y sale dorada */
+      /* Un ÚNICO pulso recorre una curva de entrada, pasa por P sin pausa
+         y prosigue por la línea de salida. Avanza por longitud de arco (no
+         por dos temporizadores), así que ni salta ni se detiene en el prisma. */
       if(o.sobrio&&!quieto){
-        var cic=4.8,ent=cic*.62,ord=[3,0,6,2,5,1,7,4].filter(function(j){return !(sh&&(j===0||j===B.length-1));}),
-            kk=ord[Math.floor(tm/cic)%ord.length],ph=tm%cic;
-        if(ph<ent){var u=ph/ent;u=u*u*(3-2*u);var q=bez(kk,u);ctx.beginPath();ctx.arc(q[0],q[1],1.7,0,7);ctx.fillStyle=rgba(B[kk].c,.95*Math.sqrt(Math.sin(Math.PI*Math.min(1,u*1.2))));ctx.fill();}
-        else{var u2=(ph-ent)/(cic-ent);u2=u2*u2*(3-2*u2);if(u2<1){var q2=en(u2*total);ctx.beginPath();ctx.arc(q2[0],q2[1],1.9,0,7);ctx.fillStyle=rgba(CLARO,.95*(1-u2));ctx.fill();}}
+        var cic=5.2,ord=[0,3,6,2,5,1,7,4].filter(function(j){return !(sh&&(j===0||j===B.length-1));}),
+            kk=ord[Math.floor(tm/cic)%ord.length],fase=(tm%cic)/cic;
+        var pasos=36,arcos=[0],puntos=[bez(kk,0)],lEntrada=0;
+        for(var z=1;z<=pasos;z++){
+          var punto=bez(kk,z/pasos),anterior=puntos[z-1];
+          lEntrada+=Math.hypot(punto[0]-anterior[0],punto[1]-anterior[1]);
+          puntos.push(punto);arcos.push(lEntrada);
+        }
+        var recorrido=lEntrada+total,distancia=fase*recorrido,pos,colorPulso;
+        if(distancia<=lEntrada){
+          var tramo=1;
+          while(tramo<pasos&&arcos[tramo]<distancia)tramo++;
+          var f=(distancia-arcos[tramo-1])/Math.max(1e-6,arcos[tramo]-arcos[tramo-1]);
+          pos=[puntos[tramo-1][0]+(puntos[tramo][0]-puntos[tramo-1][0])*f,
+               puntos[tramo-1][1]+(puntos[tramo][1]-puntos[tramo-1][1])*f];
+          colorPulso=mezclaColor(B[kk].c,NARANJA,suave((distancia-lEntrada+52)/52));
+        }else{
+          pos=en(distancia-lEntrada);
+          colorPulso=mezclaColor(NARANJA,CLARO,suave((distancia-lEntrada)/94));
+        }
+        var intensidad=.9*suave(distancia/34)*suave((recorrido-distancia)/76);
+        ctx.beginPath();ctx.arc(pos[0],pos[1],1.85,0,Math.PI*2);
+        ctx.fillStyle=rgba(colorPulso,intensidad);ctx.fill();
+        ctx.beginPath();ctx.arc(pos[0],pos[1],4.1,0,Math.PI*2);
+        ctx.fillStyle=rgba(colorPulso,intensidad*.075);ctx.fill();
       }
       puls=puls.filter(function(p){
         if(!p.out){p.t+=p.v*dt;if(p.t>=1){p.out=true;p.s=0;}}else{p.s+=150*dt;if(p.s>=total)return false;}
@@ -186,21 +223,8 @@
       if(cl){gl.addColorStop(0,"rgba(236,176,40,.62)");gl.addColorStop(.5,"rgba(225,165,30,.26)");}else gl.addColorStop(0,"rgba(255,226,150,.5)");
       gl.addColorStop(1,"rgba(217,163,27,0)");
       if(!o.sobrio){ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
-      /* Los haces de entrada y salida se detienen en el contorno del prisma.
-         Borramos únicamente la luz del interior usando el MISMO polígono del filete SVG.
-         Así el encuentro queda nítido incluso al cambiar el tamaño de pantalla. */
-      if(o.sobrio){
-        ctx.save();
-        ctx.globalCompositeOperation="destination-out";
-        ctx.fillStyle="#000";
-        ctx.beginPath();
-        ctx.moveTo(triVertices[0][0],triVertices[0][1]);
-        ctx.lineTo(triVertices[1][0],triVertices[1][1]);
-        ctx.lineTo(triVertices[2][0],triVertices[2][1]);
-        ctx.closePath();
-        ctx.fill();
-        ctx.restore();
-      }
+      /* Sin máscara ni recorte interior: los ocho hilos convergen en P y el
+         haz de salida arranca allí mismo; el filete SVG queda por encima. */
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       /* Sin el nombre de cada base sobre su haz (pedido de la portada): los
          haces conservan el color de su base; los nombres siguen en BASES_PRISMA
