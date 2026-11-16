@@ -129,71 +129,36 @@
       ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
       /* en el fondo claro la luz no suma (no hay negro sobre el que brillar): se pinta normal y en oro más hondo */
       var cl=document.documentElement.getAttribute("data-tema")==="claro",LUZ=cl?"source-over":"lighter",ORO=cl?[168,118,8]:ORO0,CLARO=cl?[148,106,6]:CLARO0;
-      /* En la portada los hilos NO se suman aditivamente: evita la mancha blanca al converger. */
-      ctx.globalCompositeOperation=o.sobrio?"source-over":LUZ;ctx.lineCap="round";ctx.lineJoin="round";
-      var sh=sinH(),principal=sh?1:0;
-      /* Primero los haces secundarios, detrás del amarillo principal.
-         Conservar su pigmento hasta dentro del prisma y atenuar SOLO los últimos píxeles
-         evita que siete extremos pintados uno sobre otro formen una mancha en P. */
+      ctx.globalCompositeOperation=LUZ;ctx.lineCap="round";ctx.lineJoin="round";
+      var sh=sinH();
       B.forEach(function(b,i){
         if(sh&&(i===0||i===B.length-1))return;
-        if(o.sobrio&&i===principal)return;
         var g=ctx.createLinearGradient(0,0,P.x,0);
         if(o.sobrio){
-          g.addColorStop(0,rgba(b.c,0));
-          g.addColorStop(.45,rgba(b.c,.34));
-          g.addColorStop(.82,rgba(b.c,.5));
-          g.addColorStop(.94,rgba(b.c,.47));
-          g.addColorStop(.985,rgba(b.c,.27));
-          g.addColorStop(1,rgba(b.c,0));
-        }else{
-          g.addColorStop(0,rgba(b.c,0));
-          g.addColorStop(.25,rgba(b.c,.5));
-          g.addColorStop(1,rgba(b.c,.85));
+          /* Las entradas se atenúan antes de confluir: la suma aditiva de sus colores ya no crea un foco blanco. */
+          g.addColorStop(0,rgba(b.c,0));g.addColorStop(.45,rgba(b.c,.34));
+          g.addColorStop(.82,rgba(b.c,.46));g.addColorStop(.94,rgba(b.c,.19));g.addColorStop(1,rgba(b.c,.04));
         }
+        else{g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));}
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
-        ctx.strokeStyle=g;ctx.lineWidth=o.sobrio?1:1.3;ctx.stroke();
-        if(!o.sobrio){ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();}
-        if(!quieto&&!o.sobrio){
-          b.next-=dt;
-          if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}
-        }
+        ctx.strokeStyle=g;ctx.lineWidth=o.sobrio?1:1.3;ctx.stroke();if(!o.sobrio){ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();}
+        if(!quieto&&!o.sobrio){b.next-=dt;if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}}
       });
+      ctx.beginPath();out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
       if(o.sobrio){
-        /* La PRIMERA línea amarilla es el mismo vector hasta la derecha: un único
-           path y un único stroke. No hay un segundo trazo que nazca en el centro,
-           ni un círculo, ni dos extremos superpuestos.
-           Solo los últimos ~10 % de la curva suavizan su tangente para llegar
-           horizontal a P, exactamente alineados con la salida preexistente. */
-        var tUnion=.90,am=bez(principal,tUnion),aY=Y[principal];
-        var ctrlX=P.x*.55;
-        var dx=2*(1-tUnion)*ctrlX+2*tUnion*(P.x-ctrlX);
-        var dy=2*tUnion*(P.y-aY);
-        var dtUnion=1-tUnion;
-        ctx.beginPath();
-        ctx.moveTo(0,aY);
-        ctx.quadraticCurveTo(ctrlX*tUnion,aY,am[0],am[1]);
-        ctx.bezierCurveTo(am[0]+dx*dtUnion/3,am[1]+dy*dtUnion/3,
-                          P.x-Math.min(28,Math.max(9,Math.min(W,H)*.035)),P.y,
-                          P.x,P.y);
-        out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);});
-        var corte=P.x/Math.max(W,1),caja=Math.min(W,P.x+Math.min(85,(W-P.x)*.23))/Math.max(W,1);
-        var gContinuo=ctx.createLinearGradient(0,0,W,0);
-        gContinuo.addColorStop(0,rgba(B[principal].c,0));
-        gContinuo.addColorStop(corte*.45,rgba(B[principal].c,.34));
-        gContinuo.addColorStop(corte*.82,rgba(B[principal].c,.52));
-        gContinuo.addColorStop(corte,rgba(B[principal].c,.7));
-        gContinuo.addColorStop(caja,rgba(ORO,.75));
-        gContinuo.addColorStop(1,rgba(ORO,.7));
-        ctx.strokeStyle=gContinuo;ctx.lineWidth=1.35;ctx.stroke();
-      }else{
-        ctx.beginPath();
-        out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
-        ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();
-        ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();
+        /* El haz dorado emerge suavemente de la confluencia, sin un punto de luz duro en el vértice. */
+        var gSalida=ctx.createLinearGradient(P.x,P.y,P.x+Math.min(90,(W-P.x)*.28),P.y);
+        gSalida.addColorStop(0,rgba(ORO,.12));gSalida.addColorStop(.4,rgba(ORO,.5));gSalida.addColorStop(1,rgba(ORO,.7));
+        ctx.strokeStyle=gSalida;ctx.lineWidth=1.5;ctx.stroke();
       }
-      /* En portada no hay partículas ni puntos animados sobre la confluencia.
-         El recorrido de luz se lee en el trazo amarillo ininterrumpido. */
+      else{ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();}
+      /* modo sobrio: una sola luz, de a una base por vez; entra por su hilo, cruza el prisma y sale dorada */
+      if(o.sobrio&&!quieto){
+        var cic=4.8,ent=cic*.62,ord=[3,0,6,2,5,1,7,4].filter(function(j){return !(sh&&(j===0||j===B.length-1));}),
+            kk=ord[Math.floor(tm/cic)%ord.length],ph=tm%cic;
+        if(ph<ent){var u=ph/ent;u=u*u*(3-2*u);var q=bez(kk,u);ctx.beginPath();ctx.arc(q[0],q[1],1.7,0,7);ctx.fillStyle=rgba(B[kk].c,.95*Math.sqrt(Math.sin(Math.PI*Math.min(1,u*1.2))));ctx.fill();}
+        else{var u2=(ph-ent)/(cic-ent);u2=u2*u2*(3-2*u2);if(u2<1){var q2=en(u2*total);ctx.beginPath();ctx.arc(q2[0],q2[1],1.9,0,7);ctx.fillStyle=rgba(CLARO,.95*(1-u2));ctx.fill();}}
+      }
       puls=puls.filter(function(p){
         if(!p.out){p.t+=p.v*dt;if(p.t>=1){p.out=true;p.s=0;}}else{p.s+=150*dt;if(p.s>=total)return false;}
         var c=p.out?ORO:B[p.i].c;
@@ -208,11 +173,7 @@
       ctx.globalCompositeOperation="source-over";
       var s=Math.min(W,H)*(typeof o.tam==="function"?o.tam(W,H):(o.tam||.1));
       /* el filete, fino: claro en el oscuro; en el claro, dorado */
-      var co=Math.cos(ang),si=Math.sin(ang);
-      var triVertices=[[0,-s],[-s*.87,s*.5],[s*.87,s*.5]].map(function(q){
-        return [P.x+q[0]*co-q[1]*si,P.y+q[0]*si+q[1]*co];
-      });
-      var pts=triVertices.map(function(q){return q[0].toFixed(2)+","+q[1].toFixed(2);}).join(" ");
+      var co=Math.cos(ang),si=Math.sin(ang),pts=[[0,-s],[-s*.87,s*.5],[s*.87,s*.5]].map(function(q){return (P.x+q[0]*co-q[1]*si).toFixed(2)+","+(P.y+q[0]*si+q[1]*co).toFixed(2);}).join(" ");
       if(pts!==triPts){triPts=pts;poli.setAttribute("points",pts);}
       poli.setAttribute("fill",o.sobrio?"none":cl?"rgba(255,250,235,.12)":"rgba(241,238,230,.035)");poli.setAttribute("stroke",cl?"rgba(148,106,6,.9)":o.sobrio?"rgba(241,238,230,.55)":"rgba(241,238,230,.6)");
       if(o.mouse&&vivo>0){var gc=ctx.createRadialGradient(mpx,mpy,0,mpx,mpy,170);gc.addColorStop(0,"rgba(255,226,150,"+(.13*Math.min(1,vivo*1.6)).toFixed(3)+")");gc.addColorStop(1,"rgba(217,163,27,0)");ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gc;ctx.beginPath();ctx.arc(mpx,mpy,170,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
@@ -221,8 +182,18 @@
       if(cl){gl.addColorStop(0,"rgba(236,176,40,.62)");gl.addColorStop(.5,"rgba(225,165,30,.26)");}else gl.addColorStop(0,"rgba(255,226,150,.5)");
       gl.addColorStop(1,"rgba(217,163,27,0)");
       if(!o.sobrio){ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
-      /* Sin máscara ni recorte interior: los ocho hilos convergen en P y el
-         haz de salida arranca allí mismo; el filete SVG queda por encima. */
+      /* Núcleo blanco tenue y pequeño en la convergencia: no altera los haces ni crea un fogonazo. */
+      if(o.sobrio){
+        var radioNucleo=Math.max(6,Math.min(10,s*.12));
+        var nucleo=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,radioNucleo);
+        nucleo.addColorStop(0,cl?"rgba(255,255,255,.78)":"rgba(255,255,255,.62)");
+        nucleo.addColorStop(.32,cl?"rgba(255,255,255,.30)":"rgba(255,255,255,.24)");
+        nucleo.addColorStop(.75,"rgba(255,255,255,.04)");
+        nucleo.addColorStop(1,"rgba(255,255,255,0)");
+        ctx.globalCompositeOperation=LUZ;
+        ctx.fillStyle=nucleo;ctx.beginPath();ctx.arc(P.x,P.y,radioNucleo,0,Math.PI*2);ctx.fill();
+        ctx.globalCompositeOperation="source-over";
+      }
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       /* Sin el nombre de cada base sobre su haz (pedido de la portada): los
          haces conservan el color de su base; los nombres siguen en BASES_PRISMA
