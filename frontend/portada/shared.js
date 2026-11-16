@@ -233,8 +233,9 @@
         gSalida.addColorStop(corte,rgba(ORO,0));
         gSalida.addColorStop((corte+1)*.5,rgba(ORO,.28));
         gSalida.addColorStop(1,rgba(ORO,.7));
-        ctx.save();ctx.globalAlpha=.12;ctx.strokeStyle=gSalida;ctx.lineWidth=8;ctx.stroke();ctx.restore();
-        ctx.strokeStyle=gSalida;ctx.lineWidth=1.5;ctx.stroke();
+        /* Filete dorado más fino; halo casi imperceptible para mantener delicadeza. */
+        ctx.save();ctx.globalAlpha=.065;ctx.strokeStyle=gSalida;ctx.lineWidth=4;ctx.stroke();ctx.restore();
+        ctx.strokeStyle=gSalida;ctx.lineWidth=1.05;ctx.stroke();
       }
       else{ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();}
       /* modo sobrio: una sola luz, de a una base por vez; entra por su hilo, cruza el prisma y sale dorada */
@@ -283,27 +284,6 @@
       if(cl){gl.addColorStop(0,"rgba(236,176,40,.62)");gl.addColorStop(.5,"rgba(225,165,30,.26)");}else gl.addColorStop(0,"rgba(255,226,150,.5)");
       gl.addColorStop(1,"rgba(217,163,27,0)");
       if(!o.sobrio){ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
-      /* Núcleo blanco del diseño restaurado: titila suavemente SOLO al comenzar
-         la salida. Mantiene su tamaño, posición y brillo base; sin flashes duros. */
-      if(o.sobrio){
-        var radioNucleo=Math.max(6,Math.min(10,s*.12));
-        var parpadeo=1;
-        if(!quieto){
-          var tSalida=tm%4.8-4.8*.62,ventana=.85;
-          if(tSalida>=0&&tSalida<ventana){
-            var envolvente=Math.sin(Math.PI*tSalida/ventana);
-            parpadeo=1+.18*envolvente*Math.sin(tSalida*Math.PI*10);
-          }
-        }
-        var nucleo=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,radioNucleo);
-        nucleo.addColorStop(0,rgba([255,255,255],(cl?.78:.62)*parpadeo));
-        nucleo.addColorStop(.32,rgba([255,255,255],(cl?.30:.24)*parpadeo));
-        nucleo.addColorStop(.75,rgba([255,255,255],.04*parpadeo));
-        nucleo.addColorStop(1,"rgba(255,255,255,0)");
-        ctx.globalCompositeOperation=LUZ;
-        ctx.fillStyle=nucleo;ctx.beginPath();ctx.arc(P.x,P.y,radioNucleo,0,Math.PI*2);ctx.fill();
-        ctx.globalCompositeOperation="source-over";
-      }
       ctx.font="500 11.5px 'Cormorant SC',serif";ctx.textBaseline="middle";ctx.textAlign="left";
       /* Sin el nombre de cada base sobre su haz (pedido de la portada): los
          haces conservan el color de su base; los nombres siguen en BASES_PRISMA
