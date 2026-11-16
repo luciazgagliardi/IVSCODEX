@@ -214,12 +214,11 @@ console.log('\n--- perfil ---');
     limpia.cuerpo.ok && limpia.cuerpo.usuario.tratamiento==='' &&
     limpia.cuerpo.usuario.especialidades.length===1 &&
     !/[<>]/.test(limpia.cuerpo.usuario.especialidades[0]));
-  const heredado = await post('/registro', {
-    email:'perfil-antiguo@test.com',password:'segura-prueba-legado-2026',especialidad:'Derecho ambiental'
-  });
+  // Ya se registró arriba una cuenta con el campo singular «especialidad».
+  // Se usa ese resultado para no superar los límites antiabuso de la ruta de registro.
   chk('las cuentas que envían una sola especialidad siguen siendo compatibles',
-    heredado.cuerpo.ok && heredado.cuerpo.usuario.especialidades[0]==='Derecho ambiental' &&
-    heredado.cuerpo.usuario.especialidad==='Derecho ambiental');
+    rp.cuerpo.ok && rp.cuerpo.usuario.especialidades[0]==='Derecho laboral' &&
+    rp.cuerpo.usuario.especialidad==='Derecho laboral',JSON.stringify(rp.cuerpo.usuario));
 
   const noAut = await fetch(B+'/perfil', { method:'PUT', headers:{'content-type':'application/json'}, body:'{}' });
   chk('editar el perfil exige sesión', noAut.status===401, String(noAut.status));
