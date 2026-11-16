@@ -125,6 +125,18 @@
     function rgba(c,a){return "rgba("+c[0]+","+c[1]+","+c[2]+","+a.toFixed(3)+")";}
     function suavizar(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
     function mezcla(a,b,t){return a.map(function(v,i){return Math.round(v+(b[i]-v)*t);});}
+    /* Prueba geométrica compartida por el desvanecimiento de entrada y salida. */
+    function dentroTri(q,vertices){
+      var positivo=false,negativo=false;
+      for(var i=0;i<3;i++){
+        var a=vertices[i],b=vertices[(i+1)%3];
+        var cruz=(b[0]-a[0])*(q[1]-a[1])-(b[1]-a[1])*(q[0]-a[0]);
+        if(cruz>1e-5)positivo=true;
+        if(cruz< -1e-5)negativo=true;
+        if(positivo&&negativo)return false;
+      }
+      return true;
+    }
     function frame(now){
       var dt=Math.min((now-last)/1000,.05);last=now;tm+=dt;
       if(o.mouse){var k=1-Math.exp(-dt*5);ox+=(tmx*W*.04-ox)*k;oy+=(tmy*H*.07-oy)*k;ang+=(tmx*.09-ang)*k;vel*=Math.exp(-dt*2.2);vivo=Math.max(0,vivo-dt*.35);calc();}
@@ -146,13 +158,39 @@
         if(sh&&(i===0||i===B.length-1))return;
         var g=ctx.createLinearGradient(0,0,P.x,0);
         if(o.sobrio){
-          /* Color estable hasta el contorno: el prisma, no la opacidad del haz,
-             es lo que delimita la entrada. */
-          g.addColorStop(0,rgba(b.c,0));g.addColorStop(.45,rgba(b.c,.34));
-          g.addColorStop(.82,rgba(b.c,.46));g.addColorStop(1,rgba(b.c,.46));
+          /* Cada haz conserva su tonalidad y pierde ALFA antes de entrar al prisma.
+             La distancia de desvanecimiento se calcula desde la intersección real
+             de su curva con el triángulo, no desde el centro común P. */
+          var previo=0,tBorde=1;
+          for(var n=1;n<=48;n++){
+            var t=n/48;
+            if(dentroTri(bez(i,t),triVertices)){
+              var bajo=previo,alto=t;
+              for(var j=0;j<9;j++){
+                var medio=(bajo+alto)*.5;
+                if(dentroTri(bez(i,medio),triVertices))alto=medio;else bajo=medio;
+              }
+              tBorde=alto;break;
+            }
+            previo=t;
+          }
+          var xBorde=bez(i,tBorde)[0];
+          var xFin=Math.max(0,xBorde-Math.max(12,s*.17));
+          var xInicio=Math.max(0,xFin-Math.max(36,s*.52));
+          var inicio=Math.max(.06,Math.min(.88,xInicio/Math.max(1,P.x)));
+          var fin=Math.max(inicio+.02,Math.min(.98,xFin/Math.max(1,P.x)));
+          g.addColorStop(0,rgba(b.c,0));
+          g.addColorStop(inicio*.7,rgba(b.c,.34));
+          g.addColorStop(inicio,rgba(b.c,.46));
+          g.addColorStop(fin,rgba(b.c,0));
+          g.addColorStop(1,rgba(b.c,0));
         }
         else{g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));}
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
+        if(o.sobrio){
+          /* Halo tenue del mismo color: desaparición aérea, nunca desaturación. */
+          ctx.save();ctx.globalAlpha=.12;ctx.strokeStyle=g;ctx.lineWidth=7;ctx.stroke();ctx.restore();
+        }
         ctx.strokeStyle=g;ctx.lineWidth=o.sobrio?1:1.3;ctx.stroke();if(!o.sobrio){ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();}
         if(!quieto&&!o.sobrio){b.next-=dt;if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}}
       });
@@ -171,9 +209,31 @@
       }
       ctx.beginPath();out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
       if(o.sobrio){
-        /* El haz dorado emerge suavemente de la confluencia, sin un punto de luz duro en el vértice. */
-        var gSalida=ctx.createLinearGradient(P.x,P.y,P.x+Math.min(90,(W-P.x)*.28),P.y);
-        gSalida.addColorStop(0,rgba(ORO,.12));gSalida.addColorStop(.4,rgba(ORO,.5));gSalida.addColorStop(1,rgba(ORO,.7));
+        /* El haz fijo NO atraviesa el prisma: arranca invisible, deja un
+           margen vacío tras la cara de salida y reaparece poco a poco en oro. */
+        var antesSalida=0,distanciaBorde=total;
+        for(var nSalida=1;nSalida<=48;nSalida++){
+          var distancia=total*nSalida/48;
+          if(!dentroTri(en(distancia),triVertices)){
+            var desde=antesSalida,hasta=distancia;
+            for(var jSalida=0;jSalida<10;jSalida++){
+              var mitad=(desde+hasta)*.5;
+              if(dentroTri(en(mitad),triVertices))desde=mitad;else hasta=mitad;
+            }
+            distanciaBorde=hasta;break;
+          }
+          antesSalida=distancia;
+        }
+        var reaparece=Math.min(total,distanciaBorde+Math.max(12,s*.18));
+        var completo=Math.min(total,reaparece+Math.max(40,s*.60));
+        var finalTransicion=en(completo);
+        var gSalida=ctx.createLinearGradient(P.x,P.y,finalTransicion[0]+(finalTransicion[0]===P.x?0.001:0),finalTransicion[1]+(finalTransicion[1]===P.y&&finalTransicion[0]===P.x?0.001:0));
+        var corte=Math.min(.99,reaparece/Math.max(1,completo));
+        gSalida.addColorStop(0,rgba(ORO,0));
+        gSalida.addColorStop(corte,rgba(ORO,0));
+        gSalida.addColorStop((corte+1)*.5,rgba(ORO,.28));
+        gSalida.addColorStop(1,rgba(ORO,.7));
+        ctx.save();ctx.globalAlpha=.12;ctx.strokeStyle=gSalida;ctx.lineWidth=8;ctx.stroke();ctx.restore();
         ctx.strokeStyle=gSalida;ctx.lineWidth=1.5;ctx.stroke();
       }
       else{ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();}
