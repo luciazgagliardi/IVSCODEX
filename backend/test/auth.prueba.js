@@ -182,6 +182,45 @@ console.log('\n--- perfil ---');
   chk('el perfil se edita y se acota el largo', pj.ok && pj.usuario.nombre.length===60 && pj.usuario.especialidad==='' && pj.usuario.actualizaciones===false, JSON.stringify(pj.usuario));
   const y2 = await yo(rp.cuerpo.token);
   chk('«quién soy» devuelve el perfil guardado', y2.cuerpo.usuario.nombre.length===60);
+  // Varias especialidades y tratamiento del saludo se guardan también entre sesiones.
+  const multiple = await post('/registro', {
+    email:'multiperfil@test.com',password:'frase-segura-de-prueba-2026',nombre:'María',
+    especialidades:['Derecho civil','Derecho laboral','Derecho civil','Docencia e investigación'],
+    tratamiento:'femenino',actualizaciones:false
+  });
+  chk('registro permite varias especialidades sin duplicados',
+    multiple.cuerpo.ok && JSON.stringify(multiple.cuerpo.usuario.especialidades)===JSON.stringify(['Derecho civil','Derecho laboral','Docencia e investigación']) &&
+    multiple.cuerpo.usuario.especialidad==='Derecho civil', JSON.stringify(multiple.cuerpo.usuario));
+  chk('registro guarda el tratamiento femenino opcional',
+    multiple.cuerpo.usuario.tratamiento==='femenino');
+  const mp = await fetch(B+'/perfil', {
+    method:'PUT',
+    headers:{'content-type':'application/json',authorization:'Bearer '+multiple.cuerpo.token},
+    body:JSON.stringify({nombre:'María',especialidades:['Derecho penal','Derecho de familia'],tratamiento:'masculino',actualizaciones:true})
+  });
+  const modificado=await mp.json();
+  chk('el perfil permite cambiar y quitar especialidades',
+    modificado.ok && JSON.stringify(modificado.usuario.especialidades)===JSON.stringify(['Derecho penal','Derecho de familia']) &&
+    modificado.usuario.tratamiento==='masculino', JSON.stringify(modificado.usuario));
+  const persistido=await yo(multiple.cuerpo.token);
+  chk('especialidades y saludo persisten en la cuenta',
+    JSON.stringify(persistido.cuerpo.usuario.especialidades)===JSON.stringify(['Derecho penal','Derecho de familia']) &&
+    persistido.cuerpo.usuario.tratamiento==='masculino');
+  const limpia = await post('/registro', {
+    email:'tratamiento-invalido@test.com',password:'segura-prueba-larga-2026',
+    especialidades:['Civil<script>','Civil<script>',42],tratamiento:'otro'
+  });
+  chk('el backend sanea datos y rechaza tratamientos desconocidos',
+    limpia.cuerpo.ok && limpia.cuerpo.usuario.tratamiento==='' &&
+    limpia.cuerpo.usuario.especialidades.length===1 &&
+    !/[<>]/.test(limpia.cuerpo.usuario.especialidades[0]));
+  const heredado = await post('/registro', {
+    email:'perfil-antiguo@test.com',password:'segura-prueba-legado-2026',especialidad:'Derecho ambiental'
+  });
+  chk('las cuentas que envían una sola especialidad siguen siendo compatibles',
+    heredado.cuerpo.ok && heredado.cuerpo.usuario.especialidades[0]==='Derecho ambiental' &&
+    heredado.cuerpo.usuario.especialidad==='Derecho ambiental');
+
   const noAut = await fetch(B+'/perfil', { method:'PUT', headers:{'content-type':'application/json'}, body:'{}' });
   chk('editar el perfil exige sesión', noAut.status===401, String(noAut.status));
 }
