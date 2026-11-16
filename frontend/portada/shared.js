@@ -92,19 +92,7 @@
     var SVGNS="http://www.w3.org/2000/svg",tri=document.createElementNS(SVGNS,"svg"),poli=document.createElementNS(SVGNS,"polygon"),triPts="";
     tri.setAttribute("aria-hidden","true");tri.style.cssText="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible";
     poli.setAttribute("stroke-width","1");poli.setAttribute("stroke-linejoin","miter");poli.setAttribute("shape-rendering","geometricPrecision");
-    tri.appendChild(poli);
-    /* Tres aristas SVG independientes para graduar la luz sin cambiar la geometría:
-       vértice superior -> inferior izquierdo, base, superior -> inferior derecho. */
-    var paresAristas=[[0,1],[1,2],[0,2]];
-    var aristasPrisma=paresAristas.map(function(){
-      var linea=document.createElementNS(SVGNS,"line");
-      linea.setAttribute("stroke-width","1");
-      linea.setAttribute("stroke-linecap","butt");
-      linea.setAttribute("shape-rendering","geometricPrecision");
-      tri.appendChild(linea);
-      return linea;
-    });
-    cv.parentNode.insertBefore(tri,cv.nextSibling);
+    tri.appendChild(poli);cv.parentNode.insertBefore(tri,cv.nextSibling);
     /* o.sinHaces(W,H): sin las dos líneas de los extremos (la de arriba, amarilla, y la de abajo, celeste); el resto del prisma queda igual */
     function sinH(){return typeof o.sinHaces==="function"?!!o.sinHaces(W,H):!!o.sinHaces;}
     function medir(){
@@ -311,23 +299,10 @@
         return true;
       });
       ctx.globalCompositeOperation="source-over";
-      /* El filete vectorial conserva los mismos vértices del recorte interior.
-         Solo en la portada sobria las aristas se iluminan independientemente. */
-      if(pts!==triPts){
-        triPts=pts;poli.setAttribute("points",pts);
-        aristasPrisma.forEach(function(linea,i){
-          var extremos=paresAristas[i],a=triVertices[extremos[0]],b=triVertices[extremos[1]];
-          linea.setAttribute("x1",a[0].toFixed(2));linea.setAttribute("y1",a[1].toFixed(2));
-          linea.setAttribute("x2",b[0].toFixed(2));linea.setAttribute("y2",b[1].toFixed(2));
-        });
-      }
+      /* El filete fino vectorial usa la misma geometría que el corte interior. */
+      if(pts!==triPts){triPts=pts;poli.setAttribute("points",pts);}
       poli.setAttribute("fill",o.sobrio?"none":cl?"rgba(255,250,235,.12)":"rgba(241,238,230,.035)");
-      poli.setAttribute("stroke",o.sobrio?"none":cl?"rgba(148,106,6,.9)":"rgba(241,238,230,.6)");
-      /* Izquierda luminosa, base suave, derecha etérea; sin alterar el grosor. */
-      var nivelesAristas=cl?[.88,.60,.30]:[.72,.45,.22];
-      aristasPrisma.forEach(function(linea,i){
-        linea.setAttribute("stroke",o.sobrio?(cl?"rgba(148,106,6,":"rgba(241,238,230,")+nivelesAristas[i]+")":"none");
-      });
+      poli.setAttribute("stroke",cl?"rgba(148,106,6,.9)":o.sobrio?"rgba(241,238,230,.55)":"rgba(241,238,230,.6)");
       if(o.mouse&&vivo>0){var gc=ctx.createRadialGradient(mpx,mpy,0,mpx,mpy,170);gc.addColorStop(0,"rgba(255,226,150,"+(.13*Math.min(1,vivo*1.6)).toFixed(3)+")");gc.addColorStop(1,"rgba(217,163,27,0)");ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gc;ctx.beginPath();ctx.arc(mpx,mpy,170,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
       /* la luz que se filtra por el prisma: del mismo tamaño en los dos fondos; en el claro, más dorada para que se vea sobre el papel */
       var gl=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,s*1.3);
