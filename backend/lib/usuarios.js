@@ -73,15 +73,27 @@ function sinPassword(u) {
   return resto;
 }
 
-/** Limpia los datos de perfil: cadenas cortas sin saltos de línea; la casilla, un booleano. */
-export function limpiarPerfil({ nombre, especialidad, actualizaciones } = {}) {
-  // Sin signos de marcado ni caracteres de control: el nombre es texto, nunca HTML (el frontend además lo escapa; esto es una segunda capa).
+/** Perfil con varias especialidades y tratamiento opcional, compatible con cuentas anteriores. */
+export function limpiarPerfil({ nombre, especialidad, especialidades, tratamiento, actualizaciones } = {}) {
   const texto = (v, max) => String(typeof v === 'string' ? v : '').replace(/[<>\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max);
-  return { nombre: texto(nombre, 60), especialidad: texto(especialidad, 80), actualizaciones: actualizaciones === true };
+  const recibidas = Array.isArray(especialidades) ? especialidades : [especialidad];
+  const limpias = [];
+  for (const valor of recibidas.slice(0, 30)) {
+    const item = texto(valor, 80);
+    if (item && !limpias.some(x => x.toLocaleLowerCase('es') === item.toLocaleLowerCase('es')) && limpias.length < 12) limpias.push(item);
+  }
+  const forma = tratamiento === 'masculino' || tratamiento === 'femenino' ? tratamiento : '';
+  return {
+    nombre: texto(nombre, 60),
+    especialidad: limpias[0] || '', // compatibilidad con clientes existentes
+    especialidades: limpias,
+    tratamiento: forma,
+    actualizaciones: actualizaciones === true,
+  };
 }
 
 /** Crea un usuario nuevo. Tira EMAIL_YA_REGISTRADO si el correo ya existe. */
-export async function crearUsuario({ email, password, nombre, especialidad, actualizaciones }) {
+export async function crearUsuario({ email, password, nombre, especialidad, especialidades, tratamiento, actualizaciones }) {
   const correo = normalizarEmail(email);
   const passwordHash = await hashearPassword(password);
   // Lectura + escritura en cola: dos registros simultáneos no se pisan.
@@ -94,7 +106,7 @@ export async function crearUsuario({ email, password, nombre, especialidad, actu
     }
     const usuario = {
       id: crypto.randomUUID(), email: correo, passwordHash, creadoEn: Date.now(),
-      ...limpiarPerfil({ nombre, especialidad, actualizaciones }),
+      ...limpiarPerfil({ nombre, especialidad, especialidades, tratamiento, actualizaciones }),
     };
     dato[correo] = usuario;
     await escribirJsonAtomico(ARCHIVO, dato);
@@ -113,12 +125,21 @@ export async function verificarCredenciales(email, password) {
 
 /** Cambia nombre, especialidad y la casilla de novedades de una cuenta. Devuelve el usuario (sin el hash). */
 export async function actualizarPerfil(id, datos) {
-  const nuevo = limpiarPerfil(datos);
   return enCola(ARCHIVO, async () => {
     const dato = await leerTodos();
     const clave = Object.keys(dato).find((k) => dato[k].id === id);
     if (!clave) return null;
-    dato[clave] = { ...dato[clave], ...nuevo };
+    const anterior = dato[clave];
+    const tiene = (campo) => Object.prototype.hasOwnProperty.call(datos, campo);
+    const nuevo = limpiarPerfil({
+      nombre: tiene('nombre') ? datos.nombre : anterior.nombre,
+      especialidades: tiene('especialidades') ? datos.especialidades
+        : tiene('especialidad') ? undefined : anterior.especialidades,
+      especialidad: tiene('especialidad') ? datos.especialidad : anterior.especialidad,
+      tratamiento: tiene('tratamiento') ? datos.tratamiento : anterior.tratamiento,
+      actualizaciones: tiene('actualizaciones') ? datos.actualizaciones : anterior.actualizaciones,
+    });
+    dato[clave] = { ...anterior, ...nuevo };
     await escribirJsonAtomico(ARCHIVO, dato);
     return sinPassword(dato[clave]);
   });
