@@ -123,79 +123,77 @@
     }
     function bez(i,t){var A=[0,Y[i]],C=[P.x*.55,Y[i]],u=1-t;return [u*u*A[0]+2*u*t*C[0]+t*t*P.x,u*u*A[1]+2*u*t*C[1]+t*t*P.y];}
     function rgba(c,a){return "rgba("+c[0]+","+c[1]+","+c[2]+","+a.toFixed(3)+")";}
-    function mezclaColor(a,b,t){return a.map(function(v,i){return Math.round(v+(b[i]-v)*t);});}
-    function suave(t){t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);}
     function frame(now){
       var dt=Math.min((now-last)/1000,.05);last=now;tm+=dt;
       if(o.mouse){var k=1-Math.exp(-dt*5);ox+=(tmx*W*.04-ox)*k;oy+=(tmy*H*.07-oy)*k;ang+=(tmx*.09-ang)*k;vel*=Math.exp(-dt*2.2);vivo=Math.max(0,vivo-dt*.35);calc();}
       ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
       /* en el fondo claro la luz no suma (no hay negro sobre el que brillar): se pinta normal y en oro más hondo */
-      var cl=document.documentElement.getAttribute("data-tema")==="claro",LUZ=cl?"source-over":"lighter",ORO=cl?[168,118,8]:ORO0,CLARO=cl?[148,106,6]:CLARO0,
-          NARANJA=cl?[184,107,30]:[234,135,45];
+      var cl=document.documentElement.getAttribute("data-tema")==="claro",LUZ=cl?"source-over":"lighter",ORO=cl?[168,118,8]:ORO0,CLARO=cl?[148,106,6]:CLARO0;
       /* En la portada los hilos NO se suman aditivamente: evita la mancha blanca al converger. */
       ctx.globalCompositeOperation=o.sobrio?"source-over":LUZ;ctx.lineCap="round";ctx.lineJoin="round";
-      var sh=sinH();
+      var sh=sinH(),principal=sh?1:0;
+      /* Primero los haces secundarios, detrás del amarillo principal.
+         Conservar su pigmento hasta dentro del prisma y atenuar SOLO los últimos píxeles
+         evita que siete extremos pintados uno sobre otro formen una mancha en P. */
       B.forEach(function(b,i){
         if(sh&&(i===0||i===B.length-1))return;
+        if(o.sobrio&&i===principal)return;
         var g=ctx.createLinearGradient(0,0,P.x,0);
         if(o.sobrio){
-          /* El color original se aproxima al centro, vira a naranja y se funde sin blanquear.
-             Todas las curvas terminan EXACTAMENTE en P; ninguna se recorta ni desplaza. */
           g.addColorStop(0,rgba(b.c,0));
           g.addColorStop(.45,rgba(b.c,.34));
-          g.addColorStop(.82,rgba(b.c,.48));
-          g.addColorStop(.93,rgba(mezclaColor(b.c,NARANJA,.55),.30));
-          g.addColorStop(.982,rgba(NARANJA,.20));
-          g.addColorStop(1,rgba(NARANJA,.18));
-        }
-        else{g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));}
-        ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
-        ctx.strokeStyle=g;ctx.lineWidth=o.sobrio?1:1.3;ctx.stroke();if(!o.sobrio){ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();}
-        if(!quieto&&!o.sobrio){b.next-=dt;if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}}
-      });
-      ctx.beginPath();out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
-      if(o.sobrio){
-        /* Mismo punto P y misma recta de siempre: arranca naranja al confluir
-           y se convierte gradualmente en el amarillo/dorado definitivo. */
-        var dSalida=Math.min(105,(W-P.x)*.27);
-        var gSalida=ctx.createLinearGradient(P.x,P.y,P.x+dSalida,P.y);
-        gSalida.addColorStop(0,rgba(NARANJA,.58));
-        gSalida.addColorStop(.22,rgba(mezclaColor(NARANJA,ORO,.42),.7));
-        gSalida.addColorStop(.65,rgba(ORO,.74));
-        gSalida.addColorStop(1,rgba(ORO,.7));
-        ctx.strokeStyle=gSalida;ctx.lineWidth=1.5;ctx.stroke();
-      }
-      else{ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();}
-      /* Un ÚNICO pulso recorre una curva de entrada, pasa por P sin pausa
-         y prosigue por la línea de salida. Avanza por longitud de arco (no
-         por dos temporizadores), así que ni salta ni se detiene en el prisma. */
-      if(o.sobrio&&!quieto){
-        var cic=5.2,ord=[0,3,6,2,5,1,7,4].filter(function(j){return !(sh&&(j===0||j===B.length-1));}),
-            kk=ord[Math.floor(tm/cic)%ord.length],fase=(tm%cic)/cic;
-        var pasos=36,arcos=[0],puntos=[bez(kk,0)],lEntrada=0;
-        for(var z=1;z<=pasos;z++){
-          var punto=bez(kk,z/pasos),anterior=puntos[z-1];
-          lEntrada+=Math.hypot(punto[0]-anterior[0],punto[1]-anterior[1]);
-          puntos.push(punto);arcos.push(lEntrada);
-        }
-        var recorrido=lEntrada+total,distancia=fase*recorrido,pos,colorPulso;
-        if(distancia<=lEntrada){
-          var tramo=1;
-          while(tramo<pasos&&arcos[tramo]<distancia)tramo++;
-          var f=(distancia-arcos[tramo-1])/Math.max(1e-6,arcos[tramo]-arcos[tramo-1]);
-          pos=[puntos[tramo-1][0]+(puntos[tramo][0]-puntos[tramo-1][0])*f,
-               puntos[tramo-1][1]+(puntos[tramo][1]-puntos[tramo-1][1])*f];
-          colorPulso=mezclaColor(B[kk].c,NARANJA,suave((distancia-lEntrada+52)/52));
+          g.addColorStop(.82,rgba(b.c,.5));
+          g.addColorStop(.94,rgba(b.c,.47));
+          g.addColorStop(.985,rgba(b.c,.27));
+          g.addColorStop(1,rgba(b.c,0));
         }else{
-          pos=en(distancia-lEntrada);
-          colorPulso=mezclaColor(NARANJA,CLARO,suave((distancia-lEntrada)/94));
+          g.addColorStop(0,rgba(b.c,0));
+          g.addColorStop(.25,rgba(b.c,.5));
+          g.addColorStop(1,rgba(b.c,.85));
         }
-        var intensidad=.9*suave(distancia/34)*suave((recorrido-distancia)/76);
-        ctx.beginPath();ctx.arc(pos[0],pos[1],1.85,0,Math.PI*2);
-        ctx.fillStyle=rgba(colorPulso,intensidad);ctx.fill();
-        ctx.beginPath();ctx.arc(pos[0],pos[1],4.1,0,Math.PI*2);
-        ctx.fillStyle=rgba(colorPulso,intensidad*.075);ctx.fill();
+        ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
+        ctx.strokeStyle=g;ctx.lineWidth=o.sobrio?1:1.3;ctx.stroke();
+        if(!o.sobrio){ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();}
+        if(!quieto&&!o.sobrio){
+          b.next-=dt;
+          if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}
+        }
+      });
+      if(o.sobrio){
+        /* La PRIMERA línea amarilla es el mismo vector hasta la derecha: un único
+           path y un único stroke. No hay un segundo trazo que nazca en el centro,
+           ni un círculo, ni dos extremos superpuestos.
+           Solo los últimos ~10 % de la curva suavizan su tangente para llegar
+           horizontal a P, exactamente alineados con la salida preexistente. */
+        var tUnion=.90,am=bez(principal,tUnion),aY=Y[principal];
+        var ctrlX=P.x*.55;
+        var dx=2*(1-tUnion)*ctrlX+2*tUnion*(P.x-ctrlX);
+        var dy=2*tUnion*(P.y-aY);
+        var dtUnion=1-tUnion;
+        ctx.beginPath();
+        ctx.moveTo(0,aY);
+        ctx.quadraticCurveTo(ctrlX*tUnion,aY,am[0],am[1]);
+        ctx.bezierCurveTo(am[0]+dx*dtUnion/3,am[1]+dy*dtUnion/3,
+                          P.x-Math.min(28,Math.max(9,Math.min(W,H)*.035)),P.y,
+                          P.x,P.y);
+        out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);});
+        var corte=P.x/Math.max(W,1),caja=Math.min(W,P.x+Math.min(85,(W-P.x)*.23))/Math.max(W,1);
+        var gContinuo=ctx.createLinearGradient(0,0,W,0);
+        gContinuo.addColorStop(0,rgba(B[principal].c,0));
+        gContinuo.addColorStop(corte*.45,rgba(B[principal].c,.34));
+        gContinuo.addColorStop(corte*.82,rgba(B[principal].c,.52));
+        gContinuo.addColorStop(corte,rgba(B[principal].c,.7));
+        gContinuo.addColorStop(caja,rgba(ORO,.75));
+        gContinuo.addColorStop(1,rgba(ORO,.7));
+        ctx.strokeStyle=gContinuo;ctx.lineWidth=1.35;ctx.stroke();
+      }else{
+        ctx.beginPath();
+        out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
+        ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();
+        ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();
       }
+      /* En portada no hay partículas ni puntos animados sobre la confluencia.
+         El recorrido de luz se lee en el trazo amarillo ininterrumpido. */
       puls=puls.filter(function(p){
         if(!p.out){p.t+=p.v*dt;if(p.t>=1){p.out=true;p.s=0;}}else{p.s+=150*dt;if(p.s>=total)return false;}
         var c=p.out?ORO:B[p.i].c;
