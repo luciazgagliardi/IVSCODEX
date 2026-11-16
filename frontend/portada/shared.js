@@ -250,14 +250,16 @@
         var desvanecerDesde=Math.min(.92,Math.max(.70,pleno+(1-pleno)*.18));
         gSalida.addColorStop(0,rgba(ORO,0));
         gSalida.addColorStop(corte,rgba(ORO,0));
-        gSalida.addColorStop((corte+pleno)*.5,rgba(ORO,.28));
-        gSalida.addColorStop(pleno,rgba(ORO,.7));
-        gSalida.addColorStop(desvanecerDesde,rgba(ORO,.7));
-        gSalida.addColorStop(desvanecerDesde+(1-desvanecerDesde)*.55,rgba(ORO,.26));
+        /* La salida usa la misma intensidad perceptual, grosor y halo que los haces
+           de entrada. Solo cambia el pigmento: permanece dorado. */
+        var nivelSalida=nivelHaz(ORO);
+        gSalida.addColorStop((corte+pleno)*.5,rgba(ORO,.18*nivelSalida));
+        gSalida.addColorStop(pleno,rgba(ORO,.46*nivelSalida));
+        gSalida.addColorStop(desvanecerDesde,rgba(ORO,.46*nivelSalida));
+        gSalida.addColorStop(desvanecerDesde+(1-desvanecerDesde)*.55,rgba(ORO,.18*nivelSalida));
         gSalida.addColorStop(1,rgba(ORO,0));
-        /* Filete dorado más fino; halo casi imperceptible para mantener delicadeza. */
-        ctx.save();ctx.globalAlpha=.065;ctx.strokeStyle=gSalida;ctx.lineWidth=4;ctx.stroke();ctx.restore();
-        ctx.strokeStyle=gSalida;ctx.lineWidth=1.05;ctx.stroke();
+        ctx.save();ctx.globalAlpha=.12;ctx.strokeStyle=gSalida;ctx.lineWidth=7;ctx.stroke();ctx.restore();
+        ctx.strokeStyle=gSalida;ctx.lineWidth=1;ctx.stroke();
       }
       else{ctx.strokeStyle=rgba(ORO,.8);ctx.lineWidth=2.4;ctx.stroke();ctx.strokeStyle=rgba(ORO,.09);ctx.lineWidth=20;ctx.stroke();}
       /* modo sobrio: una sola luz, de a una base por vez; entra por su hilo, cruza el prisma y sale dorada */
