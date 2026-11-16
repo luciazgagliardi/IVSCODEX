@@ -7903,7 +7903,7 @@ function seccionAnillos(){
   var propios=(estado.anillos||[]).map(function(a,i){
     return '<div class="rama" style="margin-bottom:10px">'+
       '<h3 style="font-size:17px">'+esc(comoTitulo(a.canonico))+'</h3>'+
-      '<div class="rotulo" style="margin-top:0">Es lo mismo que</div>'+
+      '<div class="rotulo" style="margin-top:0">Denominaciones equivalentes</div>'+
       '<div class="voces">'+(a.equivalentes||[]).map(function(t){
         return '<span class="voz" style="cursor:default">'+esc(comoTitulo(t))+'</span>';}).join("")+'</div>'+
       ((a.relacionados||[]).length
@@ -7913,32 +7913,31 @@ function seccionAnillos(){
         :'')+
       (a.nota?'<p style="font-size:13px;color:var(--humo);margin:10px 0 0;font-style:italic">'+esc(a.nota)+'</p>':'')+
       '<div class="f-acc" style="margin-top:12px">'+
-        '<button class="mini" data-act="anillo-probar" data-i="'+i+'">Buscar con este anillo</button>'+
-        '<button class="mini" data-act="anillo-borrar" data-i="'+i+'">Borrar</button>'+
+        '<button class="mini" data-act="anillo-probar" data-i="'+i+'">Buscar con estos términos</button>'+
+        '<button class="mini" data-act="anillo-borrar" data-i="'+i+'">Eliminar</button>'+
       '</div></div>';
   }).join("");
 
   return '<div class="blk"><h3>Mis términos equivalentes</h3>'+
     '<p style="font-size:13.5px;color:var(--humo);margin:0 0 14px;max-width:70ch">'+
-      'Cuando dos formas distintas nombran la misma figura, cárguelas aquí y la búsqueda ofrecerá las dos. '+
-      'Lo que usted cargue pesa más que el catálogo que viene de fábrica.</p>'+
+      'Registre las denominaciones equivalentes de una misma figura jurídica para incluirlas en la búsqueda.</p>'+
 
-    '<label class="campo"><span>El término, tal como lo escribiría</span>'+
+    '<label class="campo"><span>Término principal</span>'+
       '<input type="text" id="an-canonico" value="'+esc(n.canonico)+'" placeholder="lucro cesante" autocomplete="off"></label>'+
-    '<label class="campo"><span>Formas que significan lo mismo — separadas por coma</span>'+
+    '<label class="campo"><span>Denominaciones equivalentes (separadas por comas)</span>'+
       '<input type="text" id="an-equivalentes" value="'+esc(n.equivalentes)+'" placeholder="ganancias dejadas de percibir, pérdida de ganancias" autocomplete="off"></label>'+
-    '<label class="campo"><span>Cercanas pero distintas (opcional) — separadas por coma</span>'+
+    '<label class="campo"><span>Conceptos relacionados no equivalentes (opcional; separados por comas)</span>'+
       '<input type="text" id="an-relacionados" value="'+esc(n.relacionados)+'" placeholder="daño emergente, pérdida de chance" autocomplete="off"></label>'+
     '<label class="campo"><span>Por qué conviven las dos formas (opcional)</span>'+
       '<input type="text" id="an-nota" value="'+esc(n.nota)+'" placeholder="El CCyC de 2015 la renombró" autocomplete="off"></label>'+
     '<div class="acciones">'+
       '<button class="btn" data-act="anillo-guardar">Agregar al tesauro</button>'+
-      (estado.token?'':'<span class="pos" style="align-self:center">Sin cuenta queda sólo en este navegador</span>')+
+      (estado.token?'':'<span class="pos" style="align-self:center">Sin una cuenta, los datos se conservarán únicamente en este navegador.</span>')+
     '</div>'+
 
     (propios?'<div style="margin-top:18px"><div class="rotulo">'+estado.anillos.length+
-      (estado.anillos.length===1?' anillo cargado por usted':' anillos cargados por usted')+'</div>'+propios+'</div>'
-      :'<div class="vacio" style="margin-top:16px">Todavía no hay ninguno cargado. El catálogo de fábrica tiene '+TESAURO.length+'.</div>')+
+      (estado.anillos.length===1?' conjunto registrado':' conjuntos registrados')+'</div>'+propios+'</div>'
+      :'<div class="vacio" style="margin-top:16px">Aún no se registraron términos equivalentes.</div>')+
     '</div>';
 }
 
