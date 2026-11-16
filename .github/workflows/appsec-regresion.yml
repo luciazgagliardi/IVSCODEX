@@ -5,6 +5,8 @@ on:
     paths:
       - 'backend/routes/indice.js'
       - 'backend/routes/auth.js'
+      - 'backend/lib/usuarios.js'
+      - 'backend/test/auth.prueba.js'
       - 'backend/lib/almacen.js'
       - 'backend/lib/datosUsuario.js'
       - 'backend/lib/ocr.js'
@@ -22,6 +24,8 @@ on:
     paths:
       - 'backend/routes/indice.js'
       - 'backend/routes/auth.js'
+      - 'backend/lib/usuarios.js'
+      - 'backend/test/auth.prueba.js'
       - 'backend/lib/almacen.js'
       - 'backend/lib/datosUsuario.js'
       - 'backend/lib/ocr.js'
@@ -53,6 +57,7 @@ jobs:
           bash -n ops/publicar-version-acervo.sh
           node --check backend/routes/indice.js
           node --check backend/routes/auth.js
+          node --check backend/lib/usuarios.js
           node --check backend/lib/datosUsuario.js
           node --check backend/lib/almacen.js
           node --check backend/lib/ocr.js
