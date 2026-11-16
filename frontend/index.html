@@ -10158,6 +10158,9 @@ document.addEventListener("click",function(ev){
       ["catch"](function(){})
       .then(function(){
         estado.authCargando=false; estado.token=null; estado.usuario=null;
+        /* En equipos compartidos no se conserva la selección personal del formulario. */
+        estado.authEmail="";estado.authNombre="";estado.authEsps=[];estado.authTrato="";
+        estado.perfilEsps=null;estado.perfilTrato=null;estado.authError=null;estado.perfilAviso="";
         store.set("jedj:token",null);
         // Lo traído de la cuenta se va con la sesión: si esto es una
         // computadora prestada, no queda a la vista de quien entre después.
