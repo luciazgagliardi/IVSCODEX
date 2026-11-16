@@ -668,6 +668,37 @@ textarea:focus{outline:none;border-color:var(--gold-55)}
   .btn-menu[aria-expanded="true"] .txt::after{content:"Cerrar"}
 }
 
+/* Selector múltiple de Cuenta: acorde a Mi perfil, con el chevrón de Filtros centrado. */
+.esp-opcional{font-style:normal;color:var(--mute-2);font-size:13px}
+.esp-ui{position:relative;max-width:100%}
+.esp-ui.abre{z-index:60}
+.esp-btn{appearance:none;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:49px;padding:11px 17px 11px 20px;border:1px solid var(--line);border-radius:999px;background:rgba(var(--tx),.02);color:var(--fg);font:400 15.5px/1.4 var(--sans);text-align:left;cursor:pointer;transition:border-color .2s}
+.esp-btn:hover,.esp-ui.abre .esp-btn{border-color:var(--gold-55)}
+.esp-btn .esp-resumen{display:block;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:inherit;margin:0}
+.esp-btn .fsb-flecha{display:block;flex:none;width:13px;height:13px;align-self:center;margin:0;color:var(--mute);transition:transform .25s}
+.esp-ui.abre .esp-btn .fsb-flecha{transform:rotate(180deg)}
+.esp-panel{position:absolute;z-index:70;top:calc(100% + 8px);left:0;right:0;max-height:min(45vh,360px);overflow-y:auto;overscroll-behavior:contain;padding:8px;border:1px solid var(--line);border-radius:20px;background:var(--panel);box-shadow:0 24px 70px rgba(0,0,0,.35);opacity:0;visibility:hidden;transform:translateY(-8px) scale(.97);transform-origin:top center;transition:opacity .2s,transform .25s,visibility 0s .25s}
+.esp-ui.abre .esp-panel{opacity:1;visibility:visible;transform:none;transition:opacity .2s,transform .3s cubic-bezier(.2,1,.3,1),visibility 0s}
+.esp-ui.hacia-arriba .esp-panel{top:auto;bottom:calc(100% + 8px);transform-origin:bottom center}
+.esp-instruccion{margin:6px 10px 8px;font-size:12px;color:var(--mute)}
+.esp-opcion{appearance:none;display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border:0;border-radius:12px;background:none;color:var(--fg-82);font:400 14px/1.35 var(--sans);text-align:left;cursor:pointer;transition:background .2s,color .2s}
+.esp-opcion:hover,.esp-opcion:focus-visible{background:rgba(var(--tx),.07);color:var(--fg)}
+.esp-opcion[aria-checked="true"]{background:rgba(var(--gold-rgb),.09);color:var(--fg)}
+.esp-marca{display:grid;place-items:center;flex:none;width:17px;height:17px;border:1px solid var(--line);border-radius:5px;color:transparent}
+.esp-opcion[aria-checked="true"] .esp-marca{border-color:var(--gold);background:var(--gold);color:var(--bg)}
+.esp-marca svg{display:block}
+.trato-campo{margin:0 0 24px;padding:0;border:0;min-width:0}
+.trato-campo legend{padding:0 0 10px;font-size:14px;color:var(--mute)}
+.trato-campo small{font-size:12px;color:var(--mute-2)}
+.trato-opciones{display:flex;flex-wrap:wrap;gap:8px}
+.trato-op{position:relative;display:inline-flex;cursor:pointer}
+.trato-op input{position:absolute;width:1px;height:1px;opacity:0}
+.trato-op span{display:block;margin:0;padding:9px 15px;border:1px solid var(--line);border-radius:999px;color:var(--fg-82);font:400 14px/1.2 var(--sans);transition:border-color .2s,background .2s,color .2s}
+.trato-op:hover span{border-color:var(--gold-55)}
+.trato-op input:checked+span{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.trato-op input:focus-visible+span{outline:2px solid var(--gold);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.esp-panel,.esp-ui.abre .esp-panel,.esp-btn .fsb-flecha{transition:none}}
+
 /* el índice de las once secciones */
 .menu{
   position:fixed;inset:0;z-index:45;overflow-y:auto;overscroll-behavior:contain;
@@ -3385,7 +3416,7 @@ function nuevoEstado(){
           fav:{},hist:[],
           texto:"",fuenteDe:"",parcial:true,resaltarFuente:true,marca:0,pasajes:[],
           api:null,cargando:false,cargandoOcr:false,errorLink:null,infoDoc:null,fichaConocida:null,
-          token:null,usuario:null,authModo:"registro",authEmail:"",authNombre:"",authEsp:"",authAct:false,perfilCargando:false,perfilMenu:false,perfilAviso:"",authError:null,authCargando:false,
+          token:null,usuario:null,authModo:"registro",authEmail:"",authNombre:"",authEsps:[],authTrato:"",authAct:false,perfilEsps:null,perfilTrato:null,perfilCargando:false,perfilMenu:false,perfilAviso:"",authError:null,authCargando:false,
           sincronizando:false,sincronizadoEn:null,
           // Verificador de citas (solapa Verificar): el texto pegado, si hay
           // un pedido en vuelo y lo último que contestó el servidor.
@@ -3514,10 +3545,12 @@ function enviarAuth(ruta){
   var envio={email:email,password:password};
   if(ruta==="registro"){
     var gv=function(id){ return ((document.getElementById(id)||{}).value||"").trim(); };
-    estado.authNombre=gv("auth-nombre"); estado.authEsp=gv("auth-esp");
+    estado.authNombre=gv("auth-nombre");
     var ca=document.getElementById("auth-act"); if(ca) estado.authAct=!!ca.checked;
-    if(!estado.authNombre){ estado.authError="Escriba su nombre."; render(); return; }
-    envio.nombre=estado.authNombre; envio.especialidad=estado.authEsp; envio.actualizaciones=estado.authAct;
+    if(!estado.authNombre){ estado.authError="Ingrese su nombre para crear la cuenta."; render(); return; }
+    envio.nombre=estado.authNombre; envio.especialidades=estado.authEsps.slice();
+    envio.especialidad=estado.authEsps[0]||""; envio.tratamiento=estado.authTrato;
+    envio.actualizaciones=estado.authAct;
   }
   if(!email||!password){ estado.authError="Complete el correo y la contraseña."; render(); return; }
   estado.authCargando=true; estado.authError=null; render();
@@ -4870,7 +4903,9 @@ function nombreDe(u){
 }
 function saludoHTML(){
   var n=estado.usuario?nombreDe(estado.usuario):"";
-  return '<p class="cab__saludo">Bienvenido, <b>'+esc(n||"colega")+'</b>.</p>';
+  var t=estado.usuario&&estado.usuario.tratamiento;
+  var saludo=t==="femenino"?"Bienvenida":t==="masculino"?"Bienvenido":"Le damos la bienvenida";
+  return '<p class="cab__saludo">'+saludo+', <b>'+esc(n||"colega")+'</b>.</p>';
 }
 function pintarCabecera(v){
   var c=document.getElementById("cab");
@@ -7933,22 +7968,50 @@ function vistaGuardados(){
   return h;
 }
 
-var ESPECIALIDADES=["Derecho civil","Derecho comercial","Derecho penal","Derecho laboral","Derecho de familia","Derecho administrativo","Derecho constitucional","Derecho tributario","Derecho ambiental","Propiedad intelectual","Docencia e investigación","Estudiante"];
-function espsLista(){
-  return '<datalist id="esps">'+ESPECIALIDADES.map(function(e){ return '<option value="'+esc(e)+'">'; }).join("")+'</datalist>';
+var ESPECIALIDADES=["Derecho civil","Derecho comercial","Derecho penal","Derecho laboral","Derecho de familia","Derecho administrativo","Derecho constitucional","Derecho tributario","Derecho ambiental","Derecho procesal","Derecho previsional","Derecho internacional","Derecho societario","Derechos humanos","Propiedad intelectual","Docencia e investigación","Estudiante"];
+function especialidadesDe(u){
+  if(u&&Array.isArray(u.especialidades)) return u.especialidades.filter(function(v){return typeof v==="string"&&v.trim();}).slice(0,12);
+  return u&&typeof u.especialidad==="string"&&u.especialidad.trim()?[u.especialidad.trim()]:[];
 }
-/* El perfil de quien tiene sesión: lo mismo que se pide al crear la cuenta,
-   para que también lo completen quienes se registraron antes. */
+function resumenEspecialidades(lista){return lista.length?lista.join(", "):"Seleccione sus especialidades";}
+/* Selector múltiple integrado con la estética de los menús de la aplicación. */
+function selectorEspecialidades(tipo,seleccion){
+  var opciones=ESPECIALIDADES.concat(seleccion.filter(function(e){return ESPECIALIDADES.indexOf(e)<0;}));
+  return '<div class="esp-ui" data-esp-tipo="'+tipo+'">'+
+    '<button type="button" class="esp-btn" data-act="esp-abrir" aria-expanded="false" aria-haspopup="true" aria-controls="'+tipo+'-esp-menu">'+
+      '<span class="esp-resumen">'+esc(resumenEspecialidades(seleccion))+'</span>'+
+      '<svg class="fsb-flecha" viewBox="0 0 12 12" width="13" height="13" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
+    '<div class="esp-panel" id="'+tipo+'-esp-menu" role="group" aria-label="Especialidades profesionales">'+
+      '<p class="esp-instruccion">Seleccione una o varias especialidades</p>'+
+      opciones.map(function(e){
+        var marcada=seleccion.indexOf(e)!==-1;
+        return '<button type="button" class="esp-opcion" role="checkbox" aria-checked="'+marcada+'" data-act="esp-elegir" data-esp="'+esc(e)+'">'+
+          '<span class="esp-marca" aria-hidden="true"><svg viewBox="0 0 16 16" width="13" height="13"><path d="M3 8l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'+
+          '<span>'+esc(e)+'</span></button>';
+      }).join("")+'</div></div>';
+}
+function selectorTratamiento(tipo,valor){
+  return '<fieldset class="trato-campo"><legend>Tratamiento para el saludo <small>(opcional)</small></legend>'+
+    '<div class="trato-opciones">'+[
+      ["","No indicar"],["masculino","Hombre"],["femenino","Mujer"]
+    ].map(function(item){
+      return '<label class="trato-op"><input type="radio" name="'+tipo+'-trato" value="'+item[0]+'"'+(valor===item[0]?' checked':'')+'><span>'+item[1]+'</span></label>';
+    }).join("")+'</div></fieldset>';
+}
+/* Los perfiles antiguos mantienen su especialidad; pueden añadir otras sin perderla. */
 function formPerfil(){
   var u=estado.usuario;
+  var seleccion=estado.perfilEsps===null?especialidadesDe(u):estado.perfilEsps;
+  var tratamiento=estado.perfilTrato===null?(u.tratamiento||""):estado.perfilTrato;
   return '<label class="campo"><span>Nombre</span>'+
       '<input type="text" id="perfil-nombre" value="'+esc(u.nombre||"")+'" maxlength="60" autocomplete="given-name" placeholder="Cómo quiere que le digamos"></label>'+
-    '<label class="campo"><span>A qué se dedica o en qué se especializa</span>'+
-      '<input type="text" id="perfil-esp" list="esps" value="'+esc(u.especialidad||"")+'" maxlength="80" placeholder="Por ejemplo, Derecho laboral">'+espsLista()+'</label>'+
+    selectorTratamiento("perfil",tratamiento)+
+    '<div class="campo"><span>Áreas de ejercicio o especialización <em class="esp-opcional">(puede elegir varias)</em></span>'+
+      selectorEspecialidades("perfil",seleccion)+'</div>'+
     '<label class="campo-check"><input type="checkbox" id="perfil-act"'+(u.actualizaciones?" checked":"")+'> Quiero recibir novedades y actualizaciones de IVS CODEX.</label>'+
     '<div class="acciones" style="margin-bottom:22px"><button class="btn" data-act="perfil-guardar"'+(estado.perfilCargando?" disabled":"")+'>'+
       (estado.perfilCargando?"Guardando…":"Guardar perfil")+'</button>'+
-      (estado.perfilAviso?'<span style="font-size:13px;color:var(--mute)">'+esc(estado.perfilAviso)+'</span>':'')+'</div>';
+      (estado.perfilAviso?'<span role="status" style="font-size:13px;color:var(--mute)">'+esc(estado.perfilAviso)+'</span>':'')+'</div>';
 }
 
 /* ============================================================
@@ -8825,8 +8888,9 @@ function vistaCuenta(){
         '<input type="password" id="auth-password" autocomplete="'+(esRegistro?"new-password":"current-password")+
         '" placeholder="'+(esRegistro?"Mínimo 8 caracteres":"Su contraseña")+'"></label>'+
       (esRegistro?
-        '<label class="campo"><span>A qué se dedica o en qué se especializa <em style="font-style:normal;color:var(--mute-2)">(opcional)</em></span>'+
-          '<input type="text" id="auth-esp" list="esps" value="'+esc(estado.authEsp)+'" maxlength="80" placeholder="Por ejemplo, Derecho laboral">'+espsLista()+'</label>'+
+        selectorTratamiento("auth",estado.authTrato)+
+        '<div class="campo"><span>Áreas de ejercicio o especialización <em class="esp-opcional">(opcional; puede elegir varias)</em></span>'+
+          selectorEspecialidades("auth",estado.authEsps)+'</div>'+
         '<label class="campo-check"><input type="checkbox" id="auth-act"'+(estado.authAct?" checked":"")+'> Quiero recibir novedades y actualizaciones de IVS CODEX.</label>':'')+
       '<div class="acciones">'+
         '<button class="btn" data-act="'+(esRegistro?"auth-registro":"auth-login")+'"'+(estado.authCargando?" disabled":"")+'>'+
