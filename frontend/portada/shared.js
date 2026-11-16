@@ -156,7 +156,14 @@
       if(o.sobrio&&!quieto){
         var cic=4.8,ent=cic*.62,ord=[3,0,6,2,5,1,7,4].filter(function(j){return !(sh&&(j===0||j===B.length-1));}),
             kk=ord[Math.floor(tm/cic)%ord.length],ph=tm%cic;
-        if(ph<ent){var u=ph/ent;u=u*u*(3-2*u);var q=bez(kk,u);ctx.beginPath();ctx.arc(q[0],q[1],1.7,0,7);ctx.fillStyle=rgba(B[kk].c,.95*Math.sqrt(Math.sin(Math.PI*Math.min(1,u*1.2))));ctx.fill();}
+        if(ph<ent){
+          var u=ph/ent;u=u*u*(3-2*u);var q=bez(kk,u);
+          /* Aparece al comenzar el recorrido y conserva toda su intensidad
+             hasta P: no se desvanece antes de entrar al prisma. */
+          var alEntrada=.95*Math.min(1,u*7);
+          ctx.beginPath();ctx.arc(q[0],q[1],1.7,0,7);
+          ctx.fillStyle=rgba(B[kk].c,alEntrada);ctx.fill();
+        }
         else{var u2=(ph-ent)/(cic-ent);u2=u2*u2*(3-2*u2);if(u2<1){var q2=en(u2*total);ctx.beginPath();ctx.arc(q2[0],q2[1],1.9,0,7);ctx.fillStyle=rgba(CLARO,.95*(1-u2));ctx.fill();}}
       }
       puls=puls.filter(function(p){
@@ -182,13 +189,22 @@
       if(cl){gl.addColorStop(0,"rgba(236,176,40,.62)");gl.addColorStop(.5,"rgba(225,165,30,.26)");}else gl.addColorStop(0,"rgba(255,226,150,.5)");
       gl.addColorStop(1,"rgba(217,163,27,0)");
       if(!o.sobrio){ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gl;ctx.beginPath();ctx.arc(P.x,P.y,s*1.3,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
-      /* Núcleo blanco tenue y pequeño en la convergencia: no altera los haces ni crea un fogonazo. */
+      /* Núcleo blanco del diseño restaurado: titila suavemente SOLO al comenzar
+         la salida. Mantiene su tamaño, posición y brillo base; sin flashes duros. */
       if(o.sobrio){
         var radioNucleo=Math.max(6,Math.min(10,s*.12));
+        var parpadeo=1;
+        if(!quieto){
+          var tSalida=tm%4.8-4.8*.62,ventana=.85;
+          if(tSalida>=0&&tSalida<ventana){
+            var envolvente=Math.sin(Math.PI*tSalida/ventana);
+            parpadeo=1+.18*envolvente*Math.sin(tSalida*Math.PI*10);
+          }
+        }
         var nucleo=ctx.createRadialGradient(P.x,P.y,0,P.x,P.y,radioNucleo);
-        nucleo.addColorStop(0,cl?"rgba(255,255,255,.78)":"rgba(255,255,255,.62)");
-        nucleo.addColorStop(.32,cl?"rgba(255,255,255,.30)":"rgba(255,255,255,.24)");
-        nucleo.addColorStop(.75,"rgba(255,255,255,.04)");
+        nucleo.addColorStop(0,rgba([255,255,255],(cl?.78:.62)*parpadeo));
+        nucleo.addColorStop(.32,rgba([255,255,255],(cl?.30:.24)*parpadeo));
+        nucleo.addColorStop(.75,rgba([255,255,255],.04*parpadeo));
         nucleo.addColorStop(1,"rgba(255,255,255,0)");
         ctx.globalCompositeOperation=LUZ;
         ctx.fillStyle=nucleo;ctx.beginPath();ctx.arc(P.x,P.y,radioNucleo,0,Math.PI*2);ctx.fill();
