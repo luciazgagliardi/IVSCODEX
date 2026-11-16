@@ -123,27 +123,52 @@
     }
     function bez(i,t){var A=[0,Y[i]],C=[P.x*.55,Y[i]],u=1-t;return [u*u*A[0]+2*u*t*C[0]+t*t*P.x,u*u*A[1]+2*u*t*C[1]+t*t*P.y];}
     function rgba(c,a){return "rgba("+c[0]+","+c[1]+","+c[2]+","+a.toFixed(3)+")";}
+    function suavizar(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);}
+    function mezcla(a,b,t){return a.map(function(v,i){return Math.round(v+(b[i]-v)*t);});}
     function frame(now){
       var dt=Math.min((now-last)/1000,.05);last=now;tm+=dt;
       if(o.mouse){var k=1-Math.exp(-dt*5);ox+=(tmx*W*.04-ox)*k;oy+=(tmy*H*.07-oy)*k;ang+=(tmx*.09-ang)*k;vel*=Math.exp(-dt*2.2);vivo=Math.max(0,vivo-dt*.35);calc();}
       ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
       /* en el fondo claro la luz no suma (no hay negro sobre el que brillar): se pinta normal y en oro más hondo */
       var cl=document.documentElement.getAttribute("data-tema")==="claro",LUZ=cl?"source-over":"lighter",ORO=cl?[168,118,8]:ORO0,CLARO=cl?[148,106,6]:CLARO0;
-      ctx.globalCompositeOperation=LUZ;ctx.lineCap="round";ctx.lineJoin="round";
+      /* Los haces estáticos de la portada no deben sumarse al confluir. */
+      ctx.globalCompositeOperation=o.sobrio?"source-over":LUZ;ctx.lineCap="round";ctx.lineJoin="round";
       var sh=sinH();
+      /* La máscara del interior y el contorno SVG usan exactamente los mismos vértices,
+         incluidos los cambios de tamaño, zoom y rotación. */
+      var s=Math.min(W,H)*(typeof o.tam==="function"?o.tam(W,H):(o.tam||.1));
+      var co=Math.cos(ang),si=Math.sin(ang);
+      var triVertices=[[0,-s],[-s*.87,s*.5],[s*.87,s*.5]].map(function(q){
+        return [P.x+q[0]*co-q[1]*si,P.y+q[0]*si+q[1]*co];
+      });
+      var pts=triVertices.map(function(q){return q[0].toFixed(2)+","+q[1].toFixed(2);}).join(" ");
       B.forEach(function(b,i){
         if(sh&&(i===0||i===B.length-1))return;
         var g=ctx.createLinearGradient(0,0,P.x,0);
         if(o.sobrio){
-          /* Las entradas se atenúan antes de confluir: la suma aditiva de sus colores ya no crea un foco blanco. */
+          /* Color estable hasta el contorno: el prisma, no la opacidad del haz,
+             es lo que delimita la entrada. */
           g.addColorStop(0,rgba(b.c,0));g.addColorStop(.45,rgba(b.c,.34));
-          g.addColorStop(.82,rgba(b.c,.46));g.addColorStop(.94,rgba(b.c,.19));g.addColorStop(1,rgba(b.c,.04));
+          g.addColorStop(.82,rgba(b.c,.46));g.addColorStop(1,rgba(b.c,.46));
         }
         else{g.addColorStop(0,rgba(b.c,0));g.addColorStop(.25,rgba(b.c,.5));g.addColorStop(1,rgba(b.c,.85));}
         ctx.beginPath();ctx.moveTo(0,Y[i]);ctx.quadraticCurveTo(P.x*.55,Y[i],P.x,P.y);
         ctx.strokeStyle=g;ctx.lineWidth=o.sobrio?1:1.3;ctx.stroke();if(!o.sobrio){ctx.strokeStyle=rgba(b.c,.07);ctx.lineWidth=9;ctx.stroke();}
         if(!quieto&&!o.sobrio){b.next-=dt;if(b.next<=0){b.next=2.2+Math.random()*2.6;if(puls.length<3)puls.push({i:i,t:0,v:.2+Math.random()*.08,out:false,s:0});}}
       });
+      if(o.sobrio){
+        /* Solo se retiran los trazos fijos del interior del prisma. La partícula
+           viajera se dibuja DESPUÉS de la máscara y sí puede atravesarlo. */
+        ctx.save();
+        ctx.globalCompositeOperation="destination-out";
+        ctx.fillStyle="#000";
+        ctx.beginPath();
+        ctx.moveTo(triVertices[0][0],triVertices[0][1]);
+        ctx.lineTo(triVertices[1][0],triVertices[1][1]);
+        ctx.lineTo(triVertices[2][0],triVertices[2][1]);
+        ctx.closePath();ctx.fill();
+        ctx.restore();
+      }
       ctx.beginPath();out.forEach(function(q,i){if(i)ctx.lineTo(q[0],q[1]);else ctx.moveTo(q[0],q[1]);});
       if(o.sobrio){
         /* El haz dorado emerge suavemente de la confluencia, sin un punto de luz duro en el vértice. */
@@ -161,10 +186,21 @@
           /* Aparece al comenzar el recorrido y conserva toda su intensidad
              hasta P: no se desvanece antes de entrar al prisma. */
           var alEntrada=.95*Math.min(1,u*7);
-          ctx.beginPath();ctx.arc(q[0],q[1],1.7,0,7);
-          ctx.fillStyle=rgba(B[kk].c,alEntrada);ctx.fill();
+          /* El color de origen acompaña al punto por el interior vacío.
+             Solo en los últimos instantes se vuelve blanco al alcanzar P. */
+          var colorEntrada=mezcla(B[kk].c,[255,255,255],suavizar((u-.88)/.12));
+          ctx.beginPath();ctx.arc(q[0],q[1],1.7,0,Math.PI*2);
+          ctx.fillStyle=rgba(colorEntrada,alEntrada);ctx.fill();
+        }else{
+          var u2=(ph-ent)/(cic-ent);u2=u2*u2*(3-2*u2);
+          if(u2<1){
+            var q2=en(u2*total);
+            /* En el mismo punto P empieza blanco y pasa progresivamente a dorado. */
+            var colorSalida=mezcla([255,255,255],CLARO,suavizar(u2*total/65));
+            ctx.beginPath();ctx.arc(q2[0],q2[1],1.9,0,Math.PI*2);
+            ctx.fillStyle=rgba(colorSalida,.95*(1-u2));ctx.fill();
+          }
         }
-        else{var u2=(ph-ent)/(cic-ent);u2=u2*u2*(3-2*u2);if(u2<1){var q2=en(u2*total);ctx.beginPath();ctx.arc(q2[0],q2[1],1.9,0,7);ctx.fillStyle=rgba(CLARO,.95*(1-u2));ctx.fill();}}
       }
       puls=puls.filter(function(p){
         if(!p.out){p.t+=p.v*dt;if(p.t>=1){p.out=true;p.s=0;}}else{p.s+=150*dt;if(p.s>=total)return false;}
@@ -178,9 +214,7 @@
         return true;
       });
       ctx.globalCompositeOperation="source-over";
-      var s=Math.min(W,H)*(typeof o.tam==="function"?o.tam(W,H):(o.tam||.1));
-      /* el filete, fino: claro en el oscuro; en el claro, dorado */
-      var co=Math.cos(ang),si=Math.sin(ang),pts=[[0,-s],[-s*.87,s*.5],[s*.87,s*.5]].map(function(q){return (P.x+q[0]*co-q[1]*si).toFixed(2)+","+(P.y+q[0]*si+q[1]*co).toFixed(2);}).join(" ");
+      /* El filete fino vectorial usa la misma geometría que el corte interior. */
       if(pts!==triPts){triPts=pts;poli.setAttribute("points",pts);}
       poli.setAttribute("fill",o.sobrio?"none":cl?"rgba(255,250,235,.12)":"rgba(241,238,230,.035)");poli.setAttribute("stroke",cl?"rgba(148,106,6,.9)":o.sobrio?"rgba(241,238,230,.55)":"rgba(241,238,230,.6)");
       if(o.mouse&&vivo>0){var gc=ctx.createRadialGradient(mpx,mpy,0,mpx,mpy,170);gc.addColorStop(0,"rgba(255,226,150,"+(.13*Math.min(1,vivo*1.6)).toFixed(3)+")");gc.addColorStop(1,"rgba(217,163,27,0)");ctx.globalCompositeOperation=LUZ;ctx.fillStyle=gc;ctx.beginPath();ctx.arc(mpx,mpy,170,0,7);ctx.fill();ctx.globalCompositeOperation="source-over";}
