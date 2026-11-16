@@ -235,13 +235,26 @@
         }
         var reaparece=Math.min(total,distanciaBorde+Math.max(12,s*.18));
         var completo=Math.min(total,reaparece+Math.max(40,s*.60));
-        var finalTransicion=en(completo);
-        var gSalida=ctx.createLinearGradient(P.x,P.y,finalTransicion[0]+(finalTransicion[0]===P.x?0.001:0),finalTransicion[1]+(finalTransicion[1]===P.y&&finalTransicion[0]===P.x?0.001:0));
-        var corte=Math.min(.99,reaparece/Math.max(1,completo));
+        /* El gradiente cubre TODO el trayecto hasta el borde derecho.
+           Antes terminaba en "completo" y Canvas prolongaba el ultimo color
+           (.7) hasta el final, impidiendo que el rayo se desvaneciera. */
+        var finSalida=out[out.length-1];
+        var gSalida=ctx.createLinearGradient(
+          P.x,P.y,
+          finSalida[0]+(finSalida[0]===P.x?0.001:0),
+          finSalida[1]+(finSalida[0]===P.x&&finSalida[1]===P.y?0.001:0)
+        );
+        var largoSalida=Math.max(1,total);
+        var corte=Math.min(.80,reaparece/largoSalida);
+        var pleno=Math.min(.86,Math.max(corte+.025,completo/largoSalida));
+        var desvanecerDesde=Math.min(.92,Math.max(.70,pleno+(1-pleno)*.18));
         gSalida.addColorStop(0,rgba(ORO,0));
         gSalida.addColorStop(corte,rgba(ORO,0));
-        gSalida.addColorStop((corte+1)*.5,rgba(ORO,.28));
-        gSalida.addColorStop(1,rgba(ORO,.7));
+        gSalida.addColorStop((corte+pleno)*.5,rgba(ORO,.28));
+        gSalida.addColorStop(pleno,rgba(ORO,.7));
+        gSalida.addColorStop(desvanecerDesde,rgba(ORO,.7));
+        gSalida.addColorStop(desvanecerDesde+(1-desvanecerDesde)*.55,rgba(ORO,.26));
+        gSalida.addColorStop(1,rgba(ORO,0));
         /* Filete dorado más fino; halo casi imperceptible para mantener delicadeza. */
         ctx.save();ctx.globalAlpha=.065;ctx.strokeStyle=gSalida;ctx.lineWidth=4;ctx.stroke();ctx.restore();
         ctx.strokeStyle=gSalida;ctx.lineWidth=1.05;ctx.stroke();
