@@ -70,7 +70,9 @@ test('la búsqueda de respaldo usa el acervo, con años', async () => {
   const r = await buscarEnIndice('saij', 'despido', { modo: 'todas' });
   assert.deepEqual(r.map((x) => x.id), ['saij_3']);
   const expandida = await buscarEnIndice('saij', 'consecuencias no patrimoniales', { modo: 'todas', variantes: ['daño moral'] });
-  assert.ok(expandida.some((x) => x.id === 'saij_2'), 'el respaldo local conserva los equivalentes del tesauro');
+  const porEquivalente = expandida.find((x) => x.id === 'saij_2');
+  assert.ok(porEquivalente, 'el respaldo local conserva los equivalentes del tesauro');
+  assert.equal(porEquivalente.variante, 'daño moral', 'identifica el equivalente que recuperó el fallo');
   const expandidaProvincial = await buscarEnIndice('scba', 'multa registral', { modo: 'todas', variantes: ['relación laboral deficientemente registrada'] });
   assert.ok(expandidaProvincial.some((x) => x.id === 'scba_1'), 'la expansión también llega a una base provincial');
   assert.equal((await buscarEnIndice('saij', 'daño moral', { anioHasta: 2010 })).length, 0);
