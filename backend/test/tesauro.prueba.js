@@ -123,6 +123,9 @@ if (html.includes('tiraEquivalentes()+')) bien('la tira de equivalentes se dibuj
 else mal('la tira de equivalentes se dibuja en Buscar');
 if (html.includes('act==="usar-equivalente"')) bien('tocar un equivalente cambia la consulta');
 else mal('tocar un equivalente cambia la consulta');
+if (html.includes('data-act="'+ 'usar-relacionado' + '"') && html.includes('act==="usar-relacionado"'))
+  bien('los conceptos relacionados abren una búsqueda diferenciada');
+else mal('los conceptos relacionados abren una búsqueda diferenciada');
 
 console.log(`\nOK ${ok} · fallas ${fallas}`);
 process.exit(fallas ? 1 : 0);
