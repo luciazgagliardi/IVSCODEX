@@ -170,17 +170,41 @@ for (const [slug, provincia] of Object.entries(PROVINCIAS_PRIORIZADAS)) {
   };
 }
 
-export function informacionFuente(slug) {
+export function informacionFuente(slug, opciones = {}) {
   const info = INFO[String(slug || '')];
-  return info ? { slug, ...info } : null;
+  if (!info) return null;
+  const salida = { slug, ...info };
+
+  // SAIJ no es una sola línea de investigación: el selector del buscador
+  // puede pedir jurisprudencia, legislación, doctrina o dictámenes. La
+  // metadata debe reflejar el carril realmente consultado.
+  if (slug === 'saij') {
+    const tipo = String(opciones.tribunal || 'sumarios').toLowerCase();
+    const porTipo = {
+      legislacion: { linea: 'Normativa', tipo: 'Legislación y texto normativo', lineas: ['normativa', 'agregador'] },
+      doctrina: { linea: 'Doctrina jurídica', tipo: 'Doctrina y comentarios', lineas: ['doctrina', 'academica', 'agregador'] },
+      dictamenes: { linea: 'Derecho administrativo y dictámenes', tipo: 'Dictámenes de organismos públicos', lineas: ['administrativo', 'agregador'] },
+      fallos: { linea: 'Jurisprudencia · fichas de fallos', tipo: 'Fichas de sentencias judiciales', lineas: ['jurisprudencia', 'nacional', 'agregador'] },
+      sumarios: { linea: 'Jurisprudencia · sumarios', tipo: 'Sumarios jurisprudenciales', lineas: ['jurisprudencia', 'nacional', 'agregador'] },
+      todo: { linea: 'Jurisprudencia y documentación nacional', tipo: 'Jurisprudencia y documentación jurídica', lineas: ['jurisprudencia', 'normativa', 'doctrina', 'administrativo', 'agregador'] },
+    };
+    Object.assign(salida, porTipo[tipo] || porTipo.sumarios);
+    const provincia = String(opciones.provincia || '').trim();
+    if (provincia) {
+      salida.linea = 'Jurisprudencia provincial · ' + provincia;
+      salida.jurisdiccion = provincia + ', Argentina';
+      salida.cobertura = 'Documentación de ' + provincia + ' devuelta por la faceta territorial de SAIJ; el alcance depende del material publicado.';
+    }
+  }
+  return salida;
 }
 
 export function catalogoFuentesIntegradas() {
-  return Object.entries(INFO).map(([slug, info]) => ({ slug, ...info }));
+  return Object.entries(INFO).map(([slug]) => informacionFuente(slug));
 }
 
-export function anotarProcedencia(slug, resultados = []) {
-  const info = informacionFuente(slug);
+export function anotarProcedencia(slug, resultados = [], opciones = {}) {
+  const info = informacionFuente(slug, opciones);
   if (!info) return resultados;
   return resultados.map((r) => ({
     ...r,
