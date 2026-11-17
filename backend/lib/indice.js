@@ -103,7 +103,10 @@ export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = 
     for (const r of coincidencias) {
       if (!r?.id || vistos.has(r.id)) continue;
       vistos.add(r.id);
-      lista.push(r);
+      // Hacer visible qué forma del tesauro recuperó el fallo. Si también
+      // coincide con la consulta principal, ésta tiene prioridad porque se
+      // evalúa primero; un alias nunca debe ocultar una coincidencia literal.
+      lista.push(termino === q ? r : { ...r, variante: termino });
     }
   }
   if (!delAcervo) return lista;
