@@ -58,14 +58,16 @@ const TIPOS = {
 };
 
 /**
- * SAIJ ademas expone una faceta por tribunal, y ahi esta la Corte Suprema.
+ * SAIJ expone una faceta por tribunal que permite recuperar jurisprudencia
+ * atribuida a la CSJN y mantener una ruta abierta de consulta.
  *
- * Sirve para ofrecer jurisprudencia de la CSJN sin pasar por el sitio de la
- * propia Corte: sjconsulta.csjn.gov.ar protege TODOS sus buscadores
- * (sumarios, fallos, fallos destacados y hasta novedades) con reCAPTCHA, o
- * sea que pide expresamente que del otro lado haya una persona. Eso se
- * respeta. SAIJ publica ese mismo material de forma abierta, asi que la
- * consulta va por ahi — y en la interfaz se dice de donde sale.
+ * El portal histórico sjconsulta.csjn.gov.ar ha presentado controles
+ * reCAPTCHA. No se intenta eludirlos. La Secretaría de Jurisprudencia
+ * también publica una interfaz renovada (sjservicios.csjn.gov.ar/sj/):
+ * su disponibilidad técnica, reglas de acceso y cobertura deben volver a
+ * verificarse antes de sustituir o complementar esta fuente SAIJ. Hasta
+ * entonces la interfaz identifica expresamente que esos registros provienen
+ * de SAIJ, no de una consulta directa a la Corte.
  */
 const TRIBUNAL_CSJN = 'CORTE SUPREMA DE JUSTICIA DE LA NACION';
 // Solo los FALLOS traen el campo "tribunal"; los sumarios no, asi que
