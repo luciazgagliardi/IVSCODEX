@@ -193,6 +193,7 @@ export function informacionFuente(slug, opciones = {}) {
     if (provincia) {
       salida.linea = 'Jurisprudencia provincial · ' + provincia;
       salida.jurisdiccion = provincia + ', Argentina';
+      salida.lineas = ['jurisprudencia', 'provincial', 'agregador'];
       salida.cobertura = 'Documentación de ' + provincia + ' devuelta por la faceta territorial de SAIJ; el alcance depende del material publicado.';
     }
   }
