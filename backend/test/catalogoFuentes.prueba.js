@@ -1,4 +1,5 @@
 import test from 'node:test';
+import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -29,6 +30,18 @@ test('el catálogo manual conserva identificadores únicos y cobertura por ramas
     for (const rama of match[1].split(',')) if (!validas.has(rama)) desconocidas.add(rama);
   }
   assert.deepEqual([...desconocidas], [], 'toda etiqueta de materia debe usar un id real de RAMAS');
+});
+
+test('todos los bloques JavaScript inline de la interfaz compilan', () => {
+  const scripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script\\s*>/gi)]
+    .filter((match) => !/\\bsrc\\s*=/.test(match[1]) && match[2].trim());
+  assert.ok(scripts.length >= 5, 'se encontraron los scripts inline de la aplicación');
+  for (const [i, match] of scripts.entries()) {
+    assert.doesNotThrow(
+      () => new vm.Script(match[2], { filename: 'frontend/index.html#script-' + i }),
+      'el bloque inline ' + i + ' debe compilar',
+    );
+  }
 });
 
 test('la interfaz permite ordenar por línea jurídica y no confunde un error con cero fallos', () => {
