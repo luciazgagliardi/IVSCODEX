@@ -263,6 +263,19 @@ El informe de búsqueda no debe terminar en una cifra de resultados. Para cada f
 - Rendimiento marginal de cada fuente: qué documentos nuevos aportó que no aparecieron en las demás.
 - Calidad de atribución: tribunal, sala, instancia, fecha, expediente, tipo de documento y procedencia.
 
+### Medición real de expansión en el acervo de Mendoza
+
+El workflow de GitHub Actions `Medir recuperación jurisprudencial Mendoza` ejecutó `compararCoberturaMendoza.mjs` sobre la versión del corpus `20261115-e2e49416`, con **38.572 registros revisados**. La comparación tomó la consulta primaria y la misma consulta con los equivalentes del tesauro:
+
+| Consulta | Literal | Con equivalentes | Documentos adicionales | Aumento relativo |
+|---|---:|---:|---:|---:|
+| daño moral | 1.649 | 1.930 | +281 | +17,0 % |
+| daño punitivo | 278 | 428 | +150 | +54,0 % |
+
+La ejecución informó aproximadamente 220 ms para la primera consulta y 64 ms para la segunda con el acervo local ya preparado. Son tiempos de una corrida, no percentiles ni garantía de latencia. Los documentos adicionales son coincidencias del índice local deduplicadas por la consulta; no equivalen a una revisión humana de pertinencia.
+
+El resultado justifica conservar la expansión automática de equivalentes en el acervo local. La siguiente medición debe calcular precisión@20 y recall sobre un conjunto de fallos revisados, y repetir el ensayo en fuentes provinciales distintas de Mendoza antes de extrapolar el porcentaje.
+
 ### Métricas que hacen posible mejorar de forma sistemática
 
 | Métrica | Qué mide | Cómo usarla |
