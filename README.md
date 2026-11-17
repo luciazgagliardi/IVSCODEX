@@ -11,7 +11,7 @@ Una consulta en doce bases; cada resultado muestra el pasaje que coincide y remi
 
 <br>
 
-[Qué es](#qué-es) · [Capturas](#capturas) · [Secciones](#las-quince-secciones) · [Bases](#las-doce-bases) · [Cómo funciona](#cómo-funciona) · [Puesta en marcha](#puesta-en-marcha) · [Despliegue](#despliegue) · [Referencia](#referencia-técnica) · [Seguridad](#seguridad) · [Licencia](#licencia)
+[Qué es](#qué-es) · [Capturas](#capturas) · [Secciones](#las-quince-secciones) · [Bases](#las-doce-bases) · [Cómo funciona](#cómo-funciona) · [Puesta en marcha](#puesta-en-marcha) · [Despliegue](#despliegue) · [Referencia](#referencia-técnica) · [Seguridad](#seguridad) · [Licencia](#licencia) · [Auditoría de búsqueda 2026](docs/auditoria-busqueda-juridica-2026.md)
 
 </div>
 
