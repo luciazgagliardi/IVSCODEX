@@ -361,6 +361,8 @@ Esta sección puntúa **cada entrada individual** del catálogo `F` que ve el us
 
 **Escala:** 5/5 = fuente primaria o herramienta de referencia muy valiosa para su función; 4/5 = útil y especializada, con algún límite de cobertura o acceso; 3/5 = complemento, fuente estrecha o directorio; 2/5 = utilidad principalmente institucional o de apoyo. La nota mide utilidad **en la función que le corresponde**, no autoridad vinculante universal. Una herramienta de consulta de causas puede ser 4/5 para seguir expedientes y, aun así, no ser una base de precedentes.
 
+**Distribución de la evaluación:** 61 fuentes obtienen 5/5, 27 obtienen 4/5, 34 obtienen 3/5 y 3 obtienen 2/5. Son puntuaciones cualitativas de utilidad funcional, no un porcentaje de precisión ni una clasificación de fuerza vinculante.
+
 **Lectura jurídica:** `juris` no siempre significa sentencia judicial con valor de precedente: puede incluir doctrina administrativa, resoluciones, sumarios, material de fiscalía, buscadores temáticos o una selección editorial. En `doctrina`, la utilidad es para hallar posiciones y bibliografía, no para probar el contenido de un fallo. En `legis`, la utilidad es para verificar normas, no para buscar sentencias.
 
 ### Mendoza (32)
