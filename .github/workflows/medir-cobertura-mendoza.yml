@@ -5,6 +5,7 @@ on:
     paths:
       - 'backend/lib/acervoConsulta.js'
       - 'backend/scripts/compararCoberturaMendoza.mjs'
+      - 'backend/scripts/diagnosticarAzureFTS.mjs'
       - '.github/workflows/medir-cobertura-mendoza.yml'
   workflow_dispatch: {}
 permissions:
@@ -25,6 +26,9 @@ jobs:
       - name: Comparar dano moral y punitivo con corpus publicado
         working-directory: backend
         run: node scripts/compararCoberturaMendoza.mjs
+      - name: Contrastar Azure con el índice real y su respaldo
+        working-directory: backend
+        run: node scripts/diagnosticarAzureFTS.mjs
       - name: Guardar matriz de comparacion
         uses: actions/upload-artifact@v4
         if: always()
