@@ -64,19 +64,6 @@
 .pie9 .bs a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .pie9 .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
 .pie9 .adv{max-width:24ch;margin:0 0 22px;font:400 clamp(28px,4.2vw,58px)/1.02 var(--titulo);letter-spacing:-.04em;text-wrap:balance}.pie9 .adv em{font-style:normal;color:var(--gold)}
-/* El prisma del cierre reutiliza la geometría, escala y motor del prisma inicial.
-   La escena mide lo mismo que el héroe: 100svh × ancho completo. */
-/* Único añadido al aviso del pie: el prisma original, a su derecha. */
-.pie9-verifica{display:flex;align-items:flex-start;justify-content:space-between;gap:clamp(12px,2.5vw,36px);margin:0 0 22px;min-width:0}
-.pie9-verifica .adv{flex:1 1 auto}
-.pie-prisma-escena{position:relative;flex:0 0 min(42vw,560px);width:min(42vw,560px);height:clamp(300px,52vh,460px);overflow:hidden;pointer-events:none}
-.pie-prisma-espejo{position:absolute;inset:0;transform:scaleX(-1);transform-origin:center}
-.pie-prisma-espejo canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
-.pie-prisma-espejo .pie-punto{position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;background:var(--gold);box-shadow:0 0 5px 2px rgba(var(--gold-rgb),.55);z-index:2}
-@media(max-width:760px){
-  .pie-prisma-escena{flex-basis:min(42vw,220px);width:min(42vw,220px);height:clamp(240px,42vh,360px)}
-}
-@media(prefers-reduced-motion:reduce){.pie-prisma-espejo canvas{animation:none}}
 .pie9 .aviso{max-width:70ch;margin:0 0 28px;color:var(--mute);font-size:14px}
 .legal-velo{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:clamp(16px,5vh,60px) 16px;background:rgba(var(--ov-rgb),.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);overflow:auto}
 .legal-velo[hidden]{display:none}
@@ -249,35 +236,10 @@ var SERV=[["buscar","Buscar","Búsqueda simultánea en los ocho motores de la pl
 var of=document.createElement("section");of.className="ofr";of.id="servicios";of.innerHTML='<h2 class="h2">Servicios.</h2><p class="lead6">Todo lo que ofrece la plataforma. Seleccione un servicio para abrirlo.</p><div class="rej">'+SERV.map(function(f){return '<a class="cel" href="#" data-tab="'+f[0]+'" style="--c:var('+f[3]+')">'+IVS4.dibujo(f[0])+'<h3>'+f[1]+'</h3><p>'+f[2]+'</p></a>';}).join("")+'</div>';m.appendChild(of);
 /* pie: sin el nombre grande; aviso, derechos reservados y contacto */
 var pie=document.createElement("footer");pie.className="pie9";
-pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<a href="#" data-tab="buscar" style="--c:var('+b[1]+')" aria-label="Ir al buscador de IVS CODEX desde '+b[0]+'" title="Abrir buscador de IVS CODEX"><i aria-hidden="true"></i>'+b[0]+'</a>';}).join("")+'</div><div class="pie9-verifica"><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><div class="pie-prisma-escena" aria-hidden="true"><div class="pie-prisma-espejo"><canvas id="cv-pie-prisma"></canvas><span class="pie-punto"></span></div></div></div><p class="aviso">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</p>'+IVS4.BOTONES+
+pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<a href="#" data-tab="buscar" style="--c:var('+b[1]+')" aria-label="Ir al buscador de IVS CODEX desde '+b[0]+'" title="Abrir buscador de IVS CODEX"><i aria-hidden="true"></i>'+b[0]+'</a>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</p>'+IVS4.BOTONES+
  '<div class="legal"><p><b>© 2026 IVS CODEX.</b> Todos los derechos reservados.</p><nav aria-label="Información legal"><a href="#terminos" data-legal="terminos">Términos de uso</a><a href="#privacidad" data-legal="privacidad">Política de privacidad</a><a href="#" data-tab="fuentes">Fuentes oficiales</a></nav>'+
  '<div class="ct"><span>Contacto: <a href="#" style="color:var(--fg)">contacto@su-dominio.com</a></span><span>Mendoza, Argentina</span></div></div>';
 m.appendChild(pie);
-var prismaPie=pie.querySelector(".pie9-verifica"),prismaPieMontado=false;
-function montarPrismaPie(){
-  if(prismaPieMontado||!prismaPie)return;
-  prismaPieMontado=true;
-  var cv=document.getElementById("cv-pie-prisma");
-  var cel=function(W){return W<=760;};
-  var escala=cel(innerWidth)?.115:.1;
-  /* El lienzo inferior es más angosto, pero el triángulo conserva el mismo
-     tamaño en píxeles que el prisma de apertura. */
-  window.IVSPrisma(cv,{
-    px:.5,cy:.5,sobrio:true,
-    tam:function(W,H){return Math.min(innerWidth,innerHeight)*escala/Math.min(W,H);},
-    sinHaces:cel,
-    band:function(W,H){var h=Math.max(40,Math.min(innerHeight*.13,innerHeight*.5-110))*(cel(W)?.5:1);return [.5-h/H,.5+h/H];},
-    /* Sin haz de salida: sólo las líneas paralelas que entran desde la derecha. */
-    out:function(P){return [[P.x,P.y]];}
-  });
-}
-if(prismaPie&&"IntersectionObserver" in window){
-  var montarPrismaIO=new IntersectionObserver(function(entradas){
-    entradas.forEach(function(e){if(e.isIntersecting){montarPrismaPie();montarPrismaIO.disconnect();}});
-  },{threshold:.08});
-  montarPrismaIO.observe(prismaPie);
-}else{montarPrismaPie();}
-
 /* Términos de uso y política de privacidad: un panel sobre la portada. El
    texto describe lo que la plataforma hace de verdad (ver backend/lib/usuarios.js,
    lib/datosUsuario.js y lib/cache.js); si eso cambia, hay que cambiarlo acá. */
