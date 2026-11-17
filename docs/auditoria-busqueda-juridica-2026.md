@@ -114,7 +114,7 @@ Portal: https://jurisprudencia.juscorrientes.gov.ar/
 
 Justicia.ar informó el 28 de agosto de 2026 que el nuevo sistema reúne 48.358 fallos del Superior Tribunal de Justicia, de 2004 a agosto de 2026, clasificados en nueve materias: civil y comercial, amparo, administrativo, laboral, penal, electoral, conflicto de poderes, superintendencia y habeas data. El portal indica que en una segunda etapa incorporará todas las cámaras.
 
-Esta integración debe desplazar la dependencia exclusiva de la vista provincial SAIJ para el material que publique el STJ de Corrientes. Mantener SAIJ como fuente complementaria permitirá comparar coberturas y detectar documentos faltantes.
+Esta integración debe desplazar la dependencia exclusiva de la vista provincial SAIJ para el material que publique el STJ de Corrientes. Mantener SAIJ como fuente complementaria permitirá comparar coberturas y detectar documentos faltantes. Durante esta auditoría, la consulta automatizada del dominio del nuevo portal devolvió HTTP 403; eso no demuestra que el sitio no sea utilizable desde un navegador, pero sí impide dar por probada una API o un método de extracción. La viabilidad técnica debe verificarse respetando sus controles de acceso.
 
 ### P1 — Fuentes administrativas y especializadas
 
@@ -129,7 +129,7 @@ La página oficial ofrece últimas sentencias, buscador de jurisprudencia VUCE, 
 
 Buscador: https://busquedadictamenes.ptn.gob.ar/
 
-El buscador permite localizar dictámenes por texto completo, expresiones, voces, fecha, organismo, tomo y página. La propia PTN explica que sus dictámenes constituyen jurisprudencia administrativa obligatoria para los servicios jurídicos del Cuerpo de Abogados del Estado. Esto es especialmente relevante en empleo público, contratos administrativos, responsabilidad del Estado, procedimiento, empleo estatal, bienes públicos, regulación y litigios estatales.
+El buscador permite localizar dictámenes por texto completo, expresiones, voces, fecha, organismo, tomo y página. La propia PTN explica que sus dictámenes constituyen jurisprudencia administrativa obligatoria para los servicios jurídicos del Cuerpo de Abogados del Estado. Esto es especialmente relevante en empleo público, contratos administrativos, responsabilidad del Estado, procedimiento, empleo estatal, bienes públicos, regulación y litigios estatales. La incorporación de dictámenes históricos escaneados desde 1943 amplía el corpus, pero la propia PTN advierte que campos como fecha exacta, voces y organismo todavía tienen datos incompletos o pendientes de extracción manual.
 
 Advertencia jurídica: esa obligatoriedad institucional no convierte al dictamen en precedente judicial vinculante para los tribunales ni para todos los litigantes privados. La plataforma debe etiquetarlo como doctrina administrativa de PTN.
 
