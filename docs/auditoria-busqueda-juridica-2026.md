@@ -314,11 +314,12 @@ Para calcular precisión y recall se necesita un conjunto de consultas de refere
 - La ruta local transmite las variantes del tesauro para cualquier fuente.
 - Los conceptos relacionados abren una consulta diferenciada y el mensaje ya no los llama sinónimos.
 - Se agregaron pruebas de regresión para equivalentes que sólo aparecen en el texto de otra fuente y para la acción diferenciada de conceptos relacionados.
+- Se ampliaron las fuentes manuales de 106 a 125, incorporando portales judiciales provinciales y fuentes nacionales especializadas. Una prueba ahora impide ids duplicados y etiquetas de materia ajenas a las ramas existentes.
 - Se corrigió el manifiesto del respaldo: SCBA tenía 8.565 registros en el archivo, pero conteos.json declaraba 7.148; la prueba de integridad del respaldo pasó luego de actualizar el dato.
 - Se actualizaron comentarios que describían de forma desactualizada la fuente CSJN y la distinción entre repositorios, doctrina y colecciones editoriales.
 
 **Rama:** audit/expansion-local-corpus-2026  
-**Estado de validación:** GitHub Actions ejecutó la suite completa con Node 24: **142 pruebas aprobadas, 0 fallidas**. También finalizaron correctamente las verificaciones especializadas de seguridad, búsqueda, tesauro, cursor, cobertura FTS, concurrencia SQLite y respaldo. No se realizó despliegue.
+**Estado de validación:** GitHub Actions ejecutó la suite completa con Node 24: **144 pruebas aprobadas, 0 fallidas**. La prueba nueva del catálogo comprueba 125 identificadores únicos y etiquetas de materia válidas para las 28 ramas. También finalizaron correctamente las verificaciones especializadas de seguridad, búsqueda, tesauro, cursor, cobertura FTS, concurrencia SQLite y respaldo. No se realizó despliegue.
 
 ## 10. Fuentes de verificación
 
