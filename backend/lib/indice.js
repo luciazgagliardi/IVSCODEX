@@ -75,23 +75,39 @@ export async function upsertRegistros(fuente, registros) {
  * modo que el resto de la app (lib/relevancia.js).
  */
 const PROVINCIA_DE = { mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires', catamarca: 'Catamarca', cordoba: 'Córdoba', entrerrios: 'Entre Ríos', neuquen: 'Neuquén', tucuman: 'Tucumán', chaco: 'Chaco', corrientes: 'Corrientes' };
-export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '' } = {}) {
+export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [] } = {}) {
   const q = String(texto || '').trim();
   if (!q) return [];
+  const listaVariantes = Array.isArray(variantes)
+    ? [...new Set(variantes.filter((v) => typeof v === 'string' && v.trim() && v.trim().length <= 100)
+      .map((v) => v.trim()).filter((v) => v.toLocaleLowerCase('es') !== q.toLocaleLowerCase('es')))].slice(0, 4)
+    : [];
   const dato = await leer(fuente);
-  // con acervo (lib/acervo.js), la base grande en disco reemplaza al respaldo en memoria:
-  // trae los candidatos por índice de texto y el filtro por modo de siempre decide
-  const propios = acervoTiene(fuente) ? buscarEnAcervo(fuente, q, { modo, excluir, anioDesde, anioHasta, provincia, limite: 600 }) : null;
-  // las bases provinciales suman lo que SAIJ tiene de su provincia (los tribunales locales que SAIJ publica)
+  // Con acervo (lib/acervo.js), la base grande en disco reemplaza al respaldo
+  // en memoria y busca el término principal junto con sus equivalentes.
+  const propios = acervoTiene(fuente) ? buscarEnAcervo(fuente, q, { modo, excluir, anioDesde, anioHasta, provincia, variantes: listaVariantes, limite: 600 }) : null;
+  // Las bases provinciales suman lo que SAIJ tiene de su provincia.
   const deSaij = PROVINCIA_DE[fuente] && acervoTiene('saij')
-    ? buscarEnAcervo('saij', q, { modo, excluir, anioDesde, anioHasta, provincia: PROVINCIA_DE[fuente], limite: 400 }) || [] : [];
+    ? buscarEnAcervo('saij', q, { modo, excluir, anioDesde, anioHasta, provincia: PROVINCIA_DE[fuente], variantes: listaVariantes, limite: 400 }) || [] : [];
   const delAcervo = propios || deSaij.length ? [...(propios || []), ...deSaij] : null;
   const base = { ...(propios ? {} : await respaldoDe(fuente)), ...Object.fromEntries((delAcervo || []).map((r) => [r.id, r])) };
-  // lo guardado por las búsquedas + el acervo o el respaldo (sin repetir)
+  // Lo guardado por las búsquedas + el acervo o el respaldo (sin repetir).
   const todos = { ...base, ...dato.registros };
-  const { lista } = filtrarPorModo(Object.values(todos), { q, modo, excluir, anioDesde, anioHasta });
+  // Cada equivalente se valida por separado: no exigimos que un documento
+  // contenga simultáneamente el término original y su otra denominación.
+  // Se conserva el orden de la consulta principal; después vienen sus alias.
+  const lista = [];
+  const vistos = new Set();
+  for (const termino of [q, ...listaVariantes]) {
+    const { lista: coincidencias } = filtrarPorModo(Object.values(todos), { q: termino, modo, excluir, anioDesde, anioHasta });
+    for (const r of coincidencias) {
+      if (!r?.id || vistos.has(r.id)) continue;
+      vistos.add(r.id);
+      lista.push(r);
+    }
+  }
   if (!delAcervo) return lista;
-  // el orden del índice (relevancia) primero; lo guardado que no vino del acervo, después
+  // El orden del acervo (relevancia) primero; lo guardado que no vino del acervo, después.
   const orden = new Map(delAcervo.map((r, i) => [r.id, i]));
   return lista.sort((a, b) => (orden.get(a.id) ?? 1e9) - (orden.get(b.id) ?? 1e9));
 }
