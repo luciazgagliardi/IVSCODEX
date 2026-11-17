@@ -14,6 +14,7 @@
  */
 
 import express from 'express';
+import { informacionFuente, catalogoFuentesIntegradas, anotarProcedencia } from '../lib/fuentesInfo.js';
 import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
@@ -51,6 +52,18 @@ const MAX_FRAGMENTOS = 6;
 const PRESUPUESTO_MS = 22_000;
 /** Caracteres a cada lado de la coincidencia en el pasaje devuelto. */
 const VENTANA = 160;
+
+/**
+ * Adjunta autoridad, procedencia y tipo documental a la respuesta y a cada
+ * resultado. La interfaz no debe inferir el valor jurídico por el nombre.
+ */
+function respuestaConFuente(slug, salida) {
+  return {
+    ...salida,
+    fuenteInfo: informacionFuente(slug),
+    resultados: anotarProcedencia(slug, salida.resultados || []),
+  };
+}
 
 
 /**
@@ -275,7 +288,7 @@ for (const { slug, buscar } of FUENTES) {
       if (esPorArticulo) {
         const salida = await buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anioDesde, anioHasta, tribunal });
         const guardadas = await upsertRegistros(slug, salida.resultados);
-        return res.json({ ok: true, ...salida, guardadosEnIndice: guardadas, fuente: slug });
+        return res.json({ ok: true, ...respuestaConFuente(slug, salida), guardadosEnIndice: guardadas, fuente: slug });
       }
 
       const consulta = q;
@@ -296,7 +309,7 @@ for (const { slug, buscar } of FUENTES) {
         const loc = await paginaLocal(slug, consulta, pedidoLocal);
         if (loc && loc.resultados.length) {
           return res.json({
-            ok: true, ...loc, fuente: slug, ms: Date.now() - arranque,
+            ok: true, ...respuestaConFuente(slug, loc), fuente: slug, ms: Date.now() - arranque,
             avisoFalla: loc.totalParcial
               ? 'Resultados parciales de búsquedas guardadas. El índice completo de Mendoza no respondió a tiempo.'
               : 'Resultados verificados en el acervo completo de Mendoza. La búsqueda oficial en vivo puede estar limitada.',
@@ -308,7 +321,7 @@ for (const { slug, buscar } of FUENTES) {
       if (cuerpo.soloLocal === true || cuerpo.local === true) {
         const loc = await paginaLocal(slug, consulta, pedidoLocal, { respaldo: cuerpo.local === true && !cuerpo.soloLocal && desdeN > 0 });
         if (!loc) return res.json({ ok: false, codigo: 'SIN_COPIA_LOCAL', fuente: slug });
-        return res.json({ ok: true, ...loc, ms: Date.now() - arranque });
+        return res.json({ ok: true, ...respuestaConFuente(slug, loc), ms: Date.now() - arranque });
       }
 
       let total, totalFuente, siguienteDesde = null, resultados, desdeIndiceLocal = false, avisoFalla = null;
@@ -435,7 +448,7 @@ for (const { slug, buscar } of FUENTES) {
       const repetidos = resultados.length - unicos.length;
       res.json({
         ok: true,
-        total: Math.max(0, total - repetidos),
+        ...respuestaConFuente(slug, { total: Math.max(0, total - repetidos), resultados: unicos }),
         // Cuando el sitio de origen no sabe hacer el modo pedido, el filtro
         // corre de este lado: "total" es entonces lo verificado, no lo que
         // dice su contador. Ver lib/relevancia.js.
@@ -645,6 +658,11 @@ router.get('/acervo/estado', (_req, res) => {
     lectura: e.lectura || null, errorHilo: e.errorHilo || null, errorCopia: e.errorCopia || null, cosechaCaba: estadoCosechaCaba() });
 });
 
+router.get('/fuentes/catalogo', (_req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.json({ ok: true, fuentes: catalogoFuentesIntegradas() });
+});
+
 router.get('/fuentes/estado', async (_req, res) => {
   // Cada llamada hace una búsqueda de verdad en cada sitio oficial: se
   // reutiliza el último resultado durante 2 minutos para que esta ruta no
@@ -657,11 +675,14 @@ router.get('/fuentes/estado', async (_req, res) => {
       const arranque = Date.now();
       try {
         const r = await buscar({ q: 'daño', pagina: 1 });
-        return { slug, alcanzable: true, resultados: r.resultados.length, ms: Date.now() - arranque };
+        return { ...informacionFuente(slug), slug, alcanzable: true, estado: 'accesible', resultados: r.resultados.length, ms: Date.now() - arranque, comprobadoEn: new Date().toISOString() };
       } catch (e) {
         return {
+          ...informacionFuente(slug),
           slug,
           alcanzable: false,
+          estado: 'error_de_consulta',
+          comprobadoEn: new Date().toISOString(),
           codigo: e?.codigo || 'ERROR',
           motivo: e instanceof ErrorApp ? e.message : String(e?.message || e).slice(0, 200),
           ms: Date.now() - arranque,
