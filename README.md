@@ -76,7 +76,7 @@ Seis están siempre en la barra —Buscar, Lector, Ramas, Cálculos, Fuentes y V
 | **Calcular** | `CALCVLVS` | Cálculos | Intereses, actualización, despido, incapacidad, honorarios y tasa, liquidación. |
 | | `TEMPVS` | Plazos | Plazos, prescripción y calendario. |
 | **Preparar** | `INSTRVMENTA` | Herramientas | PDF listos para presentar: unir, dividir, foliar, reducir. Todo en el navegador. |
-| **Fuentes** | `FONTES` | Fuentes | Catálogo de 106 bases y buscadores públicos, para abrir a mano. |
+| **Fuentes** | `FONTES` | Fuentes | Catálogo de 125 bases y buscadores públicos, para abrir a mano. |
 | **Archivo personal** | `THESAVRVS` | Guardados | Pasajes, fuentes y búsquedas guardadas. |
 | | `RATIO` | Cuenta | Sincronización entre dispositivos. |
 
@@ -140,7 +140,8 @@ por SAIJ y de las cosechas efectivamente completadas.
 
 - **Frontend sin compilar.** [`frontend/`](frontend) es HTML, CSS y JavaScript puro. Los cálculos, los plazos, el glosario, el catálogo y las herramientas de PDF funcionan sin servidor; el servidor se necesita para buscar, traer un fallo por enlace, verificar citas y tener cuenta.
 - **Pasajes con contexto.** Un mismo módulo ([`frontend/pasajes.js`](frontend/pasajes.js)) decide dónde coincide lo buscado, sin distinguir acentos ni mayúsculas y por la raíz de cada palabra; lo usan la lista de resultados, el Lector y el servidor.
-- **Acervo propio.** El servidor guarda una copia en SQLite, con índice de texto completo, de casi todo SAIJ y de las demás bases ([`backend/lib/acervo.js`](backend/lib/acervo.js)). Las tandas de datos viajan en la rama `acervo` y se importan al arrancar. Cuando un sitio oficial no responde, Buscar contesta con esa copia en lugar de quedarse sin resultados. Requiere Node 22.5 o superior (`node:sqlite`); sin él, el acervo queda apagado y todo lo demás sigue igual.
+- **Acervo propio.** El servidor guarda una copia en SQLite, con índice de texto completo, de casi todo SAIJ y de las demás bases ([`backend/lib/acervo.js`](backend/lib/acervo.js)). Las tandas de datos viajan en la rama `acervo` y se importan al arrancar. Cuando un sitio oficial no responde, Buscar contesta con esa copia en lugar de quedarse sin resultados y lo identifica como consulta local. Requiere Node 22.5 o superior (`node:sqlite`); sin él, el acervo queda apagado y todo lo demás sigue igual.
+- **Procedencia y autoridad.** Cada fuente integrada declara qué tipo de material publica, de qué organismo procede, qué jurisdicción cubre y qué límites tiene. La vista Buscar puede ordenar por línea jurídica; los errores de acceso no se presentan como búsquedas válidas con cero coincidencias.
 - **Extracción de documentos.** El servidor descarga el enlace con las protecciones descritas en [Seguridad](#seguridad) y extrae el texto: HTML con Readability, PDF con pdf.js, DOC con word-extractor. Si el PDF es una imagen, ofrece reconocimiento óptico de caracteres (OCR).
 - **TSJ de CABA.** Su sitio responde con un desafío de Cloudflare a los servidores; [`backend/lib/navegadorCf.js`](backend/lib/navegadorCf.js) abre un Chrome sin interfaz para resolverlo y pedir los PDF.
 - **Cuentas.** La contraseña se guarda con scrypt y una sal por usuario; la sesión viaja como `Authorization: Bearer <token>`, no como cookie.
@@ -205,7 +206,7 @@ Todas las rutas cuelgan de `/api`. Ante un error siempre llega JSON con `codigo`
 | `POST` | `/extraer` | Cuerpo `{ "url", "refrescar" }`. Descarga el documento y devuelve su texto. |
 | `POST` | `/extraer-archivo` | Lo mismo para un archivo subido (bytes en el cuerpo, nombre en `X-Nombre-Archivo`). |
 | `POST` | `/ocr`, `/ocr-archivo` | Reconocimiento de texto para PDF escaneados, por enlace o por archivo. |
-| `POST` | `/indice/<base>/buscar` | Busca en vivo en una base. Cuerpo: `q` y, opcionalmente, `modo`, `pagina`, `desde`, `tribunal`, `excluir`, `anioDesde`, `anioHasta`, `articulo`, `norma`, `provincia`. |
+| `POST` | `/indice/<base>/buscar` | Busca en vivo en una base. Cuerpo: `q` y, opcionalmente, `modo`, `pagina`, `desde`, `tribunal`, `excluir`, `anioDesde`, `anioHasta`, `articulo`, `norma`, `provincia`. Devuelve metadata de autoridad y procedencia. |
 | `POST` | `/indice/<base>/local` | La misma búsqueda sobre la copia local, sin consultar al sitio oficial. |
 | `POST` | `/indice/<base>/fragmentos` | Pasajes de una lista de enlaces para una consulta. |
 | `GET` | `/indice/<base>/estado` | Estado del índice de esa base. |
@@ -214,7 +215,8 @@ Todas las rutas cuelgan de `/api`. Ante un error siempre llega JSON con `codigo`
 | `GET` | `/legislacion/normas`, `/legislacion/:norma/:articulo` | Normas y artículos. |
 | `GET` | `/series/:clave` | Serie oficial que el navegador no puede leer directamente (hoy, RIPTE). |
 | `GET` | `/tesauro/estado` · `POST /tesauro/proponer` | Tesauro de sinónimos; la propuesta de anillos nuevos requiere `ANTHROPIC_API_KEY`. |
-| `GET` | `/acervo/estado`, `/fuentes/estado` | Estado del acervo y de cada fuente. |
+| `GET` | `/acervo/estado`, `/fuentes/estado` | Estado del acervo y alcance técnico de cada fuente; un error no equivale a cero resultados. |
+| `GET` | `/fuentes/catalogo` | Catálogo estructurado de fuentes integradas: autoridad, tipo documental, jurisdicción, procedencia, líneas y límites. |
 | `POST` | `/auth/registro`, `/auth/login`, `/auth/logout` | Cuentas. |
 | `GET` · `PUT` | `/auth/yo`, `/auth/perfil`, `/mis-datos` · `POST /mis-datos/fusionar` | Perfil y datos personales; requieren sesión. |
 | `GET` | `/salud`, `/dominios`, `/verificar?url=` | Estado del servidor (el detalle solo para administración), lista blanca vigente y si un enlace es procesable. |
