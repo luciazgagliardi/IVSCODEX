@@ -38,6 +38,8 @@ test('SAIJ se reclasifica según el tipo documental realmente consultado', () =>
   const mendoza = informacionFuente('saij', { tribunal: 'sumarios', provincia: 'Mendoza' });
   assert.equal(mendoza.linea, 'Jurisprudencia provincial · Mendoza');
   assert.equal(mendoza.jurisdiccion, 'Mendoza, Argentina');
+  assert.ok(mendoza.lineas.includes('provincial'));
+  assert.ok(!mendoza.lineas.includes('nacional'));
 });
 
 test('las vistas provinciales SAIJ identifican la provincia y mantienen clara la procedencia agregadora', () => {
