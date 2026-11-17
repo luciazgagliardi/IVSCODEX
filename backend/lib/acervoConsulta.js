@@ -106,12 +106,12 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   const principal = consultaFts(q, modo, excluir, mag ? apellidos(db) : null);
   if (!principal) return { total: 0, resultados: [], siguienteDesde: null };
 
-  // En Mendoza la ruta normal prioriza la copia local. Antes se retornaba
-  // inmediatamente y se salteaban las variantes del tesauro que el frontend
-  // manda (daño moral / consecuencias no patrimoniales, por ejemplo).
+  // La búsqueda local debe conservar las mismas formas equivalentes que la
+  // consulta en vivo, cualquiera sea la fuente. Si se omiten, una caída del
+  // origen reduce la cobertura justo cuando entra en juego el acervo.
   // Un único MATCH combinado mantiene total, ranking, deduplicación y cursor
   // coherentes; concatenar páginas de búsquedas distintas rompería todo eso.
-  const equivalentes = base === 'mendoza' && Array.isArray(variantes)
+  const equivalentes = Array.isArray(variantes)
     ? [...new Set(variantes.filter((v) => typeof v === 'string' && v.trim().length <= 100 && v.trim())
       .map((v) => v.trim()).filter((v) => v.toLowerCase() !== String(q).trim().toLowerCase()))].slice(0, 4)
     : [];
