@@ -30,6 +30,16 @@ test('doctrina, selección editorial, agregador y tribunal oficial no se confund
   assert.ok(informacionFuente('csjn').limite.toLowerCase().includes('portal directo'));
 });
 
+test('SAIJ se reclasifica según el tipo documental realmente consultado', () => {
+  assert.equal(informacionFuente('saij', { tribunal: 'legislacion' }).linea, 'Normativa');
+  assert.equal(informacionFuente('saij', { tribunal: 'doctrina' }).linea, 'Doctrina jurídica');
+  assert.equal(informacionFuente('saij', { tribunal: 'dictamenes' }).linea, 'Derecho administrativo y dictámenes');
+  assert.equal(informacionFuente('saij', { tribunal: 'fallos' }).linea, 'Jurisprudencia · fichas de fallos');
+  const mendoza = informacionFuente('saij', { tribunal: 'sumarios', provincia: 'Mendoza' });
+  assert.equal(mendoza.linea, 'Jurisprudencia provincial · Mendoza');
+  assert.equal(mendoza.jurisdiccion, 'Mendoza, Argentina');
+});
+
 test('las vistas provinciales SAIJ identifican la provincia y mantienen clara la procedencia agregadora', () => {
   for (const slug of ['cordoba', 'entrerrios', 'neuquen', 'tucuman', 'chaco', 'corrientes']) {
     const info = informacionFuente(slug);
