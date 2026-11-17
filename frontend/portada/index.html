@@ -67,7 +67,7 @@
 /* El prisma del cierre reutiliza la geometría, escala y motor del prisma inicial.
    La escena mide lo mismo que el héroe: 100svh × ancho completo. */
 /* Único añadido al aviso del pie: el prisma original, a su derecha. */
-.pie9-verifica{display:flex;align-items:center;justify-content:space-between;gap:clamp(12px,2.5vw,36px);margin:0 0 22px;min-width:0}
+.pie9-verifica{display:flex;align-items:flex-start;justify-content:space-between;gap:clamp(12px,2.5vw,36px);margin:0 0 22px;min-width:0}
 .pie9-verifica .adv{flex:1 1 auto;margin:0}
 .pie-prisma-escena{position:relative;flex:0 0 min(42vw,560px);width:min(42vw,560px);height:clamp(300px,52vh,460px);overflow:hidden;pointer-events:none}
 .pie-prisma-espejo{position:absolute;inset:0;transform:scaleX(-1);transform-origin:center}
@@ -266,7 +266,7 @@ function montarPrismaPie(){
     px:.5,cy:.5,sobrio:true,
     tam:function(W,H){return Math.min(innerWidth,innerHeight)*escala/Math.min(W,H);},
     sinHaces:cel,
-    band:function(W,H){var h=Math.max(40,Math.min(H*.13,H*.5-110))*(cel(W)?.5:1);return [.5-h/H,.5+h/H];},
+    band:function(W,H){var h=Math.max(40,Math.min(innerHeight*.13,innerHeight*.5-110))*(cel(W)?.5:1);return [.5-h/H,.5+h/H];},
     /* Sin haz de salida: sólo las líneas paralelas que entran desde la derecha. */
     out:function(P){return [[P.x,P.y]];}
   });
