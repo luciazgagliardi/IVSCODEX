@@ -7,7 +7,7 @@
 **Buscador integrado de repositorios judiciales oficiales y doctrina.**<br>
 Una consulta en doce bases; cada resultado muestra el pasaje que coincide y remite al documento oficial.
 
-<sub>**12** fuentes integradas &nbsp;·&nbsp; **15** secciones &nbsp;·&nbsp; **106** fuentes en el catálogo &nbsp;·&nbsp; pruebas automáticas</sub>
+<sub>**12** fuentes integradas &nbsp;·&nbsp; **15** secciones &nbsp;·&nbsp; **125** fuentes en el catálogo &nbsp;·&nbsp; pruebas automáticas</sub>
 
 <br>
 
