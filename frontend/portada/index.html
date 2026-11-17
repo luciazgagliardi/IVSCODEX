@@ -66,7 +66,7 @@
 .pie9 .adv{max-width:24ch;margin:0 0 22px;font:400 clamp(28px,4.2vw,58px)/1.02 var(--titulo);letter-spacing:-.04em;text-wrap:balance}.pie9 .adv em{font-style:normal;color:var(--gold)}
 /* El prisma del cierre reutiliza la geometría, escala y motor del prisma inicial.
    La escena mide lo mismo que el héroe: 100svh × ancho completo. */
-.pie9-verifica{position:relative;height:100svh;min-height:560px;margin:0 0 22px;overflow:hidden}
+.pie9-verifica{position:relative;width:calc(100% + 2*var(--pad));height:100svh;min-height:560px;margin:0 calc(-1*var(--pad)) 22px;overflow:hidden}
 .pie9-verifica .adv{position:absolute;z-index:3;left:var(--pad);top:clamp(48px,12vh,120px);max-width:24ch;margin:0;font:400 clamp(28px,4.4vw,62px)/1.02 var(--titulo);letter-spacing:-.04em;text-wrap:balance}
 .pie9-verifica .adv em{font-style:normal;color:var(--gold)}
 .pie-prisma-escena{position:absolute;inset:0;overflow:hidden;pointer-events:none}
