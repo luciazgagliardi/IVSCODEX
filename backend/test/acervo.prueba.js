@@ -49,6 +49,10 @@ test('la consulta: raíces sin acentos, modos y exclusión', () => {
 
 test('busca por base, por la Corte, por años y en frase exacta', () => {
   assert.deepEqual(buscarEnAcervo('saij', 'daño moral').map((r) => r.id), ['saij_2']);
+  // Las formas equivalentes deben recuperar también el mismo documento en
+  // fuentes distintas de Mendoza y sin que el término canónico esté presente.
+  assert.deepEqual(buscarEnAcervo('saij', 'consecuencias no patrimoniales', { variantes: ['daño moral'] }).map((r) => r.id), ['saij_2']);
+  assert.deepEqual(buscarEnAcervo('scba', 'multa registral', { variantes: ['relación laboral deficientemente registrada'] }).map((r) => r.id), ['scba_1']);
   assert.deepEqual(buscarEnAcervo('csjn', 'fiorentino').map((r) => r.id), ['saij_1']);
   assert.deepEqual(buscarEnAcervo('csjn', 'despido'), []);
   assert.deepEqual(buscarEnAcervo('saij', 'indemnizacion', { anioDesde: 2020 }).map((r) => r.id), ['saij_3']);
@@ -65,6 +69,10 @@ test('busca por base, por la Corte, por años y en frase exacta', () => {
 test('la búsqueda de respaldo usa el acervo, con años', async () => {
   const r = await buscarEnIndice('saij', 'despido', { modo: 'todas' });
   assert.deepEqual(r.map((x) => x.id), ['saij_3']);
+  const expandida = await buscarEnIndice('saij', 'consecuencias no patrimoniales', { modo: 'todas', variantes: ['daño moral'] });
+  assert.ok(expandida.some((x) => x.id === 'saij_2'), 'el respaldo local conserva los equivalentes del tesauro');
+  const expandidaProvincial = await buscarEnIndice('scba', 'multa registral', { modo: 'todas', variantes: ['relación laboral deficientemente registrada'] });
+  assert.ok(expandidaProvincial.some((x) => x.id === 'scba_1'), 'la expansión también llega a una base provincial');
   assert.equal((await buscarEnIndice('saij', 'daño moral', { anioHasta: 2010 })).length, 0);
   assert.equal((await estadoIndice('saij')).acervo, 4);
 });
