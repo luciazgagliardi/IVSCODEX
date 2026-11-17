@@ -20,7 +20,7 @@ Se añadieron pruebas de regresión para ambos comportamientos. Estos cambios es
 
 El proyecto reúne doce fuentes documentales principales. Además, incorpora seis vistas provinciales que consultan facetas de SAIJ. Estas seis vistas no son seis conexiones independientes a los poderes judiciales provinciales.
 
-El catálogo de la interfaz contiene 125 enlaces a organismos y buscadores, luego de la segunda expansión documentada en la sección 5.1. Ese catálogo es útil para abrir fuentes manualmente, pero no significa que las 106 bases se consulten automáticamente en cada búsqueda.
+El catálogo de la interfaz contiene 125 enlaces a organismos y buscadores, luego de la segunda expansión documentada en la sección 5.1. Ese catálogo es útil para abrir fuentes manualmente, pero no significa que esos 125 enlaces sean integraciones automáticas ni que se consulten en cada búsqueda.
 
 La lista de fuentes de búsqueda tampoco equivale a cobertura total del sistema judicial argentino. Un agregador nacional puede reunir decisiones de distintas jurisdicciones, pero no garantiza que cada fallo esté publicado, actualizado, indexado con el texto completo o atribuido correctamente al tribunal. Los portales de consulta de causas, por su parte, sirven para seguir expedientes y no necesariamente contienen una base pública de sentencias.
 
@@ -318,7 +318,7 @@ Para calcular precisión y recall se necesita un conjunto de consultas de refere
 - Usar el directorio de Justicia.ar para auditar uno por uno los portales judiciales provinciales.
 - Priorizar integraciones directas donde la fuente oficial aporte texto o metadatos que SAIJ no tenga.
 - Expandir internacionalmente con OHCHR JURIS, NORMLEX, HUDOC e InfoCuria como colecciones comparadas, claramente rotuladas por autoridad y jurisdicción.
-- Revisar periódicamente el catálogo de 106 fuentes manuales para decidir cuáles merecen convertirse en integraciones reales.
+- Revisar periódicamente el catálogo de 125 fuentes manuales para decidir cuáles merecen convertirse en integraciones reales.
 
 ## 9. Cambios realizados en esta rama
 
