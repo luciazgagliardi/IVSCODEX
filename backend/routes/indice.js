@@ -57,11 +57,11 @@ const VENTANA = 160;
  * Adjunta autoridad, procedencia y tipo documental a la respuesta y a cada
  * resultado. La interfaz no debe inferir el valor jurídico por el nombre.
  */
-function respuestaConFuente(slug, salida) {
+function respuestaConFuente(slug, salida, opciones = {}) {
   return {
     ...salida,
-    fuenteInfo: informacionFuente(slug),
-    resultados: anotarProcedencia(slug, salida.resultados || []),
+    fuenteInfo: informacionFuente(slug, opciones),
+    resultados: anotarProcedencia(slug, salida.resultados || [], opciones),
   };
 }
 
@@ -288,7 +288,7 @@ for (const { slug, buscar } of FUENTES) {
       if (esPorArticulo) {
         const salida = await buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anioDesde, anioHasta, tribunal });
         const guardadas = await upsertRegistros(slug, salida.resultados);
-        return res.json({ ok: true, ...respuestaConFuente(slug, salida), guardadosEnIndice: guardadas, fuente: slug });
+        return res.json({ ok: true, ...respuestaConFuente(slug, salida, { tribunal, provincia }), guardadosEnIndice: guardadas, fuente: slug });
       }
 
       const consulta = q;
@@ -309,7 +309,7 @@ for (const { slug, buscar } of FUENTES) {
         const loc = await paginaLocal(slug, consulta, pedidoLocal);
         if (loc && loc.resultados.length) {
           return res.json({
-            ok: true, ...respuestaConFuente(slug, loc), fuente: slug, ms: Date.now() - arranque,
+            ok: true, ...respuestaConFuente(slug, loc, { tribunal, provincia }), fuente: slug, ms: Date.now() - arranque,
             avisoFalla: loc.totalParcial
               ? 'Resultados parciales de búsquedas guardadas. El índice completo de Mendoza no respondió a tiempo.'
               : 'Resultados verificados en el acervo completo de Mendoza. La búsqueda oficial en vivo puede estar limitada.',
@@ -321,7 +321,7 @@ for (const { slug, buscar } of FUENTES) {
       if (cuerpo.soloLocal === true || cuerpo.local === true) {
         const loc = await paginaLocal(slug, consulta, pedidoLocal, { respaldo: cuerpo.local === true && !cuerpo.soloLocal && desdeN > 0 });
         if (!loc) return res.json({ ok: false, codigo: 'SIN_COPIA_LOCAL', fuente: slug });
-        return res.json({ ok: true, ...respuestaConFuente(slug, loc), ms: Date.now() - arranque });
+        return res.json({ ok: true, ...respuestaConFuente(slug, loc, { tribunal, provincia }), ms: Date.now() - arranque });
       }
 
       let total, totalFuente, siguienteDesde = null, resultados, desdeIndiceLocal = false, avisoFalla = null;
@@ -354,7 +354,7 @@ for (const { slug, buscar } of FUENTES) {
       if (!accesible(slug) && acervoCubre(slug)) {
         sondear(slug, () => buscar(parametrosVivo));
         const loc = await paginaLocal(slug, consulta, pedidoLocal);
-        if (loc) return res.json({ ok: true, ...respuestaConFuente(slug, loc), ms: Date.now() - arranque });
+        if (loc) return res.json({ ok: true, ...respuestaConFuente(slug, loc, { tribunal, provincia }), ms: Date.now() - arranque });
       }
 
       try {
@@ -448,7 +448,7 @@ for (const { slug, buscar } of FUENTES) {
       const repetidos = resultados.length - unicos.length;
       res.json({
         ok: true,
-        ...respuestaConFuente(slug, { total: Math.max(0, total - repetidos), resultados: unicos }),
+        ...respuestaConFuente(slug, { total: Math.max(0, total - repetidos), resultados: unicos }, { tribunal, provincia }),
         // Cuando el sitio de origen no sabe hacer el modo pedido, el filtro
         // corre de este lado: "total" es entonces lo verificado, no lo que
         // dice su contador. Ver lib/relevancia.js.
