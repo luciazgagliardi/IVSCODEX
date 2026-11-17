@@ -300,6 +300,8 @@ Para calcular precisión y recall se necesita un conjunto de consultas de refere
 - Extender las pruebas de equivalencias a todas las fuentes, filtros de año, provincias, modos y paginación.
 - Incorporar un campo de procedencia por resultado: fuente primaria, agregador, doctrina, sumario, ficha o cosecha local.
 - Mostrar avisos de cobertura parcial y última actualización en cada columna de fuente.
+- Distinguir de forma visible una consulta oficial, un resultado de la copia local, una fuente agregadora y un error de acceso.
+- Exigir metadata de autoridad, jurisdicción, tipo documental, procedencia, línea de investigación y límites para toda fuente integrada.
 
 ### Fase 2 — Nuevas fuentes prioritarias
 - Probar la Secretaría de Jurisprudencia renovada de la CSJN.
@@ -329,7 +331,12 @@ Para calcular precisión y recall se necesita un conjunto de consultas de refere
 - Se agregaron pruebas de regresión para equivalentes que sólo aparecen en el texto de otra fuente y para la acción diferenciada de conceptos relacionados.
 - Se ampliaron las fuentes manuales de 106 a 125, incorporando portales judiciales provinciales y fuentes nacionales especializadas. Una prueba ahora impide ids duplicados y etiquetas de materia ajenas a las ramas existentes.
 - Se corrigió el manifiesto del respaldo: SCBA tenía 8.565 registros en el archivo, pero conteos.json declaraba 7.148; la prueba de integridad del respaldo pasó luego de actualizar el dato.
-- Se actualizaron comentarios que describían de forma desactualizada la fuente CSJN y la distinción entre repositorios, doctrina y colecciones editoriales.
+- Se creó `backend/lib/fuentesInfo.js`, un registro estructurado de las **18 entradas automáticas** (12 fuentes principales y seis vistas provinciales SAIJ). Cada una declara autoridad, tipo documental, procedencia, jurisdicción, cobertura, modalidad, línea(s) de investigación y límites.
+- Cada respuesta de búsqueda incluye `fuenteInfo`; cada ficha recibe `fuenteSlug`, `procedencia`, `tipoDocumento`, `nivelAutoridad`, `jurisdiccion` y `lineaInvestigacion`. La vista de resultados y el comparador muestran estos datos para no presentar doctrina, sumarios, agregadores y sentencias como objetos equivalentes.
+- Se añadieron `GET /api/fuentes/catalogo` (catálogo estructurado) y metadata al sondeo `GET /api/fuentes/estado`. El sondeo mide si la consulta técnica responde; cero coincidencias no significa que el portal esté caído.
+- La interfaz dejó de rotular un error de red como «sin coincidencias». Distingue una consulta válida con cero resultados de una fuente que no pudo consultarse y advierte que un fallo técnico no demuestra inexistencia de jurisprudencia.
+- La metadata está cubierta por pruebas que exigen clasificación para cada conector activo, comprueban la diferencia entre tribunal, agregador oficial, índice académico y selección editorial, y verifican las seis vistas territoriales SAIJ.
+- Se volvió a revisar la viabilidad de automatizar portales provinciales. Eureka! de Chubut ofrece acceso anónimo a fallos anonimizados, sumarios y resoluciones; su acceso autenticado permite vistas adicionales restringidas. No se intenta acceder a esas vistas. Salta declara un buscador público de fallos completos y doctrina judicial, pero debe inspeccionarse el protocolo de consulta antes de implementar un adaptador. Corrientes y Tucumán devolvieron 403 a la consulta externa de auditoría; se conservan como fuentes manuales hasta verificar un flujo reproducible. La ausencia de adaptador no se oculta detrás de un enlace nuevo.
 
 **Rama:** audit/expansion-local-corpus-2026  
 **Estado de validación:** GitHub Actions ejecutó la suite completa con Node 24: **144 pruebas aprobadas, 0 fallidas**. La prueba nueva del catálogo comprueba 125 identificadores únicos y etiquetas de materia válidas para las 28 ramas. También finalizaron correctamente las verificaciones especializadas de seguridad, búsqueda, tesauro, cursor, cobertura FTS, concurrencia SQLite y respaldo. No se realizó despliegue.
@@ -340,6 +347,11 @@ Consultadas el 17 de noviembre de 2026, salvo donde se indica fecha de publicaci
 
 - SAIJ, descripción oficial del alcance de la base: https://www.argentina.gob.ar/justicia/saij/buscar-informacion-juridica
 - Justicia.ar, directorio de jurisprudencia: https://www.justicia.ar/herramientas/sentencias
+- Eureka!, acceso anónimo, vistas públicas y estadísticas del sistema: https://apps1cloud.juschubut.gov.ar/eureka/
+- Secretaría de Jurisprudencia de Salta, alcance y clases de documentos: https://www.justiciasalta.gov.ar/es/jurisprudencia-inicio
+- Preguntas frecuentes oficiales de Salta, tipos de fallos y consulta: https://www.justiciasalta.gov.ar/es/preguntas-frecuentes-corte
+- Sistema de Jurisprudencia de Corrientes: https://jurisprudencia.juscorrientes.gov.ar/
+- Sistema de Jurisprudencia y Legislación de Tucumán: https://jurisprudencia.justucuman.gov.ar/
 - CSJN, ampliación del buscador federal y nacional a primera instancia, 5 de septiembre de 2025: https://www.csjn.gob.ar/novedades/detalle/10964
 - Secretaría de Jurisprudencia CSJN: https://sjservicios.csjn.gov.ar/sj/
 - Poder Judicial de Corrientes, nuevo sistema, 28 de agosto de 2026: https://www.justicia.ar/novedades/5374/2026/08/el-poder-judicial-presenta-un-nuevo-sistema-de-busqueda-de-jurisprudencia
