@@ -31,6 +31,12 @@ test('el catálogo manual conserva identificadores únicos y cobertura por ramas
   assert.deepEqual([...desconocidas], [], 'toda etiqueta de materia debe usar un id real de RAMAS');
 });
 
+test('la interfaz permite ordenar por línea jurídica y no confunde un error con cero fallos', () => {
+  assert.ok(html.includes('Por línea jurídica'), 'existe la vista agrupada por línea de investigación');
+  assert.ok(html.includes('Este error no equivale a una búsqueda válida con cero resultados'), 'la falla técnica se distingue de una consulta válida sin coincidencias');
+  assert.ok(html.includes('Un error de acceso o de red no significa que no existan fallos'), 'el resumen general comunica los errores de las fuentes');
+});
+
 test('los portales directos provinciales y especializados están registrados', () => {
   const obligatorios = [
     'apps1cloud.juschubut.gov.ar',
