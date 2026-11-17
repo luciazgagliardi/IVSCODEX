@@ -3436,7 +3436,7 @@ var SECRETARIAS_CABA={
 function nuevoIndices(){
   var o={};
   FUENTES_INDICE.forEach(function(f){
-    o[f.slug]={busco:false,cargando:false,error:null,resultados:[],total:0,guardados:0,local:false,avisoFalla:"",
+    o[f.slug]={busco:false,cargando:false,error:null,resultados:[],total:0,guardados:0,local:false,origenAcervo:"",fuenteInfo:null,avisoFalla:"",
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
@@ -5537,6 +5537,7 @@ function estadoLista(vis){
   var fallaron=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
   var h="";
   if(buscando.length) h+='<p class="rz-aviso"><span class="rf-t" style="color:var(--gold)">buscando…</span> '+buscando.map(function(f){return esc(f.cod);}).join(", ")+' (los sistemas oficiales pueden tardar hasta 30 segundos)</p>';
+  if(fallaron.length) h+='<p class="rz-aviso" role="status">No se pudo consultar '+fallaron.map(function(f){var im=estado.indices[f.slug]||{};return '<b>'+esc(f.cod)+'</b>'+(im.error?' ('+esc(String(im.error).slice(0,150))+')':'');}).join(', ')+'. Un error de acceso o de red no significa que no existan fallos.</p>';
   return h;
 }
 function bloqueResultados(vis){
@@ -5946,6 +5947,8 @@ function fichaIndice(f,r){
   var metaEnc=[r.tribunal,r.secretaria,r.magistrados,r.expediente?"Expte. "+r.expediente:""]
     .filter(Boolean).map(esc).join(" · ");
   var fechaEnc=r.fecha?esc(r.fecha):"";
+  var origenFicha=r.procedencia?'<span class="tag" title="'+esc(r.nivelAutoridad||"")+'">'+esc(r.procedencia)+'</span>':"";
+  var tipoFicha=r.tipoDocumento?'<span class="tag">'+esc(r.tipoDocumento)+'</span>':"";
   // Cuando la búsqueda fue por artículo, se distingue quién CITA el número de
   // quién apareció por el tema del artículo (su rúbrica). No es un detalle:
   // citar como "aplica el art. 1710" un fallo que sólo habla de prevención
@@ -5990,7 +5993,9 @@ function fichaIndice(f,r){
   return '<div class="fuente">'+
     '<div class="f-top"><span class="cod '+f.clase+'">'+esc(f.cod)+'</span>'+
       (metaEnc?'<span class="f-enc">'+metaEnc+'</span>':'')+
-      (fechaEnc?'<span class="f-fecha">'+fechaEnc+'</span>':'')+'</div>'+
+      (fechaEnc?'<span class="f-fecha">'+fechaEnc+'</span>':'')+
+      (origenFicha?'<span class="f-fecha">'+origenFicha+'</span>':'')+
+      (tipoFicha?'<span class="f-fecha">'+tipoFicha+'</span>':'')+'</div>'+
     '<h3 class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</h3>'+
     (pasaje?'<p class="f-nota">'+pasajeResaltado(pasaje,q,800)+'</p>':'')+
     (temas?'<p class="f-nota"><span style="opacity:.6">Temas que el TSJ asigna a este fallo: </span>'+resaltarSimple(temas,q)+'</p>':'')+
@@ -6424,6 +6429,8 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   // "total": ese es cuántos pasaron el filtro entre los que se alcanzaron a
   // revisar. Puede venir null (respaldo local: no hay sitio que preguntar).
   imBusco.totalFuente=(typeof d.totalFuente==="number")?d.totalFuente:null;
+  imBusco.fuenteInfo=d.fuenteInfo||imBusco.fuenteInfo||null;
+  imBusco.origenAcervo=d.origenAcervo||"";
   imBusco.guardados=d.guardadosEnIndice||0;
   imBusco.local=!!d.desdeIndiceLocal;
   imBusco.avisoFalla=d.avisoFalla||"";
@@ -6789,6 +6796,21 @@ function panelIndice(f){
   var out='<div class="panel vivo f-'+f.slug+'" id="panel-'+f.slug+'">'+
     '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+(local?'':' <span class="en-vivo">En vivo</span>')+'</span></div>';
 
+  var infoFuente=im.fuenteInfo;
+  if(infoFuente){
+    out+='<div class="aviso" style="margin:10px 0 14px">'+
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px">'+
+      '<span class="tag">'+esc(infoFuente.autoridad||"Fuente")+'</span>'+
+      '<span class="tag">'+esc(infoFuente.tipo||"Documento")+'</span>'+
+      '<span class="tag">'+esc(infoFuente.linea||"Investigación jurídica")+'</span>'+
+      '</div>'+
+      '<p style="margin:0 0 5px;font-size:12.5px">'+esc(infoFuente.cobertura||"Alcance no especificado.")+'</p>'+
+      '<p style="margin:0;font-size:12px;color:var(--humo)"><b>Procedencia:</b> '+esc(infoFuente.procedencia||f.nombre)+'. '+esc(infoFuente.limite||"Verifique el documento original.")+'</p>'+
+      (local?'<p style="margin:7px 0 0;font-size:12px;color:var(--gold)">Esta respuesta proviene del acervo local ('+esc(im.origenAcervo||"copia guardada")+'), no de una consulta en vivo en esta petición.</p>':'')+
+      '</div>';
+  }else if(local){
+    out+='<p class="rz-aviso">Resultado de una copia local. No equivale a una consulta en vivo.</p>';
+  }
   if(f.slug==="saij"){
     // SAIJ indexa la jurisprudencia y la legislación de las 24 jurisdicciones:
     // elegir una la convierte en el buscador de esa provincia.
@@ -6820,7 +6842,8 @@ function panelIndice(f){
     return out;
   }
   if(im.error){
-    out+='<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
+    out+='<p style="font-size:13px;color:var(--humo);margin:0">No se pudo consultar '+esc(f.nombre)+'. '+esc(String(im.error))+'</p>'+
+      '<p style="font-size:12px;color:var(--humo);margin:8px 0 0">Este error no equivale a una búsqueda válida con cero resultados. Revise el portal oficial o vuelva a consultar más tarde.</p></div>';
     return out;
   }
   if(!im.busco){
@@ -7190,7 +7213,7 @@ function compararFuentes(){
       .then(function(d){
         estado.comparar.porFuente[f.slug]=(d&&d.ok)
           ?{ok:true,total:d.total||0,totalFuente:(typeof d.totalFuente==="number"?d.totalFuente:null),
-            parcial:!!d.totalParcial,local:!!d.desdeIndiceLocal,resultados:d.resultados||[]}
+            parcial:!!d.totalParcial,local:!!d.desdeIndiceLocal,fuenteInfo:d.fuenteInfo||null,resultados:d.resultados||[]}
           :{ok:false,error:(d&&d.mensaje)||"no respondió"};
       })
       ["catch"](function(){
@@ -7209,7 +7232,7 @@ function tarjetaComparar(f){
   var borde='';
 
   if(!r) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Consultando…</p></div>';
-  if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Sin coincidencias.</p></div>';
+  if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">No se pudo consultar esta fuente. El error no equivale a cero jurisprudencia.</p></div>';
   if(!r.resultados.length) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Sin coincidencias.</p></div>';
 
   // NO se muestra el contador crudo del sitio, aunque lo tengamos.
@@ -7230,6 +7253,7 @@ function tarjetaComparar(f){
     var y=estado.comparar.porFuente[x.slug]; return y&&y.ok?y.resultados.length:0;
   }).concat([1]));
   var barra='<span class="comp-barra" aria-hidden="true"><i style="width:'+Math.round(r.resultados.length/tope*100)+'%"></i></span>';
+  var linea=r.fuenteInfo?'<p class="comp-vacio">'+esc(r.fuenteInfo.linea||r.fuenteInfo.tipo||"")+' · '+esc(r.fuenteInfo.procedencia||"")+'</p>':"";
   var cifra='<p class="comp-cifra"><b>'+r.resultados.length.toLocaleString("es-AR")+'</b> resultado'+
     (r.resultados.length===1?'':'s')+' encontrados'+
     (r.parcial?' (hay más para revisar)':'')+
@@ -7244,7 +7268,7 @@ function tarjetaComparar(f){
       '</div>';
   }).join("");
 
-  return '<div class="comp-card"'+borde+'>'+cab+cifra+barra+items+
+  return '<div class="comp-card"'+borde+'>'+cab+linea+cifra+barra+items+
     '<div class="f-acc" style="margin-top:10px">'+
       '<button class="mini" data-act="ir-a-fuente" data-fuente="'+esc(f.slug)+'">Ver todos en Buscar</button>'+
     '</div></div>';
