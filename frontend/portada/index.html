@@ -64,6 +64,36 @@
 .pie9 .bs a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 .pie9 .bs i{width:7px;height:7px;border-radius:50%;background:var(--c)}
 .pie9 .adv{max-width:24ch;margin:0 0 22px;font:400 clamp(28px,4.2vw,58px)/1.02 var(--titulo);letter-spacing:-.04em;text-wrap:balance}.pie9 .adv em{font-style:normal;color:var(--gold)}
+.pie9-verifica{display:flex;align-items:center;justify-content:space-between;gap:clamp(24px,5vw,80px);margin:0 0 22px;min-width:0}
+.pie9-verifica .adv{flex:0 1 25ch;margin:0}
+.pie-prisma{display:block;flex:0 1 340px;width:clamp(190px,28vw,340px);height:auto;overflow:visible;opacity:.92;pointer-events:none}
+.pie-prisma .haz{fill:none;stroke-width:1.25;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:.72}
+.pie-prisma .haz:nth-child(1){stroke:var(--c-mza)}
+.pie-prisma .haz:nth-child(2){stroke:var(--c-mzl)}
+.pie-prisma .haz:nth-child(3){stroke:var(--c-caba)}
+.pie-prisma .haz:nth-child(4){stroke:var(--c-scba)}
+.pie-prisma .haz:nth-child(5){stroke:var(--c-csjn)}
+.pie-prisma .haz:nth-child(6){stroke:var(--c-saij)}
+.pie-prisma .haz:nth-child(7){stroke:var(--c-dial)}
+.pie-prisma .haz:nth-child(8){stroke:var(--c-idh)}
+.pie-prisma .contorno{fill:rgba(var(--tx),.018);stroke:rgba(var(--tx),.58);stroke-width:1.2;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+.pie-prisma .nucleo{fill:var(--gold);transform-box:fill-box;transform-origin:center;opacity:0;filter:drop-shadow(0 0 5px rgba(var(--gold-rgb),.55))}
+.pie9-verifica.is-in .haz{animation:pieHaz 1.15s var(--ease) both}
+.pie9-verifica.is-in .haz:nth-child(2){animation-delay:.06s}
+.pie9-verifica.is-in .haz:nth-child(3){animation-delay:.12s}
+.pie9-verifica.is-in .haz:nth-child(4){animation-delay:.18s}
+.pie9-verifica.is-in .haz:nth-child(5){animation-delay:.24s}
+.pie9-verifica.is-in .haz:nth-child(6){animation-delay:.30s}
+.pie9-verifica.is-in .haz:nth-child(7){animation-delay:.36s}
+.pie9-verifica.is-in .haz:nth-child(8){animation-delay:.42s}
+.pie9-verifica.is-in .contorno{animation:pieContorno 1.25s var(--ease) .4s both}
+.pie9-verifica.is-in .nucleo{animation:pieNucleo .75s cubic-bezier(.34,1.56,.64,1) .9s both}
+@keyframes pieHaz{to{stroke-dashoffset:0}}
+@keyframes pieContorno{to{stroke-dashoffset:0}}
+@keyframes pieNucleo{0%{opacity:0;transform:scale(0)}75%{opacity:1;transform:scale(1.25)}100%{opacity:1;transform:scale(1)}}
+@media(max-width:760px){.pie9-verifica{gap:20px;align-items:flex-start}.pie9-verifica .adv{max-width:18ch;font-size:clamp(28px,7.5vw,42px)}.pie-prisma{width:min(42vw,190px);flex:0 0 min(42vw,190px);margin-top:6px}}
+@media(max-width:480px){.pie9-verifica{flex-direction:column;gap:14px}.pie-prisma{align-self:flex-end;width:190px;max-width:62vw;flex-basis:auto;margin-top:-4px}}
+@media(prefers-reduced-motion:reduce){.pie9-verifica.is-in .haz,.pie9-verifica.is-in .contorno,.pie9-verifica.is-in .nucleo{animation:none;stroke-dashoffset:0;opacity:1;transform:none}}
 .pie9 .aviso{max-width:70ch;margin:0 0 28px;color:var(--mute);font-size:14px}
 .legal-velo{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:clamp(16px,5vh,60px) 16px;background:rgba(var(--ov-rgb),.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);overflow:auto}
 .legal-velo[hidden]{display:none}
@@ -236,10 +266,15 @@ var SERV=[["buscar","Buscar","Búsqueda simultánea en los ocho motores de la pl
 var of=document.createElement("section");of.className="ofr";of.id="servicios";of.innerHTML='<h2 class="h2">Servicios.</h2><p class="lead6">Todo lo que ofrece la plataforma. Seleccione un servicio para abrirlo.</p><div class="rej">'+SERV.map(function(f){return '<a class="cel" href="#" data-tab="'+f[0]+'" style="--c:var('+f[3]+')">'+IVS4.dibujo(f[0])+'<h3>'+f[1]+'</h3><p>'+f[2]+'</p></a>';}).join("")+'</div>';m.appendChild(of);
 /* pie: sin el nombre grande; aviso, derechos reservados y contacto */
 var pie=document.createElement("footer");pie.className="pie9";
-pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<a href="#" data-tab="buscar" style="--c:var('+b[1]+')" aria-label="Ir al buscador de IVS CODEX desde '+b[0]+'" title="Abrir buscador de IVS CODEX"><i aria-hidden="true"></i>'+b[0]+'</a>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</p>'+IVS4.BOTONES+
+pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<a href="#" data-tab="buscar" style="--c:var('+b[1]+')" aria-label="Ir al buscador de IVS CODEX desde '+b[0]+'" title="Abrir buscador de IVS CODEX"><i aria-hidden="true"></i>'+b[0]+'</a>';}).join("")+'</div><div class="pie9-verifica"><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><svg class="pie-prisma" viewBox="0 0 360 150" role="img" aria-label="Prisma de IVS CODEX con haces que llegan desde la derecha"><defs><radialGradient id="pie-nucleo"><stop offset="0" stop-color="var(--gold)" stop-opacity=".95"/><stop offset="1" stop-color="var(--gold)" stop-opacity="0"/></radialGradient></defs><g class="haces"><path class="haz" pathLength="1" d="M360 18 C300 18 258 65 180 78"/><path class="haz" pathLength="1" d="M360 34 C298 34 256 68 180 78"/><path class="haz" pathLength="1" d="M360 50 C296 50 252 72 180 78"/><path class="haz" pathLength="1" d="M360 66 C292 66 250 76 180 78"/><path class="haz" pathLength="1" d="M360 82 C292 82 250 80 180 78"/><path class="haz" pathLength="1" d="M360 98 C296 98 252 84 180 78"/><path class="haz" pathLength="1" d="M360 114 C298 114 256 88 180 78"/><path class="haz" pathLength="1" d="M360 130 C300 130 258 91 180 78"/></g><path class="contorno" pathLength="1" d="M180 22 L111 132 L249 132 Z"/><circle class="nucleo" cx="180" cy="78" r="4.2"/><circle cx="180" cy="78" r="12" fill="url(#pie-nucleo)" opacity=".28"/></svg></div><p class="aviso">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</p>'+IVS4.BOTONES+
  '<div class="legal"><p><b>© 2026 IVS CODEX.</b> Todos los derechos reservados.</p><nav aria-label="Información legal"><a href="#terminos" data-legal="terminos">Términos de uso</a><a href="#privacidad" data-legal="privacidad">Política de privacidad</a><a href="#" data-tab="fuentes">Fuentes oficiales</a></nav>'+
  '<div class="ct"><span>Contacto: <a href="#" style="color:var(--fg)">contacto@su-dominio.com</a></span><span>Mendoza, Argentina</span></div></div>';
 m.appendChild(pie);
+var prismaPie=pie.querySelector(".pie9-verifica");
+if(prismaPie&&"IntersectionObserver" in window){
+  var revelarPrisma=new IntersectionObserver(function(entradas){entradas.forEach(function(e){if(e.isIntersecting){e.target.classList.add("is-in");revelarPrisma.unobserve(e.target);}});},{threshold:.35});
+  revelarPrisma.observe(prismaPie);
+}else if(prismaPie){prismaPie.classList.add("is-in");}
 
 /* Términos de uso y política de privacidad: un panel sobre la portada. El
    texto describe lo que la plataforma hace de verdad (ver backend/lib/usuarios.js,
