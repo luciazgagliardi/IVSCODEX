@@ -5240,7 +5240,10 @@ function tiraEquivalentes(sinNota){
   var e=expandir(String(estado.q||"").trim());
   if(!e||!e.variantes.length) return "";
   function chipVoz(v){
-    return '<button class="chip voz-sug" data-act="usar-equivalente" data-voz="'+esc(v.t)+'">'+
+    // Los equivalentes renombran el mismo concepto; los relacionados abren
+    // otra línea de búsqueda y nunca deben presentarse como sinónimos.
+    var act=v.rel==="relacionado"?"usar-relacionado":"usar-equivalente";
+    return '<button class="chip voz-sug" data-act="'+act+'" data-voz="'+esc(v.t)+'">'+
            esc(comoTitulo(v.t))+'</button>';
   }
   function porRelacion(rel){return e.variantes.filter(function(v){return v.rel===rel;});}
@@ -10421,7 +10424,7 @@ document.addEventListener("click",function(ev){
     invalidarBusquedas(); render();
     return;
   }
-  if(act==="usar-variante"||act==="usar-equivalente"||act==="usar-voz") estado.sugAbierta=false;
+  if(act==="usar-variante"||act==="usar-equivalente"||act==="usar-relacionado"||act==="usar-voz") estado.sugAbierta=false;
   if(act==="usar-variante"){
     var vq=b.getAttribute("data-voz")||"";
     if(!vq) return;
@@ -10437,7 +10440,17 @@ document.addEventListener("click",function(ev){
     estado.q=eq; estado.modo="exacta"; estado.articulo=""; estado.marca=0;
     invalidarBusquedas();
     render();
-    flash("Buscando «"+eq+"» — es lo mismo, escrito como lo escribe el tribunal");
+    flash("Buscando «"+eq+"» — otra denominación del mismo concepto");
+    return;
+  }
+  if(act==="usar-relacionado"){
+    var vinculo=b.getAttribute("data-voz")||"";
+    if(!vinculo) return;
+    var consultaOrigen=String(estado.q||"").trim();
+    estado.q=vinculo; estado.modo="exacta"; estado.articulo=""; estado.marca=0;
+    invalidarBusquedas();
+    render();
+    flash("Explorando «"+vinculo+"», concepto relacionado con «"+consultaOrigen+"», no sinónimo");
     return;
   }
   if(act==="cerrar-sugeridas"){ estado.sugeridas=[]; estado.sugeridaRama=""; render(); return; }
