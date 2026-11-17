@@ -33,8 +33,8 @@ test('el catálogo manual conserva identificadores únicos y cobertura por ramas
 });
 
 test('todos los bloques JavaScript inline de la interfaz compilan', () => {
-  const scripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script\\s*>/gi)]
-    .filter((match) => !/\\bsrc\\s*=/.test(match[1]) && match[2].trim());
+  const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)]
+    .filter((match) => !/\bsrc\s*=/.test(match[1]) && match[2].trim());
   assert.ok(scripts.length >= 5, 'se encontraron los scripts inline de la aplicación');
   for (const [i, match] of scripts.entries()) {
     assert.doesNotThrow(
@@ -43,7 +43,6 @@ test('todos los bloques JavaScript inline de la interfaz compilan', () => {
     );
   }
 });
-
 test('la interfaz permite ordenar por línea jurídica y no confunde un error con cero fallos', () => {
   assert.ok(html.includes('Por línea jurídica'), 'existe la vista agrupada por línea de investigación');
   assert.ok(html.includes('Este error no equivale a una búsqueda válida con cero resultados'), 'la falla técnica se distingue de una consulta válida sin coincidencias');
