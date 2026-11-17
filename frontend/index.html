@@ -3370,7 +3370,7 @@ var FUENTES_INDICE=[
     {v:"fallos",n:"Fallos (ficha del expediente)"},
     {v:"legislacion",n:"Legislación (con el artículo)"},
     {v:"doctrina",n:"Doctrina (con extracto)"},
-    {v:"dictamenes",n:"Dictámenes del Ministerio Público Fiscal"}
+    {v:"dictamenes",n:"Dictámenes (organismos públicos)"}
   ]},
  {slug:"dialnet",cod:"DIALNET",clase:"doc",boton:"Dialnet",
   nombre:"Doctrina jurídica en español",
@@ -5062,9 +5062,8 @@ function pintarCabecera(v){
   /* Cabecera limpia: sin etiqueta latina dorada ni categoría secundaria. */
   c.innerHTML=dibujoSeccion(t[0])+saludoHTML()+
     '<h1>'+esc(t[1])+'.</h1>'+
-    (t[0]==="buscar"?'<p class="cab__intro">La plataforma interroga de forma simultánea los repositorios oficiales integrados, '+
-      'extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, '+
-      'con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>':'');
+    (t[0]==="buscar"?'<p class="cab__intro">La plataforma consulta en paralelo los repositorios judiciales integrados, adapta la búsqueda a cada motor y amplía la recuperación con equivalencias del tesauro. '+
+      'Permite separar resultados por línea jurídica y consultar, según la fuente, jurisprudencia, normativa, doctrina o dictámenes. Cada ficha identifica su procedencia, autoridad y límites de cobertura.</p>':'');
   var primero=v.firstElementChild;
   if(primero&&primero.classList.contains("aviso")&&(primero.querySelector(".av-tit,.av-oro")||t[0]==="cuenta")){
     c.appendChild(primero);
@@ -5552,7 +5551,6 @@ function bloqueResultados(vis){
   var h=avisoNombre()+estadoLista(vis);
   if(!lista.length){
     var respondieron=vis.filter(function(f){var im=estado.indices[f.slug]||{};return im.busco&&!im.error;}).length;
-    var yaBuscaron=vis.filter(function(f){return (estado.indices[f.slug]||{}).busco;}).length;
     return h+(buscadas
       ?'<div class="vacio vacio--inicio">'+(respondieron
         ?'No se encontraron coincidencias en las fuentes que respondieron. Las fuentes que fallaron se identifican por separado y no cuentan como resultado cero.'
