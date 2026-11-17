@@ -5560,10 +5560,24 @@ function bloqueResultados(vis){
       :'<div class="vacio vacio--inicio">Escriba su consulta y seleccione <b>Buscar</b>:<br>la consulta se envía en simultáneo a las bases seleccionadas y los resultados se muestran en esta sección.</div>');
   }
   h+='<div class="rz-cab"><b>Todas las bases</b>'+
-    '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"]].map(function(o){
+    '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"],["linea","Por línea jurídica"]].map(function(o){
       return '<button class="chip" data-act="orden" data-v="'+o[0]+'" aria-pressed="'+(estado.orden===o[0]?"true":"false")+'">'+o[1]+'</button>'; }).join("")+'</span></div>';
-  var lim=estado.limFilas||40;
-  h+=lista.slice(0,lim).map(function(x){ return filaIndice(x.f,x.r,x.k,x.tambien); }).join("");
+  var lim=estado.limFilas||40, visiblesLista=lista.slice(0,lim);
+  if(estado.orden==="linea"){
+    var porLinea={};
+    visiblesLista.forEach(function(x){
+      var im=estado.indices[x.f.slug]||{}, info=im.fuenteInfo||{};
+      var linea=x.r.lineaInvestigacion||info.linea||"Otras fuentes";
+      (porLinea[linea]=porLinea[linea]||[]).push(x);
+    });
+    h+=Object.keys(porLinea).sort(function(a,b){return a.localeCompare(b,"es");}).map(function(linea){
+      var grupo=porLinea[linea];
+      return '<section class="rz-linea"><div class="rz-cab"><b>'+esc(linea)+'</b><span class="rz-ord">'+grupo.length+' resultado'+(grupo.length===1?'':'s')+'</span></div>'+
+        grupo.map(function(x){return filaIndice(x.f,x.r,x.k,x.tambien);}).join("")+'</section>';
+    }).join("");
+  }else{
+    h+=visiblesLista.map(function(x){ return filaIndice(x.f,x.r,x.k,x.tambien); }).join("");
+  }
   if(lista.length>lim) h+='<div class="rz-mas"><button class="btn sec" data-act="mas-filas">Mostrar 40 más <span class="rz-mas-n">(quedan '+(lista.length-lim)+')</span></button></div>';
   h+='<p class="rz-aviso">Se muestran los primeros resultados de cada base. Para ver todos, filtrar por tribunal o cambiar de página, elija la base en la columna de la izquierda.</p>';
   return h;
