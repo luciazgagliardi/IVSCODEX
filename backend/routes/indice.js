@@ -354,7 +354,7 @@ for (const { slug, buscar } of FUENTES) {
       if (!accesible(slug) && acervoCubre(slug)) {
         sondear(slug, () => buscar(parametrosVivo));
         const loc = await paginaLocal(slug, consulta, pedidoLocal);
-        if (loc) return res.json({ ok: true, ...loc, ms: Date.now() - arranque });
+        if (loc) return res.json({ ok: true, ...respuestaConFuente(slug, loc), ms: Date.now() - arranque });
       }
 
       try {
