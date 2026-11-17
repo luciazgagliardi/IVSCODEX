@@ -81,7 +81,7 @@
      o.band  [alto,bajo] de las entradas (fracciones)       o.out(P,W,H) -> puntos del haz de salida */
   window.IVSPrisma=function(cv,o){
     o=o||{};var ctx=cv.getContext("2d"),W=1,H=1,D=Math.min(devicePixelRatio||1,2),P={x:0,y:0},P0={x:0,y:0},Y=[],puls=[],last=0,tm=0,out=[],cum=[],total=0,
-      ox=0,oy=0,ang=0,tmx=0,tmy=0,mpx=0,mpy=0,vivo=0,vel=0,lmx=0,lmy=0;   /* interacción con el puntero (o.mouse) */
+      ox=0,oy=0,ang=0,scrollAng=0,tmx=0,tmy=0,mpx=0,mpy=0,vivo=0,vel=0,lmx=0,lmy=0;   /* interacción con el puntero (o.mouse) */
     var cs=getComputedStyle(document.documentElement),quieto=matchMedia("(prefers-reduced-motion:reduce)").matches;
     /* las entradas del prisma son las bases consultadas (no las ofertas del libro, que son otras seis cosas) */
     var BASES_PRISMA=[["SCJM","--c-mza"],["MZA LEGAL","--c-mzl"],["TSJ","--c-caba"],["SCBA","--c-scba"],["CSJN","--c-csjn"],["SAIJ","--c-saij"],["DIALNET","--c-dial"],["CORTE IDH","--c-idh"]];
@@ -117,6 +117,16 @@
         vel=Math.min(1,vel+Math.hypot(mpx-lmx,mpy-lmy)/90);lmx=mpx;lmy=mpy;vivo=1;
       },{passive:true});
     }
+    /* La rotación acompaña el recorrido de la landing: una vuelta completa
+       distribuida por toda la página, sin depender del movimiento del puntero. */
+    function actualizarGiroScroll(){
+      var max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
+      var progreso=Math.max(0,Math.min(1,scrollY/max));
+      scrollAng=progreso*Math.PI*2;
+    }
+    addEventListener("scroll",actualizarGiroScroll,{passive:true});
+    addEventListener("resize",actualizarGiroScroll);
+    actualizarGiroScroll();
     function en(s){ // punto a distancia s a lo largo del haz de salida
       for(var i=1;i<out.length;i++){ if(s<=cum[i]){var u=(s-cum[i-1])/Math.max(1e-6,cum[i]-cum[i-1]);return [out[i-1][0]+(out[i][0]-out[i-1][0])*u,out[i-1][1]+(out[i][1]-out[i-1][1])*u];} }
       return out[out.length-1];
@@ -145,7 +155,7 @@
     }
     function frame(now){
       var dt=Math.min((now-last)/1000,.05);last=now;tm+=dt;
-      if(o.mouse){var k=1-Math.exp(-dt*5);ox+=(tmx*W*.04-ox)*k;oy+=(tmy*H*.07-oy)*k;ang+=(tmx*.09-ang)*k;vel*=Math.exp(-dt*2.2);vivo=Math.max(0,vivo-dt*.35);calc();}
+      if(o.mouse){var k=1-Math.exp(-dt*5);ox+=(tmx*W*.04-ox)*k;oy+=(tmy*H*.07-oy)*k;ang+=(tmx*.09-ang)*k;vel*=Math.exp(-dt*2.2);vivo=Math.max(0,vivo-dt*.35);calc();}else{ang+=(scrollAng-ang)*(1-Math.exp(-dt*3.2));}
       ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
       /* en el fondo claro la luz no suma (no hay negro sobre el que brillar): se pinta normal y en oro más hondo */
       var cl=document.documentElement.getAttribute("data-tema")==="claro",LUZ=cl?"source-over":"lighter",ORO=cl?[168,118,8]:ORO0,CLARO=cl?[148,106,6]:CLARO0;
