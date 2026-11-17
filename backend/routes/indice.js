@@ -463,7 +463,6 @@ for (const { slug, buscar } of FUENTES) {
         totalParcial,
         revisados,
         aflojado,
-        resultados: unicos,
         guardadosEnIndice: guardados,
         desdeIndiceLocal,
         avisoFalla,
@@ -675,7 +674,7 @@ router.get('/fuentes/estado', async (_req, res) => {
       const arranque = Date.now();
       try {
         const r = await buscar({ q: 'daño', pagina: 1 });
-        return { ...informacionFuente(slug), slug, alcanzable: true, estado: 'accesible', resultados: r.resultados.length, ms: Date.now() - arranque, comprobadoEn: new Date().toISOString() };
+        return { ...informacionFuente(slug), slug, alcanzable: true, estado: 'accesible', resultados: r.resultados?.length || 0, ms: Date.now() - arranque, comprobadoEn: new Date().toISOString() };
       } catch (e) {
         return {
           ...informacionFuente(slug),
