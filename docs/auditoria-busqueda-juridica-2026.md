@@ -20,7 +20,7 @@ Se añadieron pruebas de regresión para ambos comportamientos. Estos cambios es
 
 El proyecto reúne doce fuentes documentales principales. Además, incorpora seis vistas provinciales que consultan facetas de SAIJ. Estas seis vistas no son seis conexiones independientes a los poderes judiciales provinciales.
 
-El catálogo de la interfaz contiene alrededor de 106 enlaces a organismos y buscadores. Ese catálogo es útil para abrir fuentes manualmente, pero no significa que las 106 bases se consulten automáticamente en cada búsqueda.
+El catálogo de la interfaz contiene 125 enlaces a organismos y buscadores, luego de la segunda expansión documentada en la sección 5.1. Ese catálogo es útil para abrir fuentes manualmente, pero no significa que las 106 bases se consulten automáticamente en cada búsqueda.
 
 La lista de fuentes de búsqueda tampoco equivale a cobertura total del sistema judicial argentino. Un agregador nacional puede reunir decisiones de distintas jurisdicciones, pero no garantiza que cada fallo esté publicado, actualizado, indexado con el texto completo o atribuido correctamente al tribunal. Los portales de consulta de causas, por su parte, sirven para seguir expedientes y no necesariamente contienen una base pública de sentencias.
 
@@ -170,6 +170,47 @@ La nueva plataforma ofrece texto completo y metadatos, búsqueda aproximada, ope
 https://www.justicia.ar/herramientas/sentencias
 
 Justicia.ar reúne enlaces a jurisprudencia de la CSJN, la justicia federal y nacional y los poderes judiciales provinciales y de la Ciudad. Debe convertirse en el registro de referencia para detectar altas, bajas y cambios de portales. Su directorio de consulta pública de causas debe mantenerse separado: el seguimiento de un expediente no equivale a la publicación del fallo.
+
+## 5.1. Segunda expansión del catálogo provincial y federal
+
+La revisión directa del directorio de sentencias de Justicia.ar reveló que una parte importante de los buscadores provinciales no figuraba en el catálogo de IvsCodex. Se añadieron **18 accesos oficiales al catálogo manual** y un acceso directo al buscador federal/nacional. El catálogo pasó de 106 a **125 fuentes**.
+
+Esto mejora el descubrimiento y evita que el usuario confunda una vista de SAIJ con una consulta del Poder Judicial local. No convierte automáticamente esos portales en fuentes consultadas por cada búsqueda: para eso hace falta implementar y probar un adaptador específico.
+
+| Portal oficial | Alcance observado | Valor para IvsCodex | Estado técnico de la auditoría |
+|---|---|---|---|
+| **Chubut — Eureka!** (https://apps1cloud.juschubut.gov.ar/eureka) | Fallos anonimizados, sumarios y acordadas/resoluciones. En la consulta del 17/11/2026 mostraba 241.058 sentencias, 85.237 anonimizadas, 69.692 sumarios y 29.345 acordadas/resoluciones. | Muy alto: volumen documental grande, varias instancias, doctrina y normativa administrativa. | Hay vista anónima pública; los documentos restringidos exigen credenciales. El buscador ofrece rutas distintas para fallos y sumarios. Investigar el formulario anónimo y sus límites sin tocar vistas restringidas. |
+| **Corrientes — STJ** (https://jurisprudencia.juscorrientes.gov.ar/) | 48.358 fallos del STJ, de 2004 a agosto de 2026, en nueve materias. El propio Poder Judicial anunció que las cámaras se incorporarán en una segunda etapa. | Muy alto: material reciente, clasificación por fuero y sumarios estructurados revisados por el área de jurisprudencia. | Portal oficial nuevo; el dominio devolvió 403 a la consulta automatizada de esta auditoría. No se ha confirmado una API pública ni un método de cosecha permitido. |
+| **Entre Ríos — Buscador de Jurisprudencia** (https://jurbuscador.jusentrerios.gov.ar/) | Alrededor de 14.000 sentencias completas y más de 32.000 sumarios, principalmente desde 2014; incluye STJ, cámaras civiles/comerciales, laborales, contencioso-administrativas y casación penal, además de tribunales de juicio. | Muy alto: diversidad de fueros e instancias, sumarios con voces y texto completo. | Buscador público, pero la interfaz observada incluye un campo de verificación. No automatizar sorteando ese control. Debe evaluarse una API oficial, convenio o cosecha autorizada. |
+| **Formosa** (https://www.jusformosa.gob.ar/decisiones-judiciales/jurisprudencia) | Buscador de sumarios, fallos e interlocutorios; fallos novedosos y cuantificación de daños. El sitio publica además acuerdos y resoluciones. | Alto: civil, laboral, penal y criterios de cuantificación. | El portal oficial es indexable y está enlazado por Justicia.ar; el buscador requiere una prueba de interacción y paginación antes de desarrollar adaptador. |
+| **Jujuy** (https://jurisprudencia.justiciajujuy.gov.ar/public/buscador?index=0) | Sentencias, fallos relevantes y acordadas, con filtros por órgano, fecha, expediente, voz y texto. | Alto: búsqueda por voz y frase exacta, con posibilidad de identificar fallos relevantes y perspectiva de género. | El propio portal advierte que no incluye cámaras y juzgados penales, tribunales de familia ni juzgados de menores. Esa exclusión debe mostrarse como zona ciega, no ocultarse. |
+| **La Rioja** (https://tesauro.justicialarioja.gob.ar/tb_exped_list.php) | Portal de jurisprudencia enlazado desde el directorio oficial. | Medio-alto: jurisdicción hoy subrepresentada en el acervo automático. | Respondió 502 durante el sondeo; acceso manual y automatización pendientes de nueva prueba. |
+| **Salta — Secretaría de Jurisprudencia** (https://www.justiciasalta.gov.ar/es/jurisprudencia-inicio) | Fallos completos y doctrina judicial desde 2001; Corte, cámaras civiles/comerciales y laborales, tribunales de impugnación y de juicio; novedades y boletines. | Muy alto: cobertura por fuero y material completo, con novedades y compilaciones temáticas. | Portal y buscador institucional visibles; candidato prioritario para un adaptador. |
+| **Santa Cruz — TSJ** (https://jurisprudencia.jussantacruz.gob.ar/) | Buscador inteligente público enlazado desde el portal del Tribunal Superior. | Alto: amplía jurisprudencia patagónica con conexión directa al órgano judicial. | Se verificó el enlace oficial y la portada, pero no se validaron cobertura, API ni paginación. |
+| **Tierra del Fuego** (https://juris.justierradelfuego.gov.ar/) | Portal oficial de jurisprudencia listado por Justicia.ar. | Alto como fuente territorial hoy ausente del buscador automático. | El portal sufrió timeout en el sondeo; mantener como enlace manual hasta que se pueda probar. |
+| **Tucumán — Jurisprudencia y Legislación** (https://jurisprudencia.justucuman.gov.ar/) | Oficina de Jurisprudencia y Legislación que releva diariamente resoluciones definitivas e interlocutorias de la Corte, cámaras y tribunales de impugnación de todos los fueros y centros judiciales. | Muy alto: actualizaciones frecuentes y cobertura provincial amplia. | Portal institucional comprobado; candidato prioritario para un adaptador, pendiente de inspección de formulario y condiciones de acceso. |
+| **Chaco** (https://www.justiciachaco.gov.ar/busquedas/Busqueda_Jurisprudencia/buscador/) | Buscador oficial enlazado desde Justicia.ar. | Alto como fuente provincial directa. | El portal respondió con timeout al sondeo externo. No tratar un fallo de red como resultado cero. |
+| **SCBA — listado de sentencias** (https://sentencias-corte.scba.gov.ar/) | Buscador oficial de sentencias definitivas e interlocutorias de la Suprema Corte, con filtros por organismo, registro, fechas y texto. | Alto como complemento a JUBA: agrega otra vía para encontrar sentencias del máximo tribunal. | Página de consulta visible; no se probó el flujo de envío del formulario ni la extracción de documentos. No sustituye JUBA ni sus sumarios de cámaras. |
+| **Neuquén — Civil, comercial, laboral, minería, familia y administrativo** (https://juriscivil.jusneuquen.gov.ar/) | Buscador oficial especializado por materias. | Alto: especialmente importante para minería, familia y laboral. | El portal está enlazado por Justicia.ar, pero devolvió timeout en el sondeo. |
+| **Neuquén — Penal** (https://jurispenal.jusneuquen.gov.ar/) | Buscador oficial separado para jurisprudencia penal. | Alto: evita que la consulta penal dependa de una vista general de SAIJ. | El portal está enlazado por Justicia.ar, pero devolvió timeout en el sondeo. |
+
+### Nuevas fuentes nacionales y especializadas en el catálogo
+
+- **Tribunales federales y nacionales:** el directorio oficial de Justicia.ar enlaza el acceso institucional de la CSJN a fallos, sorteos y otras decisiones del Poder Judicial de la Nación: https://www.csjn.gov.ar/tribunales-federales-nacionales/inicio.html. Debe ser prioridad para ampliar la búsqueda más allá de la CSJN y SAIJ, en especial por la cobertura de cámaras y primera instancia.
+- **Tribunal Fiscal de la Nación:** el portal reúne últimas sentencias, VUCE, boletín, sumarios y un buscador asistido por IA. Su propia página advierte que la carga de sentencias sigue en curso: https://www.argentina.gob.ar/tribunalfiscal/jurisprudencia.
+- **Procuración del Tesoro:** el buscador de dictámenes es una fuente esencial de jurisprudencia administrativa: https://busquedadictamenes.ptn.gob.ar/. Los dictámenes son obligatorios para los servicios jurídicos que integran el Cuerpo de Abogados del Estado, no para todos los jueces ni litigantes.
+- **CNDC:** la página oficial reúne buscador general de dictámenes y resoluciones, jurisprudencia temática, multas y remedios: https://www.argentina.gob.ar/defensadelacompetencia/buscadores.
+
+### Qué significa este crecimiento
+
+La sección Fuentes ahora tiene **125 enlaces**; siguen existiendo sólo doce conexiones documentales principales y seis vistas provinciales SAIJ en la búsqueda automática. La nueva lista aumenta las rutas verificables al material de cada jurisdicción, pero el producto debe seguir distinguiendo:
+
+1. **Conector automático activo:** IvsCodex ejecuta y registra esa búsqueda.
+2. **Cosecha local:** IvsCodex consulta su propio corpus, cuya cobertura y fecha de actualización deben mostrarse.
+3. **Fuente oficial manual:** el usuario abre el buscador del organismo y realiza allí la consulta.
+4. **Fuente no disponible o parcialmente accesible:** el portal está caído, bloqueado o sujeto a verificación; un error no equivale a cero jurisprudencia.
+
+La siguiente fase técnica de mayor rendimiento es integrar primero Chubut, Salta y Tucumán, siempre que sus interfaces permitan consultas públicas reproducibles; luego Entre Ríos si existe un modo autorizado de resolver su control de verificación; y después Corrientes, Jujuy, SCBA directo y Formosa. La prioridad se basa en volumen, cobertura material, actualidad y posibilidad de obtener documentos oficiales, no sólo en la cantidad de enlaces.
 
 ## 6. Método de búsqueda jurídica recomendado
 
