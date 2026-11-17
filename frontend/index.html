@@ -5551,7 +5551,12 @@ function bloqueResultados(vis){
   var lista=listaTodas(vis), buscadas=vis.filter(function(f){ return (estado.indices[f.slug]||{}).busco; }).length;
   var h=avisoNombre()+estadoLista(vis);
   if(!lista.length){
-    return h+(buscadas?'<div class="vacio vacio--inicio">Sin resultados en las bases que respondieron. Pruebe con menos palabras, o cambie «Cómo combinar».</div>'
+    var respondieron=vis.filter(function(f){var im=estado.indices[f.slug]||{};return im.busco&&!im.error;}).length;
+    var yaBuscaron=vis.filter(function(f){return (estado.indices[f.slug]||{}).busco;}).length;
+    return h+(buscadas
+      ?'<div class="vacio vacio--inicio">'+(respondieron
+        ?'No se encontraron coincidencias en las fuentes que respondieron. Las fuentes que fallaron se identifican por separado y no cuentan como resultado cero.'
+        :'Ninguna de las fuentes seleccionadas pudo completar la consulta. No hay base para afirmar que no existan fallos.')+' Revise las fuentes con error o pruebe una consulta distinta.</div>'
       :'<div class="vacio vacio--inicio">Escriba su consulta y seleccione <b>Buscar</b>:<br>la consulta se envía en simultáneo a las bases seleccionadas y los resultados se muestran en esta sección.</div>');
   }
   h+='<div class="rz-cab"><b>Todas las bases</b>'+
