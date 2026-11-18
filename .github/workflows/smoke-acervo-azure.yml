@@ -1,5 +1,9 @@
 name: Verificar búsqueda real tras publicar Azure
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/smoke-acervo-azure.yml'
   pull_request:
     branches: [main]
     paths:
@@ -15,6 +19,39 @@ concurrency:
   group: smoke-acervo-azure
   cancel-in-progress: true
 jobs:
+  voz:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Comprobar la voz neuronal argentina en Azure
+        run: |
+          node --input-type=module <<'NODE'
+          const api = 'https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api';
+          const estado = await fetch(api + '/voz', { signal: AbortSignal.timeout(15000) });
+          if (!estado.ok) throw new Error('El motor de voz no responde: HTTP ' + estado.status);
+          const motor = await estado.json();
+          if (motor.idioma !== 'es-AR' || motor.voz !== 'es-AR-ElenaNeural') {
+            throw new Error('La voz no está configurada en español argentino: ' + JSON.stringify(motor));
+          }
+          const respuesta = await fetch(api + '/voz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ texto: 'Esta es una prueba de lectura con voz neuronal argentina.' }),
+            signal: AbortSignal.timeout(60000)
+          });
+          if (!respuesta.ok) throw new Error('La síntesis falló: HTTP ' + respuesta.status + ' ' + await respuesta.text());
+          const tipo = respuesta.headers.get('content-type') || '';
+          const audio = Buffer.from(await respuesta.arrayBuffer());
+          if (!tipo.toLowerCase().includes('audio/mpeg') || audio.length < 500) {
+            throw new Error('La síntesis no devolvió un MP3 válido: ' + tipo + ', ' + audio.length + ' bytes');
+          }
+          console.log('VOZ_OK ' + JSON.stringify({ idioma: motor.idioma, voz: motor.voz, formato: tipo, bytes: audio.length }));
+          NODE
   smoke:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
