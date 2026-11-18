@@ -1162,12 +1162,11 @@ body.en-recorrido .cab>*{animation:none}
 
 /* ---------- lectura en voz alta ---------- */
 .lector-voz{
-  position:sticky;top:0;z-index:7;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
-  margin:0 0 8px;padding:10px 0;background:rgba(var(--bg-rgb),.9);
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--line-2)
+  position:relative;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
+  margin:0 0 8px;padding:10px 0;background:transparent;border:0
 }
-.lector-voz__titulo{font:500 11px/1.2 var(--caps);letter-spacing:.13em;color:var(--mute);white-space:nowrap}
+.lector-voz__titulo{display:inline-flex;align-items:center;gap:7px;font:500 14px/1.2 var(--sans);letter-spacing:0;color:var(--fg-82);white-space:nowrap}
+.lector-voz__titulo svg{display:block;width:18px;height:18px;flex:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;fill:none}
 .lector-voz__acciones{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .lector-voz__acciones button{min-height:32px;padding:6px 12px}
 .lector-voz__velocidad{display:inline-flex;align-items:center;gap:7px;color:var(--mute);font-size:12px;white-space:nowrap}
@@ -7516,7 +7515,10 @@ function vistaLector(){
   }
   return avisoErrorLector()+
     '<section class="lector-voz" role="group" aria-label="Lectura en voz alta">'+
-      '<span class="lector-voz__titulo">LECTIO · ESCUCHAR</span>'+
+      '<span class="lector-voz__titulo">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        <span>Escuchar</span>
+      </span>'+
       '<div class="lector-voz__acciones">'+
         '<button type="button" class="mini" data-act="voz-iniciar">Escuchar</button>'+
         '<button type="button" class="mini" data-act="voz-leer-seleccion" title="Seleccione un fragmento del fallo y escúchelo">Leer selección</button>'+
