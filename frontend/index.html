@@ -1873,6 +1873,18 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
     if(!entrada) return;
     var abierta=true;
 
+    /* Puente de navegación prioritario: se registra antes de las animaciones.
+       Si una decoración falla, los botones de la portada siguen abriendo la app. */
+    window.addEventListener("message",function(e){
+      if(e.origin!==location.origin||!e.data||e.data.ivs!=="abrir") return;
+      var tab=String(e.data.tab||"");
+      if(["buscar","lector","ramas","requisitos","comparar","norma","fuentes","citas","verificar","guardados","cuenta","calculos","plazos","glosario","herramientas"].indexOf(tab)===-1) return;
+      cerrar(tab);
+      estado.tab=tab;
+      render();
+      window.scrollTo(0,0);
+    });
+
     /* El sello: los renglones de un códice recortados por un círculo, con
        el punto del logo como punto final, y alrededor una leyenda que
        gira. Va con semilla para que salga siempre igual. */
@@ -2142,14 +2154,6 @@ window.onerror=function(m){ panic(String(m).slice(0,90)); return true; };
     });
     document.addEventListener("click",function(e){
       if(e.target&&e.target.closest&&e.target.closest("[data-portada]")) abrir();
-    });
-    /* La portada (en su marco) pide abrir una sección. Solo se aceptan mensajes del mismo origen y secciones conocidas. */
-    window.addEventListener("message",function(e){
-      if(e.origin!==location.origin||!e.data||e.data.ivs!=="abrir") return;
-      var tab=String(e.data.tab||"");
-      if(["buscar","lector","ramas","requisitos","comparar","norma","fuentes","citas","verificar","guardados","cuenta","calculos","plazos","glosario","herramientas"].indexOf(tab)===-1) return;
-      var b=document.createElement("button"); b.type="button"; b.setAttribute("data-tab",tab); b.hidden=true;
-      entrada.appendChild(b); b.click(); b.remove();
     });
     document.addEventListener("keydown",function(e){
       if(e.key==="Escape"&&abierta) cerrar();
