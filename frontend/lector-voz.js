@@ -34,7 +34,7 @@
         frases = Array.from(segmentador.segment(limpio), function (parte) { return parte.segment; });
       } catch (_) {}
     }
-    if (!frases.length) frases = limpio.match(/[^.!?…]+(?:[.!?…]+["»”’)\\]]*)?|[.!?…]+/g) || [limpio];
+    if (!frases.length) frases = limpio.match(/[^.!?…]+(?:[.!?…]+["»”’)\]]*)?|[.!?…]+/g) || [limpio];
 
     var tramos = [], actual = "";
     frases.forEach(function (frase) {
