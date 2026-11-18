@@ -1033,9 +1033,9 @@ body.en-recorrido .cab>*{animation:none}
 .guia-card{min-width:0;padding:20px 22px 18px;border:1px solid var(--line);border-radius:24px;background:rgba(var(--gold-rgb),.035)}
 .guia-card h3{margin:0 0 14px;font:500 18px/1.3 var(--sans);color:var(--fg)}
 /* Anula la sangría genérica de .blk ol para que la lista no desborde la tarjeta. */
-.blk .guia-lista{display:grid;gap:0;margin:0;padding:0;list-style:none;counter-reset:guia;min-width:0}
-.blk .guia-lista li{counter-increment:guia;display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:4px;align-items:start;min-width:0;box-sizing:border-box;margin:0;padding:10px 0;border-top:1px solid var(--line-2);font:400 14.5px/1.55 var(--sans);color:var(--fg-82)}
-.blk .guia-lista li::before{content:counter(guia) ")";font:inherit;letter-spacing:inherit;color:inherit;font-variant-numeric:inherit;white-space:nowrap}
+.guia-lista{display:grid;gap:0;margin:0;padding:0;list-style:none;counter-reset:guia}
+.guia-lista li{counter-increment:guia;display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:10px;padding:11px 0;border-top:1px solid var(--line-2);font:400 14.5px/1.55 var(--sans);color:var(--fg-82)}
+.guia-lista li::before{content:counter(guia) ")";font:inherit;color:inherit}
 .blk .guia-lista li em{color:inherit}
 @media(max-width:760px){.guias-grid{grid-template-columns:minmax(0,1fr)}}
 
