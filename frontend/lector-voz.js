@@ -23,7 +23,8 @@
   function vocesEspanol() {
     if (!sintesis || !sintesis.getVoices) return [];
     return sintesis.getVoices().filter(function (voz) {
-      return /^es(?:-|$)/i.test(voz.lang || "");
+      var idioma = (voz.lang || "").toLowerCase();
+      return /^es(?:-|$)/i.test(idioma) && idioma !== "es-us";
     }).sort(function (a, b) {
       function rango(v) {
         var lang = (v.lang || "").toLowerCase();
