@@ -69,7 +69,7 @@ Seis están siempre en la barra —Buscar, Lector, Ramas, Cálculos, Fuentes y V
 | | `MATERIAE` | Ramas | Las 28 ramas del derecho y las voces con que indexan los buscadores. |
 | | `REQVISITA` | Requisitos | Lo que exige cada trámite. |
 | | `LEX` | Norma | Los artículos de las normas, desde InfoLeg. |
-| **Leer y citar** | `LECTIO` | Lector | El fallo con su búsqueda destacada, por enlace, archivo o texto pegado. |
+| **Leer y citar** | `LECTIO` | Lector | El fallo con su búsqueda destacada, por enlace, archivo o texto pegado; también lo lee en voz alta desde el navegador. |
 | | `CITATIO` | Citar | Formateador de citas. |
 | | `PROBATIO` | Verificar | Contrasta una cita con las bases oficiales antes de presentarla. |
 | | `VERBA` | Glosario | Latín jurídico. |
