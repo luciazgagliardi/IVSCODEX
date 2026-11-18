@@ -18,15 +18,14 @@
  * verificador dice siempre contra qué buscó: el alcance real es esta lista,
  * no aquella.
  *
- * De las seis, dos no son tribunales: Dialnet (lib/indiceDialnet.js) es
- * doctrina, no jurisprudencia, y Mendoza Legal (lib/indiceMendozaLegal.js)
- * es una revista que publica fallos elegidos a mano, con el resumen escrito
- * por una persona. Por eso el verificador de citas (lib/verificarCita.js) no
- * elige a ninguna de las dos — su lista de fuentes posibles está fijada a
- * mano ahí adentro, no recorre este array entero — pero el Buscador general
- * sí las ofrece como una fuente más. Ninguna de las dos sirve para confirmar
- * que un expediente existe: una no indexa sentencias y la otra indexa una
- * selección, así que no encontrar algo ahí no dice absolutamente nada.
+ * No todas las entradas son repositorios judiciales equivalentes. Dialnet
+ * (lib/indiceDialnet.js) indexa doctrina académica, no sentencias; Mendoza
+ * Legal (lib/indiceMendozaLegal.js) publica una selección editorial de fallos.
+ * Ambas son valiosas para descubrir argumentos, autores y referencias, pero
+ * ninguna permite confirmar por sí sola que un expediente existe ni que un
+ * criterio sea jurisprudencia consolidada. El verificador de citas no las
+ * trata como fuentes primarias: su selección de repositorios de comprobación
+ * está fijada expresamente en lib/verificarCita.js.
  */
 
 import { buscarMza } from './indiceMza.js';

@@ -119,10 +119,14 @@ else mal('hay identificadores repetidos o vacíos');
 // 6 · está enganchado a la pantalla
 if (html.includes('function expandir(')) bien('la expansión está definida');
 else mal('la expansión está definida');
-if (html.includes('tiraEquivalentes()+')) bien('la tira de equivalentes se dibuja en Buscar');
+if (html.includes('function tiraEquivalentes(') && html.includes('sugs=tiraSugerencias()+tiraEquivalentes(!cel)+tiraVariantes()'))
+  bien('la tira de equivalentes se dibuja en Buscar');
 else mal('la tira de equivalentes se dibuja en Buscar');
 if (html.includes('act==="usar-equivalente"')) bien('tocar un equivalente cambia la consulta');
 else mal('tocar un equivalente cambia la consulta');
+if (html.includes('var act=v.rel==="relacionado"?"usar-relacionado":"usar-equivalente"') && html.includes('if(act==="usar-relacionado")'))
+  bien('los conceptos relacionados abren una búsqueda diferenciada');
+else mal('los conceptos relacionados abren una búsqueda diferenciada');
 
 console.log(`\nOK ${ok} · fallas ${fallas}`);
 process.exit(fallas ? 1 : 0);

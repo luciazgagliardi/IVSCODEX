@@ -1028,16 +1028,16 @@ body.en-recorrido .cab>*{animation:none}
 .candidato{padding:18px 0;border-top:1px solid var(--line)}
 .candidato .porque{margin:8px 0 10px;padding-left:18px;font-size:14px;color:var(--mute)}
 .candidato .porque li{margin-bottom:3px}
-/* las guías: una línea con un punto por paso */
-.fichas{display:grid;gap:26px;margin-top:10px;padding-left:0}
-.ficha-paso{
-  position:relative;display:block;width:100%;padding:0;border:0;background:none;text-align:left;
-  font:400 16px/1.55 var(--sans);color:var(--fg-82);transition:color .3s
-}
-.ficha-paso::before{content:"";position:absolute;left:-35px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--bg);border:1px solid var(--gold);transition:background .3s}
-.ficha-paso:hover{color:var(--fg)}
-.ficha-paso:hover::before{background:var(--gold)}
-.ficha-paso em{color:inherit}
+/* Guías de verificación y prevención: dos fichas al estilo del Lector. */
+.guias-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,26px);margin-top:10px;align-items:stretch}
+.guia-card{min-width:0;padding:20px 22px 18px;border:1px solid var(--line);border-radius:24px;background:rgba(var(--gold-rgb),.035)}
+.guia-card h3{margin:0 0 14px;font:500 18px/1.3 var(--sans);color:var(--fg)}
+.guia-lista{display:grid;gap:0;margin:0;padding:0;list-style:none;counter-reset:guia}
+.guia-lista li{counter-increment:guia;display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:10px;padding:11px 0;border-top:1px solid var(--line-2);font:400 14.5px/1.55 var(--sans);color:var(--fg-82)}
+.guia-lista li::before{content:counter(guia) ")";font:500 14px/1.55 var(--caps);letter-spacing:.04em;color:var(--gold);font-variant-numeric:tabular-nums}
+.guia-lista li em{color:inherit}
+@media(max-width:760px){.guias-grid{grid-template-columns:minmax(0,1fr)}}
+
 .blk .sin-items{display:grid;gap:0}
 .blk .sin-items p{margin:0;padding:12px 0;border-top:1px solid var(--line-2);font-size:15.5px;color:var(--mute);transition:color .3s}
 .blk .sin-items p:hover{color:var(--fg)}
@@ -3110,6 +3110,21 @@ var F=[
 {id:"n22",n:"Cámara Nacional Electoral",o:"CNE",a:"nac",t:"juris",c:"libre",
  u:"https://www.electoral.gob.ar/",dom:"electoral.gob.ar",r:"elec,const",
  nota:"Fallos y acordadas en materia electoral y de partidos políticos."},
+{id:"n23",n:"Directorio oficial de sentencias de la Justicia argentina",o:"CSJN · Justicia.ar",a:"nac",t:"directorio",c:"libre",
+ u:"https://tramites.csjn.gov.ar/herramientas/sentencias",dom:"csjn.gov.ar",r:"*",
+ nota:"Directorio de buscadores oficiales de la CSJN, la justicia federal y nacional y las cortes superiores provinciales. Sirve para detectar portales nuevos, no es un buscador centralizado."},
+{id:"n24",n:"Tribunal Fiscal de la Nación — Jurisprudencia",o:"TFN · Ministerio de Economía",a:"nac",t:"juris",c:"libre",
+ u:"https://www.argentina.gob.ar/tribunalfiscal/jurisprudencia",dom:"argentina.gob.ar",r:"trib,adm,com",
+ nota:"Sentencias, buscador VUCE, boletín y sumarios de competencia impositiva y aduanera. La carga de sentencias sigue en curso; usar los documentos originales y no asumir cobertura completa."},
+{id:"n25",n:"Procuración del Tesoro — Buscador de dictámenes",o:"PTN",a:"nac",t:"doctrina",c:"libre",
+ u:"https://busquedadictamenes.ptn.gob.ar/",dom:"ptn.gob.ar",r:"adm,lab,com",
+ nota:"Dictámenes y jurisprudencia administrativa del Cuerpo de Abogados del Estado. Su obligatoriedad opera dentro de ese Cuerpo, no como precedente judicial vinculante general."},
+{id:"n26",n:"Comisión Nacional de Defensa de la Competencia — Buscadores",o:"CNDC",a:"nac",t:"juris",c:"libre",
+ u:"https://www.argentina.gob.ar/defensadelacompetencia/buscadores",dom:"argentina.gob.ar",r:"com,cons,adm",
+ nota:"Dictámenes y resoluciones, jurisprudencia temática, multas por conductas anticompetitivas y notificación tardía, y remedios estructurales o conductuales."},
+{id:"n27",n:"Tribunales Federales y Nacionales — sentencias y decisiones",o:"Poder Judicial de la Nación · CSJN",a:"nac",t:"juris",c:"libre",
+ u:"https://www.csjn.gov.ar/tribunales-federales-nacionales/inicio.html",dom:"csjn.gov.ar",r:"*",
+ nota:"Directorio oficial del buscador de fallos, sorteos y otras decisiones de tribunales federales y nacionales. Complementa SAIJ/CSJN y debe explorarse para primera instancia; aún no es una conexión automática de IvsCodex."},
 
 /* ---------------- PROVINCIAS ---------------- */
 {id:"p0",n:"Directorio de poderes judiciales provinciales",o:"SCJM",a:"prov",t:"directorio",c:"libre",
@@ -3145,6 +3160,48 @@ var F=[
 {id:"p10",n:"Tribunal Superior de Justicia de la CABA",o:"TSJ CABA",a:"prov",t:"juris",c:"libre",
  u:"https://www.tsjbaires.gov.ar/",dom:"tsjbaires.gov.ar",r:"const,adm,trib",
  nota:"Doctrina constitucional local de referencia frecuente."},
+{id:"p11",n:"Chubut — Eureka!",o:"Poder Judicial del Chubut",a:"prov",t:"juris",c:"libre",
+ u:"https://apps1cloud.juschubut.gov.ar/eureka",dom:"apps1cloud.juschubut.gov.ar",r:"*",
+ nota:"Repositorio institucional de fallos anonimizados, sumarios y acordadas/resoluciones. Ofrece acceso anónimo a vistas públicas, filtros por organismo, secretaría, competencia, tipo y año, y búsqueda avanzada con AND, OR, NOT, comillas y comodín. Los documentos restringidos requieren credenciales y no deben intentarse recuperar."},
+{id:"p12",n:"Corrientes — Sistema de Búsqueda de Jurisprudencia",o:"STJ Corrientes",a:"prov",t:"juris",c:"libre",
+ u:"https://jurisprudencia.juscorrientes.gov.ar/",dom:"jurisprudencia.juscorrientes.gov.ar",r:"civ,const,adm,lab,pen,elec,ddhh",
+ nota:"Nuevo repositorio directo del STJ: 48.358 fallos publicados entre 2004 y agosto de 2026 en nueve materias. La segunda etapa anunciada incorporará las cámaras; por ahora no debe confundirse con cobertura de toda la provincia."},
+{id:"p13",n:"Entre Ríos — Buscador de Jurisprudencia",o:"STJ Entre Ríos",a:"prov",t:"juris",c:"libre",
+ u:"https://jurbuscador.jusentrerios.gov.ar/",dom:"jusentrerios.gov.ar",r:"civ,lab,pen,adm,fam,cons",
+ nota:"Buscador oficial de sumarios y sentencias completas de salas del STJ, cámaras civiles, laborales, contencioso-administrativas, casación penal y tribunales de juicio. La interfaz observada solicita un campo de verificación; no se debe automatizar sorteando ese control."},
+{id:"p14",n:"Formosa — Buscador de sumarios, fallos e interlocutorios",o:"Poder Judicial de Formosa",a:"prov",t:"juris",c:"libre",
+ u:"https://www.jusformosa.gob.ar/decisiones-judiciales/jurisprudencia",dom:"jusformosa.gob.ar",r:"civ,lab,pen,adm",
+ nota:"Portal oficial con acceso a sumarios, fallos e interlocutorios, fallos novedosos y cuantificación de daños. También publica acuerdos, resoluciones y doctrina."},
+{id:"p15",n:"Jujuy — Sistema de Jurisprudencia",o:"Poder Judicial de Jujuy",a:"prov",t:"juris",c:"libre",
+ u:"https://jurisprudencia.justiciajujuy.gov.ar/public/buscador?index=0",dom:"justiciajujuy.gov.ar",r:"civ,lab,adm,pen",
+ nota:"Buscador oficial de sentencias, fallos relevantes y acordadas. El propio portal excluye de su cobertura las cámaras y juzgados penales, tribunales de familia y juzgados de menores."},
+{id:"p16",n:"La Rioja — Tesauro y buscador de jurisprudencia",o:"TSJ La Rioja",a:"prov",t:"juris",c:"libre",
+ u:"https://tesauro.justicialarioja.gob.ar/tb_exped_list.php",dom:"justicialarioja.gob.ar",r:"civ,lab,pen,adm",
+ nota:"Portal oficial enlazado por el directorio de Justicia.ar. Su disponibilidad técnica fue inestable durante la auditoría; consultar manualmente y no inferir ausencia de fallos por un error del sitio."},
+{id:"p17",n:"Salta — Secretaría de Jurisprudencia",o:"Poder Judicial de Salta",a:"prov",t:"juris",c:"libre",
+ u:"https://www.justiciasalta.gov.ar/es/jurisprudencia-inicio",dom:"justiciasalta.gov.ar",r:"civ,lab,pen,adm,ddhh",
+ nota:"Base institucional de fallos completos y doctrina judicial desde 2001: Corte, cámaras civiles/comerciales y laborales, tribunales de impugnación y de juicio. Incluye novedades, boletines y fallos temáticos."},
+{id:"p18",n:"Santa Cruz — Buscador inteligente de jurisprudencia",o:"TSJ Santa Cruz",a:"prov",t:"juris",c:"libre",
+ u:"https://jurisprudencia.jussantacruz.gob.ar/",dom:"jussantacruz.gob.ar",r:"civ,lab,pen,adm",
+ nota:"Buscador público inteligente del TSJ: admite consultas en lenguaje natural sobre hechos, cuestiones debatidas y criterios jurisprudenciales, además de carátula, expediente y tomo/registro/folio. La función asistida por IA debe usarse para descubrir candidatos y verificar cada resultado contra el fallo."},
+{id:"p19",n:"Tierra del Fuego — Sistema de Jurisprudencia",o:"STJ Tierra del Fuego",a:"prov",t:"juris",c:"libre",
+ u:"https://juris.justierradelfuego.gov.ar/",dom:"justierradelfuego.gov.ar",r:"civ,lab,pen,adm",
+ nota:"Portal oficial de jurisprudencia enlazado por Justicia.ar. La consulta automatizada no quedó verificada; usar como fuente manual hasta probar su formulario y condiciones de acceso."},
+{id:"p20",n:"Tucumán — Jurisprudencia y Legislación",o:"Corte Suprema de Tucumán",a:"prov",t:"juris",c:"libre",
+ u:"https://jurisprudencia.justucuman.gov.ar/",dom:"justucuman.gov.ar",r:"civ,lab,pen,adm,fam",
+ nota:"Base institucional que sistematiza diariamente resoluciones definitivas e interlocutorias de la Corte, cámaras de apelaciones y tribunales de impugnación de los distintos fueros y centros judiciales."},
+{id:"p21",n:"Chaco — Buscador de Jurisprudencia",o:"Superior Tribunal de Justicia del Chaco",a:"prov",t:"juris",c:"libre",
+ u:"https://www.justiciachaco.gov.ar/busquedas/Busqueda_Jurisprudencia/buscador/",dom:"justiciachaco.gov.ar",r:"civ,lab,pen,adm",
+ nota:"Buscador oficial incluido en el directorio de sentencias de Justicia.ar. El portal respondió con demoras al sondeo externo; el acceso manual debe probarse antes de intentar cosecha automática."},
+{id:"p22",n:"SCBA — Listado de sentencias definitivas e interlocutorias",o:"Suprema Corte de Buenos Aires",a:"prov",t:"juris",c:"libre",
+ u:"https://sentencias-corte.scba.gov.ar/",dom:"sentencias-corte.scba.gov.ar",r:"civ,lab,pen,adm,cons",
+ nota:"Buscador oficial complementario a JUBA, con filtros por organismo, registro, fechas y texto. Se refiere al listado de sentencias de la Suprema Corte; no sustituye los sumarios de cámaras de JUBA."},
+{id:"p23",n:"Neuquén — Jurisprudencia civil, comercial, laboral, minería, familia y administrativa",o:"TSJ Neuquén",a:"prov",t:"juris",c:"libre",
+ u:"https://juriscivil.jusneuquen.gov.ar/",dom:"jusneuquen.gov.ar",r:"civ,lab,amb,adm,fam,cons",
+ nota:"Buscador específico enlazado por Justicia.ar para las materias civil, comercial, laboral, minería, familia y administrativo."},
+{id:"p24",n:"Neuquén — Jurisprudencia penal",o:"TSJ Neuquén",a:"prov",t:"juris",c:"libre",
+ u:"https://jurispenal.jusneuquen.gov.ar/",dom:"jusneuquen.gov.ar",r:"pen,proc_pen,ejec",
+ nota:"Buscador oficial separado para jurisprudencia penal, enlazado por el directorio de Justicia.ar."},
 
 /* ---------------- INTERNACIONAL ---------------- */
 {id:"i1",n:"Buscador de jurisprudencia de la Corte IDH",o:"Corte Interamericana de DD.HH.",a:"int",t:"juris",c:"libre",
@@ -3313,7 +3370,7 @@ var FUENTES_INDICE=[
     {v:"fallos",n:"Fallos (ficha del expediente)"},
     {v:"legislacion",n:"Legislación (con el artículo)"},
     {v:"doctrina",n:"Doctrina (con extracto)"},
-    {v:"dictamenes",n:"Dictámenes del Ministerio Público Fiscal"}
+    {v:"dictamenes",n:"Dictámenes (organismos públicos)"}
   ]},
  {slug:"dialnet",cod:"DIALNET",clase:"doc",boton:"Dialnet",
   nombre:"Doctrina jurídica en español",
@@ -3379,7 +3436,7 @@ var SECRETARIAS_CABA={
 function nuevoIndices(){
   var o={};
   FUENTES_INDICE.forEach(function(f){
-    o[f.slug]={busco:false,cargando:false,error:null,resultados:[],total:0,guardados:0,local:false,avisoFalla:"",
+    o[f.slug]={busco:false,cargando:false,error:null,resultados:[],total:0,guardados:0,local:false,origenAcervo:"",fuenteInfo:null,avisoFalla:"",
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
@@ -5005,9 +5062,8 @@ function pintarCabecera(v){
   /* Cabecera limpia: sin etiqueta latina dorada ni categoría secundaria. */
   c.innerHTML=dibujoSeccion(t[0])+saludoHTML()+
     '<h1>'+esc(t[1])+'.</h1>'+
-    (t[0]==="buscar"?'<p class="cab__intro">La plataforma interroga de forma simultánea los repositorios oficiales integrados, '+
-      'extiende la consulta a las denominaciones equivalentes de cada figura y presenta los resultados unificados, '+
-      'con indicación expresa de su procedencia y con el enlace directo al documento de origen.</p>':'');
+    (t[0]==="buscar"?'<p class="cab__intro">La plataforma consulta en paralelo los repositorios judiciales integrados, adapta la búsqueda a cada motor y amplía la recuperación con equivalencias del tesauro. '+
+      'Permite separar resultados por línea jurídica y consultar, según la fuente, jurisprudencia, normativa, doctrina o dictámenes. Cada ficha identifica su procedencia, autoridad y límites de cobertura.</p>':'');
   var primero=v.firstElementChild;
   if(primero&&primero.classList.contains("aviso")&&(primero.querySelector(".av-tit,.av-oro")||t[0]==="cuenta")){
     c.appendChild(primero);
@@ -5240,7 +5296,10 @@ function tiraEquivalentes(sinNota){
   var e=expandir(String(estado.q||"").trim());
   if(!e||!e.variantes.length) return "";
   function chipVoz(v){
-    return '<button class="chip voz-sug" data-act="usar-equivalente" data-voz="'+esc(v.t)+'">'+
+    // Los equivalentes renombran el mismo concepto; los relacionados abren
+    // otra línea de búsqueda y nunca deben presentarse como sinónimos.
+    var act=v.rel==="relacionado"?"usar-relacionado":"usar-equivalente";
+    return '<button class="chip voz-sug" data-act="'+act+'" data-voz="'+esc(v.t)+'">'+
            esc(comoTitulo(v.t))+'</button>';
   }
   function porRelacion(rel){return e.variantes.filter(function(v){return v.rel===rel;});}
@@ -5477,6 +5536,7 @@ function estadoLista(vis){
   var fallaron=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
   var h="";
   if(buscando.length) h+='<p class="rz-aviso"><span class="rf-t" style="color:var(--gold)">buscando…</span> '+buscando.map(function(f){return esc(f.cod);}).join(", ")+' (los sistemas oficiales pueden tardar hasta 30 segundos)</p>';
+  if(fallaron.length) h+='<p class="rz-aviso" role="status">No se pudo consultar '+fallaron.map(function(f){var im=estado.indices[f.slug]||{};return '<b>'+esc(f.cod)+'</b>'+(im.error?' ('+esc(String(im.error).slice(0,150))+')':'');}).join(', ')+'. Un error de acceso o de red no significa que no existan fallos.</p>';
   return h;
 }
 function bloqueResultados(vis){
@@ -5490,14 +5550,32 @@ function bloqueResultados(vis){
   var lista=listaTodas(vis), buscadas=vis.filter(function(f){ return (estado.indices[f.slug]||{}).busco; }).length;
   var h=avisoNombre()+estadoLista(vis);
   if(!lista.length){
-    return h+(buscadas?'<div class="vacio vacio--inicio">Sin resultados en las bases que respondieron. Pruebe con menos palabras, o cambie «Cómo combinar».</div>'
+    var respondieron=vis.filter(function(f){var im=estado.indices[f.slug]||{};return im.busco&&!im.error;}).length;
+    return h+(buscadas
+      ?'<div class="vacio vacio--inicio">'+(respondieron
+        ?'No se encontraron coincidencias en las fuentes que respondieron. Las fuentes que fallaron se identifican por separado y no cuentan como resultado cero.'
+        :'Ninguna de las fuentes seleccionadas pudo completar la consulta. No hay base para afirmar que no existan fallos.')+' Revise las fuentes con error o pruebe una consulta distinta.</div>'
       :'<div class="vacio vacio--inicio">Escriba su consulta y seleccione <b>Buscar</b>:<br>la consulta se envía en simultáneo a las bases seleccionadas y los resultados se muestran en esta sección.</div>');
   }
   h+='<div class="rz-cab"><b>Todas las bases</b>'+
-    '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"]].map(function(o){
+    '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"],["linea","Por línea jurídica"]].map(function(o){
       return '<button class="chip" data-act="orden" data-v="'+o[0]+'" aria-pressed="'+(estado.orden===o[0]?"true":"false")+'">'+o[1]+'</button>'; }).join("")+'</span></div>';
-  var lim=estado.limFilas||40;
-  h+=lista.slice(0,lim).map(function(x){ return filaIndice(x.f,x.r,x.k,x.tambien); }).join("");
+  var lim=estado.limFilas||40, visiblesLista=lista.slice(0,lim);
+  if(estado.orden==="linea"){
+    var porLinea={};
+    visiblesLista.forEach(function(x){
+      var im=estado.indices[x.f.slug]||{}, info=im.fuenteInfo||{};
+      var linea=x.r.lineaInvestigacion||info.linea||"Otras fuentes";
+      (porLinea[linea]=porLinea[linea]||[]).push(x);
+    });
+    h+=Object.keys(porLinea).sort(function(a,b){return a.localeCompare(b,"es");}).map(function(linea){
+      var grupo=porLinea[linea];
+      return '<section class="rz-linea"><div class="rz-cab"><b>'+esc(linea)+'</b><span class="rz-ord">'+grupo.length+' resultado'+(grupo.length===1?'':'s')+'</span></div>'+
+        grupo.map(function(x){return filaIndice(x.f,x.r,x.k,x.tambien);}).join("")+'</section>';
+    }).join("");
+  }else{
+    h+=visiblesLista.map(function(x){ return filaIndice(x.f,x.r,x.k,x.tambien); }).join("");
+  }
   if(lista.length>lim) h+='<div class="rz-mas"><button class="btn sec" data-act="mas-filas">Mostrar 40 más <span class="rz-mas-n">(quedan '+(lista.length-lim)+')</span></button></div>';
   h+='<p class="rz-aviso">Se muestran los primeros resultados de cada base. Para ver todos, filtrar por tribunal o cambiar de página, elija la base en la columna de la izquierda.</p>';
   return h;
@@ -5886,6 +5964,8 @@ function fichaIndice(f,r){
   var metaEnc=[r.tribunal,r.secretaria,r.magistrados,r.expediente?"Expte. "+r.expediente:""]
     .filter(Boolean).map(esc).join(" · ");
   var fechaEnc=r.fecha?esc(r.fecha):"";
+  var origenFicha=r.procedencia?'<span class="tag" title="'+esc(r.nivelAutoridad||"")+'">'+esc(r.procedencia)+'</span>':"";
+  var tipoFicha=r.tipoDocumento?'<span class="tag">'+esc(r.tipoDocumento)+'</span>':"";
   // Cuando la búsqueda fue por artículo, se distingue quién CITA el número de
   // quién apareció por el tema del artículo (su rúbrica). No es un detalle:
   // citar como "aplica el art. 1710" un fallo que sólo habla de prevención
@@ -5930,7 +6010,9 @@ function fichaIndice(f,r){
   return '<div class="fuente">'+
     '<div class="f-top"><span class="cod '+f.clase+'">'+esc(f.cod)+'</span>'+
       (metaEnc?'<span class="f-enc">'+metaEnc+'</span>':'')+
-      (fechaEnc?'<span class="f-fecha">'+fechaEnc+'</span>':'')+'</div>'+
+      (fechaEnc?'<span class="f-fecha">'+fechaEnc+'</span>':'')+
+      (origenFicha?'<span class="f-fecha">'+origenFicha+'</span>':'')+
+      (tipoFicha?'<span class="f-fecha">'+tipoFicha+'</span>':'')+'</div>'+
     '<h3 class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</h3>'+
     (pasaje?'<p class="f-nota">'+pasajeResaltado(pasaje,q,800)+'</p>':'')+
     (temas?'<p class="f-nota"><span style="opacity:.6">Temas que el TSJ asigna a este fallo: </span>'+resaltarSimple(temas,q)+'</p>':'')+
@@ -6364,6 +6446,8 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   // "total": ese es cuántos pasaron el filtro entre los que se alcanzaron a
   // revisar. Puede venir null (respaldo local: no hay sitio que preguntar).
   imBusco.totalFuente=(typeof d.totalFuente==="number")?d.totalFuente:null;
+  imBusco.fuenteInfo=d.fuenteInfo||imBusco.fuenteInfo||null;
+  imBusco.origenAcervo=d.origenAcervo||"";
   imBusco.guardados=d.guardadosEnIndice||0;
   imBusco.local=!!d.desdeIndiceLocal;
   imBusco.avisoFalla=d.avisoFalla||"";
@@ -6729,6 +6813,21 @@ function panelIndice(f){
   var out='<div class="panel vivo f-'+f.slug+'" id="panel-'+f.slug+'">'+
     '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+(local?'':' <span class="en-vivo">En vivo</span>')+'</span></div>';
 
+  var infoFuente=im.fuenteInfo;
+  if(infoFuente){
+    out+='<div class="aviso" style="margin:10px 0 14px">'+
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px">'+
+      '<span class="tag">'+esc(infoFuente.autoridad||"Fuente")+'</span>'+
+      '<span class="tag">'+esc(infoFuente.tipo||"Documento")+'</span>'+
+      '<span class="tag">'+esc(infoFuente.linea||"Investigación jurídica")+'</span>'+
+      '</div>'+
+      '<p style="margin:0 0 5px;font-size:12.5px">'+esc(infoFuente.cobertura||"Alcance no especificado.")+'</p>'+
+      '<p style="margin:0;font-size:12px;color:var(--humo)"><b>Procedencia:</b> '+esc(infoFuente.procedencia||f.nombre)+'. '+esc(infoFuente.limite||"Verifique el documento original.")+'</p>'+
+      (local?'<p style="margin:7px 0 0;font-size:12px;color:var(--gold)">Esta respuesta proviene del acervo local ('+esc(im.origenAcervo||"copia guardada")+'), no de una consulta en vivo en esta petición.</p>':'')+
+      '</div>';
+  }else if(local){
+    out+='<p class="rz-aviso">Resultado de una copia local. No equivale a una consulta en vivo.</p>';
+  }
   if(f.slug==="saij"){
     // SAIJ indexa la jurisprudencia y la legislación de las 24 jurisdicciones:
     // elegir una la convierte en el buscador de esa provincia.
@@ -6760,7 +6859,8 @@ function panelIndice(f){
     return out;
   }
   if(im.error){
-    out+='<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
+    out+='<p style="font-size:13px;color:var(--humo);margin:0">No se pudo consultar '+esc(f.nombre)+'. '+esc(String(im.error))+'</p>'+
+      '<p style="font-size:12px;color:var(--humo);margin:8px 0 0">Este error no equivale a una búsqueda válida con cero resultados. Revise el portal oficial o vuelva a consultar más tarde.</p></div>';
     return out;
   }
   if(!im.busco){
@@ -7130,7 +7230,7 @@ function compararFuentes(){
       .then(function(d){
         estado.comparar.porFuente[f.slug]=(d&&d.ok)
           ?{ok:true,total:d.total||0,totalFuente:(typeof d.totalFuente==="number"?d.totalFuente:null),
-            parcial:!!d.totalParcial,local:!!d.desdeIndiceLocal,resultados:d.resultados||[]}
+            parcial:!!d.totalParcial,local:!!d.desdeIndiceLocal,fuenteInfo:d.fuenteInfo||null,resultados:d.resultados||[]}
           :{ok:false,error:(d&&d.mensaje)||"no respondió"};
       })
       ["catch"](function(){
@@ -7149,7 +7249,7 @@ function tarjetaComparar(f){
   var borde='';
 
   if(!r) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Consultando…</p></div>';
-  if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Sin coincidencias.</p></div>';
+  if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">No se pudo consultar esta fuente. El error no equivale a cero jurisprudencia.</p></div>';
   if(!r.resultados.length) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Sin coincidencias.</p></div>';
 
   // NO se muestra el contador crudo del sitio, aunque lo tengamos.
@@ -7170,6 +7270,7 @@ function tarjetaComparar(f){
     var y=estado.comparar.porFuente[x.slug]; return y&&y.ok?y.resultados.length:0;
   }).concat([1]));
   var barra='<span class="comp-barra" aria-hidden="true"><i style="width:'+Math.round(r.resultados.length/tope*100)+'%"></i></span>';
+  var linea=r.fuenteInfo?'<p class="comp-vacio">'+esc(r.fuenteInfo.linea||r.fuenteInfo.tipo||"")+' · '+esc(r.fuenteInfo.procedencia||"")+'</p>':"";
   var cifra='<p class="comp-cifra"><b>'+r.resultados.length.toLocaleString("es-AR")+'</b> resultado'+
     (r.resultados.length===1?'':'s')+' encontrados'+
     (r.parcial?' (hay más para revisar)':'')+
@@ -7184,7 +7285,7 @@ function tarjetaComparar(f){
       '</div>';
   }).join("");
 
-  return '<div class="comp-card"'+borde+'>'+cab+cifra+barra+items+
+  return '<div class="comp-card"'+borde+'>'+cab+linea+cifra+barra+items+
     '<div class="f-acc" style="margin-top:10px">'+
       '<button class="mini" data-act="ir-a-fuente" data-fuente="'+esc(f.slug)+'">Ver todos en Buscar</button>'+
     '</div></div>';
@@ -7948,21 +8049,23 @@ function vistaVerificar(){
       'asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido, '+
       'cuya verosimilitud sólo se comprueba mediante la lectura directa de los considerandos.</span>'+
       '<span class="solo-cel">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</span></div>'+
-    '<div class="blk"><h3>Guía de verificación</h3><div class="fichas">'+
-      '<button type="button" class="ficha-paso">Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</button>'+
-      '<button type="button" class="ficha-paso">Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</button>'+
-      '<button type="button" class="ficha-paso">Analice el texto íntegro y el considerando específico a citar, evitando fundarse en sumarios donde el criterio principal (<em>holding</em>) pueda diferir.</button>'+
-      '<button type="button" class="ficha-paso">Identifique la distribución de votos para evitar citar una disidencia como postura mayoritaria.</button>'+
-      '<button type="button" class="ficha-paso">Confirme la vigencia del precedente frente a revocaciones posteriores, modificaciones en la composición del tribunal o reformas legislativas.</button>'+
-      '<button type="button" class="ficha-paso">Descargue y conserve el archivo PDF con la fecha de consulta como respaldo ante eventuales caídas del enlace original.</button>'+
-    '</div></div>'+
-    '<div class="blk"><h3>Guía de prevención</h3><div class="fichas">'+
-      '<button type="button" class="ficha-paso">Desconfíe de carátulas con redactados atípicos que se amolden perfectamente al caso analizado.</button>'+
-      '<button type="button" class="ficha-paso">Invalide referencias que figuren únicamente en resúmenes o modelos lingüísticos y no consten en registros oficiales.</button>'+
-      '<button type="button" class="ficha-paso">Verifique la coherencia temporal entre el tomo de <em>Fallos</em> y el año de dictado de la sentencia.</button>'+
-      '<button type="button" class="ficha-paso">Asegúrese de que el tribunal citado contara con competencia en la materia a la fecha del fallo.</button>'+
-      '<button type="button" class="ficha-paso">Descarte citas que no registren menciones en doctrina, jurisprudencia posterior ni en el buscador del propio organismo.</button>'+
-    '</div></div>';
+    '<div class="guias-grid">'+
+      '<section class="guia-card"><h3>Guía de verificación</h3><ol class="guia-lista">'+
+        '<li>Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</li>'+
+        '<li>Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</li>'+
+        '<li>Analice el texto íntegro y el considerando específico a citar, evitando fundarse en sumarios donde el criterio principal (<em>holding</em>) pueda diferir.</li>'+
+        '<li>Identifique la distribución de votos para evitar citar una disidencia como postura mayoritaria.</li>'+
+        '<li>Confirme la vigencia del precedente frente a revocaciones posteriores, modificaciones en la composición del tribunal o reformas legislativas.</li>'+
+        '<li>Descargue y conserve el archivo PDF con la fecha de consulta como respaldo ante eventuales caídas del enlace original.</li>'+
+      '</ol></section>'+
+      '<section class="guia-card"><h3>Guía de prevención</h3><ol class="guia-lista">'+
+        '<li>Desconfíe de carátulas con redactados atípicos que se amolden perfectamente al caso analizado.</li>'+
+        '<li>Invalide referencias que figuren únicamente en resúmenes o modelos lingüísticos y no consten en registros oficiales.</li>'+
+        '<li>Verifique la coherencia temporal entre el tomo de <em>Fallos</em> y el año de dictado de la sentencia.</li>'+
+        '<li>Asegúrese de que el tribunal citado contara con competencia en la materia a la fecha del fallo.</li>'+
+        '<li>Descarte citas que no registren menciones en doctrina, jurisprudencia posterior ni en el buscador del propio organismo.</li>'+
+      '</ol></section>'+
+    '</div>';
 
 }
 
@@ -10421,7 +10524,7 @@ document.addEventListener("click",function(ev){
     invalidarBusquedas(); render();
     return;
   }
-  if(act==="usar-variante"||act==="usar-equivalente"||act==="usar-voz") estado.sugAbierta=false;
+  if(act==="usar-variante"||act==="usar-equivalente"||act==="usar-relacionado"||act==="usar-voz") estado.sugAbierta=false;
   if(act==="usar-variante"){
     var vq=b.getAttribute("data-voz")||"";
     if(!vq) return;
@@ -10437,7 +10540,17 @@ document.addEventListener("click",function(ev){
     estado.q=eq; estado.modo="exacta"; estado.articulo=""; estado.marca=0;
     invalidarBusquedas();
     render();
-    flash("Buscando «"+eq+"» — es lo mismo, escrito como lo escribe el tribunal");
+    flash("Buscando «"+eq+"» — otra denominación del mismo concepto");
+    return;
+  }
+  if(act==="usar-relacionado"){
+    var vinculo=b.getAttribute("data-voz")||"";
+    if(!vinculo) return;
+    var consultaOrigen=String(estado.q||"").trim();
+    estado.q=vinculo; estado.modo="exacta"; estado.articulo=""; estado.marca=0;
+    invalidarBusquedas();
+    render();
+    flash("Explorando «"+vinculo+"», concepto relacionado con «"+consultaOrigen+"», no sinónimo");
     return;
   }
   if(act==="cerrar-sugeridas"){ estado.sugeridas=[]; estado.sugeridaRama=""; render(); return; }

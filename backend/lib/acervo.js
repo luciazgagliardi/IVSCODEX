@@ -264,10 +264,18 @@ export { consultaFts, anioDe };
  * base del respaldo. Devuelve registros con la forma de los de la búsqueda
  * en vivo, ordenados por relevancia (BM25, la carátula pesa más).
  */
-export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', limite = 400 } = {}) {
+export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [], limite = 400 } = {}) {
   if (!acervoTiene(fuente)) return null;
-  const expr = consultaFts(q, modo, excluir);
-  if (!expr) return [];
+  const principal = String(q || '').trim();
+  const consultas = [principal, ...(Array.isArray(variantes) ? variantes : [])
+    .filter((v) => typeof v === 'string' && v.trim() && v.trim().length <= 100)
+    .map((v) => v.trim())
+    .filter((v) => v.toLocaleLowerCase('es') !== principal.toLocaleLowerCase('es'))]
+    .filter((v, i, a) => a.findIndex((x) => x.toLocaleLowerCase('es') === v.toLocaleLowerCase('es')) === i)
+    .slice(0, 5);
+  const expresiones = consultas.map((termino) => consultaFts(termino, modo, excluir)).filter(Boolean);
+  if (!expresiones.length) return [];
+  const expr = expresiones.length === 1 ? expresiones[0] : expresiones.map((x) => `(${x})`).join(' OR ');
   const donde = ['1 = 1'];
   const args = [`(${expr}) AND marca : zf${String(fuente).replace(/[^a-z0-9]/g, '')}`];
   if (anioDesde) { donde.push('f.anio >= ?'); args.push(Number(anioDesde)); }
