@@ -10,7 +10,7 @@
 <!-- Política de contenido: la página solo puede cargar scripts propios, hablar con su
      propio servidor (API), con el backend publicado, con SAIJ y con la API de
      series de datos.gob.ar, y nunca cargar plugins ni cambiar su base de enlaces. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:3000 https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net https://www.saij.gob.ar https://apis.datos.gob.ar https://api.bcra.gob.ar; frame-src 'self'; worker-src 'self' blob:; media-src 'none'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:3000 https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net https://www.saij.gob.ar https://apis.datos.gob.ar https://api.bcra.gob.ar; frame-src 'self'; worker-src 'self' blob:; media-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
 <meta name="referrer" content="no-referrer">
 
 <link rel="preload" as="image" href="./grano.png" media="(min-width:761px)">
@@ -1165,21 +1165,22 @@ body.en-recorrido .cab>*{animation:none}
   position:relative;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
   margin:0 0 8px;padding:10px 0;background:transparent;border:0
 }
-.lector-voz__titulo{display:inline-flex;align-items:center;gap:7px;font:500 14px/1.2 var(--sans);letter-spacing:0;color:var(--fg-82);white-space:nowrap}
-.lector-voz__titulo svg{display:block;width:18px;height:18px;flex:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;fill:none}
+.lector-voz__principal{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:none;min-height:34px}
+.lector-voz__principal svg{display:block;width:18px;height:18px;flex:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;fill:none}
 .lector-voz__acciones{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .lector-voz__acciones button{min-height:32px;padding:6px 12px}
 .lector-voz__velocidad{display:inline-flex;align-items:center;gap:7px;color:var(--mute);font-size:12px;white-space:nowrap}
 .lector-voz__velocidad button{width:29px;height:29px;padding:0;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--fg);font:400 17px/1 var(--sans)}
 .lector-voz__velocidad button:hover{border-color:var(--gold-55);color:var(--gold)}
 .lector-voz__velocidad output{min-width:34px;text-align:center;font-variant-numeric:tabular-nums;color:var(--fg-82)}
-.lector-voz__estado{flex:1 1 220px;min-width:150px;font-size:11.5px;line-height:1.4;color:var(--mute-2)}
+.lector-voz__estado{flex:1 1 100%;min-width:0;font-size:11.5px;line-height:1.4;color:var(--mute-2)}
 .lector-voz button:disabled{opacity:.38;cursor:not-allowed}
 @media(max-width:760px){
   .lector-voz{gap:7px 9px;padding:8px 0}
-  .lector-voz__titulo{flex:1 1 100%}
-  .lector-voz__estado{flex:1 1 100%;min-width:0}
+  .lector-voz__principal{min-height:34px}
+  .lector-voz__acciones{gap:5px}
   .lector-voz__acciones button{padding:6px 10px;font-size:12px}
+  .lector-voz__estado{flex-basis:100%}
 }
 @media(prefers-reduced-motion:reduce){.lector-voz *{transition:none!important}}
 
@@ -7519,15 +7520,13 @@ function vistaLector(){
   }
   return avisoErrorLector()+
     '<section class="lector-voz" role="group" aria-label="Lectura en voz alta">'+
-      '<span class="lector-voz__titulo">'+
+      '<button type="button" class="mini lector-voz__principal" data-act="voz-iniciar">'+
         '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>'+
-        '<span>Escuchar</span>'+
-      '</span>'+
+        '<span id="voz-label">Escuchar</span>'+
+      '</button>'+
       '<div class="lector-voz__acciones">'+
-        '<button type="button" class="mini" data-act="voz-iniciar">Escuchar</button>'+
-        '<button type="button" class="mini" data-act="voz-leer-seleccion" title="Seleccione un fragmento del fallo y escúchelo">Leer selección</button>'+
+        '<button type="button" class="mini" data-act="voz-leer-seleccion" title="Seleccioná un fragmento del fallo y escuchalo">Leer selección</button>'+
         '<button type="button" class="mini" data-act="voz-detener">Detener</button>'+
-        '<button type="button" class="mini" data-act="voz-voz-siguiente">Voz automática</button>'+
       '</div>'+
       '<div class="lector-voz__velocidad" aria-label="Velocidad de lectura">'+
         '<span>Velocidad</span>'+
@@ -7535,7 +7534,7 @@ function vistaLector(){
         '<output id="voz-velocidad">1×</output>'+
         '<button type="button" data-act="voz-vel-mas" aria-label="Aumentar velocidad">+</button>'+
       '</div>'+
-      '<span class="lector-voz__estado" id="voz-estado" aria-live="polite">La aplicación no sube el fallo al servidor; la voz disponible depende del navegador y del dispositivo.</span>'+
+      '<span class="lector-voz__estado" id="voz-estado" aria-live="polite">Voz neuronal argentina · requiere internet; el fragmento se envía al servicio de voz para generar el audio.</span>'+
     '</section>'+
     (estado.cargando?'<div class="aviso" style="margin:0 0 14px">Trayendo el documento nuevo… esto puede tardar unos segundos. Mientras tanto se sigue viendo el fallo anterior.</div>':'')+
     '<div class="barra-doc">'+
@@ -11126,7 +11125,7 @@ window.IVS={
 })();
 </script>
 <script src="./herramientas.js" defer></script>
-<script src="./lector-voz.js" defer></script>
+<script src="./lector-voz.js?v=20261118-voz2" defer></script>
 <script>
 (function(){
   var ops=[].slice.call(document.querySelectorAll(".tema-op")); if(!ops.length) return;
