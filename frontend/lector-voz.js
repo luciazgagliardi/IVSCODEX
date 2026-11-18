@@ -97,17 +97,22 @@
     var disponible = !!(sintesis && Utterance);
 
     if (boton) {
-      boton.textContent = lector.estado === "speaking" ? "Pausar" :
+      var textoBoton = lector.estado === "speaking" ? "Pausar" :
         (lector.estado === "paused" ? "Continuar" : "Escuchar");
-      boton.setAttribute("aria-label", boton.textContent + " lectura del fallo");
+      if (boton.textContent !== textoBoton) boton.textContent = textoBoton;
+      boton.setAttribute("aria-label", textoBoton + " lectura del fallo");
       boton.disabled = !disponible;
     }
     if (detener) detener.disabled = !disponible ||
       (lector.estado === "idle" && lector.indice === 0);
-    if (velocidad) velocidad.textContent = lector.velocidad.toFixed(2).replace(/0+$/, "").replace(/\.$/, "") + "×";
+    if (velocidad) {
+      var textoVelocidad = lector.velocidad.toFixed(2).replace(/0+$/, "").replace(/\.$/, "") + "×";
+      if (velocidad.textContent !== textoVelocidad) velocidad.textContent = textoVelocidad;
+    }
     if (cambioVoz) {
       var voz = vozElegida();
-      cambioVoz.textContent = lector.vozURI && voz ? "Voz: " + voz.name : "Voz automática";
+      var textoVoz = lector.vozURI && voz ? "Voz: " + voz.name : "Voz automática";
+      if (cambioVoz.textContent !== textoVoz) cambioVoz.textContent = textoVoz;
       cambioVoz.title = vocesEspanol().length
         ? "Cambiar la voz en español"
         : "Se usará la voz predeterminada del dispositivo";
@@ -265,10 +270,8 @@
     }
   }, true);
 
-  if (sintesis && sintesis.addEventListener) {
-    sintesis.addEventListener("voiceschanged", actualizarControles);
-  } else if (sintesis) {
-    sintesis.onvoiceschanged = actualizarControles;
+  if (sintesis) {
+    sintesis.onvoiceschanged = function () { actualizarControles(); };
   }
 
   var observador = new MutationObserver(function () {
