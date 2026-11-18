@@ -3531,25 +3531,67 @@ function nuevoEstado(){
    GitHub Pages, sin backend propio en el mismo origen). Reemplazá el
    placeholder de abajo por la URL real una vez que despliegues backend/. */
 function detectarServidor(){
-  var candidatos=[];
-  if(location.protocol==="http:"||location.protocol==="https:") candidatos.push("/api");
-  candidatos.push("http://localhost:3000/api");
   var desplegado="https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api";
-  if(desplegado.indexOf("TU-BACKEND")===-1) candidatos.push(desplegado); // si nadie reemplazo el placeholder, ni lo intenta: ahorra el timeout de red a un dominio que sabemos que no existe
+  var candidatos=[];
+  var local=location.hostname==="localhost"||location.hostname==="127.0.0.1";
+  if(local){
+    candidatos.push("/api");
+    if(location.port!=="3000") candidatos.push("http://localhost:3000/api");
+  }else{
+    // En GitHub Pages o un dominio público, la API real se consulta PRIMERO.
+    // No sondear localhost desde HTTPS: el navegador lo bloquearía.
+    if(location.hostname==="iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net") candidatos.push("/api");
+    if(desplegado.indexOf("TU-BACKEND")===-1) candidatos.push(desplegado);
+    if((location.protocol==="https:"||location.protocol==="http:")&&
+       !location.hostname.endsWith("github.io")&&
+       location.hostname!=="iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net"){
+      candidatos.push("/api");
+    }
+  }
   var i=0;
-  (function probar(){
-    if(i>=candidatos.length){ estado.api=false; if(estado.tab==="lector"||estado.tab==="buscar"||estado.tab==="verificar") render(); return; }
-    var base=candidatos[i++];
-    var corte=setTimeout(function(){ probar(); },2500);
+  function mostrarConexion(){
+    if(estado.tab==="lector"||estado.tab==="buscar"||estado.tab==="verificar") render();
+  }
+  function probar(){
+    if(estado.api) return;
+    if(i>=candidatos.length){
+      estado.api=false;
+      mostrarConexion();
+      // Si Azure se reinicia o tarda en despertar, recuperar la conexión
+      // sin obligar al visitante a recargar la página.
+      setTimeout(function(){ if(!estado.api) detectarServidor(); },20000);
+      return;
+    }
+    var base=candidatos[i++], resuelto=false;
+    var controlador=typeof AbortController!=="undefined"?new AbortController():null;
+    function terminar(conectado){
+      if(resuelto) return;
+      resuelto=true;
+      clearTimeout(corte);
+      if(conectado){
+        var eraOffline=!estado.api;
+        estado.api=base;
+        if(eraOffline) intentarRestaurarSesion();
+        mostrarConexion();
+      }else probar();
+    }
+    // Azure puede tardar más de 2,5 segundos durante una importación o
+    // un arranque en frío. Evitar también respuestas tardías que pisen
+    // el resultado de otra prueba.
+    var corte=setTimeout(function(){
+      if(controlador) controlador.abort();
+      terminar(false);
+    },12000);
     try{
-      fetch(base+"/salud").then(function(r){ return r.ok?r.json():null; })
-      .then(function(d){
-        clearTimeout(corte);
-        if(d&&d.ok){ estado.api=base; intentarRestaurarSesion(); if(estado.tab==="lector"||estado.tab==="buscar"||estado.tab==="verificar") render(); }
-        else probar();
-      })["catch"](function(){ clearTimeout(corte); probar(); });
-    }catch(e){ clearTimeout(corte); probar(); }
-  })();
+      var opciones={cache:"no-store"};
+      if(controlador) opciones.signal=controlador.signal;
+      fetch(base+"/salud",opciones)
+        .then(function(r){ return r.ok?r.json():null; })
+        .then(function(d){ terminar(!!(d&&d.ok)); })
+        ["catch"](function(){ terminar(false); });
+    }catch(e){ terminar(false); }
+  }
+  probar();
 }
 
 /* ============================================================
