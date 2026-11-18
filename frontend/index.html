@@ -1159,6 +1159,30 @@ body.en-recorrido .cab>*{animation:none}
   .lx-fila{grid-template-columns:82px minmax(0,1fr)}
 }
 
+/* ---------- lectura en voz alta ---------- */
+.lector-voz{
+  position:sticky;top:0;z-index:7;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
+  margin:0 0 8px;padding:10px 0;background:rgba(var(--bg-rgb),.9);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line-2)
+}
+.lector-voz__titulo{font:500 11px/1.2 var(--caps);letter-spacing:.13em;color:var(--mute);white-space:nowrap}
+.lector-voz__acciones{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.lector-voz__acciones button{min-height:32px;padding:6px 12px}
+.lector-voz__velocidad{display:inline-flex;align-items:center;gap:7px;color:var(--mute);font-size:12px;white-space:nowrap}
+.lector-voz__velocidad button{width:29px;height:29px;padding:0;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--fg);font:400 17px/1 var(--sans)}
+.lector-voz__velocidad button:hover{border-color:var(--gold-55);color:var(--gold)}
+.lector-voz__velocidad output{min-width:34px;text-align:center;font-variant-numeric:tabular-nums;color:var(--fg-82)}
+.lector-voz__estado{flex:1 1 220px;min-width:150px;font-size:11.5px;line-height:1.4;color:var(--mute-2)}
+.lector-voz button:disabled{opacity:.38;cursor:not-allowed}
+@media(max-width:760px){
+  .lector-voz{gap:7px 9px;padding:8px 0}
+  .lector-voz__titulo{flex:1 1 100%}
+  .lector-voz__estado{flex:1 1 100%;min-width:0}
+  .lector-voz__acciones button{padding:6px 10px;font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.lector-voz *{transition:none!important}}
+
 /* ---------- el lector ---------- */
 .barra-doc{
   position:sticky;top:calc(71px + env(safe-area-inset-top,0px));z-index:5;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;
@@ -7490,6 +7514,22 @@ function vistaLector(){
       '</div></div>';
   }
   return avisoErrorLector()+
+    '<section class="lector-voz" role="group" aria-label="Lectura en voz alta">'+
+      '<span class="lector-voz__titulo">LECTIO · ESCUCHAR</span>'+
+      '<div class="lector-voz__acciones">'+
+        '<button type="button" class="mini" data-act="voz-iniciar">Escuchar</button>'+
+        '<button type="button" class="mini" data-act="voz-leer-seleccion" title="Seleccione un fragmento del fallo y escúchelo">Leer selección</button>'+
+        '<button type="button" class="mini" data-act="voz-detener">Detener</button>'+
+        '<button type="button" class="mini" data-act="voz-voz-siguiente">Voz automática</button>'+
+      '</div>'+
+      '<div class="lector-voz__velocidad" aria-label="Velocidad de lectura">'+
+        '<span>Velocidad</span>'+
+        '<button type="button" data-act="voz-vel-menos" aria-label="Disminuir velocidad">−</button>'+
+        '<output id="voz-velocidad">1×</output>'+
+        '<button type="button" data-act="voz-vel-mas" aria-label="Aumentar velocidad">+</button>'+
+      '</div>'+
+      '<span class="lector-voz__estado" id="voz-estado" aria-live="polite">La voz se reproduce desde el navegador; el fallo no se envía a un servicio externo.</span>'+
+    '</section>'+
     (estado.cargando?'<div class="aviso" style="margin:0 0 14px">Trayendo el documento nuevo… esto puede tardar unos segundos. Mientras tanto se sigue viendo el fallo anterior.</div>':'')+
     '<div class="barra-doc">'+
       '<span class="cnt" id="doc-cnt">Analizando…</span>'+
@@ -11079,6 +11119,7 @@ window.IVS={
 })();
 </script>
 <script src="./herramientas.js" defer></script>
+<script src="./lector-voz.js" defer></script>
 <script>
 (function(){
   var ops=[].slice.call(document.querySelectorAll(".tema-op")); if(!ops.length) return;
