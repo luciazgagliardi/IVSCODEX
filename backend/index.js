@@ -28,6 +28,7 @@ import { router, manejadorErrores } from './routes/extraer.js';
 import { router as routerIndice } from './routes/indice.js';
 import { router as routerAuth } from './routes/auth.js';
 import { router as routerCitas } from './routes/citas.js';
+import { routerVoz } from './routes/voz.js';
 
 const app = express();
 
@@ -68,6 +69,7 @@ app.use(
         'base-uri': ["'none'"],
         'form-action': ["'self'"],
         'frame-ancestors': ["'self'"], // la portada vive en un marco de la misma página; ningún otro sitio puede enmarcarla
+        'media-src': ["'self'", 'blob:'],
       },
     },
     crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -244,6 +246,7 @@ app.use('/api', router);
 app.use('/api', routerIndice);
 app.use('/api', routerAuth);
 app.use('/api', routerCitas);
+app.use('/api', routerVoz);
 app.use(express.static(DIR_PUBLICO, { extensions: ['html'], dotfiles: 'ignore', index: 'index.html', maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0 }));
 
 app.use((req, res) => {
