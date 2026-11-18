@@ -1036,6 +1036,7 @@ body.en-recorrido .cab>*{animation:none}
 .guia-lista{display:grid;gap:0;margin:0;padding:0;list-style:none;counter-reset:guia}
 .guia-lista li{counter-increment:guia;display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:10px;padding:11px 0;border-top:1px solid var(--line-2);font:400 14.5px/1.55 var(--sans);color:var(--fg-82)}
 .guia-lista li::before{content:counter(guia) ")";font:inherit;color:inherit}
+.guia-lista li > span{min-width:0}
 .blk .guia-lista li em{color:inherit}
 @media(max-width:760px){.guias-grid{grid-template-columns:minmax(0,1fr)}}
 
@@ -8092,19 +8093,19 @@ function vistaVerificar(){
       '<span class="solo-cel">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</span></div>'+
     '<div class="guias-grid">'+
       '<section class="guia-card"><h3>Guía de verificación</h3><ol class="guia-lista">'+
-        '<li>Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</li>'+
-        '<li>Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</li>'+
-        '<li>Analice el texto íntegro y el considerando específico a citar, evitando fundarse en sumarios donde el criterio principal (<em>holding</em>) pueda diferir.</li>'+
-        '<li>Identifique la distribución de votos para evitar citar una disidencia como postura mayoritaria.</li>'+
-        '<li>Confirme la vigencia del precedente frente a revocaciones posteriores, modificaciones en la composición del tribunal o reformas legislativas.</li>'+
-        '<li>Descargue y conserve el archivo PDF con la fecha de consulta como respaldo ante eventuales caídas del enlace original.</li>'+
+        '<li><span>Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</span></li>'+
+        '<li><span>Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</span></li>'+
+        '<li><span>Analice el texto íntegro y el considerando específico a citar, evitando fundarse en sumarios donde el criterio principal (<em>holding</em>) pueda diferir.</span></li>'+
+        '<li><span>Identifique la distribución de votos para evitar citar una disidencia como postura mayoritaria.</span></li>'+
+        '<li><span>Confirme la vigencia del precedente frente a revocaciones posteriores, modificaciones en la composición del tribunal o reformas legislativas.</span></li>'+
+        '<li><span>Descargue y conserve el archivo PDF con la fecha de consulta como respaldo ante eventuales caídas del enlace original.</span></li>'+
       '</ol></section>'+
       '<section class="guia-card"><h3>Guía de prevención</h3><ol class="guia-lista">'+
-        '<li>Desconfíe de carátulas con redactados atípicos que se amolden perfectamente al caso analizado.</li>'+
-        '<li>Invalide referencias que figuren únicamente en resúmenes o modelos lingüísticos y no consten en registros oficiales.</li>'+
-        '<li>Verifique la coherencia temporal entre el tomo de <em>Fallos</em> y el año de dictado de la sentencia.</li>'+
-        '<li>Asegúrese de que el tribunal citado contara con competencia en la materia a la fecha del fallo.</li>'+
-        '<li>Descarte citas que no registren menciones en doctrina, jurisprudencia posterior ni en el buscador del propio organismo.</li>'+
+        '<li><span>Desconfíe de carátulas con redactados atípicos que se amolden perfectamente al caso analizado.</span></li>'+
+        '<li><span>Invalide referencias que figuren únicamente en resúmenes o modelos lingüísticos y no consten en registros oficiales.</span></li>'+
+        '<li><span>Verifique la coherencia temporal entre el tomo de <em>Fallos</em> y el año de dictado de la sentencia.</span></li>'+
+        '<li><span>Asegúrese de que el tribunal citado contara con competencia en la materia a la fecha del fallo.</span></li>'+
+        '<li><span>Descarte citas que no registren menciones en doctrina, jurisprudencia posterior ni en el buscador del propio organismo.</span></li>'+
       '</ol></section>'+
     '</div>';
 
