@@ -4,6 +4,10 @@ import WebSocket from 'ws';
 
 export const routerVoz = express.Router();
 
+routerVoz.get('/voz', (_req, res) => {
+  res.json({ ok: true, idioma: LANG, voz: VOZ, requiereInternet: true });
+});
+
 const VOZ = 'es-AR-ElenaNeural';
 const LANG = 'es-AR';
 const CHROMIUM = '143.0.3650.75';
