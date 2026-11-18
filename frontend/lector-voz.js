@@ -23,33 +23,14 @@
   function vocesEspanol() {
     if (!sintesis || !sintesis.getVoices) return [];
     return sintesis.getVoices().filter(function (voz) {
-      var idioma = (voz.lang || "").toLowerCase();
-      return /^es(?:-|$)/i.test(idioma) && idioma !== "es-us";
+      return /^es-ar$/i.test(String(voz.lang || "").trim());
     }).sort(function (a, b) {
-      function rango(v) {
-        var lang = (v.lang || "").toLowerCase();
-        if (lang === "es-ar") return 0;
-        if (lang === "es-419") return 1;
-        if (lang === "es-mx") return 2;
-        if (/^es-(cl|co|uy|pe|bo|py|ve|ec|cr|gt|hn|ni|pa|do|pr)$/i.test(lang)) return 3;
-        if (lang === "es-es") return 4;
-        if (lang === "es") return 5;
-        if (lang === "es-us") return 6;
-        return 5;
-      }
-      return rango(a) - rango(b) || a.name.localeCompare(b.name, "es");
+      return a.name.localeCompare(b.name, "es");
     });
   }
 
   function etiquetaVoz(voz) {
-    if (!voz) return "Sin voz española";
-    var lang = (voz.lang || "").toLowerCase();
-    if (lang === "es-ar") return "Español argentino";
-    if (lang === "es-419" || lang === "es-mx" ||
-        /^es-(cl|co|uy|pe|bo|py|ve|ec|cr|gt|hn|ni|pa|do|pr)$/i.test(lang)) {
-      return "Español latino";
-    }
-    return "Español";
+    return voz ? "Español argentino" : "Sin voz es-AR";
   }
 
   function vozElegida() {
@@ -164,7 +145,7 @@
     if (!voz) {
       lector.estado = "error";
       lector.utterance = null;
-      actualizarControles("No hay una voz en español disponible. Instale una voz de español en el dispositivo y vuelva a intentarlo. No se reproducirá con voz inglesa.");
+      actualizarControles("No hay una voz de español argentino (es-AR) disponible. Instale una voz es-AR en el dispositivo y vuelva a intentarlo. No se usará otro acento.");
       return;
     }
     var u = new Utterance(frase);
@@ -196,7 +177,7 @@
       return;
     }
     if (!vozElegida()) {
-      actualizarControles("No hay una voz en español disponible en este dispositivo. Instale una voz española y vuelva a intentarlo.");
+      actualizarControles("No hay una voz de español argentino (es-AR) instalada en este dispositivo. Instale una voz es-AR y vuelva a intentarlo.");
       return;
     }
 
