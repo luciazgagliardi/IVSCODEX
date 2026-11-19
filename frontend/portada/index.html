@@ -114,16 +114,27 @@ html::-webkit-scrollbar{display:none}
   .sal tr.nota td:last-child{text-align:left;border-top:0;padding-top:0;color:var(--mute)}
 }
 
-/* Invitación a la prueba: misma tipografía y paleta, sin alterar el prisma. */
-.prueba30{margin:clamp(44px,7vw,90px) var(--pad) 0;padding:clamp(24px,4vw,48px);border:1px solid var(--line);border-radius:28px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:color-mix(in srgb,var(--gold) 4%,transparent)}
-.prueba30 .etiqueta{margin:0 0 12px;font:500 11px/1.3 var(--caps);letter-spacing:.23em;color:var(--gold)}
-.prueba30 h2{margin:0 0 9px;font:400 clamp(28px,3.6vw,49px)/1.08 var(--titulo);letter-spacing:-.035em;color:var(--fg)}
-.prueba30 h2 em{font-style:normal;color:var(--gold)}
-.prueba30 p{margin:0;max-width:57ch;color:var(--mute);font-size:14px;line-height:1.6}
-.prueba30 .prueba30-acciones{display:grid;justify-items:center;gap:9px;flex:none}
-.prueba30 .prueba30-acciones .btn{white-space:nowrap}
-.prueba30 small{max-width:27ch;color:var(--dim);font-size:11.5px;line-height:1.5;text-align:center}
-@media(max-width:760px){.prueba30{flex-direction:column;align-items:stretch}.prueba30 .prueba30-acciones{justify-items:stretch}.prueba30 .prueba30-acciones .btn{text-align:center}}
+/* Campaña editorial de 30 días: integra la estética del códice, sin tocar el héroe. */
+.prueba30{position:relative;isolation:isolate;overflow:hidden;margin:clamp(48px,8vw,110px) var(--pad) 0;padding:clamp(30px,5.5vw,78px);border:1px solid color-mix(in srgb,var(--gold) 42%,var(--line));border-radius:30px;background:radial-gradient(ellipse at 86% 38%,color-mix(in srgb,var(--gold) 13%,transparent),transparent 49%),linear-gradient(145deg,color-mix(in srgb,var(--gold) 5%,var(--bg)),var(--bg) 76%);display:grid;grid-template-columns:minmax(0,1.3fr) minmax(220px,.7fr);gap:clamp(24px,5vw,80px);align-items:center;box-shadow:0 25px 70px rgba(0,0,0,.1)}
+.prueba30::before,.prueba30::after{content:"";position:absolute;pointer-events:none;z-index:-1}
+.prueba30::before{inset:17px;border:1px solid color-mix(in srgb,var(--gold) 18%,transparent);border-radius:21px}
+.prueba30::after{width:510px;height:510px;border:1px solid color-mix(in srgb,var(--gold) 15%,transparent);border-radius:50%;right:-230px;top:-140px;box-shadow:0 0 0 52px color-mix(in srgb,var(--gold) 2%,transparent),0 0 0 106px color-mix(in srgb,var(--gold) 2%,transparent)}
+.prueba30 .prueba30-supra{display:flex;align-items:center;gap:12px;margin:0 0 28px;font:500 11px/1.3 var(--caps);letter-spacing:.24em;color:var(--gold)}
+.prueba30 .prueba30-supra::before{content:"";width:24px;height:1px;background:currentColor}
+.prueba30 .prueba30-h{margin:0 0 17px;font:400 clamp(36px,5.3vw,80px)/.99 var(--titulo);letter-spacing:-.05em;color:var(--fg);text-wrap:balance}
+.prueba30 .prueba30-h em{font-style:normal;color:var(--gold)}
+.prueba30 .prueba30-lead{margin:0;max-width:53ch;color:var(--mute);font-size:clamp(14px,1.25vw,17px);line-height:1.65}
+.prueba30 .prueba30-puntos{display:flex;flex-wrap:wrap;gap:10px 20px;margin:26px 0 0;padding:0;list-style:none;font-size:12px;letter-spacing:.02em;color:var(--fg)}
+.prueba30 .prueba30-puntos li::before{content:"✦";color:var(--gold);font-size:10px;margin-right:8px}
+.prueba30 .prueba30-lado{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;position:relative}
+.prueba30 .prueba30-num{font:400 clamp(112px,15vw,220px)/.8 var(--titulo);letter-spacing:-.095em;color:var(--gold);text-shadow:0 0 65px color-mix(in srgb,var(--gold) 18%,transparent);font-variant-numeric:lining-nums}
+.prueba30 .prueba30-dias{font:500 12px/1 var(--caps);letter-spacing:.55em;color:var(--fg);margin-left:.55em}
+.prueba30 .prueba30-acciones{display:grid;gap:13px;justify-items:center;margin-top:16px;width:100%}
+.prueba30 .prueba30-acciones .btn{display:inline-flex;align-items:center;justify-content:center;width:min(100%,290px);padding:16px 24px;white-space:nowrap}
+.prueba30 .prueba30-acciones .btn:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.prueba30 .prueba30-nota{max-width:35ch;margin:0;color:var(--dim);font-size:11px;line-height:1.5}
+@media(max-width:760px){.prueba30{grid-template-columns:minmax(0,1fr);gap:34px;padding:32px 28px 38px}.prueba30 .prueba30-supra{margin-bottom:22px}.prueba30 .prueba30-h{font-size:clamp(38px,10vw,66px)}.prueba30 .prueba30-num{font-size:clamp(110px,31vw,175px)}.prueba30 .prueba30-acciones{margin-top:4px}}
+@media(prefers-reduced-motion:no-preference){.prueba30 .prueba30-num{animation:prueba30-brillo 6s ease-in-out infinite}@keyframes prueba30-brillo{0%,100%{opacity:.84}50%{opacity:1}}}
 </style><link rel="stylesheet" href="../celular-vidrio.css?v=20261030x">
 </head><body>
 <script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261116-aristas-uniformes10"></script><script src="shared6.js?v=20261119-prueba30"></script><script src="calculos.js?v=20261024a"></script>
@@ -132,7 +143,7 @@ var m=IVS6.montar(),O=IVS4.OFERTAS;
 /* Oferta visible y vinculada al registro existente. No se simula activación ni cobro. */
 var prueba=document.createElement("section");
 prueba.className="prueba30";prueba.setAttribute("aria-label","Prueba gratuita de 30 días");
-prueba.innerHTML='<div><p class="etiqueta">ACCESO A IVS CODEX</p><h2>30 días de <em>prueba gratuita.</em></h2><p>Conozca la plataforma, explore jurisprudencia y utilice sus herramientas jurídicas. Cree su cuenta para comenzar.</p></div><div class="prueba30-acciones"><a class="btn" href="#" data-tab="cuenta">Crear cuenta</a><small>La gestión automática del plazo de prueba aún no está habilitada.</small></div>';
+prueba.innerHTML='<div class="prueba30-copia"><p class="prueba30-supra">UNA INVITACIÓN A DESCUBRIR IVS CODEX</p><h2 class="prueba30-h">El derecho a explorar.<br><em>Sin costo por 30 días.</em></h2><p class="prueba30-lead">Una plataforma jurídica para investigar con criterio: jurisprudencia, fuentes oficiales y herramientas de trabajo reunidas en un solo lugar. Descubra otra forma de consultar el derecho.</p><ul class="prueba30-puntos"><li>Jurisprudencia</li><li>Fuentes oficiales</li><li>Herramientas jurídicas</li></ul></div><div class="prueba30-lado"><div class="prueba30-num" aria-hidden="true">30</div><div class="prueba30-dias">DÍAS GRATIS</div><div class="prueba30-acciones"><a class="btn" href="#" data-tab="cuenta">Conocer la prueba gratuita</a><p class="prueba30-nota">La activación y el vencimiento automático de la prueba aún no están habilitados.</p></div></div>';
 m.appendChild(prueba);
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function $(i){return document.getElementById(i);}
