@@ -114,6 +114,16 @@ html::-webkit-scrollbar{display:none}
   .sal tr.nota td:last-child{text-align:left;border-top:0;padding-top:0;color:var(--mute)}
 }
 
+/* Acceso promocional en el héroe, visible sin desplazamiento. */
+.prueba30-hero{position:absolute;z-index:7;right:var(--pad);bottom:clamp(20px,5.5vh,60px);display:inline-flex;align-items:center;gap:14px;max-width:calc(100% - var(--pad)*2);padding:12px 20px;border:1px solid color-mix(in srgb,var(--gold) 58%,transparent);border-radius:999px;background:color-mix(in srgb,var(--bg) 87%,transparent);color:var(--fg);text-decoration:none;box-shadow:0 12px 38px rgba(0,0,0,.13);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transition:border-color .25s,transform .25s}
+.prueba30-hero:hover{border-color:var(--gold);transform:translateY(-3px)}
+.prueba30-hero:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+.prueba30-hero-cifra{font:400 46px/.85 var(--titulo);color:var(--gold)}
+.prueba30-hero-texto{display:grid;gap:4px;min-width:0}
+.prueba30-hero-texto strong{font:500 11px/1.2 var(--caps);letter-spacing:.19em}
+.prueba30-hero-texto small{font-size:11.5px;color:var(--mute);line-height:1.2}
+.prueba30-hero-flecha{color:var(--gold);font-size:18px;margin-left:8px}
+@media(max-width:760px){.prueba30-hero{right:16px;bottom:20px;padding:10px 14px;gap:10px}.prueba30-hero-cifra{font-size:39px}.prueba30-hero-texto small{font-size:10.5px}.prueba30-hero-flecha{margin-left:2px}}
 /* Campaña editorial de 30 días: integra la estética del códice, sin tocar el héroe. */
 .prueba30{position:relative;isolation:isolate;overflow:hidden;margin:clamp(48px,8vw,110px) var(--pad) 0;padding:clamp(30px,5.5vw,78px);border:1px solid color-mix(in srgb,var(--gold) 42%,var(--line));border-radius:30px;background:radial-gradient(ellipse at 86% 38%,color-mix(in srgb,var(--gold) 13%,transparent),transparent 49%),linear-gradient(145deg,color-mix(in srgb,var(--gold) 5%,var(--bg)),var(--bg) 76%);display:grid;grid-template-columns:minmax(0,1.3fr) minmax(220px,.7fr);gap:clamp(24px,5vw,80px);align-items:center;box-shadow:0 25px 70px rgba(0,0,0,.1)}
 .prueba30::before,.prueba30::after{content:"";position:absolute;pointer-events:none;z-index:-1}
@@ -144,7 +154,13 @@ var m=IVS6.montar(),O=IVS4.OFERTAS;
 var prueba=document.createElement("section");
 prueba.className="prueba30";prueba.setAttribute("aria-label","Prueba gratuita de 30 días");
 prueba.innerHTML='<div class="prueba30-copia"><p class="prueba30-supra">UNA INVITACIÓN A DESCUBRIR IVS CODEX</p><h2 class="prueba30-h">El derecho a explorar.<br><em>Sin costo por 30 días.</em></h2><p class="prueba30-lead">Una plataforma jurídica para investigar con criterio: jurisprudencia, fuentes oficiales y herramientas de trabajo reunidas en un solo lugar. Descubra otra forma de consultar el derecho.</p><ul class="prueba30-puntos"><li>Jurisprudencia</li><li>Fuentes oficiales</li><li>Herramientas jurídicas</li></ul></div><div class="prueba30-lado"><div class="prueba30-num" aria-hidden="true">30</div><div class="prueba30-dias">DÍAS GRATIS</div><div class="prueba30-acciones"><a class="btn" href="#" data-tab="cuenta">Conocer la prueba gratuita</a><p class="prueba30-nota">La activación y el vencimiento automático de la prueba aún no están habilitados.</p></div></div>';
-m.appendChild(prueba);
+/* Anuncio breve visible desde la primera pantalla, también en celulares. */
+var anuncio=document.createElement("a");
+anuncio.href="#prueba-gratis";anuncio.className="prueba30-hero";
+anuncio.setAttribute("aria-label","Descubrir la prueba gratuita de 30 días");
+anuncio.innerHTML='<span class="prueba30-hero-cifra">30</span><span class="prueba30-hero-texto"><strong>DÍAS GRATIS</strong><small>Conozca IVS CODEX sin costo</small></span><span class="prueba30-hero-flecha" aria-hidden="true">↗</span>';
+var hero=document.getElementById("hero6");if(hero)hero.appendChild(anuncio);
+prueba.id="prueba-gratis";
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function $(i){return document.getElementById(i);}
 function fh(d){return d.toISOString().slice(0,10);}
@@ -163,6 +179,8 @@ var s=document.createElement("section");s.className="mesa";
 s.innerHTML='<p class="eyebrow">LABORATORIVM</p><h2 class="h2">Pruébelo <em>aquí mismo.</em></h2><p class="lead6">Siete herramientas de la plataforma listas para probar.</p>'+
  '<div class="lab"><div class="tabs" id="tabs" role="tablist" aria-label="Instrumentos"></div><div class="panel" id="panel" role="tabpanel"></div></div>';
 m.appendChild(s);
+/* Mantener el solapamiento visual original entre prisma y laboratorio. */
+m.appendChild(prueba);
 function pintarTabs(){$("tabs").innerHTML=TOOLS.map(function(t){return '<button class="tab" role="tab" data-k="'+t.k+'" aria-selected="'+(st.tab===t.k)+'" style="--c:var('+t.c+')"><i></i>'+t.n+'</button>';}).join("");}
 $("tabs").addEventListener("click",function(e){var b=e.target.closest(".tab");if(!b)return;st.tab=b.dataset.k;pintarTabs();pintarPanel();});
 function campo(id,rot,val,extra){return '<label>'+rot+'<input type="text" id="'+id+'" value="'+esc(val)+'" '+(extra||"")+' autocomplete="off"></label>';}
