@@ -114,6 +114,7 @@ html::-webkit-scrollbar{display:none}
   .sal tr.nota td:last-child{text-align:left;border-top:0;padding-top:0;color:var(--mute)}
 }
 
+html{scroll-behavior:smooth;scroll-padding-top:82px}
 /* Acceso promocional en el héroe, visible sin desplazamiento. */
 .prueba30-hero{position:absolute;z-index:7;right:var(--pad);bottom:clamp(20px,5.5vh,60px);display:inline-flex;align-items:center;gap:14px;max-width:calc(100% - var(--pad)*2);padding:12px 20px;border:1px solid color-mix(in srgb,var(--gold) 58%,transparent);border-radius:999px;background:color-mix(in srgb,var(--bg) 87%,transparent);color:var(--fg);text-decoration:none;box-shadow:0 12px 38px rgba(0,0,0,.13);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transition:border-color .25s,transform .25s}
 .prueba30-hero:hover{border-color:var(--gold);transform:translateY(-3px)}
@@ -147,13 +148,13 @@ html::-webkit-scrollbar{display:none}
 @media(prefers-reduced-motion:no-preference){.prueba30 .prueba30-num{animation:prueba30-brillo 6s ease-in-out infinite}@keyframes prueba30-brillo{0%,100%{opacity:.84}50%{opacity:1}}}
 </style><link rel="stylesheet" href="../celular-vidrio.css?v=20261030x">
 </head><body>
-<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261116-aristas-uniformes10"></script><script src="shared6.js?v=20261119-prueba30"></script><script src="calculos.js?v=20261024a"></script>
+<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261116-aristas-uniformes10"></script><script src="shared6.js?v=20261119-enlace-campana"></script><script src="calculos.js?v=20261024a"></script>
 <script>
 var m=IVS6.montar(),O=IVS4.OFERTAS;
 /* Oferta visible y vinculada al registro existente. No se simula activación ni cobro. */
 var prueba=document.createElement("section");
 prueba.className="prueba30";prueba.setAttribute("aria-label","Prueba gratuita de 30 días");
-prueba.innerHTML='<div class="prueba30-copia"><p class="prueba30-supra">UNA INVITACIÓN A DESCUBRIR IVS CODEX</p><h2 class="prueba30-h">El derecho a explorar.<br><em>Sin costo por 30 días.</em></h2><p class="prueba30-lead">Una plataforma jurídica para investigar con criterio: jurisprudencia, fuentes oficiales y herramientas de trabajo reunidas en un solo lugar. Descubra otra forma de consultar el derecho.</p><ul class="prueba30-puntos"><li>Jurisprudencia</li><li>Fuentes oficiales</li><li>Herramientas jurídicas</li></ul></div><div class="prueba30-lado"><div class="prueba30-num" aria-hidden="true">30</div><div class="prueba30-dias">DÍAS GRATIS</div><div class="prueba30-acciones"><a class="btn" href="#" data-tab="cuenta">Conocer la prueba gratuita</a><p class="prueba30-nota">La activación y el vencimiento automático de la prueba aún no están habilitados.</p></div></div>';
+prueba.innerHTML='<div class="prueba30-copia"><p class="prueba30-supra">UNA INVITACIÓN A DESCUBRIR IVS CODEX</p><h2 class="prueba30-h">El derecho a explorar.<br><em>Sin costo por 30 días.</em></h2><p class="prueba30-lead">Una plataforma jurídica para investigar con criterio: jurisprudencia, fuentes oficiales y herramientas de trabajo reunidas en un solo lugar. Descubra otra forma de consultar el derecho.</p><ul class="prueba30-puntos"><li>Jurisprudencia</li><li>Fuentes oficiales</li><li>Herramientas jurídicas</li></ul></div><div class="prueba30-lado"><div class="prueba30-num" aria-hidden="true">30</div><div class="prueba30-dias">DÍAS GRATIS</div><div class="prueba30-acciones"><a class="btn" href="#" data-tab="cuenta">Crear mi cuenta</a><p class="prueba30-nota">La activación y el vencimiento automático de la prueba aún no están habilitados.</p></div></div>';
 /* Anuncio breve visible desde la primera pantalla, también en celulares. */
 var anuncio=document.createElement("a");
 anuncio.href="#prueba-gratis";anuncio.className="prueba30-hero";
