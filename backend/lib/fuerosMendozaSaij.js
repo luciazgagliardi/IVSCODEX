@@ -49,7 +49,7 @@ export async function buscarFuerosMendozaSaij({
     pagina:1, porPagina:40, anioDesde, anioHasta,
   });
   const resultados = filtrarFueroMendoza(muestra.resultados,tribunal)
-    .map(r=>({...r,provincia:'Mendoza',procedencia:'saij'}));
+    .map(r=>({...r,provincia:'Mendoza',fuenteSlug:'saij',procedencia:'SAIJ · Ministerio de Justicia'}));
   return {
     resultados,
     total: resultados.length,
