@@ -24,3 +24,20 @@ test('el navegador conserva el acervo y solo muestra en vivo cuando hubo respues
   assert.match(html, /En vivo no disponible/);
   assert.doesNotMatch(html, /Esta respuesta proviene del acervo local/);
 });
+
+test('el backend distingue IDs nuevos de fallos ya presentes en el corpus completo', () => {
+  const acervo = fs.readFileSync(new URL('../lib/acervo.js', import.meta.url), 'utf8');
+  assert.match(acervo, /export function idsNuevosRespectoAcervo\(registros\)/);
+  assert.match(acervo, /SELECT id FROM fallos WHERE id IN/);
+  assert.match(rutas, /idsNuevosAcervo = idsNuevosRespectoAcervo\(resultados\)/);
+  assert.match(rutas, /pedirEnVivo \? \{ idsNuevosAcervo \} : \{\}/);
+});
+
+test('los contadores separan el acervo del sitio y sólo suman IDs nuevos confirmados', () => {
+  assert.match(html, /if\(im\.local\) return \(im\.total\|\|0\)\+\(im\.nuevosVivos\|\|0\)/);
+  assert.match(html, /var idsConfirmados=Array\.isArray\(d\.idsNuevosAcervo\)/);
+  assert.match(html, /if\(idsConfirmados&&!idsConfirmados\.has\(r\.id\)\) return/);
+  assert.match(html, /imBusco\.nuevosVivos=idsConfirmados\?nuevos\.length:0/);
+  assert.match(html, /Acervo: <b>/);
+  assert.match(html, /En vivo: /);
+});
