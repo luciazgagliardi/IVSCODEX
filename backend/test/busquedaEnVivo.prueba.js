@@ -41,3 +41,9 @@ test('los contadores separan el acervo del sitio y sólo suman IDs nuevos confir
   assert.match(html, /Acervo: <b>/);
   assert.match(html, /En vivo: /);
 });
+
+test('Mendoza recibe carátulas como partes y la pantalla advierte ceros contradictorios', () => {
+  assert.match(rutas, /slug === 'mendoza' && typeof cuerpo\.partes === 'string'/);
+  assert.match(html, /if\(slug==="mendoza"\) cuerpo\.partes=nom\.consulta/);
+  assert.match(html, /ov\.total===0&&im\.total>0/);
+});
