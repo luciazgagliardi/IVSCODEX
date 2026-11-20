@@ -3470,7 +3470,7 @@ function nuevoIndices(){
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
-      fragmentos:{},fragErr:{},fragCargando:false,parcial:false,revisados:0,totalFuente:null,aflojado:false,desdeNavegador:false,
+      fragmentos:{},fragErr:{},fragCargando:false,parcial:false,revisados:0,totalFuente:null,aflojado:false,desdeNavegador:false,aportesEnVivo:0,
       // Dónde arranca cada página, en filas del SITIO: {1:0, 2:22, 3:43...}.
       // Numerar no alcanza cuando el filtro corre del lado del servidor —la
       // página 2 de resultados no es la fila 20 del sitio— así que cada
@@ -6526,6 +6526,7 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
   imBusco.parcial=!!d.totalParcial;
   imBusco.revisados=d.revisados||0;
   imBusco.aflojado=!!d.aflojado;
+  imBusco.aportesEnVivo=d.aportesEnVivo||0;
   // Dónde sigue la próxima. Si vino null, esta era la última: se borra el
   // cursor para que el paginador no ofrezca un "Siguiente" que no existe.
   if(typeof d.siguienteDesde==="number") imBusco.cursores[pagina+1]=d.siguienteDesde;
@@ -6629,7 +6630,13 @@ function buscarEnFuente(slug,pagina){
   // no cada clic. Cambia solo con una búsqueda nueva, así que ir pasando
   // de página a mano no corta la precarga de fondo de esta misma búsqueda
   // (ver precargarPaginasIndice).
-  if(esNueva){ imBusco.busquedaId=(imBusco.busquedaId||0)+1; imBusco.paginas={}; imBusco.cursores={1:0}; imBusco.porCopia=false; }
+  if(esNueva){
+    imBusco.busquedaId=(imBusco.busquedaId||0)+1;
+    imBusco.paginas={}; imBusco.cursores={1:0}; imBusco.porCopia=false;
+    // No mostrar resultados obsoletos mientras llegan los de la consulta nueva.
+    imBusco.busco=false; imBusco.resultados=[]; imBusco.total=0;
+    imBusco.local=false; imBusco.pagina=1; imBusco.aportesEnVivo=0;
+  }
   var busquedaId=imBusco.busquedaId;
   imBusco.cargando=true; imBusco.error=null; imBusco.inicio=Date.now(); render();
   // El modo y las palabras a excluir viajan al servidor: antes se elegían
@@ -6672,23 +6679,49 @@ function buscarEnFuente(slug,pagina){
   // reemplaza al llegar (salvo que ya se esté hojeando la copia). Una búsqueda
   // que vino de la copia se sigue paginando ahí.
   if(!esNueva&&imBusco.local) cuerpo.local=true;
-  var vivoListo=false;
+  var vivoListo=false, respuestaViva=null;
+  // Los hallazgos en vivo se agregan a la primera página del acervo sin
+  // reemplazarla ni alterar su total FTS o los cursores de paginación.
+  function sumarResultadosVivos(d){
+    if(!d||!d.ok||d.desdeIndiceLocal||!Array.isArray(d.resultados)||
+       !d.resultados.length||!imBusco.porCopia||imBusco.pagina!==1) return;
+    var vistos={};
+    imBusco.resultados.forEach(function(r){ vistos[claveFallo(slug,r)]=true; });
+    var nuevos=[];
+    d.resultados.forEach(function(r){
+      if(!r) return;
+      var clave=claveFallo(slug,r);
+      if(vistos[clave]) return;
+      vistos[clave]=true; nuevos.push(r);
+    });
+    if(!nuevos.length) return;
+    imBusco.resultados=imBusco.resultados.concat(nuevos);
+    imBusco.aportesEnVivo=nuevos.length;
+    if(imBusco.paginas[1]){
+      imBusco.paginas[1].resultados=imBusco.resultados.slice();
+      imBusco.paginas[1].aportesEnVivo=nuevos.length;
+    }
+    render();
+  }
   if(esNueva&&!estado.articulo){
     fetch(estado.api+"/indice/"+slug+"/local",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cuerpo)})
       .then(function(r){ return r.json(); })
       .then(function(d){
-        if(vivoListo||imBusco.pedido!==pedido||!d||!d.ok||!d.resultados||!d.resultados.length) return;
+        if(imBusco.pedido!==pedido||imBusco.pagina>1||!d||!d.ok||!d.resultados||!d.resultados.length) return;
         if(nom) d.resultados=IVSNombre.ordenar(d.resultados,nom);
-        imBusco.busco=true; imBusco.porCopia=true;
+        imBusco.busco=true; imBusco.error=null; imBusco.porCopia=true;
         aplicarPaginaIndice(slug,fCfg,imBusco,d,1,false);
         imBusco.paginas[1]=d;
+        if(respuestaViva) sumarResultadosVivos(respuestaViva);
       })["catch"](function(){ /* sin copia: se espera al sitio, como siempre */ });
   }
   // la copia local va por …/local: no le pregunta a ningún sitio oficial y no cuenta para el límite de peticiones
-  var promesaBusco=fetch(estado.api+"/indice/"+slug+(cuerpo.local?"/local":"/buscar"),{
+  // Despachar primero las solicitudes /local de todas las bases; las
+  // oficiales empiezan en la microtarea siguiente y corren en paralelo.
+  var promesaBusco=Promise.resolve().then(function(){ return fetch(estado.api+"/indice/"+slug+(cuerpo.local?"/local":"/buscar"),{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(cuerpo)
-  }).then(function(r){ return r.json(); })
+  }); }).then(function(r){ return r.json(); })
     .then(function(d){
       // SAIJ no atiende al servidor donde está publicada la web, pero sí a
       // los navegadores (ver el bloque de "SAIJ desde el navegador"). Si el
@@ -6724,12 +6757,13 @@ function buscarEnFuente(slug,pagina){
     function(err){ clearTimeout(idTope); throw err; })
     .then(function(d){
       if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
-      vivoListo=true;
-      // ya se está mostrando la copia: si el sitio no contestó, o si se está hojeando la copia, queda la copia
-      // (también si el sitio contestó «0»: a SAIJ y a la CSJN les pasa cuando se
-      // los consulta seguido, y no debe borrar lo que ya se estaba mostrando)
-      if(imBusco.porCopia&&(!d||!d.ok||imBusco.pagina>1||!(d.resultados&&d.resultados.length))){ imBusco.cargando=false; render(); return; }
-      if(imBusco.porCopia&&esNueva){ imBusco.paginas={}; imBusco.cursores={1:0}; imBusco.porCopia=false; }
+      vivoListo=true; respuestaViva=d;
+      // La consulta oficial complementa los resultados de la copia, no los sustituye.
+      if(imBusco.porCopia&&esNueva){
+        imBusco.cargando=false;
+        sumarResultadosVivos(d);
+        render(); return;
+      }
       imBusco.busco=true;
       if(!d||!d.ok){
         imBusco.cargando=false;
@@ -6756,6 +6790,7 @@ function buscarEnFuente(slug,pagina){
       }
     })["catch"](function(err){
       if(imBusco.pedido!==pedido) return;
+      if(imBusco.porCopia&&imBusco.resultados.length){ imBusco.cargando=false; render(); return; }
       imBusco.cargando=false; imBusco.busco=true;
       if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
       imBusco.error=(err&&err.tope)
@@ -6791,7 +6826,8 @@ function paginadorIndice(f,im){
   // después de la última mostrada, así que la página N empieza en el
   // resultado (N-1)*porPagina+1 sin trampa.
   var desde=(actual-1)*porPagina+1;
-  var hasta=desde+im.resultados.length-1;
+  var aportes=(im.local&&actual===1)?(im.aportesEnVivo||0):0;
+  var hasta=desde+im.resultados.length-1-aportes;
 
   // Qué filas del sitio se miraron para armar ESTA página. Es el dato que
   // convierte "20 resultados" en algo interpretable: veinte de entre
@@ -6805,6 +6841,7 @@ function paginadorIndice(f,im){
       ? ' · revisadas las filas '+filaA.toLocaleString("es-AR")+'–'+filaB.toLocaleString("es-AR")+' del sitio'
       : '')+
     (typeof im.cursores[actual+1]!=="number"&&actual>1?' · es la última página':'')+
+    (aportes?' · '+aportes+' coincidencia(s) adicionales de la consulta en vivo':'')+
     '</p>';
   if(ultima<=1&&actual<=1) return out;
 
@@ -6885,21 +6922,8 @@ function panelIndice(f){
   var out='<div class="panel vivo f-'+f.slug+'" id="panel-'+f.slug+'">'+
     '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+(local?'':' <span class="en-vivo">En vivo</span>')+'</span></div>';
 
-  var infoFuente=im.fuenteInfo;
-  if(infoFuente){
-    out+='<div class="aviso" style="margin:10px 0 14px">'+
-      '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px">'+
-      '<span class="tag">'+esc(infoFuente.autoridad||"Fuente")+'</span>'+
-      '<span class="tag">'+esc(infoFuente.tipo||"Documento")+'</span>'+
-      '<span class="tag">'+esc(infoFuente.linea||"Investigación jurídica")+'</span>'+
-      '</div>'+
-      '<p style="margin:0 0 5px;font-size:12.5px">'+esc(infoFuente.cobertura||"Alcance no especificado.")+'</p>'+
-      '<p style="margin:0;font-size:12px;color:var(--humo)"><b>Procedencia:</b> '+esc(infoFuente.procedencia||f.nombre)+'. '+esc(infoFuente.limite||"Verifique el documento original.")+'</p>'+
-      (local?'<p style="margin:7px 0 0;font-size:12px;color:var(--gold)">Esta respuesta proviene del acervo local ('+esc(im.origenAcervo||"copia guardada")+'), no de una consulta en vivo en esta petición.</p>':'')+
-      '</div>';
-  }else if(local){
-    out+='<p class="rz-aviso">Resultado de una copia local. No equivale a una consulta en vivo.</p>';
-  }
+  // El encabezado, los metadatos y los enlaces de cada fallo ya identifican
+  // la fuente. No se muestra el aviso redundante de procedencia de la copia.
   if(f.slug==="saij"){
     // SAIJ indexa la jurisprudencia y la legislación de las 24 jurisdicciones:
     // elegir una la convierte en el buscador de esa provincia.
