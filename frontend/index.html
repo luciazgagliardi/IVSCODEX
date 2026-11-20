@@ -6679,6 +6679,9 @@ function buscarEnFuente(slug,pagina){
   // reemplaza al llegar (salvo que ya se esté hojeando la copia). Una búsqueda
   // que vino de la copia se sigue paginando ahí.
   if(!esNueva&&imBusco.local) cuerpo.local=true;
+  // La copia se consulta por /local; esta segunda petición es exclusivamente
+  // para obtener los resultados nuevos del sitio oficial sin duplicar el FTS.
+  if(!cuerpo.local) cuerpo.pedirEnVivo=true;
   var vivoListo=false, respuestaViva=null;
   // Los hallazgos en vivo se agregan a la primera página del acervo sin
   // reemplazarla ni alterar su total FTS o los cursores de paginación.
