@@ -31,6 +31,7 @@ try {
       for(const i of señalados) for(let k=Math.max(0,i-2);k<=Math.min(lineas.length-1,i+3);k++)ver.add(k);
       console.log('CODIGO_SOLICITUD_OFICIAL '+JSON.stringify([...ver].sort((a,b)=>a-b).slice(0,105).map(i=>
         (i+1)+': '+lineas[i].trim().slice(0,220))));
+      console.log('PARAMETROS_JS_COMPLETO '+JSON.stringify(lineas.slice(10,148).map((linea,i)=> (i+11)+': '+linea.trim().slice(0,220))));
     }
   }
 }catch(e){console.log('FORMULARIO_ERROR '+e.name+' '+String(e.message).slice(0,200));}
@@ -58,7 +59,7 @@ const POST='https://wwwjuri.jus.mendoza.gov.ar/bib/jurisprudencia/funciones/cons
 for(const caso of [{tribunal:'CC',q:'daño moral'},{tribunal:'CT',q:'despido'}]){
   try{
     const form=new URLSearchParams({funcion:'armarSql',mostrar:'20',tesauro:'',
-      libre:caso.q,materia:'0',tribunal:caso.tribunal,expediente:'',partes:'',
+      libre:caso.q,materia:'0',tribunal:'0',expediente:'',partes:'',
       preopinante:'',cota:'0',fecha:'',ubica:'0',libro:'',fojas:'',
       norma:'0',numero:'',articulo:'',tribu:caso.tribunal,competencia:''});
     const cab={'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
