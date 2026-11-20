@@ -259,3 +259,66 @@ test('INC-03: entradas límite se rechazan con un mensaje', () => {
   assert.ok(C.incapacidad(900000, 18, 34, 'propia', { edad: 0, tasa: 4 }).error);
   assert.equal(C.incapacidad(900000, 18, 80, 'mendez').capital, 0, 'superada la edad límite');
 });
+
+/* ---------- correcciones de la auditoría integral 2026 (docs/auditoria-integral-2026/04-calculos-y-plazos.md) ---------- */
+
+test('C-05: período de prueba con egreso desde el 06/03/2026 (Ley 27.802): sin indemnización ni preaviso', () => {
+  const op = { sinPreaviso: true, integracion: true, prueba: true, sacRubros: true };
+  const r = C.despidoComponentes(1000000, f('2026-06-01'), f('2026-09-15'), op);
+  assert.deepEqual([r.indemnizacion, r.preaviso, r.sacPreaviso, r.integracion], [0, 0, 0, 0]);
+  assert.match(r.prueba.aviso, /Ley 27\.802/);
+  const L = C.liquidacionDespido(1000000, f('2026-06-01'), f('2026-09-15'), op);
+  cerca(L.total, 887083.88);   // días trabajados 500.000 + SAC 209.239,13 + vacaciones 164.164,38 + SAC 13.680,37
+});
+
+test('C-05: período de prueba con egreso anterior al 06/03/2026: sin indemnización, preaviso de 15 días', () => {
+  const r = C.despidoComponentes(1000000, f('2025-09-01'), f('2025-12-15'), { sinPreaviso: true, prueba: true });
+  assert.equal(r.indemnizacion, 0);
+  assert.equal(r.preaviso, 500000);
+  assert.match(r.prueba.aviso, /anterior al 06\/03\/2026/);
+});
+
+test('C-10: la fracción de más de 3 meses y los 5 años del preaviso cuentan el día del egreso', () => {
+  const k = (b) => C.despidoComponentes(1000000, f('2020-01-01'), f(b), { sinPreaviso: true });
+  assert.equal(k('2024-03-31').computables, 4);
+  assert.equal(k('2024-04-01').computables, 5);
+  assert.equal(k('2024-12-31').mesesPreaviso, 1);
+  assert.equal(k('2025-01-01').mesesPreaviso, 2);
+});
+
+test('C-12: la liquidación completa (plataforma y portada) da el total del caso de prueba', () => {
+  const L = C.liquidacionDespido(1250000, f('2020-03-10'), f('2026-11-20'), { sinPreaviso: true, integracion: true, sacRubros: true });
+  cerca(L.total, 14238515.28);
+  assert.equal(L.componentes.computables, 7);
+});
+
+test('C-06: Ley 9131, art. 2 en su lectura literal (grado por el monto total, piso del grado precedente, +30 % por mérito)', () => {
+  const JUS = 784337.29;
+  const h40 = C.honorariosMendoza(40000000, JUS);
+  cerca(h40.min, 6274698.32);
+  cerca(h40.max, 8157107.82);
+  assert.equal(h40.aplicaPiso, true);
+  cerca(h40.alternativa.min, 6996144.41);   // lectura acumulativa, solo como alternativa
+  cerca(C.honorariosMendoza(100000000, JUS).min, 12000000);
+  cerca(C.honorariosMendoza(30000000, JUS).min, 4800000);
+  cerca(C.honorariosMendoza(10000000, JUS).min, 2000000);
+  // reducciones y mérito
+  const perd = C.honorariosMendoza(40000000, JUS, { rol: 'perdedor', merito: 10 });
+  cerca(perd.min, 6274698.32 * 0.7);
+  cerca(perd.conMerito, 6274698.32 * 1.1 * 0.7);
+  assert.ok(C.honorariosMendoza(40000000, 0).error);
+});
+
+test('C-07: Ley 27.423, art. 58: mínimos por tipo de proceso', () => {
+  const con = C.honorariosNacion(1000000, UMA, 'conocimiento');
+  assert.equal(con.min, 1080050);
+  assert.equal(con.max, 1080050);
+  assert.equal(con.aplicaMinimo58, true);
+  const eje = C.honorariosNacion(1000000, UMA, 'ejecutivo');
+  assert.deepEqual([eje.min, eje.max], [648030, 648030]);
+  const sin = C.honorariosNacion(1000000, UMA, 'otro');
+  assert.deepEqual([sin.min, sin.max], [220000, 330000]);
+  const grande = C.honorariosNacion(12000000, UMA, 'conocimiento');
+  cerca(grande.min, 2720431.5);
+  cerca(grande.max, 2834409);
+});

@@ -116,7 +116,7 @@ html::-webkit-scrollbar{display:none}
 
 </style><link rel="stylesheet" href="../celular-vidrio.css?v=20261030x">
 </head><body>
-<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261120-doce-bases"></script><script src="shared6.js?v=20261120-doce-bases"></script><script src="calculos.js?v=20261024a"></script>
+<script>addEventListener("scroll",function(){if(scrollX>0&&innerWidth<=900)scrollTo(0,scrollY);},{passive:true});</script><script src="shared.js?v=20261120-doce-bases"></script><script src="shared6.js?v=20261120-doce-bases"></script><script src="../calculos.js?v=20261120-plazos"></script><script src="calculos.js?v=20261120-plazos"></script>
 <script>
 var m=IVS6.montar(),O=IVS4.OFERTAS;
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
@@ -157,26 +157,18 @@ var P={
    var d=diasEntre(a,b),i=c*(t/100)*d/365;$("out").innerHTML='<span class="gran">'+pesos(i)+'</span><small>Intereses por '+d+' días · total '+pesos(c+i)+'</small><table>'+fila("Capital",pesos(c))+fila("Tasa anual",t.toLocaleString("es-AR")+" %")+fila("Período",fechaCorta(a)+" a "+fechaCorta(b))+'</table>';}},
  pla:{f:function(){var hb=motivo(hoy),mn=motivo(masDias(hoy,1));
    return '<p class="hoy"><span><i class="'+(hb?"no":"")+'"></i>Hoy: <b>'+(hb?"inhábil ("+esc(hb.toLowerCase())+")":"día hábil")+'</b></span><span><i class="'+(mn?"no":"")+'"></i>Mañana: <b>'+(mn?"inhábil ("+esc(mn.toLowerCase())+")":"día hábil")+'</b></span></p>'+
-   '<div class="form">'+fecha("pn","Fecha de notificación",fh(hoy))+campo("pd","Plazo (días)","5",'inputmode="numeric"')+chips("modo","Cómo se cuenta",[["habiles","Días hábiles judiciales"],["corridos","Días corridos"]],st.modo)+chips("juris","Jurisdicción",[["nacion","Nación"],["caba","Ciudad de Buenos Aires"],["mendoza","Mendoza"]],st.juris)+'</div><div class="sal" id="out" aria-live="polite"></div>'+nota("Se descuentan fines de semana y feriados. No incluye las ferias judiciales de enero y julio ni los asuetos: cárguelos en el calendario de la plataforma.");},
+   '<div class="form">'+fecha("pn","Fecha de notificación",fh(hoy))+campo("pd","Plazo (días)","5",'inputmode="numeric"')+chips("modo","Cómo se cuenta",[["habiles","Días hábiles judiciales"],["corridos","Días corridos"]],st.modo)+chips("juris","Jurisdicción",[["nacion","Nación"],["caba","Ciudad de Buenos Aires"],["mendoza","Mendoza"]],st.juris)+'</div><div class="sal" id="out" aria-live="polite"></div>'+nota("Se descuentan fines de semana, feriados, ferias de enero y julio y los no laborables que la ley procesal declara inhábiles, cada uno con su norma (los mismos datos que la plataforma). Los asuetos que disponga cada tribunal se cargan en el calendario de la plataforma.");},
   c:function(){var n=parseInt($("pd").value,10),d=fechaDe($("pn").value);if(!d||!(n>0)){$("out").innerHTML='<span class="mal">Indique la fecha de notificación y el plazo en días.</span>';return;}
-   var vence,salt=[];if(st.modo==="habiles"){var x=d,k=0;while(k<n){x=masDias(x,1);var mo=motivo(x);if(mo){if(mo!=="Fin de semana")salt.push([x,mo]);continue;}k++;}vence=x;}else vence=masDias(d,n);
-   var g=masDias(vence,1);while(motivo(g))g=masDias(g,1);
-   $("out").innerHTML='<span class="gran">'+esc(fechaLarga(vence))+'</span><small>Con plazo de gracia: '+esc(fechaLarga(g))+', dos primeras horas de despacho</small><table>'+fila("Notificación",esc(fechaLarga(d)))+fila("Plazo",n+(st.modo==="habiles"?" días hábiles":" días corridos")+" · desde el día siguiente")+salt.map(function(q){return fila("No se computa · "+fechaCorta(q[0]),esc(q[1]));}).join("")+'</table>';}},
+   var R=IVSCalculos.computarPlazo({notif:d,dias:n,tipo:st.modo,juris:st.juris});if(R.error){$("out").innerHTML='<span class="mal">'+esc(R.error)+'</span>';return;}
+   $("out").innerHTML='<span class="gran">'+esc(fechaLarga(R.vence))+(R.provisorio?" (provisorio)":"")+'</span><small>'+(R.gracia?'Con plazo de gracia: '+esc(fechaLarga(R.gracia))+', dos primeras horas de despacho':'Vence a las 24 horas; sin plazo de gracia para escritos electrónicos (art. 61 ap. III, Ley 9001; Acordada SCJM 31.699)')+'</small><table>'+fila("Notificación",esc(fechaLarga(d)))+fila("Plazo",n+(st.modo==="habiles"?" días hábiles":" días corridos")+" · desde el día siguiente")+
+     R.saltados.map(function(q){return fila("No se computa · "+fechaCorta(q.fecha),esc(q.motivo)+(q.verificado===false?" (dato no verificado, confirme la acordada)":""));}).join("")+
+     R.faltantes.concat(R.avisos).map(function(a){return fila("Aviso",esc(a),"nota");}).join("")+fila("Base legal",esc(R.base),"nota")+'</table>';}},
  des:{f:function(){return '<div class="form">'+campo("ds","Mejor remuneración mensual, normal y habitual del último año ($)","1.250.000",'inputmode="decimal" class="ancho"')+fecha("di","Fecha de ingreso","2020-03-10")+fecha("de","Fecha de egreso",fh(hoy))+
-   '<label class="check ancho"><input type="checkbox" id="dp" checked> No se otorgó preaviso</label><label class="check ancho"><input type="checkbox" id="dg" checked> Corresponde la integración del mes de despido</label></div><div class="sal" id="out" aria-live="polite"></div>'+nota("Cálculo orientativo con la Ley de Contrato de Trabajo 20.744. No aplica topes de convenio ni intereses. Verifique siempre con un profesional.");},
+   '<label class="check ancho"><input type="checkbox" id="dp" checked> No se otorgó preaviso</label><label class="check ancho"><input type="checkbox" id="dg" checked> Corresponde la integración del mes de despido</label><label class="check ancho"><input type="checkbox" id="dpr"> El despido ocurrió durante el período de prueba (art. 92 bis LCT)</label></div><div class="sal" id="out" aria-live="polite"></div>'+nota("Cálculo orientativo con la Ley de Contrato de Trabajo 20.744, con el mismo cálculo de la plataforma (incluye el SAC sobre preaviso, integración y vacaciones). No aplica topes de convenio ni intereses. Verifique siempre con un profesional.");},
   c:function(){var sl=num($("ds").value),a=fechaDe($("di").value),b=fechaDe($("de").value);if(!(sl>0)||!a||!b||b<=a){$("out").innerHTML='<span class="mal">Complete la remuneración y fechas de ingreso y egreso (el egreso debe ser posterior).</span>';return;}
-   var ant=antiguedad(a,b),comp=Math.max(1,ant.anios+(ant.masDeTres?1:0)),dm=diasDelMes(b.getUTCFullYear(),b.getUTCMonth()),dia=b.getUTCDate(),r=[];
-   function ru(n,l,v){if(v>0)r.push([n,l,v]);}
-   ru("Indemnización por antigüedad ("+comp+(comp===1?" año":" años")+")","art. 245 LCT",sl*comp);
-   if($("dp").checked){var m5=masMeses(a,60)<b;ru("Preaviso omitido ("+(m5?"2 meses":"1 mes")+")","arts. 231 y 232 LCT",m5?2*sl:sl);
-     if($("dg").checked&&dia<dm)ru("Integración del mes de despido ("+(dm-dia)+" días)","art. 233 LCT",sl/dm*(dm-dia));}
-   ru("Días trabajados del mes ("+dia+")","art. 103 LCT",sl/dm*dia);
-   var ini=new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?0:6,1));if(ini<a)ini=a;var fin=new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?5:11,b.getUTCMonth()<6?30:31)),ds=diasEntre(new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?0:6,1)),fin)+1;
-   ru("SAC proporcional del semestre","art. 123 LCT",sl/2*(diasEntre(ini,b)+1)/ds);
-   var ia=new Date(Date.UTC(b.getUTCFullYear(),0,1));if(ia<a)ia=a;var vd=diasVacaciones(antiguedad(a,new Date(Date.UTC(b.getUTCFullYear(),11,31))).anios)*(diasEntre(ia,b)+1)/365;
-   ru("Vacaciones no gozadas ("+vd.toLocaleString("es-AR",{maximumFractionDigits:1})+" días)","arts. 150, 155 y 156 LCT",sl/25*vd);
-   var tot=r.reduce(function(x,q){return x+q[2];},0);
-   $("out").innerHTML='<span class="gran">'+pesos(tot)+'</span><small>Antigüedad: '+ant.anios+(ant.anios===1?" año":" años")+(ant.meses?" y "+ant.meses+(ant.meses===1?" mes":" meses"):"")+' · '+comp+' computables</small><table>'+r.map(function(q){return fila(esc(q[0])+'<em>'+q[1]+'</em>',pesos(q[2]));}).join("")+fila("Total",pesos(tot),"tot")+'</table>';}},
+   var L=IVSCalculos.liquidacionDespido(sl,a,b,{sinPreaviso:$("dp").checked,integracion:$("dg").checked,prueba:$("dpr").checked,sacRubros:true});if(L.error){$("out").innerHTML='<span class="mal">'+esc(L.error)+'</span>';return;}
+   var K=L.componentes,ant=K.antiguedad;
+   $("out").innerHTML='<span class="gran">'+pesos(L.total)+'</span><small>Antigüedad: '+ant.anios+(ant.anios===1?" año":" años")+(ant.meses?" y "+ant.meses+(ant.meses===1?" mes":" meses"):"")+' · '+(K.prueba?"período de prueba":K.computables+" computables")+'</small><table>'+L.rubros.map(function(q){return fila(esc(q[0])+'<em>'+q[1]+'</em>',pesos(q[2]));}).join("")+fila("Total",pesos(L.total),"tot")+(K.prueba?fila("Nota",esc(K.prueba.aviso),"nota"):"")+'</table>';}},
  pre:{f:function(){return '<div class="form"><label class="ancho">Acción<select id="pa">'+ACCIONES.map(function(a){return '<option value="'+a[0]+'">'+esc(a[1])+'</option>';}).join("")+'</select></label>'+fecha("pi","Inicio del cómputo (desde que es exigible)",fh(masMeses(hoy,-12)))+campo("ps","Días de suspensión (opcional)","0",'inputmode="numeric"')+'</div><div class="sal" id="out" aria-live="polite"></div>'+nota("Plazos de los arts. 2560 a 2564 del CCyC y 256 de la LCT. La interpelación y la mediación pueden suspender el curso: súmelo en los días de suspensión.");},
   c:function(){var ac=ACCIONES.filter(function(a){return a[0]===$("pa").value;})[0],d=fechaDe($("pi").value);if(!ac)return;
    if(ac[2]===0){$("out").innerHTML='<span class="gran">Imprescriptible</span><small>'+esc(ac[3])+'. '+esc(ac[4])+'</small>';return;}
@@ -190,7 +182,7 @@ var P={
    '<div class="form">'+campo("fp","Texto antes del número","Fs. ")+campo("fi","Empezar en","1",'inputmode="numeric"')+'</div><div class="acciones" style="margin-bottom:14px"><button class="btn" id="fgo"'+(st.pdf?"":" disabled")+'>Numerar y descargar</button></div><div class="sal" id="out" aria-live="polite"></div>'+nota("Procesamiento local en el navegador mediante pdf-lib: el archivo no se envía a ningún servidor. Límite máximo de 150 MB.");},
   c:function(){$("out").innerHTML=st.pdf?'<small>Listo para numerar '+st.pdf.pag+' páginas.</small>':'<small>Elija un archivo PDF para empezar.</small>';}}
 };
-function motivo(d){var w=d.getUTCDay();if(w===0||w===6)return "Fin de semana";return feriados(d.getUTCFullYear(),st.juris)[isoDe(d)]||"";}
+function motivo(d){return IVSCalculos.diaInhabil(d,st.juris).motivo;}
 function pintarPanel(){var t=TOOLS.filter(function(x){return x.k===st.tab;})[0];
  $("panel").style.setProperty("--c","var("+t.c+")");
  $("panel").innerHTML='<span class="lat">'+t.lat+'</span><h3>'+t.t+'</h3><p class="s">'+t.s+'</p>'+P[st.tab].f();

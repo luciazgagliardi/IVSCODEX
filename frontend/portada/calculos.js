@@ -1,4 +1,4 @@
-/* Cálculos copiados tal cual de la plataforma (index.html): mismas fórmulas, mismos feriados, mismos plazos. */
+/* Utilidades de la portada. Los cálculos con norma (plazos, feriados, despido) vienen de ../calculos.js (IVSCalculos), compartido con la plataforma. */
 function sinTildes(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,""); }
 function num(v){
   var s=String(v==null?"":v).trim().replace(/[\s$]/g,"");
@@ -24,55 +24,9 @@ function masMeses(d,meses){
   var aa=a+Math.floor(m/12),mm=((m%12)+12)%12;
   return new Date(Date.UTC(aa,mm,Math.min(dia,diasDelMes(aa,mm))));
 }
-function pascua(a){
-  var b=a%19,c=Math.floor(a/100),d=a%100,e=Math.floor(c/4),f=c%4,g=Math.floor((c+8)/25),h=Math.floor((c-g+1)/3),
-      i=(19*b+c-e-h+15)%30,k=Math.floor(d/4),l=d%4,m=(32+2*f+2*k-i-l)%7,n=Math.floor((b+11*i+22*m)/451),
-      mes=Math.floor((i+m-7*n+114)/31),dia=((i+m-7*n+114)%31)+1;
-  return new Date(Date.UTC(a,mes-1,dia));
-}
-/* Trasladables (art. 6, Ley 27.399): si caen martes o miércoles pasan al
-   lunes anterior; si caen jueves o viernes, al lunes siguiente. */
-function trasladar(d){
-  var w=d.getUTCDay();
-  if(w===2||w===3) return masDias(d,-(w-1));
-  if(w===4||w===5) return masDias(d,8-w);
-  return d;
-}
-var FERIADOS_CACHE={};
-function feriados(anio,juris){
-  var clave=anio+"|"+juris;
-  if(FERIADOS_CACHE[clave]) return FERIADOS_CACHE[clave];
-  var f={};
-  function fijo(m,d,n){ f[isoDe(new Date(Date.UTC(anio,m-1,d)))]=n; }
-  fijo(1,1,"Año Nuevo");
-  fijo(3,24,"Día Nacional de la Memoria por la Verdad y la Justicia");
-  fijo(4,2,"Día del Veterano y de los Caídos en la Guerra de Malvinas");
-  fijo(5,1,"Día del Trabajador");
-  fijo(5,25,"Día de la Revolución de Mayo");
-  fijo(6,20,"Paso a la Inmortalidad del General Manuel Belgrano");
-  fijo(7,9,"Día de la Independencia");
-  fijo(12,8,"Inmaculada Concepción de María");
-  fijo(12,25,"Navidad");
-  var p=pascua(anio);
-  f[isoDe(masDias(p,-48))]="Carnaval";
-  f[isoDe(masDias(p,-47))]="Carnaval";
-  f[isoDe(masDias(p,-2))]="Viernes Santo";
-  [[6,17,"Paso a la Inmortalidad del General Martín Miguel de Güemes"],
-   [8,17,"Paso a la Inmortalidad del General José de San Martín"],
-   [10,12,"Día del Respeto a la Diversidad Cultural"],
-   [11,20,"Día de la Soberanía Nacional"]].forEach(function(t){
-    f[isoDe(trasladar(new Date(Date.UTC(anio,t[0]-1,t[1]))))]=t[2];
-  });
-  if(juris==="mendoza") fijo(7,25,"Santiago Apóstol, patrono de Mendoza (feriado provincial)");
-  FERIADOS_CACHE[clave]=f;
-  return f;
-}
-function antiguedad(a,b){
-  var anios=0; while(masMeses(a,12*(anios+1))<=b) anios++;
-  var desdeAniv=masMeses(a,12*anios),meses=0; while(masMeses(desdeAniv,meses+1)<=b) meses++;
-  return {anios:anios,meses:meses,masDeTres:masMeses(desdeAniv,3)<b};
-}
-function diasVacaciones(anios){ return anios<5?14:anios<10?21:anios<20?28:35; }
+/* Feriados, ferias, días inhábiles, cómputo de plazos y liquidación por
+   despido: no se copian; la portada carga ../calculos.js (IVSCalculos), el
+   mismo archivo de la plataforma, para que las dos den siempre lo mismo. */
 var ACCIONES=[
   ["generico","Plazo genérico",60,"art. 2560 CCyC","Excepto que esté previsto uno diferente en la legislación local."],
   ["danos","Resarcimiento de daños derivados de la responsabilidad civil",36,"art. 2561 CCyC",""],

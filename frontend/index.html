@@ -1835,7 +1835,7 @@ mark{border-radius:6px}
 <div id="flash" role="status" aria-live="polite" hidden style="display:none!important"></div>
 
 <script src="./analisis-fallo.js?v=20261030c"></script>
-<script src="./calculos.js?v=20261024"></script>
+<script src="./calculos.js?v=20261120-plazos"></script>
 <script src="./nombre-fallo.js?v=20261024c"></script>
 <script src="./pasajes.js?v=20261025"></script>
 <script src="./lexia-picante.js?v=20261026c"></script>
@@ -9674,7 +9674,7 @@ var CALC={
   actualizacion:{monto:"",indice:"cer",desde:"",hasta:"",cargando:false,error:"",res:null},
   despido:{sueldo:"",ingreso:"",egreso:"",tope:"",prueba:false,sinPreaviso:true,integracion:true,sacRubros:true},
   incapacidad:{ingreso:"",porcentaje:"",edad:"",formula:"mendez",edadLimite:"75",tasa:"4"},
-  honorarios:{juris:"nacion",monto:"",uma:"",jus:"784.337,29",rol:"ganador",proceso:"ordinario",merito:"",procurador:false,iva:false,tasaPct:"3"},
+  honorarios:{juris:"nacion",monto:"",uma:"",procesoNacion:"conocimiento",jus:"784.337,29",rol:"ganador",proceso:"ordinario",merito:"",procurador:false,iva:false,tasaPct:"3"},
   liquidacion:{capital:"",intereses:"",desde:"",hasta:"",honorarios:"",iva:false,tasa:"",otros:""},
   plazosActiva:"procesales",
   procesales:{notif:"",dias:"",tipo:"habiles",juris:"nacion"},
@@ -9716,66 +9716,17 @@ function masMeses(d,meses){
   return new Date(Date.UTC(aa,mm,Math.min(dia,diasDelMes(aa,mm))));
 }
 
-/* ---------- feriados nacionales (Ley 27.399) ---------- */
-/* Domingo de Pascua por el algoritmo de Meeus/Jones/Butcher: de ahí salen
-   Carnaval (lunes y martes, 48 y 47 días antes) y el Viernes Santo. */
-function pascua(a){
-  var b=a%19,c=Math.floor(a/100),d=a%100,e=Math.floor(c/4),f=c%4,g=Math.floor((c+8)/25),h=Math.floor((c-g+1)/3),
-      i=(19*b+c-e-h+15)%30,k=Math.floor(d/4),l=d%4,m=(32+2*f+2*k-i-l)%7,n=Math.floor((b+11*i+22*m)/451),
-      mes=Math.floor((i+m-7*n+114)/31),dia=((i+m-7*n+114)%31)+1;
-  return new Date(Date.UTC(a,mes-1,dia));
-}
-/* Trasladables (art. 6, Ley 27.399): si caen martes o miércoles pasan al
-   lunes anterior; si caen jueves o viernes, al lunes siguiente. */
-function trasladar(d){
-  var w=d.getUTCDay();
-  if(w===2||w===3) return masDias(d,-(w-1));
-  if(w===4||w===5) return masDias(d,8-w);
-  return d;
-}
-var FERIADOS_CACHE={};
-function feriados(anio,juris){
-  var clave=anio+"|"+juris;
-  if(FERIADOS_CACHE[clave]) return FERIADOS_CACHE[clave];
-  var f={};
-  function fijo(m,d,n){ f[isoDe(new Date(Date.UTC(anio,m-1,d)))]=n; }
-  fijo(1,1,"Año Nuevo");
-  fijo(3,24,"Día Nacional de la Memoria por la Verdad y la Justicia");
-  fijo(4,2,"Día del Veterano y de los Caídos en la Guerra de Malvinas");
-  fijo(5,1,"Día del Trabajador");
-  fijo(5,25,"Día de la Revolución de Mayo");
-  fijo(6,20,"Paso a la Inmortalidad del General Manuel Belgrano");
-  fijo(7,9,"Día de la Independencia");
-  fijo(12,8,"Inmaculada Concepción de María");
-  fijo(12,25,"Navidad");
-  var p=pascua(anio);
-  f[isoDe(masDias(p,-48))]="Carnaval";
-  f[isoDe(masDias(p,-47))]="Carnaval";
-  f[isoDe(masDias(p,-2))]="Viernes Santo";
-  [[6,17,"Paso a la Inmortalidad del General Martín Miguel de Güemes"],
-   [8,17,"Paso a la Inmortalidad del General José de San Martín"],
-   [10,12,"Día del Respeto a la Diversidad Cultural"],
-   [11,20,"Día de la Soberanía Nacional"]].forEach(function(t){
-    f[isoDe(trasladar(new Date(Date.UTC(anio,t[0]-1,t[1]))))]=t[2];
-  });
-  if(juris==="mendoza") fijo(7,25,"Santiago Apóstol, patrono de Mendoza (feriado provincial)");
-  FERIADOS_CACHE[clave]=f;
-  return f;
-}
-function inhabilExtra(iso){
-  for(var i=0;i<CALC.inhabiles.length;i++){
-    var x=CALC.inhabiles[i];
-    if(iso>=x.desde&&iso<=(x.hasta||x.desde)) return x.motivo||"Día inhábil";
-  }
-  return "";
-}
+/* ---------- feriados, ferias y días inhábiles ----------
+   La regla de la Ley 27.399, la tabla anual con su norma y su URL (decretos,
+   no laborables turísticos, ferias por acordada) y el cómputo de los plazos
+   viven en calculos.js (IVSCalculos.diaInhabil / computarPlazo), probados en
+   backend/test/plazosFeriados.prueba.js. Acá solo se suman los días que
+   carga el usuario, cada uno con su jurisdicción. */
+function feriados(anio,juris){ return IVSCalculos.feriados(anio,juris); }
+function infoDia(d,juris){ return IVSCalculos.diaInhabil(d,juris,CALC.inhabiles); }
 /* Por qué un día no es hábil judicial ("" si lo es). */
-function motivoInhabil(d,juris){
-  var w=d.getUTCDay();
-  if(w===0||w===6) return "Fin de semana";
-  return feriados(d.getUTCFullYear(),juris)[isoDe(d)]||inhabilExtra(isoDe(d));
-}
-function siguienteHabil(d,juris){ var x=masDias(d,1); while(motivoInhabil(x,juris)) x=masDias(x,1); return x; }
+function motivoInhabil(d,juris){ return infoDia(d,juris).motivo; }
+function siguienteHabil(d,juris){ return IVSCalculos.siguienteHabil(d,juris,CALC.inhabiles); }
 
 /* ---------- series oficiales de índices ----------
    CER y UVA: API de Estadísticas del Banco Central (api.bcra.gob.ar, v4.0,
@@ -9958,50 +9909,24 @@ function pedirIndices(){
 }
 
 /* ================= INDEMNIZACIÓN POR DESPIDO ================= */
-function antiguedad(a,b){
-  var anios=0; while(masMeses(a,12*(anios+1))<=b) anios++;
-  var desdeAniv=masMeses(a,12*anios),meses=0; while(masMeses(desdeAniv,meses+1)<=b) meses++;
-  return {anios:anios,meses:meses,masDeTres:masMeses(desdeAniv,3)<b};
-}
-function diasVacaciones(anios){ return anios<5?14:anios<10?21:anios<20?28:35; }
 function calcDespido(){
   var c=CALC.despido,s=num(c.sueldo),a=fechaDe(c.ingreso),b=fechaDe(c.egreso);
   if(String(c.sueldo||"").trim()===""||!c.ingreso||!c.egreso) return null;
-  // Antigüedad, art. 245, preaviso e integración: IVSCalculos.despidoComponentes
-  // (calculos.js), probado en backend/test/calculos.prueba.js.
+  // Todos los rubros salen de IVSCalculos.liquidacionDespido (calculos.js),
+  // la misma función que usa la portada; probada en backend/test/calculos.prueba.js.
   var tope=num(c.tope);
-  var K=IVSCalculos.despidoComponentes(s,a,b,{tope:tope,sinPreaviso:c.sinPreaviso,integracion:c.integracion,prueba:c.prueba,sacRubros:c.sacRubros});
-  if(K.error) return {titulo:"Liquidación final por despido sin causa",total:"—",sub:esc(K.error)};
-  var ant=K.antiguedad,computables=K.computables,base=K.base,notaTope="";
+  var L=IVSCalculos.liquidacionDespido(s,a,b,{tope:tope,sinPreaviso:c.sinPreaviso,integracion:c.integracion,prueba:c.prueba,sacRubros:c.sacRubros});
+  if(L.error) return {titulo:"Liquidación final por despido sin causa",total:"—",sub:esc(L.error)};
+  var K=L.componentes,ant=K.antiguedad,computables=K.computables,base=K.base,notaTope="";
   if(base!==s) notaTope="La remuneración supera el tope del convenio: la base es "+pesos(base)+(base>tope?" (el 67 % de la remuneración, según la doctrina de la Corte en «Vizzoti», 2004)":" (el tope)")+".";
-  var dm=K.diasDelMes,dia=K.diasTrabajados;
-  var rubros=[];
-  function rubro(n,ley,v){ if(v>0) rubros.push([n,ley,v]); }
-  rubro("Indemnización por antigüedad ("+computables+(computables===1?" año":" años")+")","art. 245 LCT",K.indemnizacion);
-  // Art. 231: un mes si la antigüedad no excede de cinco años; dos meses si
-  // es superior (cinco años justos todavía es un mes). Art. 233: la
-  // integración no procede durante el período de prueba.
-  if(K.preaviso) rubro("Preaviso omitido ("+(c.prueba?"15 días, período de prueba":(K.mesesPreaviso===2?"2 meses":"1 mes"))+")","arts. 231 y 232 LCT",K.preaviso);
-  if(K.sacPreaviso) rubro("SAC sobre el preaviso","art. 121 LCT",K.sacPreaviso);
-  if(K.integracion) rubro("Integración del mes de despido ("+K.diasIntegracion+" días)","art. 233 LCT",K.integracion);
-  if(K.sacIntegracion) rubro("SAC sobre la integración","art. 121 LCT",K.sacIntegracion);
-  rubro("Remuneración de los días trabajados del mes ("+dia+")","art. 103 LCT",s/dm*dia);
-  var ini=new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?0:6,1));
-  if(ini<a) ini=a;
-  var finSem=new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?5:11,b.getUTCMonth()<6?30:31));
-  var diasSem=diasEntre(new Date(Date.UTC(b.getUTCFullYear(),b.getUTCMonth()<6?0:6,1)),finSem)+1;
-  rubro("SAC proporcional del semestre","art. 123 LCT",s/2*(diasEntre(ini,b)+1)/diasSem);
-  var iniAnio=new Date(Date.UTC(b.getUTCFullYear(),0,1)); if(iniAnio<a) iniAnio=a;
-  var vacDias=diasVacaciones(antiguedad(a,new Date(Date.UTC(b.getUTCFullYear(),11,31))).anios)*(diasEntre(iniAnio,b)+1)/365;
-  var vac=s/25*vacDias;
-  rubro("Vacaciones no gozadas proporcionales ("+vacDias.toLocaleString("es-AR",{maximumFractionDigits:1})+" días)","arts. 150, 155 y 156 LCT",vac);
-  if(c.sacRubros) rubro("SAC sobre las vacaciones","art. 121 LCT",vac/12);
+  var rubros=L.rubros;
   var total=rubros.reduce(function(x,r){return x+r[2];},0);
   var avisos=[];
+  if(K.prueba) avisos.push(K.prueba.aviso);
   if(notaTope) avisos.push(notaTope);
   avisos.push("Según la reforma de la Ley 27.742 (2024), la base del art. 245 no incluye el SAC ni los conceptos de pago no mensual, y quedaron derogadas las multas de los arts. 8, 9, 10 y 15 de la Ley 24.013 y de los arts. 1 y 2 de la Ley 25.323: no se incluyen. Tampoco se calculan la indemnización del art. 80 LCT ni los agravamientos de otros regímenes. Verifique la norma vigente y el convenio aplicable.");
   return {titulo:"Liquidación final por despido sin causa",total:pesos(total),
-    sub:"Antigüedad: "+ant.anios+(ant.anios===1?" año":" años")+(ant.meses?" y "+ant.meses+(ant.meses===1?" mes":" meses"):"")+" · "+computables+" computables",
+    sub:"Antigüedad: "+ant.anios+(ant.anios===1?" año":" años")+(ant.meses?" y "+ant.meses+(ant.meses===1?" mes":" meses"):"")+" (contando el día del egreso) · "+(c.prueba?"período de prueba: sin indemnización por antigüedad":computables+" computables"),
     filas:rubros.map(function(r){ return [esc(r[0])+' <span class="calc-ley">'+r[1]+'</span>',pesos(r[2])]; }),
     avisos:avisos,
     base:"Ley de Contrato de Trabajo 20.744: art. 245 (antigüedad: un mes de la mejor remuneración mensual, normal y habitual del último año por cada año o fracción mayor de tres meses), arts. 231 a 233 (preaviso e integración), arts. 121 a 123 (sueldo anual complementario), arts. 150 y 156 (vacaciones).",
@@ -10069,7 +9994,7 @@ function calcHonorarios(){
   if(!(m>0)) return {titulo:"Honorarios",total:"—",sub:"El monto del proceso tiene que ser un número mayor que cero."};
   var filas=[],min,max,avisos=[],base;
   if(c.juris==="nacion"){
-    var h=IVSCalculos.honorariosNacion(m,num(c.uma));
+    var h=IVSCalculos.honorariosNacion(m,num(c.uma),c.procesoNacion);
     if(h.error) return {titulo:"Honorarios",total:"—",sub:esc(h.error)};
     var uU=function(x){ return x.toLocaleString("es-AR",{maximumFractionDigits:5}); };
     min=h.min;max=h.max;
@@ -10082,34 +10007,31 @@ function calcHonorarios(){
       filas.push(["Excedente sobre el umbral",pesos(h.piso.excedente)]);
       filas.push(["Piso del art. 21 (máximo anterior + "+h.pMin+" % / "+h.pMax+" % del excedente)",pesos(h.piso.pisoMin)+" a "+pesos(h.piso.pisoMax)]);
       if(h.aplicaPiso) avisos.push("Rige el piso del último párrafo del art. 21: el porcentaje del tramo sobre todo el monto ("+pesos(h.directoMin)+") queda por debajo del máximo del grado anterior más el excedente.");
-      if(h.alternativa) avisos.push("Punto pendiente de verificación jurídica: otra lectura del último párrafo del art. 21 toma como «máximo del grado inmediato anterior» el honorario máximo que resulta de aplicar la misma regla en ese grado (escala acumulativa). Con esa lectura el rango sería de "+pesos(h.alternativa.min)+" a "+pesos(h.alternativa.max)+". Verifique el criterio del tribunal.");
+      if(h.alternativa&&!h.aplicaMinimo58) avisos.push("Punto pendiente de verificación jurídica: otra lectura del último párrafo del art. 21 toma como «máximo del grado inmediato anterior» el honorario máximo que resulta de aplicar la misma regla en ese grado (escala acumulativa). Con esa lectura el rango sería de "+pesos(h.alternativa.min)+" a "+pesos(h.alternativa.max)+". Verifique el criterio del tribunal.");
     }
-    base="Ley 27.423 de honorarios profesionales (Nación), art. 21: escala por cuantía en UMA y, en su último párrafo, «en ningún caso los honorarios podrán ser inferiores al máximo del grado inmediato anterior de la escala, con más el incremento por aplicación al excedente de la alícuota que corresponde al grado siguiente». Los mínimos por tipo de proceso (art. 58), el litisconsorcio, la instancia y el resultado no se calculan acá. Tasa de justicia: Ley 23.898, art. 2.";
+    if(h.minimo58){
+      filas.push(["Mínimo legal (art. 58, inc. "+h.minimo58.inciso+": "+h.minimo58.uma+" UMA)",pesos(h.minimo58.monto)]);
+      if(h.aplicaMinimo58) avisos.push("Rige el mínimo del art. 58 de la Ley 27.423 ("+h.minimo58.uma+" UMA = "+pesos(h.minimo58.monto)+"): el porcentaje de la escala daba menos.");
+    }else avisos.push("No se aplicó ningún mínimo del art. 58 de la Ley 27.423: elija el tipo de proceso si corresponde (conocimiento, 10 UMA; ejecutivo, 6 UMA; mediación, 2 UMA) y verifique los mínimos de otros artículos de la ley.");
+    base="Ley 27.423 de honorarios profesionales (Nación), art. 21: escala por cuantía en UMA y, en su último párrafo, «en ningún caso los honorarios podrán ser inferiores al máximo del grado inmediato anterior de la escala, con más el incremento por aplicación al excedente de la alícuota que corresponde al grado siguiente». Art. 58: mínimos de 10 UMA (procesos de conocimiento), 6 UMA (ejecutivos) y 2 UMA (mediación). El litisconsorcio, las etapas (art. 29), la instancia (art. 30) y el resultado no se calculan acá. Tasa de justicia: Ley 23.898, art. 2.";
   }else{
-    // Ley 9131 de Mendoza, art. 2: escala por tramos del monto del proceso
-    // expresado en JUS. Se aplica por tramos acumulativos: cada porcentaje
-    // alcanza solo a la porción del monto que cae en su tramo.
-    var jus=num(c.jus);
-    if(!(jus>0)) return {titulo:"Honorarios",total:"—",sub:"Cargue el valor vigente del JUS (mayor que cero): lo fija la Suprema Corte de Mendoza por acordada y la ley no lo contiene."};
-    var enJus=m/jus,TR=[[0,20,20],[20,50,16],[50,Infinity,12]],bruto=0;
-    TR.forEach(function(t){
-      var porcion=Math.max(0,Math.min(enJus,t[1])-t[0]);
-      if(porcion>0){
-        var v=porcion*jus*t[2]/100; bruto+=v;
-        filas.push(["Tramo "+(t[1]===Infinity?"más de "+t[0]:(t[0]?"más de "+t[0]+" a ":"hasta ")+t[1])+" JUS · "+t[2]+" %",
-          porcion.toLocaleString("es-AR",{maximumFractionDigits:2})+" JUS · "+pesos(v)]);
-      }
-    });
-    var mer=num(c.merito)||0,f=bruto;
-    if(mer>0){ f=f*(1+Math.min(mer,30)/100); filas.push(["Aumento por mérito de la labor (art. 2, hasta 30 %)","+"+porc(Math.min(mer,30))]); }
-    if(c.rol==="perdedor"){ f=f*.7; filas.push(["Abogado de la parte perdedora (art. 3)","70 % de lo que corresponde al de la ganadora"]); }
-    if(c.proceso==="monitorio"){ f=f*.75; filas.push(["Proceso monitorio sin oposición (art. 7)","reducción del 25 %"]); }
-    if(c.proceso==="sucesion"){ f=f*.7; filas.push(["Sucesión (art. 8)","reducción del 30 %"]); }
-    if(c.procurador){ f=f*.5; filas.push(["Procurador, primera instancia (art. 31)","50 % del honorario del abogado"]); }
-    min=f;max=f;
-    filas.unshift(["Monto del proceso",pesos(m)+" · "+enJus.toLocaleString("es-AR",{maximumFractionDigits:2})+" JUS"]);
-    base="Ley 9131 de Mendoza (aranceles de abogados y procuradores): art. 2 (escala: hasta 20 JUS, 20 %; más de 20 y hasta 50 JUS, 16 %; más de 50 JUS, 12 %; aumento de hasta 30 % por mérito), art. 3 (parte perdedora, 70 %), art. 7 (monitorio sin oposición, reducción del 25 %), art. 8 (sucesiones, reducción del 30 %) y art. 31 (procurador, 50 % en primera instancia y 30 % en las demás). El valor del JUS lo fija la Suprema Corte. Los mínimos por tipo de proceso (arts. 9 a 19), los honorarios de segunda instancia (art. 15) y los incidentes (art. 14) no se calculan acá.";
-    avisos.push("La escala se aplica por tramos acumulativos; verifique ese criterio con la regulación del juzgado.");
+    // Ley 9131 de Mendoza, art. 2, en su lectura literal: IVSCalculos.honorariosMendoza
+    // (calculos.js), probada en backend/test/calculos.prueba.js.
+    var H=IVSCalculos.honorariosMendoza(m,num(c.jus),{merito:num(c.merito)||0,rol:c.rol,proceso:c.proceso,procurador:c.procurador});
+    if(H.error) return {titulo:"Honorarios",total:"—",sub:esc(H.error)};
+    var nJ=function(x){ return x.toLocaleString("es-AR",{maximumFractionDigits:2}); };
+    min=H.min;max=H.max;
+    filas.push(["Monto del proceso",pesos(m)+" · "+nJ(H.enJus)+" JUS"]);
+    filas.push(["Grado de la escala",(H.grado===0?"juicios de hasta 20 JUS":H.grado===1?"más de 20 JUS hasta 50 JUS":"más de 50 JUS")+" · "+H.pct+" % sobre todo el monto"]);
+    filas.push([H.pct+" % del monto",pesos(H.directo)]);
+    if(H.grado>0) filas.push(["Máximo del grado precedente ("+(H.grado===1?"20 % de 20 JUS":"16 % de 50 JUS")+" = "+nJ(H.pisoJus)+" JUS)",pesos(H.piso)]);
+    filas.push(["Mínimo de la escala (art. 2)",pesos(H.minimoEscala)]);
+    filas.push(["Máximo con el aumento por mérito (+30 %)",pesos(H.maximoEscala)]);
+    H.factores.forEach(function(x){ filas.push([esc(x[1]),"× "+nJ(x[0])]); });
+    if(H.conMerito!=null) filas.push(["Con el aumento por mérito indicado ("+porc(H.merito)+")",pesos(H.conMerito)]);
+    if(H.aplicaPiso) avisos.push("Rige la última regla del art. 2 de la Ley 9131: el "+H.pct+" % del monto ("+pesos(H.directo)+") es menor que el máximo del grado precedente, así que se regula ese máximo.");
+    avisos.push("Criterio aplicado: el juicio se ubica en un grado por su monto total y el porcentaje recae sobre todo el monto, con el piso del máximo del grado precedente (texto literal del art. 2). Es un mínimo: el juez puede aumentarlo hasta un 30 % por mérito. Otra lectura aplica cada porcentaje solo a la porción del monto de su tramo (tramos acumulativos); con ella el rango sería de "+pesos(H.alternativa.min)+" a "+pesos(H.alternativa.max)+". Verifique el criterio del tribunal.");
+    base="Ley 9131 de Mendoza (aranceles de abogados y procuradores): art. 2 («se regulará como mínimo»: juicios de hasta 20 JUS, 20 %; más de 20 y hasta 50 JUS, 16 %; más de 50 JUS, 12 %; aumento de hasta 30 % por mérito; si el resultado es inferior al máximo del grado precedente, se regula ese máximo), art. 3 (parte perdedora, 70 %), art. 7 (monitorio sin oposición, reducción del 25 %), art. 8 (sucesiones, reducción del 30 %) y art. 31 (procurador, 50 % en primera instancia y 30 % en las demás). El valor del JUS lo fija la Suprema Corte. Los mínimos por tipo de proceso (arts. 9 a 19), los honorarios de segunda instancia (art. 15) y los incidentes (art. 14) no se calculan acá.";
   }
   // El IVA va sólo sobre los honorarios, nunca sobre el monto del proceso ni sobre la tasa de justicia.
   if(min===max) filas.push(["Honorarios",pesos(min)+(c.iva?" + IVA "+pesos(IVSCalculos.iva(min,true)):"")]);
@@ -10130,7 +10052,9 @@ function formHonorarios(){
       chipsC("honorarios.juris",c.juris,[["nacion","Nación · Ley 27.423 (UMA)"],["mendoza","Mendoza · Ley 9131 (JUS)"]])+'</fieldset>'+
     campoC("Monto del proceso","honorarios.monto",c.monto,{ph:"12.000.000",num:true})+
     (c.juris==="nacion"
-      ?campoC("Valor vigente de la UMA (Acordada de la Corte Suprema)","honorarios.uma",c.uma,{ph:"Valor en pesos",num:true})
+      ?campoC("Valor vigente de la UMA (Acordada de la Corte Suprema)","honorarios.uma",c.uma,{ph:"Valor en pesos",num:true})+
+        '<fieldset class="grupo" style="border:0;padding:0;margin:0"><legend class="busq-rotulo">Tipo de proceso (mínimo del art. 58)</legend>'+
+          chipsC("honorarios.procesoNacion",c.procesoNacion,[["conocimiento","Conocimiento · 10 UMA"],["ejecutivo","Ejecutivo · 6 UMA"],["mediacion","Mediación · 2 UMA"],["otro","Otro (sin mínimo del art. 58)"]])+'</fieldset>'
       :campoC("Valor del JUS (lo fija la Suprema Corte de Mendoza)","honorarios.jus",c.jus,{ph:"Valor en pesos",num:true})+
         '<p class="calc-nota">Honorarios de abogados, procuradores y auxiliares de Justicia: $ 784.337,29, vigente desde el 05/10/2026. El JUS general de 2026 es de $ 628.730,43 (del 1 de enero al 31 de diciembre).</p>'+
         '<fieldset class="grupo" style="border:0;padding:0;margin:0"><legend class="busq-rotulo">Representa a la parte</legend>'+
@@ -10185,25 +10109,33 @@ var JURIS=[["nacion","Nación"],["caba","Ciudad de Buenos Aires"],["mendoza","Me
 function calcProcesales(){
   var c=CALC.procesales,n=parseInt(c.dias,10),d=fechaDe(c.notif);
   if(!d||!(n>0)) return null;
-  var vence,saltados=[];
-  if(c.tipo==="habiles"){
-    var x=d,cont=0;
-    while(cont<n){ x=masDias(x,1); var mot=motivoInhabil(x,c.juris); if(mot){ if(mot!=="Fin de semana") saltados.push([x,mot]); continue; } cont++; }
-    vence=x;
-  }else vence=masDias(d,n);
-  var gracia=siguienteHabil(vence,c.juris);
+  // El cómputo (feriados, ferias, no laborables, plazo de gracia según la
+  // jurisdicción y aviso de datos faltantes) es IVSCalculos.computarPlazo.
+  var R=IVSCalculos.computarPlazo({notif:d,dias:n,tipo:c.tipo,juris:c.juris,extras:CALC.inhabiles});
+  if(R.error) return {titulo:"Vencimiento del plazo",total:"—",sub:esc(R.error)};
+  var vence=R.vence,gracia=R.gracia;
   var filas=[["Notificación",fechaLarga(d)],
     ["Plazo",n+(c.tipo==="habiles"?" días hábiles judiciales":" días corridos")+" · desde el día siguiente"],
-    ["Plazo de gracia","hasta las dos primeras horas del despacho del "+fechaLarga(gracia)]];
-  saltados.forEach(function(s){ filas.push(["No se computa · "+fechaCorta(s[0]),esc(s[1])]); });
-  var avisos=[];
-  if(c.tipo==="corridos"&&motivoInhabil(vence,c.juris)) avisos.push("El vencimiento cae en un día inhábil: verifique si la norma del plazo lo traslada al día hábil siguiente.");
-  avisos.push("Se descuentan los fines de semana, los feriados nacionales"+(c.juris==="mendoza"?" y provinciales":"")+" y los días inhábiles cargados en el calendario (ferias y asuetos). Los días no laborables con fines turísticos y las ferias se fijan cada año por decreto y por acordada: cárguelos si corresponden.");
-  return {titulo:"Vencimiento del plazo",total:fechaLarga(vence),
-    sub:"Con plazo de gracia: "+fechaLarga(gracia)+", dos primeras horas",
-    filas:filas,avisos:avisos,
-    base:"El plazo comienza a correr desde el día siguiente al de la notificación y se computan solo los días hábiles judiciales (art. 156 CPCCN y normas procesales locales equivalentes). El escrito puede presentarse válidamente dentro de las dos primeras horas del despacho del día hábil siguiente al del vencimiento (art. 124 CPCCN).",
-    texto:"Notificación: "+fechaCorta(d)+"\nPlazo: "+n+(c.tipo==="habiles"?" días hábiles":" días corridos")+"\nVence: "+fechaLarga(vence)+"\nPlazo de gracia: dos primeras horas del "+fechaLarga(gracia)};
+    gracia?["Plazo de gracia","hasta las dos primeras horas del despacho del "+fechaLarga(gracia)]:["Plazo de gracia","no rige para escritos electrónicos (art. 61 ap. III, Ley 9001; Acordada SCJM 31.699)"]];
+  // los días seguidos con el mismo motivo (una feria) van en una sola fila
+  var grupos=[];
+  R.saltados.forEach(function(s){
+    var g=grupos[grupos.length-1];
+    if(g&&g.motivo===s.motivo&&diasEntre(g.hasta,s.fecha)<=3) g.hasta=s.fecha;
+    else grupos.push({desde:s.fecha,hasta:s.fecha,motivo:s.motivo,norma:s.norma,verificado:s.verificado});
+  });
+  grupos.forEach(function(s){
+    filas.push(["No se computa · "+fechaCorta(s.desde)+(s.hasta>s.desde?" al "+fechaCorta(s.hasta):""),esc(s.motivo)+(s.norma?' <span class="calc-ley">'+esc(s.norma)+(s.verificado===false?" · dato no verificado, confirme la acordada":"")+'</span>':"")]);
+  });
+  var avisos=R.faltantes.map(function(f){ return "Resultado provisorio. "+esc(f); }).concat(R.avisos.map(esc));
+  avisos.push("Se descuentan los fines de semana, los feriados, las ferias y los no laborables que la ley procesal de la jurisdicción considera inhábiles, con la norma de cada uno, y los días inhábiles cargados en el calendario para "+esc(JURIS.filter(function(j){ return j[0]===c.juris; })[0][1])+". Cargue los asuetos que disponga el tribunal.");
+  var total=fechaLarga(vence)+(R.provisorio?" (provisorio)":"");
+  return {titulo:"Vencimiento del plazo",total:total,
+    sub:gracia?"Con plazo de gracia: "+fechaLarga(gracia)+", dos primeras horas":"Vence a las 24 horas de ese día; sin plazo de gracia para escritos electrónicos",
+    filas:filas,avisos:avisos,base:R.base,
+    texto:"Notificación: "+fechaCorta(d)+"\nPlazo: "+n+(c.tipo==="habiles"?" días hábiles":" días corridos")+"\nVence: "+total+
+      (gracia?"\nPlazo de gracia: dos primeras horas del "+fechaLarga(gracia):"\nSin plazo de gracia para escritos electrónicos (art. 61 ap. III Ley 9001)")+
+      R.faltantes.map(function(f){ return "\nProvisorio: "+f; }).join("")};
 }
 function formProcesales(){
   var c=CALC.procesales;
@@ -10263,13 +10195,16 @@ function vistaCalendario(){
   var celdas="",lista=[];
   for(var i=0;i<lunes;i++) celdas+='<span class="cal-dia vacio"></span>';
   for(var d=1;d<=dm;d++){
-    var f=new Date(Date.UTC(c.anio,c.mes,d)),mot=motivoInhabil(f,c.juris),fer=feriados(c.anio,c.juris)[isoDe(f)],ext=inhabilExtra(isoDe(f));
-    var cls=mot==="Fin de semana"?" fin":fer?" feriado":ext?" extra":"";
+    var f=new Date(Date.UTC(c.anio,c.mes,d)),info=infoDia(f,c.juris),mot=info.motivo;
+    var cls=info.tipo==="fin"?" fin":info.tipo==="feriado"?" feriado":mot?" extra":"";
     if(isoDe(f)===isoDe(h)) cls+=" hoy";
-    if(mot&&mot!=="Fin de semana") lista.push([d,mot,fer?"feriado":"extra"]);
+    if(mot&&info.tipo!=="fin") lista.push([d,mot+(info.norma?" · "+info.norma:"")+(info.verificado===false?" · dato no verificado, confirme la acordada":""),info.tipo==="feriado"?"feriado":"extra"]);
+    info.avisos.forEach(function(a){ lista.push([d,"Se cuenta como hábil · "+a,"extra"]); });
     celdas+='<span class="cal-dia'+cls+'"'+(mot?' title="'+esc(mot)+'"':'')+'>'+d+'</span>';
   }
+  var falta=IVSCalculos.faltantes(primero,new Date(Date.UTC(c.anio,c.mes,dm)),c.juris,CALC.inhabiles);
   function estadoDe(x){ var m=motivoInhabil(x,c.juris); return fechaLarga(x)+": "+(m?"inhábil ("+m.toLowerCase()+")":"día hábil judicial"); }
+  var nombreJ=JURIS.filter(function(j){ return j[0]===c.juris; })[0][1];
   return '<div class="cal">'+
     '<div class="cal-hoy"><p><span class="rf-srv'+(motivoInhabil(h,c.juris)?'':' ok')+'"></span>Hoy, '+estadoDe(h)+'.</p>'+
       '<p class="calc-nota" style="margin:6px 0 0">Mañana, '+estadoDe(masDias(h,1))+'.</p></div>'+
@@ -10277,17 +10212,19 @@ function vistaCalendario(){
       '<h3>'+MESES_N[c.mes]+' de '+c.anio+'</h3><button class="mini" data-act="cal-mes" data-d="1" aria-label="Mes siguiente">›</button>'+
       '<div class="cal-juris">'+chipsC("cal.juris",c.juris,JURIS)+'</div></div>'+
     '<div class="cal-grilla"><span class="cal-sem">lu</span><span class="cal-sem">ma</span><span class="cal-sem">mi</span><span class="cal-sem">ju</span><span class="cal-sem">vi</span><span class="cal-sem">sá</span><span class="cal-sem">do</span>'+celdas+'</div>'+
+    falta.map(function(x){ return '<p class="calc-aviso">Datos incompletos: '+esc(x)+'</p>'; }).join("")+
     '<div class="cal-lista">'+(lista.length?lista.map(function(x){
-      return '<p><b class="cal-'+x[2]+'">'+x[0]+'</b>'+esc(x[1])+'</p>'; }).join(""):'<p class="calc-nota">Sin feriados ni días inhábiles cargados en este mes.</p>')+'</div>'+
-    '<div class="cal-extra"><h3>Ferias y días inhábiles</h3>'+
-      '<p class="calc-nota">Las ferias judiciales y los asuetos los fija cada tribunal por acordada. Cárguelos según la de su jurisdicción: se descuentan de los plazos procesales.</p>'+
+      return '<p><b class="cal-'+x[2]+'">'+x[0]+'</b>'+esc(x[1])+'</p>'; }).join(""):'<p class="calc-nota">Sin feriados ni días inhábiles en este mes.</p>')+'</div>'+
+    '<div class="cal-extra"><h3>Asuetos y otros días inhábiles</h3>'+
+      '<p class="calc-nota">Los feriados, los no laborables, la feria de enero y la de julio ya cargada (con su norma) se descuentan solos. Agregue acá los asuetos o ferias que disponga el tribunal: se guardan para la jurisdicción elegida ('+esc(nombreJ)+') y solo se descuentan en los plazos de esa jurisdicción.</p>'+
       (CALC.inhabiles.length?'<div class="cal-cargados">'+CALC.inhabiles.map(function(x,i){
-        return '<p>'+fechaCorta(fechaDe(x.desde))+(x.hasta&&x.hasta!==x.desde?" al "+fechaCorta(fechaDe(x.hasta)):"")+' · '+esc(x.motivo||"Día inhábil")+
+        var j=JURIS.filter(function(k){ return k[0]===x.juris; })[0];
+        return '<p>'+fechaCorta(fechaDe(x.desde))+(x.hasta&&x.hasta!==x.desde?" al "+fechaCorta(fechaDe(x.hasta)):"")+' · '+esc(x.motivo||"Día inhábil")+' · '+esc(j?j[1]:"sin jurisdicción: se aplica a todas")+
           ' <button class="mini" data-act="inhabil-menos" data-i="'+i+'">Quitar</button></p>'; }).join("")+'</div>':'')+
       '<div class="fila">'+campoC("Desde","nuevoInhabil.desde",CALC.nuevoInhabil.desde,{tipo:"date"})+campoC("Hasta","nuevoInhabil.hasta",CALC.nuevoInhabil.hasta,{tipo:"date"})+
-        campoC("Motivo","nuevoInhabil.motivo",CALC.nuevoInhabil.motivo,{ph:"Feria judicial de invierno"})+'</div>'+
-      '<div class="acciones" style="border-top:0;padding-top:0"><button class="btn sec" data-act="inhabil-mas">Agregar</button>'+
-        '<button class="mini" data-act="inhabil-enero">Agregar la feria de enero de '+c.anio+' (mes completo)</button></div>'+
+        campoC("Motivo","nuevoInhabil.motivo",CALC.nuevoInhabil.motivo,{ph:"Asueto dispuesto por acordada"})+'</div>'+
+      '<div class="acciones" style="border-top:0;padding-top:0"><button class="btn sec" data-act="inhabil-mas">Agregar para '+esc(nombreJ)+'</button>'+
+        (IVSCalculos.FERIA_ENERO[c.juris]?'':'<button class="mini" data-act="inhabil-enero">Agregar la feria de enero de '+c.anio+' (mes completo)</button>')+'</div>'+
     '</div></div>';
 }
 
@@ -11103,8 +11040,8 @@ document.addEventListener("click",function(ev){
   }
   if(act==="inhabil-mas"||act==="inhabil-enero"){
     var ni=act==="inhabil-enero"
-      ?{desde:CALC.cal.anio+"-01-01",hasta:CALC.cal.anio+"-01-31",motivo:"Feria judicial de enero"}
-      :{desde:CALC.nuevoInhabil.desde,hasta:CALC.nuevoInhabil.hasta||CALC.nuevoInhabil.desde,motivo:CALC.nuevoInhabil.motivo};
+      ?{desde:CALC.cal.anio+"-01-01",hasta:CALC.cal.anio+"-01-31",motivo:"Feria judicial de enero",juris:CALC.cal.juris}
+      :{desde:CALC.nuevoInhabil.desde,hasta:CALC.nuevoInhabil.hasta||CALC.nuevoInhabil.desde,motivo:CALC.nuevoInhabil.motivo,juris:CALC.cal.juris};
     if(!fechaDe(ni.desde)){ flash("Indique al menos la fecha de inicio"); return; }
     if(ni.hasta<ni.desde) ni.hasta=ni.desde;
     CALC.inhabiles.push(ni); CALC.nuevoInhabil={desde:"",hasta:"",motivo:""};
