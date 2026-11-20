@@ -1,0 +1,32 @@
+name: Medir primeros resultados del buscador
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ops/medir-latencia-acervo.mjs'
+      - '.github/workflows/medir-latencia-acervo.yml'
+  workflow_dispatch: {}
+  workflow_run:
+    workflows: ['Publicar backend en Azure App Service']
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: medir-latencia-acervo
+  cancel-in-progress: true
+
+jobs:
+  medir:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Medir las primeras fichas en Mendoza, SAIJ, CABA y Corte
+        run: node ops/medir-latencia-acervo.mjs
