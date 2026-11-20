@@ -16,6 +16,7 @@
 import express from 'express';
 import { informacionFuente, catalogoFuentesIntegradas, anotarProcedencia } from '../lib/fuentesInfo.js';
 import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
+import { buscarFuerosMendozaSaij, FUEROS_MENDOZA_ALTERNATIVOS } from '../lib/fuerosMendozaSaij.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
@@ -283,7 +284,7 @@ async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta
  * contadores, manteniendo cursores independientes para páginas siguientes.
  */
 async function buscarMendozaTodos(buscar, parametros, cursores = null) {
-  const tribunales = ['SC', 'CC', 'CT'];
+  const tribunales = ['SC', ...FUEROS_MENDOZA_ALTERNATIVOS];
   const salidas = await Promise.all(tribunales.map(async (tribunal) => {
     const desde = cursores && Object.hasOwn(cursores, tribunal)
       ? cursores[tribunal] : 0;
@@ -297,17 +298,18 @@ async function buscarMendozaTodos(buscar, parametros, cursores = null) {
       return { tribunal, error: e };
     }
   }));
-  const correctas = salidas.filter((s) => s.r);
-  if (!correctas.length && salidas.some((s) => s.error))
-    throw salidas.find((s) => s.error).error;
   const siguiente = {};
   const resultados = [];
   let totalFuente = 0, total = 0, revisados = 0, parciales = false;
+  const tribunalesSinRespuesta = [];
   for (const salida of salidas) {
     if (salida.agotado) {
       siguiente[salida.tribunal] = null;
     } else if (salida.error) {
-      siguiente[salida.tribunal] = cursores?.[salida.tribunal] ?? 0;
+      // No convertir 403 en cero, ni volver a probar un origen bloqueado en
+      // cada página. Una búsqueda NUEVA sí vuelve a intentar el portal.
+      siguiente[salida.tribunal] = null;
+      tribunalesSinRespuesta.push(salida.tribunal);
       parciales = true;
     } else {
       const r = salida.r;
@@ -320,14 +322,47 @@ async function buscarMendozaTodos(buscar, parametros, cursores = null) {
         ? r.siguienteDesde : null;
     }
   }
+  const usaAlternativa = salidas.some((s) =>
+    s.error && FUEROS_MENDOZA_ALTERNATIVOS.includes(s.tribunal)) ||
+    (cursores && Object.hasOwn(cursores, 'SAIJ')) ||
+    salidas.some((s) => s.tribunal === 'CF' && s.r && !s.r.total);
+  let origenEnVivo = null;
+  // Una sola consulta SAIJ para cámaras civiles, laborales y familia.
+  // El 403 de NEO no habilita a atribuir el total de SAIJ a esos fueros:
+  // sólo sumamos las fichas cuyo tribunal fue identificado expresamente.
+  if (usaAlternativa && (!cursores || cursores.SAIJ !== null)) {
+    try {
+      const alt = await buscarFuerosMendozaSaij({
+        ...parametros, tribunal:'', desde: cursores?.SAIJ ?? 0,
+      });
+      resultados.push(...alt.resultados);
+      total += alt.resultados.length;
+      revisados += alt.revisados || 0;
+      siguiente.SAIJ = alt.siguienteDesde;
+      origenEnVivo = 'mixto';
+      parciales = true;
+    } catch (e) {
+      console.warn('[mendoza] SAIJ alternativo:', e.codigo || e.name);
+      siguiente.SAIJ = null;
+      parciales = true;
+    }
+  }
+  if (!resultados.length && salidas.some((s) => s.error) &&
+      !salidas.some((s) => s.r))
+    throw salidas.find((s) => s.error).error;
   const siguen = Object.values(siguiente).some((n) => typeof n === 'number');
   return {
-    total, totalFuente, resultados, revisados,
-    totalParcial: parciales || salidas.some((x) => x.error),
+    total,
+    // El total completo no se conoce cuando hubo fueros rechazados y
+    // páginas SAIJ adicionales: no atribuir el total de la Corte a todas.
+    totalFuente: parciales ? null : totalFuente,
+    resultados, revisados,
+    totalParcial: parciales,
     siguienteDesde: null,
     siguienteDesdeTribunales: siguen ? siguiente : null,
-    tribunalesConsultados: correctas.map((x) => x.tribunal),
-    tribunalesSinRespuesta: salidas.filter((x) => x.error).map((x) => x.tribunal),
+    tribunalesConsultados: salidas.filter((s) => s.r).map((x) => x.tribunal),
+    tribunalesSinRespuesta,
+    origenEnVivo,
   };
 }
 
@@ -397,6 +432,7 @@ for (const { slug, buscar } of FUENTES) {
 
       let total, totalFuente, siguienteDesde = null, resultados, desdeIndiceLocal = false, avisoFalla = null;
       let siguienteDesdeTribunales = null, tribunalesConsultados = null, tribunalesSinRespuesta = null;
+      let origenEnVivo = null;
       let totalParcial = false, revisados = 0, aflojado = false;
       let idsNuevosAcervo = null;
       const parametrosVivo = {
@@ -436,17 +472,43 @@ for (const { slug, buscar } of FUENTES) {
       }
 
       try {
-        const resViva = pedirEnVivo && slug === 'mendoza' && !parametrosVivo.tribunal
-          ? await buscarMendozaTodos(buscar, parametrosVivo, cuerpo.desdeTribunales)
-          : await buscar(parametrosVivo);
+        const fueroSeleccionado = pedirEnVivo && slug === 'mendoza' &&
+          FUEROS_MENDOZA_ALTERNATIVOS.includes(parametrosVivo.tribunal);
+        let resViva;
+        if (pedirEnVivo && slug === 'mendoza' && !parametrosVivo.tribunal) {
+          resViva = await buscarMendozaTodos(buscar, parametrosVivo, cuerpo.desdeTribunales);
+        } else if (fueroSeleccionado && cuerpo.origenSuplente === 'saij') {
+          // En las páginas siguientes continuar el cursor del sitio que sí
+          // respondió; no volver a pedir el tramo bloqueado de NEO.
+          resViva = await buscarFuerosMendozaSaij(parametrosVivo);
+        } else {
+          try {
+            resViva = await buscar(parametrosVivo);
+            if (fueroSeleccionado && parametrosVivo.tribunal === 'CF' && !resViva.total) {
+              // Familia devuelve cero en NEO incluso para voces habituales.
+              // SAIJ puede acreditar documentos de ese fuero.
+              const alt = await buscarFuerosMendozaSaij(parametrosVivo);
+              if (alt.resultados.length || alt.siguienteDesde !== null) resViva = alt;
+            }
+          } catch (e) {
+            if (fueroSeleccionado && e.codigo === 'INDICE_MZA_FALLA' && /respuesta 403/.test(e.message)) {
+              resViva = await buscarFuerosMendozaSaij(parametrosVivo);
+            } else throw e;
+          }
+        }
         ({ total, totalFuente = null, siguienteDesde = null, resultados, totalParcial = false, revisados = 0, aflojado = false,
-          siguienteDesdeTribunales = null, tribunalesConsultados = null, tribunalesSinRespuesta = null } = resViva);
+          siguienteDesdeTribunales = null, tribunalesConsultados = null, tribunalesSinRespuesta = null,
+          origenEnVivo = null } = resViva);
         // Verificar novedades contra TODO el acervo antes de guardar las fichas.
         // Que un fallo no esté en la primera página no significa que sea nuevo.
         if (pedirEnVivo) idsNuevosAcervo = idsNuevosRespectoAcervo(resultados);
         sinAcceso.delete(slug);
-        // lo que trajo el sitio y la copia todavía no tenía, a la copia (de fondo)
-        sumarVivos(slug, resultados).catch(() => {});
+        // No guardar UUID de SAIJ como si fueran decisiones extraídas del
+        // portal NEO: mantener la fuente y la provincia verificadas.
+        const deSaij = resultados.filter((r) => r?.fuenteSlug === 'saij');
+        const deOrigen = resultados.filter((r) => r?.fuenteSlug !== 'saij');
+        if (deOrigen.length) sumarVivos(slug, deOrigen).catch(() => {});
+        if (deSaij.length) sumarVivos('saij', deSaij).catch(() => {});
       } catch (e) {
         // El sitio de origen no respondió o cambió de forma —no dejamos a
         // quien busca sin nada: probamos con lo que ya quedó guardado de
@@ -538,9 +600,14 @@ for (const { slug, buscar } of FUENTES) {
         for (const r of sinTexto) if (textos.has(r.id)) r.sumario = recortarPasaje(textos.get(r.id), consulta, { exigir: true }) || undefined;
       }
 
+      const registrosSaij = resultados.filter((r) => r?.fuenteSlug === 'saij');
+      const registrosPortal = resultados.filter((r) => r?.fuenteSlug !== 'saij');
       const guardados = desdeIndiceLocal
         ? (await estadoIndice(slug)).guardados
-        : await upsertRegistros(slug, resultados.map(({ variante, ...r }) => r)); // la marca de variante es de esta búsqueda, no del documento
+        : (await Promise.all([
+            registrosPortal.length ? upsertRegistros(slug, registrosPortal.map(({ variante, ...r }) => r)) : Promise.resolve(0),
+            registrosSaij.length ? upsertRegistros('saij', registrosSaij.map(({ variante, ...r }) => r)) : Promise.resolve(0),
+          ])).reduce((a, b) => a + b, 0);
 
       // lo guardado conserva todos los sumarios; la lista que se muestra, un resultado por fallo (lib/claveFallo.js)
       const unicos = sinRepetidos(slug, resultados);
@@ -568,6 +635,7 @@ for (const { slug, buscar } of FUENTES) {
         desdeIndiceLocal,
         enVivo: pedirEnVivo ? !desdeIndiceLocal : undefined,
         ...(pedirEnVivo ? { idsNuevosAcervo } : {}),
+        ...(origenEnVivo ? { origenEnVivo } : {}),
         avisoFalla,
         ms: Date.now() - arranque,
       });
