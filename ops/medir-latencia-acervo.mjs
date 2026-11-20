@@ -37,3 +37,29 @@ console.log('RESUMEN_LATENCIA '+JSON.stringify({
 }));
 // Diagnóstico: una fuente sin conexión no debe invalidar las mediciones
 // de las otras. Las pruebas unitarias comprueban estructura y paginación.
+
+
+const conteos=await Promise.all([
+  {slug:'mendoza',q:'daño moral'},
+  {slug:'saij',q:'despido'}
+].map(async({slug,q})=>{
+  const inicio=Date.now();
+  try{
+    const r=await fetch(api+'/indice/'+slug+'/local',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({q,modo:'todas',soloConteo:true}),
+      signal:AbortSignal.timeout(55000)
+    });
+    const d=await r.json();
+    const dato={fuente:slug,q,ms:Date.now()-inicio,http:r.status,
+      ok:d.ok,soloConteo:d.soloConteo===true,total:d.total??null,error:d.codigo||null};
+    console.log('LATENCIA_TOTAL_EXACTO '+JSON.stringify(dato));
+    return dato;
+  }catch(e){
+    const dato={fuente:slug,q,ms:Date.now()-inicio,ok:false,error:e.name||e.message};
+    console.log('LATENCIA_TOTAL_EXACTO '+JSON.stringify(dato));
+    return dato;
+  }
+}));
+console.log('RESUMEN_CONTEO '+JSON.stringify({respondieron:conteos.filter(x=>x.ok&&x.soloConteo).length,
+  lentos:conteos.filter(x=>x.ms>10000).map(x=>x.fuente)}));
