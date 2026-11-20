@@ -9,7 +9,7 @@
     montar:function(nombre){
       document.body.insertAdjacentHTML("afterbegin",'<div class="luces" aria-hidden="true"><i></i><i></i><i></i></div><div class="grano" aria-hidden="true"></div>'+CAB+
         '<main id="m6"><section class="hero6" id="hero6"><canvas id="cv6" aria-hidden="true"></canvas>'+
-        '<div class="h6t" id="h6t"><h1 class="t t-sw"><span class="sw a">'+S.TITULO+'</span><span class="sw b" aria-hidden="true">Más de 900.000 <em>fallos y sumarios.</em></span><span class="sw c" aria-hidden="true"><em>11 bases oficiales.</em></span><span class="sw d" aria-hidden="true">Mendoza, la Nación y <em>todo el país.</em></span></h1></div>'+
+        '<div class="h6t" id="h6t"><h1 class="t t-sw"><span class="sw a">'+S.TITULO+'</span><span class="sw b" aria-hidden="true">Más de 900.000 <em>fallos y sumarios.</em></span><span class="sw c" aria-hidden="true"><em>12 bases oficiales.</em></span><span class="sw d" aria-hidden="true">Mendoza, la Nación y <em>todo el país.</em></span></h1></div>'+
         '<div class="h6d" id="h6d" aria-hidden="true">Desplace<i></i></div></section></main>');
       /* el prisma va en el centro de la pantalla; «Desplace», centrado debajo, a la misma distancia del gráfico y de «Laboratorivm» */
       var d=document.getElementById("h6d"),mp=function(){return Math.min(120,Math.max(60,innerWidth*.09));};
@@ -64,7 +64,7 @@
       host.appendChild(s);return s;
     },
     PRINC:[["FONS","La fuente","Todo resultado remite al documento del organismo que lo dictó. Lo que se lee nunca es una versión propia."],
-           ["ORDO","El orden","Los resultados de las once bases se presentan juntos, con la misma forma y la procedencia a la vista."],
+           ["ORDO","El orden","Los resultados de las doce bases se presentan juntos, con la misma forma y la procedencia a la vista."],
            ["FIDES","La fe","Una cita se contrasta con la base oficial antes de presentarse. Ante su ausencia, el antecedente se presume inexistente."]]
   };
 })();
