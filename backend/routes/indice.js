@@ -242,13 +242,16 @@ function sondear(slug, buscarVivo) {
     .catch(() => sinAcceso.set(slug, Date.now() + SIN_ACCESO_MS));
 }
 /** Una página de la copia local, con la forma de la respuesta en vivo. null si la copia no tiene esa base. */
-async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes = [], desde = 0, porPagina = 20 }, { respaldo = true } = {}) {
+async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes = [], desde = 0, porPagina = 20, rapida = false }, { respaldo = true } = {}) {
   const o = { modo: MODOS.has(modo) ? modo : 'todas', excluir: typeof excluir === 'string' ? excluir.slice(0, 200) : '',
     variantes: Array.isArray(variantes) ? variantes : [],
     ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}), ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}) };
   // a pedido de la pantalla (vista previa) se espera poco; cuando el sitio no contestó, la copia es la respuesta y se la espera más
   let p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
-    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina }, { espera: respaldo ? 30_000 : 12_000, prioridad: respaldo ? 3 : (accesible(slug) ? 0 : 2) });
+    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina, rapida }, { espera: rapida ? 7000 : (respaldo ? 30_000 : 30_000), prioridad: rapida ? 9 : (respaldo ? 3 : 0) });
+  // La vista rápida no debe arrancar otra consulta FTS completa ni bloquear
+  // el siguiente buscador. Si la base está ocupada, responder sin vista.
+  if (!p && rapida) return null;
   // si la misma página estaba en curso para la vista previa y se le acabó su espera (más corta), se la pide de nuevo con la propia
   if (!p && respaldo && acervoCubre(slug)) p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
     tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina }, { espera: 30_000, prioridad: 3 });
@@ -265,8 +268,9 @@ async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta
   }
   // Un índice de búsquedas guardadas NO garantiza el total exhaustivo del
   // FTS; antes ambos se anunciaban como "total exacto", ocultando regresiones.
-  return { total: p.total, totalFuente: null, siguienteDesde: p.siguienteDesde, resultados: p.resultados,
-    totalParcial: respaldoParcial, origenAcervo: respaldoParcial ? 'indice_parcial' : 'sqlite_fts',
+  return { total: p.total, totalPendiente: Boolean(p.totalPendiente),
+    totalFuente: null, siguienteDesde: p.siguienteDesde, resultados: p.resultados,
+    totalParcial: respaldoParcial || Boolean(p.totalPendiente), origenAcervo: respaldoParcial ? 'indice_parcial' : 'sqlite_fts',
     revisados: 0, aflojado: false, desdeIndiceLocal: true };
 }
 
@@ -353,7 +357,8 @@ for (const { slug, buscar } of FUENTES) {
 
       const arranque = Date.now();
       const desdeN = Number.isFinite(Number(desde)) && Number(desde) >= 0 ? Number(desde) : 0;
-      const pedidoLocal = { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes, desde: desdeN };
+      const pedidoLocal = { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes, desde: desdeN,
+        rapida: cuerpo.soloLocal === true && cuerpo.rapida === true && desdeN === 0 };
       // Esta segunda petición del frontend es únicamente una consulta oficial.
       // /local ya consulta el acervo en paralelo. No se debe sustituir una
       // respuesta oficial fallida por la copia (ni esperar otros 30 segundos).
