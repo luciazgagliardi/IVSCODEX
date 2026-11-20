@@ -101,7 +101,7 @@ const TIPO_SAIJ = { sumarios: ['sumario'], fallos: ['fallo'], todo: ['sumario', 
  * juntan dos orígenes (Mendoza y lo de SAIJ de Mendoza), los duplicados exactos
  * —la misma carátula, fecha y texto— cuentan una sola vez.
  */
-export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', variantes = [], desde = 0, porPagina = 20, rapida = false } = {}) {
+export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', variantes = [], desde = 0, porPagina = 20, rapida = false, soloConteo = false } = {}) {
   const mag = ftsConMagistrados(db);
   // Calcular todos los apellidos obliga a recorrer la tabla completa (cientos
   // de miles de filas). No hacerlo en cada primera búsqueda temática de cada
@@ -149,6 +149,17 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   const porFallo = "lower(trim(f.caratula)) || '|' || coalesce(f.fecha, '') || '|' || coalesce(lower(trim(f.tribunal)), '')";
   const clave = `CASE WHEN f.fuente <> 'saij' AND coalesce(nullif(trim(f.linkFallo), ''), nullif(trim(f.linkFicha), '')) IS NOT NULL THEN coalesce(nullif(trim(f.linkFallo), ''), trim(f.linkFicha))
     WHEN coalesce(trim(f.caratula), '') <> '' THEN ${porFallo} ELSE ${contenido} END`;
+  // El total exacto de fallos únicos no necesita calcular BM25, ordenar
+  // todos los resultados ni devolver sus textos. Es la segunda fase de
+  // búsqueda: se cuenta sobre TODO el acervo, nunca sobre 20 fichas.
+  if (soloConteo) {
+    const r = db.prepare(`SELECT count(DISTINCT ${clave}) AS n
+      FROM fts JOIN fallos f ON f.rid = fts.rowid
+      WHERE fts MATCH ? AND ${donde.join(' AND ')}`).get(...args);
+    return { total: Number(r?.n || 0), resultados: [],
+      totalPendiente: false, soloConteo: true, siguienteDesde: null };
+  }
+
   // Dos fases: la vista rápida muestra fallos reales sin el costoso
   // count(*) OVER() + GROUP BY + orden global. El total EXACTO se calcula
   // luego, en otra petición. Nunca anunciar el tamaño de la muestra como total.
