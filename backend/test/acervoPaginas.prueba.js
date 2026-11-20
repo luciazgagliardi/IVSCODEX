@@ -38,7 +38,7 @@ fs.writeFileSync(path.join(process.env.DIR_ACERVO_DATOS, 'manifiesto.json'), JSO
 // lo que guardaron búsquedas anteriores en vivo (lib/indice.js)
 fs.writeFileSync(path.join(process.env.DIR_INDICE, 'mendoza.json'), JSON.stringify({ registros: { mza_vivo: { id: 'mza_vivo', caratula: 'Guardado c/ Vivo s/ despido', fecha: '05/05/2024 - Auto', sumario: 'Un despido que trajo el sitio en vivo.' } } }));
 
-const { prepararAcervo, buscarPagina, sumarVivos, anioDe, acervoCubre } = await import('../lib/acervo.js');
+const { prepararAcervo, buscarPagina, sumarVivos, anioDe, acervoCubre, idsNuevosRespectoAcervo } = await import('../lib/acervo.js');
 await prepararAcervo({ esperar: true });
 
 test('el año de cada forma de fecha', () => {
@@ -120,4 +120,14 @@ test('una consulta amplia no frena al servidor: el hilo contesta y mientras tant
   clearInterval(reloj);
   assert.ok(r.every((x) => x && x.total === 54));
   assert.ok(latidos >= 0);
+});
+
+test('la novedad oficial se compara contra TODO el acervo y no sólo su primera página', () => {
+  const primera = idsNuevosRespectoAcervo([
+    { id: 'mza_1' }, { id: 'mza_39' }, { id: 'mza_nuevo' },
+    { id: 'mza_oficial_inedito' }, { id: 'mza_oficial_inedito' },
+  ]);
+  assert.deepEqual(primera, ['mza_oficial_inedito']);
+  assert.deepEqual(idsNuevosRespectoAcervo([{ id: 'mza_1' }, { id: 'saij_m3' }]), []);
+  assert.deepEqual(idsNuevosRespectoAcervo([]), []);
 });
