@@ -1,0 +1,28 @@
+name: Diagnosticar consultas oficiales en vivo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ops/diagnosticar-en-vivo.mjs'
+      - '.github/workflows/diagnosticar-en-vivo.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: diagnosticar-en-vivo
+  cancel-in-progress: true
+
+jobs:
+  consultar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Consultar Mendoza CABA y SAIJ desde Azure
+        run: node ops/diagnosticar-en-vivo.mjs
