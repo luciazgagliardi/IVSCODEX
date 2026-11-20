@@ -13,6 +13,8 @@ const pruebas = [
   { slug: 'mendoza', q: 'daño moral' },
   { slug: 'caba', q: 'amparo' },
   { slug: 'saij', q: 'amparo', tribunal: 'sumarios' },
+  { slug: 'saij', q: 'daño moral', tribunal: 'fallos', provincia: 'Mendoza' },
+  { slug: 'saij', q: 'despido', tribunal: 'fallos', provincia: 'Mendoza' },
 ];
 const prueba = async ({slug, ...filtros}) => {
   const t0 = Date.now();
@@ -29,6 +31,7 @@ const prueba = async ({slug, ...filtros}) => {
       enVivo: d.enVivo === true && d.desdeIndiceLocal !== true,
       desdeIndiceLocal: d.desdeIndiceLocal === true,
       total: d.total ?? null, documentos: (d.resultados || []).length,
+      muestraTribunales: (d.resultados || []).slice(0, 8).map(x=>x.tribunal||null),
       codigo: d.codigo || null, avisoFalla: d.avisoFalla || null, ms: Date.now() - t0,
     };
   } catch (error) {
