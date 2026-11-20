@@ -3470,7 +3470,7 @@ function nuevoIndices(){
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
-      fragmentos:{},fragErr:{},fragCargando:false,parcial:false,revisados:0,totalFuente:null,aflojado:false,desdeNavegador:false,aportesEnVivo:0,nuevosVivos:0,vistaOficial:null,
+      fragmentos:{},fragErr:{},fragCargando:false,parcial:false,revisados:0,totalFuente:null,totalPendiente:false,aflojado:false,desdeNavegador:false,aportesEnVivo:0,nuevosVivos:0,vistaOficial:null,
       cursorOficial:null,cursoresTribunales:null,cuerpoOficial:null,paginaOficial:1,consultadosOficial:0,buscandoMasOficial:false,errorMasOficial:"",
       // Dónde arranca cada página, en filas del SITIO: {1:0, 2:22, 3:43...}.
       // Numerar no alcanza cuando el filtro corre del lado del servidor —la
@@ -5497,6 +5497,7 @@ function estadoBase(f){
   if(im.cargando) return {c:" consultando",t:'<span class="rf-t">buscando…</span>'};
   if(im.busco&&im.error) return {c:"",t:'<span class="rf-n">0</span>'};
   if(im.busco){
+    if(im.totalPendiente)return {c:"",t:'<span class="rf-n">'+im.resultados.length+'+</span><span class="rf-t">calculando total…</span>'};
     var nota="";
     if(im.estadoVivo==="consultando") nota="consultando sitio…";
     else if(im.estadoVivo==="error") nota="en vivo no disponible";
@@ -6529,7 +6530,9 @@ function aplicarPaginaIndice(slug,fCfg,imBusco,d,pagina,esNueva){
     var k=claveFallo(slug,r);
     if(vistosRes[k]) return false; vistosRes[k]=1; return true;
   });
-  imBusco.total=Math.max(0,(d.total||0)-((d.resultados||[]).length-imBusco.resultados.length));
+  imBusco.totalPendiente=!!d.totalPendiente;
+  imBusco.total=imBusco.totalPendiente?imBusco.resultados.length:
+    Math.max(0,(d.total||0)-((d.resultados||[]).length-imBusco.resultados.length));
   // Cuántos dice tener el SITIO con esas palabras. Es otra cosa que
   // "total": ese es cuántos pasaron el filtro entre los que se alcanzaron a
   // revisar. Puede venir null (respaldo local: no hay sitio que preguntar).
@@ -6619,29 +6622,40 @@ function precargarPaginasIndice(slug,imBusco,busquedaId,cuerpoBase){
    Azure suele disponer de un hilo lector: enviar 15 consultas locales juntas
    hacía que vencieran sus 12 s de espera mientras seguían en cola. Los pedidos
    oficiales no pasan por esta cola y siguen ejecutándose en paralelo. */
-var colaAcervoPantalla=[],acervoPantallaOcupado=false;
+var colaAcervoPantalla=[],acervoPantallaActivos=0;
 function despacharAcervoPantalla(){
-  if(acervoPantallaOcupado) return;
-  var t=colaAcervoPantalla.shift();
-  if(!t) return;
-  if(!t.vigente()){ t.resolver(null); despacharAcervoPantalla(); return; }
-  acervoPantallaOcupado=true;
-  var controlador=new AbortController();
-  var reloj=setTimeout(function(){ controlador.abort(); },16000);
-  fetch(estado.api+"/indice/"+t.slug+"/local",{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:t.cuerpo,signal:controlador.signal
-  }).then(function(r){ return r.json(); }).then(t.resolver,t.rechazar)
-    .finally(function(){
-      clearTimeout(reloj); acervoPantallaOcupado=false;
-      despacharAcervoPantalla();
-    });
+  // Dos consultas en paralelo: una búsqueda con un conteo FTS difícil no
+  // puede retener toda la cola de primeras páginas de las demás fuentes.
+  while(acervoPantallaActivos<2&&colaAcervoPantalla.length){
+    var t=colaAcervoPantalla.shift();
+    if(!t.vigente()){t.resolver(null);continue;}
+    acervoPantallaActivos++;
+    (function(t){
+      var controlador=new AbortController();
+      var reloj=setTimeout(function(){controlador.abort();},t.rapida?8500:32000);
+      fetch(estado.api+"/indice/"+t.slug+"/local",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:t.cuerpo,signal:controlador.signal
+      }).then(function(r){return r.json();}).then(t.resolver,t.rechazar)
+        .finally(function(){
+          clearTimeout(reloj);acervoPantallaActivos--;
+          despacharAcervoPantalla();
+        });
+    })(t);
+  }
 }
 function consultarAcervoPantalla(slug,cuerpo,vigente,urgente){
   return new Promise(function(resolver,rechazar){
-    var t={slug:slug,cuerpo:JSON.stringify(cuerpo),vigente:vigente,resolver:resolver,rechazar:rechazar};
+    var t={slug:slug,cuerpo:JSON.stringify(cuerpo),rapida:cuerpo.rapida===true,
+      vigente:vigente,resolver:resolver,rechazar:rechazar};
+    // La primera página de cualquier fuente va antes que los conteos
+    // pendientes. Las consultas anteriores caducan por búsquedaId.
     if(urgente) colaAcervoPantalla.unshift(t);
-    else colaAcervoPantalla.push(t);
+    else if(t.rapida){
+      var pos=colaAcervoPantalla.findIndex(function(x){return !x.rapida;});
+      if(pos<0)colaAcervoPantalla.push(t);
+      else colaAcervoPantalla.splice(pos,0,t);
+    }else colaAcervoPantalla.push(t);
     despacharAcervoPantalla();
   });
 }
@@ -6836,15 +6850,26 @@ function buscarEnFuente(slug,pagina){
     anexarResultadosOficiales(slug,imBusco,d);
   }
   if(esNueva&&!estado.articulo){
-    consultarAcervoPantalla(slug,cuerpo,function(){return imBusco.pedido===pedido;},estado.verBase===slug)
-      .then(function(d){
-        if(imBusco.pedido!==pedido||imBusco.pagina>1||!d||!d.ok||!d.resultados||!d.resultados.length) return;
-        if(nom) d.resultados=IVSNombre.ordenar(d.resultados,nom);
-        imBusco.busco=true; imBusco.error=null; imBusco.porCopia=true;
-        aplicarPaginaIndice(slug,fCfg,imBusco,d,1,false);
-        imBusco.paginas[1]=d;
-        if(respuestaViva) sumarResultadosVivos(respuestaViva);
-      })["catch"](function(){ /* sin copia: se espera al sitio, como siempre */ });
+    var vigente=function(){return imBusco.pedido===pedido;};
+    var mostrarLocal=function(d){
+      if(!vigente()||imBusco.pagina>1||!d||!d.ok||!Array.isArray(d.resultados))return;
+      if(nom)d.resultados=IVSNombre.ordenar(d.resultados,nom);
+      imBusco.busco=true;imBusco.error=null;imBusco.porCopia=true;
+      // El conteo exacto que llega después sustituye el preliminar.
+      // Los extras oficiales se vuelven a cruzar sin contar dos veces.
+      imBusco.nuevosVivos=0;
+      aplicarPaginaIndice(slug,fCfg,imBusco,d,1,false);
+      imBusco.paginas[1]=d;
+      if(respuestaViva)sumarResultadosVivos(respuestaViva);
+    };
+    // Etapa 1: hasta 20 fichas sin recorrer ni ordenar todas las coincidencias.
+    // Etapa 2: total exacto, sin obstaculizar las vistas de otras fuentes.
+    consultarAcervoPantalla(slug,Object.assign({},cuerpo,{rapida:true}),vigente,estado.verBase===slug)
+      .then(mostrarLocal)["catch"](function(){})
+      .then(function(){
+        if(!vigente())return;
+        return consultarAcervoPantalla(slug,cuerpo,vigente,false).then(mostrarLocal);
+      })["catch"](function(){/* el origen oficial sigue trabajando */});
   }
   // la copia local va por …/local: no le pregunta a ningún sitio oficial y no cuenta para el límite de peticiones
   // Despachar primero las solicitudes /local de todas las bases; las
@@ -7047,6 +7072,7 @@ function conteoIndice(im,local,visibles){
   var n=function(x){ return '<b>'+(x||0).toLocaleString("es-AR")+'</b>'; };
   // Dialnet: sólo cuentan los que tienen el término en su texto (no el total crudo del sitio)
   if(visibles!=null) return n(visibles)+' resultado(s) con texto en esta página'+(typeof im.cursores[(im.pagina||1)+1]==="number"?'; pase de página para ver más':'');
+  if(local&&im.totalPendiente)return 'Primeros '+n(im.resultados.length)+' fallos del acervo · calculando total completo…';
   if(local) return n(im.total)+' en el acervo'+
     (im.nuevosVivos?' + '+n(im.nuevosVivos)+' documentos nuevos confirmados en vivo':'')+' (por identificador)';
   // Sin revisados, el filtro lo hizo el propio sitio: su contador es el total.
