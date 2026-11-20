@@ -358,7 +358,7 @@ for (const { slug, buscar } of FUENTES) {
       const arranque = Date.now();
       const desdeN = Number.isFinite(Number(desde)) && Number(desde) >= 0 ? Number(desde) : 0;
       const pedidoLocal = { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes, desde: desdeN,
-        rapida: cuerpo.soloLocal === true && cuerpo.rapida === true && desdeN === 0 };
+        rapida: (cuerpo.local === true || cuerpo.soloLocal === true) && cuerpo.rapida === true && desdeN === 0 };
       // Esta segunda petición del frontend es únicamente una consulta oficial.
       // /local ya consulta el acervo en paralelo. No se debe sustituir una
       // respuesta oficial fallida por la copia (ni esperar otros 30 segundos).
