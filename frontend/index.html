@@ -3466,7 +3466,7 @@ var SECRETARIAS_CABA={
 function nuevoIndices(){
   var o={};
   FUENTES_INDICE.forEach(function(f){
-    o[f.slug]={busco:false,cargando:false,error:null,resultados:[],total:0,guardados:0,local:false,origenAcervo:"",fuenteInfo:null,avisoFalla:"",
+    o[f.slug]={busco:false,cargando:false,error:null,resultados:[],total:0,guardados:0,local:false,origenAcervo:"",fuenteInfo:null,avisoFalla:"",estadoVivo:"sinConsulta",
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
@@ -5605,9 +5605,13 @@ function listaTodas(vis){
 }
 function estadoLista(vis){
   var buscando=vis.filter(function(f){ return (estado.indices[f.slug]||{}).cargando; });
+  var pendientesVivo=vis.filter(function(f){return (estado.indices[f.slug]||{}).estadoVivo==="consultando";});
+  var sinVivo=vis.filter(function(f){return (estado.indices[f.slug]||{}).estadoVivo==="error";});
   var fallaron=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
   var h="";
-  if(buscando.length) h+='<p class="rz-aviso"><span class="rf-t" style="color:var(--gold)">buscando…</span> '+buscando.map(function(f){return esc(f.cod);}).join(", ")+' (los sistemas oficiales pueden tardar hasta 30 segundos)</p>';
+  if(buscando.length) h+='<p class="rz-aviso"><span class="rf-t" style="color:var(--gold)">buscando…</span> '+buscando.map(function(f){return esc(f.cod);}).join(", ")+'</p>';
+  if(pendientesVivo.length&&!buscando.length) h+='<p class="rz-aviso">Actualizando fuentes oficiales: '+pendientesVivo.map(function(f){return esc(f.cod);}).join(", ")+'</p>';
+  if(sinVivo.length) h+='<p class="rz-aviso" role="status">Consulta en vivo no disponible en '+sinVivo.map(function(f){return esc(f.cod);}).join(", ")+'. Los resultados del acervo permanecen disponibles.</p>';
   if(fallaron.length) h+='<p class="rz-aviso" role="status">No se pudo consultar '+fallaron.map(function(f){var im=estado.indices[f.slug]||{};return '<b>'+esc(f.cod)+'</b>'+(im.error?' ('+esc(String(im.error).slice(0,150))+')':'');}).join(', ')+'. Un error de acceso o de red no significa que no existan fallos.</p>';
   return h;
 }
@@ -6663,6 +6667,7 @@ function buscarEnFuente(slug,pagina){
   // (ver precargarPaginasIndice).
   if(esNueva){
     imBusco.busquedaId=(imBusco.busquedaId||0)+1;
+    imBusco.estadoVivo="consultando";
     imBusco.paginas={}; imBusco.cursores={1:0}; imBusco.porCopia=false;
     // No mostrar resultados obsoletos mientras llegan los de la consulta nueva.
     imBusco.busco=false; imBusco.resultados=[]; imBusco.total=0;
@@ -6791,6 +6796,7 @@ function buscarEnFuente(slug,pagina){
     .then(function(d){
       if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
       vivoListo=true; respuestaViva=d;
+      if(!cuerpo.local) imBusco.estadoVivo=(d&&d.ok&&!d.desdeIndiceLocal&&d.enVivo!==false)?"ok":"error";
       // La consulta oficial complementa los resultados de la copia, no los sustituye.
       if(imBusco.porCopia&&esNueva){
         imBusco.cargando=false;
@@ -6823,6 +6829,7 @@ function buscarEnFuente(slug,pagina){
       }
     })["catch"](function(err){
       if(imBusco.pedido!==pedido) return;
+      if(!cuerpo.local) imBusco.estadoVivo="error";
       if(imBusco.porCopia&&imBusco.resultados.length){ imBusco.cargando=false; render(); return; }
       imBusco.cargando=false; imBusco.busco=true;
       if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
@@ -6952,8 +6959,14 @@ function panelIndice(f){
   // El borde izquierdo dorado del caso "local" se mantiene: no es decoración
   // sino un aviso —estos resultados salieron de la copia guardada, no del
   // sitio— y sigue siendo UN borde, con un lado marcado.
+  var estadoOficial=im.estadoVivo==="ok"
+    ? ' <span class="en-vivo">En vivo</span>'
+    : im.estadoVivo==="consultando"
+      ? ' <span class="en-vivo local">Consultando fuente oficial…</span>'
+      : im.estadoVivo==="error"
+        ? ' <span class="en-vivo local">En vivo no disponible</span>' : '';
   var out='<div class="panel vivo f-'+f.slug+'" id="panel-'+f.slug+'">'+
-    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+(local?'':' <span class="en-vivo">En vivo</span>')+'</span></div>';
+    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+estadoOficial+'</span></div>';
 
   // El encabezado, los metadatos y los enlaces de cada fallo ya identifican
   // la fuente. No se muestra el aviso redundante de procedencia de la copia.
