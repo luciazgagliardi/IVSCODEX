@@ -3,7 +3,7 @@ name: Publicar backend en Azure App Service
 on:
   push:
     branches: [main]
-    paths: ["backend/**", "frontend/pasajes.js"]
+    paths: ["backend/**", "frontend/pasajes.js", ".github/workflows/azure-backend.yml"]
   workflow_dispatch: {}
 
 permissions:
@@ -11,7 +11,9 @@ permissions:
 
 concurrency:
   group: azure-backend
-  cancel-in-progress: true
+  # No interrumpir la subida pesada de SQLite: cancelarla deja Azure con un
+  # OneDeploy activo, y el siguiente despliegue recibe HTTP 409 Conflict.
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -38,6 +40,18 @@ jobs:
         working-directory: backend
         run: npm ci
       - name: Desplegar en Azure App Service
+        id: primer_intento
+        continue-on-error: true
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: IURIS
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: backend
+      - name: Esperar al final de un OneDeploy anterior
+        if: steps.primer_intento.outcome == 'failure'
+        run: sleep 75
+      - name: Reintentar publicación si Azure respondió conflicto
+        if: steps.primer_intento.outcome == 'failure'
         uses: azure/webapps-deploy@v3
         with:
           app-name: IURIS
