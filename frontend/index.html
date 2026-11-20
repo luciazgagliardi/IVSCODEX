@@ -3381,7 +3381,8 @@ var FUENTES_INDICE=[
     {v:"",n:"Todos los tribunales"},
     {v:"SC",n:"Suprema Corte"},
     {v:"CC",n:"Cámaras Civil, Comercial y Minas"},
-    {v:"CT",n:"Cámaras del Trabajo"}
+    {v:"CT",n:"Cámaras del Trabajo"},
+    {v:"CF",n:"Cámara de Apelaciones de Familia"}
   ]},
  {slug:"mendozalegal",cod:"MZA LEGAL",clase:"mza",boton:"Mendoza Legal",
   nombre:"Mendoza Legal",
@@ -5503,7 +5504,9 @@ function estadoBase(f){
     else if(im.estadoVivo==="error") nota="en vivo no disponible";
     else if(im.local&&im.estadoVivo==="ok"&&im.vistaOficial){
       var oficial=im.vistaOficial.totalFuente!==null?im.vistaOficial.totalFuente:im.vistaOficial.total;
-      nota=oficial!==null?"sitio: "+Number(oficial).toLocaleString("es-AR"):"sitio consultado";
+      nota=im.vistaOficial.origenEnVivo==="saij"?"SAIJ · "+Number(im.vistaOficial.pagina||0).toLocaleString("es-AR")+" fichas de muestra":
+        im.vistaOficial.origenEnVivo==="mixto"?"Mendoza + SAIJ · parcial":
+        oficial!==null?"sitio: "+Number(oficial).toLocaleString("es-AR"):"sitio consultado";
     }else if(im.ms) nota=(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+" s";
     return {c:"",t:'<span class="rf-n">'+cuantosDe(f,im).toLocaleString("es-AR")+'</span>'+
       (nota?'<span class="rf-t">'+esc(nota)+'</span>':'')};
@@ -6749,6 +6752,8 @@ function cargarMasOficial(slug){
         if(typeof d.totalFuente==="number") im.vistaOficial.totalFuente=d.totalFuente;
         if(typeof d.total==="number") im.vistaOficial.total=d.total;
         im.vistaOficial.parcial=im.vistaOficial.parcial||!!d.totalParcial;
+        if(d.origenEnVivo)im.vistaOficial.origenEnVivo=d.origenEnVivo;
+        if(Array.isArray(d.tribunalesSinRespuesta))im.vistaOficial.tribunalesSinRespuesta=d.tribunalesSinRespuesta;
       }
       anexarResultadosOficiales(slug,im,d);
     })["catch"](function(e){
@@ -6978,6 +6983,7 @@ function buscarEnFuente(slug,pagina){
         imBusco.estadoVivo=(d&&d.ok&&!d.desdeIndiceLocal&&d.enVivo!==false)?"ok":"error";
         if(esNueva&&imBusco.estadoVivo==="ok"){
           imBusco.cuerpoOficial=Object.assign({},cuerpo);
+          if(d.origenEnVivo==="saij")imBusco.cuerpoOficial.origenSuplente="saij";
           imBusco.cursorOficial=typeof d.siguienteDesde==="number"?d.siguienteDesde:null;
           imBusco.cursoresTribunales=d.siguienteDesdeTribunales||null;
           imBusco.paginaOficial=1;
@@ -6988,6 +6994,8 @@ function buscarEnFuente(slug,pagina){
           totalFuente:typeof d.totalFuente==="number"?d.totalFuente:null,
           pagina:(d.resultados||[]).length,
           parcial:!!d.totalParcial,
+          origenEnVivo:d.origenEnVivo||null,
+          tribunalesSinRespuesta:Array.isArray(d.tribunalesSinRespuesta)?d.tribunalesSinRespuesta:[],
           idsConfirmados:Array.isArray(d.idsNuevosAcervo)
         }:null;
       }
@@ -7156,7 +7164,8 @@ function panelIndice(f){
   // sino un aviso —estos resultados salieron de la copia guardada, no del
   // sitio— y sigue siendo UN borde, con un lado marcado.
   var estadoOficial=im.estadoVivo==="ok"
-    ? ' <span class="en-vivo">En vivo</span>'
+    ? ' <span class="en-vivo">'+(im.vistaOficial&&im.vistaOficial.origenEnVivo==="saij"?"En vivo · SAIJ":
+       im.vistaOficial&&im.vistaOficial.origenEnVivo==="mixto"?"En vivo parcial · SAIJ":"En vivo")+'</span>'
     : im.estadoVivo==="consultando"
       ? ' <span class="en-vivo local">Consultando fuente oficial…</span>'
       : im.estadoVivo==="error"
@@ -7195,15 +7204,23 @@ function panelIndice(f){
   if(im.estadoVivo==="ok"&&im.vistaOficial&&im.local){
     var ov=im.vistaOficial;
     var cifra=function(n){return Number(n).toLocaleString("es-AR");};
-    var totalOficial=ov.totalFuente!==null
-      ?'el sitio informa '+cifra(ov.totalFuente)+' filas para esta consulta'
-      :ov.total!==null
-        ?(ov.parcial?'al menos ':'')+cifra(ov.total)+' coincidencias en la consulta oficial'
-        :cifra(ov.pagina)+' resultados en la página oficial';
+    var suplente=ov.origenEnVivo==="saij",mixto=ov.origenEnVivo==="mixto";
+    var totalOficial=suplente
+      ?cifra(ov.pagina)+' fichas recuperadas de SAIJ para este fuero (muestra parcial, no el total del tribunal)'
+      :mixto
+        ?cifra(ov.pagina)+' fichas recuperadas de Mendoza y SAIJ (cobertura parcial)'
+        :ov.totalFuente!==null
+          ?'el sitio informa '+cifra(ov.totalFuente)+' filas para esta consulta'
+          :ov.total!==null
+            ?(ov.parcial?'al menos ':'')+cifra(ov.total)+' coincidencias en la consulta oficial'
+            :cifra(ov.pagina)+' resultados en la página oficial';
     out+='<p class="rz-aviso" style="margin:6px 0 12px">Acervo: <b>'+cifra(im.total)+'</b> · En vivo: '+totalOficial+
-      ' · '+cifra(im.consultadosOficial)+' fichas recuperadas del sitio'+
       ' · '+(ov.idsConfirmados?'<b>'+cifra(im.nuevosVivos)+'</b> identificadores nuevos':'No se pudo comprobar cuáles ya estaban guardados')+
-      (ov.total===0&&im.total>0?' · El origen no devolvió coincidencias aunque el acervo contiene documentos: la cobertura de esta consulta no está confirmada.':'')+'</p>';
+      (!suplente&&!mixto&&ov.total===0&&im.total>0?' · El origen no devolvió coincidencias aunque el acervo contiene documentos: la cobertura de esta consulta no está confirmada.':'')+'</p>';
+    if(suplente||mixto)
+      out+='<p class="rz-aviso" role="status">El portal de Mendoza no entregó todas las fichas de cámaras. '+
+        'Se incorporan consultas actuales de SAIJ, identificadas por su procedencia; su cobertura no equivale al total del portal mendocino.'+
+        (mixto&&ov.tribunalesSinRespuesta.length?' Secciones sin respuesta directa: '+esc(ov.tribunalesSinRespuesta.join(", "))+'.':'')+'</p>';
     if(hayMasResultadosOficiales(im))
       out+='<p style="margin:0 0 12px"><button type="button" class="mini" data-act="indice-mas-oficial" data-fuente="'+f.slug+'"'+
         (im.buscandoMasOficial?' disabled':'')+'>'+
