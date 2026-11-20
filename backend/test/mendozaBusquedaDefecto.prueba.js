@@ -18,8 +18,8 @@ test('Mendoza mantiene /buscar desde el acervo y admite consulta oficial concurr
   assert.match(html,/if\(imBusco\.porCopia&&esNueva\)/);
   assert.match(html,/sumarResultadosVivos\(d\)/);
   assert.match(html,/if\(!cuerpo\.local\) cuerpo\.pedirEnVivo=true/);
-  assert.match(rutas,/if \(slug === 'mendoza' && acervoCubre\(slug\) && cuerpo\.pedirEnVivo !== true/);
-  assert.match(rutas,/if \(!accesible\(slug\) && acervoCubre\(slug\)\)/);
+  assert.match(rutas,/if \(slug === 'mendoza' && acervoCubre\(slug\) && !pedirEnVivo/);
+  assert.match(rutas,/if \(!pedirEnVivo && !accesible\(slug\) && acervoCubre\(slug\)\)/);
   assert.match(rutas,/totalParcial:\s*respaldoParcial/);
   assert.match(rutas,/origenAcervo:\s*respaldoParcial\s*\?\s*'indice_parcial'\s*:\s*'sqlite_fts'/);
 });
