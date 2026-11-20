@@ -22,8 +22,9 @@ const prueba = async ({slug, ...filtros}) => {
     return {
       fuente: slug, http: respuesta.status, ok: Boolean(d.ok),
       enVivo: d.enVivo === true && d.desdeIndiceLocal !== true,
+      desdeIndiceLocal: d.desdeIndiceLocal === true,
       total: d.total ?? null, documentos: (d.resultados || []).length,
-      codigo: d.codigo || null, ms: Date.now() - t0,
+      codigo: d.codigo || null, avisoFalla: d.avisoFalla || null, ms: Date.now() - t0,
     };
   } catch (error) {
     return { fuente: slug, ok: false, enVivo: false,
