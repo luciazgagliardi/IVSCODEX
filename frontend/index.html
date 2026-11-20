@@ -5495,7 +5495,17 @@ function estadoBase(f){
   var im=estado.indices[f.slug]||{};
   if(im.cargando) return {c:" consultando",t:'<span class="rf-t">buscando…</span>'};
   if(im.busco&&im.error) return {c:"",t:'<span class="rf-n">0</span>'};
-  if(im.busco) return {c:"",t:'<span class="rf-n">'+cuantosDe(f,im).toLocaleString("es-AR")+'</span>'+(im.ms?'<span class="rf-t">'+(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+' s</span>':'')};
+  if(im.busco){
+    var nota="";
+    if(im.estadoVivo==="consultando") nota="consultando sitio…";
+    else if(im.estadoVivo==="error") nota="en vivo no disponible";
+    else if(im.local&&im.estadoVivo==="ok"&&im.vistaOficial){
+      var oficial=im.vistaOficial.totalFuente!==null?im.vistaOficial.totalFuente:im.vistaOficial.total;
+      nota=oficial!==null?"sitio: "+Number(oficial).toLocaleString("es-AR"):"sitio consultado";
+    }else if(im.ms) nota=(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+" s";
+    return {c:"",t:'<span class="rf-n">'+cuantosDe(f,im).toLocaleString("es-AR")+'</span>'+
+      (nota?'<span class="rf-t">'+esc(nota)+'</span>':'')};
+  }
   return {c:" sin-buscar",t:'<span class="rf-t">en espera</span>'};
 }
 /* Buscar, en dos zonas: a la izquierda las bases (punto, estado, conteo y su
