@@ -1,0 +1,26 @@
+name: Diagnosticar fueros del buscador oficial de Mendoza
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ops/diagnosticar-fueros-origen.mjs'
+      - '.github/workflows/diagnosticar-fueros-origen.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  fuero:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Instalar cliente HTML de Mendoza
+        working-directory: backend
+        run: npm ci
+      - name: Comparar parámetros y respuesta de cada fuero
+        run: node ops/diagnosticar-fueros-origen.mjs
