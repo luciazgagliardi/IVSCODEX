@@ -14,7 +14,7 @@ const pruebas = [
   { slug: 'caba', q: 'amparo' },
   { slug: 'saij', q: 'amparo', tribunal: 'sumarios' },
   { slug: 'saij', q: 'daño moral', tribunal: 'fallos', provincia: 'Mendoza' },
-  { slug: 'saij', q: 'despido', tribunal: 'fallos', provincia: 'Mendoza' },
+  { slug: 'saij', q: 'despido', tribunal: 'fallos', provincia: 'Mendoza', porPagina: 80 },
 ];
 const prueba = async ({slug, ...filtros}) => {
   const t0 = Date.now();
@@ -32,6 +32,13 @@ const prueba = async ({slug, ...filtros}) => {
       desdeIndiceLocal: d.desdeIndiceLocal === true,
       total: d.total ?? null, documentos: (d.resultados || []).length,
       muestraTribunales: (d.resultados || []).slice(0, 8).map(x=>x.tribunal||null),
+      resumenTribunales: (d.resultados||[]).reduce((a,x)=>{
+        const t=String(x.tribunal||'').toUpperCase();
+        const f=t.includes('TRABAJO')||t.includes('LABORAL')?'laboral':
+          t.includes('CIVIL')||t.includes('COMERCIAL')||t.includes('MINAS')?'civil':
+          t.includes('FAMILIA')?'familia':t.includes('SUPREMA')?'corte':'otros';
+        a[f]=(a[f]||0)+1;return a;
+      },{}),
       codigo: d.codigo || null, avisoFalla: d.avisoFalla || null, ms: Date.now() - t0,
     };
   } catch (error) {
