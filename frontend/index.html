@@ -3470,7 +3470,7 @@ function nuevoIndices(){
       tribunal:f.tribunales?f.tribunales[0].v:null,secFiltro:"",pagina:1,
       // Pasajes que este buscador no manda con el resultado y hay que ir a
       // buscar al documento (ver traerFragmentos): url -> texto del pasaje.
-      fragmentos:{},fragErr:{},fragCargando:false,parcial:false,revisados:0,totalFuente:null,aflojado:false,desdeNavegador:false,aportesEnVivo:0,
+      fragmentos:{},fragErr:{},fragCargando:false,parcial:false,revisados:0,totalFuente:null,aflojado:false,desdeNavegador:false,aportesEnVivo:0,nuevosVivos:0,vistaOficial:null,
       // Dónde arranca cada página, en filas del SITIO: {1:0, 2:22, 3:43...}.
       // Numerar no alcanza cuando el filtro corre del lado del servidor —la
       // página 2 de resultados no es la fila 20 del sitio— así que cada
@@ -5558,6 +5558,7 @@ function cuantosDe(f,im){
   // Dialnet: los que de verdad tienen el término en su texto, no el total crudo del sitio
   if(f.slug==="dialnet") return (im.resultados||[]).filter(function(r){ return conTexto(f,r)===true; }).length;
   // si lo de esta página es una muestra (el filtro corre de este lado), el número es el del sitio, no el de la muestra
+  if(im.local) return (im.total||0)+(im.nuevosVivos||0);
   if(im.parcial&&typeof im.totalFuente==="number"&&im.totalFuente>(im.total||0)) return im.totalFuente;
   return im.total||(im.resultados||[]).length;
 }
@@ -6672,6 +6673,7 @@ function buscarEnFuente(slug,pagina){
     // No mostrar resultados obsoletos mientras llegan los de la consulta nueva.
     imBusco.busco=false; imBusco.resultados=[]; imBusco.total=0;
     imBusco.local=false; imBusco.pagina=1; imBusco.aportesEnVivo=0;
+    imBusco.nuevosVivos=0; imBusco.vistaOficial=null;
   }
   var busquedaId=imBusco.busquedaId;
   imBusco.cargando=true; imBusco.error=null; imBusco.inicio=Date.now(); render();
@@ -6719,23 +6721,29 @@ function buscarEnFuente(slug,pagina){
   // para obtener los resultados nuevos del sitio oficial sin duplicar el FTS.
   if(!cuerpo.local) cuerpo.pedirEnVivo=true;
   var vivoListo=false, respuestaViva=null;
-  // Los hallazgos en vivo se agregan a la primera página del acervo sin
-  // reemplazarla ni alterar su total FTS o los cursores de paginación.
+  // Los fallos con identificador nuevo se suman al acervo mostrado. El total
+  // FTS permanece exacto: los nuevos IDs se cuentan por separado. No se
+  // confunde "ausente de la primera página" con "nuevo en todo el corpus".
   function sumarResultadosVivos(d){
     if(!d||!d.ok||d.desdeIndiceLocal||!Array.isArray(d.resultados)||
        !d.resultados.length||!imBusco.porCopia||imBusco.pagina!==1) return;
+    var idsConfirmados=Array.isArray(d.idsNuevosAcervo)?new Set(d.idsNuevosAcervo):null;
     var vistos={};
     imBusco.resultados.forEach(function(r){ vistos[claveFallo(slug,r)]=true; });
     var nuevos=[];
     d.resultados.forEach(function(r){
       if(!r) return;
+      // Cuando el servidor conoce el acervo entero, descartar los documentos
+      // ya guardados aunque aparezcan recién en la página 2, 3, etcétera.
+      if(idsConfirmados&&!idsConfirmados.has(r.id)) return;
       var clave=claveFallo(slug,r);
       if(vistos[clave]) return;
       vistos[clave]=true; nuevos.push(r);
     });
-    if(!nuevos.length) return;
-    imBusco.resultados=imBusco.resultados.concat(nuevos);
+    imBusco.nuevosVivos=idsConfirmados?nuevos.length:0;
     imBusco.aportesEnVivo=nuevos.length;
+    if(!nuevos.length){ render(); return; }
+    imBusco.resultados=imBusco.resultados.concat(nuevos);
     if(imBusco.paginas[1]){
       imBusco.paginas[1].resultados=imBusco.resultados.slice();
       imBusco.paginas[1].aportesEnVivo=nuevos.length;
@@ -6796,7 +6804,16 @@ function buscarEnFuente(slug,pagina){
     .then(function(d){
       if(imBusco.pedido!==pedido) return; // ya hay un pedido mas nuevo en vuelo
       vivoListo=true; respuestaViva=d;
-      if(!cuerpo.local) imBusco.estadoVivo=(d&&d.ok&&!d.desdeIndiceLocal&&d.enVivo!==false)?"ok":"error";
+      if(!cuerpo.local){
+        imBusco.estadoVivo=(d&&d.ok&&!d.desdeIndiceLocal&&d.enVivo!==false)?"ok":"error";
+        imBusco.vistaOficial=imBusco.estadoVivo==="ok"?{
+          total:typeof d.total==="number"?d.total:null,
+          totalFuente:typeof d.totalFuente==="number"?d.totalFuente:null,
+          pagina:(d.resultados||[]).length,
+          parcial:!!d.totalParcial,
+          idsConfirmados:Array.isArray(d.idsNuevosAcervo)
+        }:null;
+      }
       // La consulta oficial complementa los resultados de la copia, no los sustituye.
       if(imBusco.porCopia&&esNueva){
         imBusco.cargando=false;
@@ -6938,7 +6955,8 @@ function conteoIndice(im,local,visibles){
   var n=function(x){ return '<b>'+(x||0).toLocaleString("es-AR")+'</b>'; };
   // Dialnet: sólo cuentan los que tienen el término en su texto (no el total crudo del sitio)
   if(visibles!=null) return n(visibles)+' resultado(s) con texto en esta página'+(typeof im.cursores[(im.pagina||1)+1]==="number"?'; pase de página para ver más':'');
-  if(local) return n(im.total)+' resultado(s)';
+  if(local) return n(im.total)+' en el acervo'+
+    (im.nuevosVivos?' + '+n(im.nuevosVivos)+' documentos nuevos confirmados en vivo':'')+' (por identificador)';
   // Sin revisados, el filtro lo hizo el propio sitio: su contador es el total.
   // Si la fuente avisa que el conteo todavía no está cerrado (la Corte IDH
   // verifica la frase exacta de a tandas), se dice «al menos».
@@ -6996,6 +7014,17 @@ function panelIndice(f){
     }).join("")+'</div>';
   }
 
+  if(im.estadoVivo==="ok"&&im.vistaOficial&&im.local){
+    var ov=im.vistaOficial;
+    var cifra=function(n){return Number(n).toLocaleString("es-AR");};
+    var totalOficial=ov.totalFuente!==null
+      ?'el sitio informa '+cifra(ov.totalFuente)+' filas para esta consulta'
+      :ov.total!==null
+        ?(ov.parcial?'al menos ':'')+cifra(ov.total)+' coincidencias en la consulta oficial'
+        :cifra(ov.pagina)+' resultados en la página oficial';
+    out+='<p class="rz-aviso" style="margin:6px 0 12px">Acervo: <b>'+cifra(im.total)+'</b> · En vivo: '+totalOficial+
+      ' · '+(ov.idsConfirmados?'<b>'+cifra(im.nuevosVivos)+'</b> identificadores nuevos':'No se pudo comprobar cuáles ya estaban guardados')+'</p>';
+  }
   if(im.cargando){
     out+='<p style="font-size:13px;color:var(--humo);margin:0">Procesando consulta… La respuesta puede demorar hasta 30 segundos debido a los tiempos de respuesta de los servidores oficiales; el sistema se encuentra activo.</p></div>';
     return out;
