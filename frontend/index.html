@@ -85,6 +85,7 @@
   --f-juristeca:#a3623a;
   --f-santafe:#4f8a7a;
    --f-catamarca:#b17d65;
+   --f-jujuy:#8a6fa3;
    --f-cordoba:var(--f-santafe);
    --f-entrerrios:var(--f-santafe);
    --f-neuquen:var(--f-santafe);
@@ -812,7 +813,7 @@ body.en-recorrido .cab>*{animation:none}
 .f-rionegro{--punto:var(--f-rionegro)}
 .f-juristeca{--punto:var(--f-juristeca)}
 .f-santafe{--punto:var(--f-santafe)}
- .f-catamarca{--punto:var(--f-catamarca)}
+ .f-catamarca{--punto:var(--f-catamarca)} .f-jujuy{--punto:var(--f-jujuy)}
  .f-cordoba{--punto:var(--f-cordoba)}
  .f-entrerrios{--punto:var(--f-entrerrios)}
  .f-neuquen{--punto:var(--f-neuquen)}
@@ -909,7 +910,7 @@ body.en-recorrido .cab>*{animation:none}
 @media (max-width:1180px){ .brief{grid-template-columns:minmax(0,1fr)} .brief__summary{position:static} }
 
 /* ---------- resultados en vivo: cada base con su sello de procedencia ---------- */
-.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet,.panel.f-corteidh,.panel.f-scba,.panel.f-rionegro,.panel.f-juristeca,.panel.f-santafe,.panel.f-cordoba,.panel.f-entrerrios,.panel.f-neuquen,.panel.f-tucuman,.panel.f-chaco,.panel.f-corrientes,.panel.f-catamarca{
+.panel.f-mendoza,.panel.f-mendozalegal,.panel.f-caba,.panel.f-csjn,.panel.f-saij,.panel.f-dialnet,.panel.f-corteidh,.panel.f-scba,.panel.f-rionegro,.panel.f-juristeca,.panel.f-santafe,.panel.f-cordoba,.panel.f-entrerrios,.panel.f-neuquen,.panel.f-tucuman,.panel.f-chaco,.panel.f-corrientes,.panel.f-catamarca,.panel.f-jujuy{
   margin:0 0 64px;padding:0;border-top:0
 }
 .rotulo-fuente{
@@ -3418,6 +3419,9 @@ var FUENTES_INDICE=[
  {slug:"catamarca",cod:"CAT",clase:"prov",boton:"la Justicia de Catamarca",
   nombre:"Poder Judicial de Catamarca",
   nota:"Sentencias y sumarios oficiales de la Corte de Justicia de Catamarca, con enlace al texto íntegro. La consulta utiliza la copia jurisprudencial indexada, incorporada por tandas periódicas, y no una API de búsqueda en vivo."},
+ {slug:"jujuy",cod:"JUJ",clase:"prov",boton:"el Poder Judicial de Jujuy",
+  nombre:"Poder Judicial de Jujuy",
+  nota:"Sumarios oficiales con las voces del tesauro y sentencias a texto completo de los organismos jurisdiccionales de Jujuy, consultados en vivo en su Sistema de Jurisprudencia. No incluye los tribunales de Familia, Menores ni Penales, y el texto es informativo: solo los protocolos agregados al expediente son documentos auténticos."},
  {slug:"cordoba",cod:"CÓR",clase:"prov",boton:"la jurisprudencia de Córdoba",
   nombre:"Jurisprudencia de Córdoba (SAIJ)",
   nota:"Sentencias y sumarios de tribunales de Córdoba recuperados mediante la faceta provincial del Sistema Argentino de Información Jurídica (SAIJ). Es una vista territorial de SAIJ, no una conexión directa al buscador del Poder Judicial provincial."},
@@ -5540,7 +5544,7 @@ function tiraLineas(){
 /* Buscar, ordenado en columnas: arriba la consulta y los filtros; abajo una
    columna por base, cada una con su punto de color, su estado, su botón
    para buscar sólo ahí y sus resultados. */
-var PROV_DE={mendoza:"Mendoza",mendozalegal:"Mendoza",caba:"Ciudad Autónoma de Buenos Aires",scba:"Buenos Aires",rionegro:"Río Negro",juristeca:"Ciudad Autónoma de Buenos Aires",santafe:"Santa Fe",catamarca:"Catamarca",cordoba:"Córdoba",entrerrios:"Entre Ríos",neuquen:"Neuquén",tucuman:"Tucumán",chaco:"Chaco",corrientes:"Corrientes"};
+var PROV_DE={mendoza:"Mendoza",mendozalegal:"Mendoza",caba:"Ciudad Autónoma de Buenos Aires",scba:"Buenos Aires",rionegro:"Río Negro",juristeca:"Ciudad Autónoma de Buenos Aires",santafe:"Santa Fe",catamarca:"Catamarca",jujuy:"Jujuy",cordoba:"Córdoba",entrerrios:"Entre Ríos",neuquen:"Neuquén",tucuman:"Tucumán",chaco:"Chaco",corrientes:"Corrientes"};
 function basesVisibles(){
   return FUENTES_INDICE.filter(function(f){
     if(!estado.ambitos[f.clase]) return false;
@@ -7651,6 +7655,7 @@ var GRUPOS_COMPARAR=[
   ["Buenos Aires", ["scba"]],
   ["Santa Fe", ["santafe"]],
   ["Catamarca", ["catamarca"]],
+  ["Jujuy", ["jujuy"]],
   ["Córdoba", ["cordoba"]],
   ["Entre Ríos", ["entrerrios"]],
   ["Neuquén", ["neuquen"]],
