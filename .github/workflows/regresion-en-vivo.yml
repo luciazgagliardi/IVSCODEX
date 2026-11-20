@@ -34,4 +34,4 @@ jobs:
         working-directory: backend
         run: node --test test/acervoPaginas.prueba.js test/busquedaEnVivo.prueba.js test/mendozaBusquedaDefecto.prueba.js
       - name: Validación de la interfaz
-        run: node --test frontend/test/cursor-buscador.test.mjs frontend/test/fuentes-vidrio.test.mjs
+        run: node --test frontend/test/cursor-buscador.test.mjs frontend/test/fuentes-vidrio.test.mjs frontend/test/falsos-ceros.test.mjs

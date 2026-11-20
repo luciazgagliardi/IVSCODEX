@@ -185,6 +185,11 @@ export const ESPERA_POR_HOST_MS = Number(process.env.ESPERA_POR_HOST_MS || 1500)
  */
 export const LIMITE_PETICIONES = Number(process.env.LIMITE_PETICIONES || 120);
 export const LIMITE_VENTANA_MS = Number(process.env.LIMITE_VENTANA_MS || 5 * 60 * 1000);
+/** Por IP y por fuente oficial, en la misma ventana: cada búsqueda en todas las
+ * bases hace hasta ~5 pedidos a una fuente (variantes, conteo, páginas). */
+export const LIMITE_BUSQUEDAS_POR_FUENTE = Number(process.env.LIMITE_BUSQUEDAS_POR_FUENTE || 60);
+/** Fragmentos (pasajes) de una fuente: hasta ~15 por búsqueda. */
+export const LIMITE_FRAGMENTOS_POR_FUENTE = Number(process.env.LIMITE_FRAGMENTOS_POR_FUENTE || 300);
 
 /**
  * Lo mismo, pero solo para el verificador de citas (POST /api/verificar-cita).

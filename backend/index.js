@@ -20,7 +20,7 @@ import {
   CORS_ORIGENES,
   DIR_PUBLICO,
   PERMITIR_CUALQUIER_DOMINIO,
-  LIMITE_PETICIONES,
+  LIMITE_PETICIONES, LIMITE_BUSQUEDAS_POR_FUENTE, LIMITE_FRAGMENTOS_POR_FUENTE,
   LIMITE_VENTANA_MS,
   LIMITE_CITAS,
   LIMITE_CITAS_VENTANA_MS, DIR_DATOS, DATOS_PERSISTEN } from './config.js';
@@ -122,11 +122,18 @@ app.use(
  * Limite de peticiones
  * ------------------------------------------------------------------ */
 
+const RE_CONSULTA_FUENTE = /^\/api\/indice\/[a-z]+\/(buscar|fragmentos)$/;
+
 const limite = rateLimit({
   windowMs: LIMITE_VENTANA_MS,
   limit: LIMITE_PETICIONES,
   // la copia local (routes/indice.js, …/local) no le pide nada a ningún sitio oficial
-  skip: (req) => /^\/api\/indice\/[a-z]+\/local$/.test(req.originalUrl.split('?')[0]),
+  // La copia local no le pide nada a ningún sitio oficial, y las consultas a
+  // cada fuente tienen su propio límite (abajo): una sola búsqueda en todas
+  // las bases hace unas 70 peticiones, y contarlas acá agotaba el cupo de
+  // 120 en la segunda búsqueda y dejaba 16 de 18 bases en «0».
+  skip: (req) => /^\/api\/indice\/[a-z]+\/local$/.test(req.originalUrl.split('?')[0]) ||
+    RE_CONSULTA_FUENTE.test(req.originalUrl.split('?')[0]),
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: {
@@ -137,11 +144,32 @@ const limite = rateLimit({
 });
 app.use('/api/', limite);
 
+// Límite por fuente oficial: protege a CADA servidor de origen de la misma
+// IP sin bloquear a quien hace varias búsquedas seguidas en todas las bases.
+// La clave es IP + ruta (fuente y tipo de pedido).
+const limitePorFuente = rateLimit({
+  windowMs: LIMITE_VENTANA_MS,
+  limit: (req) => (req.originalUrl.split('?')[0].endsWith('/fragmentos') ? LIMITE_FRAGMENTOS_POR_FUENTE : LIMITE_BUSQUEDAS_POR_FUENTE),
+  keyGenerator: (req) => `${req.ip}|${req.originalUrl.split('?')[0]}`,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: {
+    ok: false,
+    codigo: 'DEMASIADAS_PETICIONES',
+    mensaje: 'Se alcanzó el límite de consultas seguidas a esta fuente oficial. Reintente en unos minutos: el límite existe para no castigar a sus servidores.',
+  },
+});
+app.use(RE_CONSULTA_FUENTE, limitePorFuente);
+
 // Las búsquedas sobre FTS5 no consultan sitios externos pero consumen CPU y
 // memoria. Antes estaban excluidas de cualquier límite de peticiones.
+// Por IP y por base: una búsqueda en todas las bases hace dos consultas
+// locales por base (fichas y conteo), unas 36 en total. Con un cupo único de
+// 60 por minuto, la segunda búsqueda del minuto ya recibía 429.
 const limiteFTSLocal = rateLimit({
   windowMs: 60 * 1000,
-  limit: 60,
+  limit: 20,
+  keyGenerator: (req) => `${req.ip}|${req.originalUrl.split('?')[0]}`,
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: {

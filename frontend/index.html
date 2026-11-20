@@ -5282,6 +5282,7 @@ function listaPorAmbito(fs){
    consulta pasa a ser esa voz, y ahí las hermanas tienen que seguir a
    mano para poder cambiar de una a otra sin reescribir el caso. */
 function recalcularSugeridas(){
+  pedirVocabulario();
   var q=sinTildes(estado.q).trim();
   if(estado.sugeridas.some(function(s){ return sinTildes(s.voz)===q; })) return;
   var antes=estado.sugeridas.length, antesR=estado.sugeridaRama;
@@ -5354,7 +5355,13 @@ function tiraSugerencias(){
 /* Las otras formas de decir lo mismo (no las "cercanas"), según el tesauro. */
 function equivalentesDe(q){
   var e=expandir(String(q||"").trim());
-  if(!e||!e.variantes) return [];
+  if(!e||!e.variantes){
+    // Sin anillo curado para la consulta entera: las variantes verificadas
+    // del vocabulario (concepto reconocido DENTRO de la consulta; solo
+    // identidad léxica, anillos medidos o cambio de denominación por norma).
+    var vv=vocabDe(q);
+    return vv?vv.variantes.map(function(v){ return v.consulta; }).slice(0,4):[];
+  }
   return e.variantes.filter(function(v){ return v.rel==="canonico"||v.rel==="equivalente"; })
     .map(function(v){ return v.t; }).slice(0,4);
 }
@@ -5368,7 +5375,7 @@ function esCelular(){ return window.matchMedia&&matchMedia("(max-width:760px)").
 function tiraEquivalentes(sinNota){
   if(estado.tab!=="buscar") return "";
   var e=expandir(String(estado.q||"").trim());
-  if(!e||!e.variantes.length) return "";
+  if(!e||!e.variantes.length) return tiraVariantesVocab();
   function chipVoz(v){
     // Los equivalentes renombran el mismo concepto; los relacionados abren
     // otra línea de búsqueda y nunca deben presentarse como sinónimos.
@@ -5427,14 +5434,107 @@ function tiraVariantes(){
   var q=String(estado.q||"").trim();
   if(q.length<3||q.length>120) return "";
   if(expandir(q)) return "";                    // ya tiene anillo: no hay nada que sumar
+  // El vocabulario ya reconoció el concepto: las voces que solo comparten
+  // una raíz agregarían ruido (para «tenencia compartida» ofrecía tenencia
+  // de estupefacientes). Las líneas de investigación ya muestran lo útil.
+  var vq=vocabDe(q); if(vq&&vq.conceptos.length) return "";
   var vs=variantesDe(q);
   var multi=palabras(q).length>1&&estado.modo!=="alguna";
   if(!vs.length&&!multi) return "";
-  return '<div class="sugeridas"><p class="sug-nota"><b>Otras formas de escribirlo.</b> «'+esc(comoTitulo(q))+'» no figura en el tesauro; '+
-    'los tribunales varían la redacción, y cada forma recupera fallos distintos.</p><div class="chips">'+
+  return '<div class="sugeridas"><p class="sug-nota"><b>Voces del catálogo con palabras en común.</b> «'+esc(comoTitulo(q))+'» no figura en el tesauro curado. '+
+    'Estas voces comparten una raíz con lo escrito: pueden ser conceptos distintos, no otras formas de decir lo mismo.</p><div class="chips">'+
     vs.map(function(t){ return '<button class="chip voz-sug" data-act="usar-variante" data-voz="'+esc(t)+'">'+esc(comoTitulo(t))+'</button>'; }).join("")+
     (multi?'<button class="chip voz-sug" data-act="usar-variante" data-voz="'+esc(q)+'" data-modo="alguna">Con cualquiera de las palabras</button>':'')+
     '</div></div>';
+}
+
+/* ============================================================
+   Vocabulario jurídico (backend/lib/vocabulario.js)
+   ============================================================
+   El servidor reconoce conceptos DENTRO de la consulta con el Tesauro SAIJ
+   de Derecho Argentino (CC-BY 4.0), el tesauro de jurisprudencia del Poder
+   Judicial de Mendoza, los anillos curados y relaciones fundadas en normas.
+   Se pide mientras se escribe y nunca demora la búsqueda: si no llegó a
+   tiempo, la búsqueda sale igual. Solo las variantes verificadas se suman
+   solas; lo demás se ofrece rotulado como línea de investigación. */
+var vocabCache={}, vocabTimer=null;
+function claveVocab(q){ return sinTildes(String(q||"")).replace(/\s+/g," ").trim(); }
+function vocabDe(q){
+  var d=vocabCache[claveVocab(q)];
+  return d&&d.ok?d:null;
+}
+function pedirVocabulario(){
+  if(!estado.api) return;
+  var q=String(estado.q||"").trim(), k=claveVocab(q);
+  if(q.length<3||q.length>300||vocabCache[k]) return;
+  clearTimeout(vocabTimer);
+  vocabTimer=setTimeout(function(){
+    vocabCache[k]={pendiente:true};
+    fetch(estado.api+"/vocabulario/analizar?q="+encodeURIComponent(q))
+      .then(function(r){ return r.ok?r.json():null; })
+      .then(function(d){
+        vocabCache[k]=(d&&d.ok)?d:{fallo:true};
+        if(!d||!d.ok||estado.tab!=="buscar"||claveVocab(estado.q)!==k) return;
+        if(!d.conceptos.length&&!d.descriptoresScjm.length) return;
+        var campo=document.getElementById("q");
+        var donde=(campo&&document.activeElement===campo)?campo.selectionStart:null;
+        render();
+        if(donde!==null){ var c2=document.getElementById("q"); if(c2){ c2.focus(); try{ c2.setSelectionRange(donde,donde); }catch(e){} } }
+      })["catch"](function(){ vocabCache[k]={fallo:true}; });
+  },320);
+}
+var NOMBRE_ORIGEN={saij:"Tesauro SAIJ",ivs_codex:"Anillo curado",normativa:"Norma"};
+function tiraVariantesVocab(){
+  if(estado.tab!=="buscar") return "";
+  var v=vocabDe(estado.q);
+  if(!v||!v.variantes.length) return "";
+  var chips=v.variantes.map(function(x){
+    return '<button class="chip voz-sug" data-act="usar-equivalente" data-voz="'+esc(x.consulta)+'" title="'+esc("«"+x.reemplaza+"» → «"+x.por+"» · "+(NOMBRE_ORIGEN[x.fuente]||x.fuente))+'">'+esc(x.consulta)+'</button>';
+  }).join("");
+  var boton='<button class="chip" data-act="tog-equivalentes" aria-pressed="'+(estado.conEquivalentes?"true":"false")+'">'+
+    (estado.conEquivalentes?'Buscando también estas formas':'Buscar también estas formas')+'</button>';
+  return '<div class="sugeridas"><p class="sug-nota"><b>Otras denominaciones verificadas del mismo concepto.</b> '+
+    'Se reemplazó solo el concepto reconocido y se conservó el resto de la consulta.</p><div class="chips">'+chips+boton+'</div></div>';
+}
+var GRUPOS_LINEA=[
+  ["descriptorOficial","Descriptor oficial","descriptor oficial del tesauro"],
+  ["historicas","Antes y después de la reforma","denominación vinculada por una reforma legislativa"],
+  ["denominaciones","Denominaciones registradas por SAIJ · alcance por revisar","denominación que SAIJ indexa bajo el mismo descriptor, sin revisión de alcance"],
+  ["siglas","Siglas","sigla registrada"],
+  ["coloquiales","Expresiones de uso común","expresión de uso común"],
+  ["masAmplios","Concepto más amplio","concepto más amplio"],
+  ["masEspecificos","Conceptos más específicos","concepto más específico"],
+  ["relacionados","Relacionados · no son sinónimos","concepto relacionado, no sinónimo"],
+  ["seConfundeCon","Se suele confundir con","figura distinta que se suele confundir"],
+  ["contrapuestos","Concepto contrapuesto","concepto contrapuesto"]
+];
+function tiraLineas(){
+  if(estado.tab!=="buscar") return "";
+  var v=vocabDe(estado.q);
+  if(!v||(!v.conceptos.length&&!v.descriptoresScjm.length)) return "";
+  var bloques=v.conceptos.slice(0,3).map(function(c){
+    var origenes=(c.origenes||[c.origen]).map(function(o){ return NOMBRE_ORIGEN[o]||o; }).join(" · ");
+    var cab='<p class="sug-nota" style="margin:10px 0 6px"><b>'+esc(comoTitulo(c.canonico))+'</b>'+
+      (c.rama?' · '+esc(comoTitulo(nombreRama(c.rama)||c.rama)):(c.especialidad?' · '+esc(c.especialidad):''))+
+      ' <span style="opacity:.75">('+esc(origenes)+(c.vozScjm?' · voz de la SCJM':'')+')</span></p>';
+    var filas=GRUPOS_LINEA.map(function(g){
+      var items=(c.grupos&&c.grupos[g[0]])||[];
+      if(!items.length) return "";
+      return '<p class="sug-nota" style="margin:6px 0 4px">'+esc(g[1])+'</p><div class="chips">'+items.map(function(x){
+        var tit=[x.norma,x.alcance,x.evidencia].filter(Boolean).join(" — ");
+        return '<button class="chip voz-sug" data-act="usar-linea" data-tipo="'+esc(g[2])+'" data-voz="'+esc(x.termino)+'"'+(tit?' title="'+esc(tit)+'"':'')+'>'+esc(x.termino)+'</button>';
+      }).join("")+'</div>';
+    }).join("");
+    return cab+filas;
+  }).join("");
+  var scjm=v.descriptoresScjm.length?'<p class="sug-nota" style="margin:10px 0 4px">Voces del tesauro de jurisprudencia de Mendoza</p><div class="chips">'+
+    v.descriptoresScjm.map(function(x){ return '<button class="chip voz-sug" data-act="usar-linea" data-tipo="voz del tesauro de la SCJM" data-voz="'+esc(x.termino.toLowerCase())+'">'+esc(comoTitulo(x.termino.toLowerCase()))+'</button>'; }).join("")+'</div>':"";
+  return '<div class="sugeridas"><details class="lineas-inv"'+(esCelular()?'':' open')+'><summary class="sug-nota" style="cursor:pointer;margin:0"><b>Líneas de investigación</b> · '+
+    v.conceptos.length+' concepto'+(v.conceptos.length===1?'':'s')+' reconocido'+(v.conceptos.length===1?'':'s')+'</summary>'+
+    bloques+scjm+
+    '<p class="sug-nota" style="margin:10px 0 0;font-size:12px">Cada chip abre una búsqueda nueva. Un relacionado no es un sinónimo y un descriptor oficial no garantiza identidad de alcance. '+
+    'Fuentes: Tesauro SAIJ de Derecho Argentino (SAIJ, Ministerio de Justicia y Derechos Humanos; CC-BY 4.0), tesauro de jurisprudencia del Poder Judicial de Mendoza, anillos curados de IVS CODEX y normas citadas.</p>'+
+    '</details></div>';
 }
 
 /* Buscar, ordenado en columnas: arriba la consulta y los filtros; abajo una
@@ -5496,7 +5596,10 @@ function franjaBuscar(){
 function estadoBase(f){
   var im=estado.indices[f.slug]||{};
   if(im.cargando) return {c:" consultando",t:'<span class="rf-t">buscando…</span>'};
-  if(im.busco&&im.error) return {c:"",t:'<span class="rf-n">0</span>'};
+  // Una fuente que no respondió NO tiene cero resultados: mostrar «0» acá
+  // hacía creer que no había jurisprudencia (falso cero).
+  if(im.busco&&im.error) return {c:" con-error",t:'<span class="rf-n" aria-hidden="true">—</span><span class="rf-t">'+
+    (/demasiadas|límite/i.test(String(im.error))?'límite de consultas':'sin respuesta')+'</span>'};
   if(im.busco){
     if(im.totalPendiente)return {c:"",t:'<span class="rf-n">'+im.resultados.length+'+</span><span class="rf-t">'+(im.errorConteo?'total no disponible':'calculando total…')+'</span>'};
     var nota="";
@@ -5703,7 +5806,7 @@ function vistaBuscar(){
   }
   var vis=basesVisibles();
   if(estado.verBase&&!vis.some(function(f){return f.slug===estado.verBase;})) estado.verBase="";
-  var ac=filtrosActivos(), cel=esCelular(), sugs=tiraSugerencias()+tiraEquivalentes(!cel)+tiraVariantes(), notaIA=cel?"":notaAnillo();
+  var ac=filtrosActivos(), cel=esCelular(), sugs=tiraSugerencias()+tiraEquivalentes(!cel)+tiraVariantes()+tiraLineas(), notaIA=cel?"":notaAnillo();
   var tieneSug=!!(sug||sugs||notaIA);
   var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?cuantosDe(f,im):0); },0);
   var resp=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; }).length;
@@ -10932,6 +11035,16 @@ document.addEventListener("click",function(ev){
     invalidarBusquedas();
     render();
     flash("Buscando «"+eq+"» — otra denominación del mismo concepto");
+    return;
+  }
+  if(act==="usar-linea"){
+    var linea=b.getAttribute("data-voz")||"", tipoLinea=b.getAttribute("data-tipo")||"línea de investigación";
+    if(!linea) return;
+    var origenLinea=String(estado.q||"").trim();
+    estado.sugAbierta=false; estado.q=linea; estado.modo="todas"; estado.articulo=""; estado.marca=0;
+    invalidarBusquedas();
+    render();
+    flash("Explorando «"+linea+"»: "+tipoLinea+" de «"+origenLinea+"»");
     return;
   }
   if(act==="usar-relacionado"){
