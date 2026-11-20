@@ -337,6 +337,11 @@ for (const { slug, buscar } of FUENTES) {
       let idsNuevosAcervo = null;
       const parametrosVivo = {
         q: consulta,
+        // El sitio de Mendoza distingue búsqueda temática de nombres de
+        // litigantes. No mandar una carátula al campo de texto libre:
+        // puede devolver cero aun existiendo expedientes con ese nombre.
+        ...(slug === 'mendoza' && typeof cuerpo.partes === 'string' && cuerpo.partes.trim()
+          ? { partes: cuerpo.partes.trim().slice(0, 200) } : {}),
         pagina: Number(pagina) > 0 ? Number(pagina) : 1,
         // El cursor: la fila del sitio donde sigue esta página. Lo devuelve
         // el pedido anterior como "siguienteDesde" y el frontend lo manda
