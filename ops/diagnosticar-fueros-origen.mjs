@@ -78,6 +78,39 @@ for(const caso of [{tribunal:'CC',q:'daño moral'},{tribunal:'CT',q:'despido'}])
     const fichasHtml=await r2.text();
     console.log('FASE_OFICIAL '+JSON.stringify({tribunal:caso.tribunal,fase:'buscar',
       http:r2.status,bytes:fichasHtml.length,fichas:(fichasHtml.match(/class=["'][^"']*ficha/g)||[]).length,
+      paginaError:r2.ok?null:fichasHtml.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').slice(0,320),
       longitudSql:fichas.get('sql')?.length||0}));
   }catch(e){console.log('FASE_OFICIAL '+JSON.stringify({tribunal:caso.tribunal,error:e.name+' '+e.message}));}
+}
+
+/** Comparación con un AJAX normal originado en el propio formulario público. */
+for(const caso of [{tribunal:'CC',q:'daño moral'},{tribunal:'CT',q:'despido'}]){
+  try {
+    const ref='https://wwwjuri.jus.mendoza.gov.ar/bib/jurisprudencia/consultar.php';
+    const primer=await fetch(ref,{signal:AbortSignal.timeout(12000)});
+    const cookie=primer.headers.get('set-cookie')?.split(';')[0]||'';
+    const headers={
+      'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
+      'Accept':'text/html, */*;q=0.8',
+      'Origin':'https://wwwjuri.jus.mendoza.gov.ar',
+      'Referer':ref,
+      'X-Requested-With':'XMLHttpRequest',
+      ...(cookie?{'Cookie':cookie}:{})
+    };
+    const p=new URLSearchParams({funcion:'armarSql',mostrar:'10',tesauro:'',libre:caso.q,materia:'0',tribunal:caso.tribunal,
+      expediente:'',partes:'',preopinante:'',cota:'0',fecha:'',ubica:'0',libro:'',fojas:'',
+      norma:'0',numero:'',articulo:'',tribu:caso.tribunal,competencia:''});
+    const r1=await fetch(POST,{method:'POST',headers,body:p,signal:AbortSignal.timeout(12000)});
+    const t1=await r1.text(),i=t1.indexOf('@@');
+    const total=i>=0?Number(t1.slice(0,i).match(/(\d+)\s*$/)?.[1]||0):null;
+    let paso2=null;
+    if(r1.ok&&i>=0&&total>0){
+      const r2=await fetch(POST,{method:'POST',headers,signal:AbortSignal.timeout(12000),
+        body:new URLSearchParams({funcion:'buscar',next_p:'1',total:String(total),mostrar:'10',sql:t1.slice(i+2)})});
+      const t2=await r2.text();
+      paso2={http:r2.status,bytes:t2.length,fichas:(t2.match(/class=["'][^"']*ficha/g)||[]).length};
+    }
+    console.log('AJAX_OFICIAL '+JSON.stringify({tribunal:caso.tribunal,GET:primer.status,cookie:Boolean(cookie),
+      armarSql:r1.status,total,resultado:paso2}));
+  }catch(e){ console.log('AJAX_OFICIAL '+JSON.stringify({tribunal:caso.tribunal,error:e.name+' '+e.message})); }
 }
