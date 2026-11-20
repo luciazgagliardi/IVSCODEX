@@ -325,9 +325,9 @@ function detectar(texto){
     [/c[oó]digo\s+contencioso\s+administrativo\s+y\s+tributario|\bcc?ayt\b/i,"CCAyT (CABA)"],
     [/c[oó]digo\s+procesal\s+penal\b|\bcppn?\b|\bc\.\s*p\.\s*p\.(?:\s*n\.)?/i,"Código Procesal Penal"],
     [/c[oó]digo\s+civil\s+y\s+comercial(?:\s+de\s+la\s+naci[oó]n)?|c[oó]d\.?\s*civ\.?\s*y\s*com\.?|\bccycn?\b|\bcccn\b|\bc\.\s*c\.\s*c\.\s*n\.?|\bc\.\s*c\.\s*y\s*c\.?(?:\s*n\.?)?/i,"CCyC (vigente)"],
-    [/c[oó]digo\s+civil\b(?!\s+y\s+comercial)|c[oó]d\.?\s*civ(?:il)?\.?(?!\s*y\s*com)|\bc\.\s*c\.(?!\s*y)/i,"Código Civil (derogado)"],
+    [/c[oó]digo\s+civil\b(?!\s+y\s+comercial)|c[oó]d\.?\s*civ(?:il)?\.?(?![.\s]*y\s*com)|\bc\.\s*c\.(?!\s*y)/i,"Código Civil (derogado)"],
     [/\bCC\b/,"Código Civil (derogado)"],
-    [/c[oó]digo\s+penal\b|\bcp\b/i,"Código Penal"],
+    [/c[oó]digo\s+penal\b|c[oó]d\.?\s*pen(?:al)?\b\.?|\bc\.\s*pen(?:al)?\b\.?|\bcp\b/i,"Código Penal"],
     [/c[oó]digo\s+de\s+comercio\b|c[oó]d\.?\s*com\.?(?!\s*y)\b/i,"Código de Comercio (derogado)"],
     [/constituci[oó]n\s+(?:de\s+la\s+)?naci[oó]n(?:al)?(?:\s+argentina)?|const(?:\.|ituci[oó]n)\s*nac(?:\.|ional)|carta\s+magna|\bcn\b|\bc\.\s*n\.(?!\s*(?:a\.|civ|com|trab|fed|cont|crim|pen|apel|cas|elec|seg|t\.))/i,"Constitución Nacional"],
     [/constituci[oó]n\s+(?:provincial\s+)?(?:de\s+(?:la\s+)?(?:provincia\s+de\s+)?)?mendoza|const(?:\.|ituci[oó]n)?\s*(?:prov(?:\.|incial)?\s*)?(?:de\s+)?mza\b\.?/i,"Constitución de Mendoza"],
@@ -404,6 +404,20 @@ function detectar(texto){
   var reMismo=/^[\s,;(]*(?:(?:del?|de\s+la|de\s+dich[oa]|de\s+es[ea])\s+)?(?:(?:mism[oa]|citad[oa]|referid[oa]|aludid[oa]|precitad[oa]|mencionad[oa]|dich[oa]|aquel|es[ea])\s+(?:c[oó]digo|cuerpo\s+(?:legal|normativo)|ordenamiento|ley|norma|texto\s+legal|r[ée]gimen|estatuto)|(?:c[oó]digo|ley|norma|cuerpo\s+legal)\s+(?:citad[oa]|referid[oa]|mencionad[oa]|precitad[oa]|aludid[oa]))|^[\s,(]*(?:[íi]d\.|[íi]dem|ib[íi]d\.?)/i;
   /* El nombre de norma que empieza más cerca, siempre que antes de él haya
      sólo palabras de enlace. */
+  /* Dónde termina la ventana que sigue a un artículo: en el próximo «art.»
+     o en el fin de la oración. El punto de una abreviatura jurídica («Cód.
+     Civ. y Com.», «C. Penal», «Const. Nac.») NO termina la oración: cortar
+     ahí dejaba la norma fuera y la deducción por contexto le atribuía el
+     artículo a la última ley nombrada (art. 1748 «del Cód. Civ. y Com.»
+     salía como Código Civil derogado; «art. 26 del C. Penal», como Ley 26.485). */
+  var ABREV=/(?:^|[\s(,;])(?:c[oó]d|civ|com|proc|pen|const|nac|prov|pcia|crim|correc|trab|fed|cont|adm|trib|c|p|n|t|ley|nro|inc|ap|art|arts|ss|cfr|conf|cit|ob|op|pto|dec|res|ac|acord)$/i;
+  function finDeVentana(ad){
+    var re=/\b[Aa][Rr][Tt](?:[íiÍI][Cc][Uu][Ll][Oo]|[Ss]?\.)|\.\s+[A-ZÁÉÍÓÚÑ¿(]/g,m;
+    while((m=re.exec(ad))){
+      if(m[0].charAt(0)!=="."||!ABREV.test(ad.slice(0,m.index))) return m.index;
+    }
+    return -1;
+  }
   function normaAdelante(v){
     var mejor=null;
     var m=v.match(reLeyEn);
@@ -482,7 +496,7 @@ function detectar(texto){
     }
     if(!items.length) continue;
     // Lo que sigue al artículo, hasta el próximo «art.» o el fin de la oración.
-    var ad=texto.slice(fin,fin+110),corte=ad.search(/\b[Aa][Rr][Tt](?:[íiÍI][Cc][Uu][Ll][Oo]|[Ss]?\.)|\.\s+[A-ZÁÉÍÓÚÑ¿(]/);
+    var ad=texto.slice(fin,fin+110),corte=finDeVentana(ad);
     if(corte>=0) ad=ad.slice(0,corte+1);
     var at=texto.slice(Math.max(0,ini-90),ini);
     var hallada=normaAdelante(ad);

@@ -387,3 +387,30 @@ test('Lector: las citas legales se buscan como normas (ley 25.323 art. 2, Consti
   const B = detectar('SUPREMA CORTE DE JUSTICIA DE LA PROVINCIA DE BUENOS AIRES. art. 15 de la Constitución Provincial.');
   assert.deepEqual(B.artsPorFuente.map((x) => x[0]), ['Constitución de la Provincia de Buenos Aires']);
 });
+
+/* Atribución de normas con abreviaturas que llevan punto. Antes, el punto de
+   «Cód.» o «C.» cortaba la ventana que sigue al artículo, la norma quedaba
+   afuera y la deducción por contexto le atribuía el artículo a la última ley
+   nombrada. Casos tomados de una sentencia real de la 2ª Cámara Civil de
+   Mendoza (frases breves, sin datos de las partes). */
+test('abreviaturas con punto: el artículo va a la norma correcta', () => {
+  const casos = [
+    ['genera intereses desde que se produce el perjuicio (art. 1748 del Cód. Civ. y Com.). Entonces', 'CCyC (vigente)', 'art. 1748'],
+    ['en concurso ideal con el Art. 4 de la Ley N° 26.485. Condenar a la pena (Art. 26 del C. Penal), más costas', 'Código Penal', 'art. 26'],
+    ['conforme art. 79 del Cód. Penal y siguientes.', 'Código Penal', 'art. 79'],
+    ['conforme art. 1109 del Cód. Civil. Luego', 'Código Civil (derogado)', 'art. 1109'],
+    ['el art. 14 de la Const. Nac. Luego', 'Constitución Nacional', 'art. 14'],
+  ];
+  for (const [texto, norma, art] of casos) {
+    const d = detectar(texto);
+    const c = d.citas.find((x) => x.l === art);
+    assert.ok(c, `${art} en «${texto}»`);
+    assert.equal(c.f, norma, texto);
+    assert.equal(c.ctx, false, `no debe deducirse por contexto: ${texto}`);
+  }
+});
+
+test('el fin de oración real sigue cortando la ventana', () => {
+  const d = detectar('Se aplicó el art. 5. Luego la Ley 24.240 en su art. 40.');
+  assert.notEqual(d.citas.find((x) => x.l === 'art. 5').f, 'Ley de Defensa del Consumidor (LDC)');
+});
