@@ -12,7 +12,8 @@ test('Mendoza ofrece todos los tribunales y los selecciona por defecto',()=>{
   assert.match(html,/tribunal:f\.tribunales\?f\.tribunales\[0\]\.v:null/);
 });
 test('Mendoza mantiene /buscar desde el acervo y admite consulta oficial concurrente explícita',()=>{
-  assert.match(html,/fetch\(estado\.api\+"\/indice\/"\+slug\+"\/local"/);
+  assert.match(html,/function consultarAcervoPantalla\(slug,cuerpo,vigente,urgente\)/);
+  assert.match(html,/fetch\(estado\.api\+"\/indice\/"\+t\.slug\+"\/local"/);
   assert.match(html,/var promesaBusco=Promise\.resolve\(\)\.then/);
   assert.match(html,/if\(imBusco\.porCopia&&esNueva\)/);
   assert.match(html,/sumarResultadosVivos\(d\)/);
