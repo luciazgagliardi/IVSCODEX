@@ -41,6 +41,18 @@ fs.writeFileSync(path.join(process.env.DIR_INDICE, 'mendoza.json'), JSON.stringi
 const { prepararAcervo, buscarPagina, sumarVivos, anioDe, acervoCubre, idsNuevosRespectoAcervo } = await import('../lib/acervo.js');
 await prepararAcervo({ esperar: true });
 
+test('la vista inmediata entrega fichas sin esperar el conteo exhaustivo', async () => {
+  const rapida = await buscarPagina('mendoza', 'despido',
+    { desde: 0, porPagina: 20, rapida: true }, { espera: 7000, prioridad: 9 });
+  assert.ok(rapida, 'la búsqueda rápida debe responder');
+  assert.equal(rapida.total, null, '20 fichas no son el total del repositorio');
+  assert.equal(rapida.totalPendiente, true);
+  assert.ok(rapida.resultados.length >= 1 && rapida.resultados.length <= 20);
+  assert.ok(rapida.resultados.every((r) => r.id && r.caratula));
+  const exacta = await buscarPagina('mendoza', 'despido', { desde: 0, porPagina: 20 });
+  assert.equal(exacta.total, 53, 'la segunda etapa conserva el total exacto y la paginación');
+});
+
 test('el año de cada forma de fecha', () => {
   assert.equal(anioDe('27/07/2026 - Sentencia'), 2026);
   assert.equal(anioDe('2019-05-02'), 2019);
