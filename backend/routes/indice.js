@@ -298,6 +298,10 @@ for (const { slug, buscar } of FUENTES) {
       const arranque = Date.now();
       const desdeN = Number.isFinite(Number(desde)) && Number(desde) >= 0 ? Number(desde) : 0;
       const pedidoLocal = { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes, desde: desdeN };
+      // Esta segunda petición del frontend es únicamente una consulta oficial.
+      // /local ya consulta el acervo en paralelo. No se debe sustituir una
+      // respuesta oficial fallida por la copia (ni esperar otros 30 segundos).
+      const pedirEnVivo = cuerpo.pedirEnVivo === true;
 
       // Los clientes habituales de /buscar conservan la prioridad del
       // acervo completo de Mendoza. El frontend pide /local por separado y
@@ -309,7 +313,7 @@ for (const { slug, buscar } of FUENTES) {
       // Esto también permite buscar todos los tribunales cuando no se eligió
       // SC/CC/CT; el sitio oficial solo admite un tribunal por solicitud.
       // Si no hay coincidencias en la copia, se conserva el intento vivo.
-      if (slug === 'mendoza' && acervoCubre(slug) && cuerpo.pedirEnVivo !== true && cuerpo.soloLocal !== true && cuerpo.local !== true) {
+      if (slug === 'mendoza' && acervoCubre(slug) && !pedirEnVivo && cuerpo.soloLocal !== true && cuerpo.local !== true) {
         const loc = await paginaLocal(slug, consulta, pedidoLocal);
         if (loc && loc.resultados.length) {
           return res.json({
@@ -355,7 +359,7 @@ for (const { slug, buscar } of FUENTES) {
       };
 
       // un sitio que no le contesta al servidor: la copia, sin hacer esperar a nadie; de fondo se lo vuelve a probar
-      if (!accesible(slug) && acervoCubre(slug)) {
+      if (!pedirEnVivo && !accesible(slug) && acervoCubre(slug)) {
         sondear(slug, () => buscar(parametrosVivo));
         const loc = await paginaLocal(slug, consulta, pedidoLocal);
         if (loc) return res.json({ ok: true, ...respuestaConFuente(slug, loc, { tribunal, provincia }), ms: Date.now() - arranque });
@@ -373,6 +377,17 @@ for (const { slug, buscar } of FUENTES) {
         // mejor que un error en pantalla, y el frontend avisa que es local.
         // durante media hora, la copia contesta sin hacer esperar a nadie (ver sondear)
         if (!(e instanceof ErrorApp && e.codigo === 'CONSULTA_VACIA')) sinAcceso.set(slug, Date.now() + SIN_ACCESO_MS);
+        if (pedirEnVivo) {
+          // Informar explícitamente el fallo de la fuente externa. El
+          // navegador conserva el acervo que pidió antes y puede reintentar.
+          // No bloquear esta respuesta durante otra consulta SQLite.
+          return res.json({
+            ok: false, fuente: slug, enVivo: false,
+            codigo: 'FUENTE_OFICIAL_NO_DISPONIBLE',
+            mensaje: 'El buscador oficial no respondió a la consulta en vivo.',
+            ms: Date.now() - arranque,
+          });
+        }
         // la copia local, de a páginas y con su total exacto. El sitio no dijo cuántos tiene:
         // totalFuente va null para que la pantalla no muestre un total de origen inventado.
         const loc = await paginaLocal(slug, consulta, pedidoLocal);
@@ -385,7 +400,7 @@ for (const { slug, buscar } of FUENTES) {
       // devuelve directamente "0 resultados" para una consulta que sí tiene
       // (visto con acentos que el sitio no matchea, ver lib/indiceCaba.js).
       // Antes de creerle el cero, se revisa si el índice local tiene algo.
-      if (slug === 'caba' && total === 0) {
+      if (!pedirEnVivo && slug === 'caba' && total === 0) {
         const loc = await paginaLocal(slug, consulta, pedidoLocal);
         if (loc && loc.resultados.length) {
           ({ total, totalFuente, siguienteDesde, resultados, totalParcial, revisados, aflojado, desdeIndiceLocal } = loc);
@@ -403,7 +418,10 @@ for (const { slug, buscar } of FUENTES) {
             .filter((v) => v.toLowerCase() !== consulta.toLowerCase()).slice(0, 4)
         : [];
       const primeraPagina = !(Number(desde) > 0) && !(Number(pagina) > 1);
-      if (listaVariantes.length && primeraPagina && !desdeIndiceLocal) {
+      // La actualización oficial debe entregar la primera página sin
+      // retrasarse hasta 20 segundos por cuatro variantes adicionales:
+      // esos equivalentes ya se buscan juntos en el acervo FTS.
+      if (listaVariantes.length && primeraPagina && !desdeIndiceLocal && !pedirEnVivo) {
         const vistos = new Set(resultados.map((r) => r.id));
         const extras = [];
         const tope = new Promise((ok) => setTimeout(ok, 20_000)); // las variantes no demoran la respuesta más que esto
@@ -469,6 +487,7 @@ for (const { slug, buscar } of FUENTES) {
         aflojado,
         guardadosEnIndice: guardados,
         desdeIndiceLocal,
+        enVivo: pedirEnVivo ? !desdeIndiceLocal : undefined,
         avisoFalla,
         ms: Date.now() - arranque,
       });
