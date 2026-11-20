@@ -334,3 +334,34 @@
 - Código Civil y Comercial, texto actualizado: <https://www.argentina.gob.ar/normativa/nacional/ley-26994-235975/actualizacion>. Texto original: <https://servicios.infoleg.gob.ar/infolegInternet/anexos/235000-239999/235975/norma.htm>.
 - API de Estadísticas del BCRA v4.0: <https://api.bcra.gob.ar/estadisticas/v4.0/monetarias>. Series de tiempo: <https://apis.datos.gob.ar/series/api/series/>.
 - **No accesibles desde este entorno (403 o DNS):** boletinoficial.gob.ar, csjn.gov.ar y saij.gob.ar. Los datos que dependen de ellos están marcados **[No verificado]**.
+
+---
+
+## 7. Correcciones implementadas
+
+Estado al 20/11/2026. Las suites pasan: `cd backend && node --test` da 209 pruebas aprobadas, 0 fallidas, y `node --test frontend/test/*.test.mjs` da 16 aprobadas, 0 fallidas.
+
+Además, las pantallas se verificaron con Playwright contra el servidor local (`PORT=3111 node index.js`) en escritorio (1366 × 900) y celular (iPhone 13), con Cálculos, Plazos, el calendario y la portada:
+- sin errores de consola ni de página;
+- sin desborde horizontal;
+- resultados iguales a los de las pruebas: Mendoza 08/07/2026 + 5 → 31/07/2026 sin plazo de gracia; Nación 05/11/2026 + 3 → 11/11/2026; despido en período de prueba $ 887.083,88; honorarios de Nación $ 1.080.050; honorarios de Mendoza $ 6.274.698,32 a $ 8.157.107,82; despido en la portada $ 14.238.515,28, igual que la plataforma.
+
+| ID | Archivo y cambio | Prueba de regresión |
+|---|---|---|
+| C-01 | `frontend/calculos.js`: tabla `CALENDARIO` con norma, URL y marca de verificación de cada dato. Contiene el 09/11/2026 (Decreto 1103/2026, fecha confirmada en el calendario oficial), el 10/11/2026 (feriado en CABA; en Nación solo se avisa), los turísticos 23/3, 10/7 y 7/12 (Res. JGM 164/2025) y los no laborables religiosos. `feriados()`, `diaInhabil()` y `computarPlazo()` pasan a ser funciones puras. En `index.html`, `feriados`, `motivoInhabil` y `siguienteHabil` delegan en `IVSCalculos`. | `backend/test/plazosFeriados.prueba.js`: lista oficial de 2026 completa; Nación 05/11/2026 + 3 → 11/11 (gracia el 12/11); CABA 06/11/2026 + 5 → 17/11. |
+| C-02 | `calculos.js`: en Mendoza son inhábiles todo enero y los no laborables, incluido el Jueves Santo (art. 60 ap. II, Ley 9001), y el receso del 13 al 24/7/2026 (Acordada SCJM 32.674). En Nación y CABA, los no laborables se cuentan como hábiles y se avisa. `COBERTURA` y `faltantes()`: si el plazo cruza un año o una feria sin datos, el resultado sale «(provisorio)» y dice qué falta. | 20/03/2026 + 3 → 27/03; 08/07/2026 + 5 → 31/07; 04/12/2026 + 2 → 10/12; 28/12/2026 + 5 → 02/02/2027, provisorio porque faltan los datos de 2027. |
+| C-03 | `calculos.js`: la feria de enero de Nación (RJN) y la de invierno de 2026 (Acordada CSJN 11/2026) quedan cargadas con `verificado:false` y el aviso «Dato no verificado en fuente oficial… confirme la acordada». `index.html`: los inhábiles cargados por el usuario guardan `juris` y solo se descuentan en esa jurisdicción; el calendario muestra la norma de cada día, los avisos y los datos faltantes. Los no laborables religiosos solo se avisan. | Nación 15/07/2026 + 5 → 05/08/2026, con aviso de dato no verificado; un asueto de Mendoza no altera Nación; julio de 2027 en Mendoza y enero en CABA salen provisorios; el Día del Perdón se avisa y no se descuenta. |
+| C-04 | `calculos.js` (`BASES_PLAZO`, `computarPlazo`) e `index.html` (`calcProcesales`): en Mendoza `gracia=null`, con la base en los arts. 60, 61 y 63 de la Ley 9001 y la Acordada SCJM 31.699, y la nota de la excepción para prescripción y caducidad en día inhábil. Nación mantiene los arts. 156 y 124 del CPCCN. | `plazosFeriados.prueba.js` (C-04) y `frontend/test/calculos-pantalla.test.mjs`, que ejecuta la `calcProcesales` real de `index.html` y la de la portada. |
+| C-05 | `calculos.js` (`despidoComponentes`): en el período de prueba la indemnización es 0; el preaviso es 0 si el egreso es desde el 06/03/2026 (Ley 27.802, arts. 245 y 231 inc. b) y de 15 días si es anterior. Cada caso con su aviso y su cita. | `calculos.prueba.js`: (2026-06-01 → 2026-09-15) da total $ 887.083,88; (2025-09-01 → 2025-12-15) da preaviso de $ 500.000 e indemnización 0. Prueba de pantalla equivalente. |
+| C-06 | `calculos.js`: nueva `honorariosMendoza()` con la lectura literal del art. 2 de la Ley 9131: el grado se determina por el monto total, con piso en el máximo del grado precedente; mínimo y máximo con el +30 % por mérito; después, los arts. 3, 7, 8 y 31. La lectura acumulativa queda solo como alternativa rotulada. `index.html` muestra el rango y explica el criterio. | $40 M con JUS de 784.337,29 → $ 6.274.698,32 a $ 8.157.107,82 (alternativa acumulativa: 6.996.144,41); $100 M → mínimo 12.000.000; $30 M → 4.800.000; $10 M → 2.000.000. |
+| C-07 | `calculos.js`: `honorariosNacion(monto, uma, proceso)` aplica los mínimos del art. 58 (conocimiento 10 UMA, ejecutivo 6, mediación 2; «otro», ninguno). `index.html` agrega el selector del tipo de proceso, con «conocimiento» por defecto, y no precarga la UMA. | $1.000.000 con UMA de 108.005: conocimiento → 1.080.050; ejecutivo → 648.030; otro → 220.000 a 330.000. $12 M no cambia (2.720.431,50 a 2.834.409). |
+| C-10 | `calculos.js`: la antigüedad para la fracción de más de 3 meses y para los 5 años del preaviso se mide hasta el final del día del egreso. | (2020-01-01 → 2024-03-31) → 4 años computables; (→ 2024-04-01) → 5; (→ 2024-12-31) → preaviso de 1 mes; (→ 2025-01-01) → 2 meses. |
+| C-12 | `calculos.js`: nueva `liquidacionDespido()`, que usan la plataforma y la portada. `frontend/portada/index.html` carga `../calculos.js` y usa `computarPlazo`, `liquidacionDespido` y `diaInhabil`; se agrega la opción de período de prueba. `frontend/portada/calculos.js` ya no copia feriados, antigüedad ni vacaciones. | `calculos-pantalla.test.mjs`: la portada da $ 14.238.515,28, igual que la plataforma, y $ 887.083,88 en período de prueba; los plazos de la portada coinciden con los de la plataforma. |
+
+**Pendiente, fuera de esta tanda:**
+- C-08, el aviso del despido sobre la Ley 27.742.
+- C-09, el modo IPC + 3 % del art. 276 LCT.
+- C-11: el JUS sigue precargado con 784.337,29, un valor no verificado, y la tasa del 3 % sigue precargada al elegir Mendoza.
+- C-13 a C-17.
+- La copia `frontend/portada-opciones/v9/calculos.js` (variante de diseño) quedó sin tocar.
+- En `index.html` se cambió además la versión de `calculos.js` en la línea `<script src="./calculos.js?v=20261120-plazos">`, para invalidar la caché del navegador.
