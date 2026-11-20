@@ -145,6 +145,10 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   // Sin esta condición, SAIJ eludía el filtro SC/CC/CT y contaminaba los resultados.
   // Un tribunal no informado no permite atribuir el fallo a un fuero específico.
   if (trib) { donde.push("upper(coalesce(f.tribunal, '')) LIKE ?"); args.push(trib); }
+  const contenido = "coalesce(lower(trim(f.caratula)), '') || '|' || coalesce(f.fecha, '') || '|' || substr(coalesce(f.sumario, f.id), 1, 80)";
+  const porFallo = "lower(trim(f.caratula)) || '|' || coalesce(f.fecha, '') || '|' || coalesce(lower(trim(f.tribunal)), '')";
+  const clave = `CASE WHEN f.fuente <> 'saij' AND coalesce(nullif(trim(f.linkFallo), ''), nullif(trim(f.linkFicha), '')) IS NOT NULL THEN coalesce(nullif(trim(f.linkFallo), ''), trim(f.linkFicha))
+    WHEN coalesce(trim(f.caratula), '') <> '' THEN ${porFallo} ELSE ${contenido} END`;
   // Dos fases: la vista rápida muestra fallos reales sin el costoso
   // count(*) OVER() + GROUP BY + orden global. El total EXACTO se calcula
   // luego, en otra petición. Nunca anunciar el tamaño de la muestra como total.
@@ -180,10 +184,7 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   // Una fila por clave: la de mejor relevancia (SQLite devuelve con min() la fila de ese mínimo).
   // la clave de «el mismo resultado» (lib/claveFallo.js): un resultado por fallo. Un fallo con varios sumarios es UN resultado
   // (se muestra el de mejor coincidencia); el enlace manda donde cada fallo tiene el suyo, y en SAIJ (cuyos enlaces son uno por sumario) la carátula, la fecha y el tribunal.
-  const contenido = "coalesce(lower(trim(f.caratula)), '') || '|' || coalesce(f.fecha, '') || '|' || substr(coalesce(f.sumario, f.id), 1, 80)";
-  const porFallo = "lower(trim(f.caratula)) || '|' || coalesce(f.fecha, '') || '|' || coalesce(lower(trim(f.tribunal)), '')";
-  const clave = `CASE WHEN f.fuente <> 'saij' AND coalesce(nullif(trim(f.linkFallo), ''), nullif(trim(f.linkFicha), '')) IS NOT NULL THEN coalesce(nullif(trim(f.linkFallo), ''), trim(f.linkFicha))
-    WHEN coalesce(trim(f.caratula), '') <> '' THEN ${porFallo} ELSE ${contenido} END`;
+
   const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0${mag ? ', 1.0' : ''}) AS rel, ${clave} AS clave
     FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}`;
   const unicos = `WITH m AS MATERIALIZED (${coinciden}), u AS (SELECT rid, min(rel) AS rel FROM m GROUP BY clave)`;
