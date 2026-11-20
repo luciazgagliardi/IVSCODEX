@@ -101,7 +101,7 @@ const TIPO_SAIJ = { sumarios: ['sumario'], fallos: ['fallo'], todo: ['sumario', 
  * juntan dos orígenes (Mendoza y lo de SAIJ de Mendoza), los duplicados exactos
  * —la misma carátula, fecha y texto— cuentan una sola vez.
  */
-export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', variantes = [], desde = 0, porPagina = 20 } = {}) {
+export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', variantes = [], desde = 0, porPagina = 20, rapida = false } = {}) {
   const mag = ftsConMagistrados(db);
   // Calcular todos los apellidos obliga a recorrer la tabla completa (cientos
   // de miles de filas). No hacerlo en cada primera búsqueda temática de cada
@@ -145,6 +145,37 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   // Sin esta condición, SAIJ eludía el filtro SC/CC/CT y contaminaba los resultados.
   // Un tribunal no informado no permite atribuir el fallo a un fuero específico.
   if (trib) { donde.push("upper(coalesce(f.tribunal, '')) LIKE ?"); args.push(trib); }
+  // Dos fases: la vista rápida muestra fallos reales sin el costoso
+  // count(*) OVER() + GROUP BY + orden global. El total EXACTO se calcula
+  // luego, en otra petición. Nunca anunciar el tamaño de la muestra como total.
+  if (rapida && Number(desde) === 0) {
+    const n = Math.min(100, Math.max(1, Number(porPagina) || 20));
+    // Se explora un pequeño lote por FTS5. LIMIT evita recorrer cientos de
+    // miles de coincidencias sólo para mostrar las primeras fichas.
+    const candidatos = db.prepare(`SELECT f.*, ${clave} AS claveRapida
+      FROM fts JOIN fallos f ON f.rid = fts.rowid
+      WHERE fts MATCH ? AND ${donde.join(' AND ')}
+      LIMIT ?`).all(...args, Math.max(120, n * 6));
+    const vistos = new Set(), filas = [];
+    for (const f of candidatos) {
+      if (vistos.has(f.claveRapida)) continue;
+      vistos.add(f.claveRapida);
+      filas.push(f);
+      if (filas.length >= n) break;
+    }
+    const resultados = filas.map((f) => {
+      const r = { id: f.id, caratula: f.caratula, tribunal: f.tribunal, fecha: f.fecha,
+        expediente: f.expediente, sumario: f.sumario,
+        voces: f.voces ? f.voces.split(' · ') : undefined,
+        magistrados: f.magistrados, materia: f.materia,
+        linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo,
+        desdeAcervo: true };
+      for (const k of Object.keys(r)) if (r[k] == null) delete r[k];
+      return r;
+    });
+    return { total: null, totalPendiente: true, resultados, siguienteDesde: null };
+  }
+
   // MATERIALIZED: bm25() sólo vale dentro de la consulta al índice, y así SQLite no la «aplana» hacia afuera.
   // Una fila por clave: la de mejor relevancia (SQLite devuelve con min() la fila de ese mínimo).
   // la clave de «el mismo resultado» (lib/claveFallo.js): un resultado por fallo. Un fallo con varios sumarios es UN resultado
