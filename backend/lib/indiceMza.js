@@ -5,11 +5,20 @@
  * propio formulario del sitio (funciones/consultar.js):
  *
  *   1. funcion=armarSql + los campos del formulario -> devuelve
- *      "<total>@@<SQL de respaldo>". Ese SQL se recibe tal cual y se
- *      reenvia intacto en el paso 2: no lo armamos nosotros a mano, es el
- *      mismo trato que le da su propio JS.
- *   2. funcion=buscar + next_p/total/mostrar/sql -> devuelve el HTML con
- *      las fichas de resultado ya renderizadas, que parseamos con jsdom.
+ *      "<total>@@<SQL>". Solo se usa el total: es el contador verificable.
+ *   2. funcion=buscar + next_p/total/mostrar + LOS MISMOS campos del
+ *      formulario -> devuelve el HTML con las fichas ya renderizadas, que
+ *      parseamos con jsdom.
+ *
+ * Desde consultar.js?v=20261104 el formulario oficial ya NO reenvía el SQL
+ * en el paso 2 ("Se reenvian los MISMOS filtros del armarSql (sin SQL): el
+ * servidor reconstruye la consulta"). Reenviarlo como antes provoca:
+ *   - SC: HTTP 200 con "La busqueda vencio..." y ninguna ficha;
+ *   - CC/CT: HTTP 403 del Web Application Firewall (Event Type: signature),
+ *     porque el SQL de las cámaras coincide con una firma de inyección SQL.
+ * Por eso aquí nunca se envía el campo "sql". Ojo: el encabezado "Total de
+ * Sumarios Encontrados" del paso 2 repite el "total" que manda el cliente;
+ * el contador confiable es el del paso 1.
  *
  * Respeta la misma cortesia que el resto del backend: mismo User-Agent
  * identificable y la misma espera minima entre pedidos al mismo host
@@ -76,11 +85,12 @@ async function pedirConsulta(parametros, cookie = '') {
   }
 }
 
-/** Paso 1: arma el SQL de respaldo y devuelve cuantas coincidencias hay. */
-async function armarSql({ libre, partes = '', tribunal }) {
-  const p = new URLSearchParams({
-    funcion: 'armarSql',
-    mostrar: '20',
+/**
+ * Los campos del formulario, en el mismo orden que leerDatos() del
+ * consultar.js oficial. Se mandan IGUALES en los dos pasos.
+ */
+export function filtrosFormulario({ libre = '', partes = '', tribunal }) {
+  return {
     tesauro: '',
     libre,
     materia: '0',
@@ -98,7 +108,12 @@ async function armarSql({ libre, partes = '', tribunal }) {
     articulo: '',
     tribu: tribunal,
     competencia: '',
-  });
+  };
+}
+
+/** Paso 1: devuelve cuantas coincidencias hay (el SQL que viene se ignora). */
+async function armarSql(filtros) {
+  const p = new URLSearchParams({ funcion: 'armarSql', mostrar: '10', ...filtros });
 
   const { texto: cuerpo, cookie } = await pedirConsulta(p);
   const marca = cuerpo.indexOf('@@');
@@ -109,19 +124,24 @@ async function armarSql({ libre, partes = '', tribunal }) {
   const antes = cuerpo.slice(0, marca).match(/(\d+)\s*$/);
   if (!antes) throw errores.indiceMzaFalla('no se encontró el contador de resultados');
 
-  return { total: parseInt(antes[1], 10), sql: cuerpo.slice(marca + 2), cookie };
+  return { total: parseInt(antes[1], 10), cookie };
 }
 
-/** Paso 2: con el SQL del paso 1, trae las fichas ya renderizadas en HTML. */
-async function traerFichas({ sql, pagina, porPagina, total, cookie }) {
+/** Paso 2: con los mismos filtros del paso 1, trae las fichas en HTML. */
+async function traerFichas({ filtros, pagina, porPagina, total, cookie }) {
   const p = new URLSearchParams({
     funcion: 'buscar',
     next_p: String(pagina),
     total: String(total),
     mostrar: String(porPagina),
-    sql,
+    ...filtros,
   });
-  return (await pedirConsulta(p, cookie)).texto;
+  const html = (await pedirConsulta(p, cookie)).texto;
+  // El sitio responde 200 con este aviso cuando no puede reconstruir la
+  // búsqueda: no es "cero resultados", es una falla de la fuente.
+  if (/la busqueda vencio/i.test(html))
+    throw errores.indiceMzaFalla('la fuente informó que la búsqueda venció');
+  return html;
 }
 
 /** Saca el prefijo "Etiqueta: " que el sitio antepone a varios campos. */
@@ -216,7 +236,8 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
   // comillas rompen la consulta en vez de hacer frase, y el OR lo ignora),
   // así que siempre se le manda el texto pelado y los otros modos se
   // resuelven acá con lo que devolvió.
-  const { total, sql, cookie } = await armarSql({ libre, partes, tribunal });
+  const filtros = filtrosFormulario({ libre, partes, tribunal });
+  const { total, cookie } = await armarSql(filtros);
   if (total <= 0) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
 
   const hayQueFiltrar = modo === 'exacta' || String(excluir || '').trim() || anioDesde || anioHasta;
@@ -224,7 +245,7 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
 
   if (!hayQueFiltrar) {
     // El sitio hace el trabajo: su paginación ya es la de los resultados.
-    const html = await traerFichas({ sql, pagina: Math.floor(arranque / porPagina) + 1, porPagina, total, cookie });
+    const html = await traerFichas({ filtros, pagina: Math.floor(arranque / porPagina) + 1, porPagina, total, cookie });
     const filas = parsearFichas(html);
     // La fuente puede informar coincidencias y devolver una página sin fichas
     // por bloqueo, cambio de HTML o paginación defectuosa. No informar cero.
@@ -257,7 +278,7 @@ export async function buscarMza({ q, partes: partesForm, modo = 'todas', excluir
   const traer = async (offset) => {
     const paginaSitio = Math.floor(offset / FICHAS_POR_TANDA) + 1;
     const sobran = offset % FICHAS_POR_TANDA;
-    const html = await traerFichas({ sql, pagina: paginaSitio, porPagina: FICHAS_POR_TANDA, total, cookie });
+    const html = await traerFichas({ filtros, pagina: paginaSitio, porPagina: FICHAS_POR_TANDA, total, cookie });
     // Se descartan las fichas anteriores al offset pedido: el sitio solo
     // sabe arrancar en múltiplos del tamaño de página.
     const filas = parsearFichas(html);
