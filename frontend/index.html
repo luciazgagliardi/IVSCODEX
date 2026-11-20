@@ -6599,6 +6599,37 @@ function precargarPaginasIndice(slug,imBusco,busquedaId,cuerpoBase){
  *   si se pasa un número, es "ir a esa página" de una búsqueda ya hecha —
  *   reemplaza la lista, no la suma a la anterior.
  */
+/* Una sola consulta FTS pesada a la vez desde esta pestaña. El backend de
+   Azure suele disponer de un hilo lector: enviar 15 consultas locales juntas
+   hacía que vencieran sus 12 s de espera mientras seguían en cola. Los pedidos
+   oficiales no pasan por esta cola y siguen ejecutándose en paralelo. */
+var colaAcervoPantalla=[],acervoPantallaOcupado=false;
+function despacharAcervoPantalla(){
+  if(acervoPantallaOcupado) return;
+  var t=colaAcervoPantalla.shift();
+  if(!t) return;
+  if(!t.vigente()){ t.resolver(null); despacharAcervoPantalla(); return; }
+  acervoPantallaOcupado=true;
+  var controlador=new AbortController();
+  var reloj=setTimeout(function(){ controlador.abort(); },16000);
+  fetch(estado.api+"/indice/"+t.slug+"/local",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:t.cuerpo,signal:controlador.signal
+  }).then(function(r){ return r.json(); }).then(t.resolver,t.rechazar)
+    .finally(function(){
+      clearTimeout(reloj); acervoPantallaOcupado=false;
+      despacharAcervoPantalla();
+    });
+}
+function consultarAcervoPantalla(slug,cuerpo,vigente,urgente){
+  return new Promise(function(resolver,rechazar){
+    var t={slug:slug,cuerpo:JSON.stringify(cuerpo),vigente:vigente,resolver:resolver,rechazar:rechazar};
+    if(urgente) colaAcervoPantalla.unshift(t);
+    else colaAcervoPantalla.push(t);
+    despacharAcervoPantalla();
+  });
+}
+
 function buscarEnFuente(slug,pagina){
   var fCfg=FUENTES_INDICE.filter(function(x){return x.slug===slug;})[0];
   var qi=estado.q.trim();
@@ -6707,8 +6738,7 @@ function buscarEnFuente(slug,pagina){
     render();
   }
   if(esNueva&&!estado.articulo){
-    fetch(estado.api+"/indice/"+slug+"/local",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cuerpo)})
-      .then(function(r){ return r.json(); })
+    consultarAcervoPantalla(slug,cuerpo,function(){return imBusco.pedido===pedido;},estado.verBase===slug)
       .then(function(d){
         if(imBusco.pedido!==pedido||imBusco.pagina>1||!d||!d.ok||!d.resultados||!d.resultados.length) return;
         if(nom) d.resultados=IVSNombre.ordenar(d.resultados,nom);
