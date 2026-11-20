@@ -1,0 +1,3152 @@
+{
+ "descripcion": "Propuestas de anillos (equivalencias), relaciones tipadas y siglas para el vocabulario de IVS CODEX. TODAS nacen con estado «propuesta»: ninguna debe pasar a «expandir» sin revisión jurídica. Las medidas se validaron contra la API de producción como se validaron los anillos curados (frontend/index.html, var TESAURO).",
+ "criterio": "Se buscó cada forma por separado (modo por defecto «todas»), se comparó el total y el solapamiento de ids en la primera página (20 resultados) y se leyó la muestra. Una equivalencia que no aporta material nuevo sobra; una que trae material impertinente es falsa. La pertinencia heurística se calcula solo sobre sumarios (no sobre sentencias de texto completo, cuyo extracto es el encabezado) y se corrigió a mano cuando la expresión regular fallaba (p. ej. «desestimación» en SAIJ).",
+ "consultasEnVivo": {
+  "fecha": "2026-11-20",
+  "cantidad": 90,
+  "detalle": "86 consultas de medición más 4 de prueba (una devolvió 502 por arranque en frío)."
+ },
+ "resumen": {
+  "medidas": 32,
+  "validadas": 15,
+  "validadasConReservas": 8,
+  "rechazadasOInconclusas": [
+   "cramdown (inconclusa)",
+   "medida cautelar innominada (rechazada_en_este_acervo)",
+   "defensa propia (rechazada_como_expansion_libre)",
+   "pago previo (rechazada)",
+   "sustracción internacional de menores (no_aporta)",
+   "DGI (rechazada)",
+   "ART (rechazada)",
+   "estudio de impacto ambiental (confirmada_como_figura_que_se_confunde)",
+   "cupo femenino (inconclusa)"
+  ],
+  "sinMedir": 38,
+  "relaciones": 36,
+  "siglas": 22
+ },
+ "equivalenciasMedidas": [
+  {
+   "id": "prop:despido-incausado",
+   "rama": "lab",
+   "canonico": "despido sin causa",
+   "termino": "despido incausado",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "LCT (Ley 20.744) art. 245",
+   "evidencia": [
+    "Ambas son voces del tesauro SCJM: DESPIDO SIN CAUSA y DESPIDO INCAUSADO.",
+    "SAIJ: «despido sin causa» es descriptor (saij:9961); «despido incausado» no figura como término SAIJ."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "despido sin causa",
+    "formaB": "despido incausado",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 785,
+      "totalB": 80,
+      "solapamientoPrimeraPagina": "1/20",
+      "nuevosEnPrimeraPaginaB": 19,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "GÓMEZ, ROBERTO FABIÁN EN J° 8633 GÓMEZ  R.F. C/ LA REDUCCIÓN S.A. P/ A | CONTRATO DE TRABAJO, DESPIDO INCAUSADO",
+       "Contrato de trabajo, despido sin causa, sanciones laborales | contrato de trabajo, despido incausado, sanciones disciplinarias (laboral)",
+       "DIARIO LOS ANDES HNOS. CALLE S.A. EN J 20.189 CALVET MUZIO B. C/ DIARI | DERECHO LABORAL, DESPIDO INCAUSADO, SANCION DE LA LEY, INDEMNIZACION LABORAL",
+       "ZARATE JORGE ARIEL EN J 32.984 ZARATE JORGE C/LIBERTAD S.A. P/DESPIDO  | CONTRATO DE TRABAJO, DESPIDO INCAUSADO, INDEMNIZACION AGRAVADA"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 17,
+      "totalB": 20,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "3/20",
+      "nuevosEnPrimeraPaginaB": 17,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "Despido, despido sin causa, indemnización, despido con causa, abandono | despido, despido incausado, indemnización, despido por justa causa",
+       "Despido sin causa, obligaciones del trabajador, abandono de trabajo, i | despido incausado, obligaciones del trabajador, abandono de trabajo, intimación a reintegrarse al trabajo",
+       "Injuria laboral, despido con causa, despido sin causa, indemnización p | injuria laboral, despido por justa causa, despido incausado, indemnización por despido",
+       "Recurso de casación, procedimiento laboral, despido, despido sin causa | recurso de casación, procedimiento laboral, despido, despido sin justa causa"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "Ambas fuentes: casi sin solapamiento (1/20 y 3/20) y material pertinente. Ambas son voces SCJM. Candidata a «expandir»."
+   }
+  },
+  {
+   "id": "prop:trabajo-en-negro",
+   "rama": "lab",
+   "canonico": "trabajo no registrado",
+   "termino": "trabajo en negro",
+   "tipo": "expresion_coloquial",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "Ley 24.013 arts. 7-17; LCT art. 52",
+   "evidencia": [
+    "Voces SCJM: TRABAJO NO REGISTRADO y TRABAJO EN NEGRO.",
+    "Ya figura en relaciones-historicas.json con política «sugerir»."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "trabajo no registrado",
+    "formaB": "trabajo en negro",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 566,
+      "totalB": 69,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 0.75,
+      "sumariosEvaluadosB": 8,
+      "muestraB": [
+       "DEL NEGRO VERÓNICA CECILIA EN J° 166461 \"DEL NEGRO VERONICA CECILIA C/ | INJURIA LABORAL, GRAVEDAD DE LA FALTA, APRECIACION DEL JUEZ, FACULTADES DISCRECIONALES DEL JUEZ",
+       "OYOLA DARIO JESUS EN J25305 OYOLA DARIO JESUS C/CICHITTI FERNANDO P/DE | TRABAJO EN NEGRO, EMPLEO NO REGISTRADO, PRUEBA, FACULTADES DEL JUEZ",
+       "OYOLA DARIO JESUS EN J25305 OYOLA DARIO JESUS C/CICHITTI FERNANDO P/DE | TRABAJO EN NEGRO, EMPLEO NO REGISTRADO, PRUEBA, FACULTADES DEL JUEZ",
+       "FUNDACION UNIVERSIDAD NACIONAL DE CUYO EN J 161400 NAVARRETE GUIÑEZ CA | CONTRATO DE TRABAJO, PRESTACION DE SERVICIOS, EMPLEO NO REGISTRADO, PRUEBA TESTIMONIAL"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 20,
+      "totalB": 18,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "1/18",
+      "nuevosEnPrimeraPaginaB": 17,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 18,
+      "muestraB": [
+       "Empleo no registrado, regularización del trabajador, intimación al emp | empleo no registrado, regularización laboral, intimación al empleador, plazo",
+       "Ley de empleo, aportes previsionales, relación de dependencia, pago en | ley de empleo, aportes previsionales, relación de dependencia, pago en negro",
+       "Contrato de trabajo, indemnización por despido, empleo no registrado,  | contrato de trabajo, indemnización por despido, trabajo en negro, multa (laboral)",
+       "Contrato de trabajo, indemnización por despido, empleo no registrado,  | contrato de trabajo, indemnización por despido, trabajo en negro, multa (laboral)"
+      ]
+     }
+    ],
+    "resultado": "aporta_con_ruido",
+    "validacion": "validada_con_reservas",
+    "lectura": "20 fallos nuevos en Mendoza, pero el modo «todas» trae homonimia con el apellido «Del Negro». Expandir solo como frase exacta."
+   }
+  },
+  {
+   "id": "prop:aguinaldo",
+   "rama": "lab",
+   "canonico": "sueldo anual complementario",
+   "termino": "aguinaldo",
+   "tipo": "expresion_coloquial",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "LCT arts. 121-123; Ley 23.041",
+   "evidencia": [
+    "SAIJ: «aguinaldo» es término no preferido del descriptor «sueldo anual complementario».",
+    "Voces SCJM: AGUINALDO y SUELDO ANUAL COMPLEMENTARIO."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "sueldo anual complementario",
+    "formaB": "aguinaldo",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 238,
+      "totalB": 41,
+      "solapamientoPrimeraPagina": "1/20",
+      "nuevosEnPrimeraPaginaB": 19,
+      "pertinenciaHeuristicaB": 0.62,
+      "sumariosEvaluadosB": 13,
+      "muestraB": [
+       "Castro, María Alcira en j: Castro, María Alcira c/ Sanatorio Policlíni | recurso de inconstitucionalidad",
+       "Viel, Gustavo Ernesto en j: Viel, Gustavo Ernesto c/ Guillermo Padilla | contrato de trabajo, remuneración",
+       "Bohoslavsky, Juan en j: Gutiérrez, Francisco y otros c/ La Técnica Ind | recurso de inconstitucionalidad",
+       "Boholavsky, Juan en j: Espinosa, Eleodoro por su hijo menor Javier c/  | sentencia, materia laboral"
+      ]
+     }
+    ],
+    "resultado": "aporta_poco",
+    "validacion": "validada_con_reservas",
+    "lectura": "41 resultados en Mendoza, mayormente sumarios antiguos; ~60% pertinentes. Mantener como coloquial «sugerir»."
+   }
+  },
+  {
+   "id": "prop:infortunio-laboral",
+   "rama": "art",
+   "canonico": "accidentes de trabajo",
+   "termino": "infortunio laboral",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 24.557 art. 6",
+   "evidencia": [
+    "Expresión doctrinaria y jurisprudencial; no es descriptor SAIJ (no verificado como término no preferido).",
+    "Ojo: «infortunio» abarca accidente y enfermedad profesional; puede ser más amplio que el canónico."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "accidente de trabajo",
+    "formaB": "infortunio laboral",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 3689,
+      "totalB": 347,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "ZÚÑIGA HIPÓLITO EN J: ZÚÑIGA HIPÓLITO C/ ARMANDO D. BRUNETTI Y OTS. P/ | CONTRATO DE TRABAJO, INFORTUNIO LABORAL, ACCIONES REPARATORIAS, CONSOLIDACION DEL DAÑO",
+       "FEDERACION PATRONAL SEGUROS S.A. EN J° 13-00704527-6 (88539) / 55339 A | LEY SOBRE RIESGOS DEL TRABAJO, ASEGURADOR POR RIESGOS DEL TRABAJO, ACCIDENTES DE TRABAJO, PAGO",
+       "BOSTON CIA.ARGENTINA DE SEGUROS SA. C/ PRIDE INTERNACIONAL S.A. P/ INC | CONTRATO DE TRABAJO, LEY SOBRE RIESGOS DEL TRABAJO, REGIMEN DE PREVENCION Y COBERTURA DE RIESGOS DEL TRABAJO, ACCIDENTE IN ITINERE",
+       "ASOCIART ART SA EN J. N 49992  BARRERA JOSE ANGEL C/ ASOCIART ART SA P | DERECHO LABORAL, ACCIDENTES DE TRABAJO, BAREMO, PORCENTAJE DE INCAPACIDAD"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "347 resultados, 20 nuevos y pertinentes. Alcance: abarca accidentes y enfermedades; conviene anclarlo a «riesgos del trabajo» más que a «accidentes de trabajo»."
+   }
+  },
+  {
+   "id": "prop:perencion",
+   "rama": "proc_civ",
+   "canonico": "caducidad de instancia",
+   "termino": "perención de instancia",
+   "tipo": "equivalencia_historica",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij"
+   ],
+   "norma": "CPCCN arts. 310-318; CPCCyT Mendoza (Ley 9001) — artículos no verificados",
+   "evidencia": [
+    "SAIJ: «perención de instancia» es término no preferido de «caducidad de instancia».",
+    "El analizador ya la reconoce por vía SAIJ, pero no la EXPANDE (política sugerir)."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "caducidad de instancia",
+    "formaB": "perención de instancia",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 794,
+      "totalB": 109,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "GARRIDO LUCIO c/ AGUSTIN BARROS Y OTRO s/ Reconstrucción (LIBRO: A071  | caducidad de instancia, plazo, suspensión del plazo",
+       "Montemar Compañia Financiera S.A. c/ Maetú, Luis Alberto s/ ejecución  | suspensión del plazo, suspensión del proceso judicial, perención de instancia",
+       "VILLEGAS RODOLFO G. c/ ROLANDO OSCAR ROBELIN Y OTRO s/ Daños y Perjuic | perención de instancia, caducidad",
+       "BASSO, HUGO EN J: BASSO HUGO c/ EDUARDO FLORES s/ Daños Perjuicios Med | caducidad de instancia, agregación de la prueba documental"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 19,
+      "totalB": 19,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "0/19",
+      "nuevosEnPrimeraPaginaB": 19,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 19,
+      "muestraB": [
+       "Derecho procesal, terminación del proceso, caducidad de instancia, cóm | Derecho procesal, terminación del proceso, caducidad de instancia, cómputo del plazo",
+       "Derecho procesal, caducidad de instancia, cómputo del plazo, segunda i | Derecho procesal, caducidad de instancia, cómputo del plazo, segunda instancia",
+       "Derecho procesal, terminación del proceso, caducidad de instancia, cóm | Derecho procesal, terminación del proceso, caducidad de instancia, cómputo del plazo",
+       "Caducidad de instancia, interrupción de la caducidad, impulso procesal | caducidad de instancia, interrupción de la caducidad, impulso procesal"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "0 solapamiento en Mendoza y SAIJ, 100% pertinente en los sumarios. Hoy el analizador la reconoce pero no la expande: subir a «expandir»."
+   }
+  },
+  {
+   "id": "prop:prescripcion-extintiva",
+   "rama": "civ",
+   "canonico": "prescripción liberatoria",
+   "termino": "prescripción extintiva",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij"
+   ],
+   "norma": "CCyC arts. 2554-2564",
+   "evidencia": [
+    "Sinonimia doctrinaria; el CCyC usa «prescripción liberatoria» (Título I, Cap. 2, Libro VI). No verificado como término SAIJ."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "prescripción liberatoria",
+    "formaB": "prescripción extintiva",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 119,
+      "totalB": 66,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 0.86,
+      "sumariosEvaluadosB": 7,
+      "muestraB": [
+       "ARCA (EX AFIP) EN J° 13-02084403-9 (010305-57634) FAVORABLE S.A. EN J: | OBLIGACIONES DE DAR SUMAS DE DINERO, DEPOSITO JUDICIAL, DISPONIBILIDAD DE LOS DEPOSITOS, EFECTO EXTINTIVO DEL PAGO",
+       "ALVARES BENITO c/ JULIO CORTEZ BRITOS s/ Daños y Perjuicios (LIBRO: A0 | prescripción, daños y perjuicios, plazo",
+       "BALIHAUT, ADRIANA AÍDA EN J° 31.488/62.838 BALIHAUT, ADRIANA (EXPTE. N | prescripción",
+       "Fiscal c/ Giacchi Mario y otros s/ Malversación de caudales públicos - | pena"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "66 resultados, 20 nuevos, ~86% pertinentes."
+   }
+  },
+  {
+   "id": "prop:clausula-resolutoria",
+   "rama": "civ",
+   "canonico": "pacto comisorio",
+   "termino": "cláusula resolutoria expresa",
+   "tipo": "equivalencia_historica",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa"
+   ],
+   "norma": "CCyC art. 1086 (antes CC art. 1204)",
+   "evidencia": [
+    "El CCyC denomina «cláusula resolutoria expresa» lo que el CC y la jurisprudencia llamaban pacto comisorio expreso.",
+    "Medido con «cláusula resolutoria» (sin «expresa»): incluye la implícita (art. 1087), que NO es lo mismo."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "pacto comisorio",
+    "formaB": "cláusula resolutoria",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 50,
+      "totalB": 33,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 3,
+      "muestraB": [
+       "FRUT CAN S.A. EN J° 44.439/11.696 VARGAS S.A. P/ QUIEBRA NECESARIA HOY | QUIEBRA, EFECTOS DEL CONTRATO, CLAUSULAS DEL CONTRATO, INEXISTENCIA",
+       "MARCKESVKY MOISES c/ COMPAÑIA ASEGURADORA DE LOS ANDES s/ Ordinario (L | pacto comisorio tácito",
+       "SANCHEZ OSVALDO JUAN SINDICO DE LA QUIEBRA DE CESAR PRIMO PASARINI EN  | CONTRATOS, PACTO COMISORIO, RESOLUCION, CONDICIONES",
+       "DIGITAL- MERAKI GLAMPING S.A.S C/ QUIROS MARIANO FACUNDO P/ INCUMPLIMI | sentencia, cámara civil"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada_con_reservas",
+    "lectura": "20 nuevos y pertinentes, pero «cláusula resolutoria» sin «expresa» incluye la implícita (art. 1087): expandir solo «cláusula resolutoria expresa»."
+   }
+  },
+  {
+   "id": "prop:arras",
+   "rama": "civ",
+   "canonico": "seña",
+   "termino": "arras",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "CCyC arts. 1059-1060",
+   "evidencia": [
+    "Voces SCJM: SEÑA y ARRAS.",
+    "El total de «seña» en Mendoza (2576) sugiere coincidencias por raíz (p. ej. «señala», «reseña»): revisar el motor."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "seña",
+    "formaB": "arras",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 2576,
+      "totalB": 100,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 0.9,
+      "sumariosEvaluadosB": 10,
+      "muestraB": [
+       "POCOVI ANTONIO c/ HUMBERTO FORCONI s/ Cump - de Contrato (LIBRO: S082  | pacto comisorio implícito, arras",
+       "OSADERUK ARTURO s/ Concurso Preventivo (LIBRO: A064 - 354) | honorarios, abogados, base",
+       "F. c/ Sieli Ricci, Mauricio Rafael s/ maltrato y crueldad animal | graduación de la pena, maltrato animal",
+       "GREMOLICHE MIGUEL c/ JORGE M. GIMENEZ s/ Daños y Perjuicios (LIBRO: S0 | prioridad de paso"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "100 resultados, 20 nuevos, ~90% pertinentes. Aparte: «seña» devuelve 2576, señal de coincidencia por raíz en el motor."
+   }
+  },
+  {
+   "id": "prop:deuda-de-valor",
+   "rama": "civ",
+   "canonico": "obligación de valor",
+   "termino": "deuda de valor",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa"
+   ],
+   "norma": "CCyC art. 772",
+   "evidencia": [
+    "Sinonimia doctrinaria (Ley 23.928 y art. 772).",
+    "Ambas búsquedas en modo «todas» traen fallos que solo contienen las palabras sueltas: medir con modo «exacta»."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "obligación de valor",
+    "formaB": "deuda de valor",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 1694,
+      "totalB": 674,
+      "solapamientoPrimeraPagina": "5/20",
+      "nuevosEnPrimeraPaginaB": 15,
+      "pertinenciaHeuristicaB": 0.68,
+      "sumariosEvaluadosB": 19,
+      "muestraB": [
+       "MUTTI ANGELICA ASUNTA c/ PEREYRA ALDO Y LOPEZ OMAR s/ Daños y Perjuici | desindexación, deudas de valor, deudas de dinero, situación jurídica no consolidada",
+       "ESPINOSA ALBERTO GABRIEL Y OTS. EN J° 73.096/25.019 POBLETE DE ESPINOS | SUCESIONES, DEUDAS DE LA SUCESION, DEUDAS DE VALOR, OBLIGACIONES DE DAR",
+       "BANCO RIO DE LA PLATA SA c/ SEGURA WALROND LUIS ALBERTO Y OTR.- s/ EJE | entidades financieras, operaciones financieras, valor nominal, títulos públicos",
+       "VILLEGAS DE LICATA ELSA POR SU HIJA c/ ANTONIO BARRELLO s/ Daños y Per | daños y perjuicios, monto indemnizatorio, actualización monetaria, convertibilidad del austral"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "674 resultados, 15 nuevos en la primera página, ~70% pertinentes; el resto son fallos con las palabras sueltas (modo «todas»)."
+   }
+  },
+  {
+   "id": "prop:desestimacion-personalidad",
+   "rama": "com",
+   "canonico": "inoponibilidad de la personalidad jurídica",
+   "termino": "desestimación de la personalidad jurídica",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa"
+   ],
+   "norma": "LGS (Ley 19.550) art. 54, tercer párrafo; CCyC art. 144",
+   "evidencia": [
+    "Denominación doctrinaria («disregard», corrimiento del velo) de la misma figura."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "inoponibilidad de la personalidad jurídica",
+    "formaB": "desestimación de la personalidad jurídica",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 16,
+      "totalB": 27,
+      "solapamientoPrimeraPagina": "2/20",
+      "nuevosEnPrimeraPaginaB": 18,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 1,
+      "muestraB": [
+       "ESTEVES CARLOS  EN J: TORRES N. C/ LUZ VERDE S.R.L. Y OTS. P/ DESPIDO  | SOCIEDAD DE RESPONSABILIDAD LIMITADA, CONTRATO DE TRABAJO, CRITERIO RESTRICTIVO, DOLO",
+       "ANES OSCAR ALBERTO C/ MASTERFULL S.R.L. Y OTROS P/ DESPIDO | sentencia, cámara del trabajo",
+       "DIGITAL - GAMBOA WALTER ADRIAN Y LORES DEBORA C/ COOPERATIVA DE VIVIEN | sentencia, cámara civil",
+       "BARRIONUEVO MARIO EZEQUIEL C/ TRENSPORTE ROBDAN DE CUYO SA Y OTROS P/  | sentencia, cámara del trabajo"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 14,
+      "totalB": 17,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "0/17",
+      "nuevosEnPrimeraPaginaB": 17,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 17,
+      "muestraB": [
+       "Agotamiento de la instancia administrativa, denegatoria del recurso | agotamiento de la vía administrativa, desestimación del recurso",
+       "Recurso extraordinario, denegatoria del recurso, selección de causas | recurso extraordinario, denegatoria del recurso, selección de causas",
+       "Recurso extraordinario, denegatoria del recurso, selección de causas,  | recurso extraordinario, denegatoria del recurso, selección de causas, Corte Suprema de Justicia de la Nación",
+       "Recurso extraordinario, denegatoria del recurso, Corte Suprema de Just | recurso extraordinario, denegatoria del recurso, Corte Suprema de Justicia de la Nación, selección de causas"
+      ]
+     }
+    ],
+    "resultado": "aporta_solo_como_frase",
+    "validacion": "validada_con_reservas",
+    "lectura": "Mendoza: 18 nuevos (los sumarios, pertinentes). SAIJ: la primera página trae «desestimación del recurso extraordinario»: IMPERTINENTE si no se busca como frase exacta."
+   }
+  },
+  {
+   "id": "prop:cramdown",
+   "rama": "cyq",
+   "canonico": "salvataje",
+   "termino": "cramdown",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "LCQ (Ley 24.522) art. 48",
+   "evidencia": [
+    "SAIJ: «cramdown» es término no preferido de «salvataje de la empresa».",
+    "Voces SCJM: CRAMDOWN y SALVATAJE.",
+    "Advertencia: «salvataje» también es término no preferido de «asistencia y salvamento» (navegación)."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "cramdown",
+    "formaB": "salvataje",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 0,
+      "totalB": 7,
+      "solapamientoPrimeraPagina": "0/7",
+      "nuevosEnPrimeraPaginaB": 7,
+      "pertinenciaHeuristicaB": 0.8,
+      "sumariosEvaluadosB": 5,
+      "muestraB": [
+       "SINDICATO OBRERO INDUSTRIA DE LA MADERA EN J 156227 LANDA DEOLINDA PAT | DESPIDO, CONCURSO PREVENTIVO, IGUALDAD ENTRE ACREEDORES, LIBERTAD SINDICAL",
+       "ALBARRACIN NADIA Y OTS. EN J°39713/54742 LUCERO DE ALBARRACIN, CARMEN  | CONCURSOS, ACREEDORES DEL CONCURSO, VERIFICACION TARDIA, PRESCRIPCION",
+       "ARMENTANO, MARIO Y OTS. EN J° 9916 ARMENTANO Y OT. EN J° 6760 SUC. ADA | CONCURSOS, ACREEDORES DEL CONCURSO, VERIFICACION TARDIA, PRESCRIPCION",
+       "NUÑEZ ALBERTO RAMON | DETENCION, RESPONSABILIDAD DEL ESTADO, ERROR JUDICIAL"
+      ]
+     }
+    ],
+    "resultado": "sin_material",
+    "validacion": "inconclusa",
+    "lectura": "Mendoza: «cramdown» 0, «salvataje» 7 (mezcla). El acervo casi no usa ninguna de las dos. La equivalencia es normativa (art. 48 LCQ); la homonimia con «asistencia y salvamento» es el riesgo real."
+   }
+  },
+  {
+   "id": "prop:cautelar-innominada",
+   "rama": "proc_civ",
+   "canonico": "medida cautelar genérica",
+   "termino": "medida cautelar innominada",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "CPCCN art. 232",
+   "evidencia": [
+    "Voz SCJM: MEDIDA CAUTELAR GENERICA."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "medida cautelar genérica",
+    "formaB": "medida cautelar innominada",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 54,
+      "totalB": 5,
+      "solapamientoPrimeraPagina": "0/5",
+      "nuevosEnPrimeraPaginaB": 5,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 2,
+      "muestraB": [
+       "B. DE A.J.A. c/ C.A. s/ Medida Cautelar (LIBRO: A067 - 456) | actos procesales, incidentes, procedimiento, plazo",
+       "OROZCO AMICARELLI FRANCISCO MARIO C/ GOBIERNO DE LA PROVINCIA DE MENDO | REGISTRO DE LA PROPIEDAD INMUEBLE, INSCRIPCION REGISTRAL, LEGITIMACION ACTIVA, ESCRIBANOS PUBLICOS",
+       "GONZALEZ PATRICIA ALEJANDRA C/ FAMILIA GAIA S.A. Y OTS. P/ DAÑOS Y PER | sentencia, cámara civil",
+       "LUNA HUGO VICENTE C/ GALIANO JOSE FRANCISCO P/ ACCIONES POSESORIAS Y D | sentencia, cámara civil"
+      ]
+     }
+    ],
+    "resultado": "no_aporta",
+    "validacion": "rechazada_en_este_acervo",
+    "lectura": "5 resultados, todos sobre «incidentes innominados»: impertinentes. La voz SCJM es MEDIDA CAUTELAR GENERICA."
+   }
+  },
+  {
+   "id": "prop:costas-orden-causado",
+   "rama": "proc_civ",
+   "canonico": "costas en el orden causado",
+   "termino": "costas por su orden",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "CPCCN art. 68, segundo párrafo",
+   "evidencia": [
+    "Voces SCJM: COSTAS EN EL ORDEN CAUSADO y COSTAS POR SU ORDEN.",
+    "SAIJ: descriptor «costas en el orden causado»."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "costas por su orden",
+    "formaB": "costas en el orden causado",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 4727,
+      "totalB": 1474,
+      "solapamientoPrimeraPagina": "13/20",
+      "nuevosEnPrimeraPaginaB": 7,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "Ramos, Silvia Del Carmen c/ Cacace, Bruno Roberto s/ Despido | imposición de costas, costas en el orden causado, principio objetivo del vencimiento",
+       "FERNANDEZ FRANCO DAVID EN J 159991 FERNANDEZ FRANCO DAVID C/ DABRA SA  | DESPIDO, COSTAS, DERECHO PARA LITIGAR, BUENA FE",
+       "BAEZ DELFINA FELICIANA EN J° 13-05318403-5 BAEZ DELFINA FELICIANA C/ P | RELACION DE CONSUMO, COSTAS, COSTAS EN EL ORDEN CAUSADO",
+       "EXPTE. N° 88.421 OVIEDO, ELVECIA LADIS C/ HOSPITAL PERRUPATO-GOBIERNO  | legitimación pasiva, provincia, costas, costas en el orden causado"
+      ]
+     }
+    ],
+    "resultado": "aporta_poco",
+    "validacion": "validada_con_reservas",
+    "lectura": "Solapamiento 13/20: el material ya entra por la otra forma. Ambas son voces SCJM; su valor es para el filtro de voz, no para el texto libre."
+   }
+  },
+  {
+   "id": "prop:cargas-dinamicas",
+   "rama": "proc_civ",
+   "canonico": "carga dinámica de la prueba",
+   "termino": "cargas probatorias dinámicas",
+   "tipo": "variacion_morfologica",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "CCyC art. 1735",
+   "evidencia": [
+    "Voz SCJM: CARGA DINAMICA DE LA PRUEBA; SAIJ: «carga probatoria dinámica»."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "carga dinámica de la prueba",
+    "formaB": "cargas probatorias dinámicas",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 401,
+      "totalB": 233,
+      "solapamientoPrimeraPagina": "14/20",
+      "nuevosEnPrimeraPaginaB": 6,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "BARROSO FLAVIO Y OT. EN J: AVES O. E. C/ BARROSO Y OT. P/ BENEFICIO DE | PRUEBA, CARGAS PROBATORIAS DINAMICAS",
+       "DYAZ DE SILVA ELENA HORTENCIA C/ CAJA DE JUBILACIONES Y PENSIONES DE L | PRUEBA, CARGAS PROBATORIAS DINAMICAS",
+       "Molina, José Aníbal c/ Gobierno de la Provincia de Mendoza s/ Acción p | carga de la prueba, MENDOZA, Código Procesal Civil, Comercial y Tributario, carga probatoria dinámica",
+       "BARROSO FLAVIO Y OT. EN J: AVES O.E. c/ BARROSO Y OT. s/ Daños y Perju | prueba, carga de la prueba, carga probatoria dinámica"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 19,
+      "totalB": 3,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "0/3",
+      "nuevosEnPrimeraPaginaB": 3,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 3,
+      "muestraB": [
+       "Vicios del acto jurídico, simulación, prueba, carga de la prueba, carg | vicios del acto jurídico, acción de simulación, prueba, carga de la prueba",
+       "Carga de la prueba, carga probatoria dinámica, defensa en juicio | carga de la prueba, carga probatoria dinámica, defensa en juicio",
+       "Prueba, carga de la prueba, carga probatoria dinámica | prueba, carga de la prueba, carga probatoria dinámica"
+      ]
+     }
+    ],
+    "resultado": "aporta_poco",
+    "validacion": "validada_con_reservas",
+    "lectura": "Solapamiento 14/20 en Mendoza; SAIJ suma 3. Es variación morfológica: corregir en singular()/plural, no con un anillo."
+   }
+  },
+  {
+   "id": "prop:homicidio-imprudente",
+   "rama": "pen",
+   "canonico": "homicidio culposo",
+   "termino": "homicidio imprudente",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "CP art. 84 y 84 bis",
+   "evidencia": [
+    "Voz SCJM: HOMICIDIO CULPOSO. Mendoza carátula causas como «HOMICIDIO IMPRUDENTE» (visto en los ejemplos del tesauro, frontend/datos/tesauro/pen.json)."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "homicidio culposo",
+    "formaB": "homicidio imprudente",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 118,
+      "totalB": 28,
+      "solapamientoPrimeraPagina": "4/20",
+      "nuevosEnPrimeraPaginaB": 16,
+      "pertinenciaHeuristicaB": 0.76,
+      "sumariosEvaluadosB": 17,
+      "muestraB": [
+       "FC/AMIEVA VERA, JANET ESTEFANIA P/HOMICIDIO CULPOSO AGRAVADO POR LA CO | HOMICIDIO CULPOSO, ACCIDENTE DE TRANSITO, VICTIMA DEL ACCIDENTE, CULPA CONCURRENTE",
+       "F. Y QUER. PART. C/ VERDENELLI CESAR ALEJANDRO P/ HOMICIDIO IMPRUDENTE | HOMICIDIO CULPOSO, ACCIDENTE DE TRANSITO, PEATON EMBESTIDO, CRUCE NO PERMITIDO",
+       "F. C/ GUTIERREZ BUSTOS CARLOS ALBERTO P/ HOMICIDIO CULPOSO P/ RECURSO  | HOMICIDIO, HOMICIDIO CULPOSO, IMPRUDENCIA, ACCIDENTE DE TRANSITO",
+       "F C/ PAULOS SALOMON JOSE ALBERTO P/ HOMICIDIO SIMPLE CON DOLO EVENTUAL | HOMICIDIO SIMPLE, ACCIDENTE DE TRANSITO, CONDUCCION DE VEHICULO EN ESTADO DE EBRIEDAD, IMPRUDENCIA"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 16,
+      "totalB": 20,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "1/20",
+      "nuevosEnPrimeraPaginaB": 19,
+      "pertinenciaHeuristicaB": 0.9,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "Homicidio culposo, responsabilidad del conductor, imprudencia | homicidio culposo, responsabilidad del conductor, imprudencia",
+       "Homicidio simple, imprudencia | homicidio simple, comportamiento imprudente",
+       "Nulidad de sentencia, suspensión del juicio a prueba, homicidio culpos | nulidad de sentencia, suspensión del juicio a prueba, homicidio culposo, imprudencia",
+       "Homicidio culposo, nulidad de sentencia, imprudencia, negligencia | homicidio culposo, nulidad de sentencia, imprudencia, negligencia"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "Mendoza 16 nuevos (todos homicidios culposos de tránsito); SAIJ 19 nuevos. Candidata a «expandir»."
+   }
+  },
+  {
+   "id": "prop:defensa-propia",
+   "rama": "pen",
+   "canonico": "legítima defensa",
+   "termino": "defensa propia",
+   "tipo": "expresion_coloquial",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "CP art. 34 inc. 6",
+   "evidencia": [
+    "Voces SCJM: LEGITIMA DEFENSA y DEFENSA PROPIA.",
+    "CP art. 34 inc. 6 usa «en defensa propia o de sus derechos»; inc. 7 regula la defensa de terceros."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "legítima defensa",
+    "formaB": "defensa propia",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 966,
+      "totalB": 1068,
+      "solapamientoPrimeraPagina": "1/20",
+      "nuevosEnPrimeraPaginaB": 19,
+      "pertinenciaHeuristicaB": 0.1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "CITIBANK N.A. c/ VIRGINIA M. LOPEZ s/ Cambiaria (LIBRO: S151 - 359) | intereses punitorios",
+       "F. C/ ROCO GARCIA, JOSE JOAQUIN POR ROBO AGRAVADO POR EL USO DE ARMA I | ROBO, LEGITIMA DEFENSA, LEGITIMA DEFENSA DE UN TERCERO, REQUISITOS",
+       "Banco Hipotecario Nacional c/ Superintendencia General de Irrigación s | personería",
+       "F. C/ T. R., J. M. P/ ABUSO SEXUAL P/ RECURSO EXTRAORDINARIO DE CASACI | PROCESO PENAL, DEBIDO PROCESO, DERECHO DE DEFENSA EN JUICIO, FACULTADES DEL JUEZ"
+      ]
+     }
+    ],
+    "resultado": "impertinente_en_modo_todas",
+    "validacion": "rechazada_como_expansion_libre",
+    "lectura": "1068 resultados pero ~10% pertinentes: «defensa» y «propia» sueltas. Existe la voz SCJM DEFENSA PROPIA: usar solo como frase exacta o filtro de voz."
+   }
+  },
+  {
+   "id": "prop:procedimiento-abreviado",
+   "rama": "proc_pen",
+   "canonico": "juicio abreviado",
+   "termino": "procedimiento abreviado",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "CPPN art. 431 bis; CPPF (Ley 27.063) arts. 323-325 (no verificado)",
+   "evidencia": [
+    "Voz SCJM: JUICIO ABREVIADO."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "juicio abreviado",
+    "formaB": "procedimiento abreviado",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 89,
+      "totalB": 53,
+      "solapamientoPrimeraPagina": "4/20",
+      "nuevosEnPrimeraPaginaB": 16,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "Ongaro María Verónica c/ Giovarruscio Omar Claudio s/ Ejecución p/ Rec | recurso extraordinario local, modificación de cuota alimentaria, juicio abreviado, procedimiento monitorio",
+       "FISCAL C/ ORIHUELA SOTO, JUAN ANDRES P/ ABUSO DE ARMAS RECURSO EXT.DE  | DERECHO PROCESAL, PROCESOS ESPECIALES, JUICIO ABREVIADO, ACUERDO DE JUICIO ABREVIADO",
+       "FISCAL C/BARLOA ECHEGARAY | JUICIO ABREVIADO, RECURSO DE CASACION, IMPROCEDENCIA DEL RECURSO",
+       "FISCAL C/ CARRERA URIBE MIGUEL ANGEL P/ ABUSO SEXUAL S/ REVISION | DERECHO PROCESAL, PROCESOS ESPECIALES, JUICIO ABREVIADO, ACUERDO DE JUICIO ABREVIADO"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 20,
+      "totalB": 3,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "0/3",
+      "nuevosEnPrimeraPaginaB": 3,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 3,
+      "muestraB": [
+       "Recurso de reposición (procesal), trámites judiciales | recurso de reposición (procesal), trámite",
+       "Apelación abreviada, trámites judiciales, regulación de honorarios | apelación abreviada, trámite, regulación de honorarios",
+       "Defensa del consumidor, acción judicial, ley procesal, trámites judici | defensa del consumidor, acción judicial, ley procesal, trámites judiciales"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "Mendoza 16 nuevos pertinentes; SAIJ 3."
+   }
+  },
+  {
+   "id": "prop:detencion-domiciliaria",
+   "rama": "ejec",
+   "canonico": "prisión domiciliaria",
+   "termino": "detención domiciliaria",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "CP art. 10; Ley 24.660 arts. 32-33",
+   "evidencia": [
+    "SAIJ: «detención domiciliaria» es término no preferido de «prisión domiciliaria» (saij:2198).",
+    "Voces SCJM: PRISION DOMICILIARIA y DETENCION DOMICILIARIA.",
+    "SAIJ cuelga el concepto de «alternativas a la prisión preventiva»: también es modalidad de ejecución de pena."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "prisión domiciliaria",
+    "formaB": "detención domiciliaria",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 5,
+      "totalB": 3,
+      "solapamientoPrimeraPagina": "1/3",
+      "nuevosEnPrimeraPaginaB": 2,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 2,
+      "muestraB": [
+       "FISCAL - EXPTE. Nro. 132016 - c/ MOYANO MARGARITA ALEJANDRA s/ ROBO SI | pena, detención domiciliaria, otorgamiento a la madre, tenencia de menores",
+       "Xumec s/ habeas corpus colectivo y correctivo | habeas corpus colectivo, habeas corpus correctivo, prisión domiciliaria, condiciones de detención",
+       "ARANCIBIA CARLOS OSCAR C/ LEZAMA GABRIEL Y OTROS P/ DESPIDO | sentencia, cámara del trabajo"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 19,
+      "totalB": 19,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "7/19",
+      "nuevosEnPrimeraPaginaB": 12,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 19,
+      "muestraB": [
+       "Prisión domiciliaria, rechazo al pedido de prisión domiciliaria | prisión domiciliaria, rechazo al pedido de prisión domiciliaria",
+       "Prisión domiciliaria, rechazo al pedido de prisión domiciliaria, estab | prisión domiciliaria, rechazo al pedido de prisión domiciliaria, establecimientos carcelarios, condiciones de detención",
+       "Recurso de casación, procedencia del recurso, prisión domiciliaria | recurso de casación, procedencia del recurso, prisión domiciliaria",
+       "Prisión domiciliaria, sentencia definitiva | detención domiciliaria, sentencia definitiva"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "SAIJ 12 nuevos pertinentes; Mendoza poco material (5 y 3)."
+   }
+  },
+  {
+   "id": "prop:duracion-razonable",
+   "rama": "proc_pen",
+   "canonico": "plazo razonable",
+   "termino": "duración razonable del proceso",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "CADH arts. 7.5 y 8.1",
+   "evidencia": [
+    "Voz SCJM: PLAZO RAZONABLE."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "plazo razonable",
+    "formaB": "duración razonable del proceso",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 1050,
+      "totalB": 160,
+      "solapamientoPrimeraPagina": "4/20",
+      "nuevosEnPrimeraPaginaB": 16,
+      "pertinenciaHeuristicaB": 0.71,
+      "sumariosEvaluadosB": 14,
+      "muestraB": [
+       "VIDAL MARCELO C / FEDER. DE COLEGIO DE ABOGADOS Y PROC. DE LA PROV. DE | GARANTIAS PROCESALES, GARANTIA A SER JUZGADO EN UN PLAZO RAZONABLE, PROCESO DE FALTAS, DURACION DEL PROCESO",
+       "F. C/ BIZAGUIRRE MORENO, JONATHAN Y OTS. P/ TORTURAS S/ CASACION | PROCESO PENAL, DURACION DEL PROCESO, PLAZO RAZONABLE, DERECHO DE DEFENSA EN JUICIO",
+       "ARIAS LUIS MAXIMINO C/ GOBIERNO DE LA PROVINCIA P/ ACCION PROCESAL ADM | SUMARIO ADMINISTRATIVO, DURACION DEL PROCESO, PLAZO RAZONABLE, PRESCRIPCION",
+       "RUIZ OSCAR ALEJANDRO C/ PROVINCIA DE MENDOZA P/ ACCION PROCESAL ADMINI | DURACION DEL PROCESO, PLAZO RAZONABLE, RECURSOS, SENTENCIA"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada_con_reservas",
+    "lectura": "16 nuevos, ~70% pertinentes."
+   }
+  },
+  {
+   "id": "prop:apremio",
+   "rama": "trib",
+   "canonico": "ejecución fiscal",
+   "termino": "apremio",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "Ley 11.683 art. 92; Código Fiscal de Mendoza (artículos no verificados)",
+   "evidencia": [
+    "Voz SCJM: EJECUCION FISCAL. En Mendoza las carátulas usan «P/ APREMIO».",
+    "Advertencia: «apremio» también nombra apremios ilegales (CP art. 144 bis) y el apremio por honorarios."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "ejecución fiscal",
+    "formaB": "apremio",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 681,
+      "totalB": 188,
+      "solapamientoPrimeraPagina": "1/20",
+      "nuevosEnPrimeraPaginaB": 19,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "Municipalidad de Tunuyán c/ A.M.X. ARG. S.A. por apremio por apelación | ",
+       "DIRECCION GENERAL DE RENTAS c/ ESPIN HNOS. S.R.L. s/ Apremio (LIBRO: S | excepción de incompetencia, juicio de apremio",
+       "Municipalidad de Maipú c/ Viñedos Argentinos S.A. s/ Apremio (LIBRO: A | costas, allanamiento, juicio de apremio",
+       "EJECUCION FISCAL c/ DON VICTORIO J. BUSSO s/ Apremio (LIBRO: A108 - 07 | recurso de apelación (procesal), juicio de apremio, plazo"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "19 nuevos, pertinentes (juicios de apremio fiscales y municipales). Restringir a contexto tributario: «apremios ilegales» (CP art. 144 bis) es otra cosa."
+   }
+  },
+  {
+   "id": "prop:pago-previo",
+   "rama": "trib",
+   "canonico": "solve et repete",
+   "termino": "pago previo",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "Doctrina CSJN; Ley 11.683 art. 15 (no verificado)",
+   "evidencia": [
+    "Voces SCJM: SOLVE ET REPETE y PAGO PREVIO."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "solve et repete",
+    "formaB": "pago previo",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 10,
+      "totalB": 1157,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 0.05,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "ALCARAZ CERVANDO EN J: LEDESMA ISOLINA C/ CERVANDO ALCARAZ P/ DESALOJO | JUICIO DE DESALOJO, FALTA DE PAGO, REQUERIMIENTO PREVIO",
+       "DUARTE SUSANA GRACIELA EN J° 13-04355501-9 (020302-18688) VOLKSWAGEN S | PLAN DE AHORRO PREVIO, PAGO EN CUOTAS, PRECIO DETERMINABLE",
+       "SELIM ERICA SOLEDAD EN J° 13-06796614-1/1 (010305-57244) SELIM ERICA S | PLAN DE AHORRO PREVIO, PAGO EN CUOTAS, PRECIO DETERMINABLE",
+       "Ibañez Indalecio y otros c/ Moya Apolo s/ Ordinario (LIBRO: S071 - 068 | injuria laboral, falta de pago"
+      ]
+     }
+    ],
+    "resultado": "impertinente",
+    "validacion": "rechazada",
+    "lectura": "~5% pertinente: trae «requerimiento previo de pago» (desalojo) y «plan de ahorro previo». La voz SCJM PAGO PREVIO existe: usar solo como filtro de voz."
+   }
+  },
+  {
+   "id": "prop:contencioso-administrativo",
+   "rama": "adm",
+   "canonico": "acción procesal administrativa",
+   "termino": "contencioso administrativo",
+   "tipo": "equivalencia_jurisdiccional",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "Código Procesal Administrativo de Mendoza (Ley 3918); Constitución de Mendoza art. 144 inc. 5 (no verificado)",
+   "evidencia": [
+    "Voz SCJM: ACCION PROCESAL ADMINISTRATIVA. Es la denominación mendocina del proceso contencioso administrativo."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "acción procesal administrativa",
+    "formaB": "contencioso administrativo",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 1898,
+      "totalB": 429,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "Pérez, Constancia c/ Caja de Jubilaciones y Pensiones de la Provincia  | recurso contencioso administrativo",
+       "Iñiguez, Eladio Pan c/ Municipalidad de San Martín s/ Contencioso Admi | recurso contencioso administrativo",
+       "Barraud, Alejandro c/ Caja de Jubilaciones y Pensiones de la Provincia | recurso contencioso administrativo",
+       "Gómez Viuda de Sotomayor, María Sara c/ Caja de Jubilaciones y Pension | recurso contencioso administrativo"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "20 nuevos: sumarios de «recurso contencioso administrativo» anteriores al régimen actual. Equivalencia histórica y jurisdiccional (Mendoza)."
+   }
+  },
+  {
+   "id": "prop:danio-psiquico",
+   "rama": "dan",
+   "canonico": "daño psíquico",
+   "termino": "daño psicológico",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "CCyC arts. 1738 y 1746",
+   "evidencia": [
+    "SAIJ: «daño psicológico» es término no preferido de «daño psíquico» (saij:8331).",
+    "Voces SCJM: DAÑO PSIQUICO y DAÑO PSICOLOGICO.",
+    "Hoy el anillo curado «daño moral» lo tiene como relacionado: correcto, NO es daño moral."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "daño psicológico",
+    "formaB": "daño psíquico",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 609,
+      "totalB": 608,
+      "solapamientoPrimeraPagina": "1/20",
+      "nuevosEnPrimeraPaginaB": 19,
+      "pertinenciaHeuristicaB": 0.95,
+      "sumariosEvaluadosB": 19,
+      "muestraB": [
+       "PRUDENZANO MARCELA NOEMI C/ AUTOTRANSPORTES ANDESMAR S.A | DERECHO LABORAL, DESPIDO DISCRIMINATORIO, DAÑO PSIQUICO, INDEMNIZACION",
+       "L. M. S. C/ H. H. D. P/ DAÑOS DERIVADOS DE VIOLENCIA DE GENERO | DAÑOS Y PERJUICIOS, INDEMNIZACION, RUBROS INDEMNIZATORIOS, DAÑO PSIQUICO",
+       "BONANNO MARIA CONCETTA CONTRA MUNICIPALIDAD DE LA CIUDAD DE MENDOZA P/ | DAÑO MORAL, INDEMNIZACION, RUBROS INDEMNIZATORIOS, DAÑO PSIQUICO",
+       "MOYANO ANGELICA LOURDES EN J° 265.145/55770 MOYANO ANGELICA LOURDES C/ | DAÑO EXTRAPATRIMONIAL, DAÑO PSIQUICO, DAÑO MATERIAL, DERECHO A LA INTEGRIDAD FISICA"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 18,
+      "totalB": 20,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 19,
+      "muestraB": [
+       "Daño psíquico, derecho a la integridad psíquica y moral | daño psíquico, integridad psíquica y moral",
+       "Daños y perjuicios, depresión, daño moral, muerte de un hijo, derecho  | daños y perjuicios, estados depresivos, daño moral, muerte de un hijo",
+       "Daños y perjuicios, indemnización, monto de la indemnización, incapaci | daños y perjuicios, indemnización, monto de la indemnización, incapacidad sobreviniente",
+       "República Argentina, responsabilidad internacional del Estado, reparac | República Argentina, responsabilidad internacional del Estado, justa indemnización, aduanas"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "Mendoza 19 nuevos, ~95% pertinentes; SAIJ 20 nuevos. SAIJ ya la registra como no preferida. Candidata a «expandir»."
+   }
+  },
+  {
+   "id": "prop:crimenes-contra-humanidad",
+   "rama": "ddhh",
+   "canonico": "crímenes de lesa humanidad",
+   "termino": "crímenes contra la humanidad",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "Estatuto de Roma art. 7 (Ley 25.390); Ley 24.584",
+   "evidencia": [
+    "Voces SCJM: CRIMENES DE LESA HUMANIDAD y DELITOS DE LESA HUMANIDAD.",
+    "El Estatuto de Roma usa «crímenes de lesa humanidad»."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "lesa humanidad",
+    "formaB": "crímenes contra la humanidad",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 4,
+      "totalB": 3,
+      "solapamientoPrimeraPagina": "3/3",
+      "nuevosEnPrimeraPaginaB": 0,
+      "pertinenciaHeuristicaB": null,
+      "sumariosEvaluadosB": 0,
+      "muestraB": [
+       "OROZCO, MARIO ANTONIO Y OTS. C/ MUNICIPÁLIDAD DE MAIPU S/ ORDINARIO | sentencia, cámara civil",
+       "REY, JUAN CARLOS Y OTS. C/ MUNICIPALIDAD DE MAIPU S/ DAÑOS Y PERJUICIO | sentencia, cámara civil",
+       "DIGITAL - RIVEROS MARIA JULIA - RIVEROS RAMIRO MARTIN Y ARAVENA RIVERO | sentencia, cámara civil"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 20,
+      "totalB": 20,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "7/20",
+      "nuevosEnPrimeraPaginaB": 13,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "Delitos contra la humanidad, prescripción de la acción penal, ley vige | delitos de lesa humanidad, prescripción de la acción penal, vigencia de la ley, asociación ilícita",
+       "Delitos contra la humanidad, crímenes de guerra, delitos contra las pe | delitos contra la humanidad, crímenes de guerra, delitos contra la vida, genocidio",
+       "Delitos contra la humanidad, violación de derechos humanos, corte inte | delitos de lesa humanidad, violación de derechos humanos, corte interamericana de derechos humanos, Convención sobre la Imprescriptibilidad de los Crímenes de Guerra",
+       "Delitos contra la humanidad, crímenes de guerra, delitos contra las pe | delitos contra la humanidad, crímenes de guerra, delitos contra la vida, genocidio"
+      ]
+     }
+    ],
+    "resultado": "aporta_en_saij",
+    "validacion": "validada",
+    "lectura": "SAIJ 13 nuevos pertinentes. Mendoza: 3/3 solapados (el acervo casi no tiene material)."
+   }
+  },
+  {
+   "id": "prop:principio-precaucion",
+   "rama": "amb",
+   "canonico": "principio precautorio",
+   "termino": "principio de precaución",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "Ley 25.675 art. 4",
+   "evidencia": [
+    "Voz SCJM: PRINCIPIO PRECAUTORIO; SAIJ: descriptor «principio precautorio»."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "principio precautorio",
+    "formaB": "principio de precaución",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 96,
+      "totalB": 195,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 0.6,
+      "sumariosEvaluadosB": 5,
+      "muestraB": [
+       "F. c/ Pinavaría Corvalán, Francisco p/ homicidio criminis causa en con | debido proceso, defensa en juicio, garantías constitucionales, instrucciones al jurado",
+       "MINERA RIO DE LA PALATA SA C/ GOBIERNO DE LA PROVINCIA P/ ACCION INCON | ACTIVIDAD MINERA, RECURSOS HIDRICOS, PROTECCION DEL MEDIO AMBIENTE, CONTAMINACION AMBIENTAL",
+       "LUCERO HUGO ALBERTO EN J: 152.305/13.521 LUCERO HUGO C/ PROVINCIA DE M | RESPONSABILIDAD DEL ESTADO, CARCELES, ESTABLECIMIENTOS PENITENCIARIOS, OBSERVANCIA DE LOS REGLAMENTOS CARCELARIOS",
+       "VARGAS GONZALEZ WILLIAM EN J° 13-00712138-9 (11655) / 55993 VARGAS GON | RESPONSABILIDAD DEL ESTADO, ESTABLECIMIENTOS PENITENCIARIOS, PERSONAS PRIVADAS DE LA LIBERTAD, DETENIDO"
+      ]
+     }
+    ],
+    "resultado": "aporta_con_ruido",
+    "validacion": "validada_con_reservas",
+    "lectura": "195 resultados, ~60% pertinentes: el modo «todas» trae «principio» + «precaución» de tránsito. Expandir como frase."
+   }
+  },
+  {
+   "id": "prop:violencia-contra-la-mujer",
+   "rama": "gen",
+   "canonico": "violencia de género",
+   "termino": "violencia contra la mujer",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "Ley 26.485 art. 4; Convención de Belém do Pará (Ley 24.632) art. 1",
+   "evidencia": [
+    "SAIJ: «violencia contra la mujer» es término no preferido de «violencia de género» (saij:666).",
+    "Voces SCJM: VIOLENCIA DE GENERO y VIOLENCIA CONTRA LA MUJER.",
+    "Alcance: la Ley 26.485 protege a las mujeres; «violencia de género» en sentido amplio también abarca a personas LGBTI+ (no es identidad total)."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "violencia de género",
+    "formaB": "violencia contra la mujer",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 257,
+      "totalB": 184,
+      "solapamientoPrimeraPagina": "1/20",
+      "nuevosEnPrimeraPaginaB": 19,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "F. C/ O., V. A. P/ ABUSO SEXUAL SIMPLE (VARIOS HECHOS) EN CONCURSO REA | PROTECCION INTEGRAL DE LA MUJER, VIOLENCIA DE GENERO, VIOLENCIA CONTRA LA MUJER, VIOLENCIA SEXUAL CONTRA LA MUJER",
+       "F. C/ G. D. R. A. P/ ABUSO SEXUAL AGRAVADO POR SER CON ACCESO CARNAL T | VIOLENCIA DE GENERO, VIOLENCIA CONTRA LA MUJER, CICLO DE VIOLENCIA",
+       "Facultades jurisdiccionales, Convención Interamericana para prevenir,  | tutela judicial efectiva, Convención Belém Do Pará, sobreseimiento",
+       "AGUIRRE GERARDO EN J° 1006/10/6F // 13-04639969-7 (017101-436/17) MUÑO | VIOLENCIA FAMILIAR, VIOLENCIA CONTRA LA MUJER"
+      ]
+     },
+     {
+      "fuente": "saij",
+      "totalA": 20,
+      "totalB": 19,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "1/19",
+      "nuevosEnPrimeraPaginaB": 18,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 18,
+      "muestraB": [
+       "Violencia de género, perspectiva de género, medidas cautelares, respon | violencia de género, perspectiva de género, medidas cautelares, responsabilidad internacional del Estado",
+       "Homicidio calificado, violencia de género | homicidio calificado, violencia de género",
+       "Abuso sexual calificado por acceso carnal, violencia sexual contra la  | abuso sexual con acceso carnal, violencia sexual contra la mujer, violencia contra menores, declaración de la víctima menor",
+       "Violencia sexual contra la mujer, violencia contra menores, declaració | violencia sexual contra la mujer, violencia contra menores, declaración de la víctima menor, defensa en juicio"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "Mendoza 19 nuevos y SAIJ 18 nuevos, pertinentes. SAIJ la registra como no preferida. Candidata a «expandir»."
+   }
+  },
+  {
+   "id": "prop:confundibilidad",
+   "rama": "pi",
+   "canonico": "confusión de marcas",
+   "termino": "confundibilidad marcaria",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "Ley 22.362 art. 3 (inciso no verificado)",
+   "evidencia": [
+    "Voces SCJM: CONFUSION DE MARCAS y MARCAS CONFUNDIBLES. SAIJ: «marcas confundibles»."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "confusión marcaria",
+    "formaB": "confundibilidad",
+    "porFuente": [
+     {
+      "fuente": "saij",
+      "totalA": 12,
+      "totalB": 19,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "0/19",
+      "nuevosEnPrimeraPaginaB": 19,
+      "pertinenciaHeuristicaB": 1,
+      "sumariosEvaluadosB": 19,
+      "muestraB": [
+       "Marcas, imitación fraudulenta, envase semejante, caracteres internos s | marcas, imitación fraudulenta, envase semejante, caracteres internos semejantes",
+       "Registro de marca, marcas confundibles, oposición al registro de marca | registro de marca, marcas confundibles, oposición al registro de marca",
+       "Marcas, marcas confundibles, similitud fonética | marcas, confusión de marcas, similitud fonética",
+       "Marcas | marcas"
+      ]
+     }
+    ],
+    "resultado": "aporta",
+    "validacion": "validada",
+    "lectura": "SAIJ: 19 nuevos, todos de marcas."
+   }
+  },
+  {
+   "id": "prop:sustraccion-internacional",
+   "rama": "dipr",
+   "canonico": "restitución internacional de menores",
+   "termino": "sustracción internacional de menores",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "Convenio de La Haya de 1980 sobre los aspectos civiles de la sustracción internacional de menores (Ley 23.857); CCyC art. 2642",
+   "evidencia": [
+    "SAIJ: «sustracción internacional de menores» (saij:9669) y «restitución internacional de menores» (saij:7533) son descriptores separados, ambos en nna.",
+    "Voces SCJM: ambas.",
+    "La sustracción es el hecho; la restitución, el remedio: en la práctica se buscan juntos."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "restitución internacional de menores",
+    "formaB": "sustracción internacional de menores",
+    "porFuente": [
+     {
+      "fuente": "saij",
+      "totalA": 18,
+      "totalB": 19,
+      "nota": "SAIJ en vivo: el total informado es el de la página, no el del sitio.",
+      "solapamientoPrimeraPagina": "17/19",
+      "nuevosEnPrimeraPaginaB": 2,
+      "pertinenciaHeuristicaB": 0.95,
+      "sumariosEvaluadosB": 19,
+      "muestraB": [
+       "Sustracción internacional de menores, fallos de la Corte Suprema, medi | convenio sobre los aspectos civiles de la sustracción internacional de menores, sentencia de la Corte Suprema, medidas cautelares, interés superior del niño",
+       "REPÚBLICA ARGENTINA, Comisión Interamericana de Derechos Humanos, medi | REPÚBLICA ARGENTINA, Comisión Interamericana de Derechos Humanos, razones de urgencia, medidas provisionales",
+       "Tratados internacionales, interpretación de tratados internacionales,  | tratados internacionales, interpretación de tratados internacionales, sustracción internacional de menores, restitución internacional de menores",
+       "Tratados internacionales, interpretación de tratados internacionales,  | tratados internacionales, interpretación de tratados internacionales, sustracción internacional de menores, restitución internacional de menores"
+      ]
+     }
+    ],
+    "resultado": "sobra",
+    "validacion": "no_aporta",
+    "lectura": "SAIJ: 17/19 solapados. Mantener como relacionado, no hace falta expandir."
+   }
+  },
+  {
+   "id": "prop:dgi-sigla",
+   "rama": "agua",
+   "canonico": "Departamento General de Irrigación",
+   "termino": "DGI",
+   "tipo": "sigla",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "Constitución de Mendoza arts. 188-190 (no verificado)",
+   "evidencia": [
+    "Voz SCJM: DGI (sin desambiguar).",
+    "Sigla ambigua: Dirección General Impositiva (hoy dentro de ARCA)."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "Departamento General de Irrigación",
+    "formaB": "DGI",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 152,
+      "totalB": 40,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 0.35,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "B.V.y.o. c/ DGI-AFIP por conc. prev. por inc. rev. por ejec. de hon. p | ",
+       "DGI c/ MIGUEL A. SALCEDO s/ Quiebra Voluntaria (LIBRO: A112 - 120) | resoluciones judiciales",
+       "DGI EN J: DEPOSITO CUYO S.A.C.I.A. s/ Concurso Preventivo Incidente Ve | honorarios del síndico del concurso, incidente de verificación, verificación tardía",
+       "DGI en J: ORM s/ Concurso Recurso Revisión (LIBRO: A140 - 162) | caducidad de instancia, purga de la caducidad, consentimiento tácito"
+      ]
+     }
+    ],
+    "resultado": "impertinente",
+    "validacion": "rechazada",
+    "lectura": "Los 40 resultados de «DGI» son de la Dirección General Impositiva (concursos). La sigla no sirve para Irrigación."
+   }
+  },
+  {
+   "id": "prop:art-sigla",
+   "rama": "art",
+   "canonico": "aseguradora de riesgos del trabajo",
+   "termino": "ART",
+   "tipo": "sigla",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "scjm"
+   ],
+   "norma": "Ley 24.557 art. 26",
+   "evidencia": [
+    "Voz SCJM: ART.",
+    "El analizador ignora tramos de menos de 4 letras; el motor puede confundir ART con «art.» (artículo)."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "aseguradora de riesgos del trabajo",
+    "formaB": "ART",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 822,
+      "totalB": 11256,
+      "solapamientoPrimeraPagina": "0/20",
+      "nuevosEnPrimeraPaginaB": 20,
+      "pertinenciaHeuristicaB": 0.8,
+      "sumariosEvaluadosB": 20,
+      "muestraB": [
+       "F. c/ E.N.R.D. s/ p/ infracción art. 205 del C.P. artículo 4 del DNU 2 | inconstitucionalidad",
+       "AKAPOL S.A. C/ MUNICIPALIDAD DE GODOY CRUZ P/ ACCION PROCESAL ADMINIST | MUNICIPALIDAD, FACULTADES TRIBUTARIAS MUNICIPALES, DERECHOS DE PUBLICIDAD Y PROPAGANDA",
+       "Fiscal c/ Piracés, Arturo A. | ",
+       "FERNANDEZ ROLANDO RAFAEL Y OT. C/ GOBIERNO DE LA PROVINCIA DE MENDOZA  | CADUCIDAD DE INSTANCIA, IMPULSO PROCESAL, IMPULSO DE PARTE"
+      ]
+     }
+    ],
+    "resultado": "impertinente",
+    "validacion": "rechazada",
+    "lectura": "11.256 resultados: «ART» coincide con «art.» (artículo). Nunca expandir la sigla sin contexto."
+   }
+  },
+  {
+   "id": "prop:estudio-impacto",
+   "rama": "amb",
+   "canonico": "evaluación de impacto ambiental",
+   "termino": "estudio de impacto ambiental",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa"
+   ],
+   "norma": "Ley 25.675 arts. 11-13",
+   "evidencia": [
+    "El estudio es el documento que presenta el proponente; la evaluación, el procedimiento administrativo que concluye con la declaración de impacto. Se mide para mostrar que NO es equivalencia."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "evaluación de impacto ambiental",
+    "formaB": "estudio de impacto ambiental",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 29,
+      "totalB": 51,
+      "solapamientoPrimeraPagina": "10/20",
+      "nuevosEnPrimeraPaginaB": 10,
+      "pertinenciaHeuristicaB": 0.6,
+      "sumariosEvaluadosB": 5,
+      "muestraB": [
+       "INTEGRADA S.A. C/ MUNICIPALIDAD DE RIVADAVIA S/ A.P.A. | MUNICIPALIDAD, ORDENANZAS MUNICIPALES, ACTO ADMINISTRATIVO, NULIDAD DEL ACTO ADMINISTRATIVO",
+       "GOBIERNO DE LA PROVINCIA DE MENDOZA EN J° 13-05394429-3 (012051-266735 | AMPARO AMBIENTAL, OBJETO DEL PROCESO, RESOLUCION ADMINISTRATIVA, EVALUACION DEL IMPACTO AMBIENTAL",
+       "MUNICIPALIDAD DE LUJÁN DE CUYO C/ GOBIERNO DE LA PROVINCIA DE MENDOZA  | MEDIO AMBIENTE, IMPACTO AMBIENTAL, DERECHO AMBIENTAL, ESTABLECIMIENTOS PENITENCIARIOS",
+       "YPF SOCIEDAD ANONIMA EN J° 113585 / 51268 MASTROENI, JOSE C/ Y.P.F. S. | CARGA DE LA PRUEBA, CARGA PROBATORIA DINAMICA, DAÑO AMBIENTAL INDIVIDUAL, INDUSTRIA PETROLIFERA"
+      ]
+     }
+    ],
+    "resultado": "relacionado",
+    "validacion": "confirmada_como_figura_que_se_confunde",
+    "lectura": "Solapamiento 10/20: comparten material pero no son lo mismo (documento vs. procedimiento)."
+   }
+  },
+  {
+   "id": "prop:cupo-paridad",
+   "rama": "elec",
+   "canonico": "paridad de género",
+   "termino": "cupo femenino",
+   "tipo": "equivalencia_historica",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "ivs_codex_medicion",
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "Ley 24.012 (cupo) y Ley 27.412 (paridad)",
+   "evidencia": [
+    "Voz SCJM: CUPO FEMENINO. SAIJ: «cupo femenino» (saij:8168) en gen; «paridad de género» es término no preferido de «igualdad de género».",
+    "Sucesión normativa con contenido distinto (30% mínimo vs. listas intercaladas): no es sinonimia."
+   ],
+   "medicion": {
+    "fecha": "2026-11-20",
+    "api": "https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api (POST /indice/<fuente>/buscar, modo por defecto «todas»)",
+    "formaA": "paridad de género",
+    "formaB": "cupo femenino",
+    "porFuente": [
+     {
+      "fuente": "mendoza",
+      "totalA": 4,
+      "totalB": 1,
+      "solapamientoPrimeraPagina": "0/1",
+      "nuevosEnPrimeraPaginaB": 1,
+      "pertinenciaHeuristicaB": null,
+      "sumariosEvaluadosB": 0,
+      "muestraB": [
+       "DIGITAL - SANCHEZ GARCIA MARTIN FEDERICO C/ SOZZI DEMALDE ALFREDO GUID | sentencia, cámara civil"
+      ]
+     }
+    ],
+    "resultado": "sin_material",
+    "validacion": "inconclusa",
+    "lectura": "4 y 1 resultados, ninguno sobre listas: el acervo de Mendoza no cubre el fuero electoral."
+   }
+  }
+ ],
+ "propuestasSinMedir": [
+  {
+   "id": "prop:sm-1",
+   "rama": "gen",
+   "canonico": "violencia económica",
+   "termino": "violencia patrimonial",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 26.485 art. 5 inc. 4",
+   "evidencia": [
+    "SAIJ: «violencia patrimonial» (saij:21916) y «violencia económica» (saij:21915) son descriptores hermanos; la ley los trata en un mismo inciso. Ya está en el anillo curado."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-2",
+   "rama": "const",
+   "canonico": "derecho de réplica",
+   "termino": "derecho de rectificación o respuesta",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CADH art. 14",
+   "evidencia": [
+    "SAIJ: «derecho de rectificación» y «derecho de respuesta» son términos no preferidos de «derecho de réplica» (saij:7538)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-3",
+   "rama": "const",
+   "canonico": "tribunal de enjuiciamiento",
+   "termino": "jurado de enjuiciamiento",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CN art. 115",
+   "evidencia": [
+    "SAIJ: «jurado de enjuiciamiento» y «jury de enjuiciamiento» son términos no preferidos (saij:11462). La CN usa «jurado de enjuiciamiento»."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-4",
+   "rama": "const",
+   "canonico": "Defensor del Pueblo",
+   "termino": "ombudsman",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CN art. 86",
+   "evidencia": [
+    "SAIJ prefiere «ombudsman» (saij:12440) y relega «Defensor del Pueblo», que es la denominación constitucional: proponer invertir el preferido."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-5",
+   "rama": "educ",
+   "canonico": "acoso escolar",
+   "termino": "bullying",
+   "tipo": "expresion_coloquial",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 26.892",
+   "evidencia": [
+    "SAIJ: «bullying» es término no preferido de «acoso escolar» (saij:660)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-6",
+   "rama": "pen",
+   "canonico": "carreras en la vía pública",
+   "termino": "picadas",
+   "tipo": "expresion_coloquial",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CP art. 193 bis",
+   "evidencia": [
+    "SAIJ: «picadas» es término no preferido; el analizador ya lo reconoce."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-7",
+   "rama": "biotec",
+   "canonico": "organismos genéticamente modificados",
+   "termino": "OGM",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 26.270 (biotecnología moderna); Res. del ex MAGyP sobre OGM (no verificada)",
+   "evidencia": [
+    "SAIJ: «OGM» y «organismos genéticamente modificados» son términos no preferidos de «productos transgénicos» (saij:9810, rama amb)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-8",
+   "rama": "indig",
+   "canonico": "pueblos indígenas",
+   "termino": "pueblos originarios",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CN art. 75 inc. 17; Convenio 169 OIT (Ley 24.071)",
+   "evidencia": [
+    "SAIJ: «pueblos indígenas», «comunidades indígenas» y «aborígenes» son no preferidos de «pueblos originarios» (saij:9711). Alcance: «comunidad indígena» es la persona jurídica que se inscribe; «pueblo» es el sujeto colectivo del Convenio 169. Expandir solo pueblo↔pueblo."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-9",
+   "rama": "migr",
+   "canonico": "residencia precaria",
+   "termino": "radicación precaria",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 25.871 art. 20",
+   "evidencia": [
+    "SAIJ: descriptor «autorización de residencia precaria». «Radicación» es uso administrativo corriente (no verificado como término SAIJ)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-10",
+   "rama": "ejec",
+   "canonico": "estímulo educativo",
+   "termino": "reducción de plazos por estudio",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 24.660 art. 140 (Ley 26.695)",
+   "evidencia": [
+    "Anillo curado existente. Advertencia: NO reduce la pena; adelanta plazos de las fases y períodos del régimen progresivo."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-11",
+   "rama": "pi",
+   "canonico": "nombres de dominio",
+   "termino": "nombre de dominio",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "—",
+   "evidencia": [
+    "SAIJ: descriptor «nombres de dominio». Hoy NO se reconoce en singular por el defecto de singular() (ver correcciones-inventario.json)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-12",
+   "rama": "art",
+   "canonico": "accidentes de trabajo",
+   "termino": "accidente de trabajo",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "scjm"
+   ],
+   "norma": "Ley 24.557 art. 6",
+   "evidencia": [
+    "Voz SCJM: ACCIDENTES DE TRABAJO. El singular no se reconoce por el defecto de singular(): 3689 resultados en Mendoza para la forma singular (medido)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-13",
+   "rama": "adu",
+   "canonico": "derechos de exportación",
+   "termino": "retenciones",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Código Aduanero (Ley 22.415) art. 724",
+   "evidencia": [
+    "Uso coloquial y periodístico. No verificado en SAIJ. Riesgo: «retenciones» también es retención impositiva (agentes de retención)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-14",
+   "rama": "fin",
+   "canonico": "activos virtuales",
+   "termino": "criptoactivos",
+   "tipo": "equivalencia_conceptual",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 25.246 art. 4 bis (texto Ley 27.739) — no verificado",
+   "evidencia": [
+    "Concepto ausente del Tesauro SAIJ (2020). «Criptomonedas» es especie de activo virtual: relación de especie, no sinonimia."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-15",
+   "rama": "digital",
+   "canonico": "trabajo en plataformas",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa",
+    "saij",
+    "scjm"
+   ],
+   "norma": "Sin ley específica nacional (no verificado); LCT arts. 21-23",
+   "evidencia": [
+    "Ausente del Tesauro SAIJ y de las voces SCJM consultadas. SAIJ sí tiene «reparto a domicilio» (UF «delivery»)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-16",
+   "rama": "dipr",
+   "canonico": "foro de necesidad",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CCyC art. 2602",
+   "evidencia": [
+    "Ausente del inventario. Es voz de RAMAS (dipr)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-17",
+   "rama": "suc",
+   "canonico": "mejora a favor de heredero con discapacidad",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CCyC art. 2448",
+   "evidencia": [
+    "Ausente del inventario."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-18",
+   "rama": "rea",
+   "canonico": "ruina de obra",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CCyC arts. 1273-1274",
+   "evidencia": [
+    "Ausente; SAIJ solo tiene «ruina» (civ)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-19",
+   "rama": "salud",
+   "canonico": "internación involuntaria",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 26.657 art. 20; CCyC art. 41",
+   "evidencia": [
+    "Ausente. Hoy «internación» lleva a saij:14557 (medida de seguridad curativa, rama ejec)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-20",
+   "rama": "salud",
+   "canonico": "interrupción voluntaria del embarazo",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 27.610",
+   "evidencia": [
+    "Ausente del Tesauro SAIJ (anterior a la ley)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-21",
+   "rama": "gen",
+   "canonico": "violencia digital",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 26.485 (modificada por la Ley 27.736) — inciso no verificado",
+   "evidencia": [
+    "Ausente del inventario. Es voz de RAMAS (gen)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-22",
+   "rama": "digital",
+   "canonico": "difusión no consentida de imágenes íntimas",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "No verificado si hay tipo penal específico vigente",
+   "evidencia": [
+    "Ausente. Relacionado con violencia digital y derecho a la imagen (CCyC art. 53)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-23",
+   "rama": "indig",
+   "canonico": "consulta previa libre e informada",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Convenio 169 OIT arts. 6 y 15 (Ley 24.071)",
+   "evidencia": [
+    "Ausente del inventario."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-24",
+   "rama": "disc",
+   "canonico": "ajustes razonables",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Convención sobre los Derechos de las Personas con Discapacidad art. 2 (Ley 26.378)",
+   "evidencia": [
+    "Ausente del inventario."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-25",
+   "rama": "jrest",
+   "canonico": "justicia restaurativa",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CP art. 59 inc. 6 (Ley 27.147); CPPF (Ley 27.063) art. 22",
+   "evidencia": [
+    "Ausente. SAIJ tiene «mediación penal» (en proc_civ) y «conciliación»."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-26",
+   "rama": "compliance",
+   "canonico": "programa de integridad",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 27.401 arts. 22-23",
+   "evidencia": [
+    "Ausente del inventario."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-27",
+   "rama": "inv",
+   "canonico": "trato justo y equitativo",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Tratados bilaterales de inversión (cláusula estándar; no verificado tratado por tratado)",
+   "evidencia": [
+    "Ausente del inventario."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-28",
+   "rama": "animal",
+   "canonico": "maltrato animal",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa",
+    "scjm"
+   ],
+   "norma": "Ley 14.346 arts. 1-3",
+   "evidencia": [
+    "Ausente como descriptor; existe la voz SCJM ANIMALES."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-29",
+   "rama": "migr",
+   "canonico": "reunificación familiar",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 25.871 art. 10",
+   "evidencia": [
+    "Ausente del inventario."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-30",
+   "rama": "migr",
+   "canonico": "retención de extranjeros",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 25.871 art. 70",
+   "evidencia": [
+    "Ausente del inventario."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-31",
+   "rama": "digital",
+   "canonico": "desconexión digital",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "LCT art. 102 bis; Ley 27.555 art. 5",
+   "evidencia": [
+    "Ausente; SAIJ tiene «teletrabajo» y «contrato de teletrabajo»."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-32",
+   "rama": "telecom",
+   "canonico": "espectro radioeléctrico",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 27.078",
+   "evidencia": [
+    "Ausente del inventario."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-33",
+   "rama": "agua",
+   "canonico": "inherencia del agua a la tierra",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Constitución de Mendoza art. 186 (no verificado el número)",
+   "evidencia": [
+    "Ausente. Principio central del derecho de aguas mendocino."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-34",
+   "rama": "prev",
+   "canonico": "redeterminación del haber inicial",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 24.241 art. 24 (no verificado)",
+   "evidencia": [
+    "Ausente del inventario."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-35",
+   "rama": "salud",
+   "canonico": "aumento de cuota por edad en medicina prepaga",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 26.682 art. 12 (no verificado)",
+   "evidencia": [
+    "Ausente."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-36",
+   "rama": "biotec",
+   "canonico": "derecho del obtentor",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 20.247 art. 27 (uso propio)",
+   "evidencia": [
+    "Ausente; SAIJ solo tiene «obtentor» (s/r)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-37",
+   "rama": "cyq",
+   "canonico": "abuso de mayoría",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CCyC art. 10; LGS art. 251",
+   "evidencia": [
+    "Ausente del inventario; es voz de RAMAS (com)."
+   ],
+   "medicion": null
+  },
+  {
+   "id": "prop:sm-38",
+   "rama": "adu",
+   "canonico": "clasificación arancelaria",
+   "tipo": "concepto_nuevo",
+   "estado": "propuesta",
+   "politicaSugerida": "alta_de_concepto",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Código Aduanero arts. 11-13 (no verificado)",
+   "evidencia": [
+    "Ausente; existe «nomenclatura común del Mercosur»."
+   ],
+   "medicion": null
+  }
+ ],
+ "relacionesTipadas": [
+  {
+   "id": "rel:1",
+   "rama": "cyq",
+   "concepto": "salvataje",
+   "termino": "asistencia y salvamento",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "LCQ art. 48 / Ley 20.094",
+   "evidencia": [
+    "Homonimia: SAIJ cuelga «salvataje» de la asistencia marítima (saij:3149). En consultas concursales lleva a navegación."
+   ]
+  },
+  {
+   "id": "rel:2",
+   "rama": "fam",
+   "concepto": "régimen de comunicación",
+   "termino": "plan de parentalidad",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CCyC arts. 652 y 655",
+   "evidencia": [
+    "SAIJ trata «régimen de comunicación» y «régimen de visitas» como no preferidos de «plan de parentalidad» (saij:9407). El plan es un convenio que puede contener el régimen."
+   ]
+  },
+  {
+   "id": "rel:3",
+   "rama": "fam",
+   "concepto": "compensación económica",
+   "termino": "indemnización",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CCyC arts. 441-442 y 524-525",
+   "evidencia": [
+    "SAIJ la cuelga de «indemnización» (rama dan) y le da «resarcimiento» como no preferido: «resarcimiento» se reconocería como compensación económica."
+   ]
+  },
+  {
+   "id": "rel:4",
+   "rama": "fam",
+   "concepto": "compensación económica",
+   "termino": "alimentos",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CCyC arts. 441 y 432-434",
+   "evidencia": [
+    "Se confunden en la práctica; tienen presupuestos y caducidad distintos (art. 442: seis meses)."
+   ]
+  },
+  {
+   "id": "rel:5",
+   "rama": "dan",
+   "concepto": "daño punitivo",
+   "termino": "astreintes",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "LDC art. 52 bis / CCyC art. 804",
+   "evidencia": [
+    "SAIJ ubica «daño punitivo» bajo «multa civil» > «sanciones conminatorias» (saij:8346): la astreinte es otra cosa."
+   ]
+  },
+  {
+   "id": "rel:6",
+   "rama": "civ",
+   "concepto": "teoría de la imprevisión",
+   "termino": "caso fortuito",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CCyC arts. 1091 y 1730",
+   "evidencia": [
+    "SAIJ cuelga la imprevisión de «eximentes de responsabilidad» (rama dan)."
+   ]
+  },
+  {
+   "id": "rel:7",
+   "rama": "pen",
+   "concepto": "daño (delito)",
+   "termino": "daños y perjuicios",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CP art. 183 / CCyC art. 1737",
+   "evidencia": [
+    "El analizador reconoce «daños» como el delito de daño (saij:8272)."
+   ]
+  },
+  {
+   "id": "rel:8",
+   "rama": "pen",
+   "concepto": "multa (pena)",
+   "termino": "multa civil / multa tributaria / multa laboral",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CP art. 5; CCyC art. 804; Ley 11.683 arts. 45-46; Ley 24.013",
+   "evidencia": [
+    "El analizador reconoce «multa» como pena (saij:15967) en cualquier contexto."
+   ]
+  },
+  {
+   "id": "rel:9",
+   "rama": "proc_pen",
+   "concepto": "recurso de casación (penal)",
+   "termino": "recurso extraordinario provincial",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CPP Mendoza (Ley 6730) / CPCCyT Mendoza",
+   "evidencia": [
+    "La equivalencia histórica vale solo en lo civil: la casación penal sigue vigente."
+   ]
+  },
+  {
+   "id": "rel:10",
+   "rama": "salud",
+   "concepto": "internación involuntaria",
+   "termino": "internación (medida de seguridad)",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 26.657 art. 20 / CP art. 34 inc. 1",
+   "evidencia": [
+    "Hoy «internación» lleva a la rama ejec."
+   ]
+  },
+  {
+   "id": "rel:11",
+   "rama": "pen",
+   "concepto": "reincidencia",
+   "termino": "reiterancia",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CP art. 50",
+   "evidencia": [
+    "La reiterancia no es reincidencia (no hay condena previa cumplida)."
+   ]
+  },
+  {
+   "id": "rel:12",
+   "rama": "amb",
+   "concepto": "evaluación de impacto ambiental",
+   "termino": "estudio de impacto ambiental",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 25.675 arts. 11-13",
+   "evidencia": [
+    "Procedimiento vs. documento."
+   ]
+  },
+  {
+   "id": "rel:13",
+   "rama": "elec",
+   "concepto": "paridad de género",
+   "termino": "igualdad de género",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 27.412",
+   "evidencia": [
+    "SAIJ trata «paridad de género» como no preferido de «igualdad de género» (rama gen): la paridad es una regla electoral concreta."
+   ]
+  },
+  {
+   "id": "rel:14",
+   "rama": "inv",
+   "concepto": "expropiación indirecta",
+   "termino": "expropiación irregular",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "Ley 21.499 art. 51 / TBI",
+   "evidencia": [
+    "SAIJ hace a «expropiación indirecta» no preferido de «expropiación irregular»; en arbitraje de inversiones es una medida regulatoria con efecto equivalente."
+   ]
+  },
+  {
+   "id": "rel:15",
+   "rama": "digital",
+   "concepto": "habeas data",
+   "termino": "protección de datos personales",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CN art. 43; Ley 25.326 art. 33",
+   "evidencia": [
+    "SAIJ hace a «protección de datos personales» no preferido de «habeas data»: el derecho no es la acción."
+   ]
+  },
+  {
+   "id": "rel:16",
+   "rama": "cons",
+   "concepto": "cláusulas abusivas",
+   "termino": "cláusulas leoninas",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "LDC art. 37; CCyC arts. 988 y 1117-1122",
+   "evidencia": [
+    "SAIJ subordina «cláusulas abusivas» a «cláusulas leoninas» (civ, interpretación del contrato)."
+   ]
+  },
+  {
+   "id": "rel:17",
+   "rama": "cons",
+   "concepto": "garantía legal",
+   "termino": "fianza",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "LDC art. 11 / CCyC art. 1574",
+   "evidencia": [
+    "SAIJ hace a «garantía» no preferido de «fianza»: la palabra sola lleva a fianza."
+   ]
+  },
+  {
+   "id": "rel:18",
+   "rama": "prev",
+   "concepto": "moratoria previsional",
+   "termino": "plan de pagos",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "—",
+   "evidencia": [
+    "SAIJ hace a «moratoria» no preferido de «plan de pagos» (civ)."
+   ]
+  },
+  {
+   "id": "rel:19",
+   "rama": "ejec",
+   "concepto": "visitas a internos",
+   "termino": "régimen de comunicación",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 24.660 arts. 158-167",
+   "evidencia": [
+    "«régimen de visitas carcelarias» hoy se expande a «régimen de comunicación»."
+   ]
+  },
+  {
+   "id": "rel:20",
+   "rama": "rea",
+   "concepto": "tenencia (relación de poder)",
+   "termino": "cuidado personal",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CCyC arts. 1910 y 648",
+   "evidencia": [
+    "La relación histórica «tenencia→cuidado personal» se expande sin contexto: «tenencia ilegítima» o «posesión y tenencia» terminan buscando cuidado personal."
+   ]
+  },
+  {
+   "id": "rel:21",
+   "rama": "sind",
+   "concepto": "práctica desleal",
+   "termino": "competencia desleal",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "ivs_codex_ejemplos"
+   ],
+   "norma": "Ley 23.551 art. 53 / DNU 274/2019",
+   "evidencia": [
+    "Los ejemplos del tesauro de «práctica desleal» traen casos de competencia (Cencosud, AFSCA)."
+   ]
+  },
+  {
+   "id": "rel:22",
+   "rama": "seg",
+   "concepto": "franquicia (seguros)",
+   "termino": "franquicia aduanera / contrato de franquicia",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "ivs_codex_ejemplos"
+   ],
+   "norma": "Ley 17.418 / Código Aduanero / CCyC arts. 1512-1524",
+   "evidencia": [
+    "Los ejemplos de «franquicia transporte público» traen franquicias aduaneras para personas con discapacidad."
+   ]
+  },
+  {
+   "id": "rel:23",
+   "rama": "trib",
+   "concepto": "defraudación fiscal",
+   "termino": "defraudación (CP art. 173)",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "ivs_codex_ejemplos"
+   ],
+   "norma": "Ley 11.683 art. 46 / CP arts. 172-174",
+   "evidencia": [
+    "Los ejemplos de «multa por defraudación fiscal» traen estafas comunes."
+   ]
+  },
+  {
+   "id": "rel:24",
+   "rama": "pen",
+   "concepto": "femicidio",
+   "termino": "homicidio agravado por el vínculo",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CP art. 80 incs. 1 y 11",
+   "evidencia": [
+    "Pueden concurrir, pero no son lo mismo."
+   ]
+  },
+  {
+   "id": "rel:25",
+   "rama": "proc_pen",
+   "concepto": "juicio abreviado",
+   "termino": "suspensión del juicio a prueba",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CPPN art. 431 bis / CP art. 76 bis",
+   "evidencia": [
+    "Uno termina en condena; el otro suspende el proceso."
+   ]
+  },
+  {
+   "id": "rel:26",
+   "rama": "dan",
+   "concepto": "daño psíquico",
+   "termino": "daño moral",
+   "tipo": "figura_que_se_confunde",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CCyC arts. 1738 y 1741",
+   "evidencia": [
+    "Ya está como relacionado en el anillo curado; SAIJ además lo cuelga de «daño material» (doctrina dividida)."
+   ]
+  },
+  {
+   "id": "rel:27",
+   "rama": "civ",
+   "concepto": "obligación de valor",
+   "termino": "obligación de dar dinero",
+   "tipo": "concepto_contrapuesto",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CCyC arts. 765 y 772",
+   "evidencia": [
+    "Régimen de actualización opuesto (nominalismo vs. valor)."
+   ]
+  },
+  {
+   "id": "rel:28",
+   "rama": "civ",
+   "concepto": "pacto comisorio",
+   "termino": "cláusula resolutoria implícita",
+   "tipo": "concepto_contrapuesto",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CCyC arts. 1086 y 1087",
+   "evidencia": [
+    "Expresa vs. implícita."
+   ]
+  },
+  {
+   "id": "rel:29",
+   "rama": "trib",
+   "concepto": "tasa",
+   "termino": "impuesto",
+   "tipo": "concepto_contrapuesto",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 23.548 art. 9 inc. b (no verificado)",
+   "evidencia": [
+    "La tasa exige contraprestación de un servicio individualizado."
+   ]
+  },
+  {
+   "id": "rel:30",
+   "rama": "proc_pen",
+   "concepto": "prisión preventiva",
+   "termino": "excarcelación",
+   "tipo": "concepto_contrapuesto",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CPPF arts. 210-222 (no verificado)",
+   "evidencia": [
+    "Uno es la medida; el otro, su cese o sustitución."
+   ]
+  },
+  {
+   "id": "rel:31",
+   "rama": "pen",
+   "concepto": "dolo eventual",
+   "termino": "culpa consciente",
+   "tipo": "concepto_contrapuesto",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CP arts. 79 y 84",
+   "evidencia": [
+    "Ya es «relacionado» en el anillo curado: proponer tipo contrapuesto."
+   ]
+  },
+  {
+   "id": "rel:32",
+   "rama": "fin",
+   "concepto": "activos virtuales",
+   "termino": "criptomonedas",
+   "tipo": "concepto_mas_especifico",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 25.246 (texto Ley 27.739) — no verificado",
+   "evidencia": [
+    "Especie a género."
+   ]
+  },
+  {
+   "id": "rel:33",
+   "rama": "proc_pen",
+   "concepto": "prisión preventiva",
+   "termino": "prisión preventiva peligro de fuga",
+   "tipo": "concepto_mas_especifico",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "—",
+   "evidencia": [
+    "El anillo curado la tiene como EQUIVALENTE: es una línea temática más específica. Pasarla a relacionado."
+   ]
+  },
+  {
+   "id": "rel:34",
+   "rama": "fam",
+   "concepto": "cuidado personal",
+   "termino": "cuidado personal compartido",
+   "tipo": "concepto_mas_especifico",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa",
+    "saij"
+   ],
+   "norma": "CCyC art. 650",
+   "evidencia": [
+    "El anillo curado la tiene como equivalente y SAIJ, al revés, hace a «cuidado personal» no preferido de «cuidado personal compartido»."
+   ]
+  },
+  {
+   "id": "rel:35",
+   "rama": "dan",
+   "concepto": "riesgo de la cosa",
+   "termino": "responsabilidad objetiva",
+   "tipo": "concepto_mas_amplio",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "CCyC arts. 1722 y 1757",
+   "evidencia": [
+    "El anillo curado la tiene como equivalente; la responsabilidad objetiva es el género."
+   ]
+  },
+  {
+   "id": "rel:36",
+   "rama": "prev",
+   "concepto": "movilidad jubilatoria",
+   "termino": "reajuste de haberes",
+   "tipo": "concepto_relacionado",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "fuente": [
+    "normativa"
+   ],
+   "norma": "Ley 26.417; Ley 27.609",
+   "evidencia": [
+    "El anillo curado la tiene como equivalente: el reajuste es la pretensión judicial; la movilidad, el derecho. Mantener como relacionado."
+   ]
+  }
+ ],
+ "siglas": [
+  {
+   "sigla": "ART",
+   "significados": [
+    "aseguradora de riesgos del trabajo (Ley 24.557)",
+    "art. (abreviatura de artículo)"
+   ],
+   "rama": "art",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir_sin_contexto",
+   "evidencia": [
+    "Voz SCJM: ART. Riesgo alto de colisión con «art.»"
+   ]
+  },
+  {
+   "sigla": "DGI",
+   "significados": [
+    "Departamento General de Irrigación (Mendoza)",
+    "Dirección General Impositiva (ARCA)"
+   ],
+   "rama": "agua/trib",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir_sin_contexto",
+   "evidencia": [
+    "Voz SCJM: DGI."
+   ]
+  },
+  {
+   "sigla": "ATM",
+   "significados": [
+    "Administración Tributaria Mendoza",
+    "cajero automático"
+   ],
+   "rama": "trib",
+   "estado": "propuesta",
+   "politicaSugerida": "no_expandir_sin_contexto",
+   "evidencia": [
+    "No verificado como voz SCJM."
+   ]
+  },
+  {
+   "sigla": "IVA",
+   "significados": [
+    "impuesto al valor agregado"
+   ],
+   "rama": "trib",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Hoy no se reconoce (menos de 4 letras)."
+   ]
+  },
+  {
+   "sigla": "LCT",
+   "significados": [
+    "Ley de Contrato de Trabajo (20.744)"
+   ],
+   "rama": "lab",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Hoy no se reconoce."
+   ]
+  },
+  {
+   "sigla": "LCQ",
+   "significados": [
+    "Ley de Concursos y Quiebras (24.522)"
+   ],
+   "rama": "cyq",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Hoy no se reconoce."
+   ]
+  },
+  {
+   "sigla": "LGS",
+   "significados": [
+    "Ley General de Sociedades (19.550)"
+   ],
+   "rama": "com",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Hoy no se reconoce."
+   ]
+  },
+  {
+   "sigla": "LDC",
+   "significados": [
+    "Ley de Defensa del Consumidor (24.240)"
+   ],
+   "rama": "cons",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Hoy no se reconoce."
+   ]
+  },
+  {
+   "sigla": "CCyC",
+   "significados": [
+    "Código Civil y Comercial de la Nación"
+   ],
+   "rama": "civ",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Hoy no se reconoce (4 letras pero no hay término)."
+   ]
+  },
+  {
+   "sigla": "SAC",
+   "significados": [
+    "sueldo anual complementario"
+   ],
+   "rama": "lab",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Ambigua con sociedades (S.A.C.)."
+   ]
+  },
+  {
+   "sigla": "IBM",
+   "significados": [
+    "ingreso base mensual (LRT art. 12)"
+   ],
+   "rama": "art",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Ambigua con la empresa."
+   ]
+  },
+  {
+   "sigla": "CUD",
+   "significados": [
+    "certificado único de discapacidad"
+   ],
+   "rama": "disc",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Voz SCJM: CERTIFICADO UNICO DE DISCAPACIDAD."
+   ]
+  },
+  {
+   "sigla": "OSEP",
+   "significados": [
+    "Obra Social de Empleados Públicos (Mendoza)"
+   ],
+   "rama": "salud",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "No verificado como voz SCJM."
+   ]
+  },
+  {
+   "sigla": "EPAS",
+   "significados": [
+    "Ente Provincial del Agua y de Saneamiento (Mendoza)"
+   ],
+   "rama": "agua",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "No verificado como voz SCJM."
+   ]
+  },
+  {
+   "sigla": "EPRE",
+   "significados": [
+    "Ente Provincial Regulador Eléctrico (Mendoza)"
+   ],
+   "rama": "energ",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Aparece en una carátula de los ejemplos (trib.json, «solve et repete»)."
+   ]
+  },
+  {
+   "sigla": "INV",
+   "significados": [
+    "Instituto Nacional de Vitivinicultura"
+   ],
+   "rama": "agro",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Voz SCJM: INSTITUTO NACIONAL DE VITIVINICULTURA (forma larga)."
+   ]
+  },
+  {
+   "sigla": "SRT",
+   "significados": [
+    "Superintendencia de Riesgos del Trabajo"
+   ],
+   "rama": "art",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "—"
+   ]
+  },
+  {
+   "sigla": "SSN",
+   "significados": [
+    "Superintendencia de Seguros de la Nación"
+   ],
+   "rama": "seg",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "—"
+   ]
+  },
+  {
+   "sigla": "CNV",
+   "significados": [
+    "Comisión Nacional de Valores"
+   ],
+   "rama": "fin",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "—"
+   ]
+  },
+  {
+   "sigla": "AAIP",
+   "significados": [
+    "Agencia de Acceso a la Información Pública"
+   ],
+   "rama": "digital",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "—"
+   ]
+  },
+  {
+   "sigla": "PSAV",
+   "significados": [
+    "proveedores de servicios de activos virtuales"
+   ],
+   "rama": "fin",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Concepto ausente del inventario."
+   ]
+  },
+  {
+   "sigla": "RIGI",
+   "significados": [
+    "Régimen de Incentivo para Grandes Inversiones (Ley 27.742)"
+   ],
+   "rama": "inv",
+   "estado": "propuesta",
+   "politicaSugerida": "sugerir",
+   "evidencia": [
+    "Ausente del inventario."
+   ]
+  }
+ ]
+}

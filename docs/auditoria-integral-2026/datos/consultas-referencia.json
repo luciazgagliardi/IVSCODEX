@@ -1,0 +1,4559 @@
+{
+ "descripcion": "Batería de regresión del vocabulario: por cada una de las 28 ramas, diez formas de consulta (técnica, equivalente, variante ortográfica, coloquial, descriptor judicial SCJM, histórica, normativa por artículo, fáctica, procesal y contrapuesta) con el concepto esperado. «noDebeExpandirA» marca lo que NO debe sumarse (contrapuestos, homonimias). La línea base es lo que hace analizar() el 2026-11-20.",
+ "comoCorrer": "Para cada caso: a=analizar(consulta); cumple si el concepto esperado está entre los canónicos reconocidos, sus descriptores SCJM o sus formas expandidas, y si ninguna forma expandida está en noDebeExpandirA.",
+ "formas": [
+  "tecnica",
+  "equivalente",
+  "variante_ortografica",
+  "coloquial",
+  "descriptor_judicial",
+  "historica",
+  "normativa",
+  "factica",
+  "procesal",
+  "contrapuesta"
+ ],
+ "lineaBase": {
+  "fecha": "2026-11-20",
+  "casos": 280,
+  "cumplen": 156,
+  "porForma": {
+   "tecnica": "26/28",
+   "equivalente": "22/28",
+   "variante_ortografica": "23/28",
+   "coloquial": "1/28",
+   "descriptor_judicial": "26/28",
+   "historica": "14/28",
+   "normativa": "7/28",
+   "factica": "1/28",
+   "procesal": "17/28",
+   "contrapuesta": "19/28"
+  },
+  "expansionesIndebidas": [
+   "régimen de visitas carcelarias"
+  ]
+ },
+ "casos": [
+  {
+   "id": "civ-tecnica",
+   "rama": "civ",
+   "forma": "tecnica",
+   "consulta": "teoría de la imprevisión",
+   "conceptoEsperado": "teoría de la imprevisión",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "teoría de la imprevisión → teoría de la imprevisión [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "civ-equivalente",
+   "rama": "civ",
+   "forma": "equivalente",
+   "consulta": "excesiva onerosidad sobreviniente",
+   "conceptoEsperado": "teoría de la imprevisión",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "excesiva onerosidad sobreviniente → teoría de la imprevisión [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "civ-variante_ortografica",
+   "rama": "civ",
+   "forma": "variante_ortografica",
+   "consulta": "teoria de la imprevision",
+   "conceptoEsperado": "teoría de la imprevisión",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "teoria de la imprevision → teoría de la imprevisión [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "civ-coloquial",
+   "rama": "civ",
+   "forma": "coloquial",
+   "consulta": "el inquilino no paga y no se va",
+   "conceptoEsperado": "desalojo por falta de pago",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "inquilino → locatario [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "civ-descriptor_judicial",
+   "rama": "civ",
+   "forma": "descriptor_judicial",
+   "consulta": "PACTO COMISORIO",
+   "conceptoEsperado": "pacto comisorio",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "PACTO COMISORIO → pacto comisorio [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "civ-historica",
+   "rama": "civ",
+   "forma": "historica",
+   "consulta": "locación de obra",
+   "conceptoEsperado": "contrato de obra",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "locación de obra → contrato de obra [civ]"
+    ],
+    "expande": [
+     "contrato de obra"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "civ-normativa",
+   "rama": "civ",
+   "forma": "normativa",
+   "consulta": "art. 1086 CCyC cláusula resolutoria expresa",
+   "conceptoEsperado": "pacto comisorio",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "civ-factica",
+   "rama": "civ",
+   "forma": "factica",
+   "consulta": "el vendedor no escrituró y el comprador pagó todo el boleto",
+   "conceptoEsperado": "boleto de compraventa",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "pagó → pago [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "civ-procesal",
+   "rama": "civ",
+   "forma": "procesal",
+   "consulta": "acción de cumplimiento de contrato con daños",
+   "conceptoEsperado": "incumplimiento contractual",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "acción → acción [pen]",
+     "contrato → contratos [civ]",
+     "daños → daño [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "civ-contrapuesta",
+   "rama": "civ",
+   "forma": "contrapuesta",
+   "consulta": "nulidad relativa",
+   "conceptoEsperado": "nulidad relativa",
+   "noDebeExpandirA": [
+    "nulidad absoluta"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "nulidad relativa → nulidad relativa [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dan-tecnica",
+   "rama": "dan",
+   "forma": "tecnica",
+   "consulta": "consecuencias no patrimoniales",
+   "conceptoEsperado": "daño moral",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "consecuencias no patrimoniales → daño moral [dan]"
+    ],
+    "expande": [
+     "daño moral",
+     "daño extrapatrimonial",
+     "agravio moral",
+     "daño inmaterial"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dan-equivalente",
+   "rama": "dan",
+   "forma": "equivalente",
+   "consulta": "daño extrapatrimonial",
+   "conceptoEsperado": "daño moral",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "daño extrapatrimonial → daño moral [dan]"
+    ],
+    "expande": [
+     "daño moral",
+     "consecuencias no patrimoniales",
+     "agravio moral",
+     "daño inmaterial"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dan-variante_ortografica",
+   "rama": "dan",
+   "forma": "variante_ortografica",
+   "consulta": "dano moral",
+   "conceptoEsperado": "daño moral",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "dano moral → daño moral [dan]"
+    ],
+    "expande": [
+     "daño extrapatrimonial",
+     "consecuencias no patrimoniales",
+     "agravio moral",
+     "daño inmaterial"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dan-coloquial",
+   "rama": "dan",
+   "forma": "coloquial",
+   "consulta": "cuánto me tienen que pagar por el choque",
+   "conceptoEsperado": "accidente de tránsito",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "CHOQUE"
+    ]
+   }
+  },
+  {
+   "id": "dan-descriptor_judicial",
+   "rama": "dan",
+   "forma": "descriptor_judicial",
+   "consulta": "INCAPACIDAD SOBREVINIENTE",
+   "conceptoEsperado": "incapacidad sobreviniente",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "INCAPACIDAD SOBREVINIENTE → incapacidad sobreviniente [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dan-historica",
+   "rama": "dan",
+   "forma": "historica",
+   "consulta": "agravio moral",
+   "conceptoEsperado": "daño moral",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "agravio moral → daño moral [dan]"
+    ],
+    "expande": [
+     "daño moral",
+     "daño extrapatrimonial",
+     "consecuencias no patrimoniales",
+     "daño inmaterial"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dan-normativa",
+   "rama": "dan",
+   "forma": "normativa",
+   "consulta": "art. 1746 CCyC indemnización por incapacidad",
+   "conceptoEsperado": "incapacidad sobreviniente",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "indemnización por incapacidad → indemnización por incapacidad [art]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dan-factica",
+   "rama": "dan",
+   "forma": "factica",
+   "consulta": "un colectivo atropelló a un peatón en la senda",
+   "conceptoEsperado": "accidente de tránsito",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "peatón → peatones [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dan-procesal",
+   "rama": "dan",
+   "forma": "procesal",
+   "consulta": "legitimación activa para reclamar daño moral de los convivientes",
+   "conceptoEsperado": "daño moral",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "legitimación activa → legitimación activa [proc_civ]",
+     "daño moral → daño moral [dan]"
+    ],
+    "expande": [
+     "daño extrapatrimonial",
+     "consecuencias no patrimoniales",
+     "agravio moral",
+     "daño inmaterial"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dan-contrapuesta",
+   "rama": "dan",
+   "forma": "contrapuesta",
+   "consulta": "daño punitivo",
+   "conceptoEsperado": "daño punitivo",
+   "noDebeExpandirA": [
+    "daño moral"
+   ],
+   "nota": "Multa civil (LDC art. 52 bis), no rubro resarcitorio.",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "daño punitivo → daño punitivo [cons]"
+    ],
+    "expande": [
+     "multa civil",
+     "sanción pecuniaria disuasiva"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "rea-tecnica",
+   "rama": "rea",
+   "forma": "tecnica",
+   "consulta": "prescripción adquisitiva",
+   "conceptoEsperado": "prescripción adquisitiva",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "prescripción adquisitiva → prescripción adquisitiva [rea]"
+    ],
+    "expande": [
+     "usucapión",
+     "usucapión veinteañal",
+     "prescripción veinteañal"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "rea-equivalente",
+   "rama": "rea",
+   "forma": "equivalente",
+   "consulta": "usucapión",
+   "conceptoEsperado": "prescripción adquisitiva",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "usucapión → prescripción adquisitiva [rea]"
+    ],
+    "expande": [
+     "prescripción adquisitiva",
+     "usucapión veinteañal",
+     "prescripción veinteañal"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "rea-variante_ortografica",
+   "rama": "rea",
+   "forma": "variante_ortografica",
+   "consulta": "usucapion veinteanal",
+   "conceptoEsperado": "prescripción adquisitiva",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "usucapion veinteanal → prescripción adquisitiva [rea]"
+    ],
+    "expande": [
+     "prescripción adquisitiva",
+     "usucapión",
+     "prescripción veinteañal"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "rea-coloquial",
+   "rama": "rea",
+   "forma": "coloquial",
+   "consulta": "vivo hace 25 años en la casa y quiero escriturar",
+   "conceptoEsperado": "prescripción adquisitiva",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "rea-descriptor_judicial",
+   "rama": "rea",
+   "forma": "descriptor_judicial",
+   "consulta": "PROPIEDAD HORIZONTAL",
+   "conceptoEsperado": "propiedad horizontal",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "PROPIEDAD HORIZONTAL → propiedad horizontal [rea]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "rea-historica",
+   "rama": "rea",
+   "forma": "historica",
+   "consulta": "barrios cerrados",
+   "conceptoEsperado": "conjuntos inmobiliarios",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "barrios cerrados → conjuntos inmobiliarios [rea]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "rea-normativa",
+   "rama": "rea",
+   "forma": "normativa",
+   "consulta": "art. 1899 CCyC prescripción adquisitiva larga",
+   "conceptoEsperado": "prescripción adquisitiva",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "prescripción adquisitiva → prescripción adquisitiva [rea]"
+    ],
+    "expande": [
+     "usucapión",
+     "usucapión veinteañal",
+     "prescripción veinteañal"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "rea-factica",
+   "rama": "rea",
+   "forma": "factica",
+   "consulta": "el vecino corrió el alambrado y se quedó con dos metros",
+   "conceptoEsperado": "acción reivindicatoria",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "ALAMBRADO"
+    ]
+   }
+  },
+  {
+   "id": "rea-procesal",
+   "rama": "rea",
+   "forma": "procesal",
+   "consulta": "interdicto de recobrar la posesión",
+   "conceptoEsperado": "interdicto de recobrar",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "interdicto de recobrar → interdicto de recobrar [proc_civ]",
+     "posesión → posesión [rea]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "rea-contrapuesta",
+   "rama": "rea",
+   "forma": "contrapuesta",
+   "consulta": "tenencia de la cosa",
+   "conceptoEsperado": "tenencia simple",
+   "noDebeExpandirA": [
+    "cuidado personal",
+    "posesión"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "tenencia de la cosa → tenencia simple [rea]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-tecnica",
+   "rama": "fam",
+   "forma": "tecnica",
+   "consulta": "cuidado personal",
+   "conceptoEsperado": "cuidado personal",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "cuidado personal → cuidado personal [fam]",
+     "cuidado personal → cuidado personal compartido [fam]"
+    ],
+    "expande": [
+     "tenencia de los hijos",
+     "cuidado personal compartido",
+     "tenencia"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-equivalente",
+   "rama": "fam",
+   "forma": "equivalente",
+   "consulta": "tenencia de los hijos",
+   "conceptoEsperado": "cuidado personal",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "tenencia de los hijos → cuidado personal [fam]"
+    ],
+    "expande": [
+     "cuidado personal",
+     "cuidado personal compartido"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-variante_ortografica",
+   "rama": "fam",
+   "forma": "variante_ortografica",
+   "consulta": "regimen de comunicacion",
+   "conceptoEsperado": "régimen de comunicación",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "regimen de comunicacion → régimen de comunicación [fam]",
+     "regimen de comunicacion → plan de parentalidad [fam]"
+    ],
+    "expande": [
+     "régimen de visitas",
+     "derecho de comunicación"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-coloquial",
+   "rama": "fam",
+   "forma": "coloquial",
+   "consulta": "mi ex no me deja ver a los chicos",
+   "conceptoEsperado": "régimen de comunicación",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-descriptor_judicial",
+   "rama": "fam",
+   "forma": "descriptor_judicial",
+   "consulta": "COMPENSACION ECONOMICA",
+   "conceptoEsperado": "compensación económica",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "COMPENSACION ECONOMICA → compensación económica [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-historica",
+   "rama": "fam",
+   "forma": "historica",
+   "consulta": "régimen de visitas",
+   "conceptoEsperado": "régimen de comunicación",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "régimen de visitas → régimen de comunicación [fam]",
+     "régimen de visitas → plan de parentalidad [fam]"
+    ],
+    "expande": [
+     "régimen de comunicación",
+     "derecho de comunicación"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-normativa",
+   "rama": "fam",
+   "forma": "normativa",
+   "consulta": "art. 441 CCyC compensación económica",
+   "conceptoEsperado": "compensación económica",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "compensación económica → compensación económica [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-factica",
+   "rama": "fam",
+   "forma": "factica",
+   "consulta": "la madre se mudó a otra provincia con el nene sin avisar",
+   "conceptoEsperado": "cambio de residencia del hijo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "provincia → Estado Provincial [const]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-procesal",
+   "rama": "fam",
+   "forma": "procesal",
+   "consulta": "alimentos provisorios durante el juicio",
+   "conceptoEsperado": "alimentos provisorios",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "alimentos provisorios → alimentos provisionales [fam]",
+     "juicio → juicio [proc_pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "fam-contrapuesta",
+   "rama": "fam",
+   "forma": "contrapuesta",
+   "consulta": "plan de parentalidad",
+   "conceptoEsperado": "plan de parentalidad",
+   "noDebeExpandirA": [
+    "régimen de comunicación"
+   ],
+   "nota": "Art. 655 CCyC: instrumento que puede contener el régimen, no es el régimen.",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "plan de parentalidad → plan de parentalidad [fam]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "suc-tecnica",
+   "rama": "suc",
+   "forma": "tecnica",
+   "consulta": "declaratoria de herederos",
+   "conceptoEsperado": "declaratoria de herederos",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "declaratoria de herederos → declaratoria de herederos [suc]"
+    ],
+    "expande": [
+     "sucesión ab intestato",
+     "sucesión intestada"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "suc-equivalente",
+   "rama": "suc",
+   "forma": "equivalente",
+   "consulta": "sucesión ab intestato",
+   "conceptoEsperado": "declaratoria de herederos",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "sucesión ab intestato → declaratoria de herederos [suc]",
+     "sucesión ab intestato → sucesión ab intestato [suc]"
+    ],
+    "expande": [
+     "declaratoria de herederos",
+     "sucesión intestada"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "suc-variante_ortografica",
+   "rama": "suc",
+   "forma": "variante_ortografica",
+   "consulta": "sucesion abintestato",
+   "conceptoEsperado": "declaratoria de herederos",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "sucesion → sucesiones [suc]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "suc-coloquial",
+   "rama": "suc",
+   "forma": "coloquial",
+   "consulta": "murió mi papá y no dejó testamento",
+   "conceptoEsperado": "sucesión intestada",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "papá → papas [s/r]",
+     "testamento → testamentos [suc]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "suc-descriptor_judicial",
+   "rama": "suc",
+   "forma": "descriptor_judicial",
+   "consulta": "COLACION",
+   "conceptoEsperado": "colación",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "COLACION → colación [suc]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "suc-historica",
+   "rama": "suc",
+   "forma": "historica",
+   "consulta": "herederos forzosos",
+   "conceptoEsperado": "legitimarios",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "herederos forzosos → legitimarios [suc]",
+     "herederos forzosos → herederos forzosos [suc]"
+    ],
+    "expande": [
+     "legitimarios"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "suc-normativa",
+   "rama": "suc",
+   "forma": "normativa",
+   "consulta": "art. 2445 CCyC porciones legítimas",
+   "conceptoEsperado": "legítima hereditaria",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "porciones legítimas → legítima hereditaria [suc]",
+     "porciones legítimas → legítima [suc]"
+    ],
+    "expande": [
+     "legítima hereditaria",
+     "porción legítima"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "suc-factica",
+   "rama": "suc",
+   "forma": "factica",
+   "consulta": "mamá le donó la casa a mi hermano antes de morir",
+   "conceptoEsperado": "colación",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "HERMANOS"
+    ]
+   }
+  },
+  {
+   "id": "suc-procesal",
+   "rama": "suc",
+   "forma": "procesal",
+   "consulta": "acción de reducción contra donatario",
+   "conceptoEsperado": "acción de reducción",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "acción de reducción → acción de reducción [suc]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "suc-contrapuesta",
+   "rama": "suc",
+   "forma": "contrapuesta",
+   "consulta": "desheredación",
+   "conceptoEsperado": "desheredación",
+   "noDebeExpandirA": [
+    "indignidad"
+   ],
+   "nota": "El CCyC no regula la desheredación; las causales de indignidad (art. 2281) absorbieron parte de sus supuestos. No verificado si SAIJ conserva el descriptor.",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "desheredación → desheredación [suc]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-tecnica",
+   "rama": "cons",
+   "forma": "tecnica",
+   "consulta": "relación de consumo",
+   "conceptoEsperado": "relación de consumo",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "relación de consumo → relación de consumo [cons]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-equivalente",
+   "rama": "cons",
+   "forma": "equivalente",
+   "consulta": "sanción pecuniaria disuasiva",
+   "conceptoEsperado": "daño punitivo",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "sanción pecuniaria disuasiva → daño punitivo [cons]"
+    ],
+    "expande": [
+     "daño punitivo",
+     "multa civil"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-variante_ortografica",
+   "rama": "cons",
+   "forma": "variante_ortografica",
+   "consulta": "dano punitivo",
+   "conceptoEsperado": "daño punitivo",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "dano punitivo → daño punitivo [cons]"
+    ],
+    "expande": [
+     "multa civil",
+     "sanción pecuniaria disuasiva"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-coloquial",
+   "rama": "cons",
+   "forma": "coloquial",
+   "consulta": "la empresa de celular me cobra servicios que no pedí",
+   "conceptoEsperado": "relación de consumo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "empresa → empresa [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-descriptor_judicial",
+   "rama": "cons",
+   "forma": "descriptor_judicial",
+   "consulta": "DEFENSA DEL CONSUMIDOR",
+   "conceptoEsperado": "defensa del consumidor",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "DEFENSA DEL CONSUMIDOR → defensa del consumidor [cons]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-historica",
+   "rama": "cons",
+   "forma": "historica",
+   "consulta": "ley de defensa del consumidor",
+   "conceptoEsperado": "derechos del consumidor",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "ley de defensa del consumidor → ley de defensa del consumidor [cons]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-normativa",
+   "rama": "cons",
+   "forma": "normativa",
+   "consulta": "art. 52 bis ley 24.240",
+   "conceptoEsperado": "daño punitivo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-factica",
+   "rama": "cons",
+   "forma": "factica",
+   "consulta": "compré una heladera que vino fallada y no me la cambian",
+   "conceptoEsperado": "garantía legal",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "vino → vinos [s/r]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-procesal",
+   "rama": "cons",
+   "forma": "procesal",
+   "consulta": "beneficio de justicia gratuita art. 53 LDC",
+   "conceptoEsperado": "beneficio de justicia gratuita",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "beneficio de justicia gratuita → beneficio de litigar sin gastos [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cons-contrapuesta",
+   "rama": "cons",
+   "forma": "contrapuesta",
+   "consulta": "contrato paritario",
+   "conceptoEsperado": "contrato paritario",
+   "noDebeExpandirA": [
+    "contrato de consumo"
+   ],
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "contrato → contratos [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-tecnica",
+   "rama": "com",
+   "forma": "tecnica",
+   "consulta": "inoponibilidad de la personalidad jurídica",
+   "conceptoEsperado": "inoponibilidad de la personalidad jurídica",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "inoponibilidad de la personalidad jurídica → inoponibilidad de la personalidad jurídica [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-equivalente",
+   "rama": "com",
+   "forma": "equivalente",
+   "consulta": "desestimación de la personalidad jurídica",
+   "conceptoEsperado": "inoponibilidad de la personalidad jurídica",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "personalidad jurídica → personería jurídica [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-variante_ortografica",
+   "rama": "com",
+   "forma": "variante_ortografica",
+   "consulta": "inoponibilidad de la personalidad juridica",
+   "conceptoEsperado": "inoponibilidad de la personalidad jurídica",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "inoponibilidad de la personalidad juridica → inoponibilidad de la personalidad jurídica [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-coloquial",
+   "rama": "com",
+   "forma": "coloquial",
+   "consulta": "los socios vaciaron la empresa para no pagar",
+   "conceptoEsperado": "inoponibilidad de la personalidad jurídica",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "socios → socios [com]",
+     "empresa → empresa [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-descriptor_judicial",
+   "rama": "com",
+   "forma": "descriptor_judicial",
+   "consulta": "RESPONSABILIDAD DE LOS DIRECTORES",
+   "conceptoEsperado": "responsabilidad de administradores",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "RESPONSABILIDAD DE LOS DIRECTORES → responsabilidad de los directores [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-historica",
+   "rama": "com",
+   "forma": "historica",
+   "consulta": "sociedad de hecho",
+   "conceptoEsperado": "sociedades de la Sección IV",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "sociedad de hecho → sociedades de la Sección IV [com]",
+     "sociedad de hecho → sociedad de hecho [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-normativa",
+   "rama": "com",
+   "forma": "normativa",
+   "consulta": "art. 54 ley 19.550",
+   "conceptoEsperado": "inoponibilidad de la personalidad jurídica",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-factica",
+   "rama": "com",
+   "forma": "factica",
+   "consulta": "el directorio aprobó un balance falso",
+   "conceptoEsperado": "responsabilidad de administradores",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "directorio → directorio [com]",
+     "balance falso → balance o informes falsos [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-procesal",
+   "rama": "com",
+   "forma": "procesal",
+   "consulta": "impugnación de decisión asamblearia",
+   "conceptoEsperado": "impugnación de asamblea",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "impugnación de decisión asamblearia → impugnación de decisión asamblearia [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "com-contrapuesta",
+   "rama": "com",
+   "forma": "contrapuesta",
+   "consulta": "acción individual de responsabilidad",
+   "conceptoEsperado": "acción individual de responsabilidad",
+   "noDebeExpandirA": [
+    "acción social de responsabilidad"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "acción individual de responsabilidad → acción individual de responsabilidad [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-tecnica",
+   "rama": "cyq",
+   "forma": "tecnica",
+   "consulta": "verificación de créditos",
+   "conceptoEsperado": "verificación de créditos",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "verificación de créditos → verificación de créditos [cyq]"
+    ],
+    "expande": [
+     "verificación tempestiva de créditos",
+     "incidente de verificación"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-equivalente",
+   "rama": "cyq",
+   "forma": "equivalente",
+   "consulta": "cramdown",
+   "conceptoEsperado": "salvataje",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "cramdown → salvataje de la empresa [cyq]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-variante_ortografica",
+   "rama": "cyq",
+   "forma": "variante_ortografica",
+   "consulta": "verificacion tardia",
+   "conceptoEsperado": "verificación tardía",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "verificacion tardia → verificación tardía [cyq]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-coloquial",
+   "rama": "cyq",
+   "forma": "coloquial",
+   "consulta": "la empresa quebró y me debe la indemnización",
+   "conceptoEsperado": "pronto pago",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "empresa → empresa [com]",
+     "indemnización → indemnización [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-descriptor_judicial",
+   "rama": "cyq",
+   "forma": "descriptor_judicial",
+   "consulta": "PRONTO PAGO",
+   "conceptoEsperado": "pronto pago",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "PRONTO PAGO → pronto pago [cyq]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-historica",
+   "rama": "cyq",
+   "forma": "historica",
+   "consulta": "convocatoria de acreedores",
+   "conceptoEsperado": "concurso preventivo",
+   "nota": "Denominación de la ley 11.719; no verificado como descriptor.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "convocatoria de acreedores → convocatoria de acreedores [cyq]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-normativa",
+   "rama": "cyq",
+   "forma": "normativa",
+   "consulta": "art. 48 LCQ",
+   "conceptoEsperado": "salvataje",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-factica",
+   "rama": "cyq",
+   "forma": "factica",
+   "consulta": "el fallido vendió un inmueble a su cuñado un mes antes de la quiebra",
+   "conceptoEsperado": "período de sospecha",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "fallido → fallido [cyq]",
+     "quiebra → quiebra [cyq]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-procesal",
+   "rama": "cyq",
+   "forma": "procesal",
+   "consulta": "incidente de revisión art. 37",
+   "conceptoEsperado": "incidente de revisión",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "incidente de revisión → incidente de revisión [cyq]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "cyq-contrapuesta",
+   "rama": "cyq",
+   "forma": "contrapuesta",
+   "consulta": "salvamento marítimo",
+   "conceptoEsperado": "asistencia y salvamento",
+   "noDebeExpandirA": [
+    "salvataje"
+   ],
+   "nota": "Homonimia: el salvataje de navegación no es el del art. 48 LCQ.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-tecnica",
+   "rama": "seg",
+   "forma": "tecnica",
+   "consulta": "exclusión de cobertura",
+   "conceptoEsperado": "exclusión de cobertura",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "exclusión de cobertura → exclusión de cobertura [seg]"
+    ],
+    "expande": [
+     "no seguro",
+     "riesgo excluido"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-equivalente",
+   "rama": "seg",
+   "forma": "equivalente",
+   "consulta": "riesgo excluido",
+   "conceptoEsperado": "exclusión de cobertura",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "riesgo excluido → exclusión de cobertura [seg]"
+    ],
+    "expande": [
+     "exclusión de cobertura",
+     "no seguro"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-variante_ortografica",
+   "rama": "seg",
+   "forma": "variante_ortografica",
+   "consulta": "citacion en garantia",
+   "conceptoEsperado": "citación en garantía",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "citacion en garantia → citación en garantía [seg]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-coloquial",
+   "rama": "seg",
+   "forma": "coloquial",
+   "consulta": "el seguro no me paga porque dice que manejaba borracho",
+   "conceptoEsperado": "exclusión de cobertura",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "seguro → seguros [seg]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-descriptor_judicial",
+   "rama": "seg",
+   "forma": "descriptor_judicial",
+   "consulta": "RETICENCIA",
+   "conceptoEsperado": "reticencia",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "RETICENCIA → reticencia [seg]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-historica",
+   "rama": "seg",
+   "forma": "historica",
+   "consulta": "pronunciamiento del asegurador",
+   "conceptoEsperado": "silencio del asegurador",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "asegurador → asegurador [seg]"
+    ],
+    "expande": [
+     "aseguradora"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-normativa",
+   "rama": "seg",
+   "forma": "normativa",
+   "consulta": "art. 118 ley 17.418 citación en garantía",
+   "conceptoEsperado": "citación en garantía",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "citación en garantía → citación en garantía [seg]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-factica",
+   "rama": "seg",
+   "forma": "factica",
+   "consulta": "el colectivo asegurado con franquicia atropelló a una pasajera",
+   "conceptoEsperado": "oponibilidad de la franquicia",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "asegurado → asegurado [seg]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-procesal",
+   "rama": "seg",
+   "forma": "procesal",
+   "consulta": "citación en garantía de la aseguradora",
+   "conceptoEsperado": "citación en garantía",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "citación en garantía → citación en garantía [seg]",
+     "aseguradora → asegurador [seg]"
+    ],
+    "expande": [
+     "asegurador"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "seg-contrapuesta",
+   "rama": "seg",
+   "forma": "contrapuesta",
+   "consulta": "caducidad de derechos del asegurado",
+   "conceptoEsperado": "caducidad",
+   "noDebeExpandirA": [
+    "exclusión de cobertura"
+   ],
+   "nota": "La caducidad por incumplimiento de cargas no es delimitación del riesgo.",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "caducidad de derechos → caducidad [civ]",
+     "asegurado → asegurado [seg]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-tecnica",
+   "rama": "lab",
+   "forma": "tecnica",
+   "consulta": "trabajo no registrado",
+   "conceptoEsperado": "trabajo no registrado",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "trabajo no registrado → trabajo no registrado [lab]",
+     "trabajo no registrado → empleo no registrado [lab]"
+    ],
+    "expande": [
+     "empleo no registrado",
+     "relación laboral no registrada"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-equivalente",
+   "rama": "lab",
+   "forma": "equivalente",
+   "consulta": "empleo no registrado",
+   "conceptoEsperado": "trabajo no registrado",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "empleo no registrado → trabajo no registrado [lab]",
+     "empleo no registrado → empleo no registrado [lab]"
+    ],
+    "expande": [
+     "trabajo no registrado",
+     "relación laboral no registrada"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-variante_ortografica",
+   "rama": "lab",
+   "forma": "variante_ortografica",
+   "consulta": "indemnizacion art 245",
+   "conceptoEsperado": "indemnización por despido",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "indemnizacion art 245 → indemnización por despido [lab]"
+    ],
+    "expande": [
+     "indemnización por despido",
+     "indemnización por antigüedad"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-coloquial",
+   "rama": "lab",
+   "forma": "coloquial",
+   "consulta": "me echaron y estaba en negro",
+   "conceptoEsperado": "trabajo no registrado",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-descriptor_judicial",
+   "rama": "lab",
+   "forma": "descriptor_judicial",
+   "consulta": "DESPIDO INDIRECTO",
+   "conceptoEsperado": "despido indirecto",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "DESPIDO INDIRECTO → despido indirecto [lab]"
+    ],
+    "expande": [
+     "autodespido"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-historica",
+   "rama": "lab",
+   "forma": "historica",
+   "consulta": "trabajo en negro",
+   "conceptoEsperado": "trabajo no registrado",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "trabajo en negro → trabajo no registrado [lab]",
+     "trabajo en negro → empleo no registrado [lab]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-normativa",
+   "rama": "lab",
+   "forma": "normativa",
+   "consulta": "art. 245 LCT",
+   "conceptoEsperado": "indemnización por despido",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-factica",
+   "rama": "lab",
+   "forma": "factica",
+   "consulta": "le redujeron el horario y el sueldo sin acuerdo",
+   "conceptoEsperado": "ius variandi",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "sueldo → remuneración [lab]",
+     "acuerdo → acuerdo de partes [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-procesal",
+   "rama": "lab",
+   "forma": "procesal",
+   "consulta": "conciliación laboral obligatoria",
+   "conceptoEsperado": "conciliación laboral",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "conciliación laboral → conciliación laboral [lab]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "lab-contrapuesta",
+   "rama": "lab",
+   "forma": "contrapuesta",
+   "consulta": "despido directo",
+   "conceptoEsperado": "despido directo",
+   "noDebeExpandirA": [
+    "despido indirecto"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "DESPIDO DIRECTO"
+    ]
+   }
+  },
+  {
+   "id": "sind-tecnica",
+   "rama": "sind",
+   "forma": "tecnica",
+   "consulta": "tutela sindical",
+   "conceptoEsperado": "tutela sindical",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "tutela sindical → tutela sindical [sind]"
+    ],
+    "expande": [
+     "garantía sindical",
+     "protección de representantes gremiales"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "sind-equivalente",
+   "rama": "sind",
+   "forma": "equivalente",
+   "consulta": "garantía sindical",
+   "conceptoEsperado": "tutela sindical",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "garantía sindical → tutela sindical [sind]"
+    ],
+    "expande": [
+     "tutela sindical",
+     "protección de representantes gremiales"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "sind-variante_ortografica",
+   "rama": "sind",
+   "forma": "variante_ortografica",
+   "consulta": "exclusion de tutela sindical",
+   "conceptoEsperado": "exclusión de tutela sindical",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "tutela sindical → tutela sindical [sind]"
+    ],
+    "expande": [
+     "garantía sindical",
+     "protección de representantes gremiales"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "sind-coloquial",
+   "rama": "sind",
+   "forma": "coloquial",
+   "consulta": "me quieren echar y soy delegado",
+   "conceptoEsperado": "tutela sindical",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "sind-descriptor_judicial",
+   "rama": "sind",
+   "forma": "descriptor_judicial",
+   "consulta": "ULTRAACTIVIDAD",
+   "conceptoEsperado": "ultraactividad",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "ULTRAACTIVIDAD"
+    ]
+   }
+  },
+  {
+   "id": "sind-historica",
+   "rama": "sind",
+   "forma": "historica",
+   "consulta": "ley de asociaciones profesionales",
+   "conceptoEsperado": "asociaciones sindicales",
+   "nota": "Denominación previa a la ley 23.551; no verificado como descriptor.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "asociaciones profesionales → asociaciones profesionales [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "sind-normativa",
+   "rama": "sind",
+   "forma": "normativa",
+   "consulta": "art. 52 ley 23.551",
+   "conceptoEsperado": "tutela sindical",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "sind-factica",
+   "rama": "sind",
+   "forma": "factica",
+   "consulta": "despidieron a los que participaron del paro",
+   "conceptoEsperado": "derecho de huelga",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "sind-procesal",
+   "rama": "sind",
+   "forma": "procesal",
+   "consulta": "amparo sindical art. 47",
+   "conceptoEsperado": "amparo sindical",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "AMPARO SINDICAL"
+    ]
+   }
+  },
+  {
+   "id": "sind-contrapuesta",
+   "rama": "sind",
+   "forma": "contrapuesta",
+   "consulta": "práctica desleal",
+   "conceptoEsperado": "práctica desleal",
+   "noDebeExpandirA": [
+    "competencia desleal"
+   ],
+   "nota": "Art. 53 ley 23.551; no confundir con competencia desleal.",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "práctica desleal → prácticas desleales [lab]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "art-tecnica",
+   "rama": "art",
+   "forma": "tecnica",
+   "consulta": "accidente in itinere",
+   "conceptoEsperado": "accidente in itinere",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "accidente in itinere → accidente in itinere [art]"
+    ],
+    "expande": [
+     "accidente en el trayecto"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "art-equivalente",
+   "rama": "art",
+   "forma": "equivalente",
+   "consulta": "accidente en el trayecto",
+   "conceptoEsperado": "accidente in itinere",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "accidente en el trayecto → accidente in itinere [art]"
+    ],
+    "expande": [
+     "accidente in itinere",
+     "accidente in itínere"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "art-variante_ortografica",
+   "rama": "art",
+   "forma": "variante_ortografica",
+   "consulta": "accidente de trabajo",
+   "conceptoEsperado": "accidentes de trabajo",
+   "nota": "Hoy falla por el singular de «accidentes».",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "trabajo → trabajo [lab]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "art-coloquial",
+   "rama": "art",
+   "forma": "coloquial",
+   "consulta": "me caí de la escalera en el trabajo y la ART no me cubre",
+   "conceptoEsperado": "accidentes de trabajo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "trabajo → trabajo [lab]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "art-descriptor_judicial",
+   "rama": "art",
+   "forma": "descriptor_judicial",
+   "consulta": "ENFERMEDAD NO LISTADA",
+   "conceptoEsperado": "enfermedad no listada",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "ENFERMEDAD NO LISTADA"
+    ]
+   }
+  },
+  {
+   "id": "art-historica",
+   "rama": "art",
+   "forma": "historica",
+   "consulta": "ley de accidentes de trabajo 9688",
+   "conceptoEsperado": "ley de accidentes de trabajo",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "ley de accidentes de trabajo → ley de accidentes de trabajo [art]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "art-normativa",
+   "rama": "art",
+   "forma": "normativa",
+   "consulta": "art. 6 ley 24.557 contingencias",
+   "conceptoEsperado": "riesgos del trabajo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "art-factica",
+   "rama": "art",
+   "forma": "factica",
+   "consulta": "hernia de disco por levantar cajas",
+   "conceptoEsperado": "enfermedad profesional",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "hernia de disco → hernia de disco [s/r]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "art-procesal",
+   "rama": "art",
+   "forma": "procesal",
+   "consulta": "recurso contra comisión médica jurisdiccional",
+   "conceptoEsperado": "comisiones médicas",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "recurso → recursos [proc_civ]",
+     "comisión médica → comisiones médicas [art]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "art-contrapuesta",
+   "rama": "art",
+   "forma": "contrapuesta",
+   "consulta": "accidente de tránsito",
+   "conceptoEsperado": "accidente de tránsito",
+   "noDebeExpandirA": [
+    "accidente in itinere"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "accidente de tránsito → accidente de tránsito [dan]"
+    ],
+    "expande": [
+     "siniestro vial",
+     "accidente de tránsito automotor"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "prev-tecnica",
+   "rama": "prev",
+   "forma": "tecnica",
+   "consulta": "movilidad jubilatoria",
+   "conceptoEsperado": "movilidad jubilatoria",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "movilidad jubilatoria → movilidad jubilatoria [prev]",
+     "movilidad jubilatoria → movilidad del haber jubilatorio [prev]"
+    ],
+    "expande": [
+     "movilidad de haberes previsionales",
+     "reajuste de haberes"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "prev-equivalente",
+   "rama": "prev",
+   "forma": "equivalente",
+   "consulta": "movilidad de haberes previsionales",
+   "conceptoEsperado": "movilidad jubilatoria",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "movilidad de haberes previsionales → movilidad jubilatoria [prev]"
+    ],
+    "expande": [
+     "movilidad jubilatoria",
+     "reajuste de haberes"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "prev-variante_ortografica",
+   "rama": "prev",
+   "forma": "variante_ortografica",
+   "consulta": "reajuste de haberes jubilatorios",
+   "conceptoEsperado": "reajuste jubilatorio",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "reajuste de haberes → movilidad jubilatoria [prev]",
+     "reajuste de haberes → reajuste jubilatorio [prev]"
+    ],
+    "expande": [
+     "movilidad jubilatoria",
+     "movilidad de haberes previsionales"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "prev-coloquial",
+   "rama": "prev",
+   "forma": "coloquial",
+   "consulta": "me pagan una jubilación que no alcanza para nada",
+   "conceptoEsperado": "movilidad jubilatoria",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "jubilación → jubilaciones [prev]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "prev-descriptor_judicial",
+   "rama": "prev",
+   "forma": "descriptor_judicial",
+   "consulta": "JUBILACION POR INVALIDEZ",
+   "conceptoEsperado": "jubilación por invalidez",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "JUBILACION POR INVALIDEZ → jubilación por invalidez [prev]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "prev-historica",
+   "rama": "prev",
+   "forma": "historica",
+   "consulta": "AFJP",
+   "conceptoEsperado": "régimen de capitalización",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "AFJP → AFJP [prev]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "prev-normativa",
+   "rama": "prev",
+   "forma": "normativa",
+   "consulta": "art. 53 ley 24.241 pensión",
+   "conceptoEsperado": "pensiones",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "pensión → pensiones [prev]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "prev-factica",
+   "rama": "prev",
+   "forma": "factica",
+   "consulta": "murió mi pareja y la ANSES no me da la pensión",
+   "conceptoEsperado": "pensiones",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "pensión → pensiones [prev]"
+    ],
+    "expande": [],
+    "descriptoresScjm": [
+     "ANSES"
+    ]
+   }
+  },
+  {
+   "id": "prev-procesal",
+   "rama": "prev",
+   "forma": "procesal",
+   "consulta": "ejecución de sentencia previsional",
+   "conceptoEsperado": "ejecución de sentencia",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "ejecución de sentencia → ejecución de sentencia [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "prev-contrapuesta",
+   "rama": "prev",
+   "forma": "contrapuesta",
+   "consulta": "pensión no contributiva",
+   "conceptoEsperado": "pensiones no contributivas",
+   "noDebeExpandirA": [
+    "pensiones"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "pensión no contributiva → pensiones no contributivas [prev]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-tecnica",
+   "rama": "pen",
+   "forma": "tecnica",
+   "consulta": "dolo eventual",
+   "conceptoEsperado": "dolo eventual",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "dolo eventual → dolo eventual [pen]"
+    ],
+    "expande": [
+     "dolo condicionado"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-equivalente",
+   "rama": "pen",
+   "forma": "equivalente",
+   "consulta": "dolo condicionado",
+   "conceptoEsperado": "dolo eventual",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "dolo condicionado → dolo eventual [pen]",
+     "dolo condicionado → dolo indirecto [dan]"
+    ],
+    "expande": [
+     "dolo eventual"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-variante_ortografica",
+   "rama": "pen",
+   "forma": "variante_ortografica",
+   "consulta": "legitima defensa",
+   "conceptoEsperado": "legítima defensa",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "legitima defensa → legítima defensa [pen]"
+    ],
+    "expande": [
+     "defensa legítima"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-coloquial",
+   "rama": "pen",
+   "forma": "coloquial",
+   "consulta": "le disparó al ladrón que entró a su casa",
+   "conceptoEsperado": "legítima defensa",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-descriptor_judicial",
+   "rama": "pen",
+   "forma": "descriptor_judicial",
+   "consulta": "HOMICIDIO CULPOSO",
+   "conceptoEsperado": "homicidio culposo",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "HOMICIDIO CULPOSO → homicidio culposo [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-historica",
+   "rama": "pen",
+   "forma": "historica",
+   "consulta": "violación",
+   "conceptoEsperado": "abuso sexual con acceso carnal",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "violación → abuso sexual con acceso carnal [pen]",
+     "violación → violación [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-normativa",
+   "rama": "pen",
+   "forma": "normativa",
+   "consulta": "art. 80 inc. 11 Código Penal",
+   "conceptoEsperado": "femicidio",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "Código Penal → código penal [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-factica",
+   "rama": "pen",
+   "forma": "factica",
+   "consulta": "lo encontraron con varias bochitas de cocaína",
+   "conceptoEsperado": "tenencia de estupefacientes",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "cocaína → cocaína [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-procesal",
+   "rama": "pen",
+   "forma": "procesal",
+   "consulta": "suspensión del juicio a prueba",
+   "conceptoEsperado": "suspensión del juicio a prueba",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "suspensión del juicio a prueba → suspensión del juicio a prueba [proc_pen]"
+    ],
+    "expande": [
+     "probation",
+     "suspensión del proceso a prueba"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pen-contrapuesta",
+   "rama": "pen",
+   "forma": "contrapuesta",
+   "consulta": "culpa consciente",
+   "conceptoEsperado": "culpa consciente",
+   "noDebeExpandirA": [
+    "dolo eventual"
+   ],
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "culpa consciente → culpa con representación [dan]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_pen-tecnica",
+   "rama": "proc_pen",
+   "forma": "tecnica",
+   "consulta": "prisión preventiva",
+   "conceptoEsperado": "prisión preventiva",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "prisión preventiva → prisión preventiva [proc_pen]"
+    ],
+    "expande": [
+     "detención preventiva",
+     "prisión preventiva peligro de fuga"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_pen-equivalente",
+   "rama": "proc_pen",
+   "forma": "equivalente",
+   "consulta": "detención preventiva",
+   "conceptoEsperado": "prisión preventiva",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "detención preventiva → prisión preventiva [proc_pen]"
+    ],
+    "expande": [
+     "prisión preventiva",
+     "prisión preventiva peligro de fuga"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_pen-variante_ortografica",
+   "rama": "proc_pen",
+   "forma": "variante_ortografica",
+   "consulta": "prision preventiva",
+   "conceptoEsperado": "prisión preventiva",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "prision preventiva → prisión preventiva [proc_pen]"
+    ],
+    "expande": [
+     "detención preventiva",
+     "prisión preventiva peligro de fuga"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_pen-coloquial",
+   "rama": "proc_pen",
+   "forma": "coloquial",
+   "consulta": "lo dejaron preso hasta el juicio",
+   "conceptoEsperado": "prisión preventiva",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "juicio → juicio [proc_pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_pen-descriptor_judicial",
+   "rama": "proc_pen",
+   "forma": "descriptor_judicial",
+   "consulta": "DOBLE CONFORME",
+   "conceptoEsperado": "doble conforme",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "DOBLE CONFORME"
+    ]
+   }
+  },
+  {
+   "id": "proc_pen-historica",
+   "rama": "proc_pen",
+   "forma": "historica",
+   "consulta": "probation",
+   "conceptoEsperado": "suspensión del juicio a prueba",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "probation → suspensión del juicio a prueba [proc_pen]"
+    ],
+    "expande": [
+     "suspensión del juicio a prueba",
+     "suspensión del proceso a prueba"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_pen-normativa",
+   "rama": "proc_pen",
+   "forma": "normativa",
+   "consulta": "art. 8.2.h CADH derecho al recurso",
+   "conceptoEsperado": "doble conforme",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "derecho al recurso → derecho al recurso [ddhh]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_pen-factica",
+   "rama": "proc_pen",
+   "forma": "factica",
+   "consulta": "la policía entró a la casa sin orden",
+   "conceptoEsperado": "allanamiento sin orden",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "policía → policía [s/r]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_pen-procesal",
+   "rama": "proc_pen",
+   "forma": "procesal",
+   "consulta": "procedimiento abreviado",
+   "conceptoEsperado": "juicio abreviado",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "procedimiento → trámites judiciales [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_pen-contrapuesta",
+   "rama": "proc_pen",
+   "forma": "contrapuesta",
+   "consulta": "excarcelación",
+   "conceptoEsperado": "excarcelación",
+   "noDebeExpandirA": [
+    "prisión preventiva"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "excarcelación → excarcelación [proc_pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ejec-tecnica",
+   "rama": "ejec",
+   "forma": "tecnica",
+   "consulta": "libertad condicional",
+   "conceptoEsperado": "libertad condicional",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "libertad condicional → libertad condicional [ejec]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ejec-equivalente",
+   "rama": "ejec",
+   "forma": "equivalente",
+   "consulta": "detención domiciliaria",
+   "conceptoEsperado": "prisión domiciliaria",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "detención domiciliaria → prisión domiciliaria [proc_pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ejec-variante_ortografica",
+   "rama": "ejec",
+   "forma": "variante_ortografica",
+   "consulta": "estimulo educativo",
+   "conceptoEsperado": "estímulo educativo",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "estimulo educativo → estímulo educativo [ejec]"
+    ],
+    "expande": [
+     "reducción de pena por estímulo educativo",
+     "artículo 140 ley 24.660"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ejec-coloquial",
+   "rama": "ejec",
+   "forma": "coloquial",
+   "consulta": "mi marido preso quiere salir los fines de semana",
+   "conceptoEsperado": "salidas transitorias",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "FINES"
+    ]
+   }
+  },
+  {
+   "id": "ejec-descriptor_judicial",
+   "rama": "ejec",
+   "forma": "descriptor_judicial",
+   "consulta": "SALIDAS TRANSITORIAS",
+   "conceptoEsperado": "salidas transitorias",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "SALIDAS TRANSITORIAS → salidas transitorias [ejec]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ejec-historica",
+   "rama": "ejec",
+   "forma": "historica",
+   "consulta": "reducción de pena por estudio",
+   "conceptoEsperado": "estímulo educativo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "pena → pena [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ejec-normativa",
+   "rama": "ejec",
+   "forma": "normativa",
+   "consulta": "art. 140 ley 24.660",
+   "conceptoEsperado": "estímulo educativo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ejec-factica",
+   "rama": "ejec",
+   "forma": "factica",
+   "consulta": "el penal está superpoblado y no hay agua",
+   "conceptoEsperado": "condiciones de detención",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "agua → recursos hídricos [agua]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ejec-procesal",
+   "rama": "ejec",
+   "forma": "procesal",
+   "consulta": "hábeas corpus correctivo",
+   "conceptoEsperado": "habeas corpus correctivo",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "hábeas corpus correctivo → habeas corpus correctivo [const]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ejec-contrapuesta",
+   "rama": "ejec",
+   "forma": "contrapuesta",
+   "consulta": "régimen de visitas carcelarias",
+   "conceptoEsperado": "visitas",
+   "noDebeExpandirA": [
+    "régimen de comunicación"
+   ],
+   "nota": "Visitas a internos (ley 24.660) no son el régimen de comunicación familiar.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "régimen de visitas → régimen de comunicación [fam]",
+     "régimen de visitas → plan de parentalidad [fam]"
+    ],
+    "expande": [
+     "régimen de comunicación",
+     "derecho de comunicación"
+    ],
+    "descriptoresScjm": [],
+    "expansionIndebida": [
+     "régimen de comunicación"
+    ]
+   }
+  },
+  {
+   "id": "adm-tecnica",
+   "rama": "adm",
+   "forma": "tecnica",
+   "consulta": "silencio de la administración",
+   "conceptoEsperado": "silencio de la administración",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "silencio de la administración → silencio de la administración [adm]"
+    ],
+    "expande": [
+     "silencio administrativo",
+     "denegatoria tácita"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "adm-equivalente",
+   "rama": "adm",
+   "forma": "equivalente",
+   "consulta": "denegatoria tácita",
+   "conceptoEsperado": "silencio de la administración",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "denegatoria tácita → silencio de la administración [adm]"
+    ],
+    "expande": [
+     "silencio de la administración",
+     "silencio administrativo"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "adm-variante_ortografica",
+   "rama": "adm",
+   "forma": "variante_ortografica",
+   "consulta": "accion procesal administrativa",
+   "conceptoEsperado": "acción procesal administrativa",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "ACCION PROCESAL ADMINISTRATIVA"
+    ]
+   }
+  },
+  {
+   "id": "adm-coloquial",
+   "rama": "adm",
+   "forma": "coloquial",
+   "consulta": "el municipio no me contesta el reclamo hace un año",
+   "conceptoEsperado": "amparo por mora",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "municipio → Municipalidad [adm]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "adm-descriptor_judicial",
+   "rama": "adm",
+   "forma": "descriptor_judicial",
+   "consulta": "ACCION PROCESAL ADMINISTRATIVA",
+   "conceptoEsperado": "acción procesal administrativa",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "ACCION PROCESAL ADMINISTRATIVA"
+    ]
+   }
+  },
+  {
+   "id": "adm-historica",
+   "rama": "adm",
+   "forma": "historica",
+   "consulta": "contencioso administrativo",
+   "conceptoEsperado": "acción procesal administrativa",
+   "nota": "Equivalencia por jurisdicción (Mendoza), no general.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "contencioso administrativo → competencia contencioso administrativa [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "adm-normativa",
+   "rama": "adm",
+   "forma": "normativa",
+   "consulta": "art. 28 ley 19.549 amparo por mora",
+   "conceptoEsperado": "amparo por mora",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "amparo por mora → amparo por mora [adm]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "adm-factica",
+   "rama": "adm",
+   "forma": "factica",
+   "consulta": "le dieron de baja a un contratado después de años de renovaciones",
+   "conceptoEsperado": "empleo público",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "adm-procesal",
+   "rama": "adm",
+   "forma": "procesal",
+   "consulta": "habilitación de la instancia contencioso administrativa",
+   "conceptoEsperado": "habilitación de instancia",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "adm-contrapuesta",
+   "rama": "adm",
+   "forma": "contrapuesta",
+   "consulta": "revocación del acto administrativo",
+   "conceptoEsperado": "revocación",
+   "noDebeExpandirA": [
+    "nulidad del acto administrativo"
+   ],
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "revocación del acto administrativo → revocación del acto administrativo [adm]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "trib-tecnica",
+   "rama": "trib",
+   "forma": "tecnica",
+   "consulta": "determinación de oficio",
+   "conceptoEsperado": "determinación de oficio",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "determinación de oficio → determinación de oficio [trib]"
+    ],
+    "expande": [
+     "determinación tributaria de oficio",
+     "determinación de deuda fiscal"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "trib-equivalente",
+   "rama": "trib",
+   "forma": "equivalente",
+   "consulta": "determinación tributaria de oficio",
+   "conceptoEsperado": "determinación de oficio",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "determinación tributaria de oficio → determinación de oficio [trib]"
+    ],
+    "expande": [
+     "determinación de oficio",
+     "determinación de deuda fiscal"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "trib-variante_ortografica",
+   "rama": "trib",
+   "forma": "variante_ortografica",
+   "consulta": "solve et repete",
+   "conceptoEsperado": "solve et repete",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "solve et repete → solve et repete [trib]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "trib-coloquial",
+   "rama": "trib",
+   "forma": "coloquial",
+   "consulta": "la AFIP me embargó la cuenta",
+   "conceptoEsperado": "ejecución fiscal",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "AFIP → ARCA [trib]",
+     "AFIP → AFIP [trib]",
+     "embargó → embargo [proc_civ]"
+    ],
+    "expande": [
+     "ARCA"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "trib-descriptor_judicial",
+   "rama": "trib",
+   "forma": "descriptor_judicial",
+   "consulta": "CONVENIO MULTILATERAL",
+   "conceptoEsperado": "convenio multilateral",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "CONVENIO MULTILATERAL → convenio multilateral [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "trib-historica",
+   "rama": "trib",
+   "forma": "historica",
+   "consulta": "AFIP",
+   "conceptoEsperado": "ARCA",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "AFIP → ARCA [trib]",
+     "AFIP → AFIP [trib]"
+    ],
+    "expande": [
+     "ARCA"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "trib-normativa",
+   "rama": "trib",
+   "forma": "normativa",
+   "consulta": "art. 56 ley 11.683 prescripción",
+   "conceptoEsperado": "prescripción tributaria",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "prescripción → prescripción [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "trib-factica",
+   "rama": "trib",
+   "forma": "factica",
+   "consulta": "el municipio cobra una tasa sin prestar ningún servicio",
+   "conceptoEsperado": "tasa municipal",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "municipio → Municipalidad [adm]",
+     "tasa → tasas [trib]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "trib-procesal",
+   "rama": "trib",
+   "forma": "procesal",
+   "consulta": "apremio fiscal excepciones",
+   "conceptoEsperado": "ejecución fiscal",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "fiscal → fiscales [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": [
+     "EXCEPCIONES"
+    ]
+   }
+  },
+  {
+   "id": "trib-contrapuesta",
+   "rama": "trib",
+   "forma": "contrapuesta",
+   "consulta": "evasión tributaria",
+   "conceptoEsperado": "evasión fiscal",
+   "noDebeExpandirA": [
+    "elusión fiscal"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "evasión tributaria → evasión fiscal [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-tecnica",
+   "rama": "const",
+   "forma": "tecnica",
+   "consulta": "acción de amparo",
+   "conceptoEsperado": "acción de amparo",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "acción de amparo → acción de amparo [const]"
+    ],
+    "expande": [
+     "amparo"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-equivalente",
+   "rama": "const",
+   "forma": "equivalente",
+   "consulta": "amparo",
+   "conceptoEsperado": "acción de amparo",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "amparo → acción de amparo [const]"
+    ],
+    "expande": [
+     "acción de amparo"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-variante_ortografica",
+   "rama": "const",
+   "forma": "variante_ortografica",
+   "consulta": "habeas data",
+   "conceptoEsperado": "habeas data",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "habeas data → habeas data [const]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-coloquial",
+   "rama": "const",
+   "forma": "coloquial",
+   "consulta": "la obra social no me cubre el tratamiento y es urgente",
+   "conceptoEsperado": "acción de amparo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "obra social → obras sociales [prev]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-descriptor_judicial",
+   "rama": "const",
+   "forma": "descriptor_judicial",
+   "consulta": "ARBITRARIEDAD DE SENTENCIA",
+   "conceptoEsperado": "arbitrariedad de sentencia",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "ARBITRARIEDAD DE SENTENCIA → arbitrariedad de sentencia [const]",
+     "ARBITRARIEDAD DE SENTENCIA → sentencia arbitraria [proc_civ]"
+    ],
+    "expande": [
+     "sentencia arbitraria",
+     "doctrina de la arbitrariedad"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-historica",
+   "rama": "const",
+   "forma": "historica",
+   "consulta": "recurso de inconstitucionalidad",
+   "conceptoEsperado": "recurso extraordinario provincial",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "recurso de inconstitucionalidad → recurso extraordinario provincial [proc_civ]",
+     "recurso de inconstitucionalidad → recurso de inconstitucionalidad [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-normativa",
+   "rama": "const",
+   "forma": "normativa",
+   "consulta": "art. 43 Constitución Nacional",
+   "conceptoEsperado": "acción de amparo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "Constitución Nacional → Constitución Nacional [const]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-factica",
+   "rama": "const",
+   "forma": "factica",
+   "consulta": "el decreto prohíbe una manifestación en la plaza",
+   "conceptoEsperado": "derecho de reunión",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "decreto → decretos [const]",
+     "plaza → paseos públicos [adm]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-procesal",
+   "rama": "const",
+   "forma": "procesal",
+   "consulta": "recurso extraordinario federal",
+   "conceptoEsperado": "recurso extraordinario federal",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "recurso extraordinario federal → recurso extraordinario federal [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "const-contrapuesta",
+   "rama": "const",
+   "forma": "contrapuesta",
+   "consulta": "control de convencionalidad",
+   "conceptoEsperado": "control de convencionalidad",
+   "noDebeExpandirA": [
+    "control de constitucionalidad"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "control de convencionalidad → control de convencionalidad [ddhh]"
+    ],
+    "expande": [
+     "control convencional",
+     "control de compatibilidad convencional"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ddhh-tecnica",
+   "rama": "ddhh",
+   "forma": "tecnica",
+   "consulta": "control de convencionalidad",
+   "conceptoEsperado": "control de convencionalidad",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "control de convencionalidad → control de convencionalidad [ddhh]"
+    ],
+    "expande": [
+     "control convencional",
+     "control de compatibilidad convencional"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ddhh-equivalente",
+   "rama": "ddhh",
+   "forma": "equivalente",
+   "consulta": "crímenes contra la humanidad",
+   "conceptoEsperado": "crímenes de lesa humanidad",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ddhh-variante_ortografica",
+   "rama": "ddhh",
+   "forma": "variante_ortografica",
+   "consulta": "lesa humanidad",
+   "conceptoEsperado": "crímenes de lesa humanidad",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ddhh-coloquial",
+   "rama": "ddhh",
+   "forma": "coloquial",
+   "consulta": "juicios por los desaparecidos de la dictadura",
+   "conceptoEsperado": "desaparición forzada de personas",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "juicios → juicio [proc_pen]",
+     "desaparecidos → desaparecidos [ddhh]",
+     "dictadura → dictadura militar [const]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ddhh-descriptor_judicial",
+   "rama": "ddhh",
+   "forma": "descriptor_judicial",
+   "consulta": "DESAPARICION FORZADA DE PERSONAS",
+   "conceptoEsperado": "desaparición forzada de personas",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "DESAPARICION FORZADA DE PERSONAS → desaparecidos [ddhh]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ddhh-historica",
+   "rama": "ddhh",
+   "forma": "historica",
+   "consulta": "Pacto de San José de Costa Rica",
+   "conceptoEsperado": "Convención Americana sobre Derechos Humanos",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "PACTO DE SAN JOSE DE COSTA RICA"
+    ]
+   }
+  },
+  {
+   "id": "ddhh-normativa",
+   "rama": "ddhh",
+   "forma": "normativa",
+   "consulta": "art. 75 inc. 22 Constitución Nacional",
+   "conceptoEsperado": "jerarquía constitucional",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "Constitución Nacional → Constitución Nacional [const]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ddhh-factica",
+   "rama": "ddhh",
+   "forma": "factica",
+   "consulta": "un detenido murió por golpes en la comisaría",
+   "conceptoEsperado": "violencia institucional",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "detenido → detenido [proc_pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ddhh-procesal",
+   "rama": "ddhh",
+   "forma": "procesal",
+   "consulta": "medidas provisionales de la Corte Interamericana",
+   "conceptoEsperado": "medidas provisionales",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "medidas provisionales → medidas provisionales [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "ddhh-contrapuesta",
+   "rama": "ddhh",
+   "forma": "contrapuesta",
+   "consulta": "delitos comunes",
+   "conceptoEsperado": "delitos comunes",
+   "noDebeExpandirA": [
+    "crímenes de lesa humanidad"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "delitos comunes → delitos comunes [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-tecnica",
+   "rama": "amb",
+   "forma": "tecnica",
+   "consulta": "principio precautorio",
+   "conceptoEsperado": "principio precautorio",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "principio precautorio → principio precautorio [amb]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-equivalente",
+   "rama": "amb",
+   "forma": "equivalente",
+   "consulta": "principio de precaución",
+   "conceptoEsperado": "principio precautorio",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "principio de precaución → principio precautorio [amb]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-variante_ortografica",
+   "rama": "amb",
+   "forma": "variante_ortografica",
+   "consulta": "dano ambiental",
+   "conceptoEsperado": "daño ambiental",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "dano ambiental → daño ambiental [amb]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-coloquial",
+   "rama": "amb",
+   "forma": "coloquial",
+   "consulta": "la fábrica contamina el río del pueblo",
+   "conceptoEsperado": "contaminación",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-descriptor_judicial",
+   "rama": "amb",
+   "forma": "descriptor_judicial",
+   "consulta": "DAÑO AMBIENTAL",
+   "conceptoEsperado": "daño ambiental",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "DAÑO AMBIENTAL → daño ambiental [amb]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-historica",
+   "rama": "amb",
+   "forma": "historica",
+   "consulta": "ley 25.675",
+   "conceptoEsperado": "ley general del ambiente",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-normativa",
+   "rama": "amb",
+   "forma": "normativa",
+   "consulta": "art. 41 Constitución Nacional",
+   "conceptoEsperado": "derecho al ambiente sano",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "Constitución Nacional → Constitución Nacional [const]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-factica",
+   "rama": "amb",
+   "forma": "factica",
+   "consulta": "fumigan con agroquímicos al lado de la escuela",
+   "conceptoEsperado": "agroquímicos",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "escuela → establecimientos educacionales [s/r]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-procesal",
+   "rama": "amb",
+   "forma": "procesal",
+   "consulta": "amparo ambiental",
+   "conceptoEsperado": "amparo ambiental",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "amparo ambiental → amparo ambiental [const]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "amb-contrapuesta",
+   "rama": "amb",
+   "forma": "contrapuesta",
+   "consulta": "estudio de impacto ambiental",
+   "conceptoEsperado": "estudio de impacto ambiental",
+   "noDebeExpandirA": [
+    "evaluación de impacto ambiental"
+   ],
+   "nota": "Documento técnico vs. procedimiento administrativo (LGA arts. 11-13).",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "impacto ambiental → impacto ambiental [amb]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "agua-tecnica",
+   "rama": "agua",
+   "forma": "tecnica",
+   "consulta": "concesión de uso de agua pública",
+   "conceptoEsperado": "concesión de agua",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "concesión de uso → concesión de uso [adm]"
+    ],
+    "expande": [],
+    "descriptoresScjm": [
+     "AGUAS PUBLICAS"
+    ]
+   }
+  },
+  {
+   "id": "agua-equivalente",
+   "rama": "agua",
+   "forma": "equivalente",
+   "consulta": "derecho de agua",
+   "conceptoEsperado": "concesión de agua",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "DERECHO DE AGUA"
+    ]
+   }
+  },
+  {
+   "id": "agua-variante_ortografica",
+   "rama": "agua",
+   "forma": "variante_ortografica",
+   "consulta": "Departamento General de Irrigacion",
+   "conceptoEsperado": "Departamento General de Irrigación",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "DEPARTAMENTO GENERAL DE IRRIGACION"
+    ]
+   }
+  },
+  {
+   "id": "agua-coloquial",
+   "rama": "agua",
+   "forma": "coloquial",
+   "consulta": "me cortaron el turno de riego",
+   "conceptoEsperado": "turnos de riego",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "turno de riego → turnos de riego [agua]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "agua-descriptor_judicial",
+   "rama": "agua",
+   "forma": "descriptor_judicial",
+   "consulta": "DERECHO DE AGUA",
+   "conceptoEsperado": "derecho de agua",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "DERECHO DE AGUA"
+    ]
+   }
+  },
+  {
+   "id": "agua-historica",
+   "rama": "agua",
+   "forma": "historica",
+   "consulta": "Ley de Aguas de 1884",
+   "conceptoEsperado": "ley de aguas",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "Aguas → recursos hídricos [agua]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "agua-normativa",
+   "rama": "agua",
+   "forma": "normativa",
+   "consulta": "art. 186 Constitución de Mendoza",
+   "conceptoEsperado": "inherencia del agua a la tierra",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "MENDOZA"
+    ]
+   }
+  },
+  {
+   "id": "agua-factica",
+   "rama": "agua",
+   "forma": "factica",
+   "consulta": "perforaron un pozo sin permiso en la finca",
+   "conceptoEsperado": "aguas subterráneas",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "POZOS"
+    ]
+   }
+  },
+  {
+   "id": "agua-procesal",
+   "rama": "agua",
+   "forma": "procesal",
+   "consulta": "apremio por canon de riego",
+   "conceptoEsperado": "canon de riego",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "canon de riego → canon de riego [agua]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "agua-contrapuesta",
+   "rama": "agua",
+   "forma": "contrapuesta",
+   "consulta": "DGI",
+   "conceptoEsperado": "Dirección General Impositiva",
+   "noDebeExpandirA": [
+    "Departamento General de Irrigación"
+   ],
+   "nota": "Sigla ambigua: en Mendoza también nombra a Irrigación.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_civ-tecnica",
+   "rama": "proc_civ",
+   "forma": "tecnica",
+   "consulta": "caducidad de instancia",
+   "conceptoEsperado": "caducidad de instancia",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "caducidad de instancia → caducidad de instancia [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_civ-equivalente",
+   "rama": "proc_civ",
+   "forma": "equivalente",
+   "consulta": "perención de instancia",
+   "conceptoEsperado": "caducidad de instancia",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "perención de instancia → caducidad de instancia [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_civ-variante_ortografica",
+   "rama": "proc_civ",
+   "forma": "variante_ortografica",
+   "consulta": "beneficio de litigar sin gastos",
+   "conceptoEsperado": "beneficio de litigar sin gastos",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "beneficio de litigar sin gastos → beneficio de litigar sin gastos [proc_civ]"
+    ],
+    "expande": [
+     "carta de pobreza"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_civ-coloquial",
+   "rama": "proc_civ",
+   "forma": "coloquial",
+   "consulta": "no tengo plata para pagar el juicio",
+   "conceptoEsperado": "beneficio de litigar sin gastos",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "juicio → juicio [proc_pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_civ-descriptor_judicial",
+   "rama": "proc_civ",
+   "forma": "descriptor_judicial",
+   "consulta": "AUDIENCIA INICIAL",
+   "conceptoEsperado": "audiencia inicial",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "AUDIENCIA INICIAL"
+    ]
+   }
+  },
+  {
+   "id": "proc_civ-historica",
+   "rama": "proc_civ",
+   "forma": "historica",
+   "consulta": "recurso de casación",
+   "conceptoEsperado": "recurso extraordinario provincial",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "recurso de casación → recurso extraordinario provincial [proc_civ]",
+     "recurso de casación → recurso de casación [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_civ-normativa",
+   "rama": "proc_civ",
+   "forma": "normativa",
+   "consulta": "art. 145 CPCCyT Mendoza",
+   "conceptoEsperado": "recurso extraordinario provincial",
+   "nota": "Número de artículo tomado de relaciones-historicas.json; no verificado.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "MENDOZA"
+    ]
+   }
+  },
+  {
+   "id": "proc_civ-factica",
+   "rama": "proc_civ",
+   "forma": "factica",
+   "consulta": "el expediente estuvo paralizado ocho meses",
+   "conceptoEsperado": "caducidad de instancia",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "expediente → expediente [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_civ-procesal",
+   "rama": "proc_civ",
+   "forma": "procesal",
+   "consulta": "medida autosatisfactiva",
+   "conceptoEsperado": "medidas autosatisfactivas",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "medida autosatisfactiva → medidas autosatisfactivas [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "proc_civ-contrapuesta",
+   "rama": "proc_civ",
+   "forma": "contrapuesta",
+   "consulta": "costas al vencido",
+   "conceptoEsperado": "costas",
+   "noDebeExpandirA": [
+    "costas en el orden causado"
+   ],
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "costas al vencido → costas al vencido [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dipr-tecnica",
+   "rama": "dipr",
+   "forma": "tecnica",
+   "consulta": "restitución internacional de menores",
+   "conceptoEsperado": "restitución internacional de menores",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "restitución internacional de menores → restitución internacional de menores [nna]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dipr-equivalente",
+   "rama": "dipr",
+   "forma": "equivalente",
+   "consulta": "sustracción internacional de menores",
+   "conceptoEsperado": "restitución internacional de menores",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "sustracción internacional de menores → sustracción internacional de menores [nna]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dipr-variante_ortografica",
+   "rama": "dipr",
+   "forma": "variante_ortografica",
+   "consulta": "exequatur",
+   "conceptoEsperado": "exequátur",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "exequatur → exequátur [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dipr-coloquial",
+   "rama": "dipr",
+   "forma": "coloquial",
+   "consulta": "mi ex se llevó al nene a España",
+   "conceptoEsperado": "restitución internacional de menores",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "ESPAÑA"
+    ]
+   }
+  },
+  {
+   "id": "dipr-descriptor_judicial",
+   "rama": "dipr",
+   "forma": "descriptor_judicial",
+   "consulta": "JURISDICCION INTERNACIONAL",
+   "conceptoEsperado": "jurisdicción internacional",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "JURISDICCION INTERNACIONAL → jurisdicción internacional [dipr]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dipr-historica",
+   "rama": "dipr",
+   "forma": "historica",
+   "consulta": "Tratados de Montevideo",
+   "conceptoEsperado": "Tratados de Montevideo",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dipr-normativa",
+   "rama": "dipr",
+   "forma": "normativa",
+   "consulta": "art. 2602 CCyC foro de necesidad",
+   "conceptoEsperado": "foro de necesidad",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dipr-factica",
+   "rama": "dipr",
+   "forma": "factica",
+   "consulta": "divorcio celebrado en Italia que hay que inscribir acá",
+   "conceptoEsperado": "reconocimiento de sentencia extranjera",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "divorcio → divorcio [fam]"
+    ],
+    "expande": [],
+    "descriptoresScjm": [
+     "ITALIA"
+    ]
+   }
+  },
+  {
+   "id": "dipr-procesal",
+   "rama": "dipr",
+   "forma": "procesal",
+   "consulta": "exhorto internacional para notificar en el extranjero",
+   "conceptoEsperado": "notificación en el extranjero",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "exhorto → exhortos [proc_civ]",
+     "extranjero → extranjeros [adm]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "dipr-contrapuesta",
+   "rama": "dipr",
+   "forma": "contrapuesta",
+   "consulta": "orden público interno",
+   "conceptoEsperado": "orden público",
+   "noDebeExpandirA": [
+    "orden público internacional"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "orden público → orden público [civ]",
+     "interno → personas privadas de la libertad [pen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pi-tecnica",
+   "rama": "pi",
+   "forma": "tecnica",
+   "consulta": "confusión marcaria",
+   "conceptoEsperado": "confusión de marcas",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "confusión → confusión [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pi-equivalente",
+   "rama": "pi",
+   "forma": "equivalente",
+   "consulta": "confundibilidad marcaria",
+   "conceptoEsperado": "confusión de marcas",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pi-variante_ortografica",
+   "rama": "pi",
+   "forma": "variante_ortografica",
+   "consulta": "nombre de dominio",
+   "conceptoEsperado": "nombres de dominio",
+   "nota": "Hoy falla por el singular de «nombres».",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "nombre → nombre [civ]",
+     "dominio → dominio [rea]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pi-coloquial",
+   "rama": "pi",
+   "forma": "coloquial",
+   "consulta": "otra empresa usa un logo igual al mío",
+   "conceptoEsperado": "confusión de marcas",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "empresa → empresa [com]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pi-descriptor_judicial",
+   "rama": "pi",
+   "forma": "descriptor_judicial",
+   "consulta": "MARCA NOTORIA",
+   "conceptoEsperado": "marca notoria",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "MARCA NOTORIA"
+    ]
+   }
+  },
+  {
+   "id": "pi-historica",
+   "rama": "pi",
+   "forma": "historica",
+   "consulta": "ley 11.723",
+   "conceptoEsperado": "propiedad intelectual",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pi-normativa",
+   "rama": "pi",
+   "forma": "normativa",
+   "consulta": "art. 3 ley 22.362 marcas confundibles",
+   "conceptoEsperado": "confusión de marcas",
+   "nota": "Inciso aplicable no verificado.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "marcas confundibles → marcas confundibles [pi]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pi-factica",
+   "rama": "pi",
+   "forma": "factica",
+   "consulta": "subieron mi libro completo a una web sin permiso",
+   "conceptoEsperado": "derechos de autor",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "libro → libros [s/r]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pi-procesal",
+   "rama": "pi",
+   "forma": "procesal",
+   "consulta": "oposición al registro de marca",
+   "conceptoEsperado": "oposición al registro de marca",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "oposición al registro de marca → oposición al registro de marca [pi]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "pi-contrapuesta",
+   "rama": "pi",
+   "forma": "contrapuesta",
+   "consulta": "dominio público (propiedad intelectual)",
+   "conceptoEsperado": "dominio público",
+   "noDebeExpandirA": [
+    "dominio público del Estado"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "dominio público → dominio público [adm]",
+     "propiedad intelectual → propiedad intelectual [pi]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "gen-tecnica",
+   "rama": "gen",
+   "forma": "tecnica",
+   "consulta": "violencia de género",
+   "conceptoEsperado": "violencia de género",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "violencia de género → violencia de género [gen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "gen-equivalente",
+   "rama": "gen",
+   "forma": "equivalente",
+   "consulta": "violencia contra la mujer",
+   "conceptoEsperado": "violencia de género",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "violencia contra la mujer → violencia de género [gen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "gen-variante_ortografica",
+   "rama": "gen",
+   "forma": "variante_ortografica",
+   "consulta": "violencia economica",
+   "conceptoEsperado": "violencia económica",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "violencia economica → violencia económica [gen]"
+    ],
+    "expande": [
+     "violencia patrimonial",
+     "violencia económica y patrimonial"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "gen-coloquial",
+   "rama": "gen",
+   "forma": "coloquial",
+   "consulta": "mi pareja no me da plata y me controla las cuentas",
+   "conceptoEsperado": "violencia económica",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "gen-descriptor_judicial",
+   "rama": "gen",
+   "forma": "descriptor_judicial",
+   "consulta": "PROHIBICION DE ACERCAMIENTO",
+   "conceptoEsperado": "prohibición de acercamiento",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "PROHIBICION DE ACERCAMIENTO"
+    ]
+   }
+  },
+  {
+   "id": "gen-historica",
+   "rama": "gen",
+   "forma": "historica",
+   "consulta": "mujer golpeada",
+   "conceptoEsperado": "violencia de género",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "mujer golpeada → violencia de género [gen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "gen-normativa",
+   "rama": "gen",
+   "forma": "normativa",
+   "consulta": "art. 5 inc. 4 ley 26.485",
+   "conceptoEsperado": "violencia económica",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "gen-factica",
+   "rama": "gen",
+   "forma": "factica",
+   "consulta": "difundió fotos íntimas de su ex por WhatsApp",
+   "conceptoEsperado": "violencia digital",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "WhatsApp → WhatsApp [s/r]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "gen-procesal",
+   "rama": "gen",
+   "forma": "procesal",
+   "consulta": "medidas preventivas urgentes art. 26 ley 26.485",
+   "conceptoEsperado": "medidas de protección",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "MEDIDAS PREVENTIVAS"
+    ]
+   }
+  },
+  {
+   "id": "gen-contrapuesta",
+   "rama": "gen",
+   "forma": "contrapuesta",
+   "consulta": "violencia como vicio de la voluntad",
+   "conceptoEsperado": "violencia como vicio de la voluntad",
+   "noDebeExpandirA": [
+    "violencia de género"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "violencia como vicio de la voluntad → violencia como vicio de la voluntad [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "nna-tecnica",
+   "rama": "nna",
+   "forma": "tecnica",
+   "consulta": "interés superior del niño",
+   "conceptoEsperado": "interés superior del niño",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "interés superior del niño → interés superior del niño [nna]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "nna-equivalente",
+   "rama": "nna",
+   "forma": "equivalente",
+   "consulta": "capacidad progresiva",
+   "conceptoEsperado": "autonomía progresiva",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "capacidad progresiva → autonomía progresiva [nna]",
+     "capacidad progresiva → capacidad progresiva [civ]"
+    ],
+    "expande": [
+     "autonomía progresiva",
+     "principio de autonomía progresiva"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "nna-variante_ortografica",
+   "rama": "nna",
+   "forma": "variante_ortografica",
+   "consulta": "interes superior del nino",
+   "conceptoEsperado": "interés superior del niño",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "interes superior del nino → interés superior del niño [nna]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "nna-coloquial",
+   "rama": "nna",
+   "forma": "coloquial",
+   "consulta": "el juez nunca escuchó a mi hija",
+   "conceptoEsperado": "derecho a ser oído",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "juez → jueces [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "nna-descriptor_judicial",
+   "rama": "nna",
+   "forma": "descriptor_judicial",
+   "consulta": "MEDIDAS DE PROTECCION",
+   "conceptoEsperado": "medidas de protección",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": [
+     "MEDIDAS DE PROTECCION"
+    ]
+   }
+  },
+  {
+   "id": "nna-historica",
+   "rama": "nna",
+   "forma": "historica",
+   "consulta": "patronato de menores",
+   "conceptoEsperado": "protección integral de derechos",
+   "nota": "Ley 10.903 derogada por ley 26.061 (art. 76). Cambio de paradigma, no sinonimia.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "patronato de menores → patronato de menores [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "nna-normativa",
+   "rama": "nna",
+   "forma": "normativa",
+   "consulta": "art. 27 ley 26.061 abogado del niño",
+   "conceptoEsperado": "abogado del niño",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "abogado del niño → abogado del niño [proc_civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "nna-factica",
+   "rama": "nna",
+   "forma": "factica",
+   "consulta": "separaron a los chicos de la madre y los mandaron a un hogar",
+   "conceptoEsperado": "medidas de protección excepcional",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "nna-procesal",
+   "rama": "nna",
+   "forma": "procesal",
+   "consulta": "declaración de situación de adoptabilidad",
+   "conceptoEsperado": "situación de adoptabilidad",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "situación de adoptabilidad → estado de adoptabilidad [fam]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "nna-contrapuesta",
+   "rama": "nna",
+   "forma": "contrapuesta",
+   "consulta": "tutela",
+   "conceptoEsperado": "tutela",
+   "noDebeExpandirA": [
+    "tutela sindical",
+    "tutela judicial efectiva"
+   ],
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "tutela → tutela [civ]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-tecnica",
+   "rama": "elec",
+   "forma": "tecnica",
+   "consulta": "boleta única de sufragio",
+   "conceptoEsperado": "boleta única de sufragio",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "boleta única de sufragio → boleta única de sufragio [elec]"
+    ],
+    "expande": [
+     "boleta única",
+     "sistema de boleta única"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-equivalente",
+   "rama": "elec",
+   "forma": "equivalente",
+   "consulta": "boleta única",
+   "conceptoEsperado": "boleta única de sufragio",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "boleta única → boleta única de sufragio [elec]"
+    ],
+    "expande": [
+     "boleta única de sufragio",
+     "sistema de boleta única"
+    ],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-variante_ortografica",
+   "rama": "elec",
+   "forma": "variante_ortografica",
+   "consulta": "oficializacion de listas",
+   "conceptoEsperado": "oficialización de listas",
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "oficializacion de listas → oficialización de listas [elec]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-coloquial",
+   "rama": "elec",
+   "forma": "coloquial",
+   "consulta": "no me dejaron votar porque no estaba en el padrón",
+   "conceptoEsperado": "padrón electoral",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-descriptor_judicial",
+   "rama": "elec",
+   "forma": "descriptor_judicial",
+   "consulta": "PARTIDOS POLITICOS",
+   "conceptoEsperado": "partidos políticos",
+   "vozScjmVerificada": true,
+   "lineaBase20261120": {
+    "cumple": true,
+    "reconoce": [
+     "PARTIDOS POLITICOS → partidos políticos [elec]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-historica",
+   "rama": "elec",
+   "forma": "historica",
+   "consulta": "cupo femenino",
+   "conceptoEsperado": "paridad de género",
+   "nota": "Ley 24.012 (cupo) y ley 27.412 (paridad): sucesión normativa, no sinonimia.",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "cupo femenino → cupo femenino [gen]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-normativa",
+   "rama": "elec",
+   "forma": "normativa",
+   "consulta": "art. 37 Constitución Nacional",
+   "conceptoEsperado": "derechos políticos",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "Constitución Nacional → Constitución Nacional [const]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-factica",
+   "rama": "elec",
+   "forma": "factica",
+   "consulta": "un intendente quiere presentarse por cuarta vez",
+   "conceptoEsperado": "reelección",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "intendente → intendente [adm]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-procesal",
+   "rama": "elec",
+   "forma": "procesal",
+   "consulta": "impugnación de candidatura",
+   "conceptoEsperado": "impugnación de candidaturas",
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  },
+  {
+   "id": "elec-contrapuesta",
+   "rama": "elec",
+   "forma": "contrapuesta",
+   "consulta": "elecciones sindicales",
+   "conceptoEsperado": "elecciones sindicales",
+   "noDebeExpandirA": [
+    "elecciones"
+   ],
+   "lineaBase20261120": {
+    "cumple": false,
+    "reconoce": [
+     "elecciones sindicales → elecciones gremiales [sind]"
+    ],
+    "expande": [],
+    "descriptoresScjm": []
+   }
+  }
+ ]
+}
