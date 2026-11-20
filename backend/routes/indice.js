@@ -19,7 +19,7 @@ import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 import { obtenerDocumento } from '../lib/documento.js';
 import { resumenDeArticulo } from '../lib/indiceDialnet.js';
 import { upsertRegistros, estadoIndice, buscarEnIndice } from '../lib/indice.js';
-import { estadoAcervo, textosDe, acervoCubre, buscarPagina, sumarVivos, copiaLista } from '../lib/acervo.js';
+import { estadoAcervo, textosDe, acervoCubre, buscarPagina, sumarVivos, copiaLista, idsNuevosRespectoAcervo } from '../lib/acervo.js';
 import { IVSPasajes } from '../lib/pasajes.js';
 import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
 import { sinRepetidos } from '../lib/claveFallo.js';
@@ -334,6 +334,7 @@ for (const { slug, buscar } of FUENTES) {
 
       let total, totalFuente, siguienteDesde = null, resultados, desdeIndiceLocal = false, avisoFalla = null;
       let totalParcial = false, revisados = 0, aflojado = false;
+      let idsNuevosAcervo = null;
       const parametrosVivo = {
         q: consulta,
         pagina: Number(pagina) > 0 ? Number(pagina) : 1,
@@ -367,6 +368,9 @@ for (const { slug, buscar } of FUENTES) {
 
       try {
         ({ total, totalFuente = null, siguienteDesde = null, resultados, totalParcial = false, revisados = 0, aflojado = false } = await buscar(parametrosVivo));
+        // Verificar novedades contra TODO el acervo antes de guardar las fichas.
+        // Que un fallo no esté en la primera página no significa que sea nuevo.
+        if (pedirEnVivo) idsNuevosAcervo = idsNuevosRespectoAcervo(resultados);
         sinAcceso.delete(slug);
         // lo que trajo el sitio y la copia todavía no tenía, a la copia (de fondo)
         sumarVivos(slug, resultados).catch(() => {});
@@ -488,6 +492,7 @@ for (const { slug, buscar } of FUENTES) {
         guardadosEnIndice: guardados,
         desdeIndiceLocal,
         enVivo: pedirEnVivo ? !desdeIndiceLocal : undefined,
+        ...(pedirEnVivo ? { idsNuevosAcervo } : {}),
         avisoFalla,
         ms: Date.now() - arranque,
       });
