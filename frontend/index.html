@@ -6755,6 +6755,37 @@ function cargarMasOficial(slug){
     });
 }
 
+/* Las consultas oficiales también deben tener límite de concurrencia.
+   Una búsqueda en 15 portales no debe saturar el mismo Azure que está
+   entregando las primeras fichas del acervo. Se hacen cuatro en paralelo;
+   las ya obsoletas no consumen conexión. */
+var colaOrigenPantalla=[],origenPantallaActivos=0;
+function despacharOrigenPantalla(){
+  while(origenPantallaActivos<4&&colaOrigenPantalla.length){
+    var t=colaOrigenPantalla.shift();
+    if(!t.vigente()){t.resolver(null);continue;}
+    origenPantallaActivos++;
+    (function(t){
+      var control=new AbortController();
+      var reloj=setTimeout(function(){control.abort();},35000);
+      fetch(estado.api+"/indice/"+t.slug+"/buscar",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:t.cuerpo,signal:control.signal
+      }).then(t.resolver,t.rechazar).finally(function(){
+        clearTimeout(reloj);
+        origenPantallaActivos--;
+        despacharOrigenPantalla();
+      });
+    })(t);
+  }
+}
+function consultarOrigenPantalla(slug,cuerpo,vigente){
+  return new Promise(function(resolver,rechazar){
+    colaOrigenPantalla.push({slug:slug,cuerpo:JSON.stringify(cuerpo),vigente:vigente,resolver:resolver,rechazar:rechazar});
+    despacharOrigenPantalla();
+  });
+}
+
 function buscarEnFuente(slug,pagina){
   var fCfg=FUENTES_INDICE.filter(function(x){return x.slug===slug;})[0];
   var qi=estado.q.trim();
@@ -6874,10 +6905,13 @@ function buscarEnFuente(slug,pagina){
   // la copia local va por …/local: no le pregunta a ningún sitio oficial y no cuenta para el límite de peticiones
   // Despachar primero las solicitudes /local de todas las bases; las
   // oficiales empiezan en la microtarea siguiente y corren en paralelo.
-  var promesaBusco=Promise.resolve().then(function(){ return fetch(estado.api+"/indice/"+slug+(cuerpo.local?"/local":"/buscar"),{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(cuerpo)
-  }); }).then(function(r){ return r.json(); })
+  var promesaBusco=Promise.resolve().then(function(){
+    if(!cuerpo.local)return consultarOrigenPantalla(slug,cuerpo,function(){return imBusco.pedido===pedido;});
+    return fetch(estado.api+"/indice/"+slug+"/local",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(cuerpo)
+    });
+  }).then(function(r){return r? r.json():null;})
     .then(function(d){
       // SAIJ no atiende al servidor donde está publicada la web, pero sí a
       // los navegadores (ver el bloque de "SAIJ desde el navegador"). Si el
@@ -6907,7 +6941,7 @@ function buscarEnFuente(slug,pagina){
       seVencio=new Promise(function(_,reject){
         idTope=setTimeout(function(){
           reject(Object.assign(new Error("tope de espera del lado del navegador"),{tope:true}));
-        },40000);
+        },cuerpo.local?40000:150000);
       });
   Promise.race([promesaBusco,seVencio]).then(function(d){ clearTimeout(idTope); return d; },
     function(err){ clearTimeout(idTope); throw err; })
