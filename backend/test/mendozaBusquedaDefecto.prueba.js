@@ -11,12 +11,13 @@ test('Mendoza ofrece todos los tribunales y los selecciona por defecto',()=>{
   assert.match(bloque,/tribunales:\s*\[\s*\{v:"",n:"Todos los tribunales"\}/);
   assert.match(html,/tribunal:f\.tribunales\?f\.tribunales\[0\]\.v:null/);
 });
-test('Mendoza busca en paralelo en el acervo y en la fuente oficial, sin bloquear /buscar',()=>{
+test('Mendoza mantiene /buscar desde el acervo y admite consulta oficial concurrente explícita',()=>{
   assert.match(html,/fetch\(estado\.api\+"\/indice\/"\+slug\+"\/local"/);
   assert.match(html,/var promesaBusco=Promise\.resolve\(\)\.then/);
   assert.match(html,/if\(imBusco\.porCopia&&esNueva\)/);
   assert.match(html,/sumarResultadosVivos\(d\)/);
-  assert.doesNotMatch(rutas,/if \(slug === 'mendoza' && acervoCubre\(slug\)/);
+  assert.match(html,/if\(!cuerpo\.local\) cuerpo\.pedirEnVivo=true/);
+  assert.match(rutas,/if \(slug === 'mendoza' && acervoCubre\(slug\) && cuerpo\.pedirEnVivo !== true/);
   assert.match(rutas,/if \(!accesible\(slug\) && acervoCubre\(slug\)\)/);
   assert.match(rutas,/totalParcial:\s*respaldoParcial/);
   assert.match(rutas,/origenAcervo:\s*respaldoParcial\s*\?\s*'indice_parcial'\s*:\s*'sqlite_fts'/);
