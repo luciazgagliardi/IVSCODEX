@@ -164,6 +164,7 @@ export async function agregarAlAcervo(registros) {
   let nuevos = 0;
   db.exec('BEGIN');
   try { for (const r of regs) if (poner(r)) nuevos++; db.exec('COMMIT'); } catch (e) { db.exec('ROLLBACK'); throw e; }
+  if (nuevos) programarRefrescoLectura();
   return nuevos;
 }
 async function volverASumarCosechas() {
@@ -354,6 +355,30 @@ const MAX_EN_COLA = 64;
  */
 const COPIA_PARA_LEER = process.env.ACERVO_COPIA_LOCAL === '1' || Boolean(process.env.WEBSITE_SITE_NAME);
 let archivoLectura = null, copiando = false, generacion = 0;
+let ultimaCopiaMs = 0, refrescoProgramado = null, cambiosPendientes = false;
+const INTERVALO_COPIA_MS = 2 * 60 * 1000;
+/**
+ * La copia SQLite de /tmp no incluye las altas de las consultas en vivo.
+ * Refrescarla en segundo plano, agrupando múltiples escrituras. Nunca hacer
+ * una copia por cada página o por cada usuario: la base es grande y Azure
+ * comparte disco entre réplicas.
+ */
+function programarRefrescoLectura() {
+  if (!COPIA_PARA_LEER || process.env.ACERVO_SIN_SNAPSHOT === '1' || !db || !estado.activo) return;
+  cambiosPendientes = true;
+  if (refrescoProgramado) return;
+  const retraso = Math.max(15_000, INTERVALO_COPIA_MS - (Date.now() - ultimaCopiaMs));
+  refrescoProgramado = setTimeout(async () => {
+    refrescoProgramado = null;
+    if (copiando || estado.importando) { programarRefrescoLectura(); return; }
+    cambiosPendientes = false;
+    await copiarParaLeer();
+    // Si la escritura continuó durante el backup, necesitará otro snapshot
+    // cuando termine la ventana de enfriamiento.
+    if (cambiosPendientes) programarRefrescoLectura();
+  }, retraso);
+  refrescoProgramado.unref?.();
+}
 async function copiarParaLeer() {
   // Diagnóstico/contingencia: permite servir FTS completo desde /home si
   // /tmp no tiene espacio o la copia tarda demasiado. También lo prueba CI.
@@ -371,7 +396,12 @@ async function copiarParaLeer() {
     await sqlite.backup(db, temporal, { rate: 2000 });
     await fsp.rename(temporal, destino);
     archivoLectura = destino;
-    console.log(`[acervo] copia de lectura en el disco local (${Math.round((Date.now() - t0) / 1000)} s)`);
+    ultimaCopiaMs = Date.now();
+    // Los lectores usan la misma ruta del snapshot, pero ahora sus bytes son
+    // nuevos. Forzar que reabran SQLite y no reutilicen páginas cacheadas.
+    generacion++;
+    recordadas.clear();
+    console.log(`[acervo] copia de lectura actualizada (${Math.round((Date.now() - t0) / 1000)} s)`);
   } catch (e) {
     estado.errorCopia = e.message;
     console.warn('[acervo] copia de lectura:', e.message);
@@ -447,7 +477,7 @@ const recordadas = new Map();
 const enVuelo = new Map();
 export function buscarPagina(base, q, opciones = {}, { espera = ESPERA_HILO_MS, prioridad = 1 } = {}) {
   if (!acervoCubre(base)) return Promise.resolve(null);
-  const clave = JSON.stringify([estado.version, base, q, opciones]);
+  const clave = JSON.stringify([estado.version, generacion, base, q, opciones]);
   const ya = recordadas.get(clave);
   if (ya && Date.now() - ya.t < RECUERDA_MS) return Promise.resolve(ya.r);
   if (enVuelo.has(clave)) return enVuelo.get(clave);
