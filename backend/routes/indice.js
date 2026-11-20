@@ -248,7 +248,7 @@ async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta
     ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}), ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}) };
   // a pedido de la pantalla (vista previa) se espera poco; cuando el sitio no contestó, la copia es la respuesta y se la espera más
   let p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
-    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina, rapida, soloConteo }, { espera: rapida ? 7000 : (respaldo ? 30_000 : 30_000), prioridad: rapida ? 9 : (soloConteo ? 4 : (respaldo ? 3 : 0)) });
+    tribunal: typeof tribunal === 'string' ? tribunal : '', desde, porPagina, rapida, soloConteo }, { espera: rapida ? 7000 : (soloConteo ? 50_000 : 30_000), prioridad: rapida ? 9 : (soloConteo ? 4 : (respaldo ? 3 : 0)) });
   // La vista rápida no debe arrancar otra consulta FTS completa ni bloquear
   // el siguiente buscador. Si la base está ocupada, responder sin vista.
   if (!p && (rapida || soloConteo)) return null;
