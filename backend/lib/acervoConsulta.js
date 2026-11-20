@@ -103,7 +103,13 @@ const TIPO_SAIJ = { sumarios: ['sumario'], fallos: ['fallo'], todo: ['sumario', 
  */
 export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', tribunal = '', variantes = [], desde = 0, porPagina = 20 } = {}) {
   const mag = ftsConMagistrados(db);
-  const principal = consultaFts(q, modo, excluir, mag ? apellidos(db) : null);
+  // Calcular todos los apellidos obliga a recorrer la tabla completa (cientos
+  // de miles de filas). No hacerlo en cada primera búsqueda temática de cada
+  // hilo: sólo se necesita para expandir consultas con un nombre de pila.
+  // La búsqueda normal sigue incluyendo magistrados en FTS5.
+  const ts = terminos(q);
+  const tieneNombreDePila = ts.length <= 5 && ts.some((w) => NOMBRES_DE_PILA.has(w));
+  const principal = consultaFts(q, modo, excluir, mag && tieneNombreDePila ? apellidos(db) : null);
   if (!principal) return { total: 0, resultados: [], siguienteDesde: null };
 
   // La búsqueda local debe conservar las mismas formas equivalentes que la
