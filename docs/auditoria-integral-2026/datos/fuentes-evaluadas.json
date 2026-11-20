@@ -1,0 +1,2430 @@
+{
+  "version": "2026-11-20",
+  "metodo": "Pruebas HTTPS reales desde el entorno de auditoría (salida por EE.UU., sólo HTTPS a puerto 443 alcanzable); adaptadores existentes ejecutados con NODE_USE_ENV_PROXY=1; sin eludir captchas, logins ni robots.",
+  "criterios_puntaje": [
+    "autoridad",
+    "integridad",
+    "cobertura",
+    "actualizacion",
+    "calidad_documental",
+    "precision_metadatos",
+    "facilidad_busqueda",
+    "estabilidad",
+    "utilidad_marginal",
+    "viabilidad_tecnica"
+  ],
+  "escala": "1 (muy bajo) a 5 (muy alto)",
+  "limitaciones_entorno": [
+    "Sin HTTP plano: el proxy devuelve 405",
+    "Puertos no estándar inalcanzables (Salta 8091/9091)",
+    "Varios sitios provinciales cierran el túnel TLS o responden 403 a IP extranjera: se marcan como no verificados, no como caídos"
+  ],
+  "fuentes": [
+    {
+      "id": "mendoza",
+      "grupo": "integrada",
+      "nombre": "Poder Judicial de Mendoza · buscador de jurisprudencia",
+      "organismo": "Suprema Corte de Justicia de Mendoza",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "Mendoza",
+      "estado_integracion": "integrada (lib/indiceMza.js)",
+      "estado_verificado": "funciona",
+      "automatizacion": {
+        "robots": "robots.txt inexistente (404)",
+        "terminos": "no localizados",
+        "captcha": "no"
+      },
+      "evidencia": [
+        {
+          "url": "https://wwwjuri.jus.mendoza.gov.ar/bib/jurisprudencia/funciones/consultar.php",
+          "metodo": "POST",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "adaptador ejecutado: 323 resultados para «daño moral», 20 devueltos, fallo del 12/08/2026"
+        }
+      ],
+      "clasificacion_final": "mantener",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 4,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 4,
+          "utilidad_marginal": 5,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "Oficial y vigente; cobertura parcial de fueros e instancias ya documentada."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "caba",
+      "grupo": "integrada",
+      "nombre": "TSJ CABA · buscador de jurisprudencia",
+      "organismo": "Tribunal Superior de Justicia de la CABA",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "CABA",
+      "estado_integracion": "integrada (lib/indiceCaba.js)",
+      "estado_verificado": "ROTA: el host configurado no resuelve",
+      "hallazgo": "indiceCaba.js usa http://jurisprudencia.tsjbaires.gob.ar (ENOTFOUND). El servicio vive en https://jurisprudencia.tsjbaires.gov.ar/jurisprudencia/ detrás de Cloudflare y responde al mismo formulario ASP.",
+      "automatizacion": {
+        "robots": "Content-Signal: search=yes, ai-train=no, use=reference (Cloudflare)",
+        "captcha": "no en el formulario; Cloudflare puede desafiar según IP"
+      },
+      "evidencia": [
+        {
+          "url": "http://jurisprudencia.tsjbaires.gob.ar/",
+          "metodo": "GET",
+          "http": "DNS ENOTFOUND",
+          "fecha": "2026-11-20",
+          "observacion": "falla del adaptador en vivo"
+        },
+        {
+          "url": "https://jurisprudencia.tsjbaires.gov.ar/jurisprudencia/resultadoBusqueda.asp",
+          "metodo": "POST",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "body win-1252 textoLibreAlgunas=da%F1o+moral&cantRegPagina=10&post=1&pag=1 -> «Se encontraron 955 resultados», primer fallo 12/11/2026"
+        }
+      ],
+      "metodo_tecnico": "Cambiar HOST a jurisprudencia.tsjbaires.gov.ar y el esquema a https; conservar la codificación windows-1252.",
+      "clasificacion_final": "reparar_urgente",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 3,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 2,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 4
+        },
+        "justificacion": "Fuente valiosa; hoy cae por cambio de dominio, y Cloudflare introduce riesgo de bloqueo."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "saij",
+      "grupo": "integrada",
+      "nombre": "SAIJ",
+      "organismo": "Ministerio de Justicia de la Nación",
+      "naturaleza": "Agregador oficial",
+      "jurisdiccion": "Nacional y provincial",
+      "estado_integracion": "integrada (lib/indiceSaij.js, textoSaij.js; vistas provinciales)",
+      "estado_verificado": "funciona",
+      "hallazgo": "robots.txt de saij.gob.ar prohíbe /descarga-archivo, que lib/textoSaij.js usa para bajar el PDF del fallo. Para pedidos puntuales iniciados por el usuario es discutible; para cosecha masiva no corresponde.",
+      "automatizacion": {
+        "robots": "Disallow: /convert-html-to-pdf, /descarga-archivo, /archivo.php, /index.php, /urls, /_pdf"
+      },
+      "evidencia": [
+        {
+          "url": "https://www.saij.gob.ar/busqueda",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "adaptador: 20 resultados para «daño moral»"
+        },
+        {
+          "url": "https://www.saij.gob.ar/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "ver reglas"
+        }
+      ],
+      "clasificacion_final": "mantener_con_ajuste",
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 3,
+          "cobertura": 5,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 4,
+          "utilidad_marginal": 5,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "Agregador amplio; ajustar la descarga de PDF a robots."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "csjn_via_saij",
+      "grupo": "integrada",
+      "nombre": "CSJN vía SAIJ",
+      "organismo": "SAIJ (faceta CSJN)",
+      "naturaleza": "Agregador oficial",
+      "jurisdiccion": "Federal",
+      "estado_integracion": "integrada",
+      "estado_verificado": "funciona (20 fichas para «daño moral»)",
+      "evidencia": [
+        {
+          "url": "https://www.saij.gob.ar/busqueda",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "faceta Tribunal/CORTE SUPREMA…; resultados de 1986"
+        }
+      ],
+      "clasificacion_final": "mantener",
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 2,
+          "cobertura": 3,
+          "actualizacion": 3,
+          "calidad_documental": 3,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 4,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "Ruta secundaria; la directa de la CSJN no es automatizable (reCAPTCHA)."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "dialnet",
+      "grupo": "integrada",
+      "nombre": "Dialnet",
+      "organismo": "Universidad de La Rioja",
+      "naturaleza": "Índice académico",
+      "jurisdiccion": "Internacional",
+      "estado_integracion": "integrada",
+      "estado_verificado": "no verificable desde este entorno",
+      "evidencia": [
+        {
+          "url": "https://dialnet.unirioja.es/",
+          "metodo": "GET",
+          "http": "ECONNRESET",
+          "fecha": "2026-11-20",
+          "observacion": "túnel cerrado en dos intentos; no se distingue bloqueo de red de caída"
+        }
+      ],
+      "no_verificado": [
+        "Estado real del servicio desde Argentina/Azure"
+      ],
+      "clasificacion_final": "mantener",
+      "puntajes": {
+        "valores": {
+          "autoridad": 3,
+          "integridad": 3,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 3,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 3,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 3
+        },
+        "justificacion": "Doctrina; no se pudo probar en esta corrida."
+      }
+    },
+    {
+      "id": "mendozalegal",
+      "grupo": "integrada",
+      "nombre": "Mendoza Legal",
+      "organismo": "Revista privada",
+      "naturaleza": "Selección editorial",
+      "jurisdiccion": "Mendoza",
+      "estado_integracion": "integrada (WordPress REST)",
+      "estado_verificado": "funciona (13 resultados)",
+      "automatizacion": {
+        "robots": "User-agent: * / Disallow: (vacío)"
+      },
+      "evidencia": [
+        {
+          "url": "https://mendozalegal.com/wp-json/wp/v2/posts",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "adaptador OK"
+        },
+        {
+          "url": "https://mendozalegal.com/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "sin restricciones"
+        }
+      ],
+      "clasificacion_final": "mantener",
+      "puntajes": {
+        "valores": {
+          "autoridad": 2,
+          "integridad": 2,
+          "cobertura": 2,
+          "actualizacion": 4,
+          "calidad_documental": 3,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 4,
+          "estabilidad": 4,
+          "utilidad_marginal": 2,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "Editorial; no confirma existencia de fallos."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "corteidh",
+      "grupo": "integrada",
+      "nombre": "Corte IDH · buscador jurisprudencial",
+      "organismo": "Corte Interamericana de Derechos Humanos",
+      "naturaleza": "Tribunal internacional",
+      "jurisdiccion": "Sistema Interamericano",
+      "estado_integracion": "integrada (indiceCorteidh.js + corpusCorteidh.js)",
+      "estado_verificado": "BLOQUEADA desde este entorno: Cloudflare challenge",
+      "hallazgo": "El 20/11/2026 get_jurisprudencia_search.cfm y la portada responden 403 con cf-mitigated: challenge. robots.txt agrega Content-Signal ai-train=no y bloquea ClaudeBot/GPTBot y otros agentes de IA.",
+      "automatizacion": {
+        "robots": "User-agent: * Allow: / ; Content-Signal: search=yes,ai-train=no,use=reference; Disallow total para ClaudeBot, anthropic-ai, GPTBot, CCBot, Google-Extended, etc.",
+        "captcha": "desafío Cloudflare (no eludir)"
+      },
+      "evidencia": [
+        {
+          "url": "https://www.corteidh.or.cr/jurisprudencia-search.cfm?lang=es",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "cf-mitigated: challenge; title «Just a moment...»"
+        },
+        {
+          "url": "https://corteidh.or.cr/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "Content-Signal y bloqueos a agentes de IA"
+        }
+      ],
+      "metodo_tecnico": "Priorizar el corpus local (corpusCorteidh.js) y degradar con aviso; no resolver el desafío con navegador automatizado. Si se requiere actualización, pedir datos al tribunal.",
+      "no_verificado": [
+        "Si el desafío también aparece desde la IP de producción"
+      ],
+      "clasificacion_final": "mantener_corpus_local",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 5,
+          "actualizacion": 4,
+          "calidad_documental": 5,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 2,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 2
+        },
+        "justificacion": "Autoridad máxima regional; viabilidad en vivo comprometida."
+      }
+    },
+    {
+      "id": "rionegro",
+      "grupo": "integrada",
+      "nombre": "Poder Judicial de Río Negro · Protocolo web",
+      "organismo": "STJ de Río Negro",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "Río Negro",
+      "estado_integracion": "integrada",
+      "estado_verificado": "BLOQUEADA desde este entorno: CloudFront 403",
+      "evidencia": [
+        {
+          "url": "https://fallos.jusrionegro.gov.ar/protocoloweb/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "CloudFront «Request blocked»; probable restricción por origen de IP (egress EE.UU.)"
+        }
+      ],
+      "no_verificado": [
+        "Comportamiento desde IP argentina o desde Azure de producción"
+      ],
+      "clasificacion_final": "mantener_vigilar",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 3,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 4,
+          "estabilidad": 2,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 3
+        },
+        "justificacion": "Oficial; bloqueo WAF observado."
+      }
+    },
+    {
+      "id": "juristeca",
+      "grupo": "integrada",
+      "nombre": "Juristeca",
+      "organismo": "Consejo de la Magistratura CABA",
+      "naturaleza": "Repositorio institucional",
+      "jurisdiccion": "CABA",
+      "estado_integracion": "integrada",
+      "estado_verificado": "funciona (1382 resultados)",
+      "hallazgo": "robots.txt: User-agent: * Disallow: /fallos/ y /busqueda-avanzada-de-jurisprudencia/; User-agent: ClaudeBot Disallow: /. El adaptador enlaza y el descargador baja PDFs de /fallos/.",
+      "automatizacion": {
+        "robots": "Disallow /fallos/ para todos"
+      },
+      "evidencia": [
+        {
+          "url": "https://juristeca.jusbaires.gob.ar/baj/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "adaptador OK, fallo del 02/10/2026"
+        },
+        {
+          "url": "https://juristeca.jusbaires.gob.ar/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "Disallow /fallos/"
+        }
+      ],
+      "clasificacion_final": "mantener_con_ajuste",
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 3,
+          "cobertura": 3,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 4,
+          "estabilidad": 4,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 3
+        },
+        "justificacion": "Útil; no cosechar /fallos/ en masa."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "santafe",
+      "grupo": "integrada",
+      "nombre": "Corte Suprema de Santa Fe · BDJ",
+      "organismo": "CSJ Santa Fe",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "Santa Fe",
+      "estado_integracion": "integrada (vía ScraperAPI según proxyOrigen.js)",
+      "estado_verificado": "no verificable desde este entorno",
+      "evidencia": [
+        {
+          "url": "https://portal.justiciasantafe.gov.ar/bdj/index.php",
+          "metodo": "GET",
+          "http": "ECONNRESET/TLS",
+          "fecha": "2026-11-20",
+          "observacion": "túnel cerrado; bdj.justiciasantafe.gov.ar igual"
+        }
+      ],
+      "no_verificado": [
+        "Funcionamiento actual"
+      ],
+      "clasificacion_final": "mantener_vigilar",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 3,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 4,
+          "estabilidad": 2,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 3
+        },
+        "justificacion": "Depende de un proxy comercial para alcanzar el origen."
+      }
+    },
+    {
+      "id": "catamarca",
+      "grupo": "integrada",
+      "nombre": "Poder Judicial de Catamarca",
+      "organismo": "Corte de Justicia de Catamarca",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "Catamarca",
+      "estado_integracion": "cosecha local",
+      "estado_verificado": "origen responde; acervo local vacío en este entorno",
+      "automatizacion": {
+        "robots": "User-agent: * Disallow: (vacío)"
+      },
+      "evidencia": [
+        {
+          "url": "https://consulta.jurisprudencia.juscatamarca.gob.ar/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "portada"
+        },
+        {
+          "url": "https://consulta.jurisprudencia.juscatamarca.gob.ar/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "sin restricciones"
+        },
+        {
+          "url": "http://200.61.223.41/app/juris/index.php?r=sentencia/admin",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "enlace de Justicia.ar (IP pública) no accesible"
+        }
+      ],
+      "clasificacion_final": "mantener",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 2,
+          "cobertura": 2,
+          "actualizacion": 3,
+          "calidad_documental": 3,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 4
+        },
+        "justificacion": "Cosecha parcial."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "scba_juba",
+      "grupo": "integrada",
+      "nombre": "SCBA · JUBA",
+      "organismo": "Suprema Corte de Buenos Aires",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "Provincia de Buenos Aires",
+      "estado_integracion": "integrada",
+      "estado_verificado": "funciona (2744 resultados)",
+      "evidencia": [
+        {
+          "url": "https://juba.scba.gov.ar/Buscar.aspx",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "adaptador OK, fallo del 15/10/2026"
+        }
+      ],
+      "clasificacion_final": "mantener",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 4,
+          "utilidad_marginal": 5,
+          "viabilidad_tecnica": 4
+        },
+        "justificacion": "Sumarios de SCBA y cámaras con texto completo."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "csjn_sj",
+      "grupo": "argentina_nacional",
+      "nombre": "Secretaría de Jurisprudencia CSJN (sjconsulta)",
+      "organismo": "Corte Suprema de Justicia de la Nación",
+      "naturaleza": "Tribunal supremo; fuente primaria",
+      "autoridad": "Máxima (Fallos de la CSJN)",
+      "jurisdiccion": "Federal",
+      "competencia": "Originaria y apelada (REX, queja)",
+      "materias": "Todas",
+      "instancias": "CSJN",
+      "tipos_documentales": "Sumarios (1863–2026), fallos completos (1994–2026), fallos destacados, acuerdos, novedades, índice de REX, tomos completos de «Fallos» (1 a 349) en PDF",
+      "antiguedad": "1863–2026",
+      "actualizacion": "«Actualizado al 19/11/2026» en sj.csjn.gov.ar",
+      "texto": "Completo y sumarios",
+      "metadatos": "Altos (tomo/página, voces, materias)",
+      "motor": "Formularios Java (sjconsulta) protegidos con reCAPTCHA Enterprise; nueva portada sj.csjn.gov.ar",
+      "api": "No pública",
+      "acceso": "reCAPTCHA Enterprise en sumarios, fallos, novedades y destacados; endpoint de paginado de novedades devuelve 403 de WAF",
+      "automatizacion": {
+        "robots": "sjconsulta: sin robots.txt (404); sjservicios: sin robots",
+        "captcha": "sí (reCAPTCHA Enterprise sitekey 6Lc9hfAr…)",
+        "veredicto": "búsqueda: no automatizable; tomos PDF: descarga directa sin captcha"
+      },
+      "evidencia": [
+        {
+          "url": "https://sjservicios.csjn.gov.ar/sj/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "redirige por JS a https://sj.csjn.gov.ar/"
+        },
+        {
+          "url": "https://sjconsulta.csjn.gov.ar/sjconsulta/consultaSumarios/consulta.html",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "form sumarioForm + recaptcha/enterprise.js"
+        },
+        {
+          "url": "https://sjconsulta.csjn.gov.ar/sjconsulta/fallos/consulta.html",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "recaptcha.enterprise.execute()"
+        },
+        {
+          "url": "https://sjconsulta.csjn.gov.ar/sjconsulta/novedades/paginarNovedades.html?indice=0",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "página de bloqueo WAF"
+        },
+        {
+          "url": "https://sjservicios.csjn.gov.ar/sj/tomosFallos.do?method=iniciar",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "lista de tomos 1 a 349; 90 enlaces verTomo"
+        },
+        {
+          "url": "https://sjservicios.csjn.gov.ar/sj/verTomo?tomoId=447",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "application/pdf, LibroVol349-1.pdf, ~5,2 MB, %PDF-1.6"
+        }
+      ],
+      "metodo_tecnico": "Búsqueda: catálogo manual. Dataset: cosechar una vez los PDF de tomos de «Fallos» (verTomo?tomoId=N) con espera generosa, extraer texto y segmentar por fallo usando la cita tomo:página; útil como acervo verificable de citas «Fallos T:P».",
+      "utilidad_marginal": "Alta: corrige la dependencia de SAIJ para citas «Fallos» y da la colección oficial completa.",
+      "clasificacion_final": "catalogo_manual + dataset_tomos",
+      "no_verificado": [
+        "Términos de uso escritos de la SJ",
+        "Rango completo de tomoId (357–447 observados en la página)"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 5,
+          "cobertura": 5,
+          "actualizacion": 5,
+          "calidad_documental": 5,
+          "precision_metadatos": 5,
+          "facilidad_busqueda": 2,
+          "estabilidad": 4,
+          "utilidad_marginal": 5,
+          "viabilidad_tecnica": 2
+        },
+        "justificacion": "Fuente máxima; búsqueda tras reCAPTCHA, pero tomos PDF descargables."
+      }
+    },
+    {
+      "id": "pjn_federal_nacional",
+      "grupo": "argentina_nacional",
+      "nombre": "Tribunales Federales y Nacionales · buscador de fallos (CSJN)",
+      "organismo": "CSJN / Poder Judicial de la Nación",
+      "naturaleza": "Órganos judiciales oficiales",
+      "autoridad": "Alta (cámaras, tribunales orales y primera instancia)",
+      "jurisdiccion": "Federal y nacional (todas las jurisdicciones federales)",
+      "materias": "Todas",
+      "instancias": "Primera instancia, tribunales orales, cámaras, Casación",
+      "tipos_documentales": "Sentencias en PDF con tribunal, expediente, carátula y fecha",
+      "antiguedad": "Base histórica (resultados 2013–2014 observados) + sentencias nuevas diarias",
+      "actualizacion": "Diaria (20 sentencias fechadas 20/11/2026 en portada)",
+      "texto": "PDF completo",
+      "metadatos": "Medios (tribunal, expediente, carátula, fecha)",
+      "motor": "Nuevo buscador en inicio.html con widget «cap-widget» (captcha de prueba de trabajo); buscador histórico buscador-de-fallos.html sin captcha",
+      "api": "No",
+      "acceso": "captcha en el buscador nuevo",
+      "automatizacion": {
+        "robots": "www.csjn.gov.ar/robots.txt: Disallow /tribunales-federales-nacionales/inicio.html, /d/, /scp/include/, /adj/fallos/, /adj/pdfs/",
+        "captcha": "sí (cap-widget)",
+        "veredicto": "no automatizable: robots prohíbe portada, PDFs y descarga"
+      },
+      "evidencia": [
+        {
+          "url": "https://www.csjn.gov.ar/tribunales-federales-nacionales/inicio.html",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "20 sentencias del día con metadatos en base64 y PDF en d/sentencia-SGU-*.pdf; form con token de cap-widget"
+        },
+        {
+          "url": "https://www.csjn.gov.ar/tribunales-federales-nacionales/buscador-de-fallos.html",
+          "metodo": "POST",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "POST acc=search&tags=… devuelve 20 por página, fechas 2013–2014; filtro de fechas 2025–2026 = 0"
+        },
+        {
+          "url": "https://www.csjn.gov.ar/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "prohibiciones citadas"
+        },
+        {
+          "url": "https://scw.pjn.gov.ar/scw/home.seam",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "consulta de causas con captcha.pjn.gov.ar (no es base de jurisprudencia)"
+        },
+        {
+          "url": "https://juris.pjn.gov.ar/",
+          "metodo": "GET",
+          "http": "recv failure",
+          "fecha": "2026-11-20",
+          "observacion": "no responde"
+        }
+      ],
+      "metodo_tecnico": "Catálogo manual. Solicitar a la CSJN acceso por convenio o dataset (la Acordada 10/2025 amplió la publicación).",
+      "utilidad_marginal": "Muy alta en contenido (primera instancia y cámaras nacionales), pero inviable automáticamente.",
+      "clasificacion_final": "catalogo_manual",
+      "no_verificado": [
+        "Cobertura temporal exacta del buscador nuevo"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 3,
+          "cobertura": 5,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 5,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Contenido excelente; robots y captcha cierran la automatización."
+      }
+    },
+    {
+      "id": "csjn_datos",
+      "grupo": "argentina_nacional",
+      "nombre": "Datos abiertos CSJN",
+      "organismo": "CSJN",
+      "naturaleza": "Portal de datos (CKAN)",
+      "jurisdiccion": "Federal",
+      "tipos_documentales": "309 datasets: administración, presupuesto, Oficina de la Mujer (femicidios), OVD",
+      "texto": "No aplica",
+      "evidencia": [
+        {
+          "url": "https://datos.csjn.gov.ar/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "309 datasets"
+        },
+        {
+          "url": "https://datos.csjn.gov.ar/dataset?q=sentencias",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "0 resultados; también 0 para «fallos» y «jurisprudencia»"
+        }
+      ],
+      "utilidad_marginal": "Nula para jurisprudencia; útil sólo para estadística (femicidios).",
+      "clasificacion_final": "descartar_para_busqueda",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 1,
+          "actualizacion": 4,
+          "calidad_documental": 3,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 4,
+          "utilidad_marginal": 1,
+          "viabilidad_tecnica": 4
+        },
+        "justificacion": "Sin sentencias."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "datos_jus",
+      "grupo": "argentina_nacional",
+      "nombre": "Portal de Datos Justicia Argentina (datos.jus.gob.ar)",
+      "organismo": "Ministerio de Justicia de la Nación",
+      "naturaleza": "Portal CKAN oficial",
+      "licencia": "CC-BY-4.0 (datasets relevantes)",
+      "jurisdiccion": "Nacional y provincial",
+      "tipos_documentales": "63 datasets; relevantes: Tesauro SAIJ (RDF/SKOS), Base Infoleg normativa nacional (ZIP), Base SAIJ normativa provincial (CSV), estadísticas judiciales",
+      "api": "CKAN API v3 (package_search, package_show, package_list)",
+      "actualizacion": "Infoleg y normativa provincial: 02/11/2026; Tesauro: archivo de 27/10/2020",
+      "automatizacion": {
+        "licencia": "CC-BY-4.0",
+        "veredicto": "plenamente automatizable"
+      },
+      "evidencia": [
+        {
+          "url": "https://datos.jus.gob.ar/api/3/action/package_list",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "63 datasets"
+        },
+        {
+          "url": "https://datos.jus.gob.ar/api/3/action/package_search?q=jurisprudencia",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "count 0: no hay datasets de sentencias"
+        },
+        {
+          "url": "https://datos.jus.gob.ar/api/3/action/package_show?id=base-de-datos-legislativos-infoleg",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "ZIP base-infoleg-normativa-nacional.zip, last_modified 2026-11-02"
+        },
+        {
+          "url": "https://datos.jus.gob.ar/api/3/action/package_show?id=base-saij-de-normativa-provincial",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "CSV base-saij-normativa-provincial.csv, 2026-11-02"
+        },
+        {
+          "url": "https://datos.jus.gob.ar/dataset/e41e8224-f868-4688-9fae-94d320f8ee5e/resource/0a823ec3-4609-41b6-8af8-93afd23aaf9c/download/tesauro-saij.xml",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "7,8 MB; 15.117 skos:Concept, 6.581 altLabel, 15.086 broader, 2.287 related; sha256 eda195df… = el ya incorporado en backend/datos/vocabulario/inventario.json"
+        }
+      ],
+      "metodo_tecnico": "Tesauro: ya integrado (verificar hash periódicamente). Infoleg: descargar ZIP mensual, indexar en FTS5 (id_norma, tipo, número, fecha, organismo, título, texto_resumido, URL a texto) y enlazar citas de normas en los fallos. Normativa provincial SAIJ: CSV para resolver citas de leyes provinciales.",
+      "utilidad_marginal": "Alta para normativa y verificación de citas legales; nula para sentencias.",
+      "clasificacion_final": "dataset_p0",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 5,
+          "estabilidad": 5,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "Datos abiertos con licencia clara; no contienen jurisprudencia."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "tfn",
+      "grupo": "argentina_administrativa",
+      "nombre": "Tribunal Fiscal de la Nación · buscador asistido por IA + últimas sentencias",
+      "organismo": "Tribunal Fiscal de la Nación (Ministerio de Economía)",
+      "naturaleza": "Tribunal administrativo con funciones jurisdiccionales",
+      "autoridad": "Alta en materia tributaria y aduanera",
+      "jurisdiccion": "Nacional",
+      "competencia": "Impositiva (salas A–D) y aduanera (E–G)",
+      "materias": "Tributario, aduanero, procedimiento fiscal, sanciones",
+      "instancias": "TFN y fallos de la CNCAF",
+      "tipos_documentales": "Resoluciones/sentencias (30.685), fallos TFN (15.604), fallos CNCAF (8.055), doctrinas identificadas (120.159), PDF (26.938)",
+      "texto": "Completo (texto_completo en la respuesta) + PDF",
+      "metadatos": "Altos, pero «doctrinas» y «objeto» son extracciones asistidas por IA",
+      "motor": "Next.js; backend https://api.jurisprudencia-tfn.ar (FastAPI): POST /hybridSearch, GET /searchStats, /filters, /latestCases",
+      "api": "JSON no documentada públicamente pero abierta (sin clave ni captcha)",
+      "automatizacion": {
+        "robots": "sin robots.txt en la API (404)",
+        "captcha": "no",
+        "terminos": "no localizados",
+        "veredicto": "viable con moderación; la API la opera un tercero (mismo stack que Santa Cruz) bajo dominio oficial mecon.gob.ar"
+      },
+      "evidencia": [
+        {
+          "url": "https://jurisprudenciatfn.mecon.gob.ar/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "TFN — Buscador de Jurisprudencia asistido por IA"
+        },
+        {
+          "url": "https://api.jurisprudencia-tfn.ar/searchStats",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "{resoluciones_totales:30685, fallos_tfn:15604, fallos_cncaf:8055, doctrinas_identificadas:120159, fallos_con_pdf:26938}"
+        },
+        {
+          "url": "https://api.jurisprudencia-tfn.ar/hybridSearch",
+          "metodo": "POST",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "body {\"query\":\"deducción de intereses ganancias\",\"search_in\":\"doctrinas\"} -> 25 resultados con fallo_id IF-2024-53712803-APN-VOCII#TFN, metadata, doctrinas, texto_completo, has_pdf"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1ujG9KKl7KmFTcU8lgRw_61M-khSPLP1Gk-ACmOLTp8Q/gviz/tq?tqx=out:csv",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "planilla de «Últimas sentencias»: 1877 filas (fecha, sala, expediente, carátula, voces, link)"
+        }
+      ],
+      "metodo_tecnico": "Adaptador: POST https://api.jurisprudencia-tfn.ar/hybridSearch con {query, search_in:'objetos'|'doctrinas'} (otros campos estrictos: el esquema rechaza extras con 422). Respuesta: {results[], total, query, search_in, search_mode, applied_filters}; cada resultado trae fallo_id, matched_texto, objeto_texto, metadata, doctrinas, sumarios, texto_completo, has_pdf. Complemento barato: CSV de la planilla oficial de últimas sentencias.",
+      "utilidad_marginal": "Muy alta: hoy no hay ninguna fuente tributaria integrada.",
+      "clasificacion_final": "integrar_p0",
+      "no_verificado": [
+        "Parámetros de paginación (la respuesta devolvió 25 y el esquema rechaza page/page_size)",
+        "Endpoint del PDF",
+        "Términos de uso escritos"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 5,
+          "estabilidad": 3,
+          "utilidad_marginal": 5,
+          "viabilidad_tecnica": 4
+        },
+        "justificacion": "Gran volumen y API limpia; metadatos de IA deben rotularse; dependencia de proveedor externo."
+      }
+    },
+    {
+      "id": "ptn",
+      "grupo": "argentina_administrativa",
+      "nombre": "Procuración del Tesoro de la Nación · búsqueda de dictámenes",
+      "organismo": "Procuración del Tesoro de la Nación",
+      "naturaleza": "Órgano asesor; doctrina administrativa obligatoria para el Cuerpo de Abogados del Estado",
+      "jurisdiccion": "Nacional",
+      "materias": "Administrativo, empleo público, contratos, responsabilidad del Estado",
+      "tipos_documentales": "Dictámenes (tomo/página, voces, organismo, expediente, texto)",
+      "antiguedad": "Desde 1943 (históricos escaneados)",
+      "texto": "Completo en el índice (attachments.attachment.content)",
+      "metadatos": "Buenos en recientes; incompletos en históricos (según la propia PTN)",
+      "motor": "React + Elasticsearch; API https://api.ptn.gob.ar",
+      "api": "POST /search?historico=false&solo_historico=false (cuerpo Elasticsearch); descarga de archivo exige token reCAPTCHA (/confirmToken)",
+      "automatizacion": {
+        "robots": "no publicado (la ruta devuelve la SPA)",
+        "captcha": "sólo para descargar el archivo",
+        "veredicto": "búsqueda viable; el PDF debe abrirse a mano"
+      },
+      "evidencia": [
+        {
+          "url": "https://busquedadictamenes.ptn.gob.ar/env-config.js",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "REACT_APP_API_URL=https://api.ptn.gob.ar; REACT_APP_RECAPTCHA_PUBLIC presente"
+        },
+        {
+          "url": "https://api.ptn.gob.ar/search?historico=false&solo_historico=false",
+          "metodo": "POST",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "body {query:{bool:{must:[{match:{attachments.attachment.content:{query:'estabilidad empleo público',operator:'and'}}}]}},size:2,_source:{excludes:['attachments']}} -> total 243; campos numero IF-2024-101153729-APN-PTN, tomo 330, pagina 262, fecha, organismo, voces"
+        }
+      ],
+      "metodo_tecnico": "Adaptador que reproduzca la consulta del propio frontend (match sobre attachments.attachment.content, size ≤ 20, excluir attachments salvo para pasajes). Enlazar al buscador oficial para el PDF. Advertencia: la API reenvía DSL Elasticsearch arbitrario; no enviar consultas distintas de las del frontend y considerar avisar al organismo.",
+      "utilidad_marginal": "Muy alta: no hay doctrina administrativa integrada.",
+      "clasificacion_final": "integrar_p0",
+      "no_verificado": [
+        "Términos de uso",
+        "Límites de tasa"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 4,
+          "estabilidad": 3,
+          "utilidad_marginal": 5,
+          "viabilidad_tecnica": 4
+        },
+        "justificacion": "Fuente clave de derecho administrativo; API abierta pero no documentada."
+      }
+    },
+    {
+      "id": "cndc",
+      "grupo": "argentina_administrativa",
+      "nombre": "Autoridad/Comisión Nacional de Defensa de la Competencia · buscadores",
+      "organismo": "Ministerio de Economía",
+      "naturaleza": "Autoridad administrativa",
+      "jurisdiccion": "Nacional",
+      "materias": "Competencia, concentraciones, conductas, multas",
+      "tipos_documentales": "Dictámenes y resoluciones (buscador general); jurisprudencia judicial temática (206 filas); multas; remedios",
+      "motor": "Planillas Google detrás de ponchoTable de argentina.gob.ar; buscador general en cndc.produccion.gob.ar",
+      "automatizacion": {
+        "robots": "argentina.gob.ar: Crawl-delay 10, Disallow /*.pdf$",
+        "veredicto": "planillas: viables; buscador general: 403"
+      },
+      "evidencia": [
+        {
+          "url": "https://www.argentina.gob.ar/defensadelacompetencia/buscadores",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "enlaces a buscadores"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1BAmzz54rjzEuQJbR7rqkEEdmi8dKkdzjg6GDp_HlR1g/gviz/tq?tqx=out:csv",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "206 filas: Carpeta, Etiqueta, Trámite, Solución, Organismo, Fecha, enlace, Sumario"
+        },
+        {
+          "url": "https://cndc.produccion.gob.ar/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "buscador general de dictámenes bloqueado desde este egress"
+        }
+      ],
+      "metodo_tecnico": "Ingesta periódica del CSV gviz de la planilla (idSpread en el HTML de la página) al acervo local, con enlace a la ficha oficial.",
+      "clasificacion_final": "integrar_p1_dataset",
+      "no_verificado": [
+        "Buscador general cndc.produccion.gob.ar"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 3,
+          "cobertura": 3,
+          "actualizacion": 3,
+          "calidad_documental": 3,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 3,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 4
+        },
+        "justificacion": "Pequeño pero muy especializado."
+      }
+    },
+    {
+      "id": "srt",
+      "grupo": "argentina_administrativa",
+      "nombre": "SRT · jurisprudencia",
+      "organismo": "Superintendencia de Riesgos del Trabajo",
+      "naturaleza": "Selección institucional de sentencias",
+      "jurisdiccion": "Nacional/provincial",
+      "materias": "Riesgos del trabajo",
+      "tipos_documentales": "Sentencias seleccionadas (9 filas)",
+      "evidencia": [
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1yVfrXg3b5Cex6q4oCzjD8irwjTIJ-0x57ipK_ORtjbM/gviz/tq?tqx=out:csv",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "9 filas (fecha, tribunal, autos, tema, PDF)"
+        }
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 3,
+          "integridad": 1,
+          "cobertura": 1,
+          "actualizacion": 2,
+          "calidad_documental": 3,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 1,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "Volumen ínfimo."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "consumo_sanciones",
+      "grupo": "argentina_administrativa",
+      "nombre": "Defensa del Consumidor · publicación de sanciones Ley 24.240",
+      "organismo": "Secretaría de Industria y Comercio",
+      "naturaleza": "Registro administrativo de sanciones firmes",
+      "jurisdiccion": "Nacional",
+      "materias": "Consumo",
+      "motor": "JSON de https://renai.produccion.gob.ar/api/sanciones (POST)",
+      "evidencia": [
+        {
+          "url": "https://www.argentina.gob.ar/economia/industria-y-comercio/defensadelconsumidor/publicacion-de-sanciones-ley-24240",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "página con ponchoTable que consume renai.produccion.gob.ar/api/sanciones"
+        },
+        {
+          "url": "https://renai.produccion.gob.ar/api/sanciones",
+          "metodo": "POST",
+          "http": "502 proxy (connect_unreachable)",
+          "fecha": "2026-11-20",
+          "observacion": "no alcanzable desde este entorno"
+        },
+        {
+          "url": "https://www.argentina.gob.ar/produccion/defensadelconsumidor/coprec",
+          "metodo": "GET",
+          "http": 404,
+          "fecha": "2026-11-20",
+          "observacion": "la URL de COPREC del catálogo ya no existe"
+        }
+      ],
+      "no_verificado": [
+        "Contenido de la API",
+        "COPREC y Auditoría en las Relaciones de Consumo: no se encontró buscador de dictámenes público"
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 2,
+          "cobertura": 2,
+          "actualizacion": 3,
+          "calidad_documental": 2,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 2,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 2
+        },
+        "justificacion": "Sanciones, no doctrina; API no alcanzable."
+      }
+    },
+    {
+      "id": "reguladores",
+      "grupo": "argentina_administrativa",
+      "nombre": "ENRE/ENARGAS/ENACOM/BCRA/CNV/SSN/ANSES/ARCA (normativa y resoluciones)",
+      "organismo": "Entes reguladores y organismos nacionales",
+      "naturaleza": "Normativa y resoluciones administrativas",
+      "evidencia": [
+        {
+          "url": "https://www.enre.gov.ar/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "redirige a argentina.gob.ar/enre (ENReGE)"
+        },
+        {
+          "url": "https://www.enargas.gob.ar/secciones/normativa/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "bloqueo"
+        },
+        {
+          "url": "https://www.enacom.gob.ar/normativas",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "listado HTML"
+        },
+        {
+          "url": "https://api.bcra.gob.ar/estadisticas/v4.0/monetarias?limit=1",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "API BCRA sólo estadística"
+        },
+        {
+          "url": "https://www.cnv.gov.ar/sitioweb/buscadorglobal",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "buscador con captcha"
+        },
+        {
+          "url": "https://www.anses.gob.ar/institucional/normativa",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "bloqueo"
+        },
+        {
+          "url": "https://biblioteca.arca.gob.ar/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "72 bytes (redirección JS), no evaluado"
+        }
+      ],
+      "metodo_tecnico": "Cubrir su normativa vía Base Infoleg (datos.jus.gob.ar) y Boletín Oficial; dejar buscadores propios en catálogo manual.",
+      "clasificacion_final": "catalogo_manual (cubrir con Infoleg)",
+      "no_verificado": [
+        "Buscador de dictámenes de ARCA (biblioteca)",
+        "Digesto ENACOM"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 3,
+          "cobertura": 3,
+          "actualizacion": 4,
+          "calidad_documental": 3,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 2,
+          "estabilidad": 3,
+          "utilidad_marginal": 2,
+          "viabilidad_tecnica": 2
+        },
+        "justificacion": "Heterogéneos; la normativa ya llega por Infoleg."
+      }
+    },
+    {
+      "id": "boletin_infoleg",
+      "grupo": "argentina_normativa",
+      "nombre": "Boletín Oficial / InfoLeg (sitios)",
+      "organismo": "Secretaría Legal y Técnica / MinJus",
+      "naturaleza": "Fuente oficial de normas",
+      "evidencia": [
+        {
+          "url": "https://www.boletinoficial.gob.ar/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "portada"
+        },
+        {
+          "url": "https://servicios.infoleg.gob.ar/infolegInternet/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "portada"
+        },
+        {
+          "url": "https://www.argentina.gob.ar/normativa?jurisdiccion=nacional&texto=consumidor",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "buscador con módulo captcha de Drupal"
+        }
+      ],
+      "clasificacion_final": "usar_dataset_infoleg",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 5,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 4,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 3
+        },
+        "justificacion": "Preferir el dataset CC-BY."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "repositorios_universitarios",
+      "grupo": "doctrina",
+      "nombre": "SEDICI (UNLP), RDU (UNC), CONICET Digital — OAI-PMH",
+      "organismo": "Universidades nacionales / CONICET",
+      "naturaleza": "Repositorios institucionales de acceso abierto",
+      "materias": "Doctrina, tesis, revistas jurídicas",
+      "api": "OAI-PMH (DSpace)",
+      "evidencia": [
+        {
+          "url": "https://sedici.unlp.edu.ar/oai/request?verb=Identify",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "XML OAI"
+        },
+        {
+          "url": "https://sedici.unlp.edu.ar/oai/request?verb=ListRecords&metadataPrefix=oai_dc&set=col_10915_70",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "ListRecords OK (set de prueba arbitrario)"
+        },
+        {
+          "url": "https://rdu.unc.edu.ar/server/oai/request?verb=Identify",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "DSpace 7"
+        },
+        {
+          "url": "https://ri.conicet.gov.ar/server/oai/request?verb=Identify",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "DSpace 7"
+        },
+        {
+          "url": "https://repositoriosdigitales.mincyt.gob.ar/vufind/",
+          "metodo": "GET",
+          "http": "TLS",
+          "fecha": "2026-11-20",
+          "observacion": "SNRD no alcanzable"
+        }
+      ],
+      "metodo_tecnico": "Cosecha incremental OAI-PMH (from=fecha) restringida a sets/colecciones de Derecho; indexar Dublin Core y enlazar al PDF del repositorio.",
+      "clasificacion_final": "integrar_p2_dataset",
+      "no_verificado": [
+        "Identificadores de sets de las facultades de Derecho"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 3,
+          "integridad": 3,
+          "cobertura": 3,
+          "actualizacion": 4,
+          "calidad_documental": 3,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 5,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "Doctrina abierta y protocolo estándar; complementa Dialnet con producción argentina."
+      }
+    },
+    {
+      "id": "colegios",
+      "grupo": "doctrina",
+      "nombre": "Colegios profesionales (CPACF, Colegio de Abogados de la Ciudad)",
+      "naturaleza": "Asociaciones profesionales",
+      "evidencia": [
+        {
+          "url": "https://www.cpacf.org.ar/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "portada"
+        },
+        {
+          "url": "https://www.cpacf.org.ar/inst_jurisprudencia.php",
+          "metodo": "GET",
+          "http": 404,
+          "fecha": "2026-11-20",
+          "observacion": "sin buscador público verificable"
+        },
+        {
+          "url": "https://www.colegioabogados.org.ar/",
+          "metodo": "GET",
+          "http": "recv failure",
+          "fecha": "2026-11-20",
+          "observacion": "no alcanzable"
+        }
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 2,
+          "integridad": 1,
+          "cobertura": 1,
+          "actualizacion": 2,
+          "calidad_documental": 2,
+          "precision_metadatos": 2,
+          "facilidad_busqueda": 2,
+          "estabilidad": 2,
+          "utilidad_marginal": 1,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Sin base jurisprudencial abierta verificada."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "chubut_eureka",
+      "grupo": "argentina_provincial",
+      "nombre": "Chubut · Eureka!",
+      "organismo": "Superior Tribunal de Justicia de Chubut",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "Chubut",
+      "materias": "Todas",
+      "instancias": "STJ, cámaras, juzgados",
+      "tipos_documentales": "Sentencias (241.473; 85.350 anonimizadas públicas), sumarios (69.692), acordadas/resoluciones (29.363)",
+      "texto": "PDF de sentencias anonimizadas; texto de sumarios",
+      "metadatos": "Buenos (organismo, competencia, protocolo, fecha, número/año; sumarios con materia y descriptores)",
+      "motor": "ASP.NET MVC; acceso anónimo explícito («no requiere ingresar clave»)",
+      "api": "JSON interno sin autenticación",
+      "automatizacion": {
+        "robots": "sin robots.txt (404 de ELB)",
+        "captcha": "no",
+        "login": "sólo para fallos sin anonimizar (no usar)",
+        "veredicto": "viable respetando el modo anónimo"
+      },
+      "evidencia": [
+        {
+          "url": "https://apps1cloud.juschubut.gov.ar/eureka",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "contadores y botón de acceso anónimo"
+        },
+        {
+          "url": "https://apps1cloud.juschubut.gov.ar/eureka/Sentencias/BuscarPorCriterios?Texto=da%C3%B1o%20moral&Tipo=&PageIndex=1",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "JSON {pageCount:50,totalFilas:4155,maxFilas:1000,rows:[{id:106287,cell:{numero,anio,organismo,competencia,protocolo,fechaFirma:18/11/2026}}]}"
+        },
+        {
+          "url": "https://apps1cloud.juschubut.gov.ar/eureka/Sentencias/BajarDocumento?idSentencia=106287",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "application/pdf 59 KB"
+        },
+        {
+          "url": "https://apps1cloud.juschubut.gov.ar/eureka/Sumarios/BuscarPorCriterios?Texto=da%C3%B1o%20moral&PageIndex=1",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "totalFilas 1371, texto del sumario con descriptores"
+        },
+        {
+          "url": "https://apps1cloud.juschubut.gov.ar/eureka/Sumarios/TextoSumario",
+          "metodo": "POST",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "POST idSumario=64706 -> texto completo del sumario"
+        }
+      ],
+      "metodo_tecnico": "1) GET /eureka/Home/RegistrarAccesoAnonimo (cookie de sesión). 2) GET /eureka/Sentencias/BuscarPorCriterios?Texto=…&Organismos=&Competencias=&Anios=&Tipo=&Numero=&EsFraseExacta=&EsBusquedaAmplia=&EsNuevaBusqueda=&IdBusqueda=&EsBusquedaAvanzada=&PageIndex=N (Tipo vacío; con Tipo=Fallos devuelve 0). 3) Sumarios: /eureka/Sumarios/BuscarPorCriterios (mismos parámetros + Materias, Descriptores, Tipos, NumeroSentencia, NumeroSumario) y POST /eureka/Sumarios/TextoSumario. 4) PDF: /eureka/Sentencias/BajarDocumento?idSentencia=ID. Tope de 1000 filas por consulta (maxFilas).",
+      "utilidad_marginal": "Muy alta: provincia hoy ausente y volumen grande.",
+      "clasificacion_final": "integrar_p0",
+      "no_verificado": [
+        "Términos de uso escritos",
+        "Si BajarDocumento sirve siempre la versión anonimizada para usuarios anónimos (se recibió PDF; no se inspeccionó su contenido)"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 5,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 4,
+          "utilidad_marginal": 5,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "Acceso anónimo previsto por el organismo, JSON limpio y PDF."
+      }
+    },
+    {
+      "id": "jujuy",
+      "grupo": "argentina_provincial",
+      "nombre": "Jujuy · Sistema de Jurisprudencia",
+      "organismo": "Poder Judicial de Jujuy",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "Jujuy",
+      "instancias": "STJ, tribunales del trabajo, primera instancia (el portal advierte exclusiones: penal de cámaras y juzgados, familia, menores)",
+      "tipos_documentales": "Sentencias con texto HTML completo, voces (tesauro), acordadas",
+      "antiguedad": "380.418 documentos en el índice",
+      "actualizacion": "Diaria (documentos del 19/11/2026)",
+      "texto": "Completo (HTML)",
+      "metadatos": "Buenos (órgano, serie/expediente/año, fecha, tipo, voces)",
+      "motor": "Angular; API REST /endpoints/jurisprudencia/",
+      "api": "JSON sin autenticación",
+      "automatizacion": {
+        "robots": "no hay robots.txt (devuelve la SPA)",
+        "captcha": "no",
+        "veredicto": "viable"
+      },
+      "evidencia": [
+        {
+          "url": "https://jurisprudencia.justiciajujuy.gov.ar/endpoints/jurisprudencia/search/documentos?offset=1&limit=3",
+          "metodo": "POST",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "body {} -> results 380418"
+        },
+        {
+          "url": "https://jurisprudencia.justiciajujuy.gov.ar/endpoints/jurisprudencia/search/documentos?offset=1&limit=2",
+          "metodo": "POST",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "body {\"palabras\":[\"daño moral\"],\"filtroPalabras\":1} -> 7947; con [\"daño\",\"moral\"] y filtroPalabras 2 -> 9065; primer resultado STJ Sala I, 12/11/2026, voces DAÑO MORAL…"
+        },
+        {
+          "url": "https://jurisprudencia.justiciajujuy.gov.ar/endpoints/jurisprudencia/documentos/documento-sentencia/535814",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "JSON con texto HTML completo de la sentencia del 19/11/2026"
+        },
+        {
+          "url": "https://jurisprudencia.justiciajujuy.gov.ar/endpoints/jurisprudencia/search/documentos?offset=0&limit=5",
+          "metodo": "GET",
+          "http": 400,
+          "fecha": "2026-11-20",
+          "observacion": "offset debe ser ≥ 1"
+        }
+      ],
+      "metodo_tecnico": "POST /endpoints/jurisprudencia/search/documentos?offset=N&limit=M (offset base 1) con JSON {palabras:[…], filtroPalabras:1|2, fechaDesde, fechaHasta, id_organo, tesauros, id_tipo_documento}; respuesta {response:[{id_documento, serie, numero_expediente, anio, fecha, tipo_documento, organo, tesauros}], results}. Texto: GET /endpoints/jurisprudencia/documentos/documento-sentencia/{id}.",
+      "utilidad_marginal": "Muy alta: provincia ausente, texto completo y actualización diaria.",
+      "clasificacion_final": "integrar_p0",
+      "no_verificado": [
+        "Semántica exacta de filtroPalabras (1 parece frase/todas, 2 alguna)",
+        "Términos de uso escritos"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 5,
+          "calidad_documental": 5,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 4,
+          "utilidad_marginal": 5,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "API limpia con texto íntegro; exclusiones de fuero declaradas."
+      }
+    },
+    {
+      "id": "santacruz",
+      "grupo": "argentina_provincial",
+      "nombre": "Santa Cruz · buscador inteligente de jurisprudencia",
+      "organismo": "TSJ de Santa Cruz (desarrollo de InteligenciaLegal)",
+      "naturaleza": "Órgano judicial oficial con proveedor privado",
+      "jurisdiccion": "Santa Cruz",
+      "tipos_documentales": "Fallos (2.769), sumarios (2.734), «doctrinas» extraídas (13.324)",
+      "texto": "texto_completo + PDF (has_pdf)",
+      "metadatos": "Mezcla de oficiales y generados por IA (objeto, doctrinas)",
+      "motor": "Next.js; API https://api.tsj-sc.inteligencialegal.com.ar",
+      "api": "POST /hybridSearch {query, search_in:'objetos'|'doctrinas'}; GET /searchStats, /filters",
+      "automatizacion": {
+        "robots": "sin robots (404)",
+        "captcha": "no",
+        "veredicto": "viable con rótulo de IA"
+      },
+      "evidencia": [
+        {
+          "url": "https://jurisprudencia.jussantacruz.gob.ar/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "portada oficial"
+        },
+        {
+          "url": "https://api.tsj-sc.inteligencialegal.com.ar/searchStats",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "{fallos_relevados:2769, doctrinas_identificadas:13324, sumarios_relevados:2734}"
+        },
+        {
+          "url": "https://api.tsj-sc.inteligencialegal.com.ar/hybridSearch",
+          "metodo": "POST",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "{query:'daño moral',search_in:'doctrinas'} -> 25 resultados (fallo TSJI-20260417…)"
+        }
+      ],
+      "metodo_tecnico": "Mismo adaptador que TFN (misma API) parametrizando la base URL.",
+      "clasificacion_final": "integrar_p1",
+      "no_verificado": [
+        "Paginación",
+        "Términos de uso del proveedor"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 3,
+          "cobertura": 2,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 4,
+          "estabilidad": 3,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 4
+        },
+        "justificacion": "Corpus chico; reaprovecha el adaptador del TFN."
+      }
+    },
+    {
+      "id": "cordoba_jurisemia",
+      "grupo": "argentina_provincial",
+      "nombre": "Córdoba · Jurisemia (buscador semántico)",
+      "organismo": "Poder Judicial de Córdoba",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "Córdoba",
+      "motor": "SPA React con Cloudflare Turnstile; JS ofuscado",
+      "automatizacion": {
+        "captcha": "Cloudflare Turnstile",
+        "veredicto": "no automatizable"
+      },
+      "evidencia": [
+        {
+          "url": "https://www.justiciacordoba.gob.ar/Jurisemia/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "SPA"
+        },
+        {
+          "url": "https://www.justiciacordoba.gob.ar/Jurisemia/assets/index-D4hMqBd-.js",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "referencias a challenges.cloudflare.com/turnstile y onloadTurnstileCallback"
+        },
+        {
+          "url": "https://www.justiciacordoba.gob.ar/JusticiaCordoba/TSJ/boletin_judicial",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "contenido cargado por AJAX; no evaluado"
+        }
+      ],
+      "metodo_tecnico": "Catálogo manual; Córdoba sigue vía SAIJ.",
+      "clasificacion_final": "catalogo_manual",
+      "no_verificado": [
+        "Endpoint del Boletín Judicial"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 4,
+          "estabilidad": 3,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Turnstile."
+      }
+    },
+    {
+      "id": "entrerios",
+      "grupo": "argentina_provincial",
+      "nombre": "Entre Ríos · buscador de jurisprudencia",
+      "organismo": "STJ de Entre Ríos",
+      "naturaleza": "Órgano judicial oficial",
+      "jurisdiccion": "Entre Ríos",
+      "motor": "SIU-Toba (jur.jusentrerios.gov.ar)",
+      "automatizacion": {
+        "captcha": "captcha de imagen antispam en el formulario",
+        "veredicto": "no automatizable"
+      },
+      "evidencia": [
+        {
+          "url": "https://jurbuscador.jusentrerios.gov.ar/",
+          "metodo": "GET",
+          "http": 301,
+          "fecha": "2026-11-20",
+          "observacion": "redirige a http://jur.jusentrerios.gov.ar/jur/?ai=jur||newpublica"
+        },
+        {
+          "url": "https://jur.jusentrerios.gov.ar/jur/?ai=jur||newpublica",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "img#ef_antispam-captcha (mostrar_captchas_efs)"
+        }
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Captcha explícito."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "corrientes",
+      "grupo": "argentina_provincial",
+      "nombre": "Corrientes · sistema de jurisprudencia",
+      "organismo": "STJ de Corrientes",
+      "jurisdiccion": "Corrientes",
+      "evidencia": [
+        {
+          "url": "https://jurisprudencia.juscorrientes.gov.ar/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "«Security Check Required» (desafío)"
+        },
+        {
+          "url": "https://www.juscorrientes.gov.ar/jurisprudencia/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "idem"
+        }
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "automatizacion": {
+        "captcha": "página de verificación",
+        "veredicto": "no automatizable"
+      },
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 4,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Desafío de seguridad."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "scba_sentencias",
+      "grupo": "argentina_provincial",
+      "nombre": "SCBA · listado de sentencias",
+      "organismo": "SCBA",
+      "jurisdiccion": "Provincia de Buenos Aires",
+      "evidencia": [
+        {
+          "url": "https://sentencias-corte.scba.gov.ar/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "recaptcha/api.js?render=6LeF4iwq…; recaptchaToken en el envío"
+        }
+      ],
+      "automatizacion": {
+        "captcha": "reCAPTCHA v3",
+        "veredicto": "no automatizable"
+      },
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 3,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 4,
+          "utilidad_marginal": 2,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "JUBA ya cubre buena parte."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "tucuman",
+      "grupo": "argentina_provincial",
+      "nombre": "Tucumán · jurisprudencia y legislación",
+      "organismo": "Corte Suprema de Tucumán",
+      "jurisdiccion": "Tucumán",
+      "evidencia": [
+        {
+          "url": "https://www.justucuman.gov.ar/jurisprudencia",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "enlaza a https://jurisprudencia.justucuman.gov.ar/front/buscar"
+        },
+        {
+          "url": "https://jurisprudencia.justucuman.gov.ar/front/buscar",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "Apache 403 desde este egress"
+        }
+      ],
+      "no_verificado": [
+        "Formulario y condiciones desde IP argentina"
+      ],
+      "clasificacion_final": "pendiente_reverificar",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 4,
+          "actualizacion": 5,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 2
+        },
+        "justificacion": "Bloqueado por IP en la prueba."
+      }
+    },
+    {
+      "id": "salta",
+      "grupo": "argentina_provincial",
+      "nombre": "Salta · Secretaría de Jurisprudencia",
+      "organismo": "Corte de Justicia de Salta",
+      "jurisdiccion": "Salta",
+      "evidencia": [
+        {
+          "url": "https://www.justiciasalta.gov.ar/es/jurisprudencia-inicio",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "enlaza buscadores en puertos 8091 y 9091"
+        },
+        {
+          "url": "https://appweb.justiciasalta.gov.ar:8091/juriscorte/com.juriscargacorte.modbusqueda.busqueda",
+          "metodo": "GET",
+          "http": "TLS",
+          "fecha": "2026-11-20",
+          "observacion": "puerto no estándar no alcanzable desde este entorno"
+        },
+        {
+          "url": "https://appweb2.justiciasalta.gov.ar:9091/juriscamext/com.juris.busqueda",
+          "metodo": "GET",
+          "http": "TLS",
+          "fecha": "2026-11-20",
+          "observacion": "idem"
+        }
+      ],
+      "no_verificado": [
+        "Todo el buscador"
+      ],
+      "clasificacion_final": "pendiente_reverificar",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 2
+        },
+        "justificacion": "No probado."
+      }
+    },
+    {
+      "id": "neuquen",
+      "grupo": "argentina_provincial",
+      "nombre": "Neuquén · juriscivil / jurispenal",
+      "organismo": "TSJ de Neuquén",
+      "jurisdiccion": "Neuquén",
+      "evidencia": [
+        {
+          "url": "https://juriscivil.jusneuquen.gov.ar/",
+          "metodo": "GET",
+          "http": "TLS",
+          "fecha": "2026-11-20",
+          "observacion": "no alcanzable"
+        },
+        {
+          "url": "https://jurispenal.jusneuquen.gov.ar/",
+          "metodo": "GET",
+          "http": "TLS",
+          "fecha": "2026-11-20",
+          "observacion": "no alcanzable"
+        }
+      ],
+      "no_verificado": [
+        "Todo"
+      ],
+      "clasificacion_final": "pendiente_reverificar",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 2,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 2
+        },
+        "justificacion": "No probado."
+      }
+    },
+    {
+      "id": "otros_provinciales",
+      "grupo": "argentina_provincial",
+      "nombre": "San Juan, San Luis, Chaco, Formosa, La Rioja, Tierra del Fuego, Santiago del Estero",
+      "evidencia": [
+        {
+          "url": "https://www.jussanjuan.gov.ar/jurisprudencia/",
+          "metodo": "GET",
+          "http": 418,
+          "fecha": "2026-11-20",
+          "observacion": "WAF"
+        },
+        {
+          "url": "https://jurisprudencia.justiciasanluis.gov.ar/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "CloudFront"
+        },
+        {
+          "url": "https://www.justiciachaco.gov.ar/busquedas/Busqueda_Jurisprudencia/buscador/",
+          "metodo": "GET",
+          "http": "TLS",
+          "fecha": "2026-11-20",
+          "observacion": "no alcanzable"
+        },
+        {
+          "url": "https://www.jusformosa.gob.ar/decisiones-judiciales/jurisprudencia",
+          "metodo": "GET",
+          "http": "TLS",
+          "fecha": "2026-11-20",
+          "observacion": "no alcanzable"
+        },
+        {
+          "url": "https://tesauro.justicialarioja.gob.ar/tb_exped_list.php",
+          "metodo": "GET",
+          "http": "recv failure",
+          "fecha": "2026-11-20",
+          "observacion": "no alcanzable"
+        },
+        {
+          "url": "https://juris.justierradelfuego.gov.ar/",
+          "metodo": "GET",
+          "http": "TLS",
+          "fecha": "2026-11-20",
+          "observacion": "no alcanzable"
+        },
+        {
+          "url": "http://fallos-sumarios.jussantiago.gov.ar/",
+          "metodo": "GET",
+          "http": "no probado",
+          "fecha": "2026-11-20",
+          "observacion": "el entorno sólo permite HTTPS"
+        }
+      ],
+      "no_verificado": [
+        "Todos"
+      ],
+      "clasificacion_final": "pendiente_reverificar",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 2,
+          "cobertura": 3,
+          "actualizacion": 3,
+          "calidad_documental": 3,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 2,
+          "estabilidad": 2,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Sin evidencia operativa."
+      }
+    },
+    {
+      "id": "mendoza_biblio",
+      "grupo": "argentina_provincial",
+      "nombre": "Mendoza · biblioteca judicial (jusmendoza.gob.ar)",
+      "organismo": "SCJ Mendoza",
+      "evidencia": [
+        {
+          "url": "https://jusmendoza.gob.ar/biblioteca-judicial/jurisprudencia/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "página institucional con marcas de Cloudflare"
+        }
+      ],
+      "clasificacion_final": "ya_cubierta",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 3,
+          "cobertura": 3,
+          "actualizacion": 4,
+          "calidad_documental": 3,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 4,
+          "utilidad_marginal": 1,
+          "viabilidad_tecnica": 3
+        },
+        "justificacion": "Cubierta por indiceMza."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "hudoc",
+      "grupo": "internacional",
+      "nombre": "TEDH · HUDOC",
+      "organismo": "Tribunal Europeo de Derechos Humanos",
+      "naturaleza": "Tribunal internacional",
+      "jurisdiccion": "Consejo de Europa",
+      "tipos_documentales": "Sentencias, decisiones, casos comunicados, resúmenes, opiniones consultivas",
+      "motor": "HUDOC (Sitecore)",
+      "api": "GET /app/query/results con query, select, sort, start, length; JSON",
+      "evidencia": [
+        {
+          "url": "https://hudoc.echr.coe.int/app/query/results?query=contentsitename%3AECHR%20AND%20(%22freedom%20of%20expression%22)&select=itemid,docname,kpdate,appno&sort=kpdate%20Descending&start=0&length=2",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "JSON {resultcount:10296, results:[{columns:{itemid:'001-253882',docname:'CASE OF MAZZARELLA v. ITALY',kpdate:'2026-11-19'}}]}"
+        },
+        {
+          "url": "https://hudoc.echr.coe.int/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "devuelve la página HTML: sin robots.txt real"
+        }
+      ],
+      "metodo_tecnico": "Adaptador GET /app/query/results?query=contentsitename:ECHR AND (\"…\")&select=itemid,docname,appno,kpdate,doctypebranch,languageisocode&sort=kpdate Descending&start=N&length=20; ficha: https://hudoc.echr.coe.int/eng?i={itemid}. Textos en inglés/francés.",
+      "clasificacion_final": "integrar_p1",
+      "no_verificado": [
+        "Condiciones de reutilización de HUDOC",
+        "Endpoint de texto completo"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 5,
+          "cobertura": 5,
+          "actualizacion": 5,
+          "calidad_documental": 5,
+          "precision_metadatos": 5,
+          "facilidad_busqueda": 4,
+          "estabilidad": 4,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "API verificada; utilidad comparada."
+      }
+    },
+    {
+      "id": "cjeu_cellar",
+      "grupo": "internacional",
+      "nombre": "TJUE · InfoCuria + EUR-Lex/CELLAR",
+      "organismo": "Oficina de Publicaciones de la UE / TJUE",
+      "naturaleza": "Tribunal supranacional",
+      "api": "SPARQL público (publications.europa.eu/webapi/rdf/sparql); EUR-Lex SOAP sólo con registro (EU Login)",
+      "automatizacion": {
+        "robots": "infocuria: Allow /; eur-lex: Crawl-delay 10",
+        "veredicto": "SPARQL + HTML de EUR-Lex viables"
+      },
+      "evidencia": [
+        {
+          "url": "https://publications.europa.eu/webapi/rdf/sparql",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "consulta cdm:judgement con celex y fecha ≥ 2026-10-01 -> 62025TJ0773 (2026-10-07)"
+        },
+        {
+          "url": "https://eur-lex.europa.eu/legal-content/ES/TXT/HTML/?uri=CELEX:62014CJ0362",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "texto HTML en español (221 KB)"
+        },
+        {
+          "url": "https://eur-lex.europa.eu/content/help/data-reuse/webservice.html",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "«freely available after registration»"
+        },
+        {
+          "url": "https://infocuria.curia.europa.eu/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "User-agent: * Allow: /"
+        }
+      ],
+      "metodo_tecnico": "Metadatos por SPARQL (cdm:judgement, resource_legal_id_celex, work_date_document); texto en ES vía EUR-Lex legal-content/ES/TXT/HTML/?uri=CELEX:…; búsqueda temática: preferir índice local de lo cosechado.",
+      "clasificacion_final": "integrar_p2",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 5,
+          "cobertura": 5,
+          "actualizacion": 5,
+          "calidad_documental": 5,
+          "precision_metadatos": 5,
+          "facilidad_busqueda": 3,
+          "estabilidad": 5,
+          "utilidad_marginal": 2,
+          "viabilidad_tecnica": 4
+        },
+        "justificacion": "Excelente calidad; baja utilidad marginal para derecho argentino."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "colombia_cc",
+      "grupo": "internacional",
+      "nombre": "Corte Constitucional de Colombia (datos.gov.co + relatoría)",
+      "organismo": "Corte Constitucional de Colombia",
+      "licencia": "CC BY-SA 4.0",
+      "api": "Socrata SODA (v2k4-2t8s.json)",
+      "evidencia": [
+        {
+          "url": "https://www.datos.gov.co/resource/v2k4-2t8s.json?$limit=2",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "proceso, magistrado, sala, sentencia (T-012/92), fecha"
+        },
+        {
+          "url": "https://www.datos.gov.co/resource/v2k4-2t8s.json?$select=count(*)",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "29.551 sentencias; máxima fecha 2026-10-30"
+        },
+        {
+          "url": "https://www.corteconstitucional.gov.co/relatoria/2024/T-001-24.htm",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "texto HTML completo"
+        },
+        {
+          "url": "https://www.corteconstitucional.gov.co/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "Allow: /relatoria/"
+        }
+      ],
+      "metodo_tecnico": "Dataset SODA para metadatos + construcción de URL /relatoria/{año}/{sentencia}.htm para el texto.",
+      "clasificacion_final": "integrar_p2_dataset",
+      "no_verificado": [
+        "Regla de URL para todos los años y tipos (C, SU, A)"
+      ],
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 5,
+          "actualizacion": 5,
+          "calidad_documental": 5,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 4,
+          "estabilidad": 5,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 5
+        },
+        "justificacion": "Dataset abierto ejemplar."
+      }
+    },
+    {
+      "id": "ohchr_juris",
+      "grupo": "internacional",
+      "nombre": "OHCHR JURIS",
+      "organismo": "ONU · órganos de tratados",
+      "motor": "Blazor Server (SignalR)",
+      "evidencia": [
+        {
+          "url": "https://juris.ohchr.org/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "Blazor/Telerik; búsqueda por websocket"
+        },
+        {
+          "url": "https://tbinternet.ohchr.org/_layouts/15/treatybodyexternal/TBSearch.aspx?Lang=en",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "SharePoint"
+        }
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 4,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Sin API HTTP reproducible."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "cidh",
+      "grupo": "internacional",
+      "nombre": "CIDH · informes y decisiones",
+      "organismo": "OEA",
+      "evidencia": [
+        {
+          "url": "https://www.oas.org/es/cidh/decisiones/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "Cloudflare «Just a moment...»"
+        }
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Cloudflare."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "oit_normlex",
+      "grupo": "internacional",
+      "nombre": "OIT · NORMLEX / Comité de Libertad Sindical",
+      "organismo": "OIT",
+      "evidencia": [
+        {
+          "url": "https://normlex.ilo.org/dyn/nrmlx_es/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "Cloudflare «Attention Required!»"
+        },
+        {
+          "url": "https://www.ilo.org/dyn/normlex/es/f?p=NORMLEXPUB:1:0",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "redirige a normlex.ilo.org; idem"
+        }
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 4,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Cloudflare."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "latam_otros",
+      "grupo": "internacional",
+      "nombre": "Chile (PJUD, TC), Perú (TC), México (SCJN), Brasil (STF)",
+      "evidencia": [
+        {
+          "url": "https://juris.pjud.cl/busqueda/lista_buscadores",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "reCAPTCHA v3"
+        },
+        {
+          "url": "https://www.tribunalconstitucional.cl/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "91 bytes (redirección)"
+        },
+        {
+          "url": "https://www.tc.gob.pe/jurisprudencia/",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "redirige a la portada"
+        },
+        {
+          "url": "https://bj.scjn.gob.mx/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "bloqueo"
+        },
+        {
+          "url": "https://sjf2.scjn.gob.mx/busqueda-principal-tesis",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "SPA de 212 bytes"
+        },
+        {
+          "url": "https://jurisprudencia.stf.jus.br/pages/search",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "bloqueo"
+        }
+      ],
+      "no_verificado": [
+        "APIs de SJF (México) y STF (Brasil) desde IP no bloqueada"
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 5,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 2,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Captcha o bloqueo."
+      }
+    },
+    {
+      "id": "arbitraje",
+      "grupo": "internacional",
+      "nombre": "ICSID, UNCTAD ISDS Navigator, italaw",
+      "organismo": "Banco Mundial / UNCTAD / privado",
+      "evidencia": [
+        {
+          "url": "https://icsid.worldbank.org/cases/case-database",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "base de casos; API no identificada"
+        },
+        {
+          "url": "https://investmentpolicy.unctad.org/investment-dispute-settlement",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "Cloudflare"
+        },
+        {
+          "url": "https://www.italaw.com/",
+          "metodo": "GET",
+          "http": 403,
+          "fecha": "2026-11-20",
+          "observacion": "Cloudflare"
+        }
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 4,
+          "cobertura": 4,
+          "actualizacion": 4,
+          "calidad_documental": 4,
+          "precision_metadatos": 4,
+          "facilidad_busqueda": 3,
+          "estabilidad": 3,
+          "utilidad_marginal": 3,
+          "viabilidad_tecnica": 1
+        },
+        "justificacion": "Argentina es parte frecuente, pero sin vía automática verificada."
+      },
+      "no_verificado": []
+    },
+    {
+      "id": "cisg_clout",
+      "grupo": "internacional",
+      "nombre": "UNCITRAL CLOUT y CISG Database (Pace)",
+      "organismo": "CNUDMI / Pace Law",
+      "automatizacion": {
+        "robots": "Pace: Crawl-delay 10, Disallow /search/"
+      },
+      "evidencia": [
+        {
+          "url": "https://uncitral.un.org/en/search-CLOUT-abstracts",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "buscador Drupal"
+        },
+        {
+          "url": "https://iicl.law.pace.edu/cisg/search/cases?search_api_fulltext=Argentina",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "página de búsqueda"
+        },
+        {
+          "url": "https://iicl.law.pace.edu/robots.txt",
+          "metodo": "GET",
+          "http": 200,
+          "fecha": "2026-11-20",
+          "observacion": "Disallow /search/"
+        }
+      ],
+      "clasificacion_final": "catalogo_manual",
+      "puntajes": {
+        "valores": {
+          "autoridad": 4,
+          "integridad": 3,
+          "cobertura": 3,
+          "actualizacion": 3,
+          "calidad_documental": 3,
+          "precision_metadatos": 3,
+          "facilidad_busqueda": 3,
+          "estabilidad": 4,
+          "utilidad_marginal": 2,
+          "viabilidad_tecnica": 2
+        },
+        "justificacion": "Nicho; robots desalienta la búsqueda automatizada en Pace."
+      },
+      "no_verificado": []
+    }
+  ]
+}
