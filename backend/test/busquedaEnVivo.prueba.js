@@ -37,7 +37,7 @@ test('los contadores separan el acervo del sitio y sólo suman IDs nuevos confir
   assert.match(html, /if\(im\.local\) return \(im\.total\|\|0\)\+\(im\.nuevosVivos\|\|0\)/);
   assert.match(html, /var idsConfirmados=Array\.isArray\(d\.idsNuevosAcervo\)/);
   assert.match(html, /if\(idsConfirmados&&!idsConfirmados\.has\(r\.id\)\) return/);
-  assert.match(html, /imBusco\.nuevosVivos=idsConfirmados\?nuevos\.length:0/);
+  assert.match(html, /if\(idsConfirmados\) im\.nuevosVivos=\(im\.nuevosVivos\|\|0\)\+nuevos\.length/);
   assert.match(html, /Acervo: <b>/);
   assert.match(html, /En vivo: /);
 });
@@ -46,4 +46,20 @@ test('Mendoza recibe carátulas como partes y la pantalla advierte ceros contrad
   assert.match(rutas, /slug === 'mendoza' && typeof cuerpo\.partes === 'string'/);
   assert.match(html, /if\(slug==="mendoza"\) cuerpo\.partes=nom\.consulta/);
   assert.match(html, /ov\.total===0&&im\.total>0/);
+});
+
+test('la carga del acervo tiene respuesta preliminar y conteo exacto diferido', () => {
+  const consulta = fs.readFileSync(new URL('../lib/acervoConsulta.js', import.meta.url), 'utf8');
+  assert.match(consulta, /rapida = false/);
+  assert.match(consulta, /if \(rapida && Number\(desde\) === 0\)/);
+  assert.match(consulta, /total: null, totalPendiente: true, resultados/);
+  assert.match(rutas, /rapida: \(cuerpo\.local === true \|\| cuerpo\.soloLocal === true\)/);
+  assert.match(html, /Object\.assign\(\{\},cuerpo,\{rapida:true\}\)/);
+  assert.match(html, /imBusco\.totalPendiente=!!d\.totalPendiente/);
+});
+test('la primera página no se bloquea por el conteo de otra fuente', () => {
+  const acervo = fs.readFileSync(new URL('../lib/acervo.js', import.meta.url), 'utf8');
+  assert.match(acervo, /const N_HILOS = Math\.max\(2,/);
+  assert.match(html, /while\(acervoPantallaActivos<2&&colaAcervoPantalla\.length\)/);
+  assert.match(html, /if\(t\.rapida\)/);
 });
