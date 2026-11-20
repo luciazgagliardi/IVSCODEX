@@ -6714,8 +6714,10 @@ function buscarEnFuente(slug,pagina){
   var nom=nombreBuscado(qi),sinNombre=citaSinNombre(qi);
   if(sinNombre){ cuerpo.q=sinNombre; cuerpo.modo="exacta"; }
   else if(nom){
-    // a la base se le piden las partes; el tribunal y el año sirven para ordenar
+    // La consulta local busca los nombres en texto completo. Mendoza, en
+    // cambio, exige el campo "partes" en su formulario oficial.
     cuerpo.q=nom.consulta; cuerpo.modo="todas";
+    if(slug==="mendoza") cuerpo.partes=nom.consulta;
     // en SAIJ, las fichas de los fallos: son las que traen la carátula completa
     if(slug==="csjn"||slug==="saij") cuerpo.tribunal="fallos";
   }else if(estado.conEquivalentes&&!estado.articulo){
@@ -7033,7 +7035,8 @@ function panelIndice(f){
         ?(ov.parcial?'al menos ':'')+cifra(ov.total)+' coincidencias en la consulta oficial'
         :cifra(ov.pagina)+' resultados en la página oficial';
     out+='<p class="rz-aviso" style="margin:6px 0 12px">Acervo: <b>'+cifra(im.total)+'</b> · En vivo: '+totalOficial+
-      ' · '+(ov.idsConfirmados?'<b>'+cifra(im.nuevosVivos)+'</b> identificadores nuevos':'No se pudo comprobar cuáles ya estaban guardados')+'</p>';
+      ' · '+(ov.idsConfirmados?'<b>'+cifra(im.nuevosVivos)+'</b> identificadores nuevos':'No se pudo comprobar cuáles ya estaban guardados')+
+      (ov.total===0&&im.total>0?' · El origen no devolvió coincidencias aunque el acervo contiene documentos: la cobertura de esta consulta no está confirmada.':'')+'</p>';
   }
   if(im.cargando){
     out+='<p style="font-size:13px;color:var(--humo);margin:0">Procesando consulta… La respuesta puede demorar hasta 30 segundos debido a los tiempos de respuesta de los servidores oficiales; el sistema se encuentra activo.</p></div>';
