@@ -41,6 +41,18 @@ fs.writeFileSync(path.join(process.env.DIR_INDICE, 'mendoza.json'), JSON.stringi
 const { prepararAcervo, buscarPagina, sumarVivos, anioDe, acervoCubre, idsNuevosRespectoAcervo } = await import('../lib/acervo.js');
 await prepararAcervo({ esperar: true });
 
+test('el conteo FTS sin ranking reproduce exactamente el total único', async () => {
+  const opciones={ desde:0, porPagina:20, soloConteo:true };
+  const c=await buscarPagina('mendoza','despido',opciones,{espera:5000,prioridad:4});
+  assert.ok(c,'la consulta de conteo debe responder');
+  assert.equal(c.soloConteo,true);
+  assert.equal(c.total,53);
+  assert.deepEqual(c.resultados,[]);
+  const variantes=['daño extrapatrimonial','consecuencias no patrimoniales','agravio moral','daño inmaterial'];
+  const v=await buscarPagina('mendoza','daño moral',{...opciones,variantes},{espera:5000,prioridad:4});
+  assert.equal(v.total,3,'el conteo deduplica fallos de Mendoza y SAIJ con variantes');
+});
+
 test('la vista inmediata entrega fichas sin esperar el conteo exhaustivo', async () => {
   const rapida = await buscarPagina('mendoza', 'despido',
     { desde: 0, porPagina: 20, rapida: true }, { espera: 7000, prioridad: 9 });
