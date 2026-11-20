@@ -416,7 +416,9 @@ async function copiarParaLeer() {
  * esperaba turno no llega a correr. Tantos hilos como procesadores tenga el
  * servidor (hasta tres): una búsqueda pide una página por base, once a la vez.
  */
-const N_HILOS = Math.max(1, Math.min(3, (os.availableParallelism?.() || os.cpus().length || 1)));
+// Dos lectores permiten servir vistas rápidas mientras otro termina el
+// conteo completo. Sobre /home se conserva uno solo por seguridad del disco.
+const N_HILOS = Math.max(2, Math.min(3, (os.availableParallelism?.() || os.cpus().length || 1)));
 const hilos = [];
 let sec = 0;
 const cola = [];
