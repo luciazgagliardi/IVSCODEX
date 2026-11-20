@@ -129,6 +129,18 @@ const INFO = {
     limite: 'La cobertura se circunscribe al repositorio y a los períodos publicados.',
     url: 'https://www.justiciasantafe.gov.ar/',
   },
+  jujuy: {
+    linea: 'Jurisprudencia provincial',
+    lineas: ['jurisprudencia', 'provincial', 'primaria'],
+    autoridad: 'Órgano judicial oficial',
+    tipo: 'Sumarios oficiales y sentencias a texto completo',
+    procedencia: 'Poder Judicial de Jujuy · Sistema de Jurisprudencia',
+    jurisdiccion: 'Jujuy, Argentina',
+    cobertura: 'Sentencias y autos de los organismos jurisdiccionales de Jujuy y dictámenes de la Fiscalía General ante el STJ.',
+    modalidad: 'buscador_oficial',
+    limite: 'Según su aviso legal, no incluye los tribunales de Familia, Menores y Penales. El texto es informativo: sólo los protocolos de sentencias y sus copias fieles agregadas al expediente son documentos auténticos.',
+    url: 'https://jurisprudencia.justiciajujuy.gov.ar/',
+  },
   catamarca: {
     linea: 'Jurisprudencia provincial',
     lineas: ['jurisprudencia', 'provincial', 'primaria', 'acervo_local'],

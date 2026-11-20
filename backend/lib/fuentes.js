@@ -38,6 +38,7 @@ import { buscarScba } from './indiceScba.js';
 import { buscarRioNegro } from './indiceRioNegro.js';
 import { buscarJuristeca } from './indiceJuristeca.js';
 import { buscarSantaFe } from './indiceSantaFe.js';
+import { buscarJujuy } from './indiceJujuy.js';
 import { buscarCatamarca } from './indiceCatamarca.js';
 import { buscarProvinciaSaij, PROVINCIAS_PRIORIZADAS } from './indiceProvincialSaij.js';
 
@@ -77,6 +78,7 @@ const COMO_SE_CITA = {
   juristeca: (n) => `art. ${n}`,
   santafe: (n) => `artículo ${n}`,
   catamarca: (n) => `artículo ${n}`,
+  jujuy: (n) => `art. ${n}`,
   ...Object.fromEntries(Object.keys(PROVINCIAS_PRIORIZADAS).map(slug => [slug, n => `artículo ${n}`])),
 };
 
@@ -172,6 +174,14 @@ export const FUENTES = [
     nombre: 'Corte Suprema de Justicia de Santa Fe',
     tribunalPorDefecto: null,
     buscar: (args) => buscarSantaFe(args),
+  },
+  // Jujuy: la API pública de su Sistema de Jurisprudencia (STJ y demás fueros,
+  // salvo Familia, Menores y Penal), con sumario oficial y texto íntegro. Ver lib/indiceJujuy.js.
+  {
+    slug: 'jujuy',
+    nombre: 'Poder Judicial de Jujuy',
+    tribunalPorDefecto: null,
+    buscar: (args) => buscarJujuy(args),
   },
   {
     slug: 'catamarca',
