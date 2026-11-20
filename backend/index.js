@@ -29,6 +29,7 @@ import { router as routerIndice } from './routes/indice.js';
 import { router as routerAuth } from './routes/auth.js';
 import { router as routerCitas } from './routes/citas.js';
 import { routerVoz } from './routes/voz.js';
+import { routerVocabulario } from './routes/vocabulario.js';
 
 const app = express();
 
@@ -247,6 +248,7 @@ app.use('/api', routerIndice);
 app.use('/api', routerAuth);
 app.use('/api', routerCitas);
 app.use('/api', routerVoz);
+app.use('/api', routerVocabulario);
 app.use(express.static(DIR_PUBLICO, { extensions: ['html'], dotfiles: 'ignore', index: 'index.html', maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0 }));
 
 app.use((req, res) => {
