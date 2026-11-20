@@ -248,6 +248,28 @@ export function textosDe(ids) {
   } catch { return new Map(); }
 }
 
+/**
+ * IDs devueltos por una consulta oficial que todavía NO existen en el
+ * acervo íntegro. La comparación es sobre toda la base, no únicamente sobre
+ * la página local visible. Null significa que SQLite no está disponible:
+ * jamás interpretar esa incertidumbre como documentos nuevos.
+ * Se ejecuta antes de incorporar los resultados oficiales.
+ */
+export function idsNuevosRespectoAcervo(registros) {
+  if (!db || !estado.activo) return null;
+  const ids = [...new Set((registros || []).map((r) => r?.id).filter((id) =>
+    typeof id === 'string' && id.length > 0))].slice(0, 200);
+  if (!ids.length) return [];
+  try {
+    const conocidos = new Set(db.prepare(`SELECT id FROM fallos WHERE id IN (${ids.map(() => '?').join(',')})`)
+      .all(...ids).map((r) => r.id));
+    return ids.filter((id) => !conocidos.has(id));
+  } catch (e) {
+    console.warn('[acervo] comparar ids oficiales:', e.message);
+    return null;
+  }
+}
+
 /** Los ids que ya están en el acervo, de una base (para no volver a pedir su texto). */
 export function idsConTexto(fuente) {
   if (!db || !estado.activo) return new Set();
