@@ -5,7 +5,8 @@
  */
 const api = 'https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api';
 const pruebas = [
-  { slug: 'mendoza', q: 'ROSALES STELLA', tribunal: 'CC' },
+  { slug: 'mendoza', q: 'ROSALES STELLA', partes: 'ROSALES STELLA', tribunal: 'CC' },
+  { slug: 'mendoza', q: 'daño moral' },
   { slug: 'caba', q: 'amparo' },
   { slug: 'saij', q: 'amparo', tribunal: 'sumarios' },
 ];
