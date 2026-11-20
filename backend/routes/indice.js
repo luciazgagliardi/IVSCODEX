@@ -270,6 +270,62 @@ async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta
     revisados: 0, aflojado: false, desdeIndiceLocal: true };
 }
 
+/**
+ * Mendoza tiene tres buscadores oficiales independientes. Sin tribunal
+ * seleccionado la consulta local abarca los tres, por lo que consultar
+ * únicamente SC (el valor por defecto del módulo) hacía aparecer un total
+ * oficial engañosamente reducido. Consultamos SC, CC y CT y sumamos sus
+ * contadores, manteniendo cursores independientes para páginas siguientes.
+ */
+async function buscarMendozaTodos(buscar, parametros, cursores = null) {
+  const tribunales = ['SC', 'CC', 'CT'];
+  const salidas = await Promise.all(tribunales.map(async (tribunal) => {
+    const desde = cursores && Object.hasOwn(cursores, tribunal)
+      ? cursores[tribunal] : 0;
+    if (desde === null) return { tribunal, agotado: true };
+    try {
+      const r = await buscar({
+        ...parametros, tribunal, pagina: 1, desde: Math.max(0, Number(desde) || 0),
+      });
+      return { tribunal, r, desde };
+    } catch (e) {
+      return { tribunal, error: e };
+    }
+  }));
+  const correctas = salidas.filter((s) => s.r);
+  if (!correctas.length && salidas.some((s) => s.error))
+    throw salidas.find((s) => s.error).error;
+  const siguiente = {};
+  const resultados = [];
+  let totalFuente = 0, total = 0, revisados = 0, parciales = false;
+  for (const salida of salidas) {
+    if (salida.agotado) {
+      siguiente[salida.tribunal] = null;
+    } else if (salida.error) {
+      siguiente[salida.tribunal] = cursores?.[salida.tribunal] ?? 0;
+      parciales = true;
+    } else {
+      const r = salida.r;
+      resultados.push(...(r.resultados || []));
+      total += Number(r.total) || 0;
+      totalFuente += Number(r.totalFuente ?? r.total) || 0;
+      revisados += Number(r.revisados) || 0;
+      parciales ||= Boolean(r.totalParcial);
+      siguiente[salida.tribunal] = typeof r.siguienteDesde === 'number'
+        ? r.siguienteDesde : null;
+    }
+  }
+  const siguen = Object.values(siguiente).some((n) => typeof n === 'number');
+  return {
+    total, totalFuente, resultados, revisados,
+    totalParcial: parciales || salidas.some((x) => x.error),
+    siguienteDesde: null,
+    siguienteDesdeTribunales: siguen ? siguiente : null,
+    tribunalesConsultados: correctas.map((x) => x.tribunal),
+    tribunalesSinRespuesta: salidas.filter((x) => x.error).map((x) => x.tribunal),
+  };
+}
+
 // El catálogo de fuentes vive en lib/fuentes.js: lo comparten estas rutas y
 // el verificador de citas (lib/verificarCita.js).
 for (const { slug, buscar } of FUENTES) {
@@ -333,6 +389,7 @@ for (const { slug, buscar } of FUENTES) {
       }
 
       let total, totalFuente, siguienteDesde = null, resultados, desdeIndiceLocal = false, avisoFalla = null;
+      let siguienteDesdeTribunales = null, tribunalesConsultados = null, tribunalesSinRespuesta = null;
       let totalParcial = false, revisados = 0, aflojado = false;
       let idsNuevosAcervo = null;
       const parametrosVivo = {
@@ -372,7 +429,11 @@ for (const { slug, buscar } of FUENTES) {
       }
 
       try {
-        ({ total, totalFuente = null, siguienteDesde = null, resultados, totalParcial = false, revisados = 0, aflojado = false } = await buscar(parametrosVivo));
+        const resViva = pedirEnVivo && slug === 'mendoza' && !parametrosVivo.tribunal
+          ? await buscarMendozaTodos(buscar, parametrosVivo, cuerpo.desdeTribunales)
+          : await buscar(parametrosVivo);
+        ({ total, totalFuente = null, siguienteDesde = null, resultados, totalParcial = false, revisados = 0, aflojado = false,
+          siguienteDesdeTribunales = null, tribunalesConsultados = null, tribunalesSinRespuesta = null } = resViva);
         // Verificar novedades contra TODO el acervo antes de guardar las fichas.
         // Que un fallo no esté en la primera página no significa que sea nuevo.
         if (pedirEnVivo) idsNuevosAcervo = idsNuevosRespectoAcervo(resultados);
@@ -491,6 +552,8 @@ for (const { slug, buscar } of FUENTES) {
         // arriba se leía como el total y no lo es.
         totalFuente,
         siguienteDesde,
+        ...(pedirEnVivo && slug === 'mendoza' && !parametrosVivo.tribunal
+          ? { siguienteDesdeTribunales, tribunalesConsultados, tribunalesSinRespuesta } : {}),
         totalParcial,
         revisados,
         aflojado,
