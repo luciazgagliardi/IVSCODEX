@@ -25,6 +25,12 @@ try {
         [...texto.matchAll(new RegExp('.{0,110}'+code+'.{0,140}','gi'))]
           .slice(0,4).map(x=>x[0].slice(0,250)));
       console.log('SCRIPT_OFICIAL '+JSON.stringify({src:url.pathname,bytes:texto.length,contextos:contextos.slice(0,20)}));
+      const lineas=texto.split(/\r?\n/);
+      const señalados=lineas.map((linea,i)=>/funcion=armarSql|funcion=buscar|let tribunal|let tribu|parametros.*tribu|url:|sql:|post|data:|next_p|buscar\(/i.test(linea)?i:-1).filter(i=>i>=0);
+      const ver=new Set();
+      for(const i of señalados) for(let k=Math.max(0,i-2);k<=Math.min(lineas.length-1,i+3);k++)ver.add(k);
+      console.log('CODIGO_SOLICITUD_OFICIAL '+JSON.stringify([...ver].sort((a,b)=>a-b).slice(0,105).map(i=>
+        (i+1)+': '+lineas[i].trim().slice(0,220))));
     }
   }
 }catch(e){console.log('FORMULARIO_ERROR '+e.name+' '+String(e.message).slice(0,200));}
@@ -45,4 +51,32 @@ for(const caso of [
     console.log('FUERO_ORIGEN '+JSON.stringify({tribunal:caso.tribunal,q:caso.q,ok:false,
       codigo:e.codigo||e.code||e.name,detalle:String(e.message).slice(0,220),ms:Date.now()-t0}));
   }
+}
+
+
+const POST='https://wwwjuri.jus.mendoza.gov.ar/bib/jurisprudencia/funciones/consultar.php';
+for(const caso of [{tribunal:'CC',q:'daño moral'},{tribunal:'CT',q:'despido'}]){
+  try{
+    const form=new URLSearchParams({funcion:'armarSql',mostrar:'20',tesauro:'',
+      libre:caso.q,materia:'0',tribunal:caso.tribunal,expediente:'',partes:'',
+      preopinante:'',cota:'0',fecha:'',ubica:'0',libro:'',fojas:'',
+      norma:'0',numero:'',articulo:'',tribu:caso.tribunal,competencia:''});
+    const cab={'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8',
+      'Accept':'text/html, */*;q=0.8'};
+    const r1=await fetch(POST,{method:'POST',headers:cab,body:form,signal:AbortSignal.timeout(12000)});
+    const texto=await r1.text(),corte=texto.indexOf('@@');
+    console.log('FASE_OFICIAL '+JSON.stringify({tribunal:caso.tribunal,fase:'armarSql',
+      http:r1.status,bytes:texto.length,separador:corte>=0}));
+    if(!r1.ok||corte<0) continue;
+    const total=Number(texto.slice(0,corte).match(/(\d+)\s*$/)?.[1]||0);
+    if(!total)continue;
+    const fichas=new URLSearchParams({funcion:'buscar',next_p:'1',total:String(total),
+      mostrar:'10',sql:texto.slice(corte+2)});
+    const r2=await fetch(POST,{method:'POST',headers:cab,body:fichas,
+      signal:AbortSignal.timeout(12000)});
+    const fichasHtml=await r2.text();
+    console.log('FASE_OFICIAL '+JSON.stringify({tribunal:caso.tribunal,fase:'buscar',
+      http:r2.status,bytes:fichasHtml.length,fichas:(fichasHtml.match(/class=["'][^"']*ficha/g)||[]).length,
+      longitudSql:fichas.get('sql')?.length||0}));
+  }catch(e){console.log('FASE_OFICIAL '+JSON.stringify({tribunal:caso.tribunal,error:e.name+' '+e.message}));}
 }
