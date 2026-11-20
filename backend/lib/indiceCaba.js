@@ -40,9 +40,11 @@ import { urlParaPedir, sinClave } from './proxyOrigen.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 
-const HOST = 'jurisprudencia.tsjbaires.gob.ar';
-// Este servidor no habla HTTPS (IIS 6, año ~2003): es a propósito que sea http.
-const URL_BUSQUEDA = `http://${HOST}/jurisprudencia/resultadoBusqueda.asp`;
+// El buscador se mudó: jurisprudencia.tsjbaires.gob.ar ya no resuelve en DNS
+// (verificado el 20/11/2026) y el mismo formulario responde por HTTPS en el
+// dominio .gov.ar. Con el host viejo, CABA quedaba siempre «sin respuesta».
+const HOST = 'jurisprudencia.tsjbaires.gov.ar';
+const URL_BUSQUEDA = `https://${HOST}/jurisprudencia/resultadoBusqueda.asp`;
 
 /**
  * Este sitio habla windows-1252, no UTF-8 — ni para lo que le mandamos ni
