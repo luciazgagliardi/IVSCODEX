@@ -35,7 +35,7 @@ jobs:
   consultar:
     # Nunca probar el backend por el evento push: ese evento corre en paralelo
     # con el despliegue y puede medir la versión anterior. Esperar Azure o ejecutar manualmente.
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'cancelled')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
