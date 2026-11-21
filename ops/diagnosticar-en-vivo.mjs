@@ -1,56 +1,99 @@
 /**
- * Diagnóstico no invasivo de los buscadores oficiales. Cada llamada exige
- * pedirEnVivo=true y NO debe confundirse con la respuesta del acervo.
- * Se ejecuta por GitHub Actions contra la API pública de Azure.
+ * Sonda de las 19 fuentes automáticas publicadas y del acervo local.
+ * No escribe datos. Cada consulta exige pedirEnVivo=true; un cero válido
+ * queda separado de un error del origen o de una respuesta servida por la copia.
+ * Ejecutar después del despliegue de Azure.
  */
 const api = 'https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api';
+
 const pruebas = [
-  { slug: 'mendoza', q: 'ROSALES STELLA', partes: 'ROSALES STELLA', tribunal: 'CC' },
-  { slug: 'mendoza', q: 'daño moral', tribunal: 'SC' },
-  { slug: 'mendoza', q: 'daño moral', tribunal: 'CC' },
-  { slug: 'mendoza', q: 'despido', tribunal: 'CT' },
-  { slug: 'mendoza', q: 'alimentos', tribunal: 'CF' },
-  { slug: 'mendoza', q: 'daño moral' },
-  { slug: 'caba', q: 'amparo' },
-  { slug: 'saij', q: 'amparo', tribunal: 'sumarios' },
-  { slug: 'saij', q: 'daño moral', tribunal: 'fallos', provincia: 'Mendoza' },
-  { slug: 'saij', q: 'despido', tribunal: 'fallos', provincia: 'Mendoza', porPagina: 80 },
+  { slug: 'mendoza', q: 'daño moral', modo: 'todas' },
+  { slug: 'caba', q: 'amparo', modo: 'todas', sensible: true },
+  { slug: 'saij', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'csjn', q: 'amparo', tribunal: 'fallos', modo: 'todas' },
+  { slug: 'dialnet', q: 'derecho laboral', modo: 'todas', externa: true },
+  { slug: 'mendozalegal', q: 'responsabilidad civil', modo: 'todas' },
+  { slug: 'corteidh', q: 'derecho a la vida', modo: 'todas', externa: true },
+  { slug: 'rionegro', q: 'despido', tribunal: 'STJ', modo: 'todas', externa: true },
+  { slug: 'juristeca', q: 'despido', modo: 'todas' },
+  { slug: 'santafe', q: 'despido', modo: 'todas', externa: true },
+  { slug: 'jujuy', q: 'daño moral', modo: 'todas' },
+  { slug: 'scba', q: 'daño moral', modo: 'todas' },
+  { slug: 'cordoba', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'entrerrios', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'neuquen', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'tucuman', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'chaco', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'corrientes', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'catamarca', q: 'sentencia', modo: 'todas', local: true },
 ];
-const prueba = async ({slug, ...filtros}) => {
-  const t0 = Date.now();
+
+async function unaPrueba(caso) {
+  const inicio = Date.now();
+  const ruta = caso.local ? '/indice/' + caso.slug + '/local' : '/indice/' + caso.slug + '/buscar';
+  const cuerpo = caso.local
+    ? { q: caso.q, modo: caso.modo, rapida: true }
+    : { ...caso, pedirEnVivo: true };
   try {
-    const respuesta = await fetch(`${api}/indice/${slug}/buscar`, {
+    const respuesta = await fetch(api + ruta, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...filtros, modo: 'todas', pedirEnVivo: true }),
-      signal: AbortSignal.timeout(35000),
+      body: JSON.stringify(cuerpo),
+      signal: AbortSignal.timeout(55000),
     });
-    const d = await respuesta.json();
+    let d;
+    try { d = await respuesta.json(); }
+    catch (error) {
+      return { fuente: caso.slug, consulta: caso.q, http: respuesta.status, ok: false,
+        estado: 'respuesta_no_json', detalle: String(error.message).slice(0, 160), ms: Date.now() - inicio,
+        externa: Boolean(caso.externa), sensible: Boolean(caso.sensible) };
+    }
+    const enVivo = !caso.local && d.enVivo === true && d.desdeIndiceLocal !== true;
+    const copiaLocal = caso.local && d.desdeIndiceLocal === true;
+    const ok = Boolean(d.ok) && (caso.local ? copiaLocal : enVivo);
+    const total = Number.isFinite(Number(d.total)) ? Number(d.total) : null;
     return {
-      fuente: slug, tribunal: filtros.tribunal || 'TODOS', consulta: filtros.q, http: respuesta.status, ok: Boolean(d.ok),
-      enVivo: d.enVivo === true && d.desdeIndiceLocal !== true,
-      desdeIndiceLocal: d.desdeIndiceLocal === true,
-      total: d.total ?? null, documentos: (d.resultados || []).length,
-      muestraTribunales: (d.resultados || []).slice(0, 8).map(x=>x.tribunal||null),
-      resumenTribunales: (d.resultados||[]).reduce((a,x)=>{
-        const t=String(x.tribunal||'').toUpperCase();
-        const f=t.includes('TRABAJO')||t.includes('LABORAL')?'laboral':
-          t.includes('CIVIL')||t.includes('COMERCIAL')||t.includes('MINAS')?'civil':
-          t.includes('FAMILIA')?'familia':t.includes('SUPREMA')?'corte':'otros';
-        a[f]=(a[f]||0)+1;return a;
-      },{}),
-      codigo: d.codigo || null, avisoFalla: d.avisoFalla || null, ms: Date.now() - t0,
+      fuente: caso.slug, consulta: caso.q, tribunal: caso.tribunal || 'TODOS',
+      http: respuesta.status, ok, enVivo, copiaLocal,
+      estado: !d.ok ? 'error_aplicacion' : caso.local ? (copiaLocal ? 'acervo_local' : 'respuesta_no_local')
+        : enVivo ? (total === 0 ? 'cero_valido' : 'vivo') : 'no_confirmado_en_vivo',
+      total, documentos: (d.resultados || []).length,
+      codigo: d.codigo || null, mensaje: d.mensaje || d.error || null,
+      detalle: d.detalle || null, ms: Date.now() - inicio,
+      externa: Boolean(caso.externa), sensible: Boolean(caso.sensible),
     };
   } catch (error) {
-    return { fuente: slug, tribunal: filtros.tribunal || 'TODOS', consulta: filtros.q, ok: false, enVivo: false,
-      codigo: error.name || 'RED', detalle: String(error.message).slice(0,120), ms: Date.now() - t0 };
+    return { fuente: caso.slug, consulta: caso.q, tribunal: caso.tribunal || 'TODOS',
+      ok: false, estado: 'error_transporte', codigo: error.name || 'RED',
+      detalle: String(error.message).slice(0, 180), ms: Date.now() - inicio,
+      externa: Boolean(caso.externa), sensible: Boolean(caso.sensible) };
   }
-};
-const resultados = await Promise.all(pruebas.map(prueba));
-for (const r of resultados) console.log('BUSQUEDA_VIVA ' + JSON.stringify(r));
+}
+
+// Dos pedidos simultáneos como máximo: respeta la cortesía de los portales y
+// deja que las búsquedas de una fuente terminen antes de saturar sus servidores.
+const resultados = new Array(pruebas.length);
+let siguiente = 0;
+async function trabajador() {
+  while (true) {
+    const i = siguiente++;
+    if (i >= pruebas.length) return;
+    resultados[i] = await unaPrueba(pruebas[i]);
+    console.log('BUSQUEDA_VIVA ' + JSON.stringify(resultados[i]));
+  }
+}
+await Promise.all([trabajador(), trabajador()]);
+const fallasCriticas = resultados.filter((r) => !r.ok && !r.externa && !r.sensible);
+const noDisponibles = resultados.filter((r) => !r.ok);
+const ceros = resultados.filter((r) => r.estado === 'cero_valido');
 console.log('RESUMEN_VIVO ' + JSON.stringify({
-  consultadas: resultados.length,
-  confirmadas: resultados.filter((r) => r.enVivo).map((r) => r.fuente),
-  noDisponibles: resultados.filter((r) => !r.enVivo).map((r) => r.fuente),
+  fuentes: resultados.length,
+  disponibles: resultados.filter((r) => r.ok).map((r) => r.fuente),
+  noDisponibles: noDisponibles.map((r) => ({ fuente: r.fuente, estado: r.estado, codigo: r.codigo, detalle: r.detalle })),
+  cerosValidos: ceros.map((r) => r.fuente),
+  fallasCriticas: fallasCriticas.map((r) => r.fuente),
 }));
-// El diagnóstico debe informar fallos externos, no modificar producción.
+if (fallasCriticas.length) {
+  console.error('Una o más fuentes que deben responder devolvieron un error o no confirmaron consulta oficial.');
+  process.exitCode = 1;
+}
