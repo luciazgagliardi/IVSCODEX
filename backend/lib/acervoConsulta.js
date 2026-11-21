@@ -87,7 +87,19 @@ export function consultaFts(q, modo = 'todas', excluir = '', apellidosConocidos 
  * suman lo que SAIJ publica de su provincia (los tribunales locales que SAIJ
  * recoge); la Corte es lo de SAIJ marcado como de la Corte.
  */
-export const PROVINCIA_DE_BASE = { mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires', santafe: 'Santa Fe', rionegro: 'Río Negro', catamarca: 'Catamarca', cordoba: 'Córdoba', entrerrios: 'Entre Ríos', neuquen: 'Neuquén', tucuman: 'Tucumán', chaco: 'Chaco', corrientes: 'Corrientes' };
+export const PROVINCIA_DE_BASE = {
+  mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires',
+  santafe: 'Santa Fe', rionegro: 'Río Negro', catamarca: 'Catamarca',
+  cordoba: 'Córdoba', entrerrios: 'Entre Ríos', neuquen: 'Neuquén',
+  tucuman: 'Tucumán', chaco: 'Chaco', corrientes: 'Corrientes',
+  buenosaires: 'Buenos Aires', caba_saij: 'Ciudad Autónoma de Buenos Aires',
+  catamarca_saij: 'Catamarca', chubut: 'Chubut', formosa: 'Formosa',
+  jujuy_saij: 'Jujuy', lapampa: 'La Pampa', larioja: 'La Rioja',
+  mendoza_saij: 'Mendoza', misiones: 'Misiones', rionegro_saij: 'Río Negro',
+  salta: 'Salta', sanjuan: 'San Juan', sanluis: 'San Luis',
+  santacruz: 'Santa Cruz', santafe_saij: 'Santa Fe',
+  santiagodelestero: 'Santiago del Estero', tierradelfuego: 'Tierra del Fuego'
+};
 /* El selector de tribunal de Mendoza (SC, CC, CT), por el nombre del tribunal que trae cada ficha. */
 const TRIBUNAL_DE = { mendoza: { SC: '%SUPREMA%', CC: '%CIVIL%', CT: '%TRABAJO%' } };
 /* Los «tipos» de SAIJ (sumarios, fallos, doctrina…): lo que el acervo guarda de SAIJ es sólo jurisprudencia, en sumarios y fallos. */
