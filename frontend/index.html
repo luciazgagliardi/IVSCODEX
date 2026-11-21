@@ -5402,11 +5402,20 @@ function recalcularSugeridas(){
 
 function tiraSugerencias(){
   if(estado.tab!=="buscar") return "";
-  // Si lo escrito ya cae en un anillo del tesauro, manda el tesauro: dice
-  // lo mismo pero con la relación tipada (equivalente o cercano), y las
-  // dos tiras juntas repetían el mismo chip dos veces.
-  if(expandir(String(estado.q||"").trim())) return "";
-  if(!estado.sugeridas.length&&estado.sugeridaRama){
+  // El anillo y el intérprete pueden aportar voces distintas. No se oculta
+  // toda la lista por el mero hecho de que exista un anillo: se quitan sólo
+  // los chips duplicados para no perder sugerencias válidas.
+  var anillo=expandir(String(estado.q||"").trim()), cubiertas={};
+  if(anillo&&Array.isArray(anillo.variantes)){
+    anillo.variantes.forEach(function(v){
+      var k=sinTildes(String(v.t||"")).trim();
+      if(k) cubiertas[k]=true;
+    });
+  }
+  var voces=(estado.sugeridas||[]).filter(function(s){
+    return !cubiertas[sinTildes(String(s.voz||"")).trim()];
+  });
+  if(!voces.length&&estado.sugeridaRama){
     return '<div class="sugeridas">'+
       '<p class="sug-nota">No se encontró una voz puntual para la consulta escrita, '+
       'pero el tema cae en una rama. Abrirla muestra sus voces.</p>'+
@@ -5414,8 +5423,8 @@ function tiraSugerencias(){
       esc(comoTitulo(nombreRama(estado.sugeridaRama)))+'</button>'+
       '<button class="chip sug-cerrar" data-act="cerrar-sugeridas" title="Ocultar">✕</button></div></div>';
   }
-  if(!estado.sugeridas.length) return "";
-  var chips=estado.sugeridas.map(function(s){
+  if(!voces.length) return "";
+  var chips=voces.map(function(s){
     var puesta=sinTildes(estado.q).trim()===sinTildes(s.voz).trim();
     return '<button class="chip voz-sug" data-act="usar-voz" data-voz="'+esc(s.voz)+'"'+
            ' aria-pressed="'+(puesta?"true":"false")+'">'+esc(comoTitulo(s.voz))+'</button>';
@@ -5843,6 +5852,19 @@ function bloqueResultados(vis){
   var h=avisoNombre()+estadoLista(vis);
   if(!lista.length){
     var respondieron=vis.filter(function(f){var im=estado.indices[f.slug]||{};return im.busco&&!im.error;}).length;
+    var candidatos=[];
+    vis.forEach(function(f){
+      var im=estado.indices[f.slug]||{};
+      if(!im.busco||im.error||!im.resultados||!im.resultados.length) return;
+      im.resultados.forEach(function(r,i){
+        if(conTexto(f,r)===false)candidatos.push({f:f,r:r,k:f.slug+':candidato:'+i});
+      });
+    });
+    if(candidatos.length){
+      return h+'<div class="rz-aviso" role="status">Las fuentes devolvieron '+candidatos.length+
+        ' registros, pero no se pudo verificar el texto de sus pasajes. No se informa un cero: se muestran como fichas pendientes de comprobación.</div>'+
+        candidatos.map(function(x){return filaIndice(x.f,x.r,x.k);}).join('');
+    }
     return h+(buscadas
       ?'<div class="vacio vacio--inicio">'+(respondieron
         ?'No se encontraron coincidencias en las fuentes que respondieron. Las fuentes que fallaron se identifican por separado y no cuentan como resultado cero.'
@@ -7061,9 +7083,10 @@ function anexarResultadosOficiales(slug,im,d){
       if(enriquecerResultadoLocal(existente,r)) cambios=true;
       return;
     }
-    // No repetir en pantalla un fallo que ya existe en el acervo completo,
-    // aunque no haya quedado dentro de la primera página local.
-    if(idsConfirmados&&!idsConfirmados.has(r.id)) return;
+    // idsNuevosAcervo describe TODO el corpus, no la primera página rápida.
+    // Que el fallo exista en otra parte del acervo no significa que ya esté
+    // visible en esta página: descartarlo aquí hacía desaparecer resultados
+    // oficiales válidos. La deduplicación correcta es contra lo ya mostrado.
     if(vistos[clave]) return;
     vistos[clave]=true;
     if(r.id) porId[r.id]=r;
@@ -7594,7 +7617,11 @@ function panelIndice(f){
       (im.buscandoMasOficial?' disabled':'')+'>'+
       (im.buscandoMasOficial?'Trayendo más resultados…':'Traer más resultados')+'</button></p>';
   if(im.errorMasOficial)out+='<p class="rz-aviso" role="status">'+esc(im.errorMasOficial)+'</p>';
-  if(im.cargando) return out+'</div>';
+  // Una respuesta local ya visible debe permanecer en pantalla mientras la
+  // consulta oficial termina. El indicador de carga sólo reemplaza el panel
+  // cuando todavía no hay ningún resultado que conservar.
+  if(im.cargando&&!im.busco&&!im.resultados.length)
+    return out+'<p class="rz-aviso" role="status">Consultando la fuente…</p></div>';
   if(im.error){
     out+='<div class="aviso" role="alert">No se pudo consultar '+esc(f.nombre)+'. '+esc(String(im.error))+
       ' Este error no equivale a una búsqueda válida con cero resultados. Revise el portal oficial o vuelva a consultar más tarde.</div></div>';
@@ -7621,6 +7648,15 @@ function panelIndice(f){
   var visibles=(im.secFiltro?im.resultados.filter(function(r){return r.secretaria===im.secFiltro;}):im.resultados).filter(function(r){ return conTexto(f,r)!==false; });
   var nombreSec=SECRETARIAS_CABA[im.secFiltro];
   if(!visibles.length&&!im.secFiltro){
+    if(im.resultados.length){
+      // La fuente sí devolvió fichas. Si no se pudo recuperar/verificar el
+      // pasaje, no se debe convertir esa situación en un falso cero.
+      out+=avisoLocal+'<p class="rz-aviso" role="status">La fuente devolvió '+im.resultados.length+
+        ' registros en esta página, pero no se pudo verificar el pasaje coincidente. Se conservan las fichas para inspeccionar sus datos y abrir la fuente oficial.</p>'+
+        im.resultados.map(function(r,i){return filaIndice(f,r,f.slug+':candidato:'+i);}).join('')+
+        paginadorIndice(f,im)+'</div>';
+      return out;
+    }
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">'+(im.fragCargando?'Buscando los pasajes…':'Sin coincidencias en '+esc(f.nombre)+' para esta búsqueda en esta página.')+'</p>'+paginadorIndice(f,im)+'</div>';
     return out;
   }
