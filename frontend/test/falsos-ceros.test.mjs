@@ -168,3 +168,15 @@ test('las sugerencias del intérprete no desaparecen por existir un anillo del t
   assert.match(salida, /daño emergente/);
   assert.doesNotMatch(salida, /responsabilidad objetiva/);
 });
+
+
+test('una fuente con total preliminar positivo y página vacía no se presenta como cero', () => {
+  const panel = extraer('panelIndice');
+  const aviso = panel.indexOf('Number(im.totalFuente)>0||Number(im.total)>0');
+  const cero = panel.indexOf('Sin coincidencias en');
+  assert.ok(aviso >= 0 && cero > aviso,
+    'primero debe distinguir una respuesta preliminar positiva; sólo después puede afirmar cero real');
+  assert.match(panel, /No se puede afirmar que no haya resultados/);
+  assert.match(panel, /data-act="buscar-indice"/);
+  assert.match(panel, /Reintentar la consulta/);
+});
