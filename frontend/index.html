@@ -7054,7 +7054,7 @@ function cargarMasOficial(slug){
   }
   im.buscandoMasOficial=true; im.errorMasOficial="";render();
   var control=new AbortController();
-  var tope=setTimeout(function(){control.abort();},50000);
+  var tope=setTimeout(function(){control.abort();},TOPE_ORIGEN_NAVEGADOR);
   fetch(estado.api+"/indice/"+slug+"/buscar",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(cuerpo),signal:control.signal
@@ -7105,23 +7105,85 @@ function leerRespuesta(r){
   if(tipo.indexOf("json")>=0) return r.json()["catch"](function(){ return {ok:false,mensaje:"El servidor respondió de forma ilegible (HTTP "+r.status+")."}; });
   return {ok:false,mensaje:"El servidor respondió con un error (HTTP "+r.status+"); no fue un corte de su conexión. Pruebe de nuevo en unos minutos."};
 }
-var colaOrigenPantalla=[],origenPantallaActivos=0;
+var colaOrigenPantalla=[],origenPantallaActivos=0,origenPantallaControles={};
+var MAX_ORIGEN_SIMULTANEOS=4;
+// Cada adaptador tiene timeout por petición de origen, no por búsqueda
+// completa. Una consulta puede recorrer varias páginas y superar 50 segundos.
+var TOPE_ORIGEN_NAVEGADOR=135000;
+function cancelarOrigenPantalla(slug){
+  var control=origenPantallaControles[slug];
+  if(control) control.abort();
+  colaOrigenPantalla=colaOrigenPantalla.filter(function(t){
+    if(t.slug!==slug) return true;
+    t.resolver(null);
+    return false;
+  });
+}
+function esperaReintentoOrigen(control){
+  return new Promise(function(resolve,reject){
+    if(control.signal.aborted){reject(Object.assign(new Error("consulta reemplazada"),{name:"AbortError"}));return;}
+    var reloj=setTimeout(liberar,850);
+    function abortar(){
+      clearTimeout(reloj);
+      control.signal.removeEventListener("abort",abortar);
+      reject(Object.assign(new Error("consulta reemplazada"),{name:"AbortError"}));
+    }
+    function liberar(){
+      control.signal.removeEventListener("abort",abortar);
+      resolve();
+    }
+    control.signal.addEventListener("abort",abortar,{once:true});
+  });
+}
+async function pedirOrigenConReintento(t,control){
+  for(var intento=0;intento<2;intento++){
+    try{
+      if(control.signal.aborted||!t.vigente()) throw Object.assign(new Error("consulta reemplazada"),{name:"AbortError"});
+      var respuesta=await fetch(estado.api+"/indice/"+t.slug+"/buscar",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:t.cuerpo,signal:control.signal,cache:"no-store"
+      });
+      var transitoria=[502,503,504,520,522,524].includes(respuesta.status);
+      if(!transitoria&&respuesta.ok){
+        try{
+          var d=await respuesta.clone().json();
+          transitoria=Boolean(d&&d.ok===false&&d.reintentable===true);
+        }catch(e){}
+      }
+      if(transitoria&&intento===0){
+        await esperaReintentoOrigen(control);
+        continue;
+      }
+      return respuesta;
+    }catch(e){
+      if(control.signal.aborted||e?.name==="AbortError"||intento>0) throw e;
+      // Un corte de transporte puede ser circunstancial. Se reintenta una
+      // vez; las denegaciones HTTP explícitas nunca pasan por este camino.
+      await esperaReintentoOrigen(control);
+    }
+  }
+  throw new Error("No se pudo completar la consulta oficial.");
+}
 function despacharOrigenPantalla(){
-  while(origenPantallaActivos<4&&colaOrigenPantalla.length){
-    var t=colaOrigenPantalla.shift();
+  while(origenPantallaActivos<MAX_ORIGEN_SIMULTANEOS&&colaOrigenPantalla.length){
+    // Una fuente tiene una sola consulta activa; las demás fuentes avanzan
+    // aunque una respuesta lenta esté terminando de cancelarse.
+    var pos=colaOrigenPantalla.findIndex(function(t){return !origenPantallaControles[t.slug];});
+    if(pos<0) return;
+    var t=colaOrigenPantalla.splice(pos,1)[0];
     if(!t.vigente()){t.resolver(null);continue;}
     origenPantallaActivos++;
     (function(t){
       var control=new AbortController();
-      // El servidor puede tardar hasta ~45 s en una fuente (25 s de la
-      // consulta más hasta 20 s de variantes): cortar a los 35 s perdía
-      // respuestas que iban a llegar.
-      var reloj=setTimeout(function(){control.abort();},50000);
-      fetch(estado.api+"/indice/"+t.slug+"/buscar",{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:t.cuerpo,signal:control.signal
-      }).then(t.resolver,function(e){ t.rechazar(e&&e.name==="AbortError"?{tope:true}:e); }).finally(function(){
+      origenPantallaControles[t.slug]=control;
+      var reloj=setTimeout(function(){control.abort();},TOPE_ORIGEN_NAVEGADOR);
+      pedirOrigenConReintento(t,control).then(t.resolver,function(e){
+        t.rechazar(e&&e.name==="AbortError"
+          ? (t.vigente()?{tope:true}:{reemplazada:true})
+          : e);
+      }).finally(function(){
         clearTimeout(reloj);
+        if(origenPantallaControles[t.slug]===control) delete origenPantallaControles[t.slug];
         origenPantallaActivos--;
         despacharOrigenPantalla();
       });
@@ -7130,6 +7192,9 @@ function despacharOrigenPantalla(){
 }
 function consultarOrigenPantalla(slug,cuerpo,vigente){
   return new Promise(function(resolver,rechazar){
+    // No dejar que una consulta vieja de esta misma fuente ocupe la cola o
+    // uno de los puestos activos después de que se inició un término nuevo.
+    cancelarOrigenPantalla(slug);
     colaOrigenPantalla.push({slug:slug,cuerpo:JSON.stringify(cuerpo),vigente:vigente,resolver:resolver,rechazar:rechazar});
     despacharOrigenPantalla();
   });
@@ -7381,7 +7446,7 @@ function buscarEnFuente(slug,pagina){
       imBusco.cargando=false; imBusco.busco=true;
       if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
       imBusco.error=(err&&err.tope)
-        ?"El sitio oficial no respondió en 50 segundos. No es un resultado vacío: pruebe de nuevo con «Reintentar las bases sin respuesta»."
+        ?"La consulta oficial superó su plazo de 135 segundos. No es un resultado vacío: puede reintentarse."
         :(slug==="saij"||slug==="csjn")
           ?"No fue posible consultar SAIJ, ni desde el servidor ni desde el navegador. Intente nuevamente en unos minutos."
           :"No se pudo completar la consulta con el servidor ("+String((err&&err.message)||"error de red").slice(0,80)+"). No es un resultado vacío: pruebe «Reintentar las bases sin respuesta».";
