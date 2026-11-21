@@ -1,15 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { PROVINCIAS_PRIORIZADAS, provinciaSaijDe } from '../lib/indiceProvincialSaij.js';
+import { VISTAS_PROVINCIALES_SAIJ, provinciaSaijDe } from '../lib/indiceProvincialSaij.js';
 import { PROVINCIAS_SAIJ } from '../lib/indiceSaij.js';
 import { PROVINCIA_DE_BASE } from '../lib/acervoConsulta.js';
 import { FUENTES, consultaDeArticulo } from '../lib/fuentes.js';
 
-const vistas = Object.entries(PROVINCIAS_PRIORIZADAS);
+const vistas = Object.entries(VISTAS_PROVINCIALES_SAIJ);
 
-test('las seis vistas son facetas provinciales válidas de SAIJ, no fuentes sin origen', () => {
-  assert.equal(vistas.length, 6);
+test('las 24 jurisdicciones tienen vistas SAIJ válidas, sin slugs duplicados', () => {
+  assert.equal(vistas.length, 24);
   const slugs = new Set(FUENTES.map(x => x.slug));
   assert.equal(slugs.size, FUENTES.length, 'ninguna fuente se registra dos veces');
   for (const [slug, provincia] of vistas) {
@@ -34,18 +34,19 @@ test('el texto y la metadata provincial no se reemplazan por fichas más cortas 
   assert.match(armar, /clave === 'voces'/);
 });
 
-test('cosechas SAIJ provinciales con progreso y artefactos independientes', () => {
+test('cosechas SAIJ en las 24 jurisdicciones con progreso y artefactos independientes', () => {
   const script = fs.readFileSync(new URL('../scripts/cosecharSaij.mjs', import.meta.url), 'utf8');
   const workflow = fs.readFileSync(new URL('../../.github/workflows/ampliacion-integral.yml', import.meta.url), 'utf8');
   assert.match(script, /progreso-saij\$\{sufijo\}\.json/);
   assert.match(workflow, /saij_provincial:/);
   assert.match(workflow, /max-parallel: 2/);
+  assert.match(workflow, /max-parallel: 4/);
   assert.match(workflow, /needs: \[pruebas, fuentes, saij, saij_provincial\]/);
   for (const [slug] of vistas) assert.match(workflow, new RegExp('slug: ' + slug + ','));
   assert.match(workflow, /fuente-saij-\$\{\{ matrix\.slug \}\}/);
 });
 
-test('buscador expone vistas regionales y no las confunde con sitios propios', () => {
+test('buscador expone las 24 vistas territoriales SAIJ y las distingue de los sitios directos', () => {
   const html = fs.readFileSync(new URL('../../frontend/index.html', import.meta.url), 'utf8');
   for (const [slug, provincia] of vistas) {
     assert.ok(html.includes('slug:"' + slug + '"'), slug);

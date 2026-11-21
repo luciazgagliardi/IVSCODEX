@@ -25,6 +25,24 @@ const pruebas = [
   { slug: 'tucuman', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
   { slug: 'chaco', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
   { slug: 'corrientes', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'buenosaires', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'caba_saij', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'catamarca_saij', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'chubut', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'formosa', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'jujuy_saij', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'lapampa', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'larioja', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'mendoza_saij', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'misiones', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'rionegro_saij', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'salta', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'sanjuan', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'sanluis', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'santacruz', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'santafe_saij', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'santiagodelestero', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'tierradelfuego', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
   { slug: 'catamarca', q: 'sentencia', modo: 'todas', local: true },
 ];
 
@@ -94,10 +112,13 @@ await Promise.all([trabajador(), trabajador()]);
 const fallasCriticas = resultados.filter((r) => !r.ok && !r.externa && !r.sensible);
 const noDisponibles = resultados.filter((r) => !r.ok);
 const ceros = resultados.filter((r) => r.estado === 'cero_valido');
+const restriccionesConocidas = noDisponibles.filter((r) => r.externa || r.sensible);
 console.log('RESUMEN_VIVO ' + JSON.stringify({
-  fuentes: resultados.length,
+  fuentesConsultadas: resultados.length,
+  consultasConfirmadas: resultados.filter((r) => r.ok).length,
   disponibles: resultados.filter((r) => r.ok).map((r) => r.fuente),
   noDisponibles: noDisponibles.map((r) => ({ fuente: r.fuente, estado: r.estado, codigo: r.codigo, detalle: r.detalle })),
+  restriccionesConocidas: restriccionesConocidas.map((r) => ({ fuente: r.fuente, estado: r.estado, codigo: r.codigo, detalle: r.detalle })),
   cerosValidos: ceros.map((r) => r.fuente),
   fallasCriticas: fallasCriticas.map((r) => r.fuente),
 }));
