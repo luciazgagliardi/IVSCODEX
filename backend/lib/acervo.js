@@ -147,12 +147,50 @@ export async function prepararAcervo({ esperar = false } = {}) {
   return estado;
 }
 
+/** Comprueba que el volumen persistente puede crear archivos SQLite nuevos.
+ * Una base anterior legible no demuestra que el directorio todavía admita
+ * escrituras (permisos heredados, cuota llena o montaje de solo lectura).
+ */
+async function comprobarDirectorioImportacion() {
+  await fsp.mkdir(DIR_BASE, { recursive: true, mode: 0o700 });
+  try { await fsp.chmod(DIR_BASE, 0o700); } catch (e) {
+    // Si el volumen no permite corregir permisos, el test SQLite que sigue
+    // devuelve el error real sin tocar la base activa.
+    if (!['EPERM', 'EACCES', 'EROFS'].includes(e?.code)) throw e;
+  }
+  const stat = await fsp.stat(DIR_BASE);
+  if (!stat.isDirectory()) throw new Error(`la ruta del acervo no es un directorio: ${DIR_BASE}`);
+  let libre = null;
+  try {
+    const espacio = await fsp.statfs(DIR_BASE);
+    libre = Number(espacio.bavail) * Number(espacio.bsize);
+  } catch { /* statfs puede no estar disponible en todos los hostings */ }
+  const prueba = path.join(DIR_BASE, `.acervo-escritura-${randomUUID()}.db`);
+  let temporal;
+  try {
+    temporal = new sqlite.DatabaseSync(prueba);
+    temporal.exec('CREATE TABLE prueba_escritura (id INTEGER PRIMARY KEY)');
+    temporal.close();
+    temporal = null;
+    await fsp.rm(prueba, { force: true });
+    return { libre };
+  } catch (e) {
+    try { temporal?.close(); } catch { /* ya cerrada */ }
+    await fsp.rm(prueba, { force: true }).catch(() => {});
+    const bytes = Number.isFinite(libre) ? `; espacio libre: ${libre} bytes` : '';
+    throw new Error(`SQLite no puede crear una base nueva en ${DIR_BASE}${bytes}: ${e.message}`);
+  }
+}
+
 /** Un único importador entre todas las instancias de Azure; cada versión se publica en un archivo inmutable. */
 async function importar(man) {
   estado.importando = true;
   const t0 = Date.now();
   const liberar = await adquirirCandado(path.join(DIR_BASE, '.acervo.lock'), { version: man.version });
   try {
+    // La base anterior puede seguir leyéndose, pero la publicación nueva
+    // necesita crear otro archivo en el mismo volumen persistente.
+    await comprobarDirectorioImportacion();
     // Otra instancia pudo terminar la misma importación mientras esperábamos el lock.
     const puntero = punteroAcervo();
     const publicada = puntero?.version === man.version && typeof puntero.archivo === 'string' &&
