@@ -42,11 +42,14 @@ export function provinciaSaijDe(slug) {
 export async function buscarProvinciaSaij(slug, opciones = {}) {
   const provincia = provinciaSaijDe(slug);
   if (!provincia) throw new Error('Jurisdicción provincial no configurada');
-  // Ignorar provincia y tipo del cliente: el índice provincial debe quedarse
-  // estrictamente dentro de la faceta local correspondiente, sin legislación
-  // ni doctrina presentadas como fallos.
+  // Mantener la faceta territorial, pero usar el mismo orden documental que
+  // la búsqueda nacional: fallos primero y sumarios sólo como respaldo.
+  // Se permite elegir explícitamente «fallos» o «sumarios» para investigar
+  // un tipo documental aislado.
+  const pedido = ['fallos', 'sumarios', 'todo'].includes(opciones.tribunal)
+    ? opciones.tribunal : 'todo';
   const salida = await buscarSaij({ ...opciones, soloCsjn: false,
-    provincia, tribunal: 'sumarios' });
+    provincia, tribunal: pedido });
   // Los registros de SAIJ no siempre incluyen la provincia en el propio
   // resumen: añadir sólo el metadato confirmado por la faceta consultada.
   return { ...salida, resultados: (salida.resultados || []).map(r =>
