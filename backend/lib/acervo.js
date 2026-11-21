@@ -188,7 +188,15 @@ function completarAnios() {
  * también al acervo: así la copia local crece de a poco con cada búsqueda que el
  * sitio sí contestó, sin barridos.
  */
-const BASES_DEL_ACERVO = new Set(['mendoza', 'mendozalegal', 'caba', 'csjn', 'saij', 'dialnet', 'scba', 'juristeca', 'santafe', 'rionegro', 'corteidh', 'catamarca', 'jujuy', 'chubut', 'tfn', 'santacruz', 'hudoc']);
+const FUENTES_DIRECTAS_ACERVO = new Set([
+  'mendoza', 'mendozalegal', 'caba', 'csjn', 'saij', 'dialnet',
+  'scba', 'juristeca', 'santafe', 'rionegro', 'corteidh',
+  'catamarca', 'jujuy', 'chubut', 'tfn', 'santacruz', 'hudoc',
+]);
+const FUENTES_PROVINCIALES_DIRECTAS = new Set(['mendoza', 'scba', 'caba', 'santafe', 'rionegro', 'catamarca']);
+const VISTAS_SAIJ_ACERVO = new Map(Object.entries(PROVINCIA_DE_BASE)
+  .filter(([slug]) => !FUENTES_PROVINCIALES_DIRECTAS.has(slug)));
+const BASES_DEL_ACERVO = new Set([...FUENTES_DIRECTAS_ACERVO, ...VISTAS_SAIJ_ACERVO.keys()]);
 async function sumarIndiceGuardado() {
   let archivos = [];
   try { archivos = (await fsp.readdir(DIR_INDICE)).filter((a) => a.endsWith('.json')); } catch { return; }
@@ -197,12 +205,20 @@ async function sumarIndiceGuardado() {
     if (!BASES_DEL_ACERVO.has(fuente)) continue;
     let regs = [];
     try { regs = Object.values(JSON.parse(await fsp.readFile(path.join(DIR_INDICE, a), 'utf8')).registros || {}); } catch { continue; }
+    const provinciaVista = VISTAS_SAIJ_ACERVO.get(fuente);
+    const origen = provinciaVista ? 'saij' : fuente;
     const esta = db.prepare('SELECT 1 FROM fallos WHERE id = ?');
     const nuevos = regs.filter((r) => r?.id && !esta.get(r.id));
-    // de a 500, cediendo el turno: al arrancar no se frena al servidor
+    // Las facetas provinciales conservan su UUID original, pero se almacenan
+    // como SAIJ con la provincia verificada: una causa, un registro, sin copias.
+    // De a 500, cediendo el turno: al arrancar no se frena al servidor.
     for (let i = 0; i < nuevos.length; i += 500) {
       db.exec('BEGIN');
-      try { for (const r of nuevos.slice(i, i + 500)) poner({ ...r, fuente }); db.exec('COMMIT'); } catch (e) { db.exec('ROLLBACK'); console.warn('[acervo] índice guardado:', e.message); break; }
+      try {
+        for (const r of nuevos.slice(i, i + 500))
+          poner({ ...r, fuente: origen, ...(provinciaVista ? { provincia: provinciaVista } : {}) });
+        db.exec('COMMIT');
+      } catch (e) { db.exec('ROLLBACK'); console.warn('[acervo] índice guardado:', e.message); break; }
       await new Promise((ok) => setImmediate(ok));
     }
   }
