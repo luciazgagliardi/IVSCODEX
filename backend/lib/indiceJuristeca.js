@@ -89,6 +89,17 @@ export function parsear(html) {
  * cuerpo de los fallos; la frase exacta y lo excluido se filtran de este lado
  * sobre carátula y temas (el pasaje llega después, del PDF).
  */
+/** Descarta lo que tiene un año conocido fuera del rango; lo que no trae fecha queda. */
+export function filtrarPorAnio(lista, anioDesde, anioHasta) {
+  if (!anioDesde && !anioHasta) return lista;
+  return lista.filter((r) => {
+    const m = /(\d{4})\s*$/.exec(String(r.fecha || '').trim()) || /\b(19|20)\d{2}\b/.exec(String(r.fecha || ''));
+    if (!m) return true;
+    const anio = Number(m[1].length === 4 ? m[1] : m[0]);
+    return (!anioDesde || anio >= Number(anioDesde)) && (!anioHasta || anio <= Number(anioHasta));
+  });
+}
+
 export async function buscarJuristeca({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
@@ -98,16 +109,33 @@ export async function buscarJuristeca({ q, modo = 'todas', excluir = '', pagina 
   if (!total) return { total: 0, totalFuente: 0, siguienteDesde: null, pagina, porPagina, resultados: [] };
   const params = { accion: 'fallos', 'Texto[0]': termino, total_fallos: String(total), ...(anioDesde ? { AnioDesde: String(anioDesde) } : {}), ...(anioHasta ? { AnioHasta: String(anioHasta) } : {}) };
   if (desde) { params.ID = String(desde); params.pagina = String(Math.max(2, pagina)); }
-  const html = await pedir(params);
-  let resultados = parsear(html);
-  const ultimo = resultados.length ? resultados[resultados.length - 1]._id : null;
-  const hayMas = /name="pagina"\s+value="\d+"/.test(html) && ultimo;
-  if (excluir) resultados = filtrarPorModo(resultados, { q: '', modo: 'alguna', excluir }).lista;
+  // El portal recibe AnioDesde/AnioHasta pero no los respeta (medido: con
+  // 2023–2024, 50 de 50 resultados eran de 2026). Se filtra de este lado y,
+  // con rango de años, se revisan hasta 3 páginas del portal antes de dar
+  // una página por vacía: mostrar «0» tras mirar solo la primera sería un
+  // falso cero.
+  const filtrando = Boolean(anioDesde || anioHasta);
+  let resultados = [], antes = 0, ultimo = null, hayMas = false, numPag = Math.max(1, Number(params.pagina) || 1);
+  for (let vuelta = 0; vuelta < (filtrando ? 3 : 1); vuelta++) {
+    const html = await pedir(params);
+    let lote = parsear(html);
+    ultimo = lote.length ? lote[lote.length - 1]._id : ultimo;
+    hayMas = Boolean(/name="pagina"\s+value="\d+"/.test(html) && lote.length);
+    if (excluir) lote = filtrarPorModo(lote, { q: '', modo: 'alguna', excluir }).lista;
+    antes += lote.length;
+    resultados.push(...filtrarPorAnio(lote, anioDesde, anioHasta));
+    if (!filtrando || resultados.length >= porPagina || !hayMas) break;
+    numPag++; params.ID = String(ultimo); params.pagina = String(Math.max(2, numPag));
+  }
+  const descartadosPorAnio = antes - resultados.length;
   resultados = resultados.map(({ _id, ...r }) => r);
+  const filtrado = filtrando;
   return {
-    total, totalFuente: total,
+    // Con rango de años, el total del portal no describe lo que se muestra.
+    total: filtrado ? resultados.length : total, totalFuente: total,
     siguienteDesde: hayMas ? ultimo : null,
-    totalParcial: false, revisados: 0, aflojado: false,
+    totalParcial: filtrado && hayMas, revisados: filtrado ? antes : 0, aflojado: false,
+    ...(descartadosPorAnio ? { descartadosPorAnio } : {}),
     pagina, porPagina, resultados,
   };
 }

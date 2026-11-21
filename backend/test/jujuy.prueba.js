@@ -66,3 +66,10 @@ test('registrada en el catálogo con su procedencia y sus límites', () => {
   assert.match(info.limite, /Familia, Menores y Penales/);
   assert.match(info.limite, /auténticos/);
 });
+
+test('Juristeca: el rango de años se respeta aunque el portal lo ignore (F-04)', async () => {
+  const { filtrarPorAnio } = await import('../lib/indiceJuristeca.js');
+  const lista = [{ fecha: '02/10/2026' }, { fecha: '15/05/2023' }, { fecha: '' }, { fecha: '31/12/2024' }];
+  assert.deepEqual(filtrarPorAnio(lista, 2023, 2024).map((r) => r.fecha), ['15/05/2023', '', '31/12/2024']);
+  assert.equal(filtrarPorAnio(lista, null, null).length, 4);
+});
