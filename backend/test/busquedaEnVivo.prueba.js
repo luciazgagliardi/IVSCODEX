@@ -4,10 +4,30 @@ import fs from 'node:fs';
 const rutas = fs.readFileSync(new URL('../routes/indice.js', import.meta.url), 'utf8');
 const html = fs.readFileSync(new URL('../../frontend/index.html', import.meta.url), 'utf8');
 
+test('el cliente vivo cancela solicitudes viejas de la misma fuente y no las deja bloquear la cola', () => {
+  assert.match(html, /var TOPE_ORIGEN_NAVEGADOR=135000/);
+  assert.match(html, /function cancelarOrigenPantalla\(slug\)/);
+  assert.match(html, /origenPantallaControles\[slug\]/);
+  assert.match(html, /t\.resolver\(null\)/);
+  assert.match(html, /var MAX_ORIGEN_SIMULTANEOS=4/);
+  assert.match(html, /function pedirOrigenConReintento\(t,control\)/);
+  assert.match(html, /intento<2/);
+  assert.match(html, /d&&d\.ok===false&&d\.reintentable===true/);
+  assert.match(html, /\[502,503,504,520,522,524\]/);
+  assert.match(html, /function consultarOrigenPantalla\(slug,cuerpo,vigente\)[\s\S]*?cancelarOrigenPantalla\(slug\)/);
+  assert.match(html, /La consulta oficial superó su plazo de 135 segundos/);
+});
+test('el servidor devuelve el error de origen y permite reintentar sólo lo transitorio', () => {
+  assert.match(rutas, /const estadoOrigen = Number\(e\?\.extra\?\.estadoOrigen\)/);
+  assert.match(rutas, /\[401, 403, 404, 410, 429\]\.includes\(estadoOrigen\)/);
+  assert.match(rutas, /const reintentable = !denegacionDefinitiva/);
+  assert.match(rutas, /codigo, mensaje, reintentable/);
+});
+
 test('el canal oficial no se desvía a la copia cuando hay un circuito abierto', () => {
   assert.match(rutas, /const pedirEnVivo = cuerpo\.pedirEnVivo === true/);
   assert.match(rutas, /if \(!pedirEnVivo && !accesible\(slug\) && acervoCubre\(slug\)\)/);
-  assert.match(rutas, /if \(pedirEnVivo\) \{[\s\S]*?codigo: 'FUENTE_OFICIAL_NO_DISPONIBLE'/);
+  assert.match(rutas, /if \(pedirEnVivo\) \{[\s\S]*?codigo, mensaje, reintentable/);
   assert.match(rutas, /enVivo: pedirEnVivo \? !desdeIndiceLocal : undefined/);
 });
 
