@@ -1,11 +1,6 @@
 name: Medir primeros resultados del buscador
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'ops/medir-latencia-acervo.mjs'
-      - '.github/workflows/medir-latencia-acervo.yml'
   workflow_dispatch: {}
   # La medición va al final para no competir con la consulta de 37 rutas.
   workflow_run:
