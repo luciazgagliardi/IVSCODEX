@@ -91,7 +91,9 @@ function filaChubut(row, tipo) {
   return {
     id, caratula, tribunal: organismo || 'Poder Judicial de Chubut',
     fecha, expediente: numero || protocolo,
-    sumario: texto || caratula,
+    // No fingir que la carátula es el texto del sumario: si el registro no trae
+    // pasaje, se deja vacío para que no aparezca como coincidencia textual.
+    sumario: texto,
     voces: [competencia, protocolo].filter(Boolean),
     linkFicha: esSumario ? ORIGEN_CHUBUT + '/' : ORIGEN_CHUBUT + '/Sentencias/BajarDocumento?idSentencia=' + encodeURIComponent(idOriginal),
     ...(pdf ? { linkFallo: pdf } : {}),
