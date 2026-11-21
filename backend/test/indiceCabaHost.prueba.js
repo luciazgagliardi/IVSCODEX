@@ -6,9 +6,11 @@ const cliente = fs.readFileSync(new URL('../lib/indiceCaba.js', import.meta.url)
 const metadatos = fs.readFileSync(new URL('../lib/fuentesInfo.js', import.meta.url), 'utf8');
 
 import { dominioConNavegador } from '../lib/navegadorCf.js';
+import { dominioHabilitado } from '../lib/descargador.js';
 
 test('el relevo de navegador cubre el buscador oficial del TSJ y conserva el POST', () => {
   assert.equal(dominioConNavegador('jurisprudencia.tsjbaires.gob.ar'), true);
+  assert.equal(dominioHabilitado('jurisprudencia.tsjbaires.gob.ar'), true);
   assert.equal(dominioConNavegador('jurisprudencia.tsjbaires.gov.ar'), true);
   const navegador = fs.readFileSync(new URL('../lib/navegadorCf.js', import.meta.url), 'utf8');
   assert.match(navegador, /export function consultarConNavegador/);
