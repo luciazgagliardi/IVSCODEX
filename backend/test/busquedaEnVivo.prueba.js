@@ -67,12 +67,15 @@ test('un sumario sólo se usa como pasaje si contiene todos los términos en mod
   assert.ok(html.includes('function sumarioCumpleConsulta(texto,consulta)'));
   assert.ok(html.includes('IVSPasajes.coincidencias(texto,[t],{modo:"todas",tope:1})'));
 });
-test('el fallback de navegador consulta fallos primero y reserva sumarios para la página incompleta', () => {
+test('el fallback de navegador prioriza el texto de SAIJ para consultas estrictas y conserva el cursor de fallos', () => {
   assert.ok(html.includes('async function buscarSaijNavegadorSimple(cuerpo,slug)'));
   assert.ok(html.includes('var SAIJ_CURSOR_SUMARIOS_RESALDO=1000000000'));
+  assert.ok(html.includes('var SAIJ_CURSOR_FALLOS_RESALDO=2000000000'));
   assert.ok(html.includes('var tribunal=cuerpo.tribunal||"todo"'));
+  assert.ok(html.includes('if(cuerpo.modo==="exacta"||cuerpo.modo==="todas")'));
+  assert.ok(html.includes('tribunal:"sumarios"'));
   assert.ok(html.includes('tribunal:"fallos"'));
-  assert.ok(html.includes('tribunal:"sumarios",desde:0,pagina:1,porPagina:faltan'));
+  assert.ok(html.includes('tipoConsulta:"sumarios_de_consulta_estricta"'));
   assert.ok(html.includes('esSumarioRespaldo:true'));
   assert.ok(html.includes('tipo:esSumario?"sumario":"fallo"'));
 });
