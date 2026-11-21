@@ -90,7 +90,7 @@ if (!PLAN[base]) {
   const informeCosecha = { fuente: base, fecha: new Date().toISOString(), anteriores: antes, procesadas: 0, paginas: 0, errores: [], agotadas: 0 };
   let ultimo = 0;
   let rechazosDeAcceso = 0;
-  const pareceBloqueoDeRed = (mensaje) => /(?:respuesta\s+(?:403|429)|403|429|TimeoutError|AbortError|UND_ERR_CONNECT_TIMEOUT|UND_ERR_HEADERS_TIMEOUT|ETIMEDOUT|ENETUNREACH|ECONNREFUSED|ECONNRESET)/i.test(mensaje);
+  const pareceBloqueoDeRed = (mensaje) => /(?:respuesta\s+(?:403|429|502|503|504)|403|429|502|503|504|TimeoutError|AbortError|UND_ERR_CONNECT_TIMEOUT|UND_ERR_HEADERS_TIMEOUT|ETIMEDOUT|ENETUNREACH|ECONNREFUSED|ECONNRESET|ECONNABORTED|EPIPE)/i.test(mensaje);
   async function guardar() {
     const contenido = zlib.gzipSync(JSON.stringify({ fuente: base, generado: new Date().toISOString(), registros: [...registros.values()] }), { level: 8 });
     await fs.writeFile(archivo + '.tmp', contenido);
@@ -113,6 +113,8 @@ if (!PLAN[base]) {
         ultimo = Date.now();
         respuesta = await buscar({ q, ...variante, modo: 'todas', desde: estado.desde, pagina: estado.pagina, porPagina: cfg.porPagina });
         if (!Array.isArray(respuesta?.resultados)) throw new Error('Sin resultados[]');
+        // Una página válida rompe la racha de rechazos consecutivos de la fuente.
+        rechazosDeAcceso = 0;
         if (!respuesta.resultados.length && (respuesta.totalFuente || respuesta.total || 0) > 0)
           throw new Error('Página vacía con resultados informados por el sitio');
         const cursor = siguienteCursor(estado.desde, respuesta, { cursorDescendente: base === 'juristeca' });
@@ -134,7 +136,7 @@ if (!PLAN[base]) {
         // Cuatro consultas independientes con bloqueo de red y ninguna página
         // obtenida indican que esta ejecución no puede cosechar desde su IP.
         // No marcar ninguna consulta como agotada: se reintentará en la próxima.
-        if (informeCosecha.paginas === 0 && pareceBloqueoDeRed(estado.ultimoError)) rechazosDeAcceso++;
+        if (pareceBloqueoDeRed(estado.ultimoError)) rechazosDeAcceso++;
         else rechazosDeAcceso = 0;
         informeCosecha.errores.push({ q, variante, error: estado.ultimoError });
         // Se conserva el cursor y no se marca agotamiento. Otras consultas
