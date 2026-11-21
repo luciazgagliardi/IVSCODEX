@@ -110,3 +110,61 @@ test('una vista previa local vacía no borra resultados oficiales que llegaron p
   assert.ok(guarda >= 0 && reemplazo > guarda,
     'la respuesta local vacía debe descartarse antes de reemplazar la lista visible');
 });
+
+
+test('una coincidencia oficial que existe en el corpus pero no está en la muestra local no se descarta', () => {
+  const ctx = {
+    estado: { q: 'contaminación del suelo', modo: 'exacta' },
+    claveFallo: (_slug, r) => r.id,
+    enriquecerResultadoLocal: () => false,
+    urlFragmento: () => null,
+    sumarioCoincide: () => true,
+    traerFragmentos: () => {},
+    render: () => {},
+  };
+  vm.runInNewContext(extraer('anexarResultadosOficiales'), ctx);
+  const local = { id: 'local-primero', caratula: 'Registro de la muestra rápida' };
+  const oficial = { id: 'oficial-en-acervo-fuera-de-muestra', caratula: 'Contaminación del suelo' };
+  const im = {
+    porCopia: true, pagina: 1, pedido: 1, fragmentos: {}, fragEnCurso: {},
+    paginas: { 1: { resultados: [local] } }, resultados: [local],
+  };
+  ctx.anexarResultadosOficiales('saij', im, {
+    ok: true, desdeIndiceLocal: false,
+    // El resultado ya existe en algún lugar del acervo, pero no en la página
+    // rápida visible. No puede eliminarse por ese solo motivo.
+    idsNuevosAcervo: [], resultados: [oficial],
+  });
+  assert.deepEqual(Array.from(im.resultados, x => x.id), [
+    'local-primero', 'oficial-en-acervo-fuera-de-muestra',
+  ]);
+});
+
+test('el panel de una fuente conserva resultados locales mientras sigue cargando la consulta oficial', () => {
+  assert.match(html, /if\(im\.cargando&&!im\.busco&&!im\.resultados\.length\)/);
+  assert.doesNotMatch(html, /if\(im\.cargando\) return out\+'<\/div>'/);
+});
+
+test('las fichas recibidas no se convierten en «sin coincidencias» si falla la verificación del pasaje', () => {
+  assert.match(html, /La fuente devolvió '\+im\.resultados\.length\+/);
+  assert.match(html, /se conservan las fichas para inspeccionar sus datos y abrir la fuente oficial/);
+  assert.match(html, /fichas pendientes de comprobación/);
+});
+
+test('las sugerencias del intérprete no desaparecen por existir un anillo del tesauro', () => {
+  const ctx = {
+    estado: {
+      tab: 'buscar', q: 'responsabilidad civil',
+      sugeridas: [{ voz: 'responsabilidad objetiva' }, { voz: 'daño emergente' }],
+      sugeridaRama: '',
+    },
+    expandir: () => ({ variantes: [{ t: 'responsabilidad objetiva' }] }),
+    sinTildes: s => String(s).normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase(),
+    comoTitulo: s => s,
+    esc: s => String(s),
+  };
+  vm.runInNewContext(extraer('tiraSugerencias'), ctx);
+  const salida = ctx.tiraSugerencias();
+  assert.match(salida, /daño emergente/);
+  assert.doesNotMatch(salida, /responsabilidad objetiva/);
+});
