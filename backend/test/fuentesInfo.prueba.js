@@ -55,6 +55,12 @@ test('SAIJ se reclasifica según el tipo documental realmente consultado', () =>
   assert.equal(informacionFuente('saij', { tribunal: 'fallos' }).linea, 'Jurisprudencia · fichas de fallos');
   const todo = informacionFuente('saij');
   assert.equal(todo.linea, 'Jurisprudencia · fallos y sumarios de respaldo');
+  assert.equal(FUENTES.find((f) => f.slug === 'saij').tribunalPorDefecto, 'todo');
+  assert.equal(FUENTES.find((f) => f.slug === 'csjn').tribunalPorDefecto, 'todo');
+  assert.equal(FUENTES.find((f) => f.slug === 'chubut').tribunalPorDefecto, 'todo');
+  for (const fuente of FUENTES.filter((f) => f.slug.endsWith('_saij') || informacionFuente(f.slug).procedencia?.includes('SAIJ'))) {
+    if (fuente.slug !== 'csjn') assert.equal(fuente.tribunalPorDefecto, 'todo', fuente.slug);
+  }
   assert.match(informacionFuente('scba').tipo, /enlace a sentencia íntegra/);
   assert.match(informacionFuente('santafe').tipo, /enlace a sentencia íntegra/);
   assert.equal(anotarProcedencia('scba', [{ id: 'scba1', tipo: 'sumario' }])[0].tipoDocumento, 'Sumario jurisprudencial');
