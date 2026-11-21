@@ -28,6 +28,9 @@ test('sin acentos y por la raíz: lo que el buscador encontró se ve marcado', (
 test('frase exacta: la frase entera, con cualquier espacio en el medio, y sólo esa', () => {
   assert.deepEqual(marcadas('el despido\n   discriminatorio fue probado', 'despido discriminatorio', { modo: 'exacta' }), ['despido\n   discriminatorio']);
   assert.deepEqual(marcadas('el despido no fue discriminatorio', 'despido discriminatorio', { modo: 'exacta' }), []);
+  assert.deepEqual(marcadas('Se acreditó la contaminación del suelo.', 'contaminación del suelo', { modo: 'exacta' }),
+    ['contaminación del suelo']);
+  assert.deepEqual(marcadas('Se acreditó la contaminación en el suelo.', 'contaminación del suelo', { modo: 'exacta' }), []);
 });
 
 test('el pasaje es el tramo con más palabras de la búsqueda, no el principio ni el texto entero', () => {
