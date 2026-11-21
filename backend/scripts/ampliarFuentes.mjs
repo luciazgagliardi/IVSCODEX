@@ -12,6 +12,7 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { FUENTES } from '../lib/fuentes.js';
 import { siguienteCursor, combinarRegistro, idDocumentalValido } from '../lib/avanceCosecha.js';
+import { avanzarIndiceTerminos } from '../lib/avanceTerminos.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = path.resolve(RAIZ, process.env.DIR_COSECHA || 'acervo-crudo/respaldo');
@@ -29,6 +30,14 @@ export const PLAN = {
   // El portal excluye expresamente Familia, Menores y Penal. Se cosechan
   // únicamente materias que el propio sistema público declara comprendidas.
   jujuy: { porPagina: 20, consultas: ['daño moral', 'responsabilidad civil', 'daños y perjuicios', 'despido', 'derecho laboral', 'recurso de inconstitucionalidad', 'recurso extraordinario', 'amparo', 'derecho a la salud', 'contrato', 'incumplimiento contractual', 'prescripción', 'usucapión', 'empleo público', 'debido proceso', 'defensa en juicio', 'prueba', 'intereses', 'medida cautelar', 'cosa juzgada', 'nulidad', 'competencia', 'derecho administrativo', 'derecho tributario'] },
+  chubut: { porPagina: 20, variantes: [{ tribunal: 'sumarios' }, { tribunal: 'sentencias' }],
+    consultas: ['daño moral', 'responsabilidad civil', 'daños y perjuicios', 'despido', 'accidente de trabajo', 'amparo', 'derecho a la salud', 'alimentos', 'familia', 'prescripción', 'contrato', 'nulidad', 'competencia', 'prueba', 'medida cautelar', 'empleo público'] },
+  tfn: { porPagina: 25, variantes: [{ tribunal: 'objetos' }, { tribunal: 'doctrinas' }],
+    consultas: ['impuesto a las ganancias', 'deducción de intereses', 'IVA crédito fiscal', 'determinación de oficio', 'prescripción tributaria', 'repetición de tributos', 'multa aduanera', 'clasificación arancelaria', 'valor en aduana', 'ajuste por inflación', 'quebrantos impositivos', 'salidas no documentadas', 'responsabilidad solidaria', 'procedimiento tributario', 'medida cautelar tributaria'] },
+  santacruz: { porPagina: 25, variantes: [{ tribunal: 'objetos' }, { tribunal: 'doctrinas' }],
+    consultas: ['amparo', 'derecho a la salud', 'empleo público', 'despido', 'daño moral', 'responsabilidad civil', 'contrato', 'familia', 'alimentos', 'prescripción', 'recurso de inconstitucionalidad', 'debido proceso', 'prueba', 'medio ambiente', 'minería', 'medida cautelar'] },
+  hudoc: { porPagina: 20,
+    consultas: ['freedom of expression', 'right to a fair trial', 'right to life', 'right to respect for private and family life', 'protection of property', 'freedom of religion', 'prohibition of torture', 'discrimination', 'effective remedy', 'presumption of innocence', 'access to court', 'environmental protection', 'children rights', 'data protection', 'immigration detention', 'reasonable time', 'judicial independence', 'article 6', 'article 8', 'article 10'] },
 };
 const limite = (nombre, def, max) => Math.max(1, Math.min(max, Number(process.env[nombre]) || def));
 const MAX_PAGINAS = limite('MAX_PAGINAS', 600, 1500);
@@ -111,12 +120,27 @@ if (!PLAN[base]) {
         const falta = ultimo + PAUSA_MS - Date.now();
         if (falta > 0) await dormir(falta);
         ultimo = Date.now();
-        respuesta = await buscar({ q, ...variante, modo: 'todas', desde: estado.desde, pagina: estado.pagina, porPagina: cfg.porPagina });
-        if (!Array.isArray(respuesta?.resultados)) throw new Error('Sin resultados[]');
+        let ultimoError = null;
+        for (let intento = 1; intento <= 3; intento++) {
+          try {
+            respuesta = await buscar({ q, ...variante, modo: 'todas', desde: estado.desde, pagina: estado.pagina, porPagina: cfg.porPagina });
+            if (!Array.isArray(respuesta?.resultados)) throw new Error('La fuente no devolvió resultados[]');
+            if (!respuesta.resultados.length && Number(respuesta.totalFuente ?? respuesta.total ?? 0) > 0)
+              throw new Error('Página vacía con resultados informados por el sitio');
+            ultimoError = null;
+            break;
+          } catch (e) {
+            ultimoError = e;
+            const mensaje = String(e?.message || e);
+            if (!esReintentable(mensaje) || intento === 3) break;
+            // Reintentos acotados para fallos transitorios; nunca insistir
+            // inmediatamente ante 403/429 ni ignorar la cortesía por host.
+            await dormir(Math.min(15_000, PAUSA_MS * intento * 2));
+          }
+        }
+        if (ultimoError) throw ultimoError;
         // Una página válida rompe la racha de rechazos consecutivos de la fuente.
         rechazosDeAcceso = 0;
-        if (!respuesta.resultados.length && (respuesta.totalFuente || respuesta.total || 0) > 0)
-          throw new Error('Página vacía con resultados informados por el sitio');
         const cursor = siguienteCursor(estado.desde, respuesta, { cursorDescendente: base === 'juristeca' });
         for (const r of respuesta.resultados) {
           if (!idDocumentalValido(r?.id)) continue;
@@ -155,10 +179,20 @@ if (!PLAN[base]) {
     }
     await guardar();
   }
-  // Avanzar la ventana sólo tras completar una ronda; mantener cada término
-  // con su propio cursor, para reanudar la paginación en futuras ejecuciones.
-  if (palabras.length)
-    progreso.indiceTerminos = (indiceInicial + ventana.length) % palabras.length;
+  // El índice sólo avanza sobre la secuencia contigua de términos cuyas
+  // variantes ya agotaron su paginación. Si el presupuesto se termina a mitad
+  // de una ronda, el proceso retoma ese término y su cursor en la ejecución siguiente.
+  const avance = avanzarIndiceTerminos({ palabras, indiceInicial, ventana, variantes, tareas: progreso.tareas });
+  progreso.indiceTerminos = avance.indice;
+  const pendientes = tareas.filter(({ q, variante }) => !progreso.tareas[claveDe(q, variante)]?.completas);
+  informeCosecha.terminosCompletados = avance.completados;
+  informeCosecha.terminosPendientes = pendientes.length;
+  informeCosecha.parcialPorPresupuesto = informeCosecha.paginas >= MAX_PAGINAS && pendientes.length > 0;
+  informeCosecha.consultasCompletas = tareas.length - pendientes.length;
   await guardar();
-  console.log(JSON.stringify({ ...informeCosecha, nuevos: registros.size - antes, total: registros.size, siguienteTermino: progreso.indiceTerminos }));
+  console.log(JSON.stringify({ ...informeCosecha, nuevos: registros.size - antes, total: registros.size,
+    siguienteTermino: progreso.indiceTerminos, cursorConservado: pendientes.length > 0 }));
+  // Los archivos ya están escritos y el workflow los sube con if: always().
+  // La acción se marca fallida sólo si el origen falló de verdad.
+  if (informeCosecha.errores.length || informeCosecha.bloqueada) process.exitCode = 1;
 }
