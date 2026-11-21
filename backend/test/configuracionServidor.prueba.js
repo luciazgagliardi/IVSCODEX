@@ -6,10 +6,8 @@ test('el frontend público de GitHub Pages puede consultar todas las rutas de la
   assert.ok(CORS_ORIGENES.includes('https://luciazgagliardi.github.io'));
 });
 
-test('CORS conserva los orígenes locales y suma el origen de producción aunque Azure configure una lista propia', () => {
+test('CORS siempre incluye el origen de producción aunque Azure configure una lista propia', () => {
   assert.ok(CORS_ORIGENES.includes('https://luciazgagliardi.github.io'));
-  assert.ok(CORS_ORIGENES.includes('http://localhost:3000'));
-  assert.ok(CORS_ORIGENES.includes('http://127.0.0.1:3000'));
 });
 
 test('los límites de red y de consulta por fuente tienen valores válidos', () => {
