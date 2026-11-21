@@ -45,12 +45,16 @@ test('fusionar la cuenta preserva anillos del servidor y recibe los del navegado
 
 test('el endpoint de fragmentos sólo acepta URL y variante para extraer pasajes; no persiste metadatos del cliente', async () => {
   const ruta = await fs.readFile(path.join(raiz, 'routes', 'indice.js'), 'utf8');
-  assert.match(ruta, /req\.body\?\.registros/);
-  assert.match(ruta, /typeof r\?\.url === 'string' && pedidas\.includes\(r\.url\)/);
-  assert.match(ruta, /typeof r\.variante === 'string'/);
-  assert.doesNotMatch(ruta, /agregarAlAcervo\s*\(/);
-  assert.doesNotMatch(ruta, /upsertRegistros\s*\(/);
-  assert.match(ruta, /const doc = await obtenerDocumento\(url, \{ automatico: true \}\)/);
+  const inicio = ruta.indexOf('router.post(\`/indice/\${slug}/fragmentos\`');
+  const fin = ruta.indexOf('router.get(\`/indice/\${slug}/estado\`', inicio);
+  assert.ok(inicio >= 0 && fin > inicio, 'se aísla la ruta pública de pasajes');
+  const fragmentos = ruta.slice(inicio, fin);
+  assert.match(fragmentos, /req\.body\?\.registros/);
+  assert.match(fragmentos, /typeof r\?\.url === 'string' && pedidas\.includes\(r\.url\)/);
+  assert.match(fragmentos, /typeof r\.variante === 'string'/);
+  assert.doesNotMatch(fragmentos, /agregarAlAcervo\s*\(/);
+  assert.doesNotMatch(fragmentos, /upsertRegistros\s*\(/);
+  assert.match(fragmentos, /const doc = await obtenerDocumento\(url, \{ automatico: true \}\)/);
 });
 
 test('tres pipelines de publicación usan worktree limpio y evitan rebase con cosechas temporales', async () => {
