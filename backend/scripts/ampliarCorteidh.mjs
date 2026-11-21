@@ -44,7 +44,10 @@ catch (e) {
   reporte.errores.push('Catálogo no disponible: ' + String(e.message).slice(0, 160));
   await guardar();
   console.log(JSON.stringify(reporte));
-  process.exit(0);
+  // El lote y el cursor quedan guardados y se suben con if: always().
+  // No confundir una fuente caída con una cosecha exitosa de cero documentos.
+  process.exitCode = 1;
+  throw e;
 }
 if (!Array.isArray(lista) || !lista.length) throw new Error('El sitio oficial devolvió un catálogo vacío; no se actualiza el acervo');
 reporte.catalogo = lista.length;
@@ -83,3 +86,4 @@ for (const r of mapa.values()) {
 }
 await guardar();
 console.log(JSON.stringify(reporte));
+if (reporte.errores.length) process.exitCode = 1;

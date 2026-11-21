@@ -28,9 +28,19 @@ test('la cosecha cubre fuentes habilitadas y detiene reintentos ante bloqueos y 
   const armado = fs.readFileSync(new URL('../scripts/armarAcervo.mjs', import.meta.url), 'utf8');
   const workflow = fs.readFileSync(new URL('../../.github/workflows/ampliacion-integral.yml', import.meta.url), 'utf8');
   const corte = fs.readFileSync(new URL('../scripts/ampliarCorteidh.mjs', import.meta.url), 'utf8');
-  for (const slug of ['mendoza', 'caba', 'scba', 'juristeca', 'santafe', 'rionegro', 'dialnet', 'mendozalegal', 'jujuy']) {
+  for (const slug of ['mendoza', 'caba', 'scba', 'juristeca', 'santafe', 'rionegro', 'dialnet', 'mendozalegal', 'jujuy',
+    'chubut', 'tfn', 'santacruz', 'hudoc']) {
     assert.ok(archivo.includes(slug + ': {'), slug);
   }
+  assert.match(archivo, /avanzarIndiceTerminos/);
+  assert.match(archivo, /const CONSULTAS_COMPLEMENTARIAS = \{/);
+  for (const slug of ['mendoza','caba','scba','juristeca','santafe','rionegro','dialnet','mendozalegal','jujuy','chubut','tfn','santacruz','hudoc']) {
+    assert.match(archivo, new RegExp(slug + ': \\['), 'falta expansión temática equilibrada: ' + slug);
+  }
+  assert.match(archivo, /esReintentable/);
+  assert.match(archivo, /process\.exitCode = 1/);
+  assert.doesNotMatch(archivo, /indiceTerminos = \(indiceInicial \+ ventana\.length\)/);
+  for (const slug of ['chubut', 'tfn', 'santacruz', 'hudoc']) assert.ok(workflow.includes(slug), 'falta ' + slug + ' en la matriz');
   assert.ok(armado.includes("'corteidh'"));
   assert.ok(armado.includes("'jujuy'"));
   assert.ok(armado.includes('DIR_BASE'));
@@ -45,8 +55,11 @@ test('la cosecha cubre fuentes habilitadas y detiene reintentos ante bloqueos y 
   assert.ok(archivo.includes('if (pareceBloqueoDeRed(estado.ultimoError)) rechazosDeAcceso++'));
   assert.ok(archivo.includes('cursorPreservado: true'));
   assert.ok(corte.includes('listarTodo()'));
-  assert.ok(!workflow.includes('node scripts/ampliarCorteidh.mjs'));
-  assert.ok(!workflow.includes('catamarca, corteidh, jujuy'));
+  assert.ok(workflow.includes('  corteidh:'));
+  assert.ok(workflow.includes('node scripts/ampliarCorteidh.mjs'));
+  assert.match(corte, /process\.exitCode = 1/);
+  assert.doesNotMatch(corte, /process\.exit\(0\)/);
+  assert.match(workflow, /needs: \[pruebas, fuentes, saij, saij_provincial, corteidh\]/);
 });
 test('ids reales de Mendoza, CABA, SCBA y Río Negro se incorporan, no se descartan', () => {
   for(const id of ['sc_1014929_35314', 'mza_oficial_12399000248', 'caba_00123', 'juristeca-42',

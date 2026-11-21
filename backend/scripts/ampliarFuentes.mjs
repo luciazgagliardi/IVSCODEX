@@ -12,6 +12,7 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { FUENTES } from '../lib/fuentes.js';
 import { siguienteCursor, combinarRegistro, idDocumentalValido } from '../lib/avanceCosecha.js';
+import { avanzarIndiceTerminos } from '../lib/avanceTerminos.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = path.resolve(RAIZ, process.env.DIR_COSECHA || 'acervo-crudo/respaldo');
@@ -29,7 +30,132 @@ export const PLAN = {
   // El portal excluye expresamente Familia, Menores y Penal. Se cosechan
   // únicamente materias que el propio sistema público declara comprendidas.
   jujuy: { porPagina: 20, consultas: ['daño moral', 'responsabilidad civil', 'daños y perjuicios', 'despido', 'derecho laboral', 'recurso de inconstitucionalidad', 'recurso extraordinario', 'amparo', 'derecho a la salud', 'contrato', 'incumplimiento contractual', 'prescripción', 'usucapión', 'empleo público', 'debido proceso', 'defensa en juicio', 'prueba', 'intereses', 'medida cautelar', 'cosa juzgada', 'nulidad', 'competencia', 'derecho administrativo', 'derecho tributario'] },
+  chubut: { porPagina: 20, variantes: [{ tribunal: 'sumarios' }, { tribunal: 'sentencias' }],
+    consultas: ['daño moral', 'responsabilidad civil', 'daños y perjuicios', 'despido', 'accidente de trabajo', 'amparo', 'derecho a la salud', 'alimentos', 'familia', 'prescripción', 'contrato', 'nulidad', 'competencia', 'prueba', 'medida cautelar', 'empleo público'] },
+  tfn: { porPagina: 25, variantes: [{ tribunal: 'objetos' }, { tribunal: 'doctrinas' }],
+    consultas: ['impuesto a las ganancias', 'deducción de intereses', 'IVA crédito fiscal', 'determinación de oficio', 'prescripción tributaria', 'repetición de tributos', 'multa aduanera', 'clasificación arancelaria', 'valor en aduana', 'ajuste por inflación', 'quebrantos impositivos', 'salidas no documentadas', 'responsabilidad solidaria', 'procedimiento tributario', 'medida cautelar tributaria'] },
+  santacruz: { porPagina: 25, variantes: [{ tribunal: 'objetos' }, { tribunal: 'doctrinas' }],
+    consultas: ['amparo', 'derecho a la salud', 'empleo público', 'despido', 'daño moral', 'responsabilidad civil', 'contrato', 'familia', 'alimentos', 'prescripción', 'recurso de inconstitucionalidad', 'debido proceso', 'prueba', 'medio ambiente', 'minería', 'medida cautelar'] },
+  hudoc: { porPagina: 20,
+    consultas: ['freedom of expression', 'right to a fair trial', 'right to life', 'right to respect for private and family life', 'protection of property', 'freedom of religion', 'prohibition of torture', 'discrimination', 'effective remedy', 'presumption of innocence', 'access to court', 'environmental protection', 'children rights', 'data protection', 'immigration detention', 'reasonable time', 'judicial independence', 'article 6', 'article 8', 'article 10'] },
 };
+
+const CONSULTAS_COMPLEMENTARIAS = {
+  mendoza: [
+    'responsabilidad del Estado', 'daño ambiental', 'derecho ambiental', 'propiedad horizontal',
+    'desalojo', 'locación', 'seguro', 'quiebra', 'concurso preventivo', 'sociedades',
+    'derechos reales', 'ejecución hipotecaria', 'discriminación', 'régimen disciplinario',
+    'caducidad de instancia', 'honorarios profesionales', 'costas judiciales', 'prisión preventiva',
+    'violencia familiar', 'jubilación', 'pensión', 'derecho a la educación'
+  ],
+  caba: [
+    'derecho penal', 'lesiones', 'hábeas data', 'protección de datos personales',
+    'responsabilidad del Estado', 'discriminación', 'derecho ambiental', 'propiedad horizontal',
+    'locación', 'desalojo', 'quiebra', 'sociedades', 'ejecución fiscal', 'honorarios profesionales',
+    'costas judiciales', 'debido proceso', 'tutela judicial efectiva', 'acceso a la información pública'
+  ],
+  scba: [
+    'derecho penal', 'prisión preventiva', 'violencia de género', 'violencia familiar',
+    'responsabilidad del Estado', 'daño ambiental', 'derecho ambiental', 'locación',
+    'propiedad horizontal', 'concurso preventivo', 'seguro', 'derechos reales',
+    'ejecución hipotecaria', 'derecho previsional', 'jubilación', 'pensión',
+    'discriminación', 'derecho a la educación', 'honorarios profesionales', 'costas judiciales',
+    'caducidad de instancia', 'tutela judicial efectiva'
+  ],
+  juristeca: [
+    'derecho penal económico', 'violencia de género', 'violencia familiar',
+    'responsabilidad del Estado', 'derecho tributario', 'derecho público', 'locación',
+    'desalojo', 'condominio', 'seguros', 'propiedad intelectual', 'marcas',
+    'competencia desleal', 'derecho ambiental', 'derechos humanos', 'honorarios profesionales',
+    'costas judiciales', 'nulidad procesal', 'caducidad de instancia', 'insolvencia',
+    'derecho previsional', 'datos personales'
+  ],
+  santafe: [
+    'derecho penal', 'prisión preventiva', 'violencia de género', 'responsabilidad del Estado',
+    'derecho ambiental', 'daño ambiental', 'locación', 'desalojo', 'propiedad horizontal',
+    'seguros', 'sociedades', 'concurso preventivo', 'quiebra', 'derechos reales',
+    'empleo público', 'jubilación', 'pensión', 'discriminación', 'honorarios profesionales',
+    'costas judiciales', 'tutela judicial efectiva', 'protección de datos personales'
+  ],
+  rionegro: [
+    'derecho penal', 'prisión preventiva', 'violencia de género', 'responsabilidad del Estado',
+    'derecho ambiental', 'daño ambiental', 'minería', 'hidrocarburos', 'pueblos originarios',
+    'derecho indígena', 'empleo público', 'jubilación', 'pensión', 'derechos reales',
+    'propiedad horizontal', 'desalojo', 'seguros', 'honorarios profesionales',
+    'costas judiciales', 'tutela judicial efectiva', 'acceso a la información pública'
+  ],
+  dialnet: [
+    'derecho penal económico', 'derecho minero', 'derecho indígena', 'pueblos originarios',
+    'protección de datos personales', 'inteligencia artificial y derecho', 'derecho digital',
+    'propiedad intelectual', 'responsabilidad médica', 'seguridad social', 'derecho previsional',
+    'derecho tributario internacional', 'derecho internacional público',
+    'derecho internacional humanitario', 'derecho laboral colectivo', 'libertad sindical',
+    'negociación colectiva', 'derecho migratorio', 'derecho de refugio',
+    'control de convencionalidad', 'prueba digital', 'contratos electrónicos'
+  ],
+  mendozalegal: [
+    'responsabilidad del Estado', 'daño ambiental', 'derecho ambiental', 'propiedad horizontal',
+    'desalojo', 'locación', 'seguros', 'quiebras', 'concursos preventivos',
+    'sociedades', 'derechos reales', 'ejecución hipotecaria', 'discriminación',
+    'honorarios profesionales', 'costas judiciales', 'caducidad de instancia',
+    'jubilación', 'empleo público', 'prueba digital'
+  ],
+  jujuy: [
+    'derecho ambiental', 'daño ambiental', 'minería', 'recursos naturales',
+    'derecho indígena', 'comunidades originarias', 'derecho del consumidor',
+    'responsabilidad del Estado', 'contratación pública', 'servicios públicos',
+    'empleo público', 'carrera administrativa', 'vivienda', 'desalojo',
+    'propiedad horizontal', 'derechos reales', 'seguros', 'derecho tributario',
+    'ejecución fiscal', 'honorarios profesionales', 'costas judiciales',
+    'tutela judicial efectiva', 'acceso a la información pública'
+  ],
+  chubut: [
+    'responsabilidad del Estado', 'derecho administrativo', 'contratación pública',
+    'servicios públicos', 'seguridad social', 'jubilación', 'pensión', 'educación',
+    'vivienda', 'desalojo', 'consumidor', 'seguros', 'concursos', 'quiebra',
+    'pesca', 'hidrocarburos', 'recursos naturales', 'pueblos originarios',
+    'derecho indígena', 'medio ambiente', 'derecho ambiental', 'minería',
+    'libertad personal', 'prisión preventiva', 'derecho penal'
+  ],
+  tfn: [
+    'tributos aduaneros', 'impuesto al valor agregado', 'impuesto a los bienes personales',
+    'derechos de exportación', 'derechos de importación', 'infracción aduanera',
+    'recurso de apelación', 'repetición de tributos', 'agente de retención',
+    'agente de percepción', 'sanciones tributarias', 'multa aduanera',
+    'intereses resarcitorios', 'intereses punitorios', 'exención impositiva',
+    'impuestos internos', 'responsabilidad solidaria', 'ajuste por inflación',
+    'quebrantos impositivos', 'salidas no documentadas', 'valor en aduana',
+    'clasificación arancelaria', 'procedimiento tributario'
+  ],
+  santacruz: [
+    'derecho penal', 'prisión preventiva', 'responsabilidad del Estado',
+    'contratación pública', 'servicios públicos', 'seguridad social',
+    'jubilación', 'pensión', 'derecho a la educación', 'vivienda', 'desalojo',
+    'consumidor', 'seguros', 'pueblos originarios', 'derecho indígena',
+    'hidrocarburos', 'recursos naturales', 'derecho ambiental', 'daño ambiental',
+    'medio ambiente', 'empleo público', 'derecho laboral colectivo',
+    'seguridad e higiene', 'acceso a la justicia', 'tutela judicial efectiva'
+  ],
+  hudoc: [
+    'liberté d expression', 'droit à un procès équitable', 'droit à la vie',
+    'respect de la vie privée et familiale', 'protection des biens',
+    'liberté de religion', 'interdiction de la torture', 'discrimination',
+    'recours effectif', 'présomption d innocence', 'accès à un tribunal',
+    'protection de l environnement', 'droits de l enfant', 'protection des données',
+    'détention des étrangers', 'délai raisonnable', 'indépendance judiciaire',
+    'article 6', 'article 8', 'article 10', 'liberté de réunion',
+    'propriété intellectuelle', 'expulsion', 'asile'
+  ],
+};
+
+// Cada fuente recibe el mismo tipo de ampliación semántica, dentro de su
+// competencia y sus exclusiones oficiales. Las consultas ya completas se
+// conservan y nunca se duplica una frase en la lista.
+for (const [slug, adicionales] of Object.entries(CONSULTAS_COMPLEMENTARIAS)) {
+  if (!PLAN[slug] || !Array.isArray(PLAN[slug].consultas)) throw new Error('Fuente sin plan complementario: ' + slug);
+  PLAN[slug].consultas = [...new Set([...PLAN[slug].consultas, ...adicionales])];
+}
+
 const limite = (nombre, def, max) => Math.max(1, Math.min(max, Number(process.env[nombre]) || def));
 const MAX_PAGINAS = limite('MAX_PAGINAS', 600, 1500);
 const MAX_TERMINOS = limite('MAX_TERMINOS', 240, 300);
@@ -71,6 +197,14 @@ if (!PLAN[base]) {
     progreso.indiceTerminos = 0;
     progreso.versionIds = 2;
   }
+  if (progreso.versionAvanceTerminos !== 2) {
+    // Una versión anterior avanzaba el índice por toda la ventana incluso si
+    // MAX_PAGINAS cortaba el lote antes de procesarla. Reiniciar el recorrido
+    // desde el principio no pierde datos: las tareas completas se saltan
+    // y las incompletas conservan su cursor individual.
+    progreso.indiceTerminos = 0;
+    progreso.versionAvanceTerminos = 2;
+  }
   const extras = await leerJson(path.join(RAIZ, 'datos', 'terminos-cosecha.json'), []);
   const palabras = Array.isArray(extras) ? [...new Set(extras.filter((x) => typeof x === 'string').map((x) => x.trim()).filter((x) => x.length > 2 && x.length <= 90))] : [];
   const indiceInicial = progreso.indiceTerminos || 0;
@@ -90,7 +224,8 @@ if (!PLAN[base]) {
   const informeCosecha = { fuente: base, fecha: new Date().toISOString(), anteriores: antes, procesadas: 0, paginas: 0, errores: [], agotadas: 0 };
   let ultimo = 0;
   let rechazosDeAcceso = 0;
-  const pareceBloqueoDeRed = (mensaje) => /(?:respuesta\s+(?:403|429|502|503|504)|403|429|502|503|504|TimeoutError|AbortError|UND_ERR_CONNECT_TIMEOUT|UND_ERR_HEADERS_TIMEOUT|ETIMEDOUT|ENETUNREACH|ECONNREFUSED|ECONNRESET|ECONNABORTED|EPIPE)/i.test(mensaje);
+  const pareceBloqueoDeRed = (mensaje) => /(?:respuesta\s+(?:403|429|5\d{2})|\b(?:403|429|5\d{2})\b|TimeoutError|AbortError|UND_ERR_|ETIMEDOUT|ENETUNREACH|ECONNREFUSED|ECONNRESET|ECONNABORTED|EPIPE|socket hang up)/i.test(mensaje);
+  const esReintentable = (mensaje) => /(?:respuesta\s+5\d{2}|\b5\d{2}\b|TimeoutError|AbortError|UND_ERR_|ETIMEDOUT|ECONNRESET|ECONNABORTED|EPIPE|socket hang up|Página vacía con resultados informados|La fuente no devolvió resultados\[\])/i.test(mensaje);
   async function guardar() {
     const contenido = zlib.gzipSync(JSON.stringify({ fuente: base, generado: new Date().toISOString(), registros: [...registros.values()] }), { level: 8 });
     await fs.writeFile(archivo + '.tmp', contenido);
@@ -111,12 +246,27 @@ if (!PLAN[base]) {
         const falta = ultimo + PAUSA_MS - Date.now();
         if (falta > 0) await dormir(falta);
         ultimo = Date.now();
-        respuesta = await buscar({ q, ...variante, modo: 'todas', desde: estado.desde, pagina: estado.pagina, porPagina: cfg.porPagina });
-        if (!Array.isArray(respuesta?.resultados)) throw new Error('Sin resultados[]');
+        let ultimoError = null;
+        for (let intento = 1; intento <= 3; intento++) {
+          try {
+            respuesta = await buscar({ q, ...variante, modo: 'todas', desde: estado.desde, pagina: estado.pagina, porPagina: cfg.porPagina });
+            if (!Array.isArray(respuesta?.resultados)) throw new Error('La fuente no devolvió resultados[]');
+            if (!respuesta.resultados.length && Number(respuesta.totalFuente ?? respuesta.total ?? 0) > 0)
+              throw new Error('Página vacía con resultados informados por el sitio');
+            ultimoError = null;
+            break;
+          } catch (e) {
+            ultimoError = e;
+            const mensaje = String(e?.message || e);
+            if (!esReintentable(mensaje) || intento === 3) break;
+            // Reintentos acotados para fallos transitorios; nunca insistir
+            // inmediatamente ante 403/429 ni ignorar la cortesía por host.
+            await dormir(Math.min(15_000, PAUSA_MS * intento * 2));
+          }
+        }
+        if (ultimoError) throw ultimoError;
         // Una página válida rompe la racha de rechazos consecutivos de la fuente.
         rechazosDeAcceso = 0;
-        if (!respuesta.resultados.length && (respuesta.totalFuente || respuesta.total || 0) > 0)
-          throw new Error('Página vacía con resultados informados por el sitio');
         const cursor = siguienteCursor(estado.desde, respuesta, { cursorDescendente: base === 'juristeca' });
         for (const r of respuesta.resultados) {
           if (!idDocumentalValido(r?.id)) continue;
@@ -155,10 +305,20 @@ if (!PLAN[base]) {
     }
     await guardar();
   }
-  // Avanzar la ventana sólo tras completar una ronda; mantener cada término
-  // con su propio cursor, para reanudar la paginación en futuras ejecuciones.
-  if (palabras.length)
-    progreso.indiceTerminos = (indiceInicial + ventana.length) % palabras.length;
+  // El índice sólo avanza sobre la secuencia contigua de términos cuyas
+  // variantes ya agotaron su paginación. Si el presupuesto se termina a mitad
+  // de una ronda, el proceso retoma ese término y su cursor en la ejecución siguiente.
+  const avance = avanzarIndiceTerminos({ palabras, indiceInicial, ventana, variantes, tareas: progreso.tareas });
+  progreso.indiceTerminos = avance.indice;
+  const pendientes = tareas.filter(({ q, variante }) => !progreso.tareas[claveDe(q, variante)]?.completas);
+  informeCosecha.terminosCompletados = avance.completados;
+  informeCosecha.terminosPendientes = pendientes.length;
+  informeCosecha.parcialPorPresupuesto = informeCosecha.paginas >= MAX_PAGINAS && pendientes.length > 0;
+  informeCosecha.consultasCompletas = tareas.length - pendientes.length;
   await guardar();
-  console.log(JSON.stringify({ ...informeCosecha, nuevos: registros.size - antes, total: registros.size, siguienteTermino: progreso.indiceTerminos }));
+  console.log(JSON.stringify({ ...informeCosecha, nuevos: registros.size - antes, total: registros.size,
+    siguienteTermino: progreso.indiceTerminos, cursorConservado: pendientes.length > 0 }));
+  // Los archivos ya están escritos y el workflow los sube con if: always().
+  // La acción se marca fallida sólo si el origen falló de verdad.
+  if (informeCosecha.errores.length || informeCosecha.bloqueada) process.exitCode = 1;
 }

@@ -24,6 +24,12 @@ test('las 24 jurisdicciones tienen vistas SAIJ válidas, sin slugs duplicados', 
     assert.equal(consultaDeArticulo(slug, 1741), 'artículo 1741');
   }
   assert.equal(provinciaSaijDe('../cualquier-cosa'), null);
+  assert.equal(provinciaSaijDe('chubut'), null, 'Chubut directo usa su propio slug');
+  assert.equal(provinciaSaijDe('santacruz'), null, 'Santa Cruz directa usa su propio slug');
+  assert.equal(provinciaSaijDe('chubut_saij'), 'Chubut');
+  assert.equal(provinciaSaijDe('santacruz_saij'), 'Santa Cruz');
+  assert.ok(FUENTES.some(x => x.slug === 'chubut' && /Eureka/.test(x.nombre)));
+  assert.ok(FUENTES.some(x => x.slug === 'santacruz' && /Santa Cruz/.test(x.nombre)));
 });
 
 test('el texto y la metadata provincial no se reemplazan por fichas más cortas al fusionar', () => {
@@ -41,8 +47,11 @@ test('cosechas SAIJ en las 24 jurisdicciones con progreso y artefactos independi
   assert.match(workflow, /saij_provincial:/);
   assert.match(workflow, /max-parallel: 2/);
   assert.match(workflow, /max-parallel: 4/);
-  assert.match(workflow, /needs: \[pruebas, fuentes, saij, saij_provincial\]/);
-  for (const [slug] of vistas) assert.match(workflow, new RegExp('slug: ' + slug + ','));
+  assert.match(workflow, /needs: \[pruebas, fuentes, saij, saij_provincial, corteidh\]/);
+  for (const [slug] of vistas) {
+    const cosechaSlug = slug === 'chubut_saij' ? 'chubut' : slug === 'santacruz_saij' ? 'santacruz' : slug;
+    assert.match(workflow, new RegExp('slug: ' + cosechaSlug + ','));
+  }
   assert.match(workflow, /fuente-saij-\$\{\{ matrix\.slug \}\}/);
 });
 

@@ -93,11 +93,11 @@ export const PROVINCIA_DE_BASE = {
   cordoba: 'Córdoba', entrerrios: 'Entre Ríos', neuquen: 'Neuquén',
   tucuman: 'Tucumán', chaco: 'Chaco', corrientes: 'Corrientes',
   buenosaires: 'Buenos Aires', caba_saij: 'Ciudad Autónoma de Buenos Aires',
-  catamarca_saij: 'Catamarca', chubut: 'Chubut', formosa: 'Formosa',
+  catamarca_saij: 'Catamarca', chubut_saij: 'Chubut', formosa: 'Formosa',
   jujuy_saij: 'Jujuy', lapampa: 'La Pampa', larioja: 'La Rioja',
   mendoza_saij: 'Mendoza', misiones: 'Misiones', rionegro_saij: 'Río Negro',
   salta: 'Salta', sanjuan: 'San Juan', sanluis: 'San Luis',
-  santacruz: 'Santa Cruz', santafe_saij: 'Santa Fe',
+  santacruz_saij: 'Santa Cruz', santafe_saij: 'Santa Fe',
   santiagodelestero: 'Santiago del Estero', tierradelfuego: 'Tierra del Fuego'
 };
 /* El selector de tribunal de Mendoza (SC, CC, CT), por el nombre del tribunal que trae cada ficha. */

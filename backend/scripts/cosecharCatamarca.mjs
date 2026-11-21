@@ -110,3 +110,8 @@ for (const r of pendientes.slice(0, MAX_DETALLES)) {
 await guardar();
 console.log(JSON.stringify({ ...reporte, nuevos: registros.size - antes, total: registros.size }));
 if (!registros.size) process.exitCode = 2;
+else if (reporte.errores.length) {
+  // Ya se guardó el lote y el cursor. El artefacto se sube con if: always(),
+  // pero GitHub no debe marcar como exitosa una cosecha con detalles fallidos.
+  process.exitCode = 1;
+}

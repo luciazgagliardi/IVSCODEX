@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/ampliacion-integral.yml'
       - 'backend/scripts/ampliarFuentes.mjs'
+      - 'backend/scripts/ampliarCorteidh.mjs'
       - 'backend/lib/indiceProvincialSaij.js'
       - 'backend/lib/acervoConsulta.js'
       - 'backend/test/provinciasSaij.prueba.js'
@@ -13,6 +14,14 @@ on:
       - 'backend/scripts/cosecharSaij.mjs'
       - 'backend/test/provinciasSaij.prueba.js'
       - 'backend/lib/indiceCatamarca.js'
+      - 'backend/lib/indiceChubut.js'
+      - 'backend/lib/indiceTfn.js'
+      - 'backend/lib/indiceSantaCruz.js'
+      - 'backend/lib/indiceHudoc.js'
+      - 'backend/lib/indiceHybridJurisprudencia.js'
+      - 'backend/lib/avanceTerminos.js'
+      - 'backend/test/avanceTerminos.prueba.js'
+      - 'backend/test/fuentesNuevas.prueba.js'
       - 'backend/test/catamarca.prueba.js'
       - 'backend/scripts/ampliarCorteidh.mjs'
       - 'backend/scripts/armarAcervo.mjs'
@@ -29,10 +38,22 @@ on:
       - 'backend/lib/indiceProvincialSaij.js'
       - 'backend/lib/acervoConsulta.js'
       - 'backend/test/provinciasSaij.prueba.js'
-      - 'backend/scripts/armarAcervo.mjs'
+      - 'backend/scripts/cosecharCatamarca.mjs'
+      - 'backend/lib/indiceCatamarca.js'
+      - 'backend/lib/indiceChubut.js'
+      - 'backend/lib/indiceTfn.js'
+      - 'backend/lib/indiceSantaCruz.js'
+      - 'backend/lib/indiceHudoc.js'
+      - 'backend/lib/indiceHybridJurisprudencia.js'
       - 'backend/lib/avanceCosecha.js'
+      - 'backend/lib/avanceTerminos.js'
+      - 'backend/scripts/armarAcervo.mjs'
+      - 'backend/test/avanceTerminos.prueba.js'
+      - 'backend/test/fuentesNuevas.prueba.js'
+      - 'backend/test/ampliacionAcervo.prueba.js'
       - 'backend/test/jujuy.prueba.js'
       - 'backend/test/indiceCabaHost.prueba.js'
+      - 'backend/lib/fuentes.js'
       - 'backend/lib/fuentesInfo.js'
   workflow_dispatch: {}
   schedule:
@@ -71,6 +92,7 @@ jobs:
           node --check scripts/ampliarCorteidh.mjs
           node --check scripts/armarAcervo.mjs
           node --test test/ampliacionAcervo.prueba.js
+          node --test test/avanceTerminos.prueba.js test/fuentesNuevas.prueba.js
           node --test test/jujuy.prueba.js test/indiceCabaHost.prueba.js
           node --check ../ops/diagnosticar-en-vivo.mjs
 
@@ -83,7 +105,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, jujuy]
+        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, jujuy, chubut, tfn, santacruz, hudoc]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
@@ -114,14 +136,14 @@ jobs:
         working-directory: backend
         env:
           FUENTE: ${{ matrix.fuente }}
-          MAX_PAGINAS: ${{ matrix.fuente == 'catamarca' && '360' || '600' }}
+          MAX_PAGINAS: '600'
           MAX_TERMINOS: '240'
           PAGINAS_POR_TAREA: '8'
           MAX_PDFS: '150'
           PAUSA_MS: '2000'
         run: |
           if test "$FUENTE" = catamarca; then
-            MAX_DETALLES=160 node scripts/cosecharCatamarca.mjs
+            MAX_DETALLES=300 node scripts/cosecharCatamarca.mjs
           else
             node scripts/ampliarFuentes.mjs "$FUENTE"
           fi
@@ -172,8 +194,8 @@ jobs:
           echo "Estado cosecha nacional: $NACIONAL; Mendoza: $MENDOZA"
           if test "$NACIONAL" -ne 0 || test "$MENDOZA" -ne 0; then
             echo "::warning::SAIJ respondió parcialmente; sólo se integran tandas disponibles, preservando el acervo anterior"
+            exit 1
           fi
-          exit 0
       - name: Guardar tandas SAIJ y avance, aunque la fuente haya cortado
         if: always()
         uses: actions/upload-artifact@v4
@@ -258,11 +280,56 @@ jobs:
             backend/acervo-crudo/saij-*
             backend/acervo-crudo/progreso-saij-*.json
 
+  corteidh:
+    # El catálogo oficial devuelve el conjunto de documentos y sus enlaces;
+    # los PDFs se extraen por tandas con un límite propio y cursores de fallidos.
+    if: github.event_name != 'pull_request'
+    needs: pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias y recuperar documentos y fallidos
+        working-directory: backend
+        run: |
+          npm ci
+          mkdir -p acervo-crudo/respaldo
+          if test -f acervo-base/_fuentes/corteidh.json.gz; then
+            cp acervo-base/_fuentes/corteidh.json.gz acervo-crudo/respaldo/corteidh.json.gz
+          fi
+          if test -f acervo-base/_avance/avance-corteidh.json; then
+            cp acervo-base/_avance/avance-corteidh.json acervo-crudo/respaldo/avance-corteidh.json
+          fi
+      - name: Actualizar catálogo oficial y extraer PDFs públicos
+        working-directory: backend
+        env:
+          DIR_COSECHA: acervo-crudo/respaldo
+          MAX_PDFS: '150'
+          PAUSA_MS: '2000'
+        run: node scripts/ampliarCorteidh.mjs
+      - name: Retener catálogo, textos y avance aunque algún PDF falle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuente-corteidh
+          retention-days: 14
+          if-no-files-found: warn
+          path: backend/acervo-crudo/respaldo/
+
   publicar:
     # Al fallar una fuente no perder los lotes válidos de las demás fuentes.
     # Solo el fracaso de las pruebas impide publicar.
     if: ${{ always() && github.event_name != 'pull_request' && needs.pruebas.result == 'success' }}
-    needs: [pruebas, fuentes, saij, saij_provincial]
+    needs: [pruebas, fuentes, saij, saij_provincial, corteidh]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:

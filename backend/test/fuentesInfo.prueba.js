@@ -57,7 +57,7 @@ test('SAIJ se reclasifica según el tipo documental realmente consultado', () =>
 });
 
 test('las vistas provinciales SAIJ identifican la provincia y mantienen clara la procedencia agregadora', () => {
-  for (const slug of ['buenosaires','caba_saij','catamarca_saij','chaco','chubut','cordoba','corrientes','entrerrios','formosa','jujuy_saij','lapampa','larioja','mendoza_saij','misiones','neuquen','rionegro_saij','salta','sanjuan','sanluis','santacruz','santafe_saij','santiagodelestero','tierradelfuego','tucuman']) {
+  for (const slug of ['buenosaires','caba_saij','catamarca_saij','chaco','chubut_saij','cordoba','corrientes','entrerrios','formosa','jujuy_saij','lapampa','larioja','mendoza_saij','misiones','neuquen','rionegro_saij','salta','sanjuan','sanluis','santacruz_saij','santafe_saij','santiagodelestero','tierradelfuego','tucuman']) {
     const info = informacionFuente(slug);
     assert.equal(info.modalidad, 'agregador_oficial');
     assert.ok(info.jurisdiccion.endsWith(', Argentina'));
