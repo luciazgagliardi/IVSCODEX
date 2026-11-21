@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { FUENTES } from '../lib/fuentes.js';
 import {
   informacionFuente,
@@ -50,6 +51,11 @@ test('las vistas provinciales SAIJ identifican la provincia y mantienen clara la
     assert.ok(info.procedencia.includes('SAIJ'));
     assert.ok(info.limite.includes('conexión directa') || info.limite.includes('poder judicial'));
   }
+});
+
+test('los límites por ruta aceptan slugs con guion bajo de las facetas provinciales', () => {
+  const index = fs.readFileSync(new URL('../index.js', import.meta.url), 'utf8');
+  assert.equal((index.match(/\[a-z_\-\]\+/g) || []).length, 3);
 });
 
 test('la procedencia se incorpora sin destruir los metadatos originales ni mutar la ficha', () => {

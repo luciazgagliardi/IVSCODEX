@@ -46,6 +46,34 @@ const pruebas = [
   { slug: 'catamarca', q: 'sentencia', modo: 'todas', local: true },
 ];
 
+async function comprobarRegistroApi() {
+  const inicio = Date.now();
+  try {
+    const respuesta = await fetch(api + '/fuentes/catalogo', { signal: AbortSignal.timeout(15000) });
+    const d = await respuesta.json();
+    const slugs = Array.isArray(d.fuentes) ? d.fuentes.map((f) => f.slug) : [];
+    const esperados = [...new Set(pruebas.map((p) => p.slug))];
+    const faltantes = esperados.filter((slug) => !slugs.includes(slug));
+    let estadoRuta = null;
+    try {
+      const r = await fetch(api + '/indice/buenosaires/estado', { signal: AbortSignal.timeout(10000) });
+      estadoRuta = r.status;
+    } catch (e) { estadoRuta = e.name || 'error'; }
+    const resultado = {
+      http: respuesta.status, ok: respuesta.ok && faltantes.length === 0 && estadoRuta === 200,
+      totalFuentesApi: slugs.length, totalEsperadas: esperados.length,
+      nuevasFacetasRegistradas: esperados.filter((s) => /_saij$|^(buenosaires|chubut|formosa|lapampa|larioja|misiones|salta|sanjuan|sanluis|santacruz|santiagodelestero|tierradelfuego)$/.test(s) && slugs.includes(s)),
+      faltantes, rutaEstadoBuenosAires: estadoRuta, ms: Date.now() - inicio,
+    };
+    console.log('PREFLIGHT_API ' + JSON.stringify(resultado));
+    return resultado;
+  } catch (e) {
+    const resultado = { ok: false, error: e.name || 'ERROR', detalle: String(e.message).slice(0, 180), ms: Date.now() - inicio };
+    console.log('PREFLIGHT_API ' + JSON.stringify(resultado));
+    return resultado;
+  }
+}
+
 async function unaPrueba(caso) {
   const inicio = Date.now();
   const ruta = caso.local ? '/indice/' + caso.slug + '/local' : '/indice/' + caso.slug + '/buscar';
@@ -108,6 +136,8 @@ async function trabajador() {
     console.log('BUSQUEDA_VIVA ' + JSON.stringify(resultados[i]));
   }
 }
+const preflight = await comprobarRegistroApi();
+if (!preflight.ok) process.exitCode = 1;
 await Promise.all([trabajador(), trabajador()]);
 const fallasCriticas = resultados.filter((r) => !r.ok && !r.externa && !r.sensible);
 const noDisponibles = resultados.filter((r) => !r.ok);
