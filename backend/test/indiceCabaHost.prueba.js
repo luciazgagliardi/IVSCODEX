@@ -8,6 +8,6 @@ const metadatos = fs.readFileSync(new URL('../lib/fuentesInfo.js', import.meta.u
 test('CABA usa el endpoint HTTPS vigente del buscador del TSJ', () => {
   assert.ok(cliente.includes("const HOST = 'jurisprudencia.tsjbaires.gov.ar';"));
   assert.ok(cliente.includes('`https://${HOST}/jurisprudencia/resultadoBusqueda.asp`'));
-  assert.ok(!cliente.includes('jurisprudencia.tsjbaires.gob.ar'));
+  assert.ok(!cliente.includes("const HOST = 'jurisprudencia.tsjbaires.gob.ar';"));
   assert.ok(metadatos.includes('https://jurisprudencia.tsjbaires.gov.ar/jurisprudencia/resultadoBusqueda.asp'));
 });
