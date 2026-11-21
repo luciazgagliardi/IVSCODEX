@@ -32,7 +32,7 @@ const INFO = {
     cobertura: 'Decisiones publicadas por el TSJ de CABA.',
     modalidad: 'buscador_oficial',
     limite: 'No representa por sí solo a todos los juzgados y cámaras de la Ciudad. Algunos documentos se sirven como archivos descargables.',
-    url: 'https://jurisprudencia.tsjbaires.gov.ar/jurisprudencia/resultadoBusqueda.asp',
+    url: 'https://jurisprudencia.tsjbaires.gob.ar/jurisprudencia/resultadoBusqueda.asp',
   },
   saij: {
     linea: 'Jurisprudencia y documentación nacional',
