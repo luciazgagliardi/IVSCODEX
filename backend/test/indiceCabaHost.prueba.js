@@ -8,6 +8,7 @@ const metadatos = fs.readFileSync(new URL('../lib/fuentesInfo.js', import.meta.u
 import { dominioConNavegador } from '../lib/navegadorCf.js';
 
 test('el relevo de navegador cubre el buscador oficial del TSJ y conserva el POST', () => {
+  assert.equal(dominioConNavegador('jurisprudencia.tsjbaires.gob.ar'), true);
   assert.equal(dominioConNavegador('jurisprudencia.tsjbaires.gov.ar'), true);
   const navegador = fs.readFileSync(new URL('../lib/navegadorCf.js', import.meta.url), 'utf8');
   assert.match(navegador, /export function consultarConNavegador/);
@@ -18,8 +19,7 @@ test('el relevo de navegador cubre el buscador oficial del TSJ y conserva el POS
 });
 
 test('CABA usa el endpoint HTTPS vigente del buscador del TSJ', () => {
-  assert.ok(cliente.includes("const HOST = 'jurisprudencia.tsjbaires.gov.ar';"));
+  assert.ok(cliente.includes("const HOST = 'jurisprudencia.tsjbaires.gob.ar';"));
   assert.ok(cliente.includes('`https://${HOST}/jurisprudencia/resultadoBusqueda.asp`'));
-  assert.ok(!cliente.includes("const HOST = 'jurisprudencia.tsjbaires.gob.ar';"));
-  assert.ok(metadatos.includes('https://jurisprudencia.tsjbaires.gov.ar/jurisprudencia/resultadoBusqueda.asp'));
+  assert.ok(metadatos.includes('https://jurisprudencia.tsjbaires.gob.ar/jurisprudencia/resultadoBusqueda.asp'));
 });
