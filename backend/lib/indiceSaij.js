@@ -584,7 +584,7 @@ function consultaParaElSitio(termino, modo) {
 // (SAIJ ignora las comillas y trae 40.776 por cualquiera de las dos palabras,
 // la frase exacta está en una fracción): con 3 tandas salían 6 resultados, con
 // 6 salían 13 (8,5 s) y con 10 salían 18 (14 s). Cada tanda cuesta ~1,4 s.
-const TANDAS_POR_MODO = { exacta: 12, todas: 5, alguna: 3 };
+const TANDAS_POR_MODO = { exacta: 12, todas: 10, alguna: 3 };
 const PAGINAS_A_REVISAR = 3; // por defecto, y para legislación y doctrina (ver esTexto)
 const POR_PEDIDO = 100;
 
@@ -731,7 +731,7 @@ export async function buscarSaij(opciones = {}) {
   const tamano = Math.min(100, Math.max(1, Number(opciones.porPagina) || 20));
   const desde = opciones.desde == null ? null : Number(opciones.desde);
 
-  // En frase exacta, el texto buscable de SAIJ está en los SUMARIOS. Las
+  // En los modos estrictos (frase exacta y todas las palabras), el texto buscable de SAIJ está en los SUMARIOS. Las
   // fichas de fallos casi nunca incluyen el cuerpo ni el sumario relacionado:
   // buscarlas primero devolvía cero aunque la frase existiera en la misma causa.
   // Cuando se agotan los sumarios, recién entonces se completa con carátulas.
@@ -765,7 +765,7 @@ export async function buscarSaij(opciones = {}) {
     };
   }
 
-  if (opciones.modo === 'exacta') {
+  if (opciones.modo === 'exacta' || opciones.modo === 'todas') {
     const sumarios = await buscarSaijSimple({
       ...opciones, tribunal: 'sumarios', pagina: 1,
       desde: Number.isFinite(desde) ? desde : 0,
