@@ -86,6 +86,25 @@ function metadatosValidos(archivo, version) {
   finally { try { lectura?.close(); } catch { /* ya cerrada */ } }
 }
 
+/** Si otra instancia publicó una versión nueva, cambiar a su archivo inmutable. */
+function sincronizarAcervoPublicado() {
+  const p = punteroAcervo();
+  if (!p || typeof p.archivo !== 'string' || path.basename(p.archivo) !== p.archivo) return;
+  const destino = path.join(DIR_BASE, p.archivo);
+  if (destino === archivoActivo || !metadatosValidos(destino, p.version)) return;
+  const nueva = abrir(destino);
+  try { db?.close(); } catch { /* ya cerrada */ }
+  db = nueva;
+  archivoActivo = destino;
+  const meta = db.prepare('SELECT clave, valor FROM meta WHERE clave IN (?, ?)').all('version', 'esquema');
+  const valores = Object.fromEntries(meta.map((x) => [x.clave, x.valor]));
+  const conteos = JSON.parse(db.prepare("SELECT valor FROM meta WHERE clave = 'conteos'").get()?.valor || '{}');
+  estado = { ...estado, activo: true, version: valores.version, esquema: valores.esquema, conteos, importando: false, error: null };
+  archivoLectura = null;
+  generacion++;
+  recordadas.clear();
+}
+
 /** Abre la versión publicada del acervo; nunca sustituye un SQLite que otra instancia puede estar leyendo. */
 export async function prepararAcervo({ esperar = false } = {}) {
   if (!(await modulo())) { estado.error = 'Este Node no trae SQLite (node:sqlite)'; return estado; }
@@ -115,7 +134,7 @@ export async function prepararAcervo({ esperar = false } = {}) {
           await sumarIndiceGuardado();
         } finally { await liberar(); }
       }
-      if (esquema === ESQUEMA_V) copiarParaLeer();
+      if (esquema === ESQUEMA_V && (!man || man.version === estado.version)) copiarParaLeer();
     } catch (e) { estado.error = e.message; db = null; archivoActivo = null; }
   }
   if (man && (man.version !== estado.version || estado.esquema !== ESQUEMA_V) && !estado.importando) {
@@ -230,9 +249,15 @@ export async function agregarAlAcervo(registros) {
   for (const r of regs) (porFuente[r.fuente] = porFuente[r.fuente] || []).push(JSON.stringify(r));
   for (const [f, lineas] of Object.entries(porFuente)) await fsp.appendFile(path.join(DIR_COSECHAS, `${f.replace(/[^a-z0-9]/g, '')}.jsonl`), lineas.join('\n') + '\n');
   if (!db || !estado.activo || estado.importando) return 0;
+  const liberar = await adquirirCandado(path.join(DIR_BASE, '.acervo.lock'), { version: estado.version });
   let nuevos = 0;
-  db.exec('BEGIN');
-  try { for (const r of regs) if (poner(r)) nuevos++; db.exec('COMMIT'); } catch (e) { db.exec('ROLLBACK'); throw e; }
+  try {
+    sincronizarAcervoPublicado();
+    if (!db || !estado.activo || estado.importando) return 0;
+    db.exec('BEGIN');
+    try { for (const r of regs) if (poner(r)) nuevos++; db.exec('COMMIT'); }
+    catch (e) { db.exec('ROLLBACK'); throw e; }
+  } finally { await liberar(); }
   if (nuevos) programarRefrescoLectura();
   return nuevos;
 }
@@ -591,6 +616,7 @@ const RECUERDA_MS = 10 * 60 * 1000;
 const recordadas = new Map();
 const enVuelo = new Map();
 export function buscarPagina(base, q, opciones = {}, { espera = ESPERA_HILO_MS, prioridad = 1 } = {}) {
+  try { sincronizarAcervoPublicado(); } catch (e) { estado.errorHilo = e.message; }
   if (!acervoCubre(base)) return Promise.resolve(null);
   const clave = JSON.stringify([estado.version, generacion, base, q, opciones]);
   const ya = recordadas.get(clave);
