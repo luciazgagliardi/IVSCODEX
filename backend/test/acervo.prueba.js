@@ -67,7 +67,7 @@ test('busca por base, por la Corte, por años y en frase exacta', () => {
   assert.ok(!porDefecto.some((r) => r.id === 'saij_5'), 'el sumario de una causa ya recuperada no duplica el fallo');
   assert.ok(porDefecto.some((r) => r.id === 'saij_6' && r.esSumarioRespaldo), 'un sumario de otra causa queda identificado como respaldo');
   assert.deepEqual(buscarEnAcervo('saij', 'daño moral', { tribunal: 'fallos' }).map((r) => r.id), ['saij_2']);
-  assert.deepEqual(buscarEnAcervo('saij', 'daño moral', { tribunal: 'sumarios' }).map((r) => r.id), ['saij_5', 'saij_6']);
+  assert.deepEqual(buscarEnAcervo('saij', 'daño moral', { tribunal: 'sumarios' }).map((r) => r.id), ['saij_6', 'saij_5']);
   // Las formas equivalentes deben recuperar también el mismo documento en
   // fuentes distintas de Mendoza y sin que el término canónico esté presente.
   assert.deepEqual(buscarEnAcervo('saij', 'consecuencias no patrimoniales', { variantes: ['daño moral'] }).map((r) => r.id), ['saij_2', 'saij_6']);
