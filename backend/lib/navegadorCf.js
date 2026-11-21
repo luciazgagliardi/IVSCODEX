@@ -149,6 +149,74 @@ async function paginaAutorizada(origen, informe) {
  * Trae una URL con el navegador. Devuelve { estado, contentType, buffer }.
  * Los pedidos se hacen de a uno: es una sola página compartida.
  */
+async function respuestaDesdePagina(pagina, url, opciones = {}) {
+  const datos = await Promise.race([
+    pagina.evaluate(async ({ u, method, headers, body }) => {
+      const r = await fetch(u, {
+        method, headers, ...(body == null ? {} : { body }),
+        credentials: 'include', redirect: 'follow',
+      });
+      const blob = await r.blob();
+      const dataUrl = await new Promise((ok) => {
+        const fr = new FileReader();
+        fr.onload = () => ok(fr.result);
+        fr.readAsDataURL(blob);
+      });
+      return {
+        estado: r.status,
+        tipo: r.headers.get('content-type') || '',
+        mitigado: r.headers.get('cf-mitigated') || '',
+        dataUrl,
+      };
+    }, {
+      u: url.toString(),
+      method: opciones.method || 'GET',
+      headers: opciones.headers || {},
+      body: opciones.body ?? null,
+    }),
+    new Promise((_, no) => setTimeout(() => no(new Error('tiempo agotado consultando el portal con navegador')), ESPERA_PDF_MS)),
+  ]);
+  const coma = datos.dataUrl.indexOf(',');
+  return {
+    estado: datos.estado,
+    contentType: datos.tipo,
+    cfMitigated: datos.mitigado,
+    buffer: Buffer.from(datos.dataUrl.slice(coma + 1), 'base64'),
+  };
+}
+
+/**
+ * Ejecuta una consulta HTTP dentro del navegador que ya superó Cloudflare.
+ * Se usa para formularios POST que un fetch del datacenter recibe con 403,
+ * como el buscador de jurisprudencia del TSJ de CABA.
+ */
+export function consultarConNavegador(urlTexto, opciones = {}, informe = {}) {
+  return enCola('navegador-cf', async () => {
+    const url = new URL(urlTexto);
+    if (!dominioConNavegador(url.hostname)) throw new Error('dominio no habilitado para navegador de relevo');
+    const origen = url.origin;
+    clearTimeout(cierre);
+    try {
+      let pagina = await paginaAutorizada(origen, informe);
+      let r = await respuestaDesdePagina(pagina, url, opciones);
+      if (r.estado === 403 || r.cfMitigated === 'challenge' ||
+          (r.contentType.includes('text/html') && SEÑALES_DE_DESAFIO.test(r.buffer.toString('utf8', 0, 1200)))) {
+        paginas.delete(origen);
+        await pagina.close().catch(() => {});
+        pagina = await paginaAutorizada(origen, informe);
+        r = await respuestaDesdePagina(pagina, url, opciones);
+      }
+      return r;
+    } catch (e) {
+      ultimaFalla = String(e?.message || e).slice(0, 200);
+      throw e;
+    } finally {
+      programarCierre();
+    }
+  });
+}
+
+/** Descarga de un archivo usando el mismo navegador autorizado. */
 export function traerConNavegador(urlTexto, informe = {}) {
   return enCola('navegador-cf', async () => {
     const url = new URL(urlTexto);
@@ -156,34 +224,15 @@ export function traerConNavegador(urlTexto, informe = {}) {
     clearTimeout(cierre);
     try {
       let pagina = await paginaAutorizada(origen, informe);
-      const pedir = () =>
-        Promise.race([
-          pagina.evaluate(async (u) => {
-            const r = await fetch(u, { credentials: 'include' });
-            const blob = await r.blob();
-            const dataUrl = await new Promise((ok) => {
-              const fr = new FileReader();
-              fr.onload = () => ok(fr.result);
-              fr.readAsDataURL(blob);
-            });
-            return { estado: r.status, tipo: r.headers.get('content-type') || '', dataUrl };
-          }, url.toString()),
-          new Promise((_, no) => setTimeout(() => no(new Error('tiempo agotado bajando el PDF')), ESPERA_PDF_MS)),
-        ]);
-      let r = await pedir();
-      if (r.estado === 403) {
+      let r = await respuestaDesdePagina(pagina, url);
+      if (r.estado === 403 || r.cfMitigated === 'challenge') {
         // El permiso venció: se descarta la página y se gana de nuevo, una vez.
         paginas.delete(origen);
         await pagina.close().catch(() => {});
         pagina = await paginaAutorizada(origen, informe);
-        r = await pedir();
+        r = await respuestaDesdePagina(pagina, url);
       }
-      const coma = r.dataUrl.indexOf(',');
-      return {
-        estado: r.estado,
-        contentType: r.tipo,
-        buffer: Buffer.from(r.dataUrl.slice(coma + 1), 'base64'),
-      };
+      return r;
     } catch (e) {
       ultimaFalla = String(e?.message || e).slice(0, 200);
       throw e;
