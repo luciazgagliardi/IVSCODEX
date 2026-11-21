@@ -340,7 +340,7 @@ function errorDelSitio(html) {
   return null;
 }
 
-async function buscarCabaOficial({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
+export async function buscarCabaOficial({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
