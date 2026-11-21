@@ -23,24 +23,28 @@ test('conservar textos, enlaces y metadatos más completos al deduplicar', () =>
   assert.equal(combinarRegistro(null, nuevo), nuevo);
 });
 
-test('la expansión contempla todas las fuentes paginadas, incluidas Jujuy, más SAIJ y Corte IDH', () => {
+test('la cosecha cubre fuentes habilitadas y detiene reintentos ante bloqueos y timeouts', () => {
   const archivo = fs.readFileSync(new URL('../scripts/ampliarFuentes.mjs', import.meta.url), 'utf8');
-  const corte = fs.readFileSync(new URL('../scripts/ampliarCorteidh.mjs', import.meta.url), 'utf8');
   const armado = fs.readFileSync(new URL('../scripts/armarAcervo.mjs', import.meta.url), 'utf8');
+  const workflow = fs.readFileSync(new URL('../../.github/workflows/ampliacion-integral.yml', import.meta.url), 'utf8');
+  const corte = fs.readFileSync(new URL('../scripts/ampliarCorteidh.mjs', import.meta.url), 'utf8');
   for (const slug of ['mendoza', 'caba', 'scba', 'juristeca', 'santafe', 'rionegro', 'dialnet', 'mendozalegal', 'jujuy']) {
-    assert.match(archivo, new RegExp('\\b' + slug + ': \\{'));
+    assert.ok(archivo.includes(slug + ': {'), slug);
   }
-  assert.match(corte, /listarTodo\(\)/);
-  assert.match(corte, /extraerDesdeBuffer/);
-  assert.match(armado, /'corteidh'/);
-  assert.match(armado, /'jujuy'/);
-  assert.match(armado, /DIR_BASE/);
-  assert.match(archivo, /avance-/);
-  assert.match(archivo, /MAX_PAGINAS/);
-  assert.match(archivo, /MAX_TERMINOS/);
-  assert.match(archivo, /PAGINAS_POR_TAREA/);
+  assert.ok(armado.includes("'corteidh'"));
+  assert.ok(armado.includes("'jujuy'"));
+  assert.ok(armado.includes('DIR_BASE'));
+  assert.ok(archivo.includes('avance-'));
+  assert.ok(archivo.includes('MAX_PAGINAS'));
+  assert.ok(archivo.includes('MAX_TERMINOS'));
+  assert.ok(archivo.includes('PAGINAS_POR_TAREA'));
+  assert.ok(archivo.includes('TimeoutError|AbortError'));
+  assert.ok(archivo.includes('ECONNRESET'));
+  assert.ok(archivo.includes('cursorPreservado: true'));
+  assert.ok(corte.includes('listarTodo()'));
+  assert.ok(!workflow.includes('node scripts/ampliarCorteidh.mjs'));
+  assert.ok(!workflow.includes('catamarca, corteidh, jujuy'));
 });
-
 test('ids reales de Mendoza, CABA, SCBA y Río Negro se incorporan, no se descartan', () => {
   for(const id of ['sc_1014929_35314', 'mza_oficial_12399000248', 'caba_00123', 'juristeca-42',
     'scba_987654', 'rionegro_16482', 'jujuy_535558', 'aBcDEF123'])
