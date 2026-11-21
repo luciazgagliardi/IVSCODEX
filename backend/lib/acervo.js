@@ -183,11 +183,22 @@ async function comprobarDirectorioImportacion() {
 }
 
 /** Un único importador entre todas las instancias de Azure; cada versión se publica en un archivo inmutable. */
+async function limpiarTemporalesImportacion() {
+  const archivos = await fsp.readdir(DIR_BASE);
+  const temporales = archivos.filter((nombre) =>
+    /^acervo-[a-zA-Z0-9._-]+-\d+-[a-f0-9-]+\.db\.tmp(?:-(?:wal|shm))?$/.test(nombre));
+  for (const nombre of temporales)
+    await fsp.rm(path.join(DIR_BASE, nombre), { force: true });
+}
+
+/** Un único importador entre todas las instancias de Azure; cada versión se publica en un archivo inmutable. */
 async function importar(man) {
   estado.importando = true;
   const t0 = Date.now();
   const liberar = await adquirirCandado(path.join(DIR_BASE, '.acervo.lock'), { version: man.version });
+  let temporalEnTrabajo = null;
   try {
+    await limpiarTemporalesImportacion();
     // La base anterior puede seguir leyéndose, pero la publicación nueva
     // necesita crear otro archivo en el mismo volumen persistente.
     await comprobarDirectorioImportacion();
@@ -210,12 +221,17 @@ async function importar(man) {
     }
 
     const nueva = rutaTemporalImportacion(DIR_BASE, man.version);
+    temporalEnTrabajo = nueva;
     for (const f of [nueva, `${nueva}-wal`, `${nueva}-shm`]) await fsp.rm(f, { force: true });
     const { conteos } = await new Promise((ok, mal) => {
       const w = new Worker(new URL('./acervoImportar.js', import.meta.url), { workerData: { man, dirTandas: DIR_TANDAS, nueva } });
+      let errorWorker = null;
       w.once('message', ok);
-      w.once('error', mal);
-      w.once('exit', (c) => { if (c) mal(new Error(`el armado terminó con código ${c}`)); });
+      w.once('error', (e) => { errorWorker = e; });
+      w.once('exit', (c) => {
+        if (errorWorker) mal(errorWorker);
+        else if (c) mal(new Error(`el armado terminó con código ${c}`));
+      });
     });
     const info = await fsp.stat(nueva);
     if (!info.isFile() || info.size < 4096) throw new Error('SQLite temporal ausente o incompleto');
@@ -232,6 +248,7 @@ async function importar(man) {
     const segura = String(man.version).replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 80);
     const destino = path.join(DIR_BASE, `acervo-${segura}-${randomUUID()}.db`);
     await fsp.rename(nueva, destino);
+    temporalEnTrabajo = null;
     if (db) { try { db.close(); } catch { /* ya cerrada */ } }
     db = abrir(destino);
     archivoActivo = destino;
@@ -247,6 +264,10 @@ async function importar(man) {
     copiarParaLeer();
     console.log(`[acervo] versión ${man.version}: ${Object.entries(conteos).map(([k, v]) => `${k} ${v}`).join(', ')} (${estado.segundos} s)`);
   } finally {
+    if (temporalEnTrabajo) {
+      for (const archivo of [temporalEnTrabajo, `${temporalEnTrabajo}-wal`, `${temporalEnTrabajo}-shm`])
+        await fsp.rm(archivo, { force: true }).catch(() => {});
+    }
     await liberar();
   }
 }
