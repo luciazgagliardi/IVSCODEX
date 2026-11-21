@@ -678,6 +678,21 @@ for (const { slug, buscar } of FUENTES) {
       // La ruta pública solo puede devolver pasajes; la cosecha oficial
       // del servidor realiza su propia verificación de procedencia.
       const pedidas = urls.filter((u) => typeof u === 'string' && u && u.length <= 2048).slice(0, MAX_FRAGMENTOS);
+      // Un resultado puede haber aparecido por una variante de tesauro. El
+      // pasaje del fallo debe probar también esa forma, no sólo la consulta
+      // original; se usa para extraer un fragmento, nunca para persistir datos.
+      const variantesPorUrl = new Map();
+      for (const r of (Array.isArray(req.body?.registros) ? req.body.registros : []).slice(0, MAX_FRAGMENTOS)) {
+        if (typeof r?.url === 'string' && pedidas.includes(r.url) &&
+            typeof r.variante === 'string' && r.variante.trim().length <= MAX_CONSULTA)
+          variantesPorUrl.set(r.url, r.variante.trim());
+      }
+      const pasajeVerificado = (texto, url) => {
+        const principal = recortarPasaje(texto, q, { exigir: true });
+        if (principal) return principal;
+        const variante = variantesPorUrl.get(url);
+        return variante ? recortarPasaje(texto, variante, { exigir: true }) : '';
+      };
 
       const fragmentos = [];
       let pendientes = [];
@@ -700,14 +715,14 @@ for (const { slug, buscar } of FUENTES) {
           // Dialnet: lo útil es el resumen del artículo (otra página de la misma ficha).
           if (/^https?:\/\/dialnet\.unirioja\.es\/servlet\/articulo/i.test(url)) {
             const resumen = await resumenDeArticulo(url);
-            porUrl.set(url, { url, fragmento: resumen ? recortarPasaje(resumen, q, { exigir: true }) : '', error: resumen ? null : 'Dialnet no publica un resumen de este artículo.' });
+            porUrl.set(url, { url, fragmento: resumen ? pasajeVerificado(resumen, url) : '', error: resumen ? null : 'Dialnet no publica un resumen de este artículo.' });
             return;
           }
           const cerrado = SITIOS_CERRADOS.get(hostDe(url));
           if (cerrado) { porUrl.set(url, { url, fragmento: '', error: cerrado.mensaje }); return; }
           // Pasajes de fondo: sin acción puntual del usuario, se respeta robots.txt (lib/robots.js).
           const doc = await obtenerDocumento(url, { automatico: true });
-          porUrl.set(url, { url, fragmento: recortarPasaje(doc.texto, q, { exigir: true }), error: null });
+          porUrl.set(url, { url, fragmento: pasajeVerificado(doc.texto, url), error: null });
         } catch (e) {
           const mensaje = e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.';
           if (e?.codigo === 'RESPUESTA_NO_OK' && [401, 403].includes(e.extra?.estadoOrigen)) {
