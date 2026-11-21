@@ -116,6 +116,8 @@ async function unaPrueba(caso) {
             : enVivo ? (total === 0 ? 'cero_valido' : 'vivo') : 'no_confirmado_en_vivo',
       total, totalPendiente, documentos,
       codigo: d.codigo || null, mensaje: d.mensaje || d.error || null,
+      origenEnVivo: d.origenEnVivo || null,
+      fuenteAlternativa: d.fuenteAlternativa || null,
       avisoFalla: d.avisoFalla || null, detalle: d.detalle || d.detalleDiagnostico || null,
       ms: Date.now() - inicio,
       externa: Boolean(caso.externa), sensible: Boolean(caso.sensible),
