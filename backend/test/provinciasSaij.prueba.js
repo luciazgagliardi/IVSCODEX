@@ -48,6 +48,18 @@ test('el diagnóstico en vivo prueba cada fuente registrada una sola vez, inclui
   assert.ok(slugs.includes('santacruz_saij'));
 });
 
+test('el diagnóstico de las 41 fuentes corre después del smoke de Azure, sin workflow_run encadenado', () => {
+  const smoke = fs.readFileSync(new URL('../../.github/workflows/smoke-acervo-azure.yml', import.meta.url), 'utf8');
+  const diagnostico = fs.readFileSync(new URL('../../.github/workflows/diagnosticar-en-vivo.yml', import.meta.url), 'utf8');
+  assert.match(smoke, /consultas:\\n[\\s\\S]*?needs: smoke/);
+  assert.match(smoke, /needs\\.smoke\\.result == 'success'/);
+  assert.match(smoke, /node ops\\/diagnosticar-en-vivo\\.mjs/);
+  assert.match(smoke, /Consultar las 41 fuentes después de comprobar Azure y el índice FTS/);
+  assert.match(smoke, /cancel-in-progress: false/);
+  assert.doesNotMatch(diagnostico, /workflow_run:/);
+  assert.match(diagnostico, /if: github\\.event_name == 'workflow_dispatch'/);
+});
+
 test('el texto y la metadata provincial no se reemplazan por fichas más cortas al fusionar', () => {
   const armar = fs.readFileSync(new URL('../scripts/armarAcervo.mjs', import.meta.url), 'utf8');
   assert.match(armar, /const combinado = \{ \.\.\.ya \}/);
