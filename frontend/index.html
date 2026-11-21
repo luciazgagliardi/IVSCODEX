@@ -5554,22 +5554,36 @@ function vocabDe(q){
 }
 function pedirVocabulario(){
   if(!estado.api) return;
-  var q=String(estado.q||"").trim(), k=claveVocab(q);
-  if(q.length<3||q.length>300||vocabCache[k]) return;
+  var q=String(estado.q||"").trim(), k=claveVocab(q), previo=vocabCache[k];
+  if(q.length<3||q.length>300||(previo&&(previo.ok||previo.pendiente))) return;
   clearTimeout(vocabTimer);
   vocabTimer=setTimeout(function(){
-    vocabCache[k]={pendiente:true};
-    fetch(estado.api+"/vocabulario/analizar?q="+encodeURIComponent(q))
+    var intento=(previo&&previo.intentos||0)+1, control=new AbortController();
+    vocabCache[k]={pendiente:true,intentos:intento};
+    var limite=setTimeout(function(){ control.abort(); },12000);
+    function reintentar(){
+      if(intento>=2||estado.tab!=="buscar"||claveVocab(estado.q)!==k) return;
+      setTimeout(function(){
+        if(estado.tab==="buscar"&&claveVocab(estado.q)===k) pedirVocabulario();
+      },900);
+    }
+    fetch(estado.api+"/vocabulario/analizar?q="+encodeURIComponent(q),{signal:control.signal})
       .then(function(r){ return r.ok?r.json():null; })
       .then(function(d){
-        vocabCache[k]=(d&&d.ok)?d:{fallo:true};
+        clearTimeout(limite);
+        if(d&&d.ok) vocabCache[k]=d;
+        else { vocabCache[k]={fallo:true,intentos:intento}; reintentar(); }
         if(!d||!d.ok||estado.tab!=="buscar"||claveVocab(estado.q)!==k) return;
         if(!d.conceptos.length&&!d.descriptoresScjm.length) return;
         var campo=document.getElementById("q");
         var donde=(campo&&document.activeElement===campo)?campo.selectionStart:null;
         render();
         if(donde!==null){ var c2=document.getElementById("q"); if(c2){ c2.focus(); try{ c2.setSelectionRange(donde,donde); }catch(e){} } }
-      })["catch"](function(){ vocabCache[k]={fallo:true}; });
+      })["catch"](function(){
+        clearTimeout(limite);
+        vocabCache[k]={fallo:true,intentos:intento};
+        reintentar();
+      });
   },320);
 }
 var NOMBRE_ORIGEN={saij:"Tesauro SAIJ",ivs_codex:"Anillo curado",normativa:"Norma",medicion_auditoria:"Propuesta medida"};
