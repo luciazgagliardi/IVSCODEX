@@ -518,13 +518,23 @@ for (const { slug, buscar } of FUENTES) {
         // durante media hora, la copia contesta sin hacer esperar a nadie (ver sondear)
         if (!(e instanceof ErrorApp && e.codigo === 'CONSULTA_VACIA')) sinAcceso.set(slug, Date.now() + SIN_ACCESO_MS);
         if (pedirEnVivo) {
-          // Informar explícitamente el fallo de la fuente externa. El
-          // navegador conserva el acervo que pidió antes y puede reintentar.
-          // No bloquear esta respuesta durante otra consulta SQLite.
+          // No ocultar la causa real detrás de un «no respondió» genérico:
+          // la interfaz distingue un timeout transitorio de un 403/404/429.
+          const codigo = e instanceof ErrorApp ? e.codigo : 'FUENTE_OFICIAL_NO_DISPONIBLE';
+          const mensaje = e instanceof ErrorApp
+            ? e.message
+            : 'La conexión con el buscador oficial se interrumpió antes de terminar.';
+          const estadoOrigen = Number(e?.extra?.estadoOrigen) ||
+            Number(/respuesta\s+(4\d\d|5\d\d)/i.exec(String(e?.message || ''))?.[1]) || null;
+          const denegacionDefinitiva = [401, 403, 404, 410, 429].includes(estadoOrigen);
+          const reintentable = !denegacionDefinitiva && (
+            ['TIEMPO_AGOTADO', 'RED_INALCANZABLE', 'INDICE_FUENTE_FALLA', 'INDICE_MZA_FALLA'].includes(codigo) ||
+            (estadoOrigen !== null && estadoOrigen >= 500)
+          );
           return res.json({
             ok: false, fuente: slug, enVivo: false,
-            codigo: 'FUENTE_OFICIAL_NO_DISPONIBLE',
-            mensaje: 'El buscador oficial no respondió a la consulta en vivo.',
+            codigo, mensaje, reintentable,
+            ...(estadoOrigen ? { estadoOrigen } : {}),
             ms: Date.now() - arranque,
           });
         }
