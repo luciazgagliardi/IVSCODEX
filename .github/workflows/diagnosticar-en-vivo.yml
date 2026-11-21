@@ -1,6 +1,11 @@
 name: Diagnosticar consultas oficiales en vivo
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'ops/diagnosticar-en-vivo.mjs'
+      - '.github/workflows/diagnosticar-en-vivo.yml'
   push:
     branches: [main]
     paths:
@@ -19,8 +24,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  validar:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validar sintaxis del diagnóstico
+        run: node --check ops/diagnosticar-en-vivo.mjs
+
   consultar:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
