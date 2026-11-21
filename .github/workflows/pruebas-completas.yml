@@ -1,6 +1,13 @@
 name: Pruebas completas del backend
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "frontend/index.html"
+      - "frontend/pasajes.js"
+      - ".github/workflows/pruebas-completas.yml"
   pull_request:
     branches: [main]
     paths:
