@@ -18,7 +18,7 @@ permissions:
   contents: read
 concurrency:
   group: smoke-acervo-azure
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   voz:
     needs: smoke
@@ -65,3 +65,18 @@ jobs:
           node-version: '24'
       - name: Validar versión y corpus FTS en el servidor publicado
         run: node ops/smoke-acervo-azure.mjs
+
+  consultas:
+    # La validación real de todas las rutas corre en el mismo flujo que acaba
+    # de confirmar Azure/FTS; evita depender de un segundo workflow_run encadenado.
+    needs: smoke
+    if: ${{ github.event_name != 'pull_request' && needs.smoke.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Consultar las 41 fuentes después de comprobar Azure y el índice FTS
+        run: node ops/diagnosticar-en-vivo.mjs
