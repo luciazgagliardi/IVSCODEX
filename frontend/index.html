@@ -5793,6 +5793,11 @@ function pastillaSug(inner){
 function totalPendienteDeFuentes(vis){
   return vis.some(function(f){var im=estado.indices[f.slug]||{};return !!(im.totalPendiente||im.cargando);});
 }
+var FALLA_SIN_COPIA="La copia local no tiene coincidencias y el sitio oficial no respondió: la búsqueda no se completó y no puede afirmarse que no haya resultados. Pruebe de nuevo en unos minutos.";
+/* Bases que no respondieron en la búsqueda actual (sin resultados que mostrar). */
+function basesSinRespuesta(vis){
+  return vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; }).length;
+}
 function rielBuscar(vis){
   var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?cuantosDe(f,im):0); },0);
   var incompleto=totalPendienteDeFuentes(vis);
@@ -5829,7 +5834,8 @@ function vistaBuscar(){
       '</div>'+
       (tieneSug?'<div class="bq-sug bq-sug--abajo">'+(cel?pastillaSug(sug+sugs):sug+sugs+(notaIA?pastillaSug(notaIA):""))+'</div>':'')+
       '<div class="bq-sum">'+(ac.length?ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join(""):'<span><b>Búsqueda irrestricta</b> · Todas las bases, jurisdicciones y períodos.</span>')+
-        '<span class="bq-cuenta">'+(resp?'<b>'+(totalPendienteDeFuentes(vis)?'al menos ':'')+tot.toLocaleString("es-AR")+'</b> resultados':'')+'</span></div>'+
+        '<span class="bq-cuenta">'+(resp?'<b>'+(totalPendienteDeFuentes(vis)?'al menos ':'')+tot.toLocaleString("es-AR")+'</b> resultados'+
+          (basesSinRespuesta(vis)?' en las bases que respondieron · <b>'+basesSinRespuesta(vis)+'</b> sin respuesta':''):'')+'</span></div>'+
       (estado.api?avisoServidor():"")+
     '</div>'+
     '<div class="bz" id="bz"><aside class="bz-riel" aria-label="Bases">'+rielBuscar(vis)+'</aside><div class="bz-lista">'+bloqueResultados(vis)+'</div></div>';
@@ -7113,6 +7119,11 @@ function buscarEnFuente(slug,pagina){
       if(imBusco.porCopia&&esNueva){
         imBusco.cargando=false;
         sumarResultadosVivos(d);
+        // Copia local sin coincidencias y sitio oficial sin respuesta: no es
+        // «sin coincidencias» (falso cero), es una búsqueda que no se completó.
+        if(imBusco.estadoVivo==="error"&&!imBusco.resultados.length){
+          imBusco.error=FALLA_SIN_COPIA;
+        }
         render(); return;
       }
       imBusco.busco=true;
@@ -7143,6 +7154,7 @@ function buscarEnFuente(slug,pagina){
       if(imBusco.pedido!==pedido) return;
       if(!cuerpo.local) imBusco.estadoVivo="error";
       if(imBusco.porCopia&&imBusco.resultados.length){ imBusco.cargando=false; render(); return; }
+      if(imBusco.porCopia&&!imBusco.resultados.length){ imBusco.cargando=false; imBusco.busco=true; imBusco.error=FALLA_SIN_COPIA; render(); return; }
       imBusco.cargando=false; imBusco.busco=true;
       if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
       imBusco.error=(err&&err.tope)
@@ -7358,6 +7370,10 @@ function panelIndice(f){
       '<button class="mini" data-act="buscar-indice" data-fuente="'+esc(f.slug)+'" style="margin-left:6px">Rehacer la búsqueda</button></div>'
     : '';
   var avisoLocal=avisoRango;
+  if(!im.resultados.length&&im.estadoVivo==="error"){
+    out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">'+esc(FALLA_SIN_COPIA)+'</p></div>';
+    return out;
+  }
   if(!im.resultados.length){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+
       (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
