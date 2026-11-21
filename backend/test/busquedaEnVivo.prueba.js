@@ -21,7 +21,7 @@ test('el navegador conserva el acervo y solo muestra en vivo cuando hubo respues
   assert.match(html, /imBusco\.estadoVivo=\(d&&d\.ok&&!d\.desdeIndiceLocal&&d\.enVivo!==false\)\?"ok":"error"/);
   assert.match(html, /if\(imBusco\.porCopia&&esNueva\)/);
   assert.match(html, /sumarResultadosVivos\(d\)/);
-  assert.match(html, /En vivo no disponible/);
+  assert.match(html, /aria-label="Fuente sin respuesta"/);
   assert.doesNotMatch(html, /Esta respuesta proviene del acervo local/);
 });
 
@@ -33,19 +33,33 @@ test('el backend distingue IDs nuevos de fallos ya presentes en el corpus comple
   assert.match(rutas, /pedirEnVivo \? \{ idsNuevosAcervo \} : \{\}/);
 });
 
-test('los contadores separan el acervo del sitio y sólo suman IDs nuevos confirmados', () => {
-  assert.match(html, /if\(im\.local\) return \(im\.total\|\|0\)\+\(im\.nuevosVivos\|\|0\)/);
-  assert.match(html, /var idsConfirmados=Array\.isArray\(d\.idsNuevosAcervo\)/);
-  assert.match(html, /if\(idsConfirmados&&!idsConfirmados\.has\(r\.id\)\) return/);
-  assert.match(html, /if\(idsConfirmados\) im\.nuevosVivos=\(im\.nuevosVivos\|\|0\)\+nuevos\.length/);
-  assert.match(html, /Acervo: <b>/);
-  assert.match(html, /En vivo: /);
+test('los buscadores no muestran contadores técnicos del acervo ni cifras crudas del sitio', () => {
+  assert.ok(!html.includes('Acervo: <b>'));
+  assert.ok(!html.includes('En vivo: '));
+  assert.ok(!html.includes('identificadores nuevos'));
+  assert.ok(!html.includes('"sitio: "'));
+  assert.ok(!html.includes('el sitio informa'));
+  assert.ok(!html.includes('el sitio devuelve'));
+  assert.ok(!html.includes('revisadas las filas'));
+  assert.ok(!html.includes('Servidor en línea'));
+});
+test('un sumario sólo se usa como pasaje si contiene todos los términos en modo todas', () => {
+  assert.ok(html.includes('function sumarioCumpleConsulta(texto)'));
+  assert.ok(html.includes('IVSPasajes.coincidencias(texto,[t],{modo:"todas",tope:1})'));
+});
+test('la respuesta oficial enriquece fichas del acervo y vuelve a pedir sus pasajes', () => {
+  assert.ok(html.includes('function enriquecerResultadoLocal(destino,origen)'));
+  assert.ok(html.includes('enriquecerResultadoLocal(existente,r)'));
+  assert.ok(!html.includes('if(idsConfirmados&&!idsConfirmados.has(r.id)) return'));
+  assert.ok(html.includes('traerFragmentos(slug,im.pedido,0)'));
+  assert.ok(html.includes('traerFragmentos(slug,im.pedido,1)'));
 });
 
 test('Mendoza recibe carátulas como partes y la pantalla advierte ceros contradictorios', () => {
   assert.match(rutas, /slug === 'mendoza' && typeof cuerpo\.partes === 'string'/);
   assert.match(html, /if\(slug==="mendoza"\) cuerpo\.partes=nom\.consulta/);
-  assert.match(html, /ov\.total===0&&im\.total>0/);
+  assert.match(html, /im\.vistaOficial\.total===0&&im\.total>0/);
+  assert.match(html, /La fuente oficial no devolvió coincidencias; los resultados visibles provienen del acervo guardado/);
 });
 
 test('la carga del acervo tiene respuesta preliminar y conteo exacto diferido', () => {

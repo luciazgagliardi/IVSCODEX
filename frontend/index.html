@@ -5197,16 +5197,16 @@ function pintarRail(){
       var im=estado.indices[f.slug]||{};
       var clase="",der="";
       if(im.cargando){
-        clase=" consultando"; der='<span class="rf-t">buscando…</span>'; consultadas++;
+        clase=" consultando"; consultadas++;
       }else if(im.busco&&im.error){
-        // una base que no trajo nada cuenta como cero, sin avisos: lo que importa son los fallos
-        consultadas++; der='<span class="rf-n">0</span>';
+        clase=" con-error";
+        der='<span class="rf-n" aria-label="Fuente sin respuesta" title="Fuente sin respuesta">—</span>';
+        consultadas++;
       }else if(im.busco){
         consultadas++; respondieron++;
-        der='<span class="rf-n">'+cuantosDe(f,im).toLocaleString("es-AR")+'</span>'+
-            (im.ms?'<span class="rf-t">'+(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+' s</span>':'');
+        der='<span class="rf-n">'+cuantosDe(f,im).toLocaleString("es-AR")+'</span>';
       }else{
-        clase=" sin-buscar"; der='<span class="rf-t">en espera</span>';
+        clase=" sin-buscar";
       }
       // La sigla y no el nombre largo: en el riel "Tribunal Superior de
       // Justicia de la Ciudad de Buenos Aires" parte en dos renglones. Es
@@ -5216,10 +5216,7 @@ function pintarRail(){
       return '<div class="rail-fuente f-'+f.slug+clase+'" data-act="ir-fuente" data-fuente="'+f.slug+'" title="'+esc(f.nombre)+'"><span class="rf-punto"></span>'+
         '<span class="rf-nom">'+esc(f.cod)+'</span>'+der+boton+'</div>';
     }).join("");
-    var servidor=estado.api?'Servidor en línea':(estado.api===false?'Servidor sin conexión':'Comprobando el servidor…');
     fuentes='<h2>Estado de las bases</h2>'+
-      '<p class="rail-resumen"><span class="rf-srv'+(estado.api?' ok':'')+'"></span>'+servidor+
-        '</p>'+
       '<div class="rail-fuentes">'+filas+'</div>'+
       '<button type="button" class="rf-todas" data-act="buscar-todas">Buscar en todas</button>';
   }
@@ -5602,26 +5599,13 @@ function franjaBuscar(){
 }
 function estadoBase(f){
   var im=estado.indices[f.slug]||{};
-  if(im.cargando) return {c:" consultando",t:'<span class="rf-t">buscando…</span>'};
-  // Una fuente que no respondió NO tiene cero resultados: mostrar «0» acá
-  // hacía creer que no había jurisprudencia (falso cero).
-  if(im.busco&&im.error) return {c:" con-error",t:'<span class="rf-n" aria-hidden="true">—</span><span class="rf-t">'+
-    (/demasiadas|límite/i.test(String(im.error))?'límite de consultas':'sin respuesta')+'</span>'};
+  if(im.cargando) return {c:" consultando",t:""};
+  if(im.busco&&im.error) return {c:" con-error",t:'<span class="rf-n" aria-label="Fuente sin respuesta" title="Fuente sin respuesta">—</span>'};
   if(im.busco){
-    if(im.totalPendiente)return {c:"",t:'<span class="rf-n">'+im.resultados.length+'+</span><span class="rf-t">'+(im.errorConteo?'total no disponible':'calculando total…')+'</span>'};
-    var nota="";
-    if(im.estadoVivo==="consultando") nota="consultando sitio…";
-    else if(im.estadoVivo==="error") nota="en vivo no disponible";
-    else if(im.local&&im.estadoVivo==="ok"&&im.vistaOficial){
-      var oficial=im.vistaOficial.totalFuente!==null?im.vistaOficial.totalFuente:im.vistaOficial.total;
-      nota=im.vistaOficial.origenEnVivo==="saij"?"SAIJ · "+Number(im.vistaOficial.pagina||0).toLocaleString("es-AR")+" fichas de muestra":
-        im.vistaOficial.origenEnVivo==="mixto"?"Mendoza + SAIJ · parcial":
-        oficial!==null?"sitio: "+Number(oficial).toLocaleString("es-AR"):"sitio consultado";
-    }else if(im.ms) nota=(im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+" s";
-    return {c:"",t:'<span class="rf-n">'+cuantosDe(f,im).toLocaleString("es-AR")+'</span>'+
-      (nota?'<span class="rf-t">'+esc(nota)+'</span>':'')};
+    var cantidad=cuantosDe(f,im),sufijo=im.totalPendiente?"+":"";
+    return {c:"",t:'<span class="rf-n">'+cantidad.toLocaleString("es-AR")+sufijo+'</span>'};
   }
-  return {c:" sin-buscar",t:'<span class="rf-t">en espera</span>'};
+  return {c:" sin-buscar",t:""};
 }
 /* Buscar, en dos zonas: a la izquierda las bases (punto, estado, conteo y su
    botón) y a la derecha los resultados, intercalados de todas o los de una
@@ -5639,10 +5623,24 @@ function resultadosDe(f){
    buscador encontró la palabra en el fallo entero y el sumario habla de otra
    cosa («despido» → un sumario sobre cosa juzgada). Ese sumario no sirve de
    pasaje: no hay nada que marcar. Se recuerda por consulta. */
+function sumarioCumpleConsulta(texto){
+  if(!texto) return false;
+  if(!IVSPasajes.coincidencias(texto,estado.q,{modo:estado.modo,tope:1}).length) return false;
+  if(estado.modo!=="todas") return true;
+  // coincidencias() une marcas superpuestas y conserva sólo una clave por tramo;
+  // por eso cada término se comprueba por separado y no se deduce de las marcas unidas.
+  var requeridos=IVSPasajes.terminos(estado.q,estado.modo);
+  return requeridos.length>0&&requeridos.every(function(t){
+    return IVSPasajes.coincidencias(texto,[t],{modo:"todas",tope:1}).length>0;
+  });
+}
 function sumarioCoincide(r){
   if(!r.sumario) return false;
   var clave=estado.modo+"|"+estado.q;
-  if(r._coinQ!==clave){ r._coinQ=clave; r._coin=IVSPasajes.coincidencias(r.sumario,estado.q,{modo:estado.modo,tope:1}).length>0; }
+  if(r._coinQ!==clave){
+    r._coinQ=clave;
+    r._coin=sumarioCumpleConsulta(r.sumario);
+  }
   return r._coin;
 }
 /* El pasaje de un resultado: el sumario si contiene lo buscado; si no, el
@@ -5735,7 +5733,6 @@ function estadoLista(vis){
   var sinVivo=vis.filter(function(f){return (estado.indices[f.slug]||{}).estadoVivo==="error";});
   var fallaron=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
   var h="";
-  if(buscando.length) h+='<p class="rz-aviso"><span class="rf-t" style="color:var(--gold)">buscando…</span> '+buscando.map(function(f){return esc(f.cod);}).join(", ")+'</p>';
   if(pendientesVivo.length&&!buscando.length) h+='<p class="rz-aviso">Actualizando fuentes oficiales: '+pendientesVivo.map(function(f){return esc(f.cod);}).join(", ")+'</p>';
   if(sinVivo.length) h+='<p class="rz-aviso" role="status">Consulta en vivo no disponible en '+sinVivo.map(function(f){return esc(f.cod);}).join(", ")+'. Los resultados del acervo permanecen disponibles.</p>';
   if(fallaron.length) h+='<p class="rz-aviso" role="status">No se pudo consultar '+fallaron.map(function(f){var im=estado.indices[f.slug]||{};return '<b>'+esc(f.cod)+'</b>'+(im.error?' ('+esc(String(im.error).slice(0,150))+')':'');}).join(', ')+'. Un error de acceso o de red no significa que no existan fallos.</p>';
@@ -5779,7 +5776,6 @@ function bloqueResultados(vis){
     h+=visiblesLista.map(function(x){ return filaIndice(x.f,x.r,x.k,x.tambien); }).join("");
   }
   if(lista.length>lim) h+='<div class="rz-mas"><button class="btn sec" data-act="mas-filas">Mostrar 40 más <span class="rz-mas-n">(quedan '+(lista.length-lim)+')</span></button></div>';
-  h+='<p class="rz-aviso">Se muestran los primeros resultados de cada base. Para ver todos, filtrar por tribunal o cambiar de página, elija la base en la columna de la izquierda.</p>';
   return h;
 }
 /* Las sugerencias (voces, formas equivalentes, notas del tesauro) no ocupan lugar: una pastilla chica con una «i» las abre en una ventanita. */
@@ -6814,31 +6810,75 @@ function hayMasResultadosOficiales(im){
     });
   return typeof im.cursorOficial==="number";
 }
+function enriquecerResultadoLocal(destino,origen){
+  if(!destino||!origen) return false;
+  var cambio=false;
+  ["linkFallo","linkFicha","tribunal","secretaria","magistrados","expediente","fecha","caratula",
+   "procedencia","nivelAutoridad","tipoDocumento","tipo","fuenteSlug","descarga"].forEach(function(k){
+    if(origen[k]&&(!destino[k]||(Array.isArray(destino[k])&&!destino[k].length))){
+      destino[k]=origen[k]; cambio=true;
+    }
+  });
+  if(origen.voces&&origen.voces.length&&(!destino.voces||!destino.voces.length)){
+    destino.voces=origen.voces; cambio=true;
+  }
+  if(origen.sumario&&(!destino.sumario||
+     (!sumarioCumpleConsulta(destino.sumario)&&sumarioCumpleConsulta(origen.sumario)))){
+    destino.sumario=origen.sumario;
+    delete destino._coinQ; delete destino._coin;
+    cambio=true;
+  }
+  return cambio;
+}
 function anexarResultadosOficiales(slug,im,d){
   if(!d||!d.ok||d.desdeIndiceLocal||!Array.isArray(d.resultados)||!im.porCopia) return;
   var paginaUno=im.paginas&&im.paginas[1];
   if(!paginaUno) return;
   var existentes=paginaUno.resultados||[];
   var idsConfirmados=Array.isArray(d.idsNuevosAcervo)?new Set(d.idsNuevosAcervo):null;
-  var vistos={};
-  existentes.forEach(function(r){if(r) vistos[claveFallo(slug,r)]=true;});
-  var nuevos=[];
+  var porId={},porClave={},vistos={};
+  existentes.forEach(function(r){
+    if(!r) return;
+    if(r.id) porId[r.id]=r;
+    var clave=claveFallo(slug,r);
+    vistos[clave]=true;
+    if(!porClave[clave]) porClave[clave]=r;
+  });
+  var nuevos=[],cambios=false;
   d.resultados.forEach(function(r){
     if(!r) return;
-    // Comparar contra el acervo entero, no sólo contra las 20 fichas
-    // visibles de la primera página.
-    if(idsConfirmados&&!idsConfirmados.has(r.id)) return;
     var clave=claveFallo(slug,r);
+    var existente=(r.id&&porId[r.id])||porClave[clave];
+    if(existente){
+      if(enriquecerResultadoLocal(existente,r)) cambios=true;
+      return;
+    }
     if(vistos[clave]) return;
     vistos[clave]=true;
+    if(r.id) porId[r.id]=r;
+    porClave[clave]=r;
     nuevos.push(r);
   });
-  if(!nuevos.length) {render();return;}
-  paginaUno.resultados=existentes.concat(nuevos);
-  im.aportesEnVivo=(im.aportesEnVivo||0)+nuevos.length;
-  if(idsConfirmados) im.nuevosVivos=(im.nuevosVivos||0)+nuevos.length;
-  paginaUno.aportesEnVivo=im.aportesEnVivo;
-  if(im.pagina===1) im.resultados=paginaUno.resultados.slice();
+  if(nuevos.length){
+    paginaUno.resultados=existentes.concat(nuevos);
+    im.aportesEnVivo=(im.aportesEnVivo||0)+nuevos.length;
+    if(idsConfirmados) im.nuevosVivos=(im.nuevosVivos||0)+nuevos.filter(function(r){return idsConfirmados.has(r.id);}).length;
+    paginaUno.aportesEnVivo=im.aportesEnVivo;
+  }
+  if(!nuevos.length&&!cambios) return;
+  if(im.pagina===1){
+    im.resultados=paginaUno.resultados.slice();
+    var faltaPasaje=im.resultados.some(function(r){
+      var u=urlFragmento(slug,r);
+      return u&&!sumarioCoincide(r)&&!im.fragmentos.hasOwnProperty(u)&&
+        !(im.fragEnCurso&&im.fragEnCurso[u]);
+    });
+    if(faltaPasaje){
+      im.fragEnCurso=im.fragEnCurso||{};
+      traerFragmentos(slug,im.pedido,0);
+      traerFragmentos(slug,im.pedido,1);
+    }
+  }
   render();
 }
 function cargarMasOficial(slug){
@@ -7202,55 +7242,18 @@ function buscarEnFuente(slug,pagina){
  * tanda, así que ahí no hay "página siguiente" que ofrecer.
  */
 function paginadorIndice(f,im){
-  var porPagina=POR_PAGINA_INDICE;
-  var actual=Math.max(1,im.pagina||1);
-
-  // Las páginas alcanzables son aquellas cuyo arranque ya se conoce. Se van
-  // sumando a medida que se avanza: cada respuesta trae el cursor de la
-  // siguiente y ninguna otra. No se puede saltar de la 1 a la 12 porque
-  // nadie sabe todavía en qué fila del sitio empieza la 12 — depende de
-  // cuántas descarte el filtro en el medio, que solo se sabe mirándolas.
-  var ultima=actual;
+  var actual=Math.max(1,im.pagina||1),ultima=actual;
   while(typeof im.cursores[ultima+1]==="number") ultima++;
-
-  // La numeración de RESULTADOS sí es corrida: cada página muestra
-  // exactamente porPagina (salvo la última) y la siguiente arranca justo
-  // después de la última mostrada, así que la página N empieza en el
-  // resultado (N-1)*porPagina+1 sin trampa.
-  var desde=(actual-1)*porPagina+1;
-  var aportes=(im.local&&actual===1)?(im.aportesEnVivo||0):0;
-  var hasta=desde+im.resultados.length-1-aportes;
-
-  // Qué filas del sitio se miraron para armar ESTA página. Es el dato que
-  // convierte "20 resultados" en algo interpretable: veinte de entre
-  // sesenta filas revisadas no es lo mismo que veinte de entre veinte.
-  var filaA=(im.cursores[actual]||0)+1;
-  var filaB=(im.cursores[actual]||0)+(im.revisados||0);
-
-  var out='<p style="font-size:12.5px;color:var(--humo);margin:0 0 8px">Mostrando '+
-    desde.toLocaleString("es-AR")+'–'+hasta.toLocaleString("es-AR")+
-    (im.revisados
-      ? ' · revisadas las filas '+filaA.toLocaleString("es-AR")+'–'+filaB.toLocaleString("es-AR")+' del sitio'
-      : '')+
-    (typeof im.cursores[actual+1]!=="number"&&actual>1?' · es la última página':'')+
-    (aportes?' · '+aportes+' coincidencia(s) adicionales de la consulta en vivo':'')+
-    '</p>';
-  if(ultima<=1&&actual<=1) return out;
-
-  // Ventana de números alrededor de la actual; el principio queda siempre a
-  // la vista. No hay "última página" acá: no se sabe cuál es hasta llegar.
-  var desdeN=Math.max(1,actual-2), hastaN=Math.min(ultima,actual+2);
-  var nums=[];
+  if(ultima<=1&&actual<=1) return "";
+  var desdeN=Math.max(1,actual-2),hastaN=Math.min(ultima,actual+2),nums=[];
   if(desdeN>1){ nums.push(1); if(desdeN>2) nums.push(null); }
   for(var i=desdeN;i<=hastaN;i++) nums.push(i);
-
   var botones=nums.map(function(pag){
     if(pag===null) return '<span style="padding:0 3px;color:var(--humo)">…</span>';
     return '<button class="mini" data-act="indice-pagina" data-fuente="'+f.slug+'" data-pagina="'+pag+'"'+
       (pag===actual?' aria-pressed="true" disabled':'')+'>'+pag+'</button>';
   }).join("");
-
-  return out+'<div class="paginador" style="margin:0 0 12px">'+
+  return '<div class="paginador" style="margin:0 0 12px">'+
     '<button class="mini" data-act="indice-pagina" data-fuente="'+f.slug+'" data-pagina="'+(actual-1)+'"'+
       (actual<=1?' disabled':'')+'>‹ Anterior</button>'+
     botones+
@@ -7259,50 +7262,6 @@ function paginadorIndice(f,im){
     '</div>';
 }
 
-/**
- * La línea de arriba de todo: de qué tamaño es lo que hay para revisar.
- *
- * Es más delicada de lo que parece, porque "cuántos resultados hay" no
- * siempre se puede contestar. Hay dos situaciones distintas:
- *
- *   - El sitio resolvió el modo pedido (CABA siempre; las demás en "todas"
- *     las palabras o "alguna"). Ahí su contador ES el total y se dice.
- *   - El filtro corrió de nuestro lado (frase exacta, excluir). Ahí NADIE
- *     sabe el total sin revisar las filas una por una: el sitio no puede
- *     contarlo porque no sabe hacer ese modo, y nosotros contaríamos solo
- *     lo revisado hasta ahora. Se dice entonces el tamaño del material —
- *     cuántas filas devuelve el sitio— que es lo que sí se puede afirmar.
- *
- * Antes se mostraba el conteo de la muestra rotulado "N resultado(s) que
- * coinciden de verdad", y eso se leía como el total. No lo era: "daño moral"
- * en Mendoza decía 52 cuando el sitio devuelve 319 filas, y en Dialnet decía
- * 38 sobre 3.228. Un abogado que lee 52 y cierra la página se pierde el
- * resto.
- *
- * Ojo con cómo se redacta el segundo número. Cada sitio cuenta a su manera y
- * el de SAIJ cuenta con OR: para "daño moral" informa 44.220, que son los
- * que tienen "daño" O "moral", no los que tratan de daño moral. Por eso la
- * frase NO dice "hay 44.220 sobre el tema" —sería cambiar una exageración
- * por otra— sino que el sitio DEVUELVE esas filas. Eso es cierto para los
- * seis buscadores, cuenten como cuenten.
- */
-function conteoIndice(im,local,visibles){
-  var n=function(x){ return '<b>'+(x||0).toLocaleString("es-AR")+'</b>'; };
-  // Dialnet: sólo cuentan los que tienen el término en su texto (no el total crudo del sitio)
-  if(visibles!=null) return n(visibles)+' resultado(s) con texto en esta página'+(typeof im.cursores[(im.pagina||1)+1]==="number"?'; pase de página para ver más':'');
-  if(local&&im.totalPendiente)return 'Primeros '+n(im.resultados.length)+' fallos del acervo · '+(im.errorConteo?'no se pudo calcular el total completo':'calculando total completo…');
-  if(local) return n(im.total)+' en el acervo'+
-    (im.nuevosVivos?' + '+n(im.nuevosVivos)+' documentos nuevos confirmados en vivo':'')+' (por identificador)';
-  // Sin revisados, el filtro lo hizo el propio sitio: su contador es el total.
-  // Si la fuente avisa que el conteo todavía no está cerrado (la Corte IDH
-  // verifica la frase exacta de a tandas), se dice «al menos».
-  if(!im.revisados) return im.parcial?'al menos '+n(im.total)+' coincidencia(s); pase de página para ver más':n(im.total)+' coincidencia(s) en total';
-  if(im.totalFuente===null) return 'coincidencias entre lo revisado hasta acá';
-  return 'el sitio devuelve '+n(im.totalFuente)+' filas para esta consulta'+
-    (im.parcial
-      ? ', y se van revisando de a tandas: pase de página para seguir'
-      : ', ya revisadas todas');
-}
 
 function panelIndice(f){
   var im=estado.indices[f.slug];
@@ -7313,15 +7272,8 @@ function panelIndice(f){
   // El borde izquierdo dorado del caso "local" se mantiene: no es decoración
   // sino un aviso —estos resultados salieron de la copia guardada, no del
   // sitio— y sigue siendo UN borde, con un lado marcado.
-  var estadoOficial=im.estadoVivo==="ok"
-    ? ' <span class="en-vivo">'+(im.vistaOficial&&im.vistaOficial.origenEnVivo==="saij"?"En vivo · SAIJ":
-       im.vistaOficial&&im.vistaOficial.origenEnVivo==="mixto"?"En vivo parcial · SAIJ":"En vivo")+'</span>'
-    : im.estadoVivo==="consultando"
-      ? ' <span class="en-vivo local">Consultando fuente oficial…</span>'
-      : im.estadoVivo==="error"
-        ? ' <span class="en-vivo local">En vivo no disponible</span>' : '';
   var out='<div class="panel vivo f-'+f.slug+'" id="panel-'+f.slug+'">'+
-    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+estadoOficial+'</span></div>';
+    '<div class="rotulo rotulo-fuente" data-cod="'+esc(f.cod)+'" style="margin-top:0"><span>'+esc(f.nombre)+'</span></div>';
 
   // El encabezado, los metadatos y los enlaces de cada fallo ya identifican
   // la fuente. No se muestra el aviso redundante de procedencia de la copia.
@@ -7351,45 +7303,21 @@ function panelIndice(f){
     }).join("")+'</div>';
   }
 
-  if(im.estadoVivo==="ok"&&im.vistaOficial&&im.local){
-    var ov=im.vistaOficial;
-    var cifra=function(n){return Number(n).toLocaleString("es-AR");};
-    var suplente=ov.origenEnVivo==="saij",mixto=ov.origenEnVivo==="mixto";
-    var totalOficial=suplente
-      ?cifra(ov.pagina)+' fichas recuperadas de SAIJ para este fuero (muestra parcial, no el total del tribunal)'
-      :mixto
-        ?cifra(ov.pagina)+' fichas recuperadas de Mendoza y SAIJ (cobertura parcial)'
-        :ov.totalFuente!==null
-          ?'el sitio informa '+cifra(ov.totalFuente)+' filas para esta consulta'
-          :ov.total!==null
-            ?(ov.parcial?'al menos ':'')+cifra(ov.total)+' coincidencias en la consulta oficial'
-            :cifra(ov.pagina)+' resultados en la página oficial';
-    out+='<p class="rz-aviso" style="margin:6px 0 12px">Acervo: <b>'+cifra(im.total)+'</b> · En vivo: '+totalOficial+
-      ' · '+(ov.idsConfirmados?'<b>'+cifra(im.nuevosVivos)+'</b> identificadores nuevos':'No se pudo comprobar cuáles ya estaban guardados')+
-      (!suplente&&!mixto&&ov.total===0&&im.total>0?' · El origen no devolvió coincidencias aunque el acervo contiene documentos: la cobertura de esta consulta no está confirmada.':'')+'</p>';
-    if(suplente||mixto)
-      out+='<p class="rz-aviso" role="status">El portal de Mendoza no entregó todas las fichas de cámaras. '+
-        'Se incorporan consultas actuales de SAIJ, identificadas por su procedencia; su cobertura no equivale al total del portal mendocino.'+
-        (mixto&&ov.tribunalesSinRespuesta.length?' Secciones sin respuesta directa: '+esc(ov.tribunalesSinRespuesta.join(", "))+'.':'')+'</p>';
-    if(hayMasResultadosOficiales(im))
-      out+='<p style="margin:0 0 12px"><button type="button" class="mini" data-act="indice-mas-oficial" data-fuente="'+f.slug+'"'+
-        (im.buscandoMasOficial?' disabled':'')+'>'+
-        (im.buscandoMasOficial?'Recuperando más fallos…':'Recuperar siguiente página del sitio oficial')+'</button></p>';
-    if(im.errorMasOficial)out+='<p class="rz-aviso" role="status">'+esc(im.errorMasOficial)+'</p>';
-  }
-  if(im.cargando){
-    out+='<p style="font-size:13px;color:var(--humo);margin:0">Procesando consulta… La respuesta puede demorar hasta 30 segundos debido a los tiempos de respuesta de los servidores oficiales; el sistema se encuentra activo.</p></div>';
-    return out;
-  }
+  if(im.estadoVivo==="ok"&&im.vistaOficial&&im.local&&im.vistaOficial.origenEnVivo!=="saij"&&
+     im.vistaOficial.origenEnVivo!=="mixto"&&im.vistaOficial.total===0&&im.total>0)
+    out+='<div class="aviso" role="status">La fuente oficial no devolvió coincidencias; los resultados visibles provienen del acervo guardado.</div>';
+  if(im.estadoVivo==="ok"&&im.vistaOficial&&im.local&&hayMasResultadosOficiales(im))
+    out+='<p style="margin:0 0 12px"><button type="button" class="mini" data-act="indice-mas-oficial" data-fuente="'+f.slug+'"'+
+      (im.buscandoMasOficial?' disabled':'')+'>'+
+      (im.buscandoMasOficial?'Trayendo más resultados…':'Traer más resultados')+'</button></p>';
+  if(im.errorMasOficial)out+='<p class="rz-aviso" role="status">'+esc(im.errorMasOficial)+'</p>';
+  if(im.cargando) return out+'</div>';
   if(im.error){
-    out+='<p style="font-size:13px;color:var(--humo);margin:0">No se pudo consultar '+esc(f.nombre)+'. '+esc(String(im.error))+'</p>'+
-      '<p style="font-size:12px;color:var(--humo);margin:8px 0 0">Este error no equivale a una búsqueda válida con cero resultados. Revise el portal oficial o vuelva a consultar más tarde.</p></div>';
+    out+='<div class="aviso" role="alert">No se pudo consultar '+esc(f.nombre)+'. '+esc(String(im.error))+
+      ' Este error no equivale a una búsqueda válida con cero resultados. Revise el portal oficial o vuelva a consultar más tarde.</div></div>';
     return out;
   }
-  if(!im.busco){
-    out+='<p style="font-size:13px;color:var(--humo);margin:0 0 10px">'+esc(f.nota||f.nombre)+'</p></div>';
-    return out;
-  }
+  if(!im.busco) return out+'</div>';
   // Los resultados en pantalla se trajeron con el rango de años que había en
   // ese momento; si desde entonces se tocó, hay que decirlo en vez de dejar
   // una lista que ya no corresponde al filtro puesto (ver invalidarBusquedas).
@@ -7418,23 +7346,7 @@ function panelIndice(f){
       ' resultados que trajo esta página es de '+esc(nombreSec||im.secFiltro)+'. Puede estar en otra página del sitio oficial.</p></div>';
     return out;
   }
-  out+=avisoLocal+'<p style="font-size:12.5px;color:var(--humo);margin:0 0 4px">'+
-    (nombreTrib?'<b style="color:var(--lacre)">'+esc(nombreTrib)+'</b> · ':'')+
-    (nombreSec?'<b style="color:var(--lacre)">'+esc(nombreSec)+'</b> · '+visibles.length+' de sus ':'')+
-    // Cuando el sitio de origen no sabe hacer el modo pedido, el filtro corre
-    // de nuestro lado y su contador ya no aplica al modo pedido: se dice
-    // cuántos se verificaron. Ver lib/relevancia.js.
-    conteoIndice(im,local,f.slug==="dialnet"?visibles.length:null)+
-    // Antes acá también decía "· N guardadas en tu índice local hasta
-    // ahora": un detalle interno (cuántos documentos se acumularon con el
-    // tiempo en la copia de respaldo, ver lib/indice.js) que no ayuda a
-    // nadie a leer cuántos resultados dio ESTA búsqueda, y encima se
-    // mezclaba en la misma frase. Sacado a pedido de un usuario que no le
-    // encontraba sentido — con razón.
-    '</p>'+
-    // Números de página arriba de la lista: antes esto era un botón "ver más"
-    // que iba sumando de a 20 sin fin; ahora se ve de entrada cuánto hay y
-    // se puede saltar directo a cualquier página, como en cualquier buscador.
+  out+=avisoLocal+
     paginadorIndice(f,im)+
     // «Frase exacta» es el modo por defecto y es el más estricto: sólo cuentan
     // los documentos con las palabras juntas y en ese orden. Cuando deja poco,
@@ -7444,10 +7356,6 @@ function panelIndice(f){
       ?'<div class="aviso" style="margin:0 0 10px">Con «frase exacta» el resultado es corto: sólo cuentan los documentos que traen las palabras juntas y en ese orden. <button type="button" class="mini" data-act="modo-y-buscar" data-modo="todas" data-fuente="'+esc(f.slug)+'">Probar con «todas las palabras»</button></div>'
       :'')+
     (im.aflojado?'<div class="aviso" style="margin:0 0 10px">Ningún resultado tiene <b>todas</b> las palabras buscadas. Estos coinciden solo con la más específica, así que revíselos con cuidado: puede que no sean del tema buscado.</div>':'')+
-    // El sitio de CABA no manda un resumen del fallo con cada resultado
-    // como hace Mendoza: los pasajes se sacan del documento en sí, de a
-    // tandas, mientras la lista ya está en pantalla (ver traerFragmentos).
-    (f.slug==="caba"&&im.fragCargando?'<p style="font-size:12.5px;color:var(--humo);margin:0 0 10px">Este buscador no manda un resumen con cada resultado, así que los pasajes se van sacando de cada documento — aparecen solos, de a poco.</p>':'')+
     visibles.map(function(r){ return fichaIndice(f,r); }).join("")+
     '</div>';
   return out;
