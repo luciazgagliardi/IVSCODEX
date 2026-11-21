@@ -125,7 +125,7 @@ test('Santa Cruz separa objetos judiciales de doctrinas asistidas', async () => 
   }, async () => {
     const d = await buscarSantaCruz({ q: 'amparo', tribunal: 'objetos' });
     assert.equal(d.resultados[0].id, 'santacruz_TSJI-20260417-001');
-    assert.equal(d.resultados[0].metadatosAsistidos, false);
+    assert.equal(d.resultados[0].metadatosAsistidos, true);
     assert.match(d.resultados[0].caratula, /Gómez/);
   });
   assert.match(pedido.url, /api\.tsj-sc\.inteligencialegal\.com\.ar\/hybridSearch$/);
@@ -155,6 +155,23 @@ test('HUDOC devuelve total y cursor oficial, con URL de ficha estable', async ()
   assert.equal(pedido.searchParams.get('length'), '20');
   assert.match(pedido.searchParams.get('query'), /contentsitename:ECHR/);
   assert.match(pedido.searchParams.get('query'), /freedom of expression/);
+});
+
+test('un total nulo de API híbrida nunca se presenta como cero confirmado', async () => {
+  await conFetch(async () => respuesta({
+    total: null,
+    results: [{
+      fallo_id: 'SC-TEST-001',
+      objeto_texto: 'Amparo y salud.',
+      metadata: { caratula: 'Caso de prueba' },
+    }],
+  }), async () => {
+    const d = await buscarSantaCruz({ q: 'amparo', tribunal: 'objetos' });
+    assert.equal(d.total, 1);
+    assert.equal(d.totalParcial, true);
+    assert.equal(d.resultados.length, 1);
+    assert.equal(d.resultados[0].metadatosAsistidos, true);
+  });
 });
 
 test('los IDs de los nuevos adaptadores cumplen el validador que usa la cosecha', () => {
