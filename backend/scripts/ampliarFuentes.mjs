@@ -16,22 +16,25 @@ import { siguienteCursor, combinarRegistro, idDocumentalValido } from '../lib/av
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = path.resolve(RAIZ, process.env.DIR_COSECHA || 'acervo-crudo/respaldo');
 export const PLAN = {
-  mendoza: { porPagina: 20, variantes: [{ tribunal: 'SC' }, { tribunal: 'CC' }, { tribunal: 'CT' }],
-    consultas: ['de', 'daño moral', 'consecuencias no patrimoniales', 'responsabilidad civil', 'despido', 'indemnización', 'accidente de trabajo', 'familia', 'sucesión', 'amparo', 'contrato', 'prescripción', 'alimentos', 'intereses', 'recurso'] },
-  caba: { porPagina: 20, consultas: ['sentencia', 'daños', 'recurso', 'responsabilidad', 'contrato', 'despido', 'consumidor', 'familia', 'alimentos', 'amparo', 'administrativo', 'penal'] },
-  scba: { porPagina: 20, consultas: ['sentencia', 'recurso', 'daño moral', 'responsabilidad civil', 'despido', 'accidente de trabajo', 'alimentos', 'contrato', 'consumidor', 'familia', 'sucesiones', 'intereses', 'amparo'] },
-  juristeca: { porPagina: 50, consultas: ['daños', 'sentencia', 'contrato', 'laboral', 'penal', 'familia', 'alimentos', 'consumidor', 'amparo', 'sociedades', 'administrativo'] },
-  santafe: { porPagina: 30, consultas: ['recurso', 'sentencia', 'daños', 'contrato', 'trabajo', 'penal', 'familia', 'alimentos', 'responsabilidad', 'consumidor', 'amparo', 'sucesión'] },
+  mendoza: { porPagina: 20, variantes: [{ tribunal: 'SC' }, { tribunal: 'CC' }, { tribunal: 'CT' }, { tribunal: 'CF' }],
+    consultas: ['daño moral', 'consecuencias no patrimoniales', 'daño punitivo', 'responsabilidad civil', 'daños y perjuicios', 'despido', 'indemnización', 'accidente de trabajo', 'riesgos del trabajo', 'contrato', 'incumplimiento contractual', 'prescripción', 'usucapión', 'alimentos', 'régimen de comunicación', 'sucesión', 'intereses', 'tasa activa', 'amparo', 'recurso de inconstitucionalidad', 'recurso extraordinario provincial', 'empleo público', 'derecho a la salud', 'prueba', 'medida cautelar'] },
+  caba: { porPagina: 20, consultas: ['sentencia', 'daños', 'daño moral', 'recurso', 'responsabilidad', 'contrato', 'despido', 'consumidor', 'amparo', 'administrativo', 'empleo público', 'derecho a la salud', 'medida cautelar', 'arbitrariedad', 'competencia', 'hábeas corpus', 'libertad de expresión'] },
+  scba: { porPagina: 20, consultas: ['sentencia', 'recurso', 'daño moral', 'daño punitivo', 'responsabilidad civil', 'despido', 'accidente de trabajo', 'incapacidad laboral', 'alimentos', 'contrato', 'consumidor', 'familia', 'sucesiones', 'intereses', 'amparo', 'medida cautelar', 'usucapión', 'desalojo', 'prueba', 'prescripción'] },
+  juristeca: { porPagina: 50, consultas: ['daños', 'daño moral', 'sentencia', 'contrato', 'laboral', 'penal', 'familia', 'alimentos', 'consumidor', 'amparo', 'sociedades', 'administrativo', 'sucesiones', 'responsabilidad civil', 'concursos', 'quiebras', 'propiedad horizontal', 'prueba', 'competencia', 'medidas cautelares'] },
+  santafe: { porPagina: 30, consultas: ['recurso', 'sentencia', 'daños', 'daño moral', 'contrato', 'trabajo', 'despido', 'responsabilidad civil', 'familia', 'alimentos', 'consumidor', 'amparo', 'sucesión', 'intereses', 'prueba', 'medida cautelar', 'prescripción', 'quiebra', 'empleo público'] },
   rionegro: { porPagina: 10, variantes: [{ tribunal: 'STJ' }, { tribunal: 'CJ' }],
-    consultas: ['sentencia', 'recurso', 'daños', 'despido', 'responsabilidad civil', 'alimentos', 'familia', 'contrato', 'amparo', 'penal', 'accidente'] },
-  dialnet: { porPagina: 20, consultas: ['derecho', 'daño moral', 'responsabilidad civil', 'contratos', 'derecho penal', 'derecho laboral', 'familia', 'consumidor', 'derechos humanos', 'derecho constitucional', 'derecho administrativo', 'procesal', 'sucesiones'] },
-  mendozalegal: { porPagina: 20, consultas: ['de', 'daños', 'recurso', 'responsabilidad', 'despido', 'contrato', 'familia', 'consumidor', 'amparo', 'penal'] },
+    consultas: ['sentencia', 'recurso', 'daños', 'daño moral', 'despido', 'responsabilidad civil', 'alimentos', 'familia', 'contrato', 'amparo', 'accidente', 'intereses', 'empleo público', 'prueba', 'prescripción', 'medida cautelar'] },
+  dialnet: { porPagina: 20, consultas: ['derecho', 'daño moral', 'responsabilidad civil', 'contratos', 'derecho penal', 'derecho laboral', 'derecho de familia', 'derecho del consumidor', 'derechos humanos', 'derecho constitucional', 'derecho administrativo', 'derecho procesal', 'derecho ambiental', 'derecho tributario', 'derecho internacional privado', 'arbitraje', 'prueba', 'jurisprudencia'] },
+  mendozalegal: { porPagina: 20, consultas: ['daños', 'recurso', 'responsabilidad', 'responsabilidad civil', 'despido', 'contrato', 'familia', 'consumidor', 'amparo', 'penal', 'sucesiones', 'intereses', 'prueba', 'prescripción', 'daño punitivo'] },
+  // El portal excluye expresamente Familia, Menores y Penal. Se cosechan
+  // únicamente materias que el propio sistema público declara comprendidas.
+  jujuy: { porPagina: 20, consultas: ['daño moral', 'responsabilidad civil', 'daños y perjuicios', 'despido', 'derecho laboral', 'recurso de inconstitucionalidad', 'recurso extraordinario', 'amparo', 'derecho a la salud', 'contrato', 'incumplimiento contractual', 'prescripción', 'usucapión', 'empleo público', 'debido proceso', 'defensa en juicio', 'prueba', 'intereses', 'medida cautelar', 'cosa juzgada', 'nulidad', 'competencia', 'derecho administrativo', 'derecho tributario'] },
 };
 const limite = (nombre, def, max) => Math.max(1, Math.min(max, Number(process.env[nombre]) || def));
-const MAX_PAGINAS = limite('MAX_PAGINAS', 120, 1500);
-const MAX_TERMINOS = limite('MAX_TERMINOS', 36, 300);
+const MAX_PAGINAS = limite('MAX_PAGINAS', 600, 1500);
+const MAX_TERMINOS = limite('MAX_TERMINOS', 240, 300);
 const PAUSA_MS = Math.max(1100, Math.min(15000, Number(process.env.PAUSA_MS) || 1800));
-const PAGINAS_POR_TAREA = limite('PAGINAS_POR_TAREA', 3, 30);
+const PAGINAS_POR_TAREA = limite('PAGINAS_POR_TAREA', 8, 30);
 const dormir = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const leerJson = async (file, fallback) => { try { return JSON.parse(await fs.readFile(file, 'utf8')); } catch (e) { if (e.code === 'ENOENT') return fallback; throw e; } };
 const claveDe = (q, variante) => JSON.stringify([q, variante]);
