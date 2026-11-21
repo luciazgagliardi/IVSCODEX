@@ -150,7 +150,7 @@ function filaChubut(row, tipo) {
   };
 }
 
-async function buscarChubutSimple({ q, tribunal = 'sumarios', modo = 'todas', pagina = 1, desde = null, porPagina = 20 }) {
+async function buscarChubutSimple({ q, tribunal = 'sumarios', modo = 'todas', pagina = 1, desde = null, porPagina = 20, _reintentoSesion = false }) {
   const consulta = limpiar(q);
   if (!consulta) throw errores.consultaVacia();
   const tipo = tribunal === 'sentencias' || tribunal === 'fallos' ? 'sentencias' : 'sumarios';
@@ -177,9 +177,12 @@ async function buscarChubutSimple({ q, tribunal = 'sumarios', modo = 'todas', pa
   try { datos = JSON.parse(resp.text); }
   catch (parseError) {
     const sesionExpirada = /sistema eureka|tiempo de sesi[oó]n|acceso restringido|ingresar usuario y clave/i.test(resp.text.slice(0, 5000));
-    if (sesionExpirada && !opciones._reintentoSesion) {
+    if (sesionExpirada && !_reintentoSesion) {
       SESIONES.delete(clave);
-      return buscarChubutSimple({ ...opciones, _reintentoSesion: true });
+      return buscarChubutSimple({
+        q: consulta, tribunal, modo, pagina, desde, porPagina,
+        _reintentoSesion: true,
+      });
     }
     const error = errores.indiceFuenteFalla('chubut', 'la búsqueda anónima no devolvió el JSON del portal');
     error.cause = new Error(sinClave(
