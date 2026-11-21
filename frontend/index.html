@@ -7354,6 +7354,13 @@ function buscarEnFuente(slug,pagina){
     var vigente=function(){return imBusco.pedido===pedido;};
     var mostrarLocal=function(d){
       if(!vigente()||imBusco.pagina>1||!d||!d.ok||!Array.isArray(d.resultados))return;
+      // Carrera entre la vista previa local y la consulta oficial: cualquiera
+      // puede responder primero. Si el sitio ya entregó resultados y la copia
+      // local llega después vacía, NO reemplazar la lista válida por cero.
+      // El estado se reinicia al iniciar cada búsqueda y vigente() descarta
+      // respuestas viejas, así que los resultados preservados pertenecen a
+      // esta misma consulta, provincia, modo y filtros.
+      if(!d.resultados.length&&imBusco.resultados.length)return;
       if(nom)d.resultados=IVSNombre.ordenar(d.resultados,nom);
       imBusco.busco=true;imBusco.error=null;imBusco.porCopia=true;
       // El conteo exacto que llega después sustituye el preliminar.
