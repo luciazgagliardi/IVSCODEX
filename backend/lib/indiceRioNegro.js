@@ -17,6 +17,7 @@ import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
+import { buscarProvinciaSaij } from './indiceProvincialSaij.js';
 import { urlParaPedir, sinClave } from './proxyOrigen.js';
 
 const HOST = 'fallos.jusrionegro.gov.ar';
@@ -97,34 +98,66 @@ export function parsear(html, stj) {
  * (ver lib/fuentes.js). El sitio resuelve los tres modos; el rango de años y
  * lo excluido se filtran de este lado.
  */
-export async function buscarRioNegro({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null, tribunal = 'STJ' }) {
+export async function buscarRioNegro(opciones = {}) {
+  const {
+    q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20,
+    desde = null, anioDesde = null, anioHasta = null, tribunal = 'STJ',
+  } = opciones;
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
   const stj = tribunal === 'CJ' ? '0' : '1';
   const arranque = desde === null ? (Math.max(1, pagina) - 1) * porPagina : Math.max(0, desde);
-  let total = 0;
-  const traer = async (offset) => {
-    const n = Math.floor(offset / POR_PAGINA_SITIO) + 1;
-    const html = await pedir(termino, modo, stj, n);
-    if (!total) total = totalDe(html);
-    if (!total || (n - 1) * POR_PAGINA_SITIO >= total) return [];
-    return parsear(html, stj).slice(offset % POR_PAGINA_SITIO);
-  };
-  const salida = await paginarFiltrado({
-    // el sitio ya buscó en el texto completo con el modo pedido: acá sólo los años y lo excluido (sin consulta)
-    traer, desde: arranque, total: () => total, porPagina, q: '',
-    modo: 'alguna', excluir, anioDesde, anioHasta, maxTandas: 3,
-  });
-  const filtro = Boolean(excluir || anioDesde || anioHasta);
-  return {
-    total: filtro ? salida.resultados.length : total,
-    totalFuente: total,
-    siguienteDesde: salida.siguienteDesde,
-    totalParcial: filtro && salida.siguienteDesde !== null,
-    revisados: filtro ? salida.revisados : 0,
-    aflojado: false,
-    pagina,
-    porPagina,
-    resultados: salida.resultados,
-  };
+
+  try {
+    let total = 0;
+    const traer = async (offset) => {
+      const n = Math.floor(offset / POR_PAGINA_SITIO) + 1;
+      const html = await pedir(termino, modo, stj, n);
+      if (!total) total = totalDe(html);
+      if (!total || (n - 1) * POR_PAGINA_SITIO >= total) return [];
+      return parsear(html, stj).slice(offset % POR_PAGINA_SITIO);
+    };
+    const salida = await paginarFiltrado({
+      traer, desde: arranque, total: () => total, porPagina, q: '',
+      modo: 'alguna', excluir, anioDesde, anioHasta, maxTandas: 3,
+    });
+    const filtro = Boolean(excluir || anioDesde || anioHasta);
+    return {
+      total: filtro ? salida.resultados.length : total,
+      totalFuente: total,
+      siguienteDesde: salida.siguienteDesde,
+      totalParcial: filtro && salida.siguienteDesde !== null,
+      revisados: filtro ? salida.revisados : 0,
+      aflojado: false,
+      pagina,
+      porPagina,
+      resultados: salida.resultados,
+      origenEnVivo: 'rionegro',
+    };
+  } catch (error) {
+    // El Protocolo oficial exige resolver un CAPTCHA en búsquedas anónimas.
+    // No intentamos automatizar ni eludir ese control. Cuando el datacenter
+    // recibe el 403, la jurisdicción sigue consultable por la faceta pública
+    // de SAIJ (vista rionegro_saij), preservando el UUID y la procedencia real.
+    const bloqueoCaptcha = error?.codigo === 'INDICE_FUENTE_FALLA' &&
+      /respuesta\s+403|HTTP\s+403|captcha/i.test(String(error.message || ''));
+    if (!bloqueoCaptcha) throw error;
+
+    const alternativa = await buscarProvinciaSaij('rionegro_saij', {
+      ...opciones,
+      tribunal: 'todo',
+    });
+    return {
+      ...alternativa,
+      origenEnVivo: 'saij',
+      fuenteAlternativa: 'rionegro_saij',
+      desdeIndiceLocal: false,
+      resultados: (alternativa.resultados || []).map((r) => ({
+        ...r,
+        fuenteSlug: 'saij',
+        procedencia: 'SAIJ',
+        jurisdiccion: 'Río Negro',
+      })),
+    };
+  }
 }
