@@ -47,7 +47,7 @@ test('el endpoint público de fragmentos no admite metadatos del cliente para es
   const ruta = await fs.readFile(path.join(raiz, 'routes', 'indice.js'), 'utf8');
   assert.doesNotMatch(ruta, /req\.body\?\.registros/);
   assert.doesNotMatch(ruta, /agregarAlAcervo\s*\(/);
-  assert.match(ruta, /const doc = await obtenerDocumento\(url\)/);
+  assert.match(ruta, /const doc = await obtenerDocumento\(url, \{ automatico: true \}\)/);
 });
 
 test('tres pipelines de publicación usan worktree limpio y evitan rebase con cosechas temporales', async () => {

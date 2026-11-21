@@ -704,7 +704,8 @@ for (const { slug, buscar } of FUENTES) {
           }
           const cerrado = SITIOS_CERRADOS.get(hostDe(url));
           if (cerrado) { porUrl.set(url, { url, fragmento: '', error: cerrado.mensaje }); return; }
-          const doc = await obtenerDocumento(url);
+          // Pasajes de fondo: sin acción puntual del usuario, se respeta robots.txt (lib/robots.js).
+          const doc = await obtenerDocumento(url, { automatico: true });
           porUrl.set(url, { url, fragmento: recortarPasaje(doc.texto, q, { exigir: slug === 'dialnet' }), error: null });
         } catch (e) {
           const mensaje = e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.';

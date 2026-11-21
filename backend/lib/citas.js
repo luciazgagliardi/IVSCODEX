@@ -79,9 +79,9 @@ export const TRIBUNALES = [
   {
     clave: 'scba',
     nombre: 'Suprema Corte de Justicia de la Provincia de Buenos Aires',
-    // Se busca en SAIJ, que carga jurisprudencia de todas las provincias: el
-    // buscador propio de la SCBA no está integrado a este proyecto.
-    fuente: 'saij',
+    // JUBA (lib/indiceScba.js): sumarios de la SCBA y de las cámaras
+    // bonaerenses, la fuente propia del tribunal.
+    fuente: 'scba',
     alias: [
       'scba', 'suprema corte de buenos aires', 'suprema corte de justicia de buenos aires',
       'suprema corte de justicia de la provincia de buenos aires', 'suprema corte bonaerense',

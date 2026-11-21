@@ -231,7 +231,7 @@ var of=document.createElement("section");of.className="ofr";of.id="servicios";of
 var pie=document.createElement("footer");pie.className="pie9";
 pie.innerHTML='<div class="bs">'+IVS6.BASES.map(function(b){return '<a href="#" data-tab="buscar" style="--c:var('+b[1]+')" aria-label="Ir al buscador de IVS CODEX desde '+b[0]+'" title="Abrir buscador de IVS CODEX"><i aria-hidden="true"></i>'+b[0]+'</a>';}).join("")+'</div><p class="adv">Verifique siempre <em>en la fuente</em> antes de citar.</p><p class="aviso">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</p>'+IVS4.BOTONES+
  '<div class="legal"><p><b>© 2026 IVS CODEX.</b> Todos los derechos reservados.</p><nav aria-label="Información legal"><a href="#terminos" data-legal="terminos">Términos de uso</a><a href="#privacidad" data-legal="privacidad">Política de privacidad</a><a href="#" data-tab="fuentes">Fuentes oficiales</a></nav>'+
- '<div class="ct"><span>Contacto: <a href="#" style="color:var(--fg)">contacto@su-dominio.com</a></span><span>Mendoza, Argentina</span></div></div>';
+ '<div class="ct"><span>Contacto: <a href="mailto:studio@sigillvm.com" style="color:var(--fg)">studio@sigillvm.com</a></span><span>Mendoza, Argentina</span></div></div>';
 m.appendChild(pie);
 /* Términos de uso y política de privacidad: un panel sobre la portada. El
    texto describe lo que la plataforma hace de verdad (ver backend/lib/usuarios.js,
@@ -249,7 +249,7 @@ var LEGAL={
   '<h3>Elementos guardados</h3><p>Las fuentes marcadas, los pasajes guardados, los términos propios y las búsquedas se conservan en su navegador y, si inició sesión, también en su cuenta, para que pueda verlos desde otros dispositivos.</p>'+
   '<h3>Consultas y documentos</h3><p>Para buscar, la consulta se envía a los repositorios oficiales a través del servidor de la plataforma. Los documentos que se traen por enlace pueden conservarse temporalmente en una memoria del servidor para acelerar consultas posteriores. El texto que se pega en el Lector y el análisis que realiza Lexia sobre el fallo abierto se procesan en su navegador. Los archivos que se suben al Lector se envían al servidor para extraer su texto: se leen en memoria y no se guardan. La lectura en voz alta envía el texto al servidor de la plataforma y al servicio de síntesis de voz de Microsoft. Las herramientas de PDF también funcionan dentro del navegador, salvo el reconocimiento de texto (OCR), que utiliza el servidor sin guardar el archivo.</p>'+
   '<h3>Terceros</h3><p>La plataforma no vende ni cede datos personales. Para funcionar consulta servicios públicos de terceros —los repositorios judiciales, InfoLeg, el Banco Central y datos.gob.ar— y utiliza tipografías de Google Fonts, que reciben la dirección IP del navegador como cualquier sitio web.</p>'+
-  '<h3>Sus derechos</h3><p>Puede solicitar el acceso, la rectificación o la supresión de sus datos (Ley 25.326 de Protección de los Datos Personales) escribiendo a la dirección de contacto que figura al pie de esta página.</p>'}
+  '<h3>Sus derechos</h3><p>Puede solicitar el acceso, la rectificación o la supresión de sus datos (Ley 25.326 de Protección de los Datos Personales) escribiendo a <a href="mailto:studio@sigillvm.com">studio@sigillvm.com</a>.</p>'}
 };
 function abrirLegal(k){
  var L=LEGAL[k]; if(!L) return;

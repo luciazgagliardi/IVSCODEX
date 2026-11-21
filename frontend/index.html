@@ -8541,8 +8541,11 @@ function resultadoCita(){
   var d=estado.cita.salida;
   if(!d) return '';
   var v=VEREDICTOS[d.veredicto]||VEREDICTOS.no_verificable;
-  var fuentes=(d.fuentesConsultadas||[]).filter(function(f){ return f.ok; }).map(function(f){
-    return esc(f.nombre)+" · "+f.resultados+" resultado(s) revisados";
+  // Las fuentes que fallaron se muestran: un «no la encontramos» sin decir
+  // qué base estaba caída induce a error.
+  var fuentes=(d.fuentesConsultadas||[]).map(function(f){
+    return f.ok?esc(f.nombre)+" · "+f.resultados+" resultado(s) revisados"
+               :'<span style="color:var(--rojo)">'+esc(f.nombre)+" · no respondió"+(f.error?" ("+esc(f.error)+")":"")+'</span>';
   }).join("<br>");
 
   return '<div class="panel vivo">'+

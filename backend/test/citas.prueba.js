@@ -445,3 +445,20 @@ test('la guía de verificación no presume inexistente lo que no se encontró', 
   assert.doesNotMatch(html, /Descarte citas que no registren/);
   assert.match(html, /datos_no_coinciden:\{clase:"duda"/);
 });
+
+test('el expediente no coincide como parte de otro número (M-02)', async () => {
+  const ajeno = reg({ id: 'm2', caratula: 'OTRA CAUSA c/ OTRO s/ cobro', expediente: '', fecha: '01/01/2021', sumario: 'Aplicación de la ley 134/2020 de emergencia.' });
+  const r = await verificarCita('Cám. Nac. Civ., Expte. 34/2020', { buscar: buscadorFalso([ajeno]) });
+  assert.notEqual(r.veredicto, 'verificada', r.explicacion);
+});
+
+test('si una fuente prevista no respondió, no se dice «no la encontramos» (F-09)', async () => {
+  const caida = async (slug) => { if (slug === 'saij') throw new Error('fetch failed'); return { resultados: [] }; };
+  const r = await verificarCita('"Gómez c/ Pérez s/ daños", 12/03/2019', { buscar: caida });
+  assert.ok(['no_verificable'].includes(r.veredicto), r.veredicto + ' · ' + r.explicacion);
+});
+
+test('las citas de la SCBA se buscan en su propia base (JUBA)', async () => {
+  const { parsearCita } = await import('../lib/citas.js');
+  assert.equal(parsearCita('SCBA, "Ubertalli c/ Municipalidad", 2015').tribunal?.fuente, 'scba');
+});

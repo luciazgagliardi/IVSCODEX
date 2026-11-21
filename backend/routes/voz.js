@@ -6,8 +6,43 @@ import { normalizarParaVoz } from '../lib/vozJuridica.js';
 export const routerVoz = express.Router();
 
 routerVoz.get('/voz', (_req, res) => {
-  res.json({ ok: true, idioma: LANG, voz: VOZ, requiereInternet: true });
+  res.json({ ok: true, idioma: LANG, voz: VOZ, requiereInternet: true, proveedor: proveedorVoz() });
 });
+
+/* Azure AI Speech (servicio oficial y con licencia, misma voz es-AR-ElenaNeural):
+   se usa cuando el App Service tiene configuradas AZURE_SPEECH_KEY y
+   AZURE_SPEECH_REGION. Sin esas variables se mantiene el servicio de lectura
+   de Edge, para no dejar la plataforma sin voz. El nivel gratuito (F0) de
+   Azure AI Speech alcanza para un uso moderado. */
+const AZURE_SPEECH_KEY = process.env.AZURE_SPEECH_KEY || '';
+const AZURE_SPEECH_REGION = process.env.AZURE_SPEECH_REGION || '';
+export function proveedorVoz() { return AZURE_SPEECH_KEY && AZURE_SPEECH_REGION ? 'azure-speech' : 'edge-lectura'; }
+
+export function ssmlArgentino(texto) {
+  return '<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="es-AR">' +
+    '<voice name="es-AR-ElenaNeural">' + escapeXml(texto) + '</voice></speak>';
+}
+
+async function sintetizarAzure(texto) {
+  const control = new AbortController();
+  const reloj = setTimeout(() => control.abort(), 20000);
+  try {
+    const r = await fetch(`https://${AZURE_SPEECH_REGION}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+      method: 'POST', signal: control.signal,
+      headers: {
+        'Ocp-Apim-Subscription-Key': AZURE_SPEECH_KEY,
+        'Content-Type': 'application/ssml+xml',
+        'X-Microsoft-OutputFormat': 'audio-24khz-96kbitrate-mono-mp3',
+        'User-Agent': 'IVS-CODEX',
+      },
+      body: ssmlArgentino(texto),
+    });
+    if (!r.ok) throw new Error(`Azure AI Speech respondió ${r.status}`);
+    return Buffer.from(await r.arrayBuffer());
+  } finally {
+    clearTimeout(reloj);
+  }
+}
 
 const VOZ = 'es-AR-ElenaNeural';
 const LANG = 'es-AR';
@@ -274,7 +309,8 @@ async function audioDe(textoOriginal) {
   if (guardado) return guardado;
   const trozos = [];
   for (const parte of partirParaVoz(hablado)) {
-    const intento = () => conCupo(() => sintetizarVozArgentina(parte));
+    const sintetizar = proveedorVoz() === 'azure-speech' ? sintetizarAzure : sintetizarVozArgentina;
+    const intento = () => conCupo(() => sintetizar(parte));
     // el servicio a veces corta la conexión: un reintento resuelve casi todo
     trozos.push(await intento().catch(() => intento()));
   }

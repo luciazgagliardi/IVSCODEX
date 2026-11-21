@@ -16,6 +16,7 @@ import { ocrPdf } from './ocr.js';
 import { leerCache, escribirCache } from './cache.js';
 import { errores } from './errores.js';
 import { uuidSaij, resolverSaij } from './textoSaij.js';
+import { excluidaParaAutomatizacion, errorExcluida } from './robots.js';
 import { OCR_HABILITADO } from '../config.js';
 
 /**
@@ -91,7 +92,7 @@ export async function extraerDesdeBuffer(crudo, contentType = '', origen = '') {
  * @param {{refrescar?: boolean}} [opciones]
  * @returns {Promise<object>} el mismo objeto que devuelve POST /api/extraer
  */
-export async function obtenerDocumento(url, { refrescar = false } = {}) {
+export async function obtenerDocumento(url, { refrescar = false, automatico = false } = {}) {
   if (!url) throw errores.urlFaltante();
 
   if (!refrescar) {
@@ -104,7 +105,8 @@ export async function obtenerDocumento(url, { refrescar = false } = {}) {
   const guid = uuidSaij(url);
   if (guid) {
     const s = await resolverSaij(guid).catch((e) => { throw errores.indiceFuenteFalla('saij', e.message); });
-    const base = s.pdf ? await obtenerDocumento(s.pdf, { refrescar }) : null;
+    if (s.pdf && automatico && excluidaParaAutomatizacion(s.pdf)) throw errorExcluida(s.pdf);
+    const base = s.pdf ? await obtenerDocumento(s.pdf, { refrescar, automatico }) : null;
     const texto = base ? base.texto : s.texto;
     if (!texto) throw errores.indiceFuenteFalla('saij', 'la ficha no tiene el texto del fallo');
     const salida = {
@@ -116,6 +118,7 @@ export async function obtenerDocumento(url, { refrescar = false } = {}) {
     return salida;
   }
 
+  if (automatico && excluidaParaAutomatizacion(url)) throw errorExcluida(url);
   const { buffer: crudo, contentType, urlFinal, saltos } = await descargar(url);
   const resultado = await extraerDesdeBuffer(crudo, contentType, urlFinal);
   const tipo = resultado.tipo;

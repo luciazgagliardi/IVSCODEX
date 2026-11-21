@@ -46,11 +46,16 @@ export function vocesDe(tesauros) {
   return [...String(tesauros || '').matchAll(/'([^']+)'/g)].map((m) => m[1].trim()).filter(Boolean);
 }
 
+const VACIAS_JUJUY = new Set(['de', 'del', 'la', 'las', 'el', 'los', 'en', 'y', 'e', 'o', 'u', 'a', 'al', 'por', 'para', 'con', 'sin', 'su', 'sus', 'un', 'una', 'que', 'se', 'lo']);
+
 /** Cuerpo de la consulta según el modo, como lo arma el propio buscador. */
 export function cuerpoConsulta(q, modo) {
   const t = String(q || '').replace(/["“”«»]/g, '').replace(/\s+/g, ' ').trim();
   if (modo === 'exacta') return { palabras: [t], filtroPalabras: 2 };
-  return { palabras: t.split(' ').filter(Boolean), filtroPalabras: modo === 'alguna' ? 1 : 2 };
+  // El buscador de Jujuy exige cada palabra suelta, y las preposiciones no
+  // están indexadas: «régimen de visitas» daba 0 y «régimen visitas» 1.333.
+  const utiles = t.split(' ').filter((w) => w && !VACIAS_JUJUY.has(w.toLowerCase()));
+  return { palabras: utiles.length ? utiles : t.split(' ').filter(Boolean), filtroPalabras: modo === 'alguna' ? 1 : 2 };
 }
 
 function fechaDe(iso) {

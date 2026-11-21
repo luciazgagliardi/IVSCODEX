@@ -211,10 +211,14 @@ function coincideExpediente(citado, registro, pajar) {
     // suficiente, que esté contenido en el otro alcanza.
     const corto = delRegistro.length < delCitado.length ? delRegistro : delCitado;
     const largo = corto === delRegistro ? delCitado : delRegistro;
-    if (corto.length >= 8 && largo.includes(corto)) return true;
+    // …siempre que no esté pegado a otro dígito: «34/2020» no es «134/2020».
+    const i = largo.indexOf(corto);
+    if (corto.length >= 8 && i >= 0 && !/\d/.test(largo[i - 1] || '') && !/\d/.test(largo[i + corto.length] || '')) return true;
   }
 
-  const flexible = new RegExp(grupos.join('[^0-9a-z]{0,3}'));
+  // Los números del expediente tienen que aparecer completos, no como parte
+  // de otro número («Expte. 34/2020» coincidía con «ley 134/2020»).
+  const flexible = new RegExp('(?<![0-9])' + grupos.join('[^0-9a-z]{0,3}') + '(?![0-9])');
   return flexible.test(pajar);
 }
 
@@ -542,6 +546,19 @@ export async function verificarCita(texto, { buscar = buscarEnFuenteReal } = {})
       'verificada',
       'media',
       `Se encontró en ${mejor.nombreFuente} un fallo cuya carátula coincide con la de la cita (${mejor.porQue.slice(0, 3).join('; ')}), pero sin un identificador exacto —expediente o tomo y página— que lo confirme. Puede ser el mismo caso u otro con partes de apellido parecido: abra el documento y compárelo.`,
+      arranque
+    );
+  }
+
+  // Si alguna de las fuentes que correspondía consultar no respondió, «no la
+  // encontramos» sería engañoso: no se buscó en todos los lugares previstos.
+  const caidas = base.fuentesConsultadas.filter((f) => !f.ok);
+  if (caidas.length) {
+    return terminar(
+      base,
+      'no_verificable',
+      'alta',
+      `No apareció en ${donde}, pero ${caidas.map((f) => `${f.nombre} (${f.error})`).join('; ')} no respondió: la búsqueda quedó incompleta y no hay nada que concluir sobre la cita. Pruebe de nuevo en un rato.`,
       arranque
     );
   }

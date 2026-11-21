@@ -160,3 +160,12 @@ test('un renglón cortado no corta la frase; un párrafo sí', () => {
   contiene('línea uno\nlínea dos', 'línea uno línea dos');
   contiene('Primer párrafo\n\nSegundo párrafo', 'Primer párrafo. Segundo párrafo');
 });
+
+test('voz: sin clave usa el servicio actual; el SSML de Azure AI Speech es es-AR y escapa el texto', async () => {
+  const { proveedorVoz, ssmlArgentino } = await import('../routes/voz.js');
+  if (!process.env.AZURE_SPEECH_KEY) assert.equal(proveedorVoz(), 'edge-lectura');
+  const x = ssmlArgentino('Pérez c/ Gómez <b> & art. 14');
+  assert.match(x, /xml:lang="es-AR"/);
+  assert.match(x, /es-AR-ElenaNeural/);
+  assert.match(x, /&lt;b&gt; &amp; art\. 14/);
+});
