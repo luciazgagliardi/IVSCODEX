@@ -25,6 +25,10 @@ test('cada conexión automática tiene autoridad, procedencia, jurisdicción y l
   const catalogo = catalogoFuentesIntegradas();
   const ids = catalogo.map((f) => f.slug);
   assert.equal(new Set(ids).size, ids.length, 'no hay slugs duplicados en el catálogo');
+  assert.deepEqual([...ids].sort(), FUENTES.map((f) => f.slug).sort(),
+    'el catálogo público describe todas y sólo las rutas montadas');
+  assert.ok(ids.includes('tfn') && ids.includes('hudoc'));
+  assert.ok(ids.includes('chubut_saij') && ids.includes('santacruz_saij'));
   for (const fuente of FUENTES) {
     const info = informacionFuente(fuente.slug);
     assert.ok(info, 'falta metadata para ' + fuente.slug);
