@@ -17,6 +17,12 @@ on:
       - 'backend/test/ampliacionAcervo.prueba.js'
       - 'backend/test/jujuy.prueba.js'
       - 'backend/test/indiceCabaHost.prueba.js'
+      - 'backend/lib/indiceChubut.js'
+      - 'backend/lib/indiceTfn.js'
+      - 'backend/lib/indiceSantaCruz.js'
+      - 'backend/lib/indiceHudoc.js'
+      - 'backend/lib/indiceHybridJurisprudencia.js'
+      - 'backend/test/fuentesNuevas.prueba.js'
       - 'backend/lib/fuentesInfo.js'
   push:
     branches: [main]
@@ -28,6 +34,12 @@ on:
       - 'backend/lib/avanceCosecha.js'
       - 'backend/test/jujuy.prueba.js'
       - 'backend/test/indiceCabaHost.prueba.js'
+      - 'backend/lib/indiceChubut.js'
+      - 'backend/lib/indiceTfn.js'
+      - 'backend/lib/indiceSantaCruz.js'
+      - 'backend/lib/indiceHudoc.js'
+      - 'backend/lib/indiceHybridJurisprudencia.js'
+      - 'backend/test/fuentesNuevas.prueba.js'
       - 'backend/lib/fuentesInfo.js'
   workflow_dispatch: {}
   schedule:
@@ -66,7 +78,7 @@ jobs:
           node --check scripts/ampliarCorteidh.mjs
           node --check scripts/armarAcervo.mjs
           node --test test/ampliacionAcervo.prueba.js
-          node --test test/jujuy.prueba.js test/indiceCabaHost.prueba.js
+          node --test test/jujuy.prueba.js test/indiceCabaHost.prueba.js test/fuentesNuevas.prueba.js
           node --check ../ops/diagnosticar-en-vivo.mjs
 
   fuentes:
@@ -77,7 +89,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, corteidh, jujuy]
+        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, corteidh, jujuy, chubut, tfn, santacruz, hudoc]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
