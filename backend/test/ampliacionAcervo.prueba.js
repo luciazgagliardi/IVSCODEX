@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { siguienteCursor, combinarRegistro, idDocumentalValido } from '../lib/avanceCosecha.js';
+import { siguienteCursor, registrarCursor, combinarRegistro, idDocumentalValido } from '../lib/avanceCosecha.js';
 import { cookieDeSesion } from '../lib/sesionMza.js';
 
 test('no confundir un límite local con el agotamiento de una fuente', () => {
@@ -14,6 +14,18 @@ test('no confundir un límite local con el agotamiento de una fuente', () => {
   assert.throws(() => siguienteCursor(2980, { siguienteDesde: 3100 }, { cursorDescendente: true }), /Cursor/);
   assert.throws(() => siguienteCursor('id-990', { siguienteDesde: 'id-990' }), /Cursor/);
   assert.throws(() => siguienteCursor(0, { siguienteDesde: NaN }), /Cursor/);
+});
+
+test('Juristeca usa un ID de cursor opaco, sin exigir monotonía numérica, y detecta ciclos', () => {
+  assert.deepEqual(siguienteCursor(61237, { siguienteDesde: 60891 }, { cursorNoMonotono: true }),
+    { agotada: false, desde: 60891 });
+  assert.deepEqual(siguienteCursor(61237, { siguienteDesde: 70120 }, { cursorNoMonotono: true }),
+    { agotada: false, desde: 70120 });
+  assert.throws(() => siguienteCursor(61237, { siguienteDesde: 61237 }, { cursorNoMonotono: true }), /Cursor/);
+  const historial = registrarCursor(['61000', '61237'], 60891);
+  assert.deepEqual(historial, ['61000', '61237', '60891']);
+  assert.throws(() => registrarCursor(historial, 61000), /Cursor repetido/);
+  assert.deepEqual(registrarCursor(['1', '2', '3'], '4', 3), ['2', '3', '4']);
 });
 
 test('conservar textos, enlaces y metadatos más completos al deduplicar', () => {
@@ -33,6 +45,9 @@ test('la cosecha cubre fuentes habilitadas y detiene reintentos ante bloqueos y 
     assert.ok(archivo.includes(slug + ': {'), slug);
   }
   assert.match(archivo, /avanzarIndiceTerminos/);
+  assert.match(archivo, /cursorNoMonotono: base === 'juristeca'/);
+  assert.match(archivo, /registrarCursor\(estado\.cursoresVistos, cursor\.desde\)/);
+  assert.match(archivo, /cursoresVistos/);
   assert.match(archivo, /const CONSULTAS_COMPLEMENTARIAS = \{/);
   for (const slug of ['mendoza','caba','scba','juristeca','santafe','rionegro','dialnet','mendozalegal','jujuy','chubut','tfn','santacruz','hudoc']) {
     assert.match(archivo, new RegExp(slug + ': \\['), 'falta expansión temática equilibrada: ' + slug);
