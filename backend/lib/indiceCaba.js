@@ -83,48 +83,71 @@ async function pedirBusqueda(parametros) {
     Accept: 'text/html, */*;q=0.8',
   };
   const body = cuerpoWin1252(parametros);
-  const pedirConNavegador = async () => {
-    if (!dominioConNavegador(HOST)) throw new Error('el host de CABA no admite relevo de navegador');
-    const salida = await consultarConNavegador(URL_BUSQUEDA, {
-      method: 'POST', headers: { 'Content-Type': headers['Content-Type'], Accept: headers.Accept }, body,
-    }, { fuente: 'caba', operacion: 'busqueda' });
-    if (!salida || salida.estado < 200 || salida.estado >= 400) {
-      throw errores.indiceFuenteFalla('caba', `respuesta del navegador ${salida?.estado || 'sin estado'}`);
+
+  const browserFallback = async (detalleDirecto) => {
+    try {
+      if (!dominioConNavegador(HOST)) throw new Error('dominio no habilitado');
+      const salida = await consultarConNavegador(URL_BUSQUEDA, {
+        method: 'POST',
+        headers: { 'Content-Type': headers['Content-Type'], Accept: headers.Accept },
+        body,
+      }, { fuente: 'caba', operacion: 'busqueda' });
+      if (!salida || salida.estado < 200 || salida.estado >= 400) {
+        throw new Error('respuesta del navegador HTTP ' + (salida?.estado || 'sin estado'));
+      }
+      const texto = decodificarWin1252(salida.buffer);
+      if (/just a moment|checking your browser|attention required/i.test(texto.slice(0, 1600))) {
+        throw new Error('el portal devolvió un desafío también en el navegador');
+      }
+      return texto;
+    } catch (errorNavegador) {
+      // El detalle queda en cause para el diagnóstico interno del servidor.
+      // El mensaje que recibe la interfaz sigue siendo genérico.
+      const error = errores.indiceFuenteFalla('caba', 'la consulta oficial no pudo completarse');
+      error.cause = new Error(sinClave(
+        'directo: ' + (detalleDirecto || 'bloqueado') +
+        '; navegador: ' + (errorNavegador?.cause?.code || errorNavegador?.message || 'falló')
+      ).slice(0, 180));
+      throw error;
     }
-    // El navegador entrega los bytes originales. No usar response.text(): el
-    // portal devuelve windows-1252 y las tildes se romperían al decodificar UTF-8.
-    return decodificarWin1252(salida.buffer);
   };
+
   const control = new AbortController();
   const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
+    let resp;
     try {
-      const resp = await fetch(url, { method: 'POST', signal: control.signal, headers, body });
-      if (resp.ok) {
-        if (porProxy) return await resp.text();
-        const buffer = Buffer.from(await resp.arrayBuffer());
-        const texto = decodificarWin1252(buffer);
-        // Algunos bloqueos entregan 200 con una página de desafío en lugar
-        // de devolver un 403. No tratar ese HTML como una respuesta vacía.
-        if (!/just a moment|checking your browser|attention required/i.test(texto.slice(0, 1600)))
-          return texto;
-      } else if (![403, 429, 500, 502, 503, 504].includes(resp.status)) {
-        throw errores.indiceFuenteFalla('caba', `respuesta ${resp.status}`);
-      }
-      // 403 o un desafío 200: la misma consulta se reintenta dentro del Chrome
-      // que resolvió Cloudflare. No se cambia el formulario ni la codificación.
-      return await pedirConNavegador();
-    } catch (e) {
-      if (e?.codigo && e.codigo !== 'TIEMPO_AGOTADO' && e.codigo !== 'INDICE_FUENTE_FALLA') throw e;
-      // El datacenter también puede recibir reset/timeout sin un HTTP 403.
-      // El navegador se prueba una vez antes de declarar inaccesible el portal.
-      try { return await pedirConNavegador(); }
-      catch (navegadorError) {
-        throw errores.indiceFuenteFalla('caba', sinClave(
-          `directo: ${e?.cause?.code || e?.message || 'error'}; navegador: ${navegadorError?.cause?.code || navegadorError?.message || 'error'}`
-        ));
-      }
+      resp = await fetch(url, { method: 'POST', signal: control.signal, headers, body });
+    } catch (errorDirecto) {
+      // Un reset de red o timeout del datacenter también puede superarse
+      // desde Chromium, que mantiene cookies y resuelve los desafíos del sitio.
+      return await browserFallback(errorDirecto?.cause?.code || errorDirecto?.message || 'falló la conexión directa');
     }
+
+    if (resp.ok) {
+      if (porProxy) return await resp.text();
+      const buffer = Buffer.from(await resp.arrayBuffer());
+      const texto = decodificarWin1252(buffer);
+      // Algunos bloqueos entregan 200 con una página de desafío en lugar
+      // de un 403. No tratar ese HTML como una respuesta válida del buscador.
+      if (!/just a moment|checking your browser|attention required/i.test(texto.slice(0, 1600)))
+        return texto;
+      return await browserFallback('el servidor directo entregó un desafío HTTP 200');
+    }
+
+    // No insistir ante límites de uso ni enlaces inexistentes. El relevo se
+    // reserva para los bloqueos y errores de infraestructura que Chromium
+    // puede resolver desde una sesión de navegador.
+    if (resp.status === 403 || [500, 502, 503, 504].includes(resp.status)) {
+      return await browserFallback('HTTP ' + resp.status);
+    }
+    throw errores.indiceFuenteFalla('caba', 'respuesta HTTP ' + resp.status);
+  } catch (error) {
+    if (error?.codigo) throw error;
+    if (error?.name === 'AbortError') {
+      return await browserFallback('timeout de la conexión directa');
+    }
+    throw errores.indiceFuenteFalla('caba', sinClave(error?.cause?.message || error?.cause?.code || error?.message));
   } finally {
     clearTimeout(reloj);
   }
