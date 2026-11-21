@@ -47,7 +47,10 @@ test('la interfaz permite ordenar por línea jurídica y no confunde un error co
   assert.ok(html.includes('Por línea jurídica'), 'existe la vista agrupada por línea de investigación');
   assert.ok(html.includes('Este error no equivale a una búsqueda válida con cero resultados'), 'la falla técnica se distingue de una consulta válida sin coincidencias');
   assert.ok(html.includes('Un error de acceso o de red no significa que no existan fallos'), 'el resumen general comunica los errores de las fuentes');
-  const indice = html.slice(html.indexOf('var FUENTES_INDICE=['), html.indexOf('\\n];', html.indexOf('var FUENTES_INDICE=[')));
+  const inicioIndice = html.indexOf('var FUENTES_INDICE=[');
+  const finIndice = html.indexOf(String.fromCharCode(10) + '];', inicioIndice);
+  assert.ok(inicioIndice >= 0 && finIndice > inicioIndice, 'el array de fuentes de búsqueda está bien delimitado');
+  const indice = html.slice(inicioIndice, finIndice);
   const slugs = [...indice.matchAll(/slug:"([^"]+)"/g)].map(m => m[1]);
   assert.equal(new Set(slugs).size, slugs.length, 'no se reutilizan slugs para fuentes directas y vistas SAIJ');
   for (const slug of ['chubut', 'tfn', 'santacruz', 'hudoc', 'chubut_saij', 'santacruz_saij']) {
