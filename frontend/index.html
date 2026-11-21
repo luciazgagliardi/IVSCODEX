@@ -6303,9 +6303,6 @@ function fichaIndice(f,r){
   if(f.slug==="caba"&&r.voces&&r.voces.length){
     // Primero los temas que contienen lo que se buscó: son los que dicen por
     // qué apareció este fallo.
-    var claves=palabrasResaltables(q).map(function(w){
-      return w.replace(/["'()]/g,"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-    });
     var coincide=function(v){
       return sumarioCumpleConsulta(v,q) ||
         Boolean(r.variante&&sumarioCumpleConsulta(v,r.variante));
@@ -6325,7 +6322,7 @@ function fichaIndice(f,r){
       (tipoFicha?'<span class="f-fecha">'+tipoFicha+'</span>':'')+'</div>'+
     '<h3 class="f-nom">'+resaltarSimple(r.caratula||r.expediente||"(sin carátula)",consultaQueCoincide(r,r.caratula||r.expediente||""))+'</h3>'+
     (pasaje?'<p class="f-nota">'+(r.tipoExtracto?'<span style="opacity:.65">'+esc(r.tipoExtracto)+'. </span>':'')+pasajeResaltado(pasaje,consultaQueCoincide(r,pasaje),800)+'</p>':'')+
-    (temas?'<p class="f-nota"><span style="opacity:.6">Temas que el TSJ asigna a este fallo: </span>'+resaltarSimple(temas,q)+'</p>':'')+
+    (temas?'<p class="f-nota"><span style="opacity:.6">Temas que el TSJ asigna a este fallo: </span>'+resaltarSimple(temas,consultaQueCoincide(r,temas))+'</p>':'')+
     (esperando?'<p class="f-nota" style="opacity:.55;font-style:italic">Buscando el pasaje en el documento…</p>':'')+
     (sinPasaje?'<p class="f-nota" style="opacity:.55;font-style:italic">'+esc(sinPasaje)+'</p>':'')+
     (f.slug!=="caba"&&r.voces&&r.voces.length?'<div class="voces">'+r.voces.slice(0,6).map(function(v){
