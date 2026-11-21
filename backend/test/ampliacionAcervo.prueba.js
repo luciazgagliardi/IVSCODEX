@@ -28,9 +28,15 @@ test('la cosecha cubre fuentes habilitadas y detiene reintentos ante bloqueos y 
   const armado = fs.readFileSync(new URL('../scripts/armarAcervo.mjs', import.meta.url), 'utf8');
   const workflow = fs.readFileSync(new URL('../../.github/workflows/ampliacion-integral.yml', import.meta.url), 'utf8');
   const corte = fs.readFileSync(new URL('../scripts/ampliarCorteidh.mjs', import.meta.url), 'utf8');
-  for (const slug of ['mendoza', 'caba', 'scba', 'juristeca', 'santafe', 'rionegro', 'dialnet', 'mendozalegal', 'jujuy']) {
+  for (const slug of ['mendoza', 'caba', 'scba', 'juristeca', 'santafe', 'rionegro', 'dialnet', 'mendozalegal', 'jujuy',
+    'chubut', 'tfn', 'santacruz', 'hudoc']) {
     assert.ok(archivo.includes(slug + ': {'), slug);
   }
+  assert.match(archivo, /avanzarIndiceTerminos/);
+  assert.match(archivo, /esReintentable/);
+  assert.match(archivo, /process\.exitCode = 1/);
+  assert.doesNotMatch(archivo, /indiceTerminos = \(indiceInicial \+ ventana\.length\)/);
+  for (const slug of ['chubut', 'tfn', 'santacruz', 'hudoc']) assert.ok(workflow.includes(slug), 'falta ' + slug + ' en la matriz');
   assert.ok(armado.includes("'corteidh'"));
   assert.ok(armado.includes("'jujuy'"));
   assert.ok(armado.includes('DIR_BASE'));
