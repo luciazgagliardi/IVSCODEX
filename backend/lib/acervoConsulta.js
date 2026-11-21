@@ -44,6 +44,10 @@ export function ftsConMagistrados(db) {
 const VACIAS = new Set('de del la las el los un una unos unas y e o u en al a ante con sin por para que se su sus lo le les es son como mas sobre entre desde hasta segun contra ni no'.split(' '));
 const plano = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 function terminos(s) { return plano(s).split(/[^a-z0-9ñ]+/).filter((w) => w.length >= 2 && !VACIAS.has(w)); }
+// En frase exacta no se pueden quitar conectores: «contaminación del suelo»
+// no equivale a la secuencia «contaminación suelo». FTS5 debe recibir todos
+// los tokens, en orden, para que la frase consultada exista literalmente.
+function terminosDeFrase(s) { return plano(s).split(/[^a-z0-9ñ]+/).filter(Boolean); }
 const raiz = (w) => (w.length > 7 ? w.slice(0, Math.max(5, w.length - 2)) : w);
 /*
  * Nombres de magistrados. Buscar «aida kemelmajer» tiene que traer los fallos
@@ -67,12 +71,15 @@ export function apellidos(db) {
   return set;
 }
 export function consultaFts(q, modo = 'todas', excluir = '', apellidosConocidos = null) {
-  const ts = terminos(q);
+  const ts = modo === 'exacta' ? terminosDeFrase(q) : terminos(q);
   if (!ts.length) return null;
   let expr;
   if (modo === 'exacta') expr = `"${ts.join(' ')}"`;
   else expr = ts.map((w) => `"${raiz(w)}"*`).join(modo === 'alguna' ? ' OR ' : ' AND ');
-  if (apellidosConocidos && ts.length <= 5) {
+  // La expansión por apellido es útil en búsquedas normales, pero rompería
+  // el contrato de frase exacta al añadir coincidencias que sólo están en
+  // el campo «magistrados».
+  if (modo !== 'exacta' && apellidosConocidos && ts.length <= 5) {
     const deApellido = ts.filter((w) => apellidosConocidos.has(w) && !NOMBRES_DE_PILA.has(w));
     if (deApellido.length && ts.every((w) => apellidosConocidos.has(w) || NOMBRES_DE_PILA.has(w)))
       expr = `(${expr}) OR (magistrados : (${deApellido.map((w) => `"${w}"`).join(' OR ')}))`;
