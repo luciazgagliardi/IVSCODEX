@@ -8,6 +8,19 @@ import {
   anotarProcedencia,
 } from '../lib/fuentesInfo.js';
 
+test('el router Express registra buscar, local y estado para todas las fuentes', async () => {
+  const { router } = await import('../routes/indice.js');
+  const rutas = new Set(router.stack.map((layer) => layer.route?.path).filter(Boolean));
+  for (const fuente of FUENTES) {
+    for (const accion of ['buscar', 'local', 'estado']) {
+      assert.ok(
+        rutas.has('/indice/' + fuente.slug + '/' + accion),
+        'falta POST/GET para ' + fuente.slug + '/' + accion,
+      );
+    }
+  }
+});
+
 test('cada conexión automática tiene autoridad, procedencia, jurisdicción y límites declarados', () => {
   const catalogo = catalogoFuentesIntegradas();
   const ids = catalogo.map((f) => f.slug);
