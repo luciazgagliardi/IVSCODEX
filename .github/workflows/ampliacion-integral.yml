@@ -5,6 +5,9 @@ on:
     paths:
       - '.github/workflows/ampliacion-integral.yml'
       - 'backend/scripts/ampliarFuentes.mjs'
+      - 'backend/lib/indiceProvincialSaij.js'
+      - 'backend/lib/acervoConsulta.js'
+      - 'backend/test/provinciasSaij.prueba.js'
       - 'backend/scripts/cosecharCatamarca.mjs'
       - 'backend/lib/indiceProvincialSaij.js'
       - 'backend/scripts/cosecharSaij.mjs'
@@ -23,7 +26,9 @@ on:
     paths:
       - '.github/workflows/ampliacion-integral.yml'
       - 'backend/scripts/ampliarFuentes.mjs'
-      - 'backend/scripts/ampliarCorteidh.mjs'
+      - 'backend/lib/indiceProvincialSaij.js'
+      - 'backend/lib/acervoConsulta.js'
+      - 'backend/test/provinciasSaij.prueba.js'
       - 'backend/scripts/armarAcervo.mjs'
       - 'backend/lib/avanceCosecha.js'
       - 'backend/test/jujuy.prueba.js'
@@ -76,8 +81,9 @@ jobs:
     timeout-minutes: 180
     strategy:
       fail-fast: false
+      max-parallel: 4
       matrix:
-        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, corteidh, jujuy]
+        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, jujuy]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
@@ -114,9 +120,7 @@ jobs:
           MAX_PDFS: '150'
           PAUSA_MS: '2000'
         run: |
-          if test "$FUENTE" = corteidh; then
-            node scripts/ampliarCorteidh.mjs
-          elif test "$FUENTE" = catamarca; then
+          if test "$FUENTE" = catamarca; then
             MAX_DETALLES=160 node scripts/cosecharCatamarca.mjs
           else
             node scripts/ampliarFuentes.mjs "$FUENTE"
@@ -180,9 +184,9 @@ jobs:
           path: backend/acervo-crudo/
 
   saij_provincial:
-    # Barridos por provincia (incluidos Santa Fe y Río Negro como respaldo)
-    # con cursores separados: se incorporan al mismo
-    # corpus SAIJ (UUID original), no se replican seis bases completas.
+    # Barridos parejos de las 24 facetas provinciales de SAIJ con cursores
+    # separados. Todos los documentos conservan el UUID original y se
+    # deduplican en un único corpus SAIJ, sin clonar registros por jurisdicción.
     if: github.event_name != 'pull_request'
     needs: pruebas
     runs-on: ubuntu-latest
@@ -192,15 +196,30 @@ jobs:
       max-parallel: 2
       matrix:
         include:
-          - { slug: cordoba, provincia: Córdoba }
-          - { slug: entrerrios, provincia: Entre Ríos }
-          - { slug: neuquen, provincia: Neuquén }
-          - { slug: tucuman, provincia: Tucumán }
+          - { slug: buenosaires, provincia: Buenos Aires }
+          - { slug: caba_saij, provincia: Ciudad Autónoma de Buenos Aires }
+          - { slug: catamarca_saij, provincia: Catamarca }
           - { slug: chaco, provincia: Chaco }
+          - { slug: chubut, provincia: Chubut }
+          - { slug: cordoba, provincia: Córdoba }
           - { slug: corrientes, provincia: Corrientes }
-          # Respaldo provincial oficial: los portales directos actualmente bloquean la cosecha
-          - { slug: santafe, provincia: Santa Fe }
-          - { slug: rionegro, provincia: Río Negro }
+          - { slug: entrerrios, provincia: Entre Ríos }
+          - { slug: formosa, provincia: Formosa }
+          - { slug: jujuy_saij, provincia: Jujuy }
+          - { slug: lapampa, provincia: La Pampa }
+          - { slug: larioja, provincia: La Rioja }
+          - { slug: mendoza_saij, provincia: Mendoza }
+          - { slug: misiones, provincia: Misiones }
+          - { slug: neuquen, provincia: Neuquén }
+          - { slug: rionegro_saij, provincia: Río Negro }
+          - { slug: salta, provincia: Salta }
+          - { slug: sanjuan, provincia: San Juan }
+          - { slug: sanluis, provincia: San Luis }
+          - { slug: santacruz, provincia: Santa Cruz }
+          - { slug: santafe_saij, provincia: Santa Fe }
+          - { slug: santiagodelestero, provincia: Santiago del Estero }
+          - { slug: tierradelfuego, provincia: Tierra del Fuego }
+          - { slug: tucuman, provincia: Tucumán }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
@@ -257,7 +276,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Recuperar lotes de las once fuentes independientes
+      - name: Recuperar lotes de todas las fuentes y jurisdicciones
         uses: actions/download-artifact@v4
         with:
           pattern: fuente-*
