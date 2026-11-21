@@ -7,6 +7,7 @@
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
+import { sinClave } from './proxyOrigen.js';
 
 export const ORIGEN_CHUBUT = 'https://apps1cloud.juschubut.gov.ar/eureka';
 const HOST = new URL(ORIGEN_CHUBUT).hostname;
