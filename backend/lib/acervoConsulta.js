@@ -139,10 +139,11 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   const junta = Boolean(prov && base !== 'saij');
   // SAIJ publica el mismo sumario con más de un id, y Mendoza o la SCBA un renglón por sumario de cada fallo: se cuenta una sola vez
   // el filtro de tipo (sumarios / fallos / doctrina…) de SAIJ: la copia no tiene doctrina, legislación ni dictámenes, y no debe contestar con otra cosa
-  if (base === 'saij' && !tribunal) tribunal = 'sumarios'; // como en vivo: sin elegir, sumarios
+  if ((base === 'saij' || base === 'csjn') && !tribunal) tribunal = 'todo'; // fallos primero; sumarios de respaldo
   const tiposSaij = (base === 'saij' || base === 'csjn') && tribunal ? TIPO_SAIJ[tribunal] || (tribunal in { doctrina: 1, legislacion: 1, dictamenes: 1 } ? [] : null) : null;
   if (tiposSaij && !tiposSaij.length) return { total: 0, resultados: [], siguienteDesde: null };
   const marcas = base === 'csjn' ? ['csjn'] : [base, ...(junta ? ['saij'] : [])];
+  const priorizaFallos = (base === 'saij' || base === 'csjn' || junta) && (!tribunal || tribunal === 'todo');
   const args = [`(${expr}) AND (${marcas.map((m) => `marca : zf${m}`).join(' OR ')})`];
   const donde = [];
   if (base === 'csjn') donde.push("(f.corte = 1 OR f.fuente = 'csjn')");
@@ -151,7 +152,16 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   if (anioDesde) { donde.push('f.anio >= ?'); args.push(Number(anioDesde)); }
   if (anioHasta) { donde.push('f.anio <= ?'); args.push(Number(anioHasta)); }
   if (provincia) { donde.push('f.provincia = ?'); args.push(provincia); }
-  if (tiposSaij) { donde.push(`f.tipo IN (${tiposSaij.map(() => '?').join(',')})`); args.push(...tiposSaij); }
+  if (tiposSaij) {
+    if (tribunal === 'todo') {
+      // Las filas antiguas sin tipo siguen consultables mientras se renueva el acervo.
+      donde.push(`(f.tipo IN (${tiposSaij.map(() => '?').join(',')}) OR f.tipo IS NULL)`);
+      args.push(...tiposSaij);
+    } else {
+      donde.push(`f.tipo IN (${tiposSaij.map(() => '?').join(',')})`);
+      args.push(...tiposSaij);
+    }
+  }
   const trib = TRIBUNAL_DE[base]?.[tribunal];
   // Aplicar el tribunal a TODO el conjunto, también a los fallos mendocinos de SAIJ.
   // Sin esta condición, SAIJ eludía el filtro SC/CC/CT y contaminaba los resultados.
@@ -179,9 +189,11 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
     const n = Math.min(100, Math.max(1, Number(porPagina) || 20));
     // Se explora un pequeño lote por FTS5. LIMIT evita recorrer cientos de
     // miles de coincidencias sólo para mostrar las primeras fichas.
+    const pesoTipo = priorizaFallos ? "CASE WHEN f.tipo = 'sumario' THEN 1 ELSE 0 END," : '';
     const candidatos = db.prepare(`SELECT f.*, ${clave} AS claveRapida
       FROM fts JOIN fallos f ON f.rid = fts.rowid
       WHERE fts MATCH ? AND ${donde.join(' AND ')}
+      ORDER BY ${pesoTipo} bm25(fts, 4.0, 1.0, 2.0, 0.0${mag ? ', 1.0' : ''}), f.rid
       LIMIT ?`).all(...args, Math.max(120, n * 6));
     const vistos = new Set(), filas = [];
     for (const f of candidatos) {
@@ -196,6 +208,8 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
         voces: f.voces ? f.voces.split(' · ') : undefined,
         magistrados: f.magistrados, materia: f.materia,
         linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo,
+        ...(priorizaFallos && f.tipo === 'sumario' ? { esSumarioRespaldo: true } : {}),
+        ...(f.tipo === 'fallo' && f.sumario ? { tipoExtracto: 'Sumario asociado; no es el texto íntegro del fallo' } : {}),
         desdeAcervo: true };
       for (const k of Object.keys(r)) if (r[k] == null) delete r[k];
       return r;
@@ -208,16 +222,31 @@ export function paginaEn(db, base, q, { modo = 'todas', excluir = '', anioDesde 
   // la clave de «el mismo resultado» (lib/claveFallo.js): un resultado por fallo. Un fallo con varios sumarios es UN resultado
   // (se muestra el de mejor coincidencia); el enlace manda donde cada fallo tiene el suyo, y en SAIJ (cuyos enlaces son uno por sumario) la carátula, la fecha y el tribunal.
 
-  const coinciden = `SELECT f.rid AS rid, bm25(fts, 4.0, 1.0, 2.0, 0.0${mag ? ', 1.0' : ''}) AS rel, ${clave} AS clave
+  const coinciden = `SELECT f.rid AS rid, f.tipo AS tipo, bm25(fts, 4.0, 1.0, 2.0, 0.0${mag ? ', 1.0' : ''}) AS rel, ${clave} AS clave
     FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}`;
-  const unicos = `WITH m AS MATERIALIZED (${coinciden}), u AS (SELECT rid, min(rel) AS rel FROM m GROUP BY clave)`;
+  const unicos = priorizaFallos
+    ? `WITH m AS MATERIALIZED (${coinciden}), ordenados AS (
+        SELECT rid, rel, tipo, clave,
+          row_number() OVER (PARTITION BY clave
+            ORDER BY CASE WHEN tipo = 'sumario' THEN 1 ELSE 0 END, rel, rid) AS rn
+        FROM m
+      ), u AS (
+        SELECT rid, rel, CASE WHEN tipo = 'sumario' THEN 1 ELSE 0 END AS prioridad
+        FROM ordenados WHERE rn = 1
+      )`
+    : `WITH m AS MATERIALIZED (${coinciden}), u AS (
+        SELECT rid, min(rel) AS rel, 0 AS prioridad FROM m GROUP BY clave
+      )`;
   const pos = Math.max(0, Number(desde) || 0), n = Math.min(100, Math.max(1, Number(porPagina) || 20));
   // el total sale de la misma pasada (count() OVER), sin recorrer el índice dos veces
-  const filas = db.prepare(`${unicos} SELECT f.*, count(*) OVER () AS total_ FROM u JOIN fallos f ON f.rid = u.rid ORDER BY u.rel, u.rid LIMIT ? OFFSET ?`).all(...args, n, pos);
+  const filas = db.prepare(`${unicos} SELECT f.*, count(*) OVER () AS total_ FROM u JOIN fallos f ON f.rid = u.rid ORDER BY u.prioridad, u.rel, u.rid LIMIT ? OFFSET ?`).all(...args, n, pos);
   const total = filas.length ? filas[0].total_ : db.prepare(`${unicos} SELECT count(*) AS n FROM u`).get(...args).n;
   const resultados = filas.map((f) => {
     const r = { id: f.id, caratula: f.caratula, tribunal: f.tribunal, fecha: f.fecha, expediente: f.expediente, sumario: f.sumario,
-      voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo, desdeAcervo: true };
+      voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo,
+      ...(priorizaFallos && f.tipo === 'sumario' ? { esSumarioRespaldo: true } : {}),
+      ...(f.tipo === 'fallo' && f.sumario ? { tipoExtracto: 'Sumario asociado; no es el texto íntegro del fallo' } : {}),
+      desdeAcervo: true };
     for (const k of Object.keys(r)) if (r[k] == null) delete r[k];
     return r;
   });
