@@ -102,7 +102,7 @@ function filaChubut(row, tipo) {
   };
 }
 
-export async function buscarChubut({ q, tribunal = 'sumarios', modo = 'todas', pagina = 1, desde = null, porPagina = 20 }) {
+async function buscarChubutSimple({ q, tribunal = 'sumarios', modo = 'todas', pagina = 1, desde = null, porPagina = 20 }) {
   const consulta = limpiar(q);
   if (!consulta) throw errores.consultaVacia();
   const tipo = tribunal === 'sentencias' || tribunal === 'fallos' ? 'sentencias' : 'sumarios';
@@ -142,5 +142,92 @@ export async function buscarChubut({ q, tribunal = 'sumarios', modo = 'todas', p
     siguienteDesde: hayMas ? page + 1 : null,
     pagina: page, porPagina: resultados.length || porPagina,
     resultados,
+  };
+}
+
+
+const CURSOR_SUMARIOS_CHUBUT = 1_000_000;
+
+/**
+ * Búsqueda combinada: sentencias anonimizadas primero. Los sumarios sólo
+ * completan una página cuando ya no queda otra sentencia por mostrar.
+ * El portal pagina por número de página (1-based), no por desplazamiento.
+ */
+function claveCasoChubut(r) {
+  const exp = limpiar(r?.expediente || '');
+  const tribunal = limpiar(r?.tribunal || '').toLowerCase();
+  if (exp) return tribunal + '|exp|' + exp.toLowerCase();
+  const caratula = limpiar(r?.caratula || '').normalize('NFD').replace(/\\p{M}/gu, '').toLowerCase();
+  return caratula ? [tribunal, caratula, r?.fecha || ''].join('|') : 'id|' + String(r?.id || '');
+}
+
+export async function buscarChubut(opciones = {}) {
+  const tribunal = opciones.tribunal || 'todo';
+  if (['sentencias', 'fallos', 'sumarios'].includes(tribunal))
+    return buscarChubutSimple({ ...opciones, tribunal });
+
+  const cantidad = Math.min(20, Math.max(1, Number(opciones.porPagina) || 20));
+  const cursor = opciones.desde == null ? null : Number(opciones.desde);
+
+  if (Number.isFinite(cursor) && cursor >= CURSOR_SUMARIOS_CHUBUT) {
+    const pagina = cursor - CURSOR_SUMARIOS_CHUBUT;
+    const salida = await buscarChubutSimple({ ...opciones, tribunal: 'sumarios', pagina: 1, desde: pagina });
+    const resultados = (salida.resultados || []).map((r) => ({ ...r, esSumarioRespaldo: true }));
+    return {
+      ...salida,
+      resultados,
+      siguienteDesde: salida.siguienteDesde == null ? null : CURSOR_SUMARIOS_CHUBUT + salida.siguienteDesde,
+      complementoSumarios: true,
+      cantidadFallos: 0,
+      cantidadSumarios: resultados.length,
+      tipoConsulta: 'sumarios_de_respaldo',
+    };
+  }
+
+  // Un error del carril de sentencias se propaga. Un 403/timeout no significa
+  // que el buscador haya agotado los fallos y no autoriza sustituirlos.
+  const fallos = await buscarChubutSimple({ ...opciones, tribunal: 'sentencias' });
+  const listaFallos = fallos.resultados || [];
+  if (listaFallos.length >= cantidad || fallos.siguienteDesde != null) {
+    return {
+      ...fallos,
+      cantidadFallos: listaFallos.length,
+      cantidadSumarios: 0,
+      complementoSumarios: false,
+      tipoConsulta: 'fallos',
+    };
+  }
+
+  const faltan = cantidad - listaFallos.length;
+  if (!faltan) return fallos;
+  const sumarios = await buscarChubutSimple({
+    ...opciones, tribunal: 'sumarios', pagina: 1, desde: 1, porPagina: faltan,
+  });
+  const vistos = new Set(listaFallos.map(claveCasoChubut));
+  const relleno = [];
+  for (const r of (sumarios.resultados || [])) {
+    const clave = claveCasoChubut(r);
+    if (vistos.has(clave)) continue;
+    vistos.add(clave);
+    relleno.push({ ...r, esSumarioRespaldo: true });
+    if (listaFallos.length + relleno.length >= cantidad) break;
+  }
+  return {
+    ...fallos,
+    total: listaFallos.length + relleno.length,
+    totalFuente: Number(fallos.totalFuente || 0) + Number(sumarios.totalFuente || 0),
+    totalFuenteFallos: Number(fallos.totalFuente || 0),
+    totalFuenteSumarios: Number(sumarios.totalFuente || 0),
+    totalParcial: Boolean(fallos.totalParcial || sumarios.totalParcial || relleno.length > 0),
+    revisados: Number(fallos.revisados || 0) + Number(sumarios.revisados || 0),
+    siguienteDesde: sumarios.siguienteDesde == null
+      ? null
+      : CURSOR_SUMARIOS_CHUBUT + Number(sumarios.siguienteDesde),
+    porPagina: cantidad,
+    resultados: listaFallos.concat(relleno),
+    complementoSumarios: relleno.length > 0,
+    cantidadFallos: listaFallos.length,
+    cantidadSumarios: relleno.length,
+    tipoConsulta: relleno.length ? 'fallos_con_sumarios_de_respaldo' : 'fallos',
   };
 }
