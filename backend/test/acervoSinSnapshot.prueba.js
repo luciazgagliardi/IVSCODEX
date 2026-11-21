@@ -17,6 +17,10 @@ process.env.ACERVO_COPIA_LOCAL='1';
 process.env.ACERVO_SIN_SNAPSHOT='1';
 fs.mkdirSync(process.env.DIR_ACERVO_DATOS,{recursive:true});
 fs.mkdirSync(process.env.DIR_INDICE,{recursive:true});
+fs.mkdirSync(process.env.DIR_ACERVO,{recursive:true});
+// Simula archivos parciales que quedaron tras una importación interrumpida.
+const temporalAbandonado=path.join(process.env.DIR_ACERVO,'acervo-version-fallida-99-11111111-1111-4111-8111-111111111111.db.tmp');
+for (const archivo of [temporalAbandonado,temporalAbandonado+'-wal',temporalAbandonado+'-shm']) fs.writeFileSync(archivo,'residuo');
 
 const fallos=[
   {id:'mza_1',fuente:'mendoza',caratula:'Pérez contra Aseguradora',tribunal:'Cámara Civil de Mendoza',fecha:'07/09/2026',sumario:'Se reconoce daño moral.'},
@@ -31,6 +35,11 @@ fs.writeFileSync(path.join(process.env.DIR_ACERVO_DATOS,'lote-001.jsonl.gz'),zli
 fs.writeFileSync(path.join(process.env.DIR_ACERVO_DATOS,'manifiesto.json'),JSON.stringify({version:'azure-sin-snapshot-1',archivos:['lote-001.jsonl.gz']}));
 const {prepararAcervo,buscarPagina,estadoAcervo,copiaLista}=await import('../lib/acervo.js');
 await prepararAcervo({esperar:true});
+
+test('la importación retira archivos temporales abandonados sin tocar la base activa',()=>{
+  const temporal=path.join(process.env.DIR_ACERVO,'acervo-version-fallida-99-11111111-1111-4111-8111-111111111111.db.tmp');
+  for (const archivo of [temporal,temporal+'-wal',temporal+'-shm']) assert.equal(fs.existsSync(archivo),false,archivo);
+});
 
 test('el corpus FTS queda activo aunque la copia rápida esté suspendida',()=>{
   assert.equal(estadoAcervo().activo,true);
