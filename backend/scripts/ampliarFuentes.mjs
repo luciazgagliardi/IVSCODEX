@@ -90,7 +90,7 @@ if (!PLAN[base]) {
   const informeCosecha = { fuente: base, fecha: new Date().toISOString(), anteriores: antes, procesadas: 0, paginas: 0, errores: [], agotadas: 0 };
   let ultimo = 0;
   let rechazosDeAcceso = 0;
-  const pareceBloqueoDeRed = (mensaje) => /(?:respuesta 403|UND_ERR_CONNECT_TIMEOUT|ETIMEDOUT|ENETUNREACH|ECONNREFUSED)/i.test(mensaje);
+  const pareceBloqueoDeRed = (mensaje) => /(?:respuesta\\s+(?:403|429)|403|429|TimeoutError|AbortError|UND_ERR_CONNECT_TIMEOUT|UND_ERR_HEADERS_TIMEOUT|ETIMEDOUT|ENETUNREACH|ECONNREFUSED|ECONNRESET)/i.test(mensaje);
   async function guardar() {
     const contenido = zlib.gzipSync(JSON.stringify({ fuente: base, generado: new Date().toISOString(), registros: [...registros.values()] }), { level: 8 });
     await fs.writeFile(archivo + '.tmp', contenido);
