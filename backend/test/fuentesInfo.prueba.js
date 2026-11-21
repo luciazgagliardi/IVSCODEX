@@ -53,6 +53,17 @@ test('SAIJ se reclasifica según el tipo documental realmente consultado', () =>
   assert.equal(informacionFuente('saij', { tribunal: 'doctrina' }).linea, 'Doctrina jurídica');
   assert.equal(informacionFuente('saij', { tribunal: 'dictamenes' }).linea, 'Derecho administrativo y dictámenes');
   assert.equal(informacionFuente('saij', { tribunal: 'fallos' }).linea, 'Jurisprudencia · fichas de fallos');
+  const todo = informacionFuente('saij');
+  assert.equal(todo.linea, 'Jurisprudencia · fallos y sumarios de respaldo');
+  assert.deepEqual(todo.lineas, ['jurisprudencia', 'nacional', 'agregador']);
+  const clasificados = anotarProcedencia('saij', [
+    { id: 'f1', tipo: 'fallo' },
+    { id: 's1', tipo: 'sumario', esSumarioRespaldo: true },
+    { id: 's2', tipo: 'sumario' },
+  ]);
+  assert.equal(clasificados[0].tipoDocumento, 'Fallo judicial');
+  assert.equal(clasificados[1].tipoDocumento, 'Sumario de respaldo');
+  assert.equal(clasificados[2].tipoDocumento, 'Sumario jurisprudencial');
   const mendoza = informacionFuente('saij', { tribunal: 'sumarios', provincia: 'Mendoza' });
   assert.equal(mendoza.linea, 'Jurisprudencia provincial · Mendoza');
   assert.equal(mendoza.jurisdiccion, 'Mendoza, Argentina');
