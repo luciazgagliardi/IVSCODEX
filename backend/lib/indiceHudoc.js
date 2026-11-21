@@ -39,6 +39,7 @@ export function registroHudoc(row) {
     linkFallo: ficha,
     tipo: col(row, 'doctypebranch') || 'Decisión HUDOC',
     idioma: col(row, 'languageisocode'),
+    tipoDocumento: 'Ficha oficial HUDOC; el título no es el texto de la sentencia',
     fuente: 'hudoc',
   };
 }
