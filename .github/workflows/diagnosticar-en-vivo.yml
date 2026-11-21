@@ -43,5 +43,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Consultar las 37 rutas automáticas y el acervo local después de publicar Azure
+      - name: Consultar las 41 fuentes: 40 rutas remotas y el acervo local de Catamarca después de publicar Azure
         run: node ops/diagnosticar-en-vivo.mjs
