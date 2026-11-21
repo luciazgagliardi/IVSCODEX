@@ -5798,8 +5798,23 @@ var FALLA_SIN_COPIA="La copia local no tiene coincidencias y el sitio oficial no
 function basesSinRespuesta(vis){
   return vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; }).length;
 }
+/* Bases que son vistas sobre SAIJ (la CSJN y las facetas provinciales): sus
+   documentos ya están dentro de SAIJ. Sumarlas al total general contaba dos
+   veces los mismos fallos («al menos 266.663 resultados»). */
+var VISTAS_DE_SAIJ={csjn:1,cordoba:1,entrerrios:1,neuquen:1,tucuman:1,chaco:1,corrientes:1};
+function saijRespondio(vis){
+  return vis.some(function(f){ var im=estado.indices[f.slug]||{}; return f.slug==="saij"&&im.busco&&!im.error; });
+}
+function totalGeneral(vis){
+  var sinVistas=saijRespondio(vis);
+  return vis.reduce(function(n,f){
+    var im=estado.indices[f.slug]||{};
+    if(sinVistas&&VISTAS_DE_SAIJ[f.slug]) return n;
+    return n+((im.busco&&!im.error)?cuantosDe(f,im):0);
+  },0);
+}
 function rielBuscar(vis){
-  var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?cuantosDe(f,im):0); },0);
+  var tot=totalGeneral(vis);
   var incompleto=totalPendienteDeFuentes(vis);
   var h='<div class="bz-fila'+(!estado.verBase?" on":"")+'" data-act="ver-base" data-fuente=""><span class="rf-nom">TODAS LAS BASES</span><span class="rf-n">'+(tot?tot.toLocaleString("es-AR")+(incompleto?"+":""):"")+'</span></div>';
   h+=vis.map(function(f){
@@ -5820,7 +5835,7 @@ function vistaBuscar(){
   if(estado.verBase&&!vis.some(function(f){return f.slug===estado.verBase;})) estado.verBase="";
   var ac=filtrosActivos(), cel=esCelular(), sugs=tiraSugerencias()+tiraEquivalentes(!cel)+tiraVariantes()+tiraLineas(), notaIA=cel?"":notaAnillo();
   var tieneSug=!!(sug||sugs||notaIA);
-  var tot=vis.reduce(function(n,f){ var im=estado.indices[f.slug]||{}; return n+((im.busco&&!im.error)?cuantosDe(f,im):0); },0);
+  var tot=totalGeneral(vis);
   var resp=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; }).length;
   return '<div class="bq" id="panel-buscar-form">'+
       '<div class="bq-barra"><label class="cq"><input type="text" id="q" value="'+esc(estado.q)+'" placeholder="daño moral por incumplimiento contractual" autocomplete="off" aria-label="¿Qué desea consultar?">'+
@@ -5835,7 +5850,8 @@ function vistaBuscar(){
       (tieneSug?'<div class="bq-sug bq-sug--abajo">'+(cel?pastillaSug(sug+sugs):sug+sugs+(notaIA?pastillaSug(notaIA):""))+'</div>':'')+
       '<div class="bq-sum">'+(ac.length?ac.map(function(t){ return '<span class="fsb-tk">'+esc(t[0])+' <b>'+esc(t[1])+'</b><button type="button" data-act="quitar-filtro" data-k="'+t[2]+'" data-v="'+esc(t[3])+'" aria-label="Quitar">✕</button></span>'; }).join(""):'<span><b>Búsqueda irrestricta</b> · Todas las bases, jurisdicciones y períodos.</span>')+
         '<span class="bq-cuenta">'+(resp?'<b>'+(totalPendienteDeFuentes(vis)?'al menos ':'')+tot.toLocaleString("es-AR")+'</b> resultados'+
-          (basesSinRespuesta(vis)?' en las bases que respondieron · <b>'+basesSinRespuesta(vis)+'</b> sin respuesta':''):'')+'</span></div>'+
+          (basesSinRespuesta(vis)?' en las bases que respondieron · <b>'+basesSinRespuesta(vis)+'</b> sin respuesta':'')+
+          (saijRespondio(vis)&&vis.some(function(f){return VISTAS_DE_SAIJ[f.slug];})?' · <span title="La CSJN y las vistas provinciales se consultan dentro de SAIJ: sus fallos ya están contados en SAIJ.">sin sumar las vistas de SAIJ</span>':''):'')+'</span></div>'+
       (estado.api?avisoServidor():"")+
     '</div>'+
     '<div class="bz" id="bz"><aside class="bz-riel" aria-label="Bases">'+rielBuscar(vis)+'</aside><div class="bz-lista">'+bloqueResultados(vis)+'</div></div>';

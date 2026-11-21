@@ -70,3 +70,16 @@ test('intereses: la tasa elegida no se presenta como obtenida por la plataforma 
   assert.match(html, /La plataforma no obtiene ni controla el valor de la tasa/);
   assert.match(html, /valor no obtenido ni verificado por la plataforma/);
 });
+
+test('el total general no suma las vistas de SAIJ cuando SAIJ respondió (F-03)', () => {
+  const ctx = {
+    estado: { indices: { saij: { busco: true, total: 100 }, cordoba: { busco: true, total: 30 }, csjn: { busco: true, total: 10 }, mendoza: { busco: true, total: 5 } } },
+    cuantosDe: (_f, im) => im.total,
+  };
+  for (const n of ['saijRespondio', 'totalGeneral']) vm.runInNewContext(extraer(n), ctx);
+  vm.runInNewContext(html.match(/var VISTAS_DE_SAIJ=\{[^}]*\};/)[0], ctx);
+  const vis = ['saij', 'cordoba', 'csjn', 'mendoza'].map((slug) => ({ slug }));
+  assert.equal(ctx.totalGeneral(vis), 105);
+  ctx.estado.indices.saij = { busco: true, error: 'sin respuesta' };
+  assert.equal(ctx.totalGeneral(vis), 45, 'si SAIJ falló, las vistas son la única fuente de esos fallos');
+});
