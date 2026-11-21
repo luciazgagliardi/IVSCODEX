@@ -5,7 +5,7 @@
       "pagina": 8,
       "completas": false,
       "paginas": 7,
-      "errores": 7,
+      "errores": 8,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"incumplimiento contractual\",{}]": {
@@ -21,8 +21,8 @@
       "pagina": 4,
       "completas": false,
       "paginas": 3,
-      "errores": 7,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 8,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: Client network socket disconnected before secure TLS connection was established. Puede estar caído, lento o haber cambiado de formato; intente n"
     },
     "[\"pacto comisorio\",{}]": {
       "desde": 0,
@@ -37,8 +37,8 @@
       "pagina": 7,
       "completas": false,
       "paginas": 6,
-      "errores": 7,
-      "ultimoError": "Página vacía con resultados informados por el sitio"
+      "errores": 8,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 60,
@@ -51,7 +51,7 @@
       "pagina": 5,
       "completas": false,
       "paginas": 4,
-      "errores": 8,
+      "errores": 9,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"mora automática\",{}]": {
@@ -5095,8 +5095,32 @@
       "paginas": 0,
       "errores": 1,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"extradición\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"consumidores\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3,
+      "errores": 1,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"lavado de activos\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     }
   },
-  "indiceTerminos": 626,
+  "indiceTerminos": 866,
   "versionIds": 2
 }

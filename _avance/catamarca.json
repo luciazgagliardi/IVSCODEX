@@ -1,10 +1,11 @@
 {
   "version": 1,
   "paginas": {
-    "sentencias": 442,
+    "sentencias": 531,
     "sumarios": 307
   },
   "completadas": {
-    "sumarios": true
+    "sumarios": true,
+    "sentencias": true
   }
 }

@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"sentencia\",{}]": {
-      "desde": 780,
-      "pagina": 40,
+      "desde": 940,
+      "pagina": 48,
       "completas": false,
-      "paginas": 39,
+      "paginas": 47,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -15,11 +15,11 @@
       "paginas": 3
     },
     "[\"recurso\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 8,
-      "errores": 7,
+      "paginas": 11,
+      "errores": 8,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{}]": {
@@ -29,10 +29,10 @@
       "paginas": 3
     },
     "[\"daño moral\",{}]": {
-      "desde": 880,
-      "pagina": 45,
+      "desde": 1040,
+      "pagina": 53,
       "completas": false,
-      "paginas": 44
+      "paginas": 52
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 40,
@@ -43,10 +43,10 @@
       "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"responsabilidad civil\",{}]": {
-      "desde": 980,
-      "pagina": 50,
+      "desde": 1140,
+      "pagina": 58,
       "completas": false,
-      "paginas": 49
+      "paginas": 57
     },
     "[\"mora automática\",{}]": {
       "desde": 60,
@@ -59,7 +59,7 @@
       "pagina": 5,
       "completas": false,
       "paginas": 4,
-      "errores": 7,
+      "errores": 8,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"intereses moratorios\",{}]": {
@@ -73,7 +73,7 @@
       "pagina": 21,
       "completas": false,
       "paginas": 20,
-      "errores": 4,
+      "errores": 5,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"tasa activa\",{}]": {
@@ -83,10 +83,10 @@
       "paginas": 3
     },
     "[\"alimentos\",{}]": {
-      "desde": 820,
-      "pagina": 42,
+      "desde": 980,
+      "pagina": 50,
       "completas": false,
-      "paginas": 41
+      "paginas": 49
     },
     "[\"resolución contractual\",{}]": {
       "desde": 60,
@@ -95,10 +95,10 @@
       "paginas": 3
     },
     "[\"contrato\",{}]": {
-      "desde": 820,
-      "pagina": 42,
+      "desde": 980,
+      "pagina": 50,
       "completas": false,
-      "paginas": 41
+      "paginas": 49
     },
     "[\"seña\",{}]": {
       "desde": 60,
@@ -107,10 +107,10 @@
       "paginas": 3
     },
     "[\"consumidor\",{}]": {
-      "desde": 820,
-      "pagina": 42,
+      "desde": 980,
+      "pagina": 50,
       "completas": false,
-      "paginas": 41
+      "paginas": 49
     },
     "[\"boleto de compraventa\",{}]": {
       "desde": 60,
@@ -119,10 +119,10 @@
       "paginas": 3
     },
     "[\"familia\",{}]": {
-      "desde": 820,
-      "pagina": 42,
+      "desde": 980,
+      "pagina": 50,
       "completas": false,
-      "paginas": 41
+      "paginas": 49
     },
     "[\"locación de inmueble\",{}]": {
       "desde": 60,
@@ -135,7 +135,7 @@
       "pagina": 7,
       "completas": false,
       "paginas": 6,
-      "errores": 6,
+      "errores": 8,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"desalojo falta de pago\",{}]": {
@@ -145,10 +145,10 @@
       "paginas": 3
     },
     "[\"intereses\",{}]": {
-      "desde": 820,
-      "pagina": 42,
+      "desde": 980,
+      "pagina": 50,
       "completas": false,
-      "paginas": 41
+      "paginas": 49
     },
     "[\"obligación de valor\",{}]": {
       "desde": 60,
@@ -157,10 +157,10 @@
       "paginas": 3
     },
     "[\"amparo\",{}]": {
-      "desde": 940,
-      "pagina": 48,
+      "desde": 1100,
+      "pagina": 56,
       "completas": false,
-      "paginas": 47
+      "paginas": 55
     },
     "[\"novación\",{}]": {
       "desde": 60,
@@ -213,7 +213,7 @@
       "pagina": 7,
       "completas": false,
       "paginas": 6,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"riesgo de la cosa\",{}]": {
@@ -2013,10 +2013,10 @@
       "paginas": 6
     },
     "[\"usucapión\",{}]": {
-      "desde": 280,
-      "pagina": 15,
+      "desde": 440,
+      "pagina": 23,
       "completas": false,
-      "paginas": 14
+      "paginas": 22
     },
     "[\"prescripción veinteañal\",{}]": {
       "desde": 0,
@@ -2281,10 +2281,10 @@
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"desalojo\",{}]": {
-      "desde": 280,
-      "pagina": 15,
+      "desde": 440,
+      "pagina": 23,
       "completas": false,
-      "paginas": 14
+      "paginas": 22
     },
     "[\"daño moral procedencia\",{}]": {
       "desde": 100,
@@ -2317,10 +2317,10 @@
       "paginas": 6
     },
     "[\"medida cautelar\",{}]": {
-      "desde": 200,
-      "pagina": 11,
+      "desde": 360,
+      "pagina": 19,
       "completas": false,
-      "paginas": 10
+      "paginas": 18
     },
     "[\"proceso penal\",{}]": {
       "desde": 160,
@@ -2365,10 +2365,10 @@
       "paginas": 8
     },
     "[\"incapacidad laboral\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"defensa en juicio\",{}]": {
       "desde": 160,
@@ -2441,16 +2441,16 @@
       "paginas": 8
     },
     "[\"prueba\",{}]": {
-      "desde": 160,
-      "pagina": 9,
-      "completas": false,
-      "paginas": 8
-    },
-    "[\"prescripción\",{}]": {
       "desde": 320,
       "pagina": 17,
       "completas": false,
       "paginas": 16
+    },
+    "[\"prescripción\",{}]": {
+      "desde": 480,
+      "pagina": 25,
+      "completas": false,
+      "paginas": 24
     },
     "[\"sentencia condenatoria\",{}]": {
       "desde": 160,
@@ -2723,8 +2723,540 @@
       "pagina": 8,
       "completas": false,
       "paginas": 7
+    },
+    "[\"extradición\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"consumidores\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"lavado de activos\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"municipalidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"extinción de la acción penal\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"daño material\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"igualdad ante la ley\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"obligaciones internacionales\",{}]": {
+      "desde": 20,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"obligaciones\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"intervención de terceros\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"abuso sexual calificado por acceso carnal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"comercialización ilegal de estupefacientes\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia civil\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"revisión judicial\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tutela judicial efectiva\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"lucro cesante\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"excepción de incompetencia\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho civil\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"ciudad autónoma de buenos aires\",{}]": {
+      "desde": 40,
+      "pagina": 3,
+      "completas": false,
+      "paginas": 2,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"movilidad del haber jubilatorio\",{}]": {
+      "desde": 20,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"ley sobre riesgos del trabajo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"medida de no innovar\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tratados internacionales\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso de inaplicabilidad de ley\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"vicios\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"principios generales del derecho\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"convención americana sobre derechos humanos\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tasas de interés\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"sociedades\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"reenvío\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"pronunciamiento inoficioso\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"rechazo del reclamo\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"escala penal\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"caducidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"adicionales de remuneración\",{}]": {
+      "desde": 20,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"derecho común\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"declaración de la víctima\",{}]": {
+      "desde": 140,
+      "pagina": 8,
+      "completas": false,
+      "paginas": 7,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"bancos\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"monto de la pena\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"habilitación de feria\",{}]": {
+      "desde": 40,
+      "pagina": 3,
+      "completas": false,
+      "paginas": 2,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"mora\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"prisión\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: UND_ERR_SOCKET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"competencia por el territorio\",{}]": {
+      "desde": 140,
+      "pagina": 8,
+      "completas": false,
+      "paginas": 7,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"orden público\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"moneda extranjera\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"efecto suspensivo\",{}]": {
+      "desde": 140,
+      "pagina": 8,
+      "completas": false,
+      "paginas": 7,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"sentencia firme\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"riesgos del trabajo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"empleador\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tasa aplicable\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tentativa\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"excesos u omisiones en el pronunciamiento\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"capitalización de intereses\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derechos de las niñas, niños y adolescentes\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"protección del medio ambiente\",{}]": {
+      "desde": 20,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"poder de policía\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"cómputo de intereses\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"obras sociales\",{}]": {
+      "desde": 100,
+      "pagina": 6,
+      "completas": false,
+      "paginas": 5,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"aumento de cuota\",{}]": {
+      "desde": 140,
+      "pagina": 8,
+      "completas": false,
+      "paginas": 7,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"república argentina\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"redes sociales\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"concurso real\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derechos de la víctima\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"juicio de desalojo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"abogados\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"defraudación\",{}]": {
+      "desde": 120,
+      "pagina": 7,
+      "completas": false,
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"contratos bancarios\",{}]": {
+      "desde": 20,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"prueba documental\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derivación razonada del derecho vigente\",{}]": {
+      "desde": 140,
+      "pagina": 8,
+      "completas": false,
+      "paginas": 7,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"filiación\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"defectos de fabricación\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"amparo ambiental\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"responsabilidad de la concesionaria\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"incompetencia\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"círculo cerrado\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prestación de servicios\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"seguro colectivo\",{}]": {
+      "desde": 40,
+      "pagina": 3,
+      "completas": false,
+      "paginas": 2,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"jerarquía constitucional de los tratados de derechos humanos\",{}]": {
+      "desde": 20,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"excepción de prescripción\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"deber de imparcialidad\",{}]": {
+      "desde": 20,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"rechazo in límine\",{}]": {
+      "desde": 60,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
     }
   },
-  "indiceTerminos": 626,
+  "indiceTerminos": 866,
   "versionIds": 2
 }

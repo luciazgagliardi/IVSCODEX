@@ -1,22 +1,22 @@
 {
   "tareas": {
     "[\"daño moral\",{}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16
+      "paginas": 24
     },
     "[\"incumplimiento contractual\",{}]": {
+      "desde": 480,
+      "pagina": 25,
+      "completas": false,
+      "paginas": 24
+    },
+    "[\"responsabilidad civil\",{}]": {
       "desde": 320,
       "pagina": 17,
       "completas": false,
       "paginas": 16
-    },
-    "[\"responsabilidad civil\",{}]": {
-      "desde": 160,
-      "pagina": 9,
-      "completas": false,
-      "paginas": 8
     },
     "[\"pacto comisorio\",{}]": {
       "desde": 160,
@@ -25,10 +25,10 @@
       "paginas": 8
     },
     "[\"daños y perjuicios\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 80,
@@ -37,10 +37,10 @@
       "paginas": 5
     },
     "[\"despido\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"mora automática\",{}]": {
       "desde": 160,
@@ -49,10 +49,10 @@
       "paginas": 8
     },
     "[\"derecho laboral\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"intereses moratorios\",{}]": {
       "desde": 160,
@@ -61,10 +61,10 @@
       "paginas": 8
     },
     "[\"recurso de inconstitucionalidad\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 8
+      "paginas": 24
     },
     "[\"tasa activa\",{}]": {
       "desde": 160,
@@ -73,10 +73,10 @@
       "paginas": 8
     },
     "[\"recurso extraordinario\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"resolución contractual\",{}]": {
       "desde": 160,
@@ -85,10 +85,10 @@
       "paginas": 8
     },
     "[\"amparo\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"seña\",{}]": {
       "desde": 160,
@@ -97,10 +97,10 @@
       "paginas": 8
     },
     "[\"derecho a la salud\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"boleto de compraventa\",{}]": {
       "desde": 160,
@@ -109,10 +109,10 @@
       "paginas": 8
     },
     "[\"contrato\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"locación de inmueble\",{}]": {
       "desde": 160,
@@ -127,10 +127,10 @@
       "paginas": 8
     },
     "[\"prescripción\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"obligación de valor\",{}]": {
       "desde": 160,
@@ -139,10 +139,10 @@
       "paginas": 8
     },
     "[\"usucapión\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"novación\",{}]": {
       "desde": 160,
@@ -151,10 +151,10 @@
       "paginas": 8
     },
     "[\"empleo público\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"cesión de créditos\",{}]": {
       "desde": 160,
@@ -163,10 +163,10 @@
       "paginas": 8
     },
     "[\"debido proceso\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"buena fe contractual\",{}]": {
       "desde": 0,
@@ -175,16 +175,16 @@
       "paginas": 1
     },
     "[\"defensa en juicio\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"prueba\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"consecuencias no patrimoniales\",{}]": {
       "desde": 0,
@@ -193,10 +193,10 @@
       "paginas": 1
     },
     "[\"intereses\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"incapacidad sobreviniente\",{}]": {
       "desde": 160,
@@ -205,10 +205,10 @@
       "paginas": 8
     },
     "[\"medida cautelar\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"fórmula acciarri\",{}]": {
       "desde": 20,
@@ -217,10 +217,10 @@
       "paginas": 2
     },
     "[\"cosa juzgada\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"pérdida de chance\",{}]": {
       "desde": 160,
@@ -229,10 +229,10 @@
       "paginas": 8
     },
     "[\"nulidad\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"daño punitivo\",{}]": {
       "desde": 160,
@@ -241,10 +241,10 @@
       "paginas": 8
     },
     "[\"competencia\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"riesgo de la cosa\",{}]": {
       "desde": 160,
@@ -253,10 +253,10 @@
       "paginas": 8
     },
     "[\"derecho administrativo\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"accidente de tránsito\",{}]": {
       "desde": 160,
@@ -265,10 +265,10 @@
       "paginas": 8
     },
     "[\"derecho tributario\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"mala praxis médica\",{}]": {
       "desde": 160,
@@ -467,8 +467,422 @@
       "pagina": 5,
       "completas": false,
       "paginas": 4
+    },
+    "[\"derecho de riego\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"departamento general de irrigación\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"canon de riego\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"recurso hídrico\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"licencia ambiental minera\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"actividad minera metalífera\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"uso del suelo rural\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"servidumbre administrativa de acueducto\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuenca hídrica\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley 9001 mendoza\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"audiencia inicial\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"audiencia final\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso extraordinario provincial\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso de casación\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"caducidad de instancia\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"medida cautelar genérica\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"costas por su orden\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"beneficio de litigar sin gastos\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"honorarios regulación\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"carga dinámica de la prueba\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"jurisdicción internacional\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"ley aplicable al contrato\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"exequátur\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reconocimiento de sentencia extranjera\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"restitución internacional de menores\",{}]": {
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"convenio de la haya 1980\",{}]": {
+      "desde": 140,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
+    },
+    "[\"orden público internacional\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"arbitraje internacional\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"foro de necesidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"cooperación jurídica internacional\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"confusión marcaria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"oposición al registro de marca\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho de autor plagio\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"habeas data\",{}]": {
+      "desde": 100,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"derecho al olvido\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"protección de datos personales\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"responsabilidad de buscadores\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nombre de dominio\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"competencia desleal\",{}]": {
+      "desde": 100,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"software y obra por encargo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"perspectiva de género\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"ley 26.485\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"violencia económica\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"medidas de protección urgentes\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"femicidio\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"denuncia por violencia familiar\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"revictimización\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"testimonio único de la víctima\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"reparación con enfoque de género\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"violencia digital\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho a ser oído\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"medida de protección excepcional\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"adoptabilidad\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"abogado del niño\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"penal juvenil\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"situación de calle\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"alimentos a favor del hijo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tutela\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"oficialización de listas\",{}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"paridad de género en listas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"financiamiento de campañas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reconocimiento de partido político\",{}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"competencia electoral\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"boleta única\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"impugnación de candidatura\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño extrapatrimonial\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"agravio moral\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"daño inmaterial\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"daño psicológico\",{}]": {
+      "desde": 140,
+      "pagina": 8,
+      "completas": false,
+      "paginas": 7
     }
   },
-  "indiceTerminos": 240,
+  "indiceTerminos": 480,
   "versionIds": 2
 }
