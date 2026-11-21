@@ -21,7 +21,7 @@ test('el navegador conserva el acervo y solo muestra en vivo cuando hubo respues
   assert.match(html, /imBusco\.estadoVivo=\(d&&d\.ok&&!d\.desdeIndiceLocal&&d\.enVivo!==false\)\?"ok":"error"/);
   assert.match(html, /if\(imBusco\.porCopia&&esNueva\)/);
   assert.match(html, /sumarResultadosVivos\(d\)/);
-  assert.match(html, /En vivo no disponible/);
+  assert.match(html, /aria-label="Fuente sin respuesta"/);
   assert.doesNotMatch(html, /Esta respuesta proviene del acervo local/);
 });
 
@@ -58,7 +58,8 @@ test('la respuesta oficial enriquece fichas del acervo y vuelve a pedir sus pasa
 test('Mendoza recibe carátulas como partes y la pantalla advierte ceros contradictorios', () => {
   assert.match(rutas, /slug === 'mendoza' && typeof cuerpo\.partes === 'string'/);
   assert.match(html, /if\(slug==="mendoza"\) cuerpo\.partes=nom\.consulta/);
-  assert.match(html, /ov\.total===0&&im\.total>0/);
+  assert.match(html, /im\.vistaOficial\.total===0&&im\.total>0/);
+  assert.match(html, /La fuente oficial no devolvió coincidencias; los resultados visibles provienen del acervo guardado/);
 });
 
 test('la carga del acervo tiene respuesta preliminar y conteo exacto diferido', () => {
