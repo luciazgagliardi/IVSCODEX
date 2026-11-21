@@ -80,6 +80,14 @@ if (!PLAN[base]) {
     progreso.indiceTerminos = 0;
     progreso.versionIds = 2;
   }
+  if (progreso.versionAvanceTerminos !== 2) {
+    // Una versión anterior avanzaba el índice por toda la ventana incluso si
+    // MAX_PAGINAS cortaba el lote antes de procesarla. Reiniciar el recorrido
+    // desde el principio no pierde datos: las tareas completas se saltan
+    // y las incompletas conservan su cursor individual.
+    progreso.indiceTerminos = 0;
+    progreso.versionAvanceTerminos = 2;
+  }
   const extras = await leerJson(path.join(RAIZ, 'datos', 'terminos-cosecha.json'), []);
   const palabras = Array.isArray(extras) ? [...new Set(extras.filter((x) => typeof x === 'string').map((x) => x.trim()).filter((x) => x.length > 2 && x.length <= 90))] : [];
   const indiceInicial = progreso.indiceTerminos || 0;
