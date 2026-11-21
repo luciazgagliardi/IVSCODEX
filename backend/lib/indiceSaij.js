@@ -584,7 +584,7 @@ function consultaParaElSitio(termino, modo) {
 // (SAIJ ignora las comillas y trae 40.776 por cualquiera de las dos palabras,
 // la frase exacta está en una fracción): con 3 tandas salían 6 resultados, con
 // 6 salían 13 (8,5 s) y con 10 salían 18 (14 s). Cada tanda cuesta ~1,4 s.
-const TANDAS_POR_MODO = { exacta: 8, todas: 5, alguna: 3 };
+const TANDAS_POR_MODO = { exacta: 12, todas: 5, alguna: 3 };
 const PAGINAS_A_REVISAR = 3; // por defecto, y para legislación y doctrina (ver esTexto)
 const POR_PEDIDO = 100;
 
@@ -707,6 +707,7 @@ async function buscarSaijSimple({ q, modo = 'todas', excluir = '', tribunal = 's
 // El cursor mantiene separadas las dos fases del modo combinado sin perder
 // páginas cuando SAIJ obliga a paginar por filas crudas del sitio.
 const CURSOR_SUMARIOS_RESALDO = 1_000_000_000;
+const CURSOR_FALLOS_RESALDO = 2_000_000_000;
 function claveCasoRespaldo(r) {
   const caratula = String(r?.caratula || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim();
   const fecha = String(r?.fecha || '').trim();
@@ -730,6 +731,24 @@ export async function buscarSaij(opciones = {}) {
   const tamano = Math.min(100, Math.max(1, Number(opciones.porPagina) || 20));
   const desde = opciones.desde == null ? null : Number(opciones.desde);
 
+  // En frase exacta, el texto buscable de SAIJ está en los SUMARIOS. Las
+  // fichas de fallos casi nunca incluyen el cuerpo ni el sumario relacionado:
+  // buscarlas primero devolvía cero aunque la frase existiera en la misma causa.
+  // Cuando se agotan los sumarios, recién entonces se completa con carátulas.
+  if (Number.isFinite(desde) && desde >= CURSOR_FALLOS_RESALDO) {
+    const offset = desde - CURSOR_FALLOS_RESALDO;
+    const salida = await buscarSaijSimple({
+      ...opciones, tribunal: 'fallos', pagina: 1, desde: offset,
+    });
+    return {
+      ...salida,
+      siguienteDesde: salida.siguienteDesde == null ? null : CURSOR_FALLOS_RESALDO + Number(salida.siguienteDesde),
+      cantidadFallos: (salida.resultados || []).length,
+      cantidadSumarios: 0,
+      tipoConsulta: 'fallos_despues_de_sumarios_exactos',
+    };
+  }
+
   if (Number.isFinite(desde) && desde >= CURSOR_SUMARIOS_RESALDO) {
     const offset = desde - CURSOR_SUMARIOS_RESALDO;
     const salida = await buscarSaijSimple({
@@ -743,6 +762,57 @@ export async function buscarSaij(opciones = {}) {
       cantidadFallos: 0,
       cantidadSumarios: (salida.resultados || []).length,
       tipoConsulta: 'sumarios_de_respaldo',
+    };
+  }
+
+  if (opciones.modo === 'exacta') {
+    const sumarios = await buscarSaijSimple({
+      ...opciones, tribunal: 'sumarios', pagina: 1,
+      desde: Number.isFinite(desde) ? desde : 0,
+    });
+    const listaSumarios = sumarios.resultados || [];
+    // Si todavía quedan filas de sumarios por revisar, conservar ese cursor:
+    // no afirmar que no hay coincidencias por haber mirado sólo una muestra.
+    if (listaSumarios.length >= tamano || sumarios.siguienteDesde != null) {
+      return {
+        ...sumarios,
+        resultados: listaSumarios.map((r) => r && ({ ...r, esSumarioRespaldo: true })),
+        cantidadFallos: 0,
+        cantidadSumarios: listaSumarios.length,
+        complementoSumarios: true,
+        tipoConsulta: 'sumarios_frase_exacta',
+      };
+    }
+
+    // Los sumarios ya se agotaron. Completar los huecos con carátulas que
+    // también contengan la frase exacta, sin duplicar causas.
+    const faltan = tamano - listaSumarios.length;
+    if (faltan <= 0) return { ...sumarios, resultados: listaSumarios };
+    const fallos = await buscarSaijSimple({
+      ...opciones, tribunal: 'fallos', pagina: 1, desde: 0, porPagina: faltan,
+    });
+    const vistos = new Set(listaSumarios.map(claveCasoRespaldo));
+    const relleno = [];
+    for (const r of (fallos.resultados || [])) {
+      const clave = claveCasoRespaldo(r);
+      if (vistos.has(clave)) continue;
+      vistos.add(clave);
+      relleno.push(r);
+      if (listaSumarios.length + relleno.length >= tamano) break;
+    }
+    return {
+      ...sumarios,
+      total: listaSumarios.length + relleno.length,
+      totalFuente: Number(sumarios.totalFuente || 0) + Number(fallos.totalFuente || 0),
+      totalParcial: Boolean(sumarios.totalParcial || fallos.totalParcial),
+      revisados: Number(sumarios.revisados || 0) + Number(fallos.revisados || 0),
+      siguienteDesde: fallos.siguienteDesde == null
+        ? null : CURSOR_FALLOS_RESALDO + Number(fallos.siguienteDesde),
+      resultados: listaSumarios.map((r) => ({ ...r, esSumarioRespaldo: true })).concat(relleno),
+      complementoSumarios: listaSumarios.length > 0,
+      cantidadFallos: relleno.length,
+      cantidadSumarios: listaSumarios.length,
+      tipoConsulta: 'sumarios_exactos_con_fallos_de_respaldo',
     };
   }
 
