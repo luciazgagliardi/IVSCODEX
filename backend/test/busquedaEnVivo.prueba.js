@@ -45,7 +45,7 @@ test('los buscadores no muestran contadores técnicos del acervo ni cifras cruda
 });
 test('un sumario sólo se usa como pasaje si contiene todos los términos en modo todas', () => {
   assert.ok(html.includes('function sumarioCumpleConsulta(texto)'));
-  assert.ok(html.includes('requeridos.every(function(t){ return !!presentes[t.k]; })'));
+  assert.ok(html.includes('IVSPasajes.coincidencias(texto,[t],{modo:"todas",tope:1})'));
 });
 test('la respuesta oficial enriquece fichas del acervo y vuelve a pedir sus pasajes', () => {
   assert.ok(html.includes('function enriquecerResultadoLocal(destino,origen)'));
