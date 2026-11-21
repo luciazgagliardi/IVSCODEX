@@ -1,5 +1,5 @@
 /**
- * Sonda de las 19 fuentes automáticas publicadas y del acervo local.
+ * Sonda de las 23 fuentes automáticas publicadas y del acervo local.
  * No escribe datos. Cada consulta exige pedirEnVivo=true; un cero válido
  * queda separado de un error del origen o de una respuesta servida por la copia.
  * Ejecutar después del despliegue de Azure.
@@ -26,6 +26,10 @@ const pruebas = [
   { slug: 'chaco', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
   { slug: 'corrientes', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
   { slug: 'catamarca', q: 'sentencia', modo: 'todas', local: true },
+  { slug: 'chubut', q: 'daño moral', tribunal: 'sumarios', modo: 'todas' },
+  { slug: 'tfn', q: 'impuesto a las ganancias', tribunal: 'objetos', modo: 'todas' },
+  { slug: 'santacruz', q: 'amparo', tribunal: 'objetos', modo: 'todas' },
+  { slug: 'hudoc', q: 'freedom of expression', modo: 'todas' },
 ];
 
 async function unaPrueba(caso) {
