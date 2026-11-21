@@ -2990,9 +2990,9 @@
     },
     "[\"jurisprudencia\",{}]": {
       "desde": 160,
-      "pagina": 9,
-      "completas": false,
-      "paginas": 8
+      "pagina": 10,
+      "completas": true,
+      "paginas": 9
     },
     "[\"pago\",{}]": {
       "desde": 20,
@@ -5305,7 +5305,7 @@
       "paginas": 1
     }
   },
-  "indiceTerminos": 480,
+  "indiceTerminos": 720,
   "versionIds": 2,
   "versionAvanceTerminos": 2
 }

@@ -1,15 +1,17 @@
 {
- "version": "20261121-beb8d1fc",
- "generado": "2026-11-21T21:26:06.662Z",
+ "version": "20261121-1ef53c5d",
+ "generado": "2026-11-21T23:49:51.775Z",
  "archivos": [
   "caba-001.jsonl.gz",
   "catamarca-001.jsonl.gz",
+  "chubut-001.jsonl.gz",
   "dialnet-001.jsonl.gz",
   "hudoc-001.jsonl.gz",
   "jujuy-001.jsonl.gz",
   "juristeca-001.jsonl.gz",
   "mendoza-001.jsonl.gz",
   "mendozalegal-001.jsonl.gz",
+  "rionegro-001.jsonl.gz",
   "saij-001.jsonl.gz",
   "saij-002.jsonl.gz",
   "saij-003.jsonl.gz",
@@ -28,18 +30,20 @@
   "tfn-001.jsonl.gz"
  ],
  "conteos": {
-  "caba": 18557,
+  "caba": 19621,
   "csjn": 61810,
   "catamarca": 5160,
+  "chubut": 4612,
   "dialnet": 3912,
-  "hudoc": 7948,
-  "jujuy": 22368,
-  "juristeca": 34583,
-  "mendoza": 38347,
+  "hudoc": 10915,
+  "jujuy": 27233,
+  "juristeca": 35612,
+  "mendoza": 41665,
   "mendozalegal": 180,
+  "rionegro": 241,
   "saij": 779900,
-  "santacruz": 2740,
-  "scba": 34354,
-  "tfn": 10360
+  "santacruz": 2762,
+  "scba": 36885,
+  "tfn": 12390
  }
 }
