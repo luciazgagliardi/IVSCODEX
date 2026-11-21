@@ -51,7 +51,7 @@ test('sin snapshot, el hilo FTS consulta todos los fallos con sinónimos y provi
   assert.equal(punitivo?.total,3);
   assert.deepEqual(new Set(punitivo.resultados.map(x=>x.id)),new Set(['mza_3','mza_4','saij_2']));
   assert.equal(estadoAcervo().lectura?.modo,'lectura_persistente_solo_lectura');
-  assert.ok(estadoAcervo().lectura?.archivo?.endsWith('acervo.db'));
+  assert.match(estadoAcervo().lectura?.archivo || '', /acervo-azure-sin-snapshot-1-[a-f0-9-]+\.db$/);
   assert.equal(estadoAcervo().errorHilo,null);
 });
 
