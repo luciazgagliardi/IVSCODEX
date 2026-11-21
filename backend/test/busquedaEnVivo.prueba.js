@@ -50,7 +50,9 @@ test('un sumario sólo se usa como pasaje si contiene todos los términos en mod
 test('la respuesta oficial enriquece fichas del acervo y vuelve a pedir sus pasajes', () => {
   assert.ok(html.includes('function enriquecerResultadoLocal(destino,origen)'));
   assert.ok(html.includes('enriquecerResultadoLocal(existente,r)'));
-  assert.ok(!html.includes('if(idsConfirmados&&!idsConfirmados.has(r.id)) return'));
+  const enriquecer = html.indexOf('enriquecerResultadoLocal(existente,r)');
+  const deduplicar = html.indexOf('if(idsConfirmados&&!idsConfirmados.has(r.id)) return', enriquecer);
+  assert.ok(enriquecer > 0 && deduplicar > enriquecer, 'primero completa la ficha visible y después descarta IDs ya guardados');
   assert.ok(html.includes('traerFragmentos(slug,im.pedido,0)'));
   assert.ok(html.includes('traerFragmentos(slug,im.pedido,1)'));
 });
