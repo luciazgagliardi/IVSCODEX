@@ -22,6 +22,8 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
+import { randomUUID } from 'node:crypto';
+import { adquirirCandado } from './acervoCandado.js';
 import { rutaTemporalImportacion, rutaCopiaLectura, rutaCopiaTemporal } from './acervoArchivos.js';
 import zlib from 'node:zlib';
 import readline from 'node:readline';
@@ -35,7 +37,7 @@ const DIR_BASE = process.env.DIR_ACERVO ? path.resolve(process.env.DIR_ACERVO) :
 // lo que el propio servidor cosecha (lib/cosechaCaba.js): un renglón por fallo, y se vuelve a sumar en cada versión nueva
 const DIR_COSECHAS = path.join(DIR_BASE, 'cosechas');
 
-let sqlite = null, db = null, estado = { activo: false, version: null, conteos: {}, importando: false, error: null };
+let sqlite = null, db = null, archivoActivo = null, estado = { activo: false, version: null, conteos: {}, importando: false, error: null };
 async function modulo() {
   if (sqlite !== null) return sqlite;
   try {
@@ -57,24 +59,65 @@ function abrir(archivo) {
 }
 const leerManifiesto = () => { try { return JSON.parse(fs.readFileSync(path.join(DIR_TANDAS, 'manifiesto.json'), 'utf8')); } catch { return null; } };
 
-/** Abre la base que haya y, si las tandas son de otra versión, las importa de fondo. */
+function punteroAcervo() {
+  try { return JSON.parse(fs.readFileSync(path.join(DIR_BASE, 'acervo-activo.json'), 'utf8')); }
+  catch { return null; }
+}
+function rutaAcervo(man) {
+  const p = punteroAcervo();
+  if (man && p?.version === man.version && typeof p.archivo === 'string' &&
+      path.basename(p.archivo) === p.archivo && /^acervo-[a-zA-Z0-9._-]+-[a-f0-9-]+\.db$/.test(p.archivo)) {
+    const candidato = path.join(DIR_BASE, p.archivo);
+    if (fs.existsSync(candidato)) return candidato;
+  }
+  return path.join(DIR_BASE, 'acervo.db'); // migración desde la base anterior
+}
+function metadatosValidos(archivo, version) {
+  let lectura;
+  try {
+    lectura = new sqlite.DatabaseSync(archivo, { readOnly: true });
+    const integridad = lectura.prepare('PRAGMA quick_check').all();
+    if (integridad.length !== 1 || integridad[0].quick_check !== 'ok') return null;
+    const meta = lectura.prepare('SELECT clave, valor FROM meta WHERE clave IN (?, ?)').all('version', 'esquema');
+    const m = Object.fromEntries(meta.map((x) => [x.clave, x.valor]));
+    if (m.version !== version || m.esquema !== ESQUEMA_V) return null;
+    return m;
+  } catch { return null; }
+  finally { try { lectura?.close(); } catch { /* ya cerrada */ } }
+}
+
+/** Abre la versión publicada del acervo; nunca sustituye un SQLite que otra instancia puede estar leyendo. */
 export async function prepararAcervo({ esperar = false } = {}) {
   if (!(await modulo())) { estado.error = 'Este Node no trae SQLite (node:sqlite)'; return estado; }
   await fsp.mkdir(DIR_BASE, { recursive: true });
-  const actual = path.join(DIR_BASE, 'acervo.db');
+  const man = leerManifiesto();
+  const actual = rutaAcervo(man);
   if (!db && fs.existsSync(actual)) {
     try {
       db = abrir(actual);
+      archivoActivo = actual;
       const m = db.prepare('SELECT valor FROM meta WHERE clave = ?');
       const esquema = m.get('esquema')?.valor || null;
-      // una base de un esquema anterior (2) sigue contestando mientras se arma la nueva; más vieja, no
       const sirve = esquema === ESQUEMA_V || esquema === '2';
       estado = { ...estado, activo: sirve, esquema, version: sirve ? (m.get('version')?.valor || null) : null, conteos: sirve ? JSON.parse(m.get('conteos')?.valor || '{}') : {} };
-      if (sirve) { completarAnios(); await sumarIndiceGuardado(); }
+      if (sirve && (!man || (man.version === estado.version && esquema === ESQUEMA_V))) {
+        const liberar = await adquirirCandado(path.join(DIR_BASE, '.acervo.lock'), { version: estado.version });
+        try {
+          const rutaActual = rutaAcervo(man);
+          if (rutaActual !== archivoActivo && fs.existsSync(rutaActual)) {
+            try { db.close(); } catch { /* ya cerrada */ }
+            db = abrir(rutaActual); archivoActivo = rutaActual;
+            const meta = db.prepare('SELECT valor FROM meta WHERE clave = ?');
+            estado = { ...estado, version: meta.get('version')?.valor || null, esquema: meta.get('esquema')?.valor || null,
+              conteos: JSON.parse(meta.get('conteos')?.valor || '{}'), activo: true };
+          }
+          completarAnios();
+          await sumarIndiceGuardado();
+        } finally { await liberar(); }
+      }
       if (esquema === ESQUEMA_V) copiarParaLeer();
-    } catch (e) { estado.error = e.message; db = null; }
+    } catch (e) { estado.error = e.message; db = null; archivoActivo = null; }
   }
-  const man = leerManifiesto();
   if (man && (man.version !== estado.version || estado.esquema !== ESQUEMA_V) && !estado.importando) {
     const tarea = importar(man).catch((e) => { estado.error = `importación: ${e.message}`; estado.importando = false; });
     if (esperar) await tarea;
@@ -82,44 +125,70 @@ export async function prepararAcervo({ esperar = false } = {}) {
   return estado;
 }
 
-/** Importa las tandas a una base nueva y, al terminar, la pone en lugar de la anterior. */
+/** Un único importador entre todas las instancias de Azure; cada versión se publica en un archivo inmutable. */
 async function importar(man) {
   estado.importando = true;
   const t0 = Date.now();
-  // El nombre anterior era el mismo en todos los procesos de Azure: un segundo
-  // arranque podía borrar el SQLite temporal de otro antes de su rename.
-  const nueva = rutaTemporalImportacion(DIR_BASE, man.version);
-  for (const f of [nueva, `${nueva}-wal`, `${nueva}-shm`]) await fsp.rm(f, { force: true });
-  // en un hilo aparte (lib/acervoImportar.js): mientras tanto contesta la base anterior
-  const { conteos } = await new Promise((ok, mal) => {
-    const w = new Worker(new URL('./acervoImportar.js', import.meta.url), { workerData: { man, dirTandas: DIR_TANDAS, nueva } });
-    w.once('message', ok);
-    w.once('error', mal);
-    w.once('exit', (c) => { if (c) mal(new Error(`el armado terminó con código ${c}`)); });
-  });
-  // Nunca cerrar la base vigente si el hilo no entregó un SQLite real.
-  const info = await fsp.stat(nueva);
-  if (!info.isFile() || info.size < 4096) throw new Error('SQLite temporal ausente o incompleto');
-  // Si durante la importación cambió el manifiesto del despliegue, no
-  // sustituir la base actual por una versión ya obsoleta.
-  if (leerManifiesto()?.version !== man.version) {
-    await fsp.rm(nueva, { force: true });
-    estado.importando = false;
-    return;
+  const liberar = await adquirirCandado(path.join(DIR_BASE, '.acervo.lock'), { version: man.version });
+  try {
+    // Otra instancia pudo terminar la misma importación mientras esperábamos el lock.
+    const puntero = punteroAcervo();
+    const publicada = puntero?.version === man.version && typeof puntero.archivo === 'string' &&
+      path.basename(puntero.archivo) === puntero.archivo ? path.join(DIR_BASE, puntero.archivo) : null;
+    if (publicada && metadatosValidos(publicada, man.version)) {
+      if (db) { try { db.close(); } catch { /* ya cerrada */ } }
+      db = abrir(publicada); archivoActivo = publicada;
+      const meta = db.prepare('SELECT clave, valor FROM meta WHERE clave IN (?, ?)').all('version', 'esquema');
+      const valores = Object.fromEntries(meta.map((x) => [x.clave, x.valor]));
+      const conteos = JSON.parse(db.prepare("SELECT valor FROM meta WHERE clave = 'conteos'").get()?.valor || '{}');
+      estado = { ...estado, activo: true, esquema: valores.esquema, version: valores.version, conteos, importando: false, error: null };
+      archivoLectura = null; generacion++;
+      await volverASumarCosechas();
+      await sumarIndiceGuardado();
+      copiarParaLeer();
+      return;
+    }
+
+    const nueva = rutaTemporalImportacion(DIR_BASE, man.version);
+    for (const f of [nueva, `${nueva}-wal`, `${nueva}-shm`]) await fsp.rm(f, { force: true });
+    const { conteos } = await new Promise((ok, mal) => {
+      const w = new Worker(new URL('./acervoImportar.js', import.meta.url), { workerData: { man, dirTandas: DIR_TANDAS, nueva } });
+      w.once('message', ok);
+      w.once('error', mal);
+      w.once('exit', (c) => { if (c) mal(new Error(`el armado terminó con código ${c}`)); });
+    });
+    const info = await fsp.stat(nueva);
+    if (!info.isFile() || info.size < 4096) throw new Error('SQLite temporal ausente o incompleto');
+    if (!metadatosValidos(nueva, man.version)) throw new Error('SQLite temporal no superó la comprobación de integridad');
+    if (leerManifiesto()?.version !== man.version) {
+      await fsp.rm(nueva, { force: true });
+      estado.importando = false;
+      return;
+    }
+
+    // No se reemplaza acervo.db ni se borran sus archivos WAL/SHM: otra
+    // instancia puede seguir leyendo la versión anterior. Se publica un
+    // archivo inmutable y luego se cambia el puntero de forma atómica.
+    const segura = String(man.version).replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 80);
+    const destino = path.join(DIR_BASE, `acervo-${segura}-${randomUUID()}.db`);
+    await fsp.rename(nueva, destino);
+    if (db) { try { db.close(); } catch { /* ya cerrada */ } }
+    db = abrir(destino);
+    archivoActivo = destino;
+    const temporalPuntero = path.join(DIR_BASE, `acervo-activo-${randomUUID()}.tmp`);
+    await fsp.writeFile(temporalPuntero, JSON.stringify({ version: man.version, archivo: path.basename(destino) }), { mode: 0o600 });
+    await fsp.rename(temporalPuntero, path.join(DIR_BASE, 'acervo-activo.json'));
+
+    archivoLectura = null;
+    generacion++;
+    estado = { activo: true, esquema: ESQUEMA_V, version: man.version, conteos, importando: false, error: null, segundos: Math.round((Date.now() - t0) / 1000) };
+    await volverASumarCosechas();
+    await sumarIndiceGuardado();
+    copiarParaLeer();
+    console.log(`[acervo] versión ${man.version}: ${Object.entries(conteos).map(([k, v]) => `${k} ${v}`).join(', ')} (${estado.segundos} s)`);
+  } finally {
+    await liberar();
   }
-  // en lugar de la anterior
-  const actual = path.join(DIR_BASE, 'acervo.db');
-  if (db) { try { db.close(); } catch { /* ya cerrada */ } db = null; }
-  for (const f of [`${actual}-wal`, `${actual}-shm`]) await fsp.rm(f, { force: true });
-  await fsp.rename(nueva, actual);
-  db = abrir(actual);
-  archivoLectura = null; // la copia de lectura era de la versión anterior
-  generacion++;          // los hilos de consulta vuelven a abrir la base (aunque se llame igual, es otra)
-  estado = { activo: true, esquema: ESQUEMA_V, version: man.version, conteos, importando: false, error: null, segundos: Math.round((Date.now() - t0) / 1000) };
-  await volverASumarCosechas();
-  await sumarIndiceGuardado();
-  copiarParaLeer();
-  console.log(`[acervo] versión ${man.version}: ${Object.entries(conteos).map(([k, v]) => `${k} ${v}`).join(', ')} (${estado.segundos} s)`);
 }
 
 export function estadoAcervo() { return { ...estado }; }
@@ -503,7 +572,7 @@ function siguiente() {
     libre.enCurso = t;
     t.desde = Date.now();
     libre.w.ref();
-    const archivo = archivoLectura || path.join(DIR_BASE, 'acervo.db');
+    const archivo = archivoLectura || archivoActivo || path.join(DIR_BASE, 'acervo.db');
     lectura().archivo = archivo;
     lectura().modo = archivoLectura ? 'snapshot_local' : 'lectura_persistente_solo_lectura';
     lectura().copiando = copiando;
