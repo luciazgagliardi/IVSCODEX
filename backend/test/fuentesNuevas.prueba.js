@@ -142,7 +142,7 @@ test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fa
       pagina: 1, porPagina: 20,
     });
     assert.equal(segunda.resultados[0].id, 'chubut_sumario_88004');
-    assert.equal(segunda.esSumarioRespaldo, undefined);
+    assert.equal(segunda.resultados[0].esSumarioRespaldo, true);
     assert.equal(segunda.siguienteDesde, null);
   });
 
