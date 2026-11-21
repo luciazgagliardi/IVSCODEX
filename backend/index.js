@@ -122,7 +122,7 @@ app.use(
  * Limite de peticiones
  * ------------------------------------------------------------------ */
 
-const RE_CONSULTA_FUENTE = /^\/api\/indice\/[a-z]+\/(buscar|fragmentos)$/;
+const RE_CONSULTA_FUENTE = /^\/api\/indice\/[a-z_-]+\/(buscar|fragmentos)$/;
 
 const limite = rateLimit({
   windowMs: LIMITE_VENTANA_MS,
@@ -132,7 +132,7 @@ const limite = rateLimit({
   // cada fuente tienen su propio límite (abajo): una sola búsqueda en todas
   // las bases hace unas 70 peticiones, y contarlas acá agotaba el cupo de
   // 120 en la segunda búsqueda y dejaba 16 de 18 bases en «0».
-  skip: (req) => /^\/api\/indice\/[a-z]+\/local$/.test(req.originalUrl.split('?')[0]) ||
+  skip: (req) => /^\/api\/indice\/[a-z_-]+\/local$/.test(req.originalUrl.split('?')[0]) ||
     RE_CONSULTA_FUENTE.test(req.originalUrl.split('?')[0]),
   standardHeaders: 'draft-7',
   legacyHeaders: false,
@@ -178,7 +178,7 @@ const limiteFTSLocal = rateLimit({
     mensaje: 'Demasiadas consultas al índice local. Reintente en un minuto.',
   },
 });
-app.use(/^\/api\/indice\/[a-z]+\/local$/, limiteFTSLocal);
+app.use(/^\/api\/indice\/[a-z_-]+\/local$/, limiteFTSLocal);
 
 
 // Login y registro se limitan aparte y más estricto: son el blanco típico
