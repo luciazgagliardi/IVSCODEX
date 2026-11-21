@@ -535,6 +535,7 @@ function cerrarRegistros(registros) {
   for (const r of registros) {
     if (!r) continue;
     if (!r.sumario && r._tema) r.sumario = r._tema;
+    if (r.tipo === 'fallo' && r.sumario) r.tipoExtracto = 'Sumario asociado; no es el texto íntegro del fallo';
     delete r._rel;
     delete r._tema;
     delete r._guid;
@@ -706,11 +707,12 @@ async function buscarSaijSimple({ q, modo = 'todas', excluir = '', tribunal = 's
 // El cursor mantiene separadas las dos fases del modo combinado sin perder
 // páginas cuando SAIJ obliga a paginar por filas crudas del sitio.
 const CURSOR_SUMARIOS_RESALDO = 1_000_000_000;
-const claveCasoRespaldo = (r) => [
-  String(r?.caratula || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim(),
-  String(r?.fecha || '').trim(),
-  String(r?.tribunal || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim(),
-].join('|');
+function claveCasoRespaldo(r) {
+  const caratula = String(r?.caratula || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim();
+  const fecha = String(r?.fecha || '').trim();
+  const tribunal = String(r?.tribunal || '').normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().trim();
+  return caratula || fecha ? [caratula, fecha, tribunal].join('|') : `id:${r?.id || ''}`;
+}
 
 /**
  * Modo jurisprudencial predeterminado: primero consulta fichas de fallos.
