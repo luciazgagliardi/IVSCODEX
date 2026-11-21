@@ -16,6 +16,8 @@ test('sin acentos y por la raíz: lo que el buscador encontró se ve marcado', (
   assert.deepEqual(marcadas('Los despidos fueron discriminatorios.', 'despido discriminatorio'), ['despidos', 'discriminatorios']);
   assert.deepEqual(marcadas('Se reclama la INDEMNIZACIÓN por daños morales.', 'indemnizacion daño moral'), ['INDEMNIZACIÓN', 'daños', 'morales']);
   assert.deepEqual(marcadas('corresponde indemnizar el daño', 'indemnización'), ['indemnizar']);
+  assert.deepEqual(marcadas('Se reconocen indemnizaciones por daño moral.', 'indemnización'), ['indemnizaciones']);
+  assert.deepEqual(marcadas('La indemnización extraordinaria fue reclamada.', 'indemnizaciones'), ['indemnización']);
   // una palabra corta no marca otras que empiezan igual
   assert.deepEqual(marcadas('La desidia del archivo', 'des'), []);
   assert.deepEqual(marcadas('el daño y los daños', 'daño'), ['daño', 'daños']);
