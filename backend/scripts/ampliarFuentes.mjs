@@ -29,6 +29,14 @@ export const PLAN = {
   // El portal excluye expresamente Familia, Menores y Penal. Se cosechan
   // únicamente materias que el propio sistema público declara comprendidas.
   jujuy: { porPagina: 20, consultas: ['daño moral', 'responsabilidad civil', 'daños y perjuicios', 'despido', 'derecho laboral', 'recurso de inconstitucionalidad', 'recurso extraordinario', 'amparo', 'derecho a la salud', 'contrato', 'incumplimiento contractual', 'prescripción', 'usucapión', 'empleo público', 'debido proceso', 'defensa en juicio', 'prueba', 'intereses', 'medida cautelar', 'cosa juzgada', 'nulidad', 'competencia', 'derecho administrativo', 'derecho tributario'] },
+  chubut: { porPagina: 20, variantes: [{ tribunal: 'sumarios' }, { tribunal: 'sentencias' }],
+    consultas: ['daño moral', 'responsabilidad civil', 'daños y perjuicios', 'despido', 'accidente de trabajo', 'amparo', 'derecho a la salud', 'alimentos', 'familia', 'prescripción', 'contrato', 'nulidad', 'competencia', 'prueba', 'medida cautelar', 'empleo público'] },
+  tfn: { porPagina: 25, variantes: [{ tribunal: 'objetos' }, { tribunal: 'doctrinas' }],
+    consultas: ['impuesto a las ganancias', 'deducción de intereses', 'IVA crédito fiscal', 'determinación de oficio', 'prescripción tributaria', 'repetición de tributos', 'multa aduanera', 'clasificación arancelaria', 'valor en aduana', 'ajuste por inflación', 'quebrantos impositivos', 'salidas no documentadas', 'responsabilidad solidaria', 'procedimiento tributario', 'medida cautelar tributaria'] },
+  santacruz: { porPagina: 25, variantes: [{ tribunal: 'objetos' }, { tribunal: 'doctrinas' }],
+    consultas: ['amparo', 'derecho a la salud', 'empleo público', 'despido', 'daño moral', 'responsabilidad civil', 'contrato', 'familia', 'alimentos', 'prescripción', 'recurso de inconstitucionalidad', 'debido proceso', 'prueba', 'medio ambiente', 'minería', 'medida cautelar'] },
+  hudoc: { porPagina: 20,
+    consultas: ['freedom of expression', 'right to a fair trial', 'right to life', 'right to respect for private and family life', 'protection of property', 'freedom of religion', 'prohibition of torture', 'discrimination', 'effective remedy', 'presumption of innocence', 'access to court', 'environmental protection', 'children rights', 'data protection', 'immigration detention', 'reasonable time', 'judicial independence', 'article 6', 'article 8', 'article 10'] },
 };
 const limite = (nombre, def, max) => Math.max(1, Math.min(max, Number(process.env[nombre]) || def));
 const MAX_PAGINAS = limite('MAX_PAGINAS', 600, 1500);
