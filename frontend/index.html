@@ -7301,6 +7301,9 @@ function panelIndice(f){
     }).join("")+'</div>';
   }
 
+  if(im.estadoVivo==="ok"&&im.vistaOficial&&im.local&&im.vistaOficial.origenEnVivo!=="saij"&&
+     im.vistaOficial.origenEnVivo!=="mixto"&&im.vistaOficial.total===0&&im.total>0)
+    out+='<div class="aviso" role="status">La fuente oficial no devolvió coincidencias; los resultados visibles provienen del acervo guardado.</div>';
   if(im.estadoVivo==="ok"&&im.vistaOficial&&im.local&&hayMasResultadosOficiales(im))
     out+='<p style="margin:0 0 12px"><button type="button" class="mini" data-act="indice-mas-oficial" data-fuente="'+f.slug+'"'+
       (im.buscandoMasOficial?' disabled':'')+'>'+
@@ -7308,8 +7311,8 @@ function panelIndice(f){
   if(im.errorMasOficial)out+='<p class="rz-aviso" role="status">'+esc(im.errorMasOficial)+'</p>';
   if(im.cargando) return out+'</div>';
   if(im.error){
-    out+='<p style="font-size:13px;color:var(--humo);margin:0">No se pudo consultar '+esc(f.nombre)+'. '+esc(String(im.error))+'</p>'+
-      '</div>';
+    out+='<div class="aviso" role="alert">No se pudo consultar '+esc(f.nombre)+'. '+esc(String(im.error))+
+      ' Este error no equivale a una búsqueda válida con cero resultados. Revise el portal oficial o vuelva a consultar más tarde.</div></div>';
     return out;
   }
   if(!im.busco) return out+'</div>';
