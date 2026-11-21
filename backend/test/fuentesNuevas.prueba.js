@@ -98,8 +98,8 @@ test('Chubut sigue redirecciones de acceso anónimo y renueva una sesión expira
       });
     }
     if (u.pathname.endsWith('/RegistrarAccesoAnonimo')) {
-      registrosAnonimos++;
-      if (u.pathname.endsWith('/RegistrarAccesoAnonimo') && !u.searchParams.has('confirmado')) {
+      if (!u.searchParams.has('confirmado')) {
+        registrosAnonimos++;
         return new Response('', {
           status: 302,
           headers: {
@@ -108,11 +108,6 @@ test('Chubut sigue redirecciones de acceso anónimo y renueva una sesión expira
           },
         });
       }
-      return new Response('Acceso anónimo habilitado', {
-        status: 200, headers: { 'Set-Cookie': 'EurekaSession=renewed-' + registrosAnonimos + '; Path=/' },
-      });
-    }
-    if (u.searchParams.has('confirmado')) {
       return new Response('Acceso anónimo confirmado', {
         status: 200, headers: { 'Set-Cookie': 'EurekaSession=renewed-' + registrosAnonimos + '; Path=/' },
       });
