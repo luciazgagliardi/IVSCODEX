@@ -15,6 +15,9 @@ on:
       - 'backend/scripts/armarAcervo.mjs'
       - 'backend/lib/avanceCosecha.js'
       - 'backend/test/ampliacionAcervo.prueba.js'
+      - 'backend/test/jujuy.prueba.js'
+      - 'backend/test/indiceCabaHost.prueba.js'
+      - 'backend/lib/fuentesInfo.js'
   push:
     branches: [main]
     paths:
@@ -23,6 +26,9 @@ on:
       - 'backend/scripts/ampliarCorteidh.mjs'
       - 'backend/scripts/armarAcervo.mjs'
       - 'backend/lib/avanceCosecha.js'
+      - 'backend/test/jujuy.prueba.js'
+      - 'backend/test/indiceCabaHost.prueba.js'
+      - 'backend/lib/fuentesInfo.js'
   workflow_dispatch: {}
   schedule:
     - cron: '17 5 * * 0'
@@ -60,6 +66,8 @@ jobs:
           node --check scripts/ampliarCorteidh.mjs
           node --check scripts/armarAcervo.mjs
           node --test test/ampliacionAcervo.prueba.js
+          node --test test/jujuy.prueba.js test/indiceCabaHost.prueba.js
+          node --check ../ops/diagnosticar-en-vivo.mjs
 
   fuentes:
     if: github.event_name != 'pull_request'
