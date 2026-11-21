@@ -46,6 +46,60 @@ test('el diagnóstico en vivo prueba cada fuente registrada una sola vez, inclui
   assert.ok(slugs.includes('chubut_saij'));
   assert.ok(slugs.includes('santacruz'));
   assert.ok(slugs.includes('santacruz_saij'));
+  const clasificacion = diagnostico.split('\\n').find(line => line.includes('nuevasFacetasRegistradas:'));
+  assert.ok(clasificacion && clasificacion.includes('_saij
+
+test('el diagnóstico de las 41 fuentes corre después del smoke de Azure, sin workflow_run encadenado', () => {
+  const smoke = fs.readFileSync(new URL('../../.github/workflows/smoke-acervo-azure.yml', import.meta.url), 'utf8');
+  const diagnostico = fs.readFileSync(new URL('../../.github/workflows/diagnosticar-en-vivo.yml', import.meta.url), 'utf8');
+  assert.ok(smoke.includes('\n  consultas:\n'));
+  assert.ok(smoke.includes('    needs: smoke'));
+  assert.ok(smoke.includes("needs.smoke.result == 'success'"));
+  assert.ok(smoke.includes('node ops/diagnosticar-en-vivo.mjs'));
+  assert.ok(smoke.includes('Consultar las 41 fuentes después de comprobar Azure y el índice FTS'));
+  assert.ok(smoke.includes('cancel-in-progress: false'));
+  assert.ok(!diagnostico.includes('workflow_run:'));
+  assert.ok(diagnostico.includes("if: github.event_name == 'workflow_dispatch'"));
+});
+
+test('el texto y la metadata provincial no se reemplazan por fichas más cortas al fusionar', () => {
+  const armar = fs.readFileSync(new URL('../scripts/armarAcervo.mjs', import.meta.url), 'utf8');
+  assert.match(armar, /const combinado = \{ \.\.\.ya \}/);
+  assert.match(armar, /previo == null \|\| previo === ''/);
+  assert.match(armar, /clave === 'sumario'/);
+  assert.match(armar, /clave === 'voces'/);
+});
+
+test('cosechas SAIJ en las 24 jurisdicciones con progreso y artefactos independientes', () => {
+  const script = fs.readFileSync(new URL('../scripts/cosecharSaij.mjs', import.meta.url), 'utf8');
+  const workflow = fs.readFileSync(new URL('../../.github/workflows/ampliacion-integral.yml', import.meta.url), 'utf8');
+  assert.match(script, /progreso-saij\$\{sufijo\}\.json/);
+  assert.match(workflow, /saij_provincial:/);
+  assert.match(workflow, /max-parallel: 2/);
+  assert.match(workflow, /max-parallel: 4/);
+  assert.match(workflow, /needs: \[pruebas, fuentes, saij, saij_provincial, corteidh\]/);
+  for (const [slug] of vistas) {
+    const cosechaSlug = slug === 'chubut_saij' ? 'chubut' : slug === 'santacruz_saij' ? 'santacruz' : slug;
+    assert.match(workflow, new RegExp('slug: ' + cosechaSlug + ','));
+  }
+  assert.match(workflow, /fuente-saij-\$\{\{ matrix\.slug \}\}/);
+});
+
+test('buscador expone las 24 vistas territoriales SAIJ y las distingue de los sitios directos', () => {
+  const html = fs.readFileSync(new URL('../../frontend/index.html', import.meta.url), 'utf8');
+  for (const [slug, provincia] of vistas) {
+    assert.ok(html.includes('slug:"' + slug + '"'), slug);
+    assert.ok(html.includes('SAIJ'), slug);
+    assert.ok(html.includes('"' + slug + '"'), slug);
+    assert.ok(html.includes(provincia), slug);
+  }
+  const acervo = fs.readFileSync(new URL('../lib/acervo.js', import.meta.url), 'utf8');
+  assert.match(acervo, /const origen = territorial \? 'saij' : fuente/);
+  assert.match(acervo, /UPDATE fallos SET provincia/);
+});
+));
+  assert.ok(!clasificacion.includes('chubut|') && !clasificacion.includes('|santacruz|'),
+    'las fuentes directas no se cuentan como facetas agregadas SAIJ');
 });
 
 test('el diagnóstico de las 41 fuentes corre después del smoke de Azure, sin workflow_run encadenado', () => {
