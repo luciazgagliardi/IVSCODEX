@@ -52,6 +52,11 @@ test('las vistas provinciales SAIJ identifican la provincia y mantienen clara la
   }
 });
 
+test('los límites por ruta aceptan slugs con guion bajo de las facetas provinciales', () => {
+  const index = fs.readFileSync(new URL('../index.js', import.meta.url), 'utf8');
+  assert.equal((index.match(/\[a-z_\-\]\+/g) || []).length, 3);
+});
+
 test('la procedencia se incorpora sin destruir los metadatos originales ni mutar la ficha', () => {
   const original = { id: 'x1', caratula: 'Caso de prueba', tribunal: 'Tribunal de prueba' };
   const salida = anotarProcedencia('mendoza', [original]);
