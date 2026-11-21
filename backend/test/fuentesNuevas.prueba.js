@@ -36,6 +36,11 @@ test('Chubut inicia acceso anónimo, conserva sesión y pagina en el JSON oficia
   await conFetch(async (url, opciones = {}) => {
     const u = new URL(url);
     llamadas.push({ url: u, opciones });
+    if (u.pathname.endsWith('/Home/Index')) {
+      return new Response('Inicio Eureka', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaVisit=visit-1; Path=/' },
+      });
+    }
     if (u.pathname.endsWith('/RegistrarAccesoAnonimo')) {
       return new Response('Acceso anónimo habilitado', {
         status: 200, headers: { 'Set-Cookie': 'EurekaSession=anon-123; Path=/; HttpOnly' },
@@ -68,12 +73,16 @@ test('Chubut inicia acceso anónimo, conserva sesión y pagina en el JSON oficia
     assert.equal(segunda.pagina, 2);
     assert.equal(segunda.resultados[0].id, 'chubut_sumario_64708');
   });
+  assert.equal(llamadas.filter(x => x.url.pathname.endsWith('/Home/Index')).length, 1);
   assert.equal(llamadas.filter(x => x.url.pathname.endsWith('/RegistrarAccesoAnonimo')).length, 1);
   assert.equal(llamadas.filter(x => x.url.pathname.endsWith('/BuscarPorCriterios')).length, 2);
-  assert.equal(llamadas[1].url.searchParams.get('PageIndex'), '1');
-  assert.equal(llamadas[2].url.searchParams.get('PageIndex'), '2');
-  assert.equal(llamadas[1].url.searchParams.get('Tipo'), '');
+  assert.equal(llamadas[2].url.searchParams.get('PageIndex'), '1');
+  assert.equal(llamadas[3].url.searchParams.get('PageIndex'), '2');
+  assert.equal(llamadas[2].url.searchParams.get('Tipo'), '');
+  assert.match(llamadas[2].opciones.headers.Cookie || '', /EurekaVisit=visit-1/);
   assert.match(llamadas[2].opciones.headers.Cookie || '', /EurekaSession=anon-123/);
+  assert.equal(llamadas[2].opciones.headers['X-Requested-With'], 'XMLHttpRequest');
+  assert.equal(llamadas[3].opciones.headers['X-Requested-With'], 'XMLHttpRequest');
 });
 
 test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fallos', async () => {
@@ -81,6 +90,11 @@ test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fa
   await conFetch(async (url, opciones = {}) => {
     const u = new URL(url);
     llamadas.push({ url: u, opciones });
+    if (u.pathname.endsWith('/Home/Index')) {
+      return new Response('Inicio Eureka', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaVisit=visit-1; Path=/' },
+      });
+    }
     if (u.pathname.endsWith('/RegistrarAccesoAnonimo')) {
       return new Response('Acceso anónimo habilitado', {
         status: 200, headers: { 'Set-Cookie': 'EurekaSession=fallos-first; Path=/; HttpOnly' },
@@ -148,7 +162,10 @@ test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fa
 
   assert.ok(llamadas.some((x) => x.url.pathname.endsWith('/Sentencias/BuscarPorCriterios')));
   assert.ok(llamadas.some((x) => x.url.pathname.endsWith('/Sumarios/BuscarPorCriterios')));
+  assert.equal(llamadas.filter((x) => x.url.pathname.endsWith('/Home/Index')).length, 2);
   assert.equal(llamadas.filter((x) => x.url.pathname.endsWith('/RegistrarAccesoAnonimo')).length, 2);
+  for (const x of llamadas.filter((x) => /BuscarPorCriterios/.test(x.url.pathname)))
+    assert.equal(x.opciones.headers['X-Requested-With'], 'XMLHttpRequest');
   const pathOrden = llamadas.filter((x) => /BuscarPorCriterios/.test(x.url.pathname)).map((x) => x.url.pathname);
   assert.ok(pathOrden[0].endsWith('/Sentencias/BuscarPorCriterios'));
   assert.ok(pathOrden[1].endsWith('/Sumarios/BuscarPorCriterios'));
