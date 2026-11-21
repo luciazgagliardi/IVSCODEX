@@ -308,10 +308,10 @@ if (!PLAN[base]) {
   // El índice sólo avanza sobre la secuencia contigua de términos cuyas
   // variantes ya agotaron su paginación. Si el presupuesto se termina a mitad
   // de una ronda, el proceso retoma ese término y su cursor en la ejecución siguiente.
-  const avance = avanzarIndiceTerminos({ palabras, indiceInicial, ventana, variantes, tareas: progreso.tareas });
-  progreso.indiceTerminos = avance.indice;
+  const resultadoAvance = avanzarIndiceTerminos({ palabras, indiceInicial, ventana, variantes, tareas: progreso.tareas });
+  progreso.indiceTerminos = resultadoAvance.indice;
   const pendientes = tareas.filter(({ q, variante }) => !progreso.tareas[claveDe(q, variante)]?.completas);
-  informeCosecha.terminosCompletados = avance.completados;
+  informeCosecha.terminosCompletados = resultadoAvance.completados;
   informeCosecha.terminosPendientes = pendientes.length;
   informeCosecha.parcialPorPresupuesto = informeCosecha.paginas >= MAX_PAGINAS && pendientes.length > 0;
   informeCosecha.consultasCompletas = tareas.length - pendientes.length;
