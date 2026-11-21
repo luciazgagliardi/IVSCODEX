@@ -13,6 +13,15 @@ import { parsear, totalDe } from '../lib/indiceRioNegro.js';
 const FILA = `<div class="summary">Mostrando <b>1-10</b> de <b>1,205</b> elementos.</div>
 <tr data-key="2ce5d044-1358"><td class="content-gridview"><div class="well well-sm contenido-column"><p class="titulo-grilla-registro">LACIAR, CLAUDIA B. y OTRAS C /SOFIASUR S.R.L. S /ACCION DE AMPARO</p><div class="contenido-column-detalle"><div class="texto-sentencia"><p>...la nulidad del <resaltar>despido</resaltar> por <resaltar>discriminatorio</resaltar> fundada...</p><p>...un <resaltar>despido</resaltar><resaltar>discriminatorio</resaltar>, con efectos...</p></div><div class="row item-grilla"><div><p>SENTENCIA: 56 - 09/05/2017 - DEFINITIVA</p></div></div><p><a href="/protocoloweb/protocolo/descargar-archivo-pdf?id_protocolo=2ce5d044-1358">Descargar</a></p><p class="organismo-grilla">SECRETARÍA CAUSAS ORIGINARIAS Y CONSTITUCIONAL STJ Nº4</p></div></td></tr>`;
 
+test('Río Negro usa la faceta jurisdiccional pública de SAIJ cuando el Protocolo requiere CAPTCHA', () => {
+  const cliente = fs.readFileSync(new URL('../lib/indiceRioNegro.js', import.meta.url), 'utf8');
+  assert.match(cliente, /buscarProvinciaSaij\('rionegro_saij'/);
+  assert.match(cliente, /origenEnVivo: 'saij'/);
+  assert.match(cliente, /fuenteSlug: 'saij'/);
+  assert.match(cliente, /procedencia: 'SAIJ'/);
+  assert.match(cliente, /respuesta\\s\+403/);
+});
+
 test('una fila del Protocolo web', () => {
   assert.equal(totalDe(FILA), 1205);
   const [r] = parsear(FILA, '1');
