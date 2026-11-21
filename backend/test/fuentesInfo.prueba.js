@@ -55,6 +55,10 @@ test('SAIJ se reclasifica según el tipo documental realmente consultado', () =>
   assert.equal(informacionFuente('saij', { tribunal: 'fallos' }).linea, 'Jurisprudencia · fichas de fallos');
   const todo = informacionFuente('saij');
   assert.equal(todo.linea, 'Jurisprudencia · fallos y sumarios de respaldo');
+  assert.match(informacionFuente('scba').tipo, /enlace a sentencia íntegra/);
+  assert.match(informacionFuente('santafe').tipo, /enlace a sentencia íntegra/);
+  assert.equal(anotarProcedencia('scba', [{ id: 'scba1', tipo: 'sumario' }])[0].tipoDocumento, 'Sumario jurisprudencial');
+  assert.equal(anotarProcedencia('santafe', [{ id: 'sf1', tipo: 'sumario' }])[0].tipoDocumento, 'Sumario jurisprudencial');
   assert.deepEqual(todo.lineas, ['jurisprudencia', 'nacional', 'agregador']);
   const clasificados = anotarProcedencia('saij', [
     { id: 'f1', tipo: 'fallo' },
