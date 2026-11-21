@@ -7,6 +7,7 @@
  * explicar al usuario qué está mirando.
  */
 import { VISTAS_PROVINCIALES_SAIJ } from './indiceProvincialSaij.js';
+import { FUENTES } from './fuentes.js';
 
 const INFO = {
   mendoza: {
@@ -261,7 +262,12 @@ export function informacionFuente(slug, opciones = {}) {
 }
 
 export function catalogoFuentesIntegradas() {
-  return Object.entries(INFO).map(([slug]) => informacionFuente(slug));
+  // El catálogo público debe describir exactamente las rutas montadas por
+  // routes/indice.js. No se reconstruye desde INFO porque una fuente nueva
+  // podría quedar consultable pero invisible en el catálogo.
+  const faltantes = FUENTES.filter(({ slug }) => !INFO[slug]).map(({ slug }) => slug);
+  if (faltantes.length) throw new Error('Fuentes sin metadata: ' + faltantes.join(', '));
+  return FUENTES.map(({ slug }) => informacionFuente(slug));
 }
 
 export function anotarProcedencia(slug, resultados = [], opciones = {}) {
