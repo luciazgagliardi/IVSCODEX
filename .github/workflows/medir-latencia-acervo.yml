@@ -7,8 +7,10 @@ on:
       - 'ops/medir-latencia-acervo.mjs'
       - '.github/workflows/medir-latencia-acervo.yml'
   workflow_dispatch: {}
+  # La medición va al final para no competir con la consulta de 37 rutas.
   workflow_run:
-    workflows: ['Publicar backend en Azure App Service']
+    workflows: ['Diagnosticar consultas oficiales en vivo']
+    branches: [main]
     types: [completed]
 
 permissions:
@@ -20,7 +22,7 @@ concurrency:
 
 jobs:
   medir:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'cancelled'
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
