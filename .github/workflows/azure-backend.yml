@@ -3,7 +3,11 @@ name: Publicar backend en Azure App Service
 on:
   push:
     branches: [main]
-    paths: ["backend/**", "frontend/pasajes.js", ".github/workflows/azure-backend.yml"]
+    paths:
+      - "backend/**"
+      - "!backend/test/**"
+      - "frontend/pasajes.js"
+      - ".github/workflows/azure-backend.yml"
   workflow_dispatch: {}
 
 permissions:
