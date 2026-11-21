@@ -46,8 +46,10 @@ test('el diagnóstico en vivo prueba cada fuente registrada una sola vez, inclui
   assert.ok(slugs.includes('chubut_saij'));
   assert.ok(slugs.includes('santacruz'));
   assert.ok(slugs.includes('santacruz_saij'));
-  const clasificacion = diagnostico.split('\\n').find(line => line.includes('nuevasFacetasRegistradas:'));
-  assert.ok(clasificacion && clasificacion.includes('_saij
+  const clasificacion = diagnostico.split(String.fromCharCode(10)).find(line => line.includes('nuevasFacetasRegistradas:'));
+  assert.ok(clasificacion && clasificacion.includes('_saij$'));
+  assert.ok(!clasificacion.includes('chubut|') && !clasificacion.includes('|santacruz|'));
+});
 
 test('el diagnóstico de las 41 fuentes corre después del smoke de Azure, sin workflow_run encadenado', () => {
   const smoke = fs.readFileSync(new URL('../../.github/workflows/smoke-acervo-azure.yml', import.meta.url), 'utf8');
