@@ -287,7 +287,7 @@ export { consultaFts, anioDe };
  * base del respaldo. Devuelve registros con la forma de los de la búsqueda
  * en vivo, ordenados por relevancia (BM25, la carátula pesa más).
  */
-export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [], limite = 400 } = {}) {
+export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [], tribunal = 'todo', limite = 400 } = {}) {
   if (!acervoTiene(fuente)) return null;
   const principal = String(q || '').trim();
   const consultas = [principal, ...(Array.isArray(variantes) ? variantes : [])
@@ -304,13 +304,24 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
   if (anioDesde) { donde.push('f.anio >= ?'); args.push(Number(anioDesde)); }
   if (anioHasta) { donde.push('f.anio <= ?'); args.push(Number(anioHasta)); }
   if (provincia) { donde.push('f.provincia = ?'); args.push(provincia); }
+  const esSaij = fuente === 'saij' || fuente === 'csjn';
+  if (esSaij) {
+    if (tribunal === 'fallos') donde.push("f.tipo = 'fallo'");
+    else if (tribunal === 'sumarios') donde.push("f.tipo = 'sumario'");
+    else donde.push("(f.tipo IN ('fallo','sumario') OR f.tipo IS NULL)");
+  }
+  const priorizaFallos = tribunal !== 'sumarios';
   args.push(Math.min(2000, Math.max(1, limite)));
   try {
+    const pesoTipo = priorizaFallos ? "CASE WHEN f.tipo = 'sumario' THEN 1 ELSE 0 END," : '';
     const filas = db.prepare(`SELECT f.* FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}
-      ORDER BY bm25(fts, 4.0, 1.0, 2.0, 0.0${ftsConMagistrados(db) ? ', 1.0' : ''}) LIMIT ?`).all(...args);
+      ORDER BY ${pesoTipo} bm25(fts, 4.0, 1.0, 2.0, 0.0${ftsConMagistrados(db) ? ', 1.0' : ''}), f.rid LIMIT ?`).all(...args);
     return filas.map((f) => {
       const r = { id: f.id, caratula: f.caratula, tribunal: f.tribunal, fecha: f.fecha, expediente: f.expediente, sumario: f.sumario,
-        voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo, desdeAcervo: true };
+        voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo,
+        ...(priorizaFallos && f.tipo === 'sumario' ? { esSumarioRespaldo: true } : {}),
+        ...(f.tipo === 'fallo' && f.sumario ? { tipoExtracto: 'Sumario asociado; no es el texto íntegro del fallo' } : {}),
+        desdeAcervo: true };
       for (const k of Object.keys(r)) if (r[k] == null) delete r[k];
       return r;
     });
