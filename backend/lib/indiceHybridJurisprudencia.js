@@ -44,7 +44,7 @@ function normalizarResultado(fila, fuente, searchIn) {
     ? 'https://jurisprudenciatfn.mecon.gob.ar/'
     : 'https://jurisprudencia.jussantacruz.gob.ar/');
   const urlPdf = campo(meta, 'pdf_url', 'url_pdf', 'documento_pdf', 'linkFallo');
-  const generado = searchIn === 'doctrinas' || doctrinas.length > 0 || sumarios.length > 0;
+  const generado = searchIn === 'doctrinas' || Boolean(fila?.objeto_texto) || doctrinas.length > 0 || sumarios.length > 0;
   return {
     id, caratula, tribunal,
     fecha: fecha(campo(meta, 'fecha', 'fecha_fallo', 'fecha_resolucion', 'date')),
@@ -91,12 +91,13 @@ export async function buscarIndiceHybrid({
     const datos = await respuesta.json();
     if (!datos || !Array.isArray(datos.results)) throw errores.indiceFuenteFalla(fuente, 'respuesta JSON con forma inesperada');
     const resultados = datos.results.map((r) => normalizarResultado(r, fuente, searchIn)).filter(Boolean);
-    const total = Number.isFinite(Number(datos.total)) ? Number(datos.total) : resultados.length;
+    const totalDeclarado = datos.total !== null && datos.total !== undefined && Number.isFinite(Number(datos.total));
+    const total = totalDeclarado ? Number(datos.total) : resultados.length;
     return {
       ok: true, total, totalFuente: total,
       // El API todavía no expone paginación verificada. El resultado de 25 es
       // una muestra; la cosecha ensancha cobertura con términos distintos.
-      totalParcial: total > resultados.length, revisados: resultados.length,
+      totalParcial: !totalDeclarado || total > resultados.length, revisados: resultados.length,
       siguienteDesde: null, pagina: 1, porPagina: resultados.length,
       searchIn, modo, resultados,
     };
