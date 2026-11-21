@@ -106,7 +106,7 @@ async function prepararPagina(pagina) {
 }
 
 /** Una página de ese origen que ya superó el desafío; si no hay, la gana. */
-async function paginaAutorizada(origen, informe) {
+async function paginaAutorizada(origen, informe, urlInicial = `${origen}/`) {
   const previa = paginas.get(origen);
   if (previa && !previa.isClosed()) return previa;
 
@@ -118,7 +118,7 @@ async function paginaAutorizada(origen, informe) {
   let titulo = '';
   let sinDesafio = false;
   try {
-    const resp = await pagina.goto(`${origen}/`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
+    const resp = await pagina.goto(urlInicial, { waitUntil: 'domcontentloaded', timeout: 30_000 });
     informe.estadoInicial = resp?.status();
     // Una respuesta 200 que no es el desafío ya está autorizada: no hay nada que esperar.
     sinDesafio = resp?.status() === 200 && resp.headers()['cf-mitigated'] !== 'challenge';
@@ -206,7 +206,7 @@ export function consultarConNavegador(urlTexto, opciones = {}, informe = {}) {
     const origen = url.origin;
     clearTimeout(cierre);
     try {
-      let pagina = await paginaAutorizada(origen, informe);
+      let pagina = await paginaAutorizada(origen, informe, url.toString());
       let r = await respuestaDesdePagina(pagina, url, opciones);
       if (r.estado === 403 || r.cfMitigated === 'challenge' ||
           (r.contentType.includes('text/html') && SEÑALES_DE_DESAFIO.test(r.buffer.toString('utf8', 0, 1200)))) {
