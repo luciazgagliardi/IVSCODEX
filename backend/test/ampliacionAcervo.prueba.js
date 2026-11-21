@@ -43,7 +43,7 @@ test('la expansión contempla todas las fuentes paginadas, incluidas Jujuy, más
 
 test('ids reales de Mendoza, CABA, SCBA y Río Negro se incorporan, no se descartan', () => {
   for(const id of ['sc_1014929_35314', 'mza_oficial_12399000248', 'caba_00123', 'juristeca-42',
-    'scba_987654', 'rionegro_16482', 'aBcDEF123'])
+    'scba_987654', 'rionegro_16482', 'jujuy_535558', 'aBcDEF123'])
     assert.equal(idDocumentalValido(id), true, id);
   for(const id of [null, '', ' ', '../escape', 'x', 'x'.repeat(161)])
     assert.equal(idDocumentalValido(id), false, String(id));
