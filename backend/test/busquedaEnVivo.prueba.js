@@ -88,12 +88,16 @@ test('el fallback de navegador prioriza el texto de SAIJ para consultas estricta
   assert.ok(html.includes('esSumarioRespaldo:true'));
   assert.ok(html.includes('tipo:esSumario?"sumario":"fallo"'));
 });
-test('la respuesta oficial enriquece fichas del acervo y vuelve a pedir sus pasajes', () => {
+test('la respuesta oficial enriquece fichas ya visibles y no descarta fallos que faltan en la muestra local', () => {
   assert.ok(html.includes('function enriquecerResultadoLocal(destino,origen)'));
   assert.ok(html.includes('enriquecerResultadoLocal(existente,r)'));
   const enriquecer = html.indexOf('enriquecerResultadoLocal(existente,r)');
-  const deduplicar = html.indexOf('if(idsConfirmados&&!idsConfirmados.has(r.id)) return', enriquecer);
-  assert.ok(enriquecer > 0 && deduplicar > enriquecer, 'primero completa la ficha visible y después descarta IDs ya guardados');
+  const deduplicar = html.indexOf('if(vistos[clave]) return', enriquecer);
+  assert.ok(enriquecer > 0 && deduplicar > enriquecer,
+    'primero completa una ficha ya visible y después elimina sólo duplicados reales de la lista');
+  assert.ok(html.includes('paginaUno.resultados=existentes.concat(nuevos)'));
+  assert.doesNotMatch(html, /if\(idsConfirmados&&!idsConfirmados\.has\(r\.id\)\) return/,
+    'la presencia en otra parte del acervo no significa que el fallo ya esté visible');
   assert.ok(html.includes('traerFragmentos(slug,im.pedido,0)'));
   assert.ok(html.includes('traerFragmentos(slug,im.pedido,1)'));
 });
