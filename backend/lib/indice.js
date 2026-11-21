@@ -74,8 +74,8 @@ export async function upsertRegistros(fuente, registros) {
  * es exactamente cuando tenia que servir. Ahora usa el mismo filtro por
  * modo que el resto de la app (lib/relevancia.js).
  */
-const PROVINCIA_DE = { mendoza: 'Mendoza', scba: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires', catamarca: 'Catamarca', cordoba: 'Córdoba', entrerrios: 'Entre Ríos', neuquen: 'Neuquén', tucuman: 'Tucumán', chaco: 'Chaco', corrientes: 'Corrientes' };
-export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [] } = {}) {
+const PROVINCIA_DE = { mendoza: 'Mendoza', mendoza_saij: 'Mendoza', scba: 'Buenos Aires', buenosaires: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires', caba_saij: 'Ciudad Autónoma de Buenos Aires', catamarca: 'Catamarca', catamarca_saij: 'Catamarca', cordoba: 'Córdoba', entrerrios: 'Entre Ríos', neuquen: 'Neuquén', tucuman: 'Tucumán', chaco: 'Chaco', corrientes: 'Corrientes', chubut: 'Chubut', chubut_saij: 'Chubut', formosa: 'Formosa', jujuy: 'Jujuy', jujuy_saij: 'Jujuy', lapampa: 'La Pampa', larioja: 'La Rioja', misiones: 'Misiones', rionegro: 'Río Negro', rionegro_saij: 'Río Negro', salta: 'Salta', sanjuan: 'San Juan', sanluis: 'San Luis', santacruz: 'Santa Cruz', santacruz_saij: 'Santa Cruz', santafe: 'Santa Fe', santafe_saij: 'Santa Fe', santiagodelestero: 'Santiago del Estero', tierradelfuego: 'Tierra del Fuego' };
+export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [], tribunal = 'todo' } = {}) {
   const q = String(texto || '').trim();
   if (!q) return [];
   const listaVariantes = Array.isArray(variantes)
@@ -85,10 +85,10 @@ export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = 
   const dato = await leer(fuente);
   // Con acervo (lib/acervo.js), la base grande en disco reemplaza al respaldo
   // en memoria y busca el término principal junto con sus equivalentes.
-  const propios = acervoTiene(fuente) ? buscarEnAcervo(fuente, q, { modo, excluir, anioDesde, anioHasta, provincia, variantes: listaVariantes, limite: 600 }) : null;
+  const propios = acervoTiene(fuente) ? buscarEnAcervo(fuente, q, { modo, excluir, anioDesde, anioHasta, provincia, variantes: listaVariantes, tribunal, limite: 600 }) : null;
   // Las bases provinciales suman lo que SAIJ tiene de su provincia.
   const deSaij = PROVINCIA_DE[fuente] && acervoTiene('saij')
-    ? buscarEnAcervo('saij', q, { modo, excluir, anioDesde, anioHasta, provincia: PROVINCIA_DE[fuente], variantes: listaVariantes, limite: 400 }) || [] : [];
+    ? buscarEnAcervo('saij', q, { modo, excluir, anioDesde, anioHasta, provincia: PROVINCIA_DE[fuente], tribunal: 'todo', variantes: listaVariantes, limite: 400 }) || [] : [];
   const delAcervo = propios || deSaij.length ? [...(propios || []), ...deSaij] : null;
   const base = { ...(propios ? {} : await respaldoDe(fuente)), ...Object.fromEntries((delAcervo || []).map((r) => [r.id, r])) };
   // Lo guardado por las búsquedas + el acervo o el respaldo (sin repetir).
