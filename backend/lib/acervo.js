@@ -524,14 +524,20 @@ async function copiarParaLeer() {
   if (!COPIA_PARA_LEER || copiando || !db || !sqlite?.backup) return;
   copiando = true;
   const dir = path.join(os.tmpdir(), 'ivs-acervo');
-  const destino = rutaCopiaLectura(dir, estado.version);
-  const temporal = rutaCopiaTemporal(dir, estado.version);
+  const versionCopia = estado.version;
+  const origenCopia = db;
+  const rutaOrigen = archivoActivo;
+  const destino = rutaCopiaLectura(dir, versionCopia);
+  const temporal = rutaCopiaTemporal(dir, versionCopia);
   try {
     await fsp.mkdir(dir, { recursive: true });
     // No borrar archivos de otros procesos: cada réplica comparte /tmp en el
     // mismo host. El barrido anterior podía eliminar una copia aún en uso.
     const t0 = Date.now();
-    await sqlite.backup(db, temporal, { rate: 2000 });
+    await sqlite.backup(origenCopia, temporal, { rate: 2000 });
+    // Otra instancia puede publicar una versión nueva mientras corre el backup.
+    // Nunca dejar que una copia vieja vuelva a quedar como lectura activa.
+    if (versionCopia !== estado.version || origenCopia !== db || rutaOrigen !== archivoActivo) return;
     await fsp.rename(temporal, destino);
     archivoLectura = destino;
     ultimaCopiaMs = Date.now();
