@@ -88,13 +88,17 @@ export const PUERTO = Number(process.env.PORT || 3000);
  * Se define con CORS_ORIGENES separando por comas. El valor "*" habilita
  * cualquier origen: comodo para probar, desaconsejado si lo publicas.
  */
-export const CORS_ORIGENES = (
+const ORIGENES_CORS_BASE = (
   process.env.CORS_ORIGENES ||
   'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5500,http://127.0.0.1:5500'
-)
-  .split(',')
-  .map((s) => s.trim())
-  .filter(Boolean);
+).split(',').map((s) => s.trim()).filter(Boolean);
+
+// El frontend público se publica en GitHub Pages y consulta este backend
+// cross-origin. No depender de que una variable manual de Azure recuerde
+// incluirlo: si falta, todos los buscadores parecen «caídos» en el navegador
+// aunque la API responda perfectamente desde curl o desde GitHub Actions.
+const ORIGENES_CORS_PUBLICOS = ['https://luciazgagliardi.github.io'];
+export const CORS_ORIGENES = [...new Set([...ORIGENES_CORS_BASE, ...ORIGENES_CORS_PUBLICOS])];
 
 /** Milisegundos maximos que esperamos a que el sitio de origen responda. */
 export const TIMEOUT_MS = Number(process.env.TIMEOUT_MS || 25000);
