@@ -1,0 +1,474 @@
+{
+  "tareas": {
+    "[\"daño moral\",{}]": {
+      "desde": 320,
+      "pagina": 17,
+      "completas": false,
+      "paginas": 16
+    },
+    "[\"incumplimiento contractual\",{}]": {
+      "desde": 320,
+      "pagina": 17,
+      "completas": false,
+      "paginas": 16
+    },
+    "[\"responsabilidad civil\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"pacto comisorio\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"daños y perjuicios\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"teoría de la imprevisión\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"despido\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"mora automática\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho laboral\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"intereses moratorios\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso de inconstitucionalidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tasa activa\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso extraordinario\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"resolución contractual\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"amparo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"seña\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho a la salud\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"boleto de compraventa\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"contrato\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"locación de inmueble\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"desalojo falta de pago\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"prescripción\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"obligación de valor\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"usucapión\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"novación\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"empleo público\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"cesión de créditos\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"debido proceso\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"buena fe contractual\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"defensa en juicio\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"prueba\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"consecuencias no patrimoniales\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"intereses\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"incapacidad sobreviniente\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"medida cautelar\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"fórmula acciarri\",{}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"cosa juzgada\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"pérdida de chance\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"nulidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"daño punitivo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"competencia\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"riesgo de la cosa\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho administrativo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"accidente de tránsito\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho tributario\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"mala praxis médica\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"relación de causalidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"eximentes de responsabilidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"culpa de la víctima\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"valor vida\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"gastos de tratamiento futuro\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"legitimación activa daño moral\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"prescripción adquisitiva\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"usucapión veinteañal\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"acción reivindicatoria\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"interdicto de recobrar\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"propiedad horizontal\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"expensas comunes\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"servidumbre de paso\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"medianería\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"posesión y tenencia\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"desalojo por intrusión\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"boleto y oponibilidad\",{}]": {
+      "desde": 120,
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
+    },
+    "[\"conjunto inmobiliario\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tiempo compartido\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"compensación económica\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"cuidado personal compartido\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"régimen de comunicación\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"cuota alimentaria\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"alimentos provisorios\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"atribución del hogar\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"liquidación de la comunidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"unión convivencial\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"filiación por trha\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"adopción plena\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"impedimento de contacto\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"violencia familiar medidas\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"interés superior del niño\",{}]": {
+      "desde": 80,
+      "pagina": 5,
+      "completas": false,
+      "paginas": 4
+    }
+  },
+  "indiceTerminos": 240,
+  "versionIds": 2
+}

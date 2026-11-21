@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"daños\",{}]": {
-      "desde": 55460,
-      "pagina": 34,
+      "desde": 53026,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"incumplimiento contractual\",{}]": {
       "desde": 56889,
@@ -13,10 +13,10 @@
       "paginas": 3
     },
     "[\"sentencia\",{}]": {
-      "desde": 60441,
-      "pagina": 40,
+      "desde": 59804,
+      "pagina": 48,
       "completas": false,
-      "paginas": 39
+      "paginas": 47
     },
     "[\"pacto comisorio\",{}]": {
       "desde": 0,
@@ -25,10 +25,10 @@
       "paginas": 1
     },
     "[\"contrato\",{}]": {
-      "desde": 47901,
-      "pagina": 34,
+      "desde": 44476,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 0,
@@ -37,10 +37,10 @@
       "paginas": 1
     },
     "[\"laboral\",{}]": {
-      "desde": 52720,
-      "pagina": 34,
+      "desde": 50004,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"mora automática\",{}]": {
       "desde": 0,
@@ -52,7 +52,9 @@
       "desde": 61237,
       "pagina": 34,
       "completas": false,
-      "paginas": 33
+      "paginas": 33,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
     },
     "[\"intereses moratorios\",{}]": {
       "desde": 40071,
@@ -61,10 +63,10 @@
       "paginas": 3
     },
     "[\"familia\",{}]": {
-      "desde": 48590,
-      "pagina": 34,
+      "desde": 44977,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"tasa activa\",{}]": {
       "desde": 58998,
@@ -85,10 +87,10 @@
       "paginas": 1
     },
     "[\"consumidor\",{}]": {
-      "desde": 36808,
-      "pagina": 34,
+      "desde": 27485,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"seña\",{}]": {
       "desde": 36057,
@@ -97,10 +99,10 @@
       "paginas": 3
     },
     "[\"amparo\",{}]": {
-      "desde": 53616,
-      "pagina": 40,
+      "desde": 51760,
+      "pagina": 48,
       "completas": false,
-      "paginas": 39
+      "paginas": 47
     },
     "[\"boleto de compraventa\",{}]": {
       "desde": 15175,
@@ -121,10 +123,10 @@
       "paginas": 1
     },
     "[\"administrativo\",{}]": {
-      "desde": 56979,
-      "pagina": 34,
+      "desde": 55751,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"desalojo falta de pago\",{}]": {
       "desde": 0,
@@ -157,10 +159,10 @@
       "paginas": 1
     },
     "[\"daño moral\",{}]": {
-      "desde": 61508,
-      "pagina": 4,
+      "desde": 52410,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"consecuencias no patrimoniales\",{}]": {
       "desde": 55590,
@@ -271,10 +273,10 @@
       "paginas": 1
     },
     "[\"propiedad horizontal\",{}]": {
-      "desde": 36299,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 23219,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
     },
     "[\"expensas comunes\",{}]": {
       "desde": 0,
@@ -2290,7 +2292,9 @@
       "desde": 63349,
       "pagina": 7,
       "completas": false,
-      "paginas": 6
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "Cursor numérico no progresivo"
     },
     "[\"denegatoria del recurso\",{}]": {
       "desde": 3491,
@@ -2317,10 +2321,10 @@
       "paginas": 1
     },
     "[\"medidas cautelares\",{}]": {
-      "desde": 61476,
-      "pagina": 7,
+      "desde": 58106,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"derecho procesal\",{}]": {
       "desde": 61675,
@@ -2342,9 +2346,9 @@
     },
     "[\"concursos\",{}]": {
       "desde": 25658,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
     },
     "[\"indemnización\",{}]": {
       "desde": 60474,
@@ -2437,10 +2441,10 @@
       "paginas": 2
     },
     "[\"competencia\",{}]": {
-      "desde": 62965,
-      "pagina": 7,
+      "desde": 61833,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"fundamentación de sentencias\",{}]": {
       "desde": 0,
@@ -2707,10 +2711,10 @@
       "paginas": 6
     },
     "[\"responsabilidad civil\",{}]": {
-      "desde": 53027,
-      "pagina": 7,
+      "desde": 31346,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"abuso sexual\",{}]": {
       "desde": 54224,
@@ -5555,8 +5559,704 @@
       "pagina": 4,
       "completas": false,
       "paginas": 3
+    },
+    "[\"exenciones impositivas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"información crediticia\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"inflación\",{}]": {
+      "desde": 23543,
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
+    },
+    "[\"ordenanzas municipales\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"depreciación monetaria\",{}]": {
+      "desde": 50096,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"conclusión de la quiebra\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cláusula penal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"muerte\",{}]": {
+      "desde": 54016,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"interpretación y aplicación de la ley\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fiscales\",{}]": {
+      "desde": 59260,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"contrato de servicios\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"salarios caídos\",{}]": {
+      "desde": 27152,
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
+    },
+    "[\"menor víctima\",{}]": {
+      "desde": 39604,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"juicio político\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"participación criminal\",{}]": {
+      "desde": 36525,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"quiebras\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"determinación del monto\",{}]": {
+      "desde": 26489,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"firma\",{}]": {
+      "desde": 60073,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"secuestro de bienes\",{}]": {
+      "desde": 671,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"derecho administrativo\",{}]": {
+      "desde": 55014,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"letra de cambio\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cannabis medicinal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"río negro\",{}]": {
+      "desde": 25126,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
+    },
+    "[\"pago total\",{}]": {
+      "desde": 25364,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"gravamen actual\",{}]": {
+      "desde": 10750,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"fallos del superior tribunal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"levantamiento del embargo\",{}]": {
+      "desde": 36137,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"proporcionalidad de la pena\",{}]": {
+      "desde": 22685,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"acceso a la información pública\",{}]": {
+      "desde": 35608,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"juicio por jurados populares\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ius variandi\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medidas cautelares contra el estado\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"avenimiento\",{}]": {
+      "desde": 57480,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"testigos\",{}]": {
+      "desde": 61080,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"jurisdicción\",{}]": {
+      "desde": 62407,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"base imponible\",{}]": {
+      "desde": 22463,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"iura novit curia\",{}]": {
+      "desde": 16098,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"limitación de costas\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"régimen penal de la minoridad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prenda\",{}]": {
+      "desde": 6883,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"corte suprema de justicia de la nación\",{}]": {
+      "desde": 62714,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"verdad jurídica objetiva\",{}]": {
+      "desde": 19918,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"obligaciones del asegurador\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"estado de adoptabilidad\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"doble instancia\",{}]": {
+      "desde": 49949,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"mutuo\",{}]": {
+      "desde": 17869,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"canon locativo\",{}]": {
+      "desde": 42892,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"conversión de moneda\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad internacional del estado parte\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"procesos especiales\",{}]": {
+      "desde": 47423,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"apreciación del juez\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"comisiones\",{}]": {
+      "desde": 6724,
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
+    },
+    "[\"nulidad de la notificación\",{}]": {
+      "desde": 12789,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
+    },
+    "[\"administración fraudulenta\",{}]": {
+      "desde": 16545,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"establecimientos penitenciarios\",{}]": {
+      "desde": 28342,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"contrato de turismo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"violación\",{}]": {
+      "desde": 62401,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso de casación penal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"peritos\",{}]": {
+      "desde": 54452,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"homicidio calificado\",{}]": {
+      "desde": 32135,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"doctrina de la corte\",{}]": {
+      "desde": 43959,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"responsabilidad extracontractual\",{}]": {
+      "desde": 31034,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"violencia contra la mujer\",{}]": {
+      "desde": 52860,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"dictámenes\",{}]": {
+      "desde": 48511,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tribunal colegiado\",{}]": {
+      "desde": 27248,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"acusación fiscal\",{}]": {
+      "desde": 21648,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"índices de actualización\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reformatio in pejus\",{}]": {
+      "desde": 23079,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"responsabilidad del deudor\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reforma laboral\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"acciones societarias\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"jubilados\",{}]": {
+      "desde": 13085,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"cuestión de derecho público local\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño\",{}]": {
+      "desde": 62272,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"oposición del fiscal\",{}]": {
+      "desde": 14154,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"facultades no delegadas\",{}]": {
+      "desde": 35538,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"derecho a la imagen\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"administración pública\",{}]": {
+      "desde": 55877,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"medicamentos\",{}]": {
+      "desde": 47581,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"personas privadas de la libertad\",{}]": {
+      "desde": 42292,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"crédito verificado\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cosa riesgosa\",{}]": {
+      "desde": 22132,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"conflicto de intereses\",{}]": {
+      "desde": 45407,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"solicitud de excarcelación\",{}]": {
+      "desde": 4947,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"medidas de seguridad\",{}]": {
+      "desde": 33837,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"rechazo al pedido de prisión domiciliaria\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"levantamiento de medidas cautelares\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reforma legislativa\",{}]": {
+      "desde": 6876,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"posesión\",{}]": {
+      "desde": 56038,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"autonomía municipal\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"privación ilegal de la libertad\",{}]": {
+      "desde": 42900,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"concesionario (comercial)\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"validez de la ley\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"obligaciones de dar sumas de dinero\",{}]": {
+      "desde": 25177,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"justicia nacional\",{}]": {
+      "desde": 57090,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"ripte\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"audiencia\",{}]": {
+      "desde": 63122,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"libertad sindical\",{}]": {
+      "desde": 47938,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"inimputabilidad\",{}]": {
+      "desde": 1060,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"irrazonabilidad\",{}]": {
+      "desde": 42605,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"sentencia de la corte suprema\",{}]": {
+      "desde": 54797,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"sistema republicano\",{}]": {
+      "desde": 25413,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"principio de proporcionalidad\",{}]": {
+      "desde": 41790,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"agravantes\",{}]": {
+      "desde": 57823,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"salud del imputado\",{}]": {
+      "desde": 21520,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"desobediencia a un funcionario público\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"requerimiento de elevación a juicio\",{}]": {
+      "desde": 53177,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"reinstalación en el puesto de trabajo\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"temeridad o malicia\",{}]": {
+      "desde": 30900,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"cuentas bancarias\",{}]": {
+      "desde": 32222,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"adopción\",{}]": {
+      "desde": 60978,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"participación ciudadana\",{}]": {
+      "desde": 30787,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"porcentaje de incapacidad\",{}]": {
+      "desde": 26015,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"responsabilidad de la administradora del plan\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nulidad absoluta\",{}]": {
+      "desde": 49505,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"declaración testimonial\",{}]": {
+      "desde": 61861,
+      "pagina": 4,
+      "completas": false,
+      "paginas": 3
     }
   },
-  "indiceTerminos": 1036,
+  "indiceTerminos": 1276,
   "versionIds": 2
 }

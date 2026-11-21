@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"sentencia\",{}]": {
-      "desde": 620,
-      "pagina": 32,
+      "desde": 780,
+      "pagina": 40,
       "completas": false,
-      "paginas": 31,
+      "paginas": 39,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -15,11 +15,11 @@
       "paginas": 3
     },
     "[\"recurso\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 6,
-      "errores": 6,
+      "paginas": 8,
+      "errores": 7,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{}]": {
@@ -29,10 +29,10 @@
       "paginas": 3
     },
     "[\"daño moral\",{}]": {
-      "desde": 720,
-      "pagina": 37,
+      "desde": 880,
+      "pagina": 45,
       "completas": false,
-      "paginas": 36
+      "paginas": 44
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 40,
@@ -43,10 +43,10 @@
       "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"responsabilidad civil\",{}]": {
-      "desde": 660,
-      "pagina": 34,
+      "desde": 980,
+      "pagina": 50,
       "completas": false,
-      "paginas": 33
+      "paginas": 49
     },
     "[\"mora automática\",{}]": {
       "desde": 60,
@@ -59,7 +59,7 @@
       "pagina": 5,
       "completas": false,
       "paginas": 4,
-      "errores": 5,
+      "errores": 7,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"intereses moratorios\",{}]": {
@@ -73,7 +73,7 @@
       "pagina": 21,
       "completas": false,
       "paginas": 20,
-      "errores": 3,
+      "errores": 4,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"tasa activa\",{}]": {
@@ -83,10 +83,10 @@
       "paginas": 3
     },
     "[\"alimentos\",{}]": {
-      "desde": 660,
-      "pagina": 34,
+      "desde": 820,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"resolución contractual\",{}]": {
       "desde": 60,
@@ -95,10 +95,10 @@
       "paginas": 3
     },
     "[\"contrato\",{}]": {
-      "desde": 660,
-      "pagina": 34,
+      "desde": 820,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"seña\",{}]": {
       "desde": 60,
@@ -107,10 +107,10 @@
       "paginas": 3
     },
     "[\"consumidor\",{}]": {
-      "desde": 660,
-      "pagina": 34,
+      "desde": 820,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"boleto de compraventa\",{}]": {
       "desde": 60,
@@ -119,10 +119,10 @@
       "paginas": 3
     },
     "[\"familia\",{}]": {
-      "desde": 660,
-      "pagina": 34,
+      "desde": 820,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"locación de inmueble\",{}]": {
       "desde": 60,
@@ -135,7 +135,7 @@
       "pagina": 7,
       "completas": false,
       "paginas": 6,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"desalojo falta de pago\",{}]": {
@@ -145,10 +145,10 @@
       "paginas": 3
     },
     "[\"intereses\",{}]": {
-      "desde": 660,
-      "pagina": 34,
+      "desde": 820,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33
+      "paginas": 41
     },
     "[\"obligación de valor\",{}]": {
       "desde": 60,
@@ -157,10 +157,10 @@
       "paginas": 3
     },
     "[\"amparo\",{}]": {
-      "desde": 780,
-      "pagina": 40,
+      "desde": 940,
+      "pagina": 48,
       "completas": false,
-      "paginas": 39
+      "paginas": 47
     },
     "[\"novación\",{}]": {
       "desde": 60,
@@ -209,10 +209,12 @@
       "paginas": 3
     },
     "[\"daño punitivo\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 120,
+      "pagina": 7,
       "completas": false,
-      "paginas": 3
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"riesgo de la cosa\",{}]": {
       "desde": 60,
@@ -2011,10 +2013,10 @@
       "paginas": 6
     },
     "[\"usucapión\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"prescripción veinteañal\",{}]": {
       "desde": 0,
@@ -2279,10 +2281,10 @@
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"desalojo\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"daño moral procedencia\",{}]": {
       "desde": 100,
@@ -2315,12 +2317,414 @@
       "paginas": 6
     },
     "[\"medida cautelar\",{}]": {
+      "desde": 200,
+      "pagina": 11,
+      "completas": false,
+      "paginas": 10
+    },
+    "[\"proceso penal\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho laboral\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"honorarios\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"costas\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"interpretación de la ley\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"contratos\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"inadmisibilidad del recurso\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"incapacidad laboral\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"defensa en juicio\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso extraordinario\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"apreciación de la prueba\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"accidentes de trabajo\",{}]": {
+      "desde": 140,
+      "pagina": 8,
+      "completas": false,
+      "paginas": 7,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"competencia\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"fundamentación de sentencias\",{}]": {
       "desde": 40,
       "pagina": 3,
       "completas": false,
-      "paginas": 2
+      "paginas": 2,
+      "errores": 1,
+      "ultimoError": "El buscador de \"scba\" no respondió como se esperaba: respuesta 500. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"corte suprema de justicia provincial\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"seguros\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"juicio ejecutivo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recursos\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"debido proceso\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"prueba\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"prescripción\",{}]": {
+      "desde": 320,
+      "pagina": 17,
+      "completas": false,
+      "paginas": 16
+    },
+    "[\"sentencia condenatoria\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"quiebra\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"incumplimiento del contrato\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"admisibilidad del recurso\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"declaración de inconstitucionalidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"violencia de género\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derechos y garantías constitucionales\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"empleo público\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"inconstitucionalidad\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"defensa del consumidor\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"falta de prueba\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"carga de la prueba\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"sentencia suficientemente fundada\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fallos de la corte suprema\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso de apelación (procesal)\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"deberes del juez\",{}]": {
+      "desde": 100,
+      "pagina": 6,
+      "completas": false,
+      "paginas": 5,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"ley de defensa del consumidor\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"código civil y comercial\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso de queja (procesal)\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"constitución nacional\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"jurisprudencia aplicable\",{}]": {
+      "desde": 80,
+      "pagina": 5,
+      "completas": false,
+      "paginas": 4,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"imputado\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"responsabilidad contractual\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"ley vigente\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"juicio ordinario\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"multa\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"rechazo de la demanda\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho a la salud\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"responsabilidad solidaria\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"resoluciones judiciales\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"prueba testimonial\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"pena\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"sentencia definitiva\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"concurso preventivo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"cuestión federal\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"sentencia no definitiva\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"coronavirus\",{}]": {
+      "desde": 0,
+      "pagina": 1,
+      "completas": false,
+      "paginas": 0,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"abuso sexual\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"efectos entre partes\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"emergencia sanitaria\",{}]": {
+      "desde": 20,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1,
+      "errores": 1,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
+    },
+    "[\"ejecución de sentencia\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"corte suprema de justicia nacional\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"sobreseimiento\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"fundamentación del recurso\",{}]": {
+      "desde": 140,
+      "pagina": 8,
+      "completas": false,
+      "paginas": 7
     }
   },
-  "indiceTerminos": 386,
+  "indiceTerminos": 626,
   "versionIds": 2
 }
