@@ -10,6 +10,7 @@ on:
       - 'backend/test/busquedaEnVivo.prueba.js'
       - 'backend/test/mendozaBusquedaDefecto.prueba.js'
       - 'frontend/index.html'
+      - 'frontend/test/falsos-ceros.test.mjs'
       - '.github/workflows/regresion-en-vivo.yml'
   workflow_dispatch: {}
 
