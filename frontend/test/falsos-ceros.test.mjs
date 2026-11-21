@@ -180,3 +180,13 @@ test('una fuente con total preliminar positivo y página vacía no se presenta c
   assert.match(panel, /data-act="buscar-indice"/);
   assert.match(panel, /Reintentar la consulta/);
 });
+
+
+test('un fallo transitorio del vocabulario no queda cacheado como definitivo', () => {
+  const pedir = extraer('pedirVocabulario');
+  assert.match(pedir, /previo&&\(previo\.ok\|\|previo\.pendiente\)/);
+  assert.match(pedir, /fallo:true,intentos:intento/);
+  assert.match(pedir, /intento>=2/);
+  assert.match(pedir, /AbortController/);
+  assert.match(pedir, /pedirVocabulario\(\)/);
+});
