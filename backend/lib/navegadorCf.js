@@ -39,7 +39,8 @@ let ultimaFalla = '';
 /** Los únicos sitios para los que se abre el navegador. */
 export function dominioConNavegador(host) {
   const h = String(host || '').toLowerCase().replace(/\.$/, '');
-  return h === 'tsjbaires.gov.ar' || h.endsWith('.tsjbaires.gov.ar');
+  return ['tsjbaires.gob.ar', 'tsjbaires.gov.ar']
+    .some((base) => h === base || h.endsWith('.' + base));
 }
 
 export function estadoNavegador() {
