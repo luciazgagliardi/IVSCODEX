@@ -216,6 +216,7 @@ function aRegistro(bruto) {
     // Solo los sumarios traen la doctrina; los fallos son ficha sin texto
     // propio, pero cada uno apunta a sus sumarios (ver enriquecerConSumarios).
     sumario: esSumario ? limpiarTexto(c.texto) : '',
+    tipo: esSumario ? 'sumario' : 'fallo',
     _rel: esSumario ? [] : [].concat(c['sumarios-relacionados']?.['sumario-relacionado'] || []),
     _tema: esSumario ? '' : limpiarTexto(c.sobre),
     _numero: esSumario ? String(c['numero-sumario'] || '') : '',
@@ -572,7 +573,8 @@ function consultaParaElSitio(termino, modo) {
  *
  * @param {{q: string, modo?: string, excluir?: string, tribunal?: string,
  *          pagina?: number, porPagina?: number}} args
- *   tribunal es cuál de los TIPOS mirar ("sumarios" por defecto).
+ *   tribunal es cuál de los TIPOS mirar. El modo combinado «todo» consulta
+ *   primero expedientes/fallos y sólo completa con sumarios cuando se agotan.
  */
 /** Cuántas páginas de 100 se revisan antes de darse por vencido. */
 // Cuántas tandas de cien filas se revisan, como máximo, para llenar una página.
@@ -585,7 +587,7 @@ const TANDAS_POR_MODO = { exacta: 8, todas: 5, alguna: 3 };
 const PAGINAS_A_REVISAR = 3; // por defecto, y para legislación y doctrina (ver esTexto)
 const POR_PEDIDO = 100;
 
-export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false, desde = null, anioDesde = null, anioHasta = null, provincia = '' }) {
+async function buscarSaijSimple({ q, modo = 'todas', excluir = '', tribunal = 'sumarios', pagina = 1, porPagina = 20, soloCsjn = false, desde = null, anioDesde = null, anioHasta = null, provincia = '' }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
@@ -700,3 +702,97 @@ export async function buscarSaij({ q, modo = 'todas', excluir = '', tribunal = '
     resultados,
   };
 }
+
+// El cursor mantiene separadas las dos fases del modo combinado sin perder
+// páginas cuando SAIJ obliga a paginar por filas crudas del sitio.
+const CURSOR_SUMARIOS_RESALDO = 1_000_000_000;
+const claveCasoRespaldo = (r) => [
+  String(r?.caratula || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim(),
+  String(r?.fecha || '').trim(),
+  String(r?.tribunal || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim(),
+].join('|');
+
+/**
+ * Modo jurisprudencial predeterminado: primero consulta fichas de fallos.
+ * Sólo cuando la consulta de fallos llegó al final y dejó huecos se completa
+ * la página con sumarios. Si el portal está bloqueado o la búsqueda sigue
+ * teniendo páginas pendientes, no se sustituye ese fallo por un sumario.
+ *
+ * El cursor >= CURSOR_SUMARIOS_RESALDO indica que la fase de fallos terminó
+ * y que la paginación actual continúa sobre el carril de sumarios de respaldo.
+ */
+export async function buscarSaij(opciones = {}) {
+  const tribunal = opciones.tribunal || 'todo';
+  if (tribunal !== 'todo') return buscarSaijSimple({ ...opciones, tribunal });
+
+  const tamano = Math.min(100, Math.max(1, Number(opciones.porPagina) || 20));
+  const desde = opciones.desde == null ? null : Number(opciones.desde);
+
+  if (Number.isFinite(desde) && desde >= CURSOR_SUMARIOS_RESALDO) {
+    const offset = desde - CURSOR_SUMARIOS_RESALDO;
+    const salida = await buscarSaijSimple({
+      ...opciones, tribunal: 'sumarios', pagina: 1, desde: offset,
+    });
+    return {
+      ...salida,
+      resultados: (salida.resultados || []).map((r) => r && ({ ...r, esSumarioRespaldo: true })),
+      siguienteDesde: salida.siguienteDesde == null ? null : CURSOR_SUMARIOS_RESALDO + salida.siguienteDesde,
+      complementoSumarios: true,
+      cantidadFallos: 0,
+      cantidadSumarios: (salida.resultados || []).length,
+      tipoConsulta: 'sumarios_de_respaldo',
+    };
+  }
+
+  // Los errores del buscador de fallos se propagan: una fuente bloqueada no
+  // equivale a una búsqueda agotada y no habilita el relleno con sumarios.
+  const fallos = await buscarSaijSimple({ ...opciones, tribunal: 'fallos' });
+  const listaFallos = fallos.resultados || [];
+  if (listaFallos.length >= tamano || fallos.siguienteDesde != null) {
+    return {
+      ...fallos,
+      cantidadFallos: listaFallos.length,
+      cantidadSumarios: 0,
+      complementoSumarios: false,
+      tipoConsulta: 'fallos',
+    };
+  }
+
+  const faltan = tamano - listaFallos.length;
+  if (faltan <= 0) return fallos;
+
+  const sumarios = await buscarSaijSimple({
+    ...opciones, tribunal: 'sumarios', pagina: 1, desde: 0, porPagina: faltan,
+  });
+  const vistos = new Set(listaFallos.map(claveCasoRespaldo));
+  const relleno = [];
+  for (const r of (sumarios.resultados || [])) {
+    const clave = claveCasoRespaldo(r);
+    if (vistos.has(clave)) continue;
+    vistos.add(clave);
+    relleno.push({ ...r, esSumarioRespaldo: true });
+    if (listaFallos.length + relleno.length >= tamano) break;
+  }
+
+  const totalFuenteFallos = Number(fallos.totalFuente || 0);
+  const totalFuenteSumarios = Number(sumarios.totalFuente || 0);
+  return {
+    ...fallos,
+    total: listaFallos.length + relleno.length,
+    totalFuente: totalFuenteFallos + totalFuenteSumarios,
+    totalFuenteFallos,
+    totalFuenteSumarios,
+    totalParcial: Boolean(fallos.totalParcial || sumarios.totalParcial),
+    revisados: Number(fallos.revisados || 0) + Number(sumarios.revisados || 0),
+    aflojado: Boolean(fallos.aflojado || sumarios.aflojado),
+    siguienteDesde: sumarios.siguienteDesde == null
+      ? null
+      : CURSOR_SUMARIOS_RESALDO + Number(sumarios.siguienteDesde),
+    resultados: listaFallos.concat(relleno),
+    complementoSumarios: relleno.length > 0,
+    cantidadFallos: listaFallos.length,
+    cantidadSumarios: relleno.length,
+    tipoConsulta: relleno.length ? 'fallos_con_sumarios_de_respaldo' : 'fallos',
+  };
+}
+
