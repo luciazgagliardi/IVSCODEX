@@ -19,7 +19,7 @@ test('las 24 jurisdicciones tienen vistas SAIJ válidas, sin slugs duplicados', 
     const f = FUENTES.find(x => x.slug === slug);
     assert.ok(f, slug);
     assert.match(f.nombre, /vía SAIJ/i);
-    assert.equal(f.tribunalPorDefecto, 'sumarios');
+    assert.equal(f.tribunalPorDefecto, 'fallos');
     assert.equal(typeof f.buscar, 'function');
     assert.equal(consultaDeArticulo(slug, 1741), 'artículo 1741');
   }
