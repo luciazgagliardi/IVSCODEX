@@ -99,3 +99,14 @@ test('un error HTTP no se informa como corte de conexión, y hay reintento de la
   assert.match(html, /cancelarOrigenPantalla\(slug\)/);
   assert.match(html, /if\(act==="reintentar-fallidas"\)/);
 });
+
+test('una vista previa local vacía no borra resultados oficiales que llegaron primero', () => {
+  const inicio = html.indexOf('var mostrarLocal=function(d){');
+  const fin = html.indexOf('// la copia local va por', inicio);
+  assert.ok(inicio >= 0 && fin > inicio, 'está el flujo de vista previa');
+  const bloque = html.slice(inicio, fin);
+  const guarda = bloque.indexOf('if(!d.resultados.length&&imBusco.resultados.length)return;');
+  const reemplazo = bloque.indexOf('aplicarPaginaIndice(slug,fCfg,imBusco,d,1,false);');
+  assert.ok(guarda >= 0 && reemplazo > guarda,
+    'la respuesta local vacía debe descartarse antes de reemplazar la lista visible');
+});
