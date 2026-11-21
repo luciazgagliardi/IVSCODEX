@@ -86,6 +86,7 @@ export function parsear(html) {
       magistrados: '',
       linkFicha: enlace ? decodificar(enlace[1]) : null,
       linkFallo: enlace ? decodificar(enlace[1]) : null,
+      tipo: 'sumario',
     });
   }
   return out;
