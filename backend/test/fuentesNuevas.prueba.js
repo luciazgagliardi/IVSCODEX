@@ -76,6 +76,85 @@ test('Chubut inicia acceso anónimo, conserva sesión y pagina en el JSON oficia
   assert.match(llamadas[2].opciones.headers.Cookie || '', /EurekaSession=anon-123/);
 });
 
+test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fallos', async () => {
+  const llamadas = [];
+  await conFetch(async (url, opciones = {}) => {
+    const u = new URL(url);
+    llamadas.push({ url: u, opciones });
+    if (u.pathname.endsWith('/RegistrarAccesoAnonimo')) {
+      return new Response('Acceso anónimo habilitado', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaSession=fallos-first; Path=/; HttpOnly' },
+      });
+    }
+    if (u.pathname.endsWith('/Sentencias/BuscarPorCriterios')) {
+      return respuesta({
+        idBusqueda: 'sentencias-1', pageCount: 1, totalFilas: 1,
+        rows: [{ idSentencia: 88001, cell: {
+          numero: '12345', anio: '2024', organismo: 'Cámara Civil',
+          competencia: 'Civil', fechaFirma: '18/11/2026',
+          texto: 'Sentencia completa sobre responsabilidad civil.',
+          caratula: 'Pérez c/ Provincia del Chubut',
+        } }],
+      });
+    }
+    assert.ok(u.pathname.endsWith('/Sumarios/BuscarPorCriterios'));
+    const page = Number(u.searchParams.get('PageIndex'));
+    if (page === 1) return respuesta({
+      idBusqueda: 'sumarios-1', pageCount: 2, totalFilas: 21,
+      rows: [
+        { idSumario: 88002, cell: {
+          numero: '12345', anio: '2024', organismo: 'Cámara Civil',
+          competencia: 'Civil', fechaFirma: '18/11/2026',
+          sumario: 'Sumario duplicado de la sentencia ya recuperada.',
+          caratula: 'Pérez c/ Provincia del Chubut',
+        } },
+        { idSumario: 88003, cell: {
+          numero: '7654', anio: '2025', organismo: 'Cámara Laboral',
+          competencia: 'Trabajo', fechaFirma: '19/11/2026',
+          sumario: 'Sumario de respaldo sobre responsabilidad laboral.',
+          caratula: 'Gómez c/ Empresa s/ despido',
+        } },
+      ],
+    });
+    return respuesta({
+      idBusqueda: 'sumarios-1', pageCount: 2, totalFilas: 21,
+      rows: [{ idSumario: 88004, cell: {
+        numero: '9999', anio: '2023', organismo: 'Cámara Penal',
+        competencia: 'Penal', fechaFirma: '20/11/2026',
+        sumario: 'Otro sumario disponible en página dos.',
+        caratula: 'Fiscal c/ Rojas',
+      } }],
+    });
+  }, async () => {
+    const primera = await buscarChubut({ q: 'responsabilidad ambiental', porPagina: 20 });
+    assert.equal(primera.resultados[0].id, 'chubut_sentencia_88001');
+    assert.equal(primera.resultados[0].tipo, 'fallo');
+    assert.equal(primera.resultados[1].id, 'chubut_sumario_88003');
+    assert.equal(primera.resultados[1].tipo, 'sumario');
+    assert.equal(primera.resultados[1].esSumarioRespaldo, true);
+    assert.equal(primera.cantidadFallos, 1);
+    assert.equal(primera.cantidadSumarios, 1);
+    assert.equal(primera.tipoConsulta, 'fallos_con_sumarios_de_respaldo');
+    assert.equal(primera.siguienteDesde, 1_000_002);
+
+    const segunda = await buscarChubut({
+      q: 'responsabilidad ambiental', desde: primera.siguienteDesde,
+      pagina: 1, porPagina: 20,
+    });
+    assert.equal(segunda.resultados[0].id, 'chubut_sumario_88004');
+    assert.equal(segunda.esSumarioRespaldo, undefined);
+    assert.equal(segunda.siguienteDesde, null);
+  });
+
+  assert.ok(llamadas.some((x) => x.url.pathname.endsWith('/Sentencias/BuscarPorCriterios')));
+  assert.ok(llamadas.some((x) => x.url.pathname.endsWith('/Sumarios/BuscarPorCriterios')));
+  assert.equal(llamadas.filter((x) => x.url.pathname.endsWith('/RegistrarAccesoAnonimo')).length, 2);
+  const pathOrden = llamadas.filter((x) => /BuscarPorCriterios/.test(x.url.pathname)).map((x) => x.url.pathname);
+  assert.ok(pathOrden[0].endsWith('/Sentencias/BuscarPorCriterios'));
+  assert.ok(pathOrden[1].endsWith('/Sumarios/BuscarPorCriterios'));
+  assert.equal(llamadas.at(-1).url.searchParams.get('PageIndex'), '2');
+});
+
 test('TFN llama al contrato estricto del API y rotula texto asistido por IA', async () => {
   let pedido;
   await conFetch(async (url, opciones) => {
