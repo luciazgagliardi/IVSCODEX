@@ -116,7 +116,7 @@ export async function buscarCatamarca({ q, modo = 'todas', excluir = '', pagina 
   const filtros = { modo, excluir, anioDesde, anioHasta };
   let p = null;
   if (acervoCubre('catamarca'))
-    p = await buscarPagina('catamarca', consulta, { ...filtros, desde: offset, porPagina }, { espera: 12000, prioridad: 1 });
+    p = await buscarPagina('catamarca', consulta, { ...filtros, desde: offset, porPagina }, { espera: 50_000, prioridad: 8 });
   if (!p) {
     const lista = await buscarEnIndice('catamarca', consulta, filtros);
     p = { total: lista.length, resultados: lista.slice(offset, offset + porPagina),

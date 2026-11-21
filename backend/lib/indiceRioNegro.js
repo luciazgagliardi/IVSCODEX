@@ -143,10 +143,20 @@ export async function buscarRioNegro(opciones = {}) {
       /respuesta\s+403|HTTP\s+403|captcha/i.test(String(error.message || ''));
     if (!bloqueoCaptcha) throw error;
 
-    const alternativa = await buscarProvinciaSaij('rionegro_saij', {
-      ...opciones,
-      tribunal: 'todo',
-    });
+    let alternativa = null;
+    let ultimoError = null;
+    for (const tribunalAlternativo of ['todo', 'sumarios']) {
+      try {
+        alternativa = await buscarProvinciaSaij('rionegro_saij', {
+          ...opciones, tribunal: tribunalAlternativo,
+        });
+        if (alternativa.resultados?.length || tribunalAlternativo === 'sumarios') break;
+      } catch (e) { ultimoError = e; }
+    }
+    if (!alternativa) {
+      error.cause = ultimoError || error.cause;
+      throw error;
+    }
     return {
       ...alternativa,
       origenEnVivo: 'saij',

@@ -22,7 +22,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DIR_DATOS } from '../config.js';
-import { buscarCaba } from './indiceCaba.js';
+import { buscarCabaOficial } from './indiceCaba.js';
 import { descargar } from './descargador.js';
 import { traerConNavegador } from './navegadorCf.js';
 import { extraerDesdeBuffer } from './documento.js';
@@ -49,7 +49,7 @@ async function pasoListado() {
   if (!q) return false;
   let r;
   try {
-    r = await buscarCaba({ q, modo: 'todas', desde: estado.desde, porPagina: 20 });
+    r = await buscarCabaOficial({ q, modo: 'todas', desde: estado.desde, porPagina: 20 });
     estado.fallasPagina = 0;
   } catch (e) {
     // una página que el TSJ no puede listar (siempre la misma): a la segunda, se sigue con el término siguiente

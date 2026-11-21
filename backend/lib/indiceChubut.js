@@ -8,6 +8,7 @@ import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
 import { sinClave } from './proxyOrigen.js';
+import { buscarProvinciaSaij } from './indiceProvincialSaij.js';
 
 export const ORIGEN_CHUBUT = 'https://apps1cloud.juschubut.gov.ar/eureka';
 const HOST = new URL(ORIGEN_CHUBUT).hostname;
@@ -176,8 +177,10 @@ async function buscarChubutSimple({ q, tribunal = 'sumarios', modo = 'todas', pa
   let datos;
   try { datos = JSON.parse(resp.text); }
   catch (parseError) {
-    const sesionExpirada = /sistema eureka|tiempo de sesi[oó]n|acceso restringido|ingresar usuario y clave/i.test(resp.text.slice(0, 5000));
-    if (sesionExpirada && !_reintentoSesion) {
+    // Algunas respuestas de sesión caducada cambian de plantilla y no
+    // incluyen un texto reconocible. Ante cualquier cuerpo no JSON se renueva
+    // una sola vez la sesión anónima; si vuelve a fallar, el wrapper usa SAIJ.
+    if (!_reintentoSesion) {
       SESIONES.delete(clave);
       return buscarChubutSimple({
         q: consulta, tribunal, modo, pagina, desde, porPagina,
@@ -224,7 +227,7 @@ function claveCasoChubut(r) {
   return caratula ? [tribunal, caratula, r?.fecha || ''].join('|') : 'id|' + String(r?.id || '');
 }
 
-export async function buscarChubut(opciones = {}) {
+async function buscarChubutEureka(opciones = {}) {
   const tribunal = opciones.tribunal || 'todo';
   if (['sentencias', 'fallos', 'sumarios'].includes(tribunal))
     return buscarChubutSimple({ ...opciones, tribunal });
@@ -293,4 +296,50 @@ export async function buscarChubut(opciones = {}) {
     cantidadSumarios: relleno.length,
     tipoConsulta: relleno.length ? 'fallos_con_sumarios_de_respaldo' : 'fallos',
   };
+}
+
+
+/**
+ * Eureka! entrega el buscador mediante una sesión anónima; cuando el portal
+ * devuelve una página HTML inesperada (en vez del JSON del listado), se
+ * renueva una vez dentro de buscarChubutSimple. Si aun así el servidor oficial
+ * no permite consultar, se conserva acceso jurisdiccional mediante la faceta
+ * pública SAIJ de Chubut, sin confundir ambas procedencias.
+ */
+export async function buscarChubut(opciones = {}) {
+  try {
+    return await buscarChubutEureka(opciones);
+  } catch (error) {
+    const pedido = ['fallos', 'sentencias', 'sumarios', 'todo'].includes(opciones.tribunal)
+      ? opciones.tribunal : 'todo';
+    const tribunal = pedido === 'sentencias' ? 'fallos' : pedido;
+    let alternativa = null;
+    let ultimoError = null;
+    const intentos = tribunal === 'todo' ? ['todo', 'sumarios'] : [tribunal];
+    for (const tipo of intentos) {
+      try {
+        alternativa = await buscarProvinciaSaij('chubut_saij', {
+          ...opciones, tribunal: tipo,
+        });
+        if (alternativa.resultados?.length || tipo === 'sumarios') break;
+      } catch (e) { ultimoError = e; }
+    }
+    if (!alternativa) {
+      error.cause = ultimoError || error.cause;
+      throw error;
+    }
+    return {
+      ...alternativa,
+      origenEnVivo: 'saij',
+      fuenteAlternativa: 'chubut_saij',
+      desdeIndiceLocal: false,
+      resultados: (alternativa.resultados || []).map((r) => ({
+        ...r,
+        fuente: 'saij',
+        fuenteSlug: 'saij',
+        procedencia: 'SAIJ',
+        jurisdiccion: 'Chubut',
+      })),
+    };
+  }
 }
