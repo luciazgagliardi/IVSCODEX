@@ -218,7 +218,7 @@ export async function buscarChubut(opciones = {}) {
     totalFuente: Number(fallos.totalFuente || 0) + Number(sumarios.totalFuente || 0),
     totalFuenteFallos: Number(fallos.totalFuente || 0),
     totalFuenteSumarios: Number(sumarios.totalFuente || 0),
-    totalParcial: Boolean(fallos.totalParcial || sumarios.totalParcial || relleno.length > 0),
+    totalParcial: Boolean(fallos.totalParcial || sumarios.totalParcial || sumarios.siguienteDesde != null || relleno.length > 0),
     revisados: Number(fallos.revisados || 0) + Number(sumarios.revisados || 0),
     siguienteDesde: sumarios.siguienteDesde == null
       ? null
