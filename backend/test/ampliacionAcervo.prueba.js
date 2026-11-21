@@ -33,6 +33,10 @@ test('la cosecha cubre fuentes habilitadas y detiene reintentos ante bloqueos y 
     assert.ok(archivo.includes(slug + ': {'), slug);
   }
   assert.match(archivo, /avanzarIndiceTerminos/);
+  assert.match(archivo, /const CONSULTAS_COMPLEMENTARIAS = \{/);
+  for (const slug of ['mendoza','caba','scba','juristeca','santafe','rionegro','dialnet','mendozalegal','jujuy','chubut','tfn','santacruz','hudoc']) {
+    assert.match(archivo, new RegExp(slug + ': \\['), 'falta expansión temática equilibrada: ' + slug);
+  }
   assert.match(archivo, /esReintentable/);
   assert.match(archivo, /process\.exitCode = 1/);
   assert.doesNotMatch(archivo, /indiceTerminos = \(indiceInicial \+ ventana\.length\)/);
