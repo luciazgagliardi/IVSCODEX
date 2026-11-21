@@ -6,14 +6,10 @@ on:
     paths:
       - 'ops/diagnosticar-en-vivo.mjs'
       - '.github/workflows/diagnosticar-en-vivo.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'ops/diagnosticar-en-vivo.mjs'
-      - '.github/workflows/diagnosticar-en-vivo.yml'
   workflow_dispatch: {}
   workflow_run:
     workflows: ['Publicar backend en Azure App Service']
+    branches: [main]
     types: [completed]
 
 permissions:
@@ -36,7 +32,9 @@ jobs:
         run: node --check ops/diagnosticar-en-vivo.mjs
 
   consultar:
-    if: github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
+    # Nunca probar el backend por el evento push: ese evento corre en paralelo
+    # con el despliegue y puede medir la versión anterior. Esperar Azure o ejecutar manualmente.
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -44,5 +42,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Consultar las 19 fuentes automáticas y el acervo local desde Azure
+      - name: Consultar las 37 rutas automáticas y el acervo local después de publicar Azure
         run: node ops/diagnosticar-en-vivo.mjs
