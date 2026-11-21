@@ -49,6 +49,12 @@ test('ids reales de Mendoza, CABA, SCBA y Río Negro se incorporan, no se descar
     assert.equal(idDocumentalValido(id), false, String(id));
 });
 
+test('el resumen de la cosecha cuenta las raíces provinciales y no informa cero falso', () => {
+  const saij = fs.readFileSync(new URL('../scripts/cosecharSaij.mjs', import.meta.url), 'utf8');
+  assert.match(saij, /const nivelesRaiz = PROVINCIA \? 3 : 2/);
+  assert.match(saij, /k\.split\('\|'\)\.length === nivelesRaiz/);
+  assert.match(saij, /!PROVINCIA \|\| k\.includes\(EXTRA\[0\]\)/);
+});
 test('la búsqueda judicial conserva cookie PHP al pedir las fichas', () => {
   const sesion=cookieDeSesion(new Headers({'set-cookie':'PHPSESSID=abcd1234; path=/; HttpOnly'}));
   assert.equal(sesion,'PHPSESSID=abcd1234');

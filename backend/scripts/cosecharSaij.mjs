@@ -208,5 +208,11 @@ for (const tipo of TIPOS) {
     if (pedidos > antes) console.log(`${new Date().toTimeString().slice(0, 8)} ${tipo} ${anio}: ${n} (${pedidos} consultas, ${((Date.now() - t0) / 60000).toFixed(0)} min)`);
   }
 }
-const total = Object.entries(progreso.hechos).filter(([k]) => k.split('|').length === 2).reduce((a, [, v]) => a + v, 0);
+// La clave raíz nacional es tipo|año (2 componentes); la provincial
+// agrega la jurisdicción (3). Contar con un único nivel omitía todos los
+// documentos de cada barrido provincial y mostraba el falso «fin: 0».
+const nivelesRaiz = PROVINCIA ? 3 : 2;
+const total = Object.entries(progreso.hechos)
+  .filter(([k]) => k.split('|').length === nivelesRaiz && (!PROVINCIA || k.includes(EXTRA[0])))
+  .reduce((a, [, v]) => a + v, 0);
 console.log(`fin: ${total} documentos, ${pedidos} consultas, ${((Date.now() - t0) / 60000).toFixed(0)} min`);
