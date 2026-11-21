@@ -3393,13 +3393,15 @@ var FUENTES_INDICE=[
   nota:"Sentencias del máximo tribunal porteño en materia contencioso-administrativa, tributaria, penal, contravencional y electoral."},
  {slug:"csjn",cod:"CSJN",clase:"nac",boton:"la Corte Suprema",
   nombre:"Corte Suprema de Justicia de la Nación",
-  nota:"Los fallos de la Corte, con carátula, fecha y enlace al documento. Se consultan a través de SAIJ, que publica ese material de forma abierta: el buscador del sitio propio de la Corte exige resolver un captcha, así que no se puede consultar automáticamente."},
+  nota:"Fallos de la Corte primero; los sumarios asociados sólo completan cuando no hay suficientes fichas de fallos. Se consultan a través de SAIJ, que publica ese material de forma abierta: el buscador del sitio propio de la Corte exige resolver un captcha, así que no se puede consultar automáticamente.",
+  tribunales:[{v:"todo",n:"Fallos primero · sumarios de respaldo"}]},
  {slug:"saij",cod:"SAIJ",clase:"nac",boton:"SAIJ, todo el país",
   nombre:"Sistema Argentino de Información Jurídica",
   nota:"Jurisprudencia, legislación y doctrina unificada de fueros federales, nacionales y provinciales de toda la Argentina.",
   tribunales:[
-    {v:"sumarios",n:"Sumarios (con doctrina)"},
-    {v:"fallos",n:"Fallos (ficha del expediente)"},
+    {v:"todo",n:"Fallos primero · sumarios de respaldo"},
+    {v:"fallos",n:"Sólo fallos (ficha del expediente)"},
+    {v:"sumarios",n:"Sólo sumarios jurisprudenciales"},
     {v:"legislacion",n:"Legislación (con el artículo)"},
     {v:"doctrina",n:"Doctrina (con extracto)"},
     {v:"dictamenes",n:"Dictámenes (organismos públicos)"}
@@ -5695,36 +5697,44 @@ function resultadosDe(f){
    buscador encontró la palabra en el fallo entero y el sumario habla de otra
    cosa («despido» → un sumario sobre cosa juzgada). Ese sumario no sirve de
    pasaje: no hay nada que marcar. Se recuerda por consulta. */
-function sumarioCumpleConsulta(texto){
-  if(!texto) return false;
-  if(!IVSPasajes.coincidencias(texto,estado.q,{modo:estado.modo,tope:1}).length) return false;
+function sumarioCumpleConsulta(texto,consulta){
+  consulta=consulta||estado.q;
+  if(!texto||!consulta) return false;
+  if(!IVSPasajes.coincidencias(texto,consulta,{modo:estado.modo,tope:1}).length) return false;
   if(estado.modo!=="todas") return true;
-  // coincidencias() une marcas superpuestas y conserva sólo una clave por tramo;
-  // por eso cada término se comprueba por separado y no se deduce de las marcas unidas.
-  var requeridos=IVSPasajes.terminos(estado.q,estado.modo);
+  // Cada término se comprueba por separado: las marcas unidas no prueban
+  // que la consulta completa esté presente en el mismo pasaje.
+  var requeridos=IVSPasajes.terminos(consulta,estado.modo);
   return requeridos.length>0&&requeridos.every(function(t){
     return IVSPasajes.coincidencias(texto,[t],{modo:"todas",tope:1}).length>0;
   });
 }
+function consultaQueCoincide(r,texto){
+  if(sumarioCumpleConsulta(texto,estado.q)) return estado.q;
+  if(r&&r.variante&&sumarioCumpleConsulta(texto,r.variante)) return r.variante;
+  return estado.q;
+}
 function sumarioCoincide(r){
   if(!r.sumario) return false;
-  var clave=estado.modo+"|"+estado.q;
+  var clave=estado.modo+"|"+estado.q+"|"+(r.variante||"");
   if(r._coinQ!==clave){
     r._coinQ=clave;
-    r._coin=sumarioCumpleConsulta(r.sumario);
+    r._coin=sumarioCumpleConsulta(r.sumario,estado.q) ||
+      Boolean(r.variante&&sumarioCumpleConsulta(r.sumario,r.variante));
   }
   return r._coin;
 }
-/* El pasaje de un resultado: el sumario si contiene lo buscado; si no, el
-   tramo del documento donde está (ver traerFragmentos); y sólo si el
-   documento no se pudo leer, el sumario tal cual. */
+/* El pasaje sólo se muestra cuando contiene la consulta (o el equivalente
+   que efectivamente encontró el resultado). No se presenta texto de relleno
+   como si fuera una coincidencia.
+*/
 function pasajeDe(f,r){
   var im=estado.indices[f.slug]||{}, uf=urlFragmento(f.slug,r);
   if(sumarioCoincide(r)) return r.sumario;
   var frag=uf&&im.fragmentos?im.fragmentos[uf]:"";
-  if(frag) return frag;
-  if(r.sumario&&uf&&im.fragmentos&&!im.fragmentos.hasOwnProperty(uf)) return "";
-  return r.sumario||"";
+  if(frag&&(sumarioCumpleConsulta(frag,estado.q)||
+      (r.variante&&sumarioCumpleConsulta(frag,r.variante)))) return frag;
+  return "";
 }
 /* Un resultado se muestra sólo con su texto: true si ya tiene pasaje, "pendiente"
    si se está yendo a buscar al documento, false si no lo tiene. Dialnet no se
@@ -6297,8 +6307,8 @@ function fichaIndice(f,r){
       return w.replace(/["'()]/g,"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
     });
     var coincide=function(v){
-      var n=v.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-      return claves.some(function(k){ return n.indexOf(k)>-1; });
+      return sumarioCumpleConsulta(v,q) ||
+        Boolean(r.variante&&sumarioCumpleConsulta(v,r.variante));
     };
     var ordenados=r.voces.filter(coincide).concat(r.voces.filter(function(v){ return !coincide(v); }));
     temas=ordenados.slice(0,14).join(" · ");
@@ -6313,13 +6323,13 @@ function fichaIndice(f,r){
       (fechaEnc?'<span class="f-fecha">'+fechaEnc+'</span>':'')+
       (origenFicha?'<span class="f-fecha">'+origenFicha+'</span>':'')+
       (tipoFicha?'<span class="f-fecha">'+tipoFicha+'</span>':'')+'</div>'+
-    '<h3 class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</h3>'+
-    (pasaje?'<p class="f-nota">'+pasajeResaltado(pasaje,q,800)+'</p>':'')+
+    '<h3 class="f-nom">'+resaltarSimple(r.caratula||r.expediente||"(sin carátula)",consultaQueCoincide(r,r.caratula||r.expediente||""))+'</h3>'+
+    (pasaje?'<p class="f-nota">'+(r.tipoExtracto?'<span style="opacity:.65">'+esc(r.tipoExtracto)+'. </span>':'')+pasajeResaltado(pasaje,consultaQueCoincide(r,pasaje),800)+'</p>':'')+
     (temas?'<p class="f-nota"><span style="opacity:.6">Temas que el TSJ asigna a este fallo: </span>'+resaltarSimple(temas,q)+'</p>':'')+
     (esperando?'<p class="f-nota" style="opacity:.55;font-style:italic">Buscando el pasaje en el documento…</p>':'')+
     (sinPasaje?'<p class="f-nota" style="opacity:.55;font-style:italic">'+esc(sinPasaje)+'</p>':'')+
     (f.slug!=="caba"&&r.voces&&r.voces.length?'<div class="voces">'+r.voces.slice(0,6).map(function(v){
-      return '<span class="voz" style="cursor:default">'+esc(v)+'</span>';}).join("")+'</div>':"")+
+      return '<span class="voz" style="cursor:default">'+resaltarSimple(v,consultaQueCoincide(r,v))+'</span>';}).join("")+'</div>':"")+
     '<div class="f-acc" style="margin-top:8px">'+
       (r.linkFicha?'<a class="mini" href="'+escU(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
       marcaTema+marcaVariante+
