@@ -45,8 +45,8 @@ test('fusionar la cuenta preserva anillos del servidor y recibe los del navegado
 
 test('el endpoint de fragmentos sólo acepta URL y variante para extraer pasajes; no persiste metadatos del cliente', async () => {
   const ruta = await fs.readFile(path.join(raiz, 'routes', 'indice.js'), 'utf8');
-  const inicio = ruta.indexOf('router.post(\`/indice/\${slug}/fragmentos\`');
-  const fin = ruta.indexOf('router.get(\`/indice/\${slug}/estado\`', inicio);
+  const inicio = ruta.indexOf('router.post(`/indice/${slug}/fragmentos`');
+  const fin = ruta.indexOf('router.get(`/indice/${slug}/estado`', inicio);
   assert.ok(inicio >= 0 && fin > inicio, 'se aísla la ruta pública de pasajes');
   const fragmentos = ruta.slice(inicio, fin);
   assert.match(fragmentos, /req\.body\?\.registros/);
