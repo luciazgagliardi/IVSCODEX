@@ -45,12 +45,12 @@ test('fusionar la cuenta preserva anillos del servidor y recibe los del navegado
 
 test('el endpoint de fragmentos sólo acepta URL y variante para extraer pasajes; no persiste metadatos del cliente', async () => {
   const ruta = await fs.readFile(path.join(raiz, 'routes', 'indice.js'), 'utf8');
-  assert.match(ruta, /req\\.body\\?\\.registros/);
-  assert.match(ruta, /typeof r\\?\\.url === 'string' && pedidas\\.includes\\(r\\.url\\)/);
-  assert.match(ruta, /typeof r\\?\\.variante === 'string'/);
-  assert.doesNotMatch(ruta, /agregarAlAcervo\\s*\\(/);
-  assert.doesNotMatch(ruta, /upsertRegistros\\s*\\(/);
-  assert.match(ruta, /const doc = await obtenerDocumento\\(url, \\{ automatico: true \\}\\)/);
+  assert.match(ruta, /req\.body\?\.registros/);
+  assert.match(ruta, /typeof r\?\.url === 'string' && pedidas\.includes\(r\.url\)/);
+  assert.match(ruta, /typeof r\?\.variante === 'string'/);
+  assert.doesNotMatch(ruta, /agregarAlAcervo\s*\(/);
+  assert.doesNotMatch(ruta, /upsertRegistros\s*\(/);
+  assert.match(ruta, /const doc = await obtenerDocumento\(url, \{ automatico: true \}\)/);
 });
 
 test('tres pipelines de publicación usan worktree limpio y evitan rebase con cosechas temporales', async () => {
