@@ -6389,7 +6389,7 @@ function traerFragmentos(slug,pedido,carril){
   tanda.forEach(function(u){ im.fragEnCurso[u]=1; });
   im.fragCargando=true;
   // con los datos de cada fallo: el servidor guarda en el acervo el texto que lee, y la próxima vez sale al instante
-  var registros=pendientes.slice(0,cuantos).map(function(r){ return {id:r.id,url:urlFragmento(slug,r),caratula:r.caratula,fecha:r.fecha,tribunal:r.tribunal,expediente:r.expediente}; });
+  var registros=pendientes.slice(0,cuantos).map(function(r){ return {id:r.id,url:urlFragmento(slug,r),caratula:r.caratula,fecha:r.fecha,tribunal:r.tribunal,expediente:r.expediente,variante:r.variante||''}; });
   var promesaFrag=fetch(estado.api+"/indice/"+slug+"/fragmentos",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({q:qi,urls:tanda,registros:registros})
