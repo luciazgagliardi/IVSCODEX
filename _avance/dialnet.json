@@ -5,15 +5,15 @@
       "pagina": 8,
       "completas": false,
       "paginas": 7,
-      "errores": 8,
+      "errores": 9,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"incumplimiento contractual\",{}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 20,
+      "pagina": 2,
       "completas": false,
-      "paginas": 0,
-      "errores": 1,
+      "paginas": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daño moral\",{}]": {
@@ -21,15 +21,15 @@
       "pagina": 4,
       "completas": false,
       "paginas": 3,
-      "errores": 8,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: Client network socket disconnected before secure TLS connection was established. Puede estar caído, lento o haber cambiado de formato; intente n"
+      "errores": 9,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{}]": {
       "desde": 0,
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"responsabilidad civil\",{}]": {
@@ -37,7 +37,7 @@
       "pagina": 7,
       "completas": false,
       "paginas": 6,
-      "errores": 8,
+      "errores": 9,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"teoría de la imprevisión\",{}]": {
@@ -5121,6 +5121,7 @@
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     }
   },
-  "indiceTerminos": 866,
-  "versionIds": 2
+  "indiceTerminos": 0,
+  "versionIds": 2,
+  "versionAvanceTerminos": 2
 }

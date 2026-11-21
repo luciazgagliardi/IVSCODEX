@@ -57,18 +57,18 @@
       "paginas": 1
     },
     "[\"daño moral\",{\"tribunal\":\"CC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 640,
+      "pagina": 33,
       "completas": false,
-      "paginas": 16,
+      "paginas": 32,
       "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -82,9 +82,9 @@
     },
     "[\"pacto comisorio\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -109,10 +109,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"teoría de la imprevisión\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -143,18 +143,18 @@
       "paginas": 2
     },
     "[\"responsabilidad civil\",{\"tribunal\":\"CC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"mora automática\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -168,9 +168,9 @@
     },
     "[\"mora automática\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -181,10 +181,10 @@
       "paginas": 41
     },
     "[\"intereses moratorios\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 140,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
     },
     "[\"despido\",{\"tribunal\":\"CC\"}]": {
       "desde": 20,
@@ -195,34 +195,34 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses moratorios\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"despido\",{\"tribunal\":\"CT\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses moratorios\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"indemnización\",{\"tribunal\":\"SC\"}]": {
-      "desde": 1100,
-      "pagina": 56,
+      "desde": 1260,
+      "pagina": 64,
       "completas": false,
-      "paginas": 55
+      "paginas": 63
     },
     "[\"tasa activa\",{\"tribunal\":\"SC\"}]": {
       "desde": 140,
@@ -231,10 +231,10 @@
       "paginas": 8
     },
     "[\"indemnización\",{\"tribunal\":\"CC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -247,10 +247,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"indemnización\",{\"tribunal\":\"CT\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -283,26 +283,26 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"resolución contractual\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"accidente de trabajo\",{\"tribunal\":\"CT\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"resolución contractual\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -313,10 +313,10 @@
       "paginas": 28
     },
     "[\"seña\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"familia\",{\"tribunal\":\"CC\"}]": {
       "desde": 0,
@@ -327,10 +327,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"seña\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -343,10 +343,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"seña\",{\"tribunal\":\"CT\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -358,9 +358,9 @@
     },
     "[\"boleto de compraventa\",{\"tribunal\":\"SC\"}]": {
       "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
     },
     "[\"sucesión\",{\"tribunal\":\"CC\"}]": {
       "desde": 240,
@@ -371,10 +371,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"boleto de compraventa\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -388,9 +388,9 @@
     },
     "[\"boleto de compraventa\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -402,23 +402,23 @@
     },
     "[\"locación de inmueble\",{\"tribunal\":\"SC\"}]": {
       "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
     },
     "[\"amparo\",{\"tribunal\":\"CC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"locación de inmueble\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -432,17 +432,17 @@
     },
     "[\"locación de inmueble\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"contrato\",{\"tribunal\":\"SC\"}]": {
-      "desde": 980,
-      "pagina": 50,
+      "desde": 1140,
+      "pagina": 58,
       "completas": false,
-      "paginas": 49
+      "paginas": 57
     },
     "[\"desalojo falta de pago\",{\"tribunal\":\"SC\"}]": {
       "desde": 20,
@@ -451,26 +451,26 @@
       "paginas": 2
     },
     "[\"contrato\",{\"tribunal\":\"CC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"desalojo falta de pago\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"contrato\",{\"tribunal\":\"CT\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -481,30 +481,30 @@
       "paginas": 1
     },
     "[\"prescripción\",{\"tribunal\":\"SC\"}]": {
-      "desde": 980,
-      "pagina": 50,
+      "desde": 1140,
+      "pagina": 58,
       "completas": false,
-      "paginas": 49
+      "paginas": 57
     },
     "[\"obligación de valor\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 200,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11
     },
     "[\"prescripción\",{\"tribunal\":\"CC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 6,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"obligación de valor\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -517,10 +517,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"obligación de valor\",{\"tribunal\":\"CT\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -531,10 +531,10 @@
       "paginas": 5
     },
     "[\"novación\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
     },
     "[\"alimentos\",{\"tribunal\":\"CC\"}]": {
       "desde": 220,
@@ -545,10 +545,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"novación\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -562,17 +562,17 @@
     },
     "[\"novación\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses\",{\"tribunal\":\"SC\"}]": {
-      "desde": 1100,
-      "pagina": 56,
+      "desde": 1260,
+      "pagina": 64,
       "completas": false,
-      "paginas": 55
+      "paginas": 63
     },
     "[\"cesión de créditos\",{\"tribunal\":\"SC\"}]": {
       "desde": 20,
@@ -581,18 +581,18 @@
       "paginas": 2
     },
     "[\"intereses\",{\"tribunal\":\"CC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 7,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"cesión de créditos\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -606,9 +606,9 @@
     },
     "[\"cesión de créditos\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -633,10 +633,10 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"buena fe contractual\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -650,31 +650,31 @@
     },
     "[\"buena fe contractual\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incapacidad sobreviniente\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
     },
     "[\"incapacidad sobreviniente\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incapacidad sobreviniente\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -703,18 +703,18 @@
       "paginas": 3
     },
     "[\"pérdida de chance\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 120,
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pérdida de chance\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -739,120 +739,120 @@
       "paginas": 1
     },
     "[\"riesgo de la cosa\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 200,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11
     },
     "[\"riesgo de la cosa\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"riesgo de la cosa\",{\"tribunal\":\"CT\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"accidente de tránsito\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"accidente de tránsito\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"accidente de tránsito\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"mala praxis médica\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 100,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
     },
     "[\"mala praxis médica\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"mala praxis médica\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"relación de causalidad\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"relación de causalidad\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"relación de causalidad\",{\"tribunal\":\"CT\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"eximentes de responsabilidad\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 160,
+      "pagina": 10,
+      "completas": true,
+      "paginas": 9
     },
     "[\"eximentes de responsabilidad\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"eximentes de responsabilidad\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"culpa de la víctima\",{\"tribunal\":\"SC\"}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"servidumbre de paso\",{\"tribunal\":\"SC\"}]": {
       "desde": 0,
@@ -4117,10 +4117,10 @@
       "paginas": 1
     },
     "[\"recurso de inconstitucionalidad\",{\"tribunal\":\"SC\"}]": {
-      "desde": 440,
-      "pagina": 23,
+      "desde": 600,
+      "pagina": 31,
       "completas": false,
-      "paginas": 22
+      "paginas": 30
     },
     "[\"recurso de inconstitucionalidad\",{\"tribunal\":\"CC\"}]": {
       "desde": 20,
@@ -5541,24 +5541,24 @@
       "paginas": 1
     },
     "[\"desalojo\",{\"tribunal\":\"SC\"}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"desalojo\",{\"tribunal\":\"CC\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"desalojo\",{\"tribunal\":\"CT\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -5653,10 +5653,10 @@
       "paginas": 8
     },
     "[\"medida cautelar\",{\"tribunal\":\"CC\"}]": {
-      "desde": 160,
-      "pagina": 9,
-      "completas": false,
-      "paginas": 8,
+      "desde": 300,
+      "pagina": 17,
+      "completas": true,
+      "paginas": 16,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -5831,16 +5831,16 @@
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daños y perjuicios\",{\"tribunal\":\"SC\"}]": {
-      "desde": 440,
-      "pagina": 23,
+      "desde": 600,
+      "pagina": 31,
       "completas": false,
-      "paginas": 22
+      "paginas": 30
     },
     "[\"daños y perjuicios\",{\"tribunal\":\"CC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -5915,24 +5915,24 @@
       "paginas": 1
     },
     "[\"prueba\",{\"tribunal\":\"SC\"}]": {
-      "desde": 280,
-      "pagina": 15,
+      "desde": 440,
+      "pagina": 23,
       "completas": false,
-      "paginas": 14
+      "paginas": 22
     },
     "[\"prueba\",{\"tribunal\":\"CC\"}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"prueba\",{\"tribunal\":\"CT\"}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 1,
       "ultimoError": "El buscador de la SCJM no respondió como se esperaba: respuesta 403. Puede estar caído o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -7571,10 +7571,10 @@
       "paginas": 1
     },
     "[\"riesgos del trabajo\",{\"tribunal\":\"SC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16
+      "paginas": 24
     },
     "[\"cosa juzgada\",{\"tribunal\":\"SC\"}]": {
       "desde": 160,
@@ -7595,10 +7595,10 @@
       "paginas": 8
     },
     "[\"riesgos del trabajo\",{\"tribunal\":\"CT\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16
+      "paginas": 24
     },
     "[\"cosa juzgada\",{\"tribunal\":\"CT\"}]": {
       "desde": 20,
@@ -7973,10 +7973,10 @@
       "paginas": 1
     },
     "[\"empleo público\",{\"tribunal\":\"SC\"}]": {
-      "desde": 320,
-      "pagina": 17,
+      "desde": 480,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16
+      "paginas": 24
     },
     "[\"impuesto sobre los ingresos brutos\",{\"tribunal\":\"SC\"}]": {
       "desde": 40,
@@ -8991,8 +8991,429 @@
       "pagina": 4,
       "completas": false,
       "paginas": 3
+    },
+    "[\"pacto comisorio\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"teoría de la imprevisión\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"mora automática\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"intereses moratorios\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"resolución contractual\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"seña\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"boleto de compraventa\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"locación de inmueble\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"desalojo falta de pago\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"obligación de valor\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"novación\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cesión de créditos\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"buena fe contractual\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"incapacidad sobreviniente\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fórmula acciarri\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pérdida de chance\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"riesgo de la cosa\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente de tránsito\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"mala praxis médica\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"relación de causalidad\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad del Estado\",{\"tribunal\":\"SC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"responsabilidad del Estado\",{\"tribunal\":\"CC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"responsabilidad del Estado\",{\"tribunal\":\"CT\"}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"responsabilidad del Estado\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"eximentes de responsabilidad\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño ambiental\",{\"tribunal\":\"SC\"}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"daño ambiental\",{\"tribunal\":\"CC\"}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"culpa de la víctima\",{\"tribunal\":\"CC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"daño ambiental\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"culpa de la víctima\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño ambiental\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"culpa de la víctima\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho ambiental\",{\"tribunal\":\"SC\"}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"valor vida\",{\"tribunal\":\"SC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho ambiental\",{\"tribunal\":\"CC\"}]": {
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2
+    },
+    "[\"valor vida\",{\"tribunal\":\"CC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho ambiental\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"valor vida\",{\"tribunal\":\"CT\"}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"derecho ambiental\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"valor vida\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"propiedad horizontal\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"gastos de tratamiento futuro\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"propiedad horizontal\",{\"tribunal\":\"CC\"}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"gastos de tratamiento futuro\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"propiedad horizontal\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"gastos de tratamiento futuro\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"propiedad horizontal\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"gastos de tratamiento futuro\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación activa daño moral\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación activa daño moral\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación activa daño moral\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"desalojo\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación activa daño moral\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"locación\",{\"tribunal\":\"SC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"prescripción adquisitiva\",{\"tribunal\":\"SC\"}]": {
+      "desde": 140,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
+    },
+    "[\"locación\",{\"tribunal\":\"CC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"prescripción adquisitiva\",{\"tribunal\":\"CC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"locación\",{\"tribunal\":\"CT\"}]": {
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"prescripción adquisitiva\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"locación\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prescripción adquisitiva\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"seguro\",{\"tribunal\":\"SC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"usucapión veinteañal\",{\"tribunal\":\"SC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"seguro\",{\"tribunal\":\"CC\"}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"usucapión veinteañal\",{\"tribunal\":\"CC\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"seguro\",{\"tribunal\":\"CT\"}]": {
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
+    },
+    "[\"usucapión veinteañal\",{\"tribunal\":\"CT\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"seguro\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"usucapión veinteañal\",{\"tribunal\":\"CF\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"quiebra\",{\"tribunal\":\"SC\"}]": {
+      "desde": 20,
+      "pagina": 2,
+      "completas": false,
+      "paginas": 1
     }
   },
-  "indiceTerminos": 1016,
-  "versionIds": 2
+  "indiceTerminos": 4,
+  "versionIds": 2,
+  "versionAvanceTerminos": 2
 }

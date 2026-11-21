@@ -1,22 +1,51 @@
 {
   "tareas": {
     "[\"daños\",{}]": {
-      "desde": 50630,
-      "pagina": 50,
+      "desde": 48320,
+      "pagina": 58,
       "completas": false,
-      "paginas": 49
+      "paginas": 57,
+      "cursoresVistos": [
+        "50630",
+        "50404",
+        "50167",
+        "49908",
+        "49561",
+        "49317",
+        "48967",
+        "48609",
+        "48320"
+      ]
     },
     "[\"incumplimiento contractual\",{}]": {
-      "desde": 56889,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 30841,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8,
+      "cursoresVistos": [
+        "56889",
+        "54409",
+        "48236",
+        "40289",
+        "30841"
+      ]
     },
     "[\"sentencia\",{}]": {
-      "desde": 59091,
-      "pagina": 56,
+      "desde": 58421,
+      "pagina": 64,
       "completas": false,
-      "paginas": 55
+      "paginas": 63,
+      "cursoresVistos": [
+        "59091",
+        "59012",
+        "58915",
+        "58838",
+        "58753",
+        "58649",
+        "58574",
+        "58498",
+        "58421"
+      ]
     },
     "[\"pacto comisorio\",{}]": {
       "desde": 0,
@@ -25,10 +54,21 @@
       "paginas": 1
     },
     "[\"contrato\",{}]": {
-      "desde": 41591,
-      "pagina": 50,
+      "desde": 37742,
+      "pagina": 58,
       "completas": false,
-      "paginas": 49
+      "paginas": 57,
+      "cursoresVistos": [
+        "41591",
+        "41178",
+        "40794",
+        "40184",
+        "39675",
+        "39264",
+        "38886",
+        "38300",
+        "37742"
+      ]
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 0,
@@ -37,10 +77,21 @@
       "paginas": 1
     },
     "[\"laboral\",{}]": {
-      "desde": 47696,
-      "pagina": 50,
+      "desde": 45164,
+      "pagina": 58,
       "completas": false,
-      "paginas": 49
+      "paginas": 57,
+      "cursoresVistos": [
+        "47696",
+        "47374",
+        "47027",
+        "46745",
+        "46372",
+        "46057",
+        "45792",
+        "45577",
+        "45164"
+      ]
     },
     "[\"mora automática\",{}]": {
       "desde": 0,
@@ -49,12 +100,23 @@
       "paginas": 1
     },
     "[\"penal\",{}]": {
-      "desde": 61237,
-      "pagina": 34,
+      "desde": 60788,
+      "pagina": 42,
       "completas": false,
-      "paginas": 33,
+      "paginas": 41,
       "errores": 2,
-      "ultimoError": "Cursor numérico no progresivo"
+      "ultimoError": "Cursor numérico no progresivo",
+      "cursoresVistos": [
+        "61237",
+        "61306",
+        "61219",
+        "61151",
+        "61079",
+        "61019",
+        "60945",
+        "60856",
+        "60788"
+      ]
     },
     "[\"intereses moratorios\",{}]": {
       "desde": 40071,
@@ -63,16 +125,38 @@
       "paginas": 3
     },
     "[\"familia\",{}]": {
-      "desde": 41073,
-      "pagina": 50,
+      "desde": 34119,
+      "pagina": 58,
       "completas": false,
-      "paginas": 49
+      "paginas": 57,
+      "cursoresVistos": [
+        "41073",
+        "40359",
+        "39402",
+        "38577",
+        "37634",
+        "36774",
+        "35760",
+        "34752",
+        "34119"
+      ]
     },
     "[\"tasa activa\",{}]": {
-      "desde": 58998,
-      "pagina": 4,
+      "desde": 42225,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11,
+      "cursoresVistos": [
+        "58998",
+        "57371",
+        "55464",
+        "53348",
+        "51368",
+        "49412",
+        "47370",
+        "45510",
+        "42225"
+      ]
     },
     "[\"alimentos\",{}]": {
       "desde": 1282,
@@ -93,16 +177,38 @@
       "paginas": 44
     },
     "[\"seña\",{}]": {
-      "desde": 36057,
-      "pagina": 4,
+      "desde": 16509,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11,
+      "cursoresVistos": [
+        "36057",
+        "31444",
+        "29007",
+        "27177",
+        "25156",
+        "22608",
+        "20437",
+        "18435",
+        "16509"
+      ]
     },
     "[\"amparo\",{}]": {
-      "desde": 49874,
-      "pagina": 56,
+      "desde": 48368,
+      "pagina": 64,
       "completas": false,
-      "paginas": 55
+      "paginas": 63,
+      "cursoresVistos": [
+        "49874",
+        "49616",
+        "49430",
+        "49215",
+        "49078",
+        "48934",
+        "48705",
+        "48467",
+        "48368"
+      ]
     },
     "[\"boleto de compraventa\",{}]": {
       "desde": 15175,
@@ -123,10 +229,21 @@
       "paginas": 1
     },
     "[\"administrativo\",{}]": {
-      "desde": 54234,
-      "pagina": 50,
+      "desde": 52590,
+      "pagina": 58,
       "completas": false,
-      "paginas": 49
+      "paginas": 57,
+      "cursoresVistos": [
+        "54234",
+        "53996",
+        "53764",
+        "53610",
+        "53378",
+        "53127",
+        "52988",
+        "52771",
+        "52590"
+      ]
     },
     "[\"desalojo falta de pago\",{}]": {
       "desde": 0,
@@ -159,10 +276,21 @@
       "paginas": 1
     },
     "[\"daño moral\",{}]": {
-      "desde": 37455,
-      "pagina": 20,
-      "completas": false,
-      "paginas": 19
+      "desde": 22966,
+      "pagina": 29,
+      "completas": true,
+      "paginas": 28,
+      "cursoresVistos": [
+        "37455",
+        "36142",
+        "34760",
+        "33926",
+        "32781",
+        "29684",
+        "26973",
+        "24777",
+        "22966"
+      ]
     },
     "[\"consecuencias no patrimoniales\",{}]": {
       "desde": 55590,
@@ -171,10 +299,19 @@
       "paginas": 2
     },
     "[\"incapacidad sobreviniente\",{}]": {
-      "desde": 53082,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 24069,
+      "pagina": 11,
+      "completas": true,
+      "paginas": 10,
+      "cursoresVistos": [
+        "53082",
+        "49317",
+        "41868",
+        "37031",
+        "34155",
+        "28931",
+        "24069"
+      ]
     },
     "[\"fórmula acciarri\",{}]": {
       "desde": 0,
@@ -183,22 +320,35 @@
       "paginas": 1
     },
     "[\"pérdida de chance\",{}]": {
-      "desde": 36085,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 24070,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5,
+      "cursoresVistos": [
+        "36085",
+        "24070"
+      ]
     },
     "[\"daño punitivo\",{}]": {
-      "desde": 57519,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 48313,
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7,
+      "cursoresVistos": [
+        "57519",
+        "55402",
+        "51520",
+        "48313"
+      ]
     },
     "[\"riesgo de la cosa\",{}]": {
       "desde": 23447,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
+      "cursoresVistos": [
+        "23447"
+      ]
     },
     "[\"accidente de tránsito\",{}]": {
       "desde": 26962,
@@ -213,10 +363,21 @@
       "paginas": 3
     },
     "[\"relación de causalidad\",{}]": {
-      "desde": 59639,
-      "pagina": 4,
+      "desde": 37105,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11,
+      "cursoresVistos": [
+        "59639",
+        "58043",
+        "56141",
+        "52627",
+        "49524",
+        "43735",
+        "41864",
+        "39297",
+        "37105"
+      ]
     },
     "[\"eximentes de responsabilidad\",{}]": {
       "desde": 34470,
@@ -225,10 +386,15 @@
       "paginas": 2
     },
     "[\"culpa de la víctima\",{}]": {
-      "desde": 37148,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 23131,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6,
+      "cursoresVistos": [
+        "37148",
+        "31880",
+        "23131"
+      ]
     },
     "[\"valor vida\",{}]": {
       "desde": 34238,
@@ -345,10 +511,14 @@
       "paginas": 2
     },
     "[\"cuota alimentaria\",{}]": {
-      "desde": 26560,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 14570,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8,
+      "cursoresVistos": [
+        "26560",
+        "14570"
+      ]
     },
     "[\"alimentos provisorios\",{}]": {
       "desde": 27281,
@@ -399,10 +569,21 @@
       "paginas": 1
     },
     "[\"interés superior del niño\",{}]": {
-      "desde": 56660,
-      "pagina": 7,
+      "desde": 44849,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "56660",
+        "55924",
+        "54515",
+        "52426",
+        "51297",
+        "49689",
+        "48580",
+        "46570",
+        "44849"
+      ]
     },
     "[\"autonomía progresiva\",{}]": {
       "desde": 0,
@@ -417,10 +598,21 @@
       "paginas": 2
     },
     "[\"colación\",{}]": {
-      "desde": 57819,
-      "pagina": 7,
+      "desde": 40912,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "57819",
+        "56619",
+        "54845",
+        "53086",
+        "50762",
+        "48263",
+        "45675",
+        "42647",
+        "40912"
+      ]
     },
     "[\"legítima hereditaria\",{}]": {
       "desde": 0,
@@ -471,22 +663,44 @@
       "paginas": 1
     },
     "[\"relación de consumo\",{}]": {
-      "desde": 57190,
-      "pagina": 7,
+      "desde": 47299,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "57190",
+        "56697",
+        "55401",
+        "54406",
+        "53042",
+        "51435",
+        "50297",
+        "48545",
+        "47299"
+      ]
     },
     "[\"trato digno\",{}]": {
-      "desde": 46266,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 34128,
+      "pagina": 11,
+      "completas": true,
+      "paginas": 10,
+      "cursoresVistos": [
+        "46266",
+        "44478",
+        "42652",
+        "34128"
+      ]
     },
     "[\"deber de información\",{}]": {
-      "desde": 36313,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 17196,
+      "pagina": 10,
+      "completas": true,
+      "paginas": 9,
+      "cursoresVistos": [
+        "36313",
+        "30087",
+        "17196"
+      ]
     },
     "[\"cláusulas abusivas\",{}]": {
       "desde": 0,
@@ -700,9 +914,12 @@
     },
     "[\"reticencia\",{}]": {
       "desde": 789,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7,
+      "cursoresVistos": [
+        "789"
+      ]
     },
     "[\"seguro de vida colectivo\",{}]": {
       "desde": 0,
@@ -753,10 +970,20 @@
       "paginas": 1
     },
     "[\"relación de dependencia\",{}]": {
-      "desde": 46882,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 17207,
+      "pagina": 15,
+      "completas": true,
+      "paginas": 14,
+      "cursoresVistos": [
+        "46882",
+        "44493",
+        "41897",
+        "39095",
+        "35525",
+        "31437",
+        "25500",
+        "17207"
+      ]
     },
     "[\"trabajo no registrado\",{}]": {
       "desde": 0,
@@ -855,10 +1082,18 @@
       "paginas": 1
     },
     "[\"paritarias\",{}]": {
-      "desde": 43212,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 22485,
+      "pagina": 13,
+      "completas": true,
+      "paginas": 12,
+      "cursoresVistos": [
+        "43212",
+        "41191",
+        "38692",
+        "33595",
+        "28914",
+        "22485"
+      ]
     },
     "[\"ultraactividad del convenio\",{}]": {
       "desde": 0,
@@ -903,10 +1138,15 @@
       "paginas": 1
     },
     "[\"baremo\",{}]": {
-      "desde": 35590,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 3883,
+      "pagina": 10,
+      "completas": true,
+      "paginas": 9,
+      "cursoresVistos": [
+        "35590",
+        "27426",
+        "3883"
+      ]
     },
     "[\"prestaciones dinerarias\",{}]": {
       "desde": 22418,
@@ -1024,15 +1264,29 @@
     },
     "[\"determinación de la pena\",{}]": {
       "desde": 7107,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7,
+      "cursoresVistos": [
+        "7107"
+      ]
     },
     "[\"reincidencia\",{}]": {
-      "desde": 58502,
-      "pagina": 7,
+      "desde": 50365,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "58502",
+        "57911",
+        "56967",
+        "55968",
+        "54899",
+        "54045",
+        "52871",
+        "51577",
+        "50365"
+      ]
     },
     "[\"homicidio agravado por el vínculo\",{}]": {
       "desde": 0,
@@ -1053,10 +1307,17 @@
       "paginas": 2
     },
     "[\"tenencia de estupefacientes con fines de comercialización\",{}]": {
-      "desde": 53072,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 40518,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11,
+      "cursoresVistos": [
+        "53072",
+        "49528",
+        "46663",
+        "43162",
+        "40518"
+      ]
     },
     "[\"violencia de género femicidio\",{}]": {
       "desde": 0,
@@ -1065,10 +1326,15 @@
       "paginas": 1
     },
     "[\"lesiones culposas\",{}]": {
-      "desde": 42811,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 9825,
+      "pagina": 10,
+      "completas": true,
+      "paginas": 9,
+      "cursoresVistos": [
+        "42811",
+        "38917",
+        "9825"
+      ]
     },
     "[\"prisión preventiva peligro de fuga\",{}]": {
       "desde": 0,
@@ -1095,28 +1361,67 @@
       "paginas": 2
     },
     "[\"doble conforme\",{}]": {
-      "desde": 50216,
-      "pagina": 7,
+      "desde": 23583,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "50216",
+        "48308",
+        "44338",
+        "39935",
+        "36446",
+        "33363",
+        "29594",
+        "26720",
+        "23583"
+      ]
     },
     "[\"juicio abreviado\",{}]": {
-      "desde": 48247,
-      "pagina": 7,
+      "desde": 15050,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "48247",
+        "45496",
+        "42555",
+        "40128",
+        "38394",
+        "35346",
+        "30761",
+        "25492",
+        "15050"
+      ]
     },
     "[\"juicio por jurados\",{}]": {
-      "desde": 30557,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 10758,
+      "pagina": 11,
+      "completas": true,
+      "paginas": 10,
+      "cursoresVistos": [
+        "30557",
+        "28512",
+        "24660",
+        "10758"
+      ]
     },
     "[\"suspensión del juicio a prueba\",{}]": {
-      "desde": 56590,
-      "pagina": 7,
+      "desde": 47945,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "56590",
+        "55332",
+        "54390",
+        "53350",
+        "52300",
+        "51364",
+        "50044",
+        "48926",
+        "47945"
+      ]
     },
     "[\"testigo único\",{}]": {
       "desde": 17723,
@@ -1131,10 +1436,21 @@
       "paginas": 1
     },
     "[\"in dubio pro reo\",{}]": {
-      "desde": 50145,
-      "pagina": 7,
+      "desde": 20041,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "50145",
+        "48158",
+        "45119",
+        "40595",
+        "36060",
+        "32059",
+        "28535",
+        "25275",
+        "20041"
+      ]
     },
     "[\"exclusión probatoria\",{}]": {
       "desde": 19469,
@@ -1143,16 +1459,32 @@
       "paginas": 2
     },
     "[\"libertad condicional\",{}]": {
-      "desde": 55387,
-      "pagina": 7,
+      "desde": 41649,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "55387",
+        "54471",
+        "52469",
+        "50417",
+        "48844",
+        "47314",
+        "45202",
+        "43369",
+        "41649"
+      ]
     },
     "[\"libertad asistida\",{}]": {
-      "desde": 32774,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 366,
+      "pagina": 10,
+      "completas": true,
+      "paginas": 9,
+      "cursoresVistos": [
+        "32774",
+        "22802",
+        "366"
+      ]
     },
     "[\"salidas transitorias\",{}]": {
       "desde": 7361,
@@ -1167,22 +1499,46 @@
       "paginas": 5
     },
     "[\"prisión domiciliaria\",{}]": {
-      "desde": 52317,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 356,
+      "pagina": 15,
+      "completas": true,
+      "paginas": 14,
+      "cursoresVistos": [
+        "52317",
+        "50730",
+        "47848",
+        "45941",
+        "43643",
+        "42142",
+        "41422",
+        "356"
+      ]
     },
     "[\"hábeas corpus correctivo\",{}]": {
       "desde": 37713,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7,
+      "cursoresVistos": [
+        "37713"
+      ]
     },
     "[\"condiciones de detención\",{}]": {
-      "desde": 58124,
-      "pagina": 7,
+      "desde": 47753,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "58124",
+        "56393",
+        "55529",
+        "54687",
+        "53825",
+        "52130",
+        "51119",
+        "49440",
+        "47753"
+      ]
     },
     "[\"cómputo de pena\",{}]": {
       "desde": 38696,
@@ -1192,9 +1548,12 @@
     },
     "[\"sanciones disciplinarias\",{}]": {
       "desde": 22307,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7,
+      "cursoresVistos": [
+        "22307"
+      ]
     },
     "[\"nulidad del acto administrativo\",{}]": {
       "desde": 24957,
@@ -1215,10 +1574,21 @@
       "paginas": 2
     },
     "[\"responsabilidad del estado\",{}]": {
-      "desde": 52165,
-      "pagina": 7,
+      "desde": 23756,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "52165",
+        "49586",
+        "46077",
+        "41890",
+        "38337",
+        "35420",
+        "33143",
+        "27834",
+        "23756"
+      ]
     },
     "[\"empleo público estabilidad\",{}]": {
       "desde": 0,
@@ -1227,16 +1597,32 @@
       "paginas": 1
     },
     "[\"contrato administrativo\",{}]": {
-      "desde": 30081,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 10299,
+      "pagina": 10,
+      "completas": true,
+      "paginas": 9,
+      "cursoresVistos": [
+        "30081",
+        "24824",
+        "10299"
+      ]
     },
     "[\"sanción disciplinaria\",{}]": {
-      "desde": 34048,
-      "pagina": 7,
+      "desde": 15838,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "34048",
+        "31245",
+        "28679",
+        "26545",
+        "24849",
+        "22606",
+        "19875",
+        "17948",
+        "15838"
+      ]
     },
     "[\"habilitación de instancia\",{}]": {
       "desde": 38798,
@@ -1258,9 +1644,12 @@
     },
     "[\"determinación de oficio\",{}]": {
       "desde": 26502,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7,
+      "cursoresVistos": [
+        "26502"
+      ]
     },
     "[\"ingresos brutos convenio multilateral\",{}]": {
       "desde": 40365,
@@ -1317,16 +1706,30 @@
       "paginas": 2
     },
     "[\"acción de amparo\",{}]": {
-      "desde": 58045,
-      "pagina": 7,
+      "desde": 54020,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "58045",
+        "57666",
+        "57152",
+        "56643",
+        "56338",
+        "55963",
+        "55414",
+        "54727",
+        "54020"
+      ]
     },
     "[\"amparo colectivo\",{}]": {
       "desde": 27561,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7,
+      "cursoresVistos": [
+        "27561"
+      ]
     },
     "[\"control de constitucionalidad de oficio\",{}]": {
       "desde": 13933,
@@ -1359,22 +1762,55 @@
       "paginas": 1
     },
     "[\"arbitrariedad de sentencia\",{}]": {
-      "desde": 51160,
-      "pagina": 7,
+      "desde": 37693,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "51160",
+        "49985",
+        "47981",
+        "46505",
+        "44624",
+        "43481",
+        "42277",
+        "40368",
+        "37693"
+      ]
     },
     "[\"recurso extraordinario federal\",{}]": {
-      "desde": 46560,
-      "pagina": 7,
+      "desde": 31373,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "46560",
+        "45100",
+        "43757",
+        "42562",
+        "39977",
+        "38699",
+        "36447",
+        "33820",
+        "31373"
+      ]
     },
     "[\"gravedad institucional\",{}]": {
-      "desde": 47970,
-      "pagina": 7,
+      "desde": 24876,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "47970",
+        "44266",
+        "40004",
+        "36555",
+        "32786",
+        "30963",
+        "28862",
+        "26689",
+        "24876"
+      ]
     },
     "[\"per saltum\",{}]": {
       "desde": 0,
@@ -1383,10 +1819,14 @@
       "paginas": 1
     },
     "[\"control de convencionalidad\",{}]": {
-      "desde": 48038,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 22419,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8,
+      "cursoresVistos": [
+        "48038",
+        "22419"
+      ]
     },
     "[\"lesa humanidad imprescriptibilidad\",{}]": {
       "desde": 0,
@@ -1413,10 +1853,17 @@
       "paginas": 1
     },
     "[\"reparación integral\",{}]": {
-      "desde": 49110,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 23460,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11,
+      "cursoresVistos": [
+        "49110",
+        "43897",
+        "39113",
+        "33334",
+        "23460"
+      ]
     },
     "[\"medidas provisionales\",{}]": {
       "desde": 0,
@@ -1599,10 +2046,16 @@
       "paginas": 6
     },
     "[\"caducidad de instancia\",{}]": {
-      "desde": 27929,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 13152,
+      "pagina": 11,
+      "completas": true,
+      "paginas": 10,
+      "cursoresVistos": [
+        "27929",
+        "24618",
+        "19703",
+        "13152"
+      ]
     },
     "[\"medida cautelar genérica\",{}]": {
       "desde": 0,
@@ -2181,10 +2634,21 @@
       "paginas": 1
     },
     "[\"desalojo\",{}]": {
-      "desde": 53312,
-      "pagina": 7,
+      "desde": 39983,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "53312",
+        "51741",
+        "49778",
+        "48409",
+        "47230",
+        "46577",
+        "44651",
+        "43305",
+        "39983"
+      ]
     },
     "[\"daño moral procedencia\",{}]": {
       "desde": 0,
@@ -2289,12 +2753,23 @@
       "paginas": 1
     },
     "[\"prueba\",{}]": {
-      "desde": 63349,
-      "pagina": 7,
+      "desde": 62790,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6,
+      "paginas": 14,
       "errores": 2,
-      "ultimoError": "Cursor numérico no progresivo"
+      "ultimoError": "Cursor numérico no progresivo",
+      "cursoresVistos": [
+        "63349",
+        "63411",
+        "63321",
+        "63228",
+        "63126",
+        "63043",
+        "62975",
+        "62888",
+        "62790"
+      ]
     },
     "[\"denegatoria del recurso\",{}]": {
       "desde": 3491,
@@ -2321,10 +2796,21 @@
       "paginas": 1
     },
     "[\"medidas cautelares\",{}]": {
-      "desde": 54067,
-      "pagina": 23,
+      "desde": 49598,
+      "pagina": 31,
       "completas": false,
-      "paginas": 22
+      "paginas": 30,
+      "cursoresVistos": [
+        "54067",
+        "53487",
+        "52956",
+        "52380",
+        "51874",
+        "51155",
+        "50632",
+        "50106",
+        "49598"
+      ]
     },
     "[\"derecho procesal\",{}]": {
       "desde": 61675,
@@ -2441,10 +2927,21 @@
       "paginas": 2
     },
     "[\"competencia\",{}]": {
-      "desde": 60709,
-      "pagina": 23,
+      "desde": 59422,
+      "pagina": 31,
       "completas": false,
-      "paginas": 22
+      "paginas": 30,
+      "cursoresVistos": [
+        "60709",
+        "60539",
+        "60378",
+        "60207",
+        "60067",
+        "59900",
+        "59769",
+        "59583",
+        "59422"
+      ]
     },
     "[\"fundamentación de sentencias\",{}]": {
       "desde": 0,
@@ -2459,10 +2956,21 @@
       "paginas": 1
     },
     "[\"seguros\",{}]": {
-      "desde": 58095,
-      "pagina": 7,
+      "desde": 50557,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "58095",
+        "57159",
+        "56650",
+        "56103",
+        "55539",
+        "54409",
+        "53351",
+        "51874",
+        "50557"
+      ]
     },
     "[\"juicio ejecutivo\",{}]": {
       "desde": 32431,
@@ -2525,10 +3033,21 @@
       "paginas": 6
     },
     "[\"violencia de género\",{}]": {
-      "desde": 61131,
-      "pagina": 7,
+      "desde": 57442,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "61131",
+        "60701",
+        "60360",
+        "59913",
+        "59577",
+        "59167",
+        "58693",
+        "57975",
+        "57442"
+      ]
     },
     "[\"derechos y garantías constitucionales\",{}]": {
       "desde": 56837,
@@ -2771,10 +3290,18 @@
       "paginas": 1
     },
     "[\"nulidad procesal\",{}]": {
-      "desde": 29076,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 6293,
+      "pagina": 13,
+      "completas": true,
+      "paginas": 12,
+      "cursoresVistos": [
+        "29076",
+        "27222",
+        "24760",
+        "18444",
+        "12060",
+        "6293"
+      ]
     },
     "[\"sociedades comerciales\",{}]": {
       "desde": 0,
@@ -3235,10 +3762,21 @@
       "paginas": 6
     },
     "[\"violencia familiar\",{}]": {
-      "desde": 54850,
-      "pagina": 7,
+      "desde": 42824,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "54850",
+        "53490",
+        "51934",
+        "50367",
+        "49357",
+        "47932",
+        "45950",
+        "44260",
+        "42824"
+      ]
     },
     "[\"ley provincial\",{}]": {
       "desde": 0,
@@ -3451,10 +3989,21 @@
       "paginas": 6
     },
     "[\"locación\",{}]": {
-      "desde": 49393,
-      "pagina": 7,
+      "desde": 32369,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14,
+      "cursoresVistos": [
+        "49393",
+        "46994",
+        "45062",
+        "43509",
+        "41897",
+        "39589",
+        "37075",
+        "34789",
+        "32369"
+      ]
     },
     "[\"demanda\",{}]": {
       "desde": 62888,
@@ -7137,8 +7686,167 @@
       "pagina": 4,
       "completas": false,
       "paginas": 3
+    },
+    "[\"derecho penal económico\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
+      "cursoresVistos": []
+    },
+    "[\"responsabilidad del Estado\",{}]": {
+      "desde": 46077,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8,
+      "cursoresVistos": [
+        "61946",
+        "59971",
+        "58082",
+        "56526",
+        "54946",
+        "52235",
+        "49586",
+        "46077"
+      ]
+    },
+    "[\"derecho tributario\",{}]": {
+      "desde": 22922,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
+      "cursoresVistos": [
+        "55006",
+        "41230",
+        "22922"
+      ]
+    },
+    "[\"derecho público\",{}]": {
+      "desde": 55091,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8,
+      "cursoresVistos": [
+        "62867",
+        "61082",
+        "60204",
+        "59192",
+        "58498",
+        "57266",
+        "55974",
+        "55091"
+      ]
+    },
+    "[\"condominio\",{}]": {
+      "desde": 15512,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2,
+      "cursoresVistos": [
+        "15512"
+      ]
+    },
+    "[\"propiedad intelectual\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
+      "cursoresVistos": []
+    },
+    "[\"marcas\",{}]": {
+      "desde": 12460,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6,
+      "cursoresVistos": [
+        "59349",
+        "54222",
+        "45844",
+        "33970",
+        "12460"
+      ]
+    },
+    "[\"derecho ambiental\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
+      "cursoresVistos": []
+    },
+    "[\"derechos humanos\",{}]": {
+      "desde": 61757,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8,
+      "cursoresVistos": [
+        "63587",
+        "63300",
+        "63037",
+        "62855",
+        "62661",
+        "62335",
+        "62032",
+        "61757"
+      ]
+    },
+    "[\"honorarios profesionales\",{}]": {
+      "desde": 52723,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8,
+      "cursoresVistos": [
+        "62939",
+        "61100",
+        "59613",
+        "57972",
+        "57051",
+        "55897",
+        "54418",
+        "52723"
+      ]
+    },
+    "[\"costas judiciales\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
+      "cursoresVistos": []
+    },
+    "[\"insolvencia\",{}]": {
+      "desde": 26001,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3,
+      "cursoresVistos": [
+        "47939",
+        "26001"
+      ]
+    },
+    "[\"derecho previsional\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
+      "cursoresVistos": []
+    },
+    "[\"datos personales\",{}]": {
+      "desde": 46210,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8,
+      "cursoresVistos": [
+        "62617",
+        "60697",
+        "58885",
+        "56679",
+        "54179",
+        "51854",
+        "48644",
+        "46210"
+      ]
     }
   },
-  "indiceTerminos": 1516,
-  "versionIds": 2
+  "indiceTerminos": 5,
+  "versionIds": 2,
+  "versionAvanceTerminos": 2
 }

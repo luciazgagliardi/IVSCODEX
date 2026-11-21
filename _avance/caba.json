@@ -5,20 +5,22 @@
       "pagina": 21,
       "completas": false,
       "paginas": 20,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{}]": {
       "desde": 60,
       "pagina": 4,
       "completas": false,
-      "paginas": 3
+      "paginas": 3,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daños\",{}]": {
-      "desde": 740,
-      "pagina": 38,
+      "desde": 900,
+      "pagina": 46,
       "completas": false,
-      "paginas": 37,
+      "paginas": 45,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -43,10 +45,10 @@
       "paginas": 1
     },
     "[\"responsabilidad\",{}]": {
-      "desde": 740,
-      "pagina": 38,
-      "completas": false,
-      "paginas": 37,
+      "desde": 820,
+      "pagina": 43,
+      "completas": true,
+      "paginas": 42,
       "errores": 2,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -57,18 +59,18 @@
       "paginas": 3
     },
     "[\"contrato\",{}]": {
-      "desde": 720,
-      "pagina": 37,
-      "completas": false,
-      "paginas": 36,
+      "desde": 800,
+      "pagina": 42,
+      "completas": true,
+      "paginas": 41,
       "errores": 3,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"intereses moratorios\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 180,
+      "pagina": 11,
+      "completas": true,
+      "paginas": 10
     },
     "[\"despido\",{}]": {
       "desde": 500,
@@ -79,24 +81,24 @@
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"tasa activa\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"consumidor\",{}]": {
-      "desde": 700,
-      "pagina": 36,
-      "completas": false,
-      "paginas": 35,
+      "desde": 840,
+      "pagina": 44,
+      "completas": true,
+      "paginas": 43,
       "errores": 3,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"resolución contractual\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"familia\",{}]": {
       "desde": 440,
@@ -135,16 +137,18 @@
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"locación de inmueble\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 80,
+      "pagina": 5,
       "completas": false,
-      "paginas": 3
+      "paginas": 4,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: cortó la respuesta antes de listar los resultados, pruebe de nuevo. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en uno"
     },
     "[\"administrativo\",{}]": {
-      "desde": 640,
-      "pagina": 33,
+      "desde": 800,
+      "pagina": 41,
       "completas": false,
-      "paginas": 32,
+      "paginas": 40,
       "errores": 3,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -161,10 +165,10 @@
       "paginas": 33
     },
     "[\"obligación de valor\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"novación\",{}]": {
       "desde": 20,
@@ -185,22 +189,22 @@
       "paginas": 3
     },
     "[\"daño moral\",{}]": {
-      "desde": 380,
-      "pagina": 20,
-      "completas": false,
-      "paginas": 19
+      "desde": 420,
+      "pagina": 23,
+      "completas": true,
+      "paginas": 22
     },
     "[\"consecuencias no patrimoniales\",{}]": {
       "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
     },
     "[\"incapacidad sobreviniente\",{}]": {
       "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
     },
     "[\"fórmula acciarri\",{}]": {
       "desde": 0,
@@ -215,22 +219,22 @@
       "paginas": 3
     },
     "[\"daño punitivo\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 100,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
     },
     "[\"riesgo de la cosa\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"accidente de tránsito\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
     },
     "[\"mala praxis médica\",{}]": {
       "desde": 40,
@@ -239,10 +243,10 @@
       "paginas": 3
     },
     "[\"relación de causalidad\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 100,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
     },
     "[\"eximentes de responsabilidad\",{}]": {
       "desde": 0,
@@ -257,16 +261,16 @@
       "paginas": 3
     },
     "[\"valor vida\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3
+      "paginas": 11
     },
     "[\"gastos de tratamiento futuro\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "desde": 140,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
     },
     "[\"legitimación activa daño moral\",{}]": {
       "desde": 0,
@@ -300,9 +304,9 @@
     },
     "[\"propiedad horizontal\",{}]": {
       "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4
     },
     "[\"expensas comunes\",{}]": {
       "desde": 0,
@@ -333,7 +337,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"boleto y oponibilidad\",{}]": {
@@ -367,10 +371,10 @@
       "paginas": 1
     },
     "[\"régimen de comunicación\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"cuota alimentaria\",{}]": {
       "desde": 40,
@@ -407,14 +411,14 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"adopción plena\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 220,
+      "pagina": 13,
+      "completas": true,
+      "paginas": 12
     },
     "[\"impedimento de contacto\",{}]": {
       "desde": 60,
@@ -423,24 +427,24 @@
       "paginas": 4
     },
     "[\"violencia familiar medidas\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 200,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11
     },
     "[\"interés superior del niño\",{}]": {
-      "desde": 100,
-      "pagina": 6,
-      "completas": false,
-      "paginas": 5,
+      "desde": 220,
+      "pagina": 13,
+      "completas": true,
+      "paginas": 12,
       "errores": 1,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"autonomía progresiva\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 140,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
     },
     "[\"declaratoria de herederos\",{}]": {
       "desde": 0,
@@ -456,17 +460,17 @@
     },
     "[\"legítima hereditaria\",{}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"acción de reducción\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"partición de herencia\",{}]": {
       "desde": 0,
@@ -505,10 +509,10 @@
       "paginas": 1
     },
     "[\"relación de consumo\",{}]": {
-      "desde": 20,
-      "pagina": 2,
+      "desde": 180,
+      "pagina": 10,
       "completas": false,
-      "paginas": 1,
+      "paginas": 9,
       "errores": 1,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -519,10 +523,10 @@
       "paginas": 2
     },
     "[\"deber de información\",{}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -569,10 +573,10 @@
       "paginas": 1
     },
     "[\"garantía legal\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 3,
+      "paginas": 11,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -589,10 +593,10 @@
       "paginas": 1
     },
     "[\"acción social de responsabilidad\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"impugnación de asamblea\",{}]": {
       "desde": 80,
@@ -607,10 +611,10 @@
       "paginas": 4
     },
     "[\"sociedad de la sección iv\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 140,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
     },
     "[\"pagaré de consumo\",{}]": {
       "desde": 0,
@@ -643,10 +647,10 @@
       "paginas": 2
     },
     "[\"abuso de mayoría\",{}]": {
-      "desde": 100,
-      "pagina": 6,
+      "desde": 260,
+      "pagina": 14,
       "completas": false,
-      "paginas": 5,
+      "paginas": 13,
       "errores": 1,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -697,14 +701,14 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: cortó la respuesta antes de listar los resultados, pruebe de nuevo. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en uno"
     },
     "[\"incidente de revisión\",{}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -721,10 +725,10 @@
       "paginas": 3
     },
     "[\"citación en garantía\",{}]": {
-      "desde": 80,
-      "pagina": 5,
+      "desde": 240,
+      "pagina": 13,
       "completas": false,
-      "paginas": 4
+      "paginas": 12
     },
     "[\"seguro de vida colectivo\",{}]": {
       "desde": 20,
@@ -751,18 +755,18 @@
       "paginas": 1
     },
     "[\"seguro de responsabilidad civil\",{}]": {
-      "desde": 20,
-      "pagina": 2,
-      "completas": false,
-      "paginas": 1,
+      "desde": 60,
+      "pagina": 5,
+      "completas": true,
+      "paginas": 4,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"despido indirecto\",{}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -773,18 +777,18 @@
       "paginas": 1
     },
     "[\"indemnización art. 245\",{}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "desde": 20,
+      "pagina": 3,
+      "completas": true,
+      "paginas": 2,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"relación de dependencia\",{}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -801,28 +805,28 @@
       "paginas": 1
     },
     "[\"solidaridad art. 30\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 200,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11
     },
     "[\"intereses tasa activa laboral\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"jornada extraordinaria\",{}]": {
       "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
     },
     "[\"empleo público de hecho\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"despido discriminatorio\",{}]": {
       "desde": 0,
@@ -849,10 +853,10 @@
       "paginas": 3
     },
     "[\"exclusión de tutela\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"práctica desleal\",{}]": {
       "desde": 0,
@@ -873,10 +877,10 @@
       "paginas": 6
     },
     "[\"derecho de huelga\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 180,
+      "pagina": 11,
+      "completas": true,
+      "paginas": 10
     },
     "[\"delegado de personal\",{}]": {
       "desde": 40,
@@ -885,10 +889,10 @@
       "paginas": 3
     },
     "[\"paritarias\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"ultraactividad del convenio\",{}]": {
       "desde": 20,
@@ -904,15 +908,15 @@
     },
     "[\"enfermedad profesional\",{}]": {
       "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
     },
     "[\"comisión médica\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 180,
+      "pagina": 11,
+      "completas": true,
+      "paginas": 10
     },
     "[\"incapacidad laboral permanente\",{}]": {
       "desde": 40,
@@ -931,7 +935,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"baremo\",{}]": {
@@ -941,16 +945,16 @@
       "paginas": 1
     },
     "[\"prestaciones dinerarias\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 140,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
     },
     "[\"actualización ripte\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"reagravación\",{}]": {
       "desde": 0,
@@ -983,16 +987,20 @@
       "paginas": 1
     },
     "[\"haber mínimo\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 220,
+      "pagina": 12,
       "completas": false,
-      "paginas": 6
+      "paginas": 11,
+      "errores": 1,
+      "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"reconocimiento de servicios\",{}]": {
       "desde": 120,
       "pagina": 7,
       "completas": false,
-      "paginas": 6
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"tareas penosas\",{}]": {
       "desde": 0,
@@ -1017,8 +1025,8 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
-      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 2,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"dolo eventual\",{}]": {
       "desde": 40,
@@ -1027,23 +1035,23 @@
       "paginas": 3
     },
     "[\"legítima defensa\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"estado de necesidad\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"tentativa inidónea\",{}]": {
       "desde": 0,
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: cortó la respuesta antes de listar los resultados, pruebe de nuevo. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en uno"
     },
     "[\"autoría mediata\",{}]": {
@@ -1059,10 +1067,10 @@
       "paginas": 3
     },
     "[\"determinación de la pena\",{}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -1077,7 +1085,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"estafa procesal\",{}]": {
@@ -1132,13 +1140,17 @@
       "desde": 120,
       "pagina": 7,
       "completas": false,
-      "paginas": 6
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"doble conforme\",{}]": {
       "desde": 120,
       "pagina": 7,
       "completas": false,
-      "paginas": 6
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"juicio abreviado\",{}]": {
       "desde": 60,
@@ -1151,14 +1163,14 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
-      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 2,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"suspensión del juicio a prueba\",{}]": {
-      "desde": 40,
-      "pagina": 3,
+      "desde": 200,
+      "pagina": 11,
       "completas": false,
-      "paginas": 2
+      "paginas": 10
     },
     "[\"valoración de la prueba indiciaria\",{}]": {
       "desde": 0,
@@ -1167,10 +1179,10 @@
       "paginas": 1
     },
     "[\"in dubio pro reo\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 220,
+      "pagina": 13,
+      "completas": true,
+      "paginas": 12
     },
     "[\"exclusión probatoria\",{}]": {
       "desde": 40,
@@ -1215,10 +1227,10 @@
       "paginas": 1
     },
     "[\"condiciones de detención\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 220,
+      "pagina": 13,
+      "completas": true,
+      "paginas": 12
     },
     "[\"cómputo de pena\",{}]": {
       "desde": 60,
@@ -1236,111 +1248,121 @@
       "desde": 120,
       "pagina": 7,
       "completas": false,
-      "paginas": 6
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"agotamiento de la vía administrativa\",{}]": {
       "desde": 0,
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
-      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 2,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"silencio de la administración\",{}]": {
       "desde": 120,
       "pagina": 7,
       "completas": false,
-      "paginas": 6
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"responsabilidad del estado\",{}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"empleo público estabilidad\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 240,
+      "pagina": 14,
+      "completas": true,
+      "paginas": 13
     },
     "[\"contrato administrativo\",{}]": {
       "desde": 120,
       "pagina": 7,
       "completas": false,
-      "paginas": 6
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"sanción disciplinaria\",{}]": {
       "desde": 120,
       "pagina": 7,
       "completas": false,
-      "paginas": 6
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"habilitación de instancia\",{}]": {
       "desde": 120,
       "pagina": 7,
       "completas": false,
-      "paginas": 6
+      "paginas": 6,
+      "errores": 1,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"medida cautelar contra el estado\",{}]": {
       "desde": 0,
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
-      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 2,
+      "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"acción procesal administrativa\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"determinación de oficio\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"ingresos brutos convenio multilateral\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 180,
+      "pagina": 11,
+      "completas": true,
+      "paginas": 10
     },
     "[\"prescripción tributaria\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 200,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11
     },
     "[\"repetición de impuestos\",{}]": {
       "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
     },
     "[\"multa por defraudación fiscal\",{}]": {
       "desde": 0,
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 1,
+      "errores": 2,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"ejecución fiscal excepciones\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"impuesto de sellos\",{}]": {
       "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
     },
     "[\"tasa municipal servicio efectivo\",{}]": {
       "desde": 0,
@@ -1350,9 +1372,9 @@
     },
     "[\"confiscatoriedad\",{}]": {
       "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "pagina": 8,
+      "completas": true,
+      "paginas": 7
     },
     "[\"solve et repete\",{}]": {
       "desde": 0,
@@ -1361,34 +1383,34 @@
       "paginas": 1
     },
     "[\"acción de amparo\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"amparo colectivo\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"control de constitucionalidad de oficio\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 200,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11
     },
     "[\"cuestión política no justiciable\",{}]": {
-      "desde": 120,
-      "pagina": 7,
-      "completas": false,
-      "paginas": 6
+      "desde": 140,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
     },
     "[\"derecho a la salud amparo\",{}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 1,
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
@@ -1399,10 +1421,10 @@
       "paginas": 5
     },
     "[\"legitimación colectiva\",{}]": {
-      "desde": 80,
-      "pagina": 5,
-      "completas": false,
-      "paginas": 4
+      "desde": 140,
+      "pagina": 9,
+      "completas": true,
+      "paginas": 8
     },
     "[\"uso del suelo rural\",{}]": {
       "desde": 0,
@@ -1929,10 +1951,10 @@
       "paginas": 1
     },
     "[\"desalojo\",{}]": {
-      "desde": 120,
-      "pagina": 7,
+      "desde": 280,
+      "pagina": 15,
       "completas": false,
-      "paginas": 6
+      "paginas": 14
     },
     "[\"daño moral procedencia\",{}]": {
       "desde": 120,
@@ -1959,10 +1981,10 @@
       "paginas": 6
     },
     "[\"medida cautelar\",{}]": {
-      "desde": 440,
-      "pagina": 23,
+      "desde": 600,
+      "pagina": 31,
       "completas": false,
-      "paginas": 22
+      "paginas": 30
     },
     "[\"recurso extraordinario federal admisibilidad\",{}]": {
       "desde": 120,
@@ -2045,10 +2067,10 @@
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"empleo público\",{}]": {
-      "desde": 640,
-      "pagina": 33,
+      "desde": 800,
+      "pagina": 41,
       "completas": false,
-      "paginas": 32
+      "paginas": 40
     },
     "[\"accidentes de trabajo\",{}]": {
       "desde": 320,
@@ -2057,16 +2079,16 @@
       "paginas": 16
     },
     "[\"derecho a la salud\",{}]": {
-      "desde": 640,
-      "pagina": 33,
+      "desde": 800,
+      "pagina": 41,
       "completas": false,
-      "paginas": 32
+      "paginas": 40
     },
     "[\"competencia\",{}]": {
-      "desde": 640,
-      "pagina": 33,
+      "desde": 800,
+      "pagina": 41,
       "completas": false,
-      "paginas": 32
+      "paginas": 40
     },
     "[\"fundamentación de sentencias\",{}]": {
       "desde": 280,
@@ -2077,10 +2099,10 @@
       "ultimoError": "El sitio no respondió en 25 segundos. Puede estar caído o lento; intente nuevamente en unos minutos."
     },
     "[\"arbitrariedad\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 2,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -2109,10 +2131,10 @@
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"libertad de expresión\",{}]": {
-      "desde": 160,
-      "pagina": 9,
-      "completas": false,
-      "paginas": 8,
+      "desde": 200,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11,
       "errores": 1,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: respuesta 403. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -2127,7 +2149,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 2,
+      "errores": 3,
       "ultimoError": "El buscador de \"caba\" no respondió como se esperaba: no se encontró el contador de resultados. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"prescripción\",{}]": {
@@ -2497,18 +2519,145 @@
       "paginas": 8
     },
     "[\"ejecución fiscal\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"comisiones médicas\",{}]": {
       "desde": 0,
       "pagina": 2,
       "completas": true,
       "paginas": 1
+    },
+    "[\"derecho penal\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"lesiones\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"hábeas data\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"responsabilidad del Estado\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"discriminación\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"derecho ambiental\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"locación\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"sociedades\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"honorarios profesionales\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"costas judiciales\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"tutela judicial efectiva\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"acceso a la información pública\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"franquicia transporte público\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"exclusión de cobertura\",{}]": {
+      "desde": 100,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6
+    },
+    "[\"declaración del riesgo\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"reticencia\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"testigo único\",{}]": {
+      "desde": 80,
+      "pagina": 6,
+      "completas": true,
+      "paginas": 5
+    },
+    "[\"arbitrariedad de sentencia\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"recurso extraordinario federal\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"gravedad institucional\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
+    },
+    "[\"per saltum\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
     }
   },
-  "indiceTerminos": 626,
-  "versionIds": 2
+  "indiceTerminos": 0,
+  "versionIds": 2,
+  "versionAvanceTerminos": 2
 }
