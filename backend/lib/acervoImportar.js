@@ -13,7 +13,12 @@ import { DatabaseSync } from 'node:sqlite';
 import { ESQUEMA, ESQUEMA_V, anioDe } from './acervoConsulta.js';
 
 const { man, dirTandas, nueva } = workerData;
-const d = new DatabaseSync(nueva);
+let d;
+try {
+  d = new DatabaseSync(nueva);
+} catch (e) {
+  throw new Error(`SQLite no puede crear la base temporal ${nueva}: ${e.message}`, { cause: e });
+}
 d.exec('PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;');
 d.exec(ESQUEMA);
 const ins = d.prepare(`INSERT OR IGNORE INTO fallos(id,fuente,corte,provincia,caratula,tribunal,fecha,anio,expediente,sumario,voces,magistrados,materia,linkFicha,linkFallo,tipo,marca)
