@@ -39,6 +39,7 @@ import { esperarTurno } from './descargador.js';
 import { urlParaPedir, sinClave } from './proxyOrigen.js';
 import { consultarConNavegador, dominioConNavegador } from './navegadorCf.js';
 import { errores } from './errores.js';
+import { buscarProvinciaSaij } from './indiceProvincialSaij.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 
 // El host primario es el publicado en el enlace oficial del TSJ (.gob.ar).
@@ -339,7 +340,7 @@ function errorDelSitio(html) {
   return null;
 }
 
-export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
+async function buscarCabaOficial({ q, modo = 'todas', excluir = '', pagina = 1, porPagina = 20, desde = null, anioDesde = null, anioHasta = null }) {
   const termino = String(q || '').trim();
   if (!termino) throw errores.consultaVacia();
 
@@ -456,4 +457,47 @@ export async function buscarCaba({ q, modo = 'todas', excluir = '', pagina = 1, 
     porPagina,
     resultados,
   };
+}
+
+
+/**
+ * Si el TSJ rechaza la IP del servidor, la misma jurisdicción sigue disponible
+ * por la faceta pública de SAIJ. Se conserva la procedencia real: no se rotula
+ * un registro de SAIJ como si lo hubiera servido el portal directo del TSJ.
+ */
+async function buscarCabaEnSaij(opciones) {
+  let ultimoError = null;
+  for (const tribunal of ['todo', 'sumarios']) {
+    try {
+      const salida = await buscarProvinciaSaij('caba_saij', { ...opciones, tribunal });
+      if (salida.resultados?.length || tribunal === 'sumarios') {
+        return {
+          ...salida,
+          origenEnVivo: 'saij',
+          fuenteAlternativa: 'caba_saij',
+          desdeIndiceLocal: false,
+          resultados: (salida.resultados || []).map((r) => ({
+            ...r, fuente: 'saij', fuenteSlug: 'saij',
+            procedencia: 'SAIJ',
+            jurisdiccion: 'Ciudad Autónoma de Buenos Aires',
+          })),
+        };
+      }
+    } catch (e) { ultimoError = e; }
+  }
+  throw ultimoError || errores.indiceFuenteFalla('caba', 'la faceta pública alternativa no devolvió resultados');
+}
+
+export async function buscarCaba(opciones = {}) {
+  try {
+    return await buscarCabaOficial(opciones);
+  } catch (error) {
+    // El 403 de Cloudflare no debe dejar la consulta de CABA sin documentos:
+    // primero usamos el buscador oficial directo y después la faceta SAIJ.
+    try { return await buscarCabaEnSaij(opciones); }
+    catch (alternativa) {
+      error.cause = alternativa;
+      throw error;
+    }
+  }
 }
