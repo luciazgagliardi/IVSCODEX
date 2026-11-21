@@ -151,39 +151,47 @@ async function paginaAutorizada(origen, informe) {
  * Los pedidos se hacen de a uno: es una sola página compartida.
  */
 async function respuestaDesdePagina(pagina, url, opciones = {}) {
-  const datos = await Promise.race([
-    pagina.evaluate(async ({ u, method, headers, body }) => {
-      const r = await fetch(u, {
-        method, headers, ...(body == null ? {} : { body }),
-        credentials: 'include', redirect: 'follow',
-      });
-      const blob = await r.blob();
-      const dataUrl = await new Promise((ok) => {
-        const fr = new FileReader();
-        fr.onload = () => ok(fr.result);
-        fr.readAsDataURL(blob);
-      });
-      return {
-        estado: r.status,
-        tipo: r.headers.get('content-type') || '',
-        mitigado: r.headers.get('cf-mitigated') || '',
-        dataUrl,
-      };
-    }, {
-      u: url.toString(),
-      method: opciones.method || 'GET',
-      headers: opciones.headers || {},
-      body: opciones.body ?? null,
-    }),
-    new Promise((_, no) => setTimeout(() => no(new Error('tiempo agotado consultando el portal con navegador')), ESPERA_PDF_MS)),
-  ]);
-  const coma = datos.dataUrl.indexOf(',');
-  return {
-    estado: datos.estado,
-    contentType: datos.tipo,
-    cfMitigated: datos.mitigado,
-    buffer: Buffer.from(datos.dataUrl.slice(coma + 1), 'base64'),
-  };
+  let reloj;
+  try {
+    const limite = new Promise((_, no) => {
+      reloj = setTimeout(() => no(new Error('tiempo agotado consultando el portal con navegador')), ESPERA_PDF_MS);
+    });
+    const datos = await Promise.race([
+      pagina.evaluate(async ({ u, method, headers, body }) => {
+        const r = await fetch(u, {
+          method, headers, ...(body == null ? {} : { body }),
+          credentials: 'include', redirect: 'follow',
+        });
+        const blob = await r.blob();
+        const dataUrl = await new Promise((ok) => {
+          const fr = new FileReader();
+          fr.onload = () => ok(fr.result);
+          fr.readAsDataURL(blob);
+        });
+        return {
+          estado: r.status,
+          tipo: r.headers.get('content-type') || '',
+          mitigado: r.headers.get('cf-mitigated') || '',
+          dataUrl,
+        };
+      }, {
+        u: url.toString(),
+        method: opciones.method || 'GET',
+        headers: opciones.headers || {},
+        body: opciones.body ?? null,
+      }),
+      limite,
+    ]);
+    const coma = datos.dataUrl.indexOf(',');
+    return {
+      estado: datos.estado,
+      contentType: datos.tipo,
+      cfMitigated: datos.mitigado,
+      buffer: Buffer.from(datos.dataUrl.slice(coma + 1), 'base64'),
+    };
+  } finally {
+    clearTimeout(reloj);
+  }
 }
 
 /**
