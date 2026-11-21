@@ -240,14 +240,14 @@ export function informacionFuente(slug, opciones = {}) {
   // puede pedir jurisprudencia, legislación, doctrina o dictámenes. La
   // metadata debe reflejar el carril realmente consultado.
   if (slug === 'saij') {
-    const tipo = String(opciones.tribunal || 'sumarios').toLowerCase();
+    const tipo = String(opciones.tribunal || 'todo').toLowerCase();
     const porTipo = {
       legislacion: { linea: 'Normativa', tipo: 'Legislación y texto normativo', lineas: ['normativa', 'agregador'] },
       doctrina: { linea: 'Doctrina jurídica', tipo: 'Doctrina y comentarios', lineas: ['doctrina', 'academica', 'agregador'] },
       dictamenes: { linea: 'Derecho administrativo y dictámenes', tipo: 'Dictámenes de organismos públicos', lineas: ['administrativo', 'agregador'] },
       fallos: { linea: 'Jurisprudencia · fichas de fallos', tipo: 'Fichas de sentencias judiciales', lineas: ['jurisprudencia', 'nacional', 'agregador'] },
       sumarios: { linea: 'Jurisprudencia · sumarios', tipo: 'Sumarios jurisprudenciales', lineas: ['jurisprudencia', 'nacional', 'agregador'] },
-      todo: { linea: 'Jurisprudencia y documentación nacional', tipo: 'Jurisprudencia y documentación jurídica', lineas: ['jurisprudencia', 'normativa', 'doctrina', 'administrativo', 'agregador'] },
+      todo: { linea: 'Jurisprudencia · fallos y sumarios de respaldo', tipo: 'Fallos judiciales y sumarios de respaldo', lineas: ['jurisprudencia', 'nacional', 'agregador'] },
     };
     Object.assign(salida, porTipo[tipo] || porTipo.sumarios);
     const provincia = String(opciones.provincia || '').trim();
@@ -277,7 +277,7 @@ export function anotarProcedencia(slug, resultados = [], opciones = {}) {
     ...r,
     fuenteSlug: r.fuenteSlug || slug,
     procedencia: r.procedencia || info.procedencia,
-    tipoDocumento: r.tipoDocumento || info.tipo,
+    tipoDocumento: r.tipoDocumento || (r.tipo === 'fallo' ? 'Fallo judicial' : r.tipo === 'sumario' ? (r.esSumarioRespaldo ? 'Sumario de respaldo' : 'Sumario jurisprudencial') : info.tipo),
     nivelAutoridad: r.nivelAutoridad || info.autoridad,
     jurisdiccion: r.jurisdiccion || info.jurisdiccion,
     lineaInvestigacion: r.lineaInvestigacion || info.linea,
