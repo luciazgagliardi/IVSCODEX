@@ -3393,13 +3393,19 @@ var FUENTES_INDICE=[
   nota:"Sentencias del máximo tribunal porteño en materia contencioso-administrativa, tributaria, penal, contravencional y electoral."},
  {slug:"csjn",cod:"CSJN",clase:"nac",boton:"la Corte Suprema",
   nombre:"Corte Suprema de Justicia de la Nación",
-  nota:"Los fallos de la Corte, con carátula, fecha y enlace al documento. Se consultan a través de SAIJ, que publica ese material de forma abierta: el buscador del sitio propio de la Corte exige resolver un captcha, así que no se puede consultar automáticamente."},
+  nota:"Fallos de la Corte primero; los sumarios asociados sólo completan cuando no hay suficientes fichas de fallos. Se consultan a través de SAIJ, que publica ese material de forma abierta: el buscador del sitio propio de la Corte exige resolver un captcha, así que no se puede consultar automáticamente.",
+  tribunales:[
+    {v:"todo",n:"Fallos primero · sumarios de respaldo"},
+    {v:"fallos",n:"Sólo fallos"},
+    {v:"sumarios",n:"Sólo sumarios"}
+  ]},
  {slug:"saij",cod:"SAIJ",clase:"nac",boton:"SAIJ, todo el país",
   nombre:"Sistema Argentino de Información Jurídica",
   nota:"Jurisprudencia, legislación y doctrina unificada de fueros federales, nacionales y provinciales de toda la Argentina.",
   tribunales:[
-    {v:"sumarios",n:"Sumarios (con doctrina)"},
-    {v:"fallos",n:"Fallos (ficha del expediente)"},
+    {v:"todo",n:"Fallos primero · sumarios de respaldo"},
+    {v:"fallos",n:"Sólo fallos (ficha del expediente)"},
+    {v:"sumarios",n:"Sólo sumarios jurisprudenciales"},
     {v:"legislacion",n:"Legislación (con el artículo)"},
     {v:"doctrina",n:"Doctrina (con extracto)"},
     {v:"dictamenes",n:"Dictámenes (organismos públicos)"}
@@ -3455,7 +3461,11 @@ var FUENTES_INDICE=[
  {slug:"chubut",cod:"CHU",clase:"prov",boton:"el Poder Judicial de Chubut",
   nombre:"Poder Judicial de Chubut · Eureka!",
   nota:"Sentencias anonimizadas y sumarios del sistema oficial Eureka!. No se accede a fallos sin anonimizar ni a expedientes reservados.",
-  tribunales:[{v:"sumarios",n:"Sumarios"},{v:"sentencias",n:"Sentencias anonimizadas"}]},
+  tribunales:[
+    {v:"todo",n:"Sentencias primero · sumarios de respaldo"},
+    {v:"sentencias",n:"Sólo sentencias anonimizadas"},
+    {v:"sumarios",n:"Sólo sumarios"}
+  ]},
  {slug:"formosa",cod:"FOR·S",clase:"prov",boton:"la jurisprudencia de Formosa vía SAIJ",
   nombre:"Jurisprudencia de Formosa (SAIJ)",
   nota:"Documentos de Formosa publicados por SAIJ; la procedencia se identifica como agregadora y se mantiene el enlace al documento original cuando está disponible."},
@@ -5695,36 +5705,44 @@ function resultadosDe(f){
    buscador encontró la palabra en el fallo entero y el sumario habla de otra
    cosa («despido» → un sumario sobre cosa juzgada). Ese sumario no sirve de
    pasaje: no hay nada que marcar. Se recuerda por consulta. */
-function sumarioCumpleConsulta(texto){
-  if(!texto) return false;
-  if(!IVSPasajes.coincidencias(texto,estado.q,{modo:estado.modo,tope:1}).length) return false;
+function sumarioCumpleConsulta(texto,consulta){
+  consulta=consulta||estado.q;
+  if(!texto||!consulta) return false;
+  if(!IVSPasajes.coincidencias(texto,consulta,{modo:estado.modo,tope:1}).length) return false;
   if(estado.modo!=="todas") return true;
-  // coincidencias() une marcas superpuestas y conserva sólo una clave por tramo;
-  // por eso cada término se comprueba por separado y no se deduce de las marcas unidas.
-  var requeridos=IVSPasajes.terminos(estado.q,estado.modo);
+  // Cada término se comprueba por separado: las marcas unidas no prueban
+  // que la consulta completa esté presente en el mismo pasaje.
+  var requeridos=IVSPasajes.terminos(consulta,estado.modo);
   return requeridos.length>0&&requeridos.every(function(t){
     return IVSPasajes.coincidencias(texto,[t],{modo:"todas",tope:1}).length>0;
   });
 }
+function consultaQueCoincide(r,texto){
+  if(sumarioCumpleConsulta(texto,estado.q)) return estado.q;
+  if(r&&r.variante&&sumarioCumpleConsulta(texto,r.variante)) return r.variante;
+  return estado.q;
+}
 function sumarioCoincide(r){
   if(!r.sumario) return false;
-  var clave=estado.modo+"|"+estado.q;
+  var clave=estado.modo+"|"+estado.q+"|"+(r.variante||"");
   if(r._coinQ!==clave){
     r._coinQ=clave;
-    r._coin=sumarioCumpleConsulta(r.sumario);
+    r._coin=sumarioCumpleConsulta(r.sumario,estado.q) ||
+      Boolean(r.variante&&sumarioCumpleConsulta(r.sumario,r.variante));
   }
   return r._coin;
 }
-/* El pasaje de un resultado: el sumario si contiene lo buscado; si no, el
-   tramo del documento donde está (ver traerFragmentos); y sólo si el
-   documento no se pudo leer, el sumario tal cual. */
+/* El pasaje sólo se muestra cuando contiene la consulta (o el equivalente
+   que efectivamente encontró el resultado). No se presenta texto de relleno
+   como si fuera una coincidencia.
+*/
 function pasajeDe(f,r){
   var im=estado.indices[f.slug]||{}, uf=urlFragmento(f.slug,r);
   if(sumarioCoincide(r)) return r.sumario;
   var frag=uf&&im.fragmentos?im.fragmentos[uf]:"";
-  if(frag) return frag;
-  if(r.sumario&&uf&&im.fragmentos&&!im.fragmentos.hasOwnProperty(uf)) return "";
-  return r.sumario||"";
+  if(frag&&(sumarioCumpleConsulta(frag,estado.q)||
+      (r.variante&&sumarioCumpleConsulta(frag,r.variante)))) return frag;
+  return "";
 }
 /* Un resultado se muestra sólo con su texto: true si ya tiene pasaje, "pendiente"
    si se está yendo a buscar al documento, false si no lo tiene. Dialnet no se
@@ -6293,12 +6311,9 @@ function fichaIndice(f,r){
   if(f.slug==="caba"&&r.voces&&r.voces.length){
     // Primero los temas que contienen lo que se buscó: son los que dicen por
     // qué apareció este fallo.
-    var claves=palabrasResaltables(q).map(function(w){
-      return w.replace(/["'()]/g,"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-    });
     var coincide=function(v){
-      var n=v.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-      return claves.some(function(k){ return n.indexOf(k)>-1; });
+      return sumarioCumpleConsulta(v,q) ||
+        Boolean(r.variante&&sumarioCumpleConsulta(v,r.variante));
     };
     var ordenados=r.voces.filter(coincide).concat(r.voces.filter(function(v){ return !coincide(v); }));
     temas=ordenados.slice(0,14).join(" · ");
@@ -6313,13 +6328,13 @@ function fichaIndice(f,r){
       (fechaEnc?'<span class="f-fecha">'+fechaEnc+'</span>':'')+
       (origenFicha?'<span class="f-fecha">'+origenFicha+'</span>':'')+
       (tipoFicha?'<span class="f-fecha">'+tipoFicha+'</span>':'')+'</div>'+
-    '<h3 class="f-nom">'+esc(r.caratula||r.expediente||"(sin carátula)")+'</h3>'+
-    (pasaje?'<p class="f-nota">'+pasajeResaltado(pasaje,q,800)+'</p>':'')+
-    (temas?'<p class="f-nota"><span style="opacity:.6">Temas que el TSJ asigna a este fallo: </span>'+resaltarSimple(temas,q)+'</p>':'')+
+    '<h3 class="f-nom">'+resaltarSimple(r.caratula||r.expediente||"(sin carátula)",consultaQueCoincide(r,r.caratula||r.expediente||""))+'</h3>'+
+    (pasaje?'<p class="f-nota">'+(r.tipoExtracto?'<span style="opacity:.65">'+esc(r.tipoExtracto)+'. </span>':'')+pasajeResaltado(pasaje,consultaQueCoincide(r,pasaje),800)+'</p>':'')+
+    (temas?'<p class="f-nota"><span style="opacity:.6">Temas que el TSJ asigna a este fallo: </span>'+resaltarSimple(temas,consultaQueCoincide(r,temas))+'</p>':'')+
     (esperando?'<p class="f-nota" style="opacity:.55;font-style:italic">Buscando el pasaje en el documento…</p>':'')+
     (sinPasaje?'<p class="f-nota" style="opacity:.55;font-style:italic">'+esc(sinPasaje)+'</p>':'')+
     (f.slug!=="caba"&&r.voces&&r.voces.length?'<div class="voces">'+r.voces.slice(0,6).map(function(v){
-      return '<span class="voz" style="cursor:default">'+esc(v)+'</span>';}).join("")+'</div>':"")+
+      return '<span class="voz" style="cursor:default">'+resaltarSimple(v,consultaQueCoincide(r,v))+'</span>';}).join("")+'</div>':"")+
     '<div class="f-acc" style="margin-top:8px">'+
       (r.linkFicha?'<a class="mini" href="'+escU(r.linkFicha)+'" target="_blank" rel="noopener noreferrer">Ver ficha completa</a>':"")+
       marcaTema+marcaVariante+
@@ -6374,7 +6389,7 @@ function traerFragmentos(slug,pedido,carril){
   tanda.forEach(function(u){ im.fragEnCurso[u]=1; });
   im.fragCargando=true;
   // con los datos de cada fallo: el servidor guarda en el acervo el texto que lee, y la próxima vez sale al instante
-  var registros=pendientes.slice(0,cuantos).map(function(r){ return {id:r.id,url:urlFragmento(slug,r),caratula:r.caratula,fecha:r.fecha,tribunal:r.tribunal,expediente:r.expediente}; });
+  var registros=pendientes.slice(0,cuantos).map(function(r){ return {id:r.id,url:urlFragmento(slug,r),caratula:r.caratula,fecha:r.fecha,tribunal:r.tribunal,expediente:r.expediente,variante:r.variante||''}; });
   var promesaFrag=fetch(estado.api+"/indice/"+slug+"/fragmentos",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({q:qi,urls:tanda,registros:registros})
@@ -6453,12 +6468,9 @@ var SAIJ_TIPOS={
   doctrina:"Total|Tipo de Documento/Doctrina",
   dictamenes:"Total|Tipo de Documento/Dictamen"
 };
-/* La Corte Suprema sale de SAIJ filtrando por su faceta de tribunal. Solo
-   los fallos traen ese campo, así que va siempre por fallos (ver la nota en
-   lib/indiceSaij.js del servidor). */
-/* Igual que el servidor (lib/indiceSaij.js): la Corte se busca en el texto de
-   sus SUMARIOS, que son federales y llevan número con "A"; las fichas de fallos
-   no tienen texto y el filtro por modo las descartaba todas. */
+/* La Corte Suprema sale de SAIJ por su faceta de tribunal. En la búsqueda
+   general se prueban primero sus fichas de fallos y luego los sumarios de
+   respaldo; el verificador de citas sigue usando sólo fallos. */
 var SAIJ_FACETA_CSJN="Total|Tipo de Documento/Jurisprudencia/Sumario|Jurisdicción/Federal";
 // las fichas de los fallos de la Corte (con la carátula entera): para buscar un fallo por su nombre
 var SAIJ_FACETA_CSJN_FALLOS="Total|Tipo de Documento/Jurisprudencia/Fallo|Tribunal/CORTE SUPREMA DE JUSTICIA DE LA NACION";
@@ -6548,7 +6560,8 @@ function saijARegistro(bruto){
       .filter(Boolean).filter(function(v,i,a){ return a.indexOf(v)===i; }).join(" · "),
     magistrados:c.magistrados||"",
     linkFicha:"https://www.saij.gob.ar/"+uuid,
-    linkFallo:null
+    linkFallo:null,
+    tipo:esSumario?"sumario":"fallo"
   };
 }
 
@@ -6580,13 +6593,13 @@ function saijEnVivo(cuerpo,slug,delServidor){
     return (delServidor&&delServidor.ok)?delServidor:n;
   },function(e){ if(delServidor&&delServidor.ok) return delServidor; throw e; });
 }
-function buscarSaijNavegador(cuerpo,slug){
+async function buscarSaijNavegadorSimple(cuerpo,slug){
   var formas=formasDeArticulo(cuerpo);
   if(formas){
     var porId={}, orden=[], pendientes=formas.length, resolver;
     var listo=new Promise(function(res){ resolver=res; });
     formas.forEach(function(forma,idx){
-      buscarSaijNavegador(Object.assign({},cuerpo,{q:forma,articulo:""}),slug)
+      buscarSaijNavegador(Object.assign({},cuerpo,{q:forma,articulo:"",tribunal:"fallos"}),slug)
         .then(function(d){
           (d&&d.resultados||[]).forEach(function(x){
             if(!x||!x.id) return;
@@ -6607,7 +6620,7 @@ function buscarSaijNavegador(cuerpo,slug){
   var faceta=fichasCsjn?SAIJ_FACETA_CSJN_FALLOS:slug==="csjn"?SAIJ_FACETA_CSJN:(SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios);
   if(slug==="saij"&&PROVINCIAS_SAIJ.indexOf(cuerpo.provincia)!==-1&&cuerpo.tribunal!=="doctrina"&&cuerpo.tribunal!=="dictamenes")
     faceta+="|Jurisdicción/Local/"+cuerpo.provincia;
-  var porPagina=20, porPedido=100;
+  var porPagina=Math.min(20,Math.max(1,Number(cuerpo.porPagina)||20)), porPedido=100;
   // Espejo de backend/lib/paginarFiltrado.js, y tiene que seguir siéndolo:
   // este camino se usa justo donde MÁS importa, el servidor publicado, al
   // que SAIJ le responde 403. Si acá quedara el cálculo viejo por número de
@@ -6680,6 +6693,70 @@ function buscarSaijNavegador(cuerpo,slug){
       resultados:resultados,
       desdeNavegador:true
     };
+  });
+}
+
+// Mismo contrato que backend/lib/indiceSaij.js. Cuando el servidor no
+// puede consultar SAIJ, el navegador también prioriza fichas de fallos y sólo
+// recurre a sumarios cuando ya agotó los fallos y la página quedó incompleta.
+var SAIJ_CURSOR_SUMARIOS_RESALDO=1000000000;
+function saijClaveCaso(r){
+  function n(v){return String(v||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim();}
+  return n(r.caratula)||r.fecha?[n(r.caratula),String(r.fecha||""),n(r.tribunal)].join("|"):"id:"+String(r.id||"");
+}
+function buscarSaijNavegador(cuerpo,slug){
+  var tribunal=cuerpo.tribunal||"todo";
+  if(tribunal!=="todo") return buscarSaijNavegadorSimple(Object.assign({},cuerpo,{tribunal:tribunal}),slug);
+  var desde=Number(cuerpo.desde);
+  if(Number.isFinite(desde)&&desde>=SAIJ_CURSOR_SUMARIOS_RESALDO){
+    var offset=desde-SAIJ_CURSOR_SUMARIOS_RESALDO;
+    return buscarSaijNavegadorSimple(Object.assign({},cuerpo,{
+      tribunal:"sumarios",desde:offset,pagina:1
+    }),slug).then(function(d){
+      var resultados=(d.resultados||[]).map(function(r){return Object.assign({},r,{
+        tipo:"sumario",esSumarioRespaldo:true
+      });});
+      return Object.assign({},d,{resultados:resultados,
+        siguienteDesde:d.siguienteDesde==null?null:SAIJ_CURSOR_SUMARIOS_RESALDO+d.siguienteDesde,
+        complementoSumarios:true,cantidadFallos:0,cantidadSumarios:resultados.length,
+        tipoConsulta:"sumarios_de_respaldo"});
+    });
+  }
+  return buscarSaijNavegadorSimple(Object.assign({},cuerpo,{tribunal:"fallos"}),slug).then(function(fallos){
+    var listaFallos=fallos.resultados||[];
+    var tamano=Math.min(20,Math.max(1,Number(cuerpo.porPagina)||20));
+    // Un HTTP rechazado se propaga. No equivale a una búsqueda agotada.
+    if(listaFallos.length>=tamano||fallos.siguienteDesde!=null)
+      return Object.assign({},fallos,{cantidadFallos:listaFallos.length,cantidadSumarios:0,
+        complementoSumarios:false,tipoConsulta:"fallos"});
+    var faltan=tamano-listaFallos.length;
+    if(!faltan) return fallos;
+    return buscarSaijNavegadorSimple(Object.assign({},cuerpo,{
+      tribunal:"sumarios",desde:0,pagina:1,porPagina:faltan
+    }),slug).then(function(sumarios){
+      var vistos={};
+      listaFallos.forEach(function(r){vistos[saijClaveCaso(r)]=1;});
+      var relleno=[];
+      (sumarios.resultados||[]).forEach(function(r){
+        var clave=saijClaveCaso(r);
+        if(vistos[clave]||listaFallos.length+relleno.length>=tamano) return;
+        vistos[clave]=1;
+        relleno.push(Object.assign({},r,{tipo:"sumario",esSumarioRespaldo:true}));
+      });
+      return Object.assign({},fallos,{
+        total:listaFallos.length+relleno.length,
+        totalFuente:Number(fallos.totalFuente||0)+Number(sumarios.totalFuente||0),
+        totalFuenteFallos:Number(fallos.totalFuente||0),
+        totalFuenteSumarios:Number(sumarios.totalFuente||0),
+        totalParcial:!!(fallos.totalParcial||sumarios.totalParcial),
+        revisados:Number(fallos.revisados||0)+Number(sumarios.revisados||0),
+        siguienteDesde:sumarios.siguienteDesde==null?null:SAIJ_CURSOR_SUMARIOS_RESALDO+sumarios.siguienteDesde,
+        resultados:listaFallos.concat(relleno),
+        complementoSumarios:relleno.length>0,cantidadFallos:listaFallos.length,
+        cantidadSumarios:relleno.length,
+        tipoConsulta:relleno.length?"fallos_con_sumarios_de_respaldo":"fallos"
+      });
+    });
   });
 }
 
@@ -6977,7 +7054,7 @@ function cargarMasOficial(slug){
   }
   im.buscandoMasOficial=true; im.errorMasOficial="";render();
   var control=new AbortController();
-  var tope=setTimeout(function(){control.abort();},50000);
+  var tope=setTimeout(function(){control.abort();},TOPE_ORIGEN_NAVEGADOR);
   fetch(estado.api+"/indice/"+slug+"/buscar",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(cuerpo),signal:control.signal
@@ -7028,23 +7105,85 @@ function leerRespuesta(r){
   if(tipo.indexOf("json")>=0) return r.json()["catch"](function(){ return {ok:false,mensaje:"El servidor respondió de forma ilegible (HTTP "+r.status+")."}; });
   return {ok:false,mensaje:"El servidor respondió con un error (HTTP "+r.status+"); no fue un corte de su conexión. Pruebe de nuevo en unos minutos."};
 }
-var colaOrigenPantalla=[],origenPantallaActivos=0;
+var colaOrigenPantalla=[],origenPantallaActivos=0,origenPantallaControles={};
+var MAX_ORIGEN_SIMULTANEOS=4;
+// Cada adaptador tiene timeout por petición de origen, no por búsqueda
+// completa. Una consulta puede recorrer varias páginas y superar 50 segundos.
+var TOPE_ORIGEN_NAVEGADOR=135000;
+function cancelarOrigenPantalla(slug){
+  var control=origenPantallaControles[slug];
+  if(control) control.abort();
+  colaOrigenPantalla=colaOrigenPantalla.filter(function(t){
+    if(t.slug!==slug) return true;
+    t.resolver(null);
+    return false;
+  });
+}
+function esperaReintentoOrigen(control){
+  return new Promise(function(resolve,reject){
+    if(control.signal.aborted){reject(Object.assign(new Error("consulta reemplazada"),{name:"AbortError"}));return;}
+    var reloj=setTimeout(liberar,850);
+    function abortar(){
+      clearTimeout(reloj);
+      control.signal.removeEventListener("abort",abortar);
+      reject(Object.assign(new Error("consulta reemplazada"),{name:"AbortError"}));
+    }
+    function liberar(){
+      control.signal.removeEventListener("abort",abortar);
+      resolve();
+    }
+    control.signal.addEventListener("abort",abortar,{once:true});
+  });
+}
+async function pedirOrigenConReintento(t,control){
+  for(var intento=0;intento<2;intento++){
+    try{
+      if(control.signal.aborted||!t.vigente()) throw Object.assign(new Error("consulta reemplazada"),{name:"AbortError"});
+      var respuesta=await fetch(estado.api+"/indice/"+t.slug+"/buscar",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:t.cuerpo,signal:control.signal,cache:"no-store"
+      });
+      var transitoria=[502,503,504,520,522,524].includes(respuesta.status);
+      if(!transitoria&&respuesta.ok){
+        try{
+          var d=await respuesta.clone().json();
+          transitoria=Boolean(d&&d.ok===false&&d.reintentable===true);
+        }catch(e){}
+      }
+      if(transitoria&&intento===0){
+        await esperaReintentoOrigen(control);
+        continue;
+      }
+      return respuesta;
+    }catch(e){
+      if(control.signal.aborted||e?.name==="AbortError"||intento>0) throw e;
+      // Un corte de transporte puede ser circunstancial. Se reintenta una
+      // vez; las denegaciones HTTP explícitas nunca pasan por este camino.
+      await esperaReintentoOrigen(control);
+    }
+  }
+  throw new Error("No se pudo completar la consulta oficial.");
+}
 function despacharOrigenPantalla(){
-  while(origenPantallaActivos<4&&colaOrigenPantalla.length){
-    var t=colaOrigenPantalla.shift();
+  while(origenPantallaActivos<MAX_ORIGEN_SIMULTANEOS&&colaOrigenPantalla.length){
+    // Una fuente tiene una sola consulta activa; las demás fuentes avanzan
+    // aunque una respuesta lenta esté terminando de cancelarse.
+    var pos=colaOrigenPantalla.findIndex(function(t){return !origenPantallaControles[t.slug];});
+    if(pos<0) return;
+    var t=colaOrigenPantalla.splice(pos,1)[0];
     if(!t.vigente()){t.resolver(null);continue;}
     origenPantallaActivos++;
     (function(t){
       var control=new AbortController();
-      // El servidor puede tardar hasta ~45 s en una fuente (25 s de la
-      // consulta más hasta 20 s de variantes): cortar a los 35 s perdía
-      // respuestas que iban a llegar.
-      var reloj=setTimeout(function(){control.abort();},50000);
-      fetch(estado.api+"/indice/"+t.slug+"/buscar",{
-        method:"POST",headers:{"Content-Type":"application/json"},
-        body:t.cuerpo,signal:control.signal
-      }).then(t.resolver,function(e){ t.rechazar(e&&e.name==="AbortError"?{tope:true}:e); }).finally(function(){
+      origenPantallaControles[t.slug]=control;
+      var reloj=setTimeout(function(){control.abort();},TOPE_ORIGEN_NAVEGADOR);
+      pedirOrigenConReintento(t,control).then(t.resolver,function(e){
+        t.rechazar(e&&e.name==="AbortError"
+          ? (t.vigente()?{tope:true}:{reemplazada:true})
+          : e);
+      }).finally(function(){
         clearTimeout(reloj);
+        if(origenPantallaControles[t.slug]===control) delete origenPantallaControles[t.slug];
         origenPantallaActivos--;
         despacharOrigenPantalla();
       });
@@ -7053,6 +7192,9 @@ function despacharOrigenPantalla(){
 }
 function consultarOrigenPantalla(slug,cuerpo,vigente){
   return new Promise(function(resolver,rechazar){
+    // No dejar que una consulta vieja de esta misma fuente ocupe la cola o
+    // uno de los puestos activos después de que se inició un término nuevo.
+    cancelarOrigenPantalla(slug);
     colaOrigenPantalla.push({slug:slug,cuerpo:JSON.stringify(cuerpo),vigente:vigente,resolver:resolver,rechazar:rechazar});
     despacharOrigenPantalla();
   });
@@ -7304,7 +7446,7 @@ function buscarEnFuente(slug,pagina){
       imBusco.cargando=false; imBusco.busco=true;
       if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
       imBusco.error=(err&&err.tope)
-        ?"El sitio oficial no respondió en 50 segundos. No es un resultado vacío: pruebe de nuevo con «Reintentar las bases sin respuesta»."
+        ?"La consulta oficial superó su plazo de 135 segundos. No es un resultado vacío: puede reintentarse."
         :(slug==="saij"||slug==="csjn")
           ?"No fue posible consultar SAIJ, ni desde el servidor ni desde el navegador. Intente nuevamente en unos minutos."
           :"No se pudo completar la consulta con el servidor ("+String((err&&err.message)||"error de red").slice(0,80)+"). No es un resultado vacío: pruebe «Reintentar las bases sin respuesta».";

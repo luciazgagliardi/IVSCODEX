@@ -128,8 +128,8 @@ export const FUENTES = [
   {
     slug: 'csjn',
     nombre: 'Corte Suprema de Justicia de la Nación (vía SAIJ)',
-    // Sólo lo usa el verificador de citas: necesita las fichas de los fallos.
-    // Buscar no manda tribunal y recibe los sumarios, que son los que tienen texto.
+    // El verificador de citas necesita siempre fichas de fallos reales.
+    // La búsqueda general usa el modo combinado «todo» por su cuenta.
     tribunalPorDefecto: 'fallos',
     buscar: (args) => buscarSaij({ ...args, soloCsjn: true }),
   },
@@ -204,13 +204,13 @@ export const FUENTES = [
   ...Object.entries(VISTAS_PROVINCIALES_SAIJ).map(([slug, provincia]) => ({
     slug,
     nombre: 'Jurisprudencia de ' + provincia + ' (vía SAIJ)',
-    tribunalPorDefecto: 'sumarios',
+    tribunalPorDefecto: 'fallos',
     buscar: (args) => buscarProvinciaSaij(slug, args),
   })),
   {
     slug: 'chubut',
     nombre: 'Superior Tribunal de Justicia de Chubut · Eureka!',
-    tribunalPorDefecto: 'sumarios',
+    tribunalPorDefecto: 'fallos',
     buscar: (args) => buscarChubut(args),
   },
   {

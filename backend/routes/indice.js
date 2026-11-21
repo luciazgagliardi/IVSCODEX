@@ -246,6 +246,7 @@ function sondear(slug, buscarVivo) {
 async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes = [], desde = 0, porPagina = 20, rapida = false, soloConteo = false }, { respaldo = true } = {}) {
   const o = { modo: MODOS.has(modo) ? modo : 'todas', excluir: typeof excluir === 'string' ? excluir.slice(0, 200) : '',
     variantes: Array.isArray(variantes) ? variantes : [],
+    tribunal: typeof tribunal === 'string' && tribunal ? tribunal : 'todo',
     ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}), ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}) };
   // a pedido de la pantalla (vista previa) se espera poco; cuando el sitio no contestó, la copia es la respuesta y se la espera más
   let p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
@@ -517,13 +518,23 @@ for (const { slug, buscar } of FUENTES) {
         // durante media hora, la copia contesta sin hacer esperar a nadie (ver sondear)
         if (!(e instanceof ErrorApp && e.codigo === 'CONSULTA_VACIA')) sinAcceso.set(slug, Date.now() + SIN_ACCESO_MS);
         if (pedirEnVivo) {
-          // Informar explícitamente el fallo de la fuente externa. El
-          // navegador conserva el acervo que pidió antes y puede reintentar.
-          // No bloquear esta respuesta durante otra consulta SQLite.
+          // No ocultar la causa real detrás de un «no respondió» genérico:
+          // la interfaz distingue un timeout transitorio de un 403/404/429.
+          const codigo = e instanceof ErrorApp ? e.codigo : 'FUENTE_OFICIAL_NO_DISPONIBLE';
+          const mensaje = e instanceof ErrorApp
+            ? e.message
+            : 'La conexión con el buscador oficial se interrumpió antes de terminar.';
+          const estadoOrigen = Number(e?.extra?.estadoOrigen) ||
+            Number(/respuesta\s+(4\d\d|5\d\d)/i.exec(String(e?.message || ''))?.[1]) || null;
+          const denegacionDefinitiva = [401, 403, 404, 410, 429].includes(estadoOrigen);
+          const reintentable = !denegacionDefinitiva && (
+            ['TIEMPO_AGOTADO', 'RED_INALCANZABLE', 'INDICE_FUENTE_FALLA', 'INDICE_MZA_FALLA'].includes(codigo) ||
+            (estadoOrigen !== null && estadoOrigen >= 500)
+          );
           return res.json({
             ok: false, fuente: slug, enVivo: false,
-            codigo: 'FUENTE_OFICIAL_NO_DISPONIBLE',
-            mensaje: 'El buscador oficial no respondió a la consulta en vivo.',
+            codigo, mensaje, reintentable,
+            ...(estadoOrigen ? { estadoOrigen } : {}),
             ms: Date.now() - arranque,
           });
         }
@@ -677,6 +688,21 @@ for (const { slug, buscar } of FUENTES) {
       // La ruta pública solo puede devolver pasajes; la cosecha oficial
       // del servidor realiza su propia verificación de procedencia.
       const pedidas = urls.filter((u) => typeof u === 'string' && u && u.length <= 2048).slice(0, MAX_FRAGMENTOS);
+      // Un resultado puede haber aparecido por una variante de tesauro. El
+      // pasaje del fallo debe probar también esa forma, no sólo la consulta
+      // original; se usa para extraer un fragmento, nunca para persistir datos.
+      const variantesPorUrl = new Map();
+      for (const r of (Array.isArray(req.body?.registros) ? req.body.registros : []).slice(0, MAX_FRAGMENTOS)) {
+        if (typeof r?.url === 'string' && pedidas.includes(r.url) &&
+            typeof r.variante === 'string' && r.variante.trim().length <= MAX_CONSULTA)
+          variantesPorUrl.set(r.url, r.variante.trim());
+      }
+      const pasajeVerificado = (texto, url) => {
+        const principal = recortarPasaje(texto, q, { exigir: true });
+        if (principal) return principal;
+        const variante = variantesPorUrl.get(url);
+        return variante ? recortarPasaje(texto, variante, { exigir: true }) : '';
+      };
 
       const fragmentos = [];
       let pendientes = [];
@@ -699,14 +725,14 @@ for (const { slug, buscar } of FUENTES) {
           // Dialnet: lo útil es el resumen del artículo (otra página de la misma ficha).
           if (/^https?:\/\/dialnet\.unirioja\.es\/servlet\/articulo/i.test(url)) {
             const resumen = await resumenDeArticulo(url);
-            porUrl.set(url, { url, fragmento: resumen ? recortarPasaje(resumen, q, { exigir: true }) : '', error: resumen ? null : 'Dialnet no publica un resumen de este artículo.' });
+            porUrl.set(url, { url, fragmento: resumen ? pasajeVerificado(resumen, url) : '', error: resumen ? null : 'Dialnet no publica un resumen de este artículo.' });
             return;
           }
           const cerrado = SITIOS_CERRADOS.get(hostDe(url));
           if (cerrado) { porUrl.set(url, { url, fragmento: '', error: cerrado.mensaje }); return; }
           // Pasajes de fondo: sin acción puntual del usuario, se respeta robots.txt (lib/robots.js).
           const doc = await obtenerDocumento(url, { automatico: true });
-          porUrl.set(url, { url, fragmento: recortarPasaje(doc.texto, q, { exigir: slug === 'dialnet' }), error: null });
+          porUrl.set(url, { url, fragmento: pasajeVerificado(doc.texto, url), error: null });
         } catch (e) {
           const mensaje = e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.';
           if (e?.codigo === 'RESPUESTA_NO_OK' && [401, 403].includes(e.extra?.estadoOrigen)) {

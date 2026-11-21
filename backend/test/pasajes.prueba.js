@@ -16,6 +16,8 @@ test('sin acentos y por la raíz: lo que el buscador encontró se ve marcado', (
   assert.deepEqual(marcadas('Los despidos fueron discriminatorios.', 'despido discriminatorio'), ['despidos', 'discriminatorios']);
   assert.deepEqual(marcadas('Se reclama la INDEMNIZACIÓN por daños morales.', 'indemnizacion daño moral'), ['INDEMNIZACIÓN', 'daños', 'morales']);
   assert.deepEqual(marcadas('corresponde indemnizar el daño', 'indemnización'), ['indemnizar']);
+  assert.deepEqual(marcadas('Se reconocen indemnizaciones por daño moral.', 'indemnización'), ['indemnizaciones']);
+  assert.deepEqual(marcadas('La indemnización extraordinaria fue reclamada.', 'indemnizaciones'), ['indemnización']);
   // una palabra corta no marca otras que empiezan igual
   assert.deepEqual(marcadas('La desidia del archivo', 'des'), []);
   assert.deepEqual(marcadas('el daño y los daños', 'daño'), ['daño', 'daños']);
@@ -26,6 +28,9 @@ test('sin acentos y por la raíz: lo que el buscador encontró se ve marcado', (
 test('frase exacta: la frase entera, con cualquier espacio en el medio, y sólo esa', () => {
   assert.deepEqual(marcadas('el despido\n   discriminatorio fue probado', 'despido discriminatorio', { modo: 'exacta' }), ['despido\n   discriminatorio']);
   assert.deepEqual(marcadas('el despido no fue discriminatorio', 'despido discriminatorio', { modo: 'exacta' }), []);
+  assert.deepEqual(marcadas('Se acreditó la contaminación del suelo.', 'contaminación del suelo', { modo: 'exacta' }),
+    ['contaminación del suelo']);
+  assert.deepEqual(marcadas('Se acreditó la contaminación en el suelo.', 'contaminación del suelo', { modo: 'exacta' }), []);
 });
 
 test('el pasaje es el tramo con más palabras de la búsqueda, no el principio ni el texto entero', () => {

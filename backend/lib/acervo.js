@@ -188,7 +188,15 @@ function completarAnios() {
  * también al acervo: así la copia local crece de a poco con cada búsqueda que el
  * sitio sí contestó, sin barridos.
  */
-const BASES_DEL_ACERVO = new Set(['mendoza', 'mendozalegal', 'caba', 'csjn', 'saij', 'dialnet', 'scba', 'juristeca', 'santafe', 'rionegro', 'corteidh']);
+const FUENTES_DIRECTAS_ACERVO = new Set([
+  'mendoza', 'mendozalegal', 'caba', 'csjn', 'saij', 'dialnet',
+  'scba', 'juristeca', 'santafe', 'rionegro', 'corteidh',
+  'catamarca', 'jujuy', 'chubut', 'tfn', 'santacruz', 'hudoc',
+]);
+const FUENTES_PROVINCIALES_DIRECTAS = new Set(['mendoza', 'scba', 'caba', 'santafe', 'rionegro', 'catamarca']);
+const VISTAS_SAIJ_ACERVO = new Map(Object.entries(PROVINCIA_DE_BASE)
+  .filter(([slug]) => !FUENTES_PROVINCIALES_DIRECTAS.has(slug)));
+const BASES_DEL_ACERVO = new Set([...FUENTES_DIRECTAS_ACERVO, ...VISTAS_SAIJ_ACERVO.keys()]);
 async function sumarIndiceGuardado() {
   let archivos = [];
   try { archivos = (await fsp.readdir(DIR_INDICE)).filter((a) => a.endsWith('.json')); } catch { return; }
@@ -197,12 +205,20 @@ async function sumarIndiceGuardado() {
     if (!BASES_DEL_ACERVO.has(fuente)) continue;
     let regs = [];
     try { regs = Object.values(JSON.parse(await fsp.readFile(path.join(DIR_INDICE, a), 'utf8')).registros || {}); } catch { continue; }
+    const provinciaVista = VISTAS_SAIJ_ACERVO.get(fuente);
+    const origen = provinciaVista ? 'saij' : fuente;
     const esta = db.prepare('SELECT 1 FROM fallos WHERE id = ?');
     const nuevos = regs.filter((r) => r?.id && !esta.get(r.id));
-    // de a 500, cediendo el turno: al arrancar no se frena al servidor
+    // Las facetas provinciales conservan su UUID original, pero se almacenan
+    // como SAIJ con la provincia verificada: una causa, un registro, sin copias.
+    // De a 500, cediendo el turno: al arrancar no se frena al servidor.
     for (let i = 0; i < nuevos.length; i += 500) {
       db.exec('BEGIN');
-      try { for (const r of nuevos.slice(i, i + 500)) poner({ ...r, fuente }); db.exec('COMMIT'); } catch (e) { db.exec('ROLLBACK'); console.warn('[acervo] índice guardado:', e.message); break; }
+      try {
+        for (const r of nuevos.slice(i, i + 500))
+          poner({ ...r, fuente: origen, ...(provinciaVista ? { provincia: provinciaVista } : {}) });
+        db.exec('COMMIT');
+      } catch (e) { db.exec('ROLLBACK'); console.warn('[acervo] índice guardado:', e.message); break; }
       await new Promise((ok) => setImmediate(ok));
     }
   }
@@ -287,7 +303,7 @@ export { consultaFts, anioDe };
  * base del respaldo. Devuelve registros con la forma de los de la búsqueda
  * en vivo, ordenados por relevancia (BM25, la carátula pesa más).
  */
-export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [], limite = 400 } = {}) {
+export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [], tribunal = 'todo', limite = 400 } = {}) {
   if (!acervoTiene(fuente)) return null;
   const principal = String(q || '').trim();
   const consultas = [principal, ...(Array.isArray(variantes) ? variantes : [])
@@ -304,13 +320,41 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
   if (anioDesde) { donde.push('f.anio >= ?'); args.push(Number(anioDesde)); }
   if (anioHasta) { donde.push('f.anio <= ?'); args.push(Number(anioHasta)); }
   if (provincia) { donde.push('f.provincia = ?'); args.push(provincia); }
+  const esSaij = fuente === 'saij' || fuente === 'csjn';
+  if (esSaij) {
+    if (tribunal === 'fallos') donde.push("f.tipo = 'fallo'");
+    else if (tribunal === 'sumarios') donde.push("f.tipo = 'sumario'");
+    else donde.push("(f.tipo IN ('fallo','sumario') OR f.tipo IS NULL)");
+  }
+  const priorizaFallos = tribunal !== 'sumarios';
   args.push(Math.min(2000, Math.max(1, limite)));
   try {
+    const pesoTipo = priorizaFallos ? "CASE WHEN f.tipo = 'sumario' THEN 1 ELSE 0 END," : '';
     const filas = db.prepare(`SELECT f.* FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}
-      ORDER BY bm25(fts, 4.0, 1.0, 2.0, 0.0${ftsConMagistrados(db) ? ', 1.0' : ''}) LIMIT ?`).all(...args);
-    return filas.map((f) => {
+      ORDER BY ${pesoTipo} bm25(fts, 4.0, 1.0, 2.0, 0.0${ftsConMagistrados(db) ? ', 1.0' : ''}), f.rid LIMIT ?`).all(...args);
+    // El acervo es una copia de fallos, no una lista de todos sus sumarios.
+    // Si la ficha del fallo y tres sumarios describen la misma causa, conservar
+    // la primera fila del orden documental (fallo primero) y no mostrar cuatro.
+    const vistos = new Set();
+    const unicos = filas.filter((f) => {
+      const caratula = String(f.caratula || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      const tribunal = String(f.tribunal || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      const fecha = String(f.fecha || '').trim();
+      let clave;
+      if ((fuente === 'saij' || fuente === 'csjn') && caratula) clave = [caratula, fecha, tribunal].join('|');
+      else if (f.linkFallo) clave = 'url|' + String(f.linkFallo).trim();
+      else if (caratula) clave = [caratula, fecha, tribunal].join('|');
+      else clave = 'id|' + f.id;
+      if (vistos.has(clave)) return false;
+      vistos.add(clave);
+      return true;
+    });
+    return unicos.map((f) => {
       const r = { id: f.id, caratula: f.caratula, tribunal: f.tribunal, fecha: f.fecha, expediente: f.expediente, sumario: f.sumario,
-        voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo, desdeAcervo: true };
+        voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo,
+        ...(priorizaFallos && f.tipo === 'sumario' ? { esSumarioRespaldo: true } : {}),
+        ...(f.tipo === 'fallo' && f.sumario ? { tipoExtracto: 'Sumario asociado; no es el texto íntegro del fallo' } : {}),
+        desdeAcervo: true };
       for (const k of Object.keys(r)) if (r[k] == null) delete r[k];
       return r;
     });
