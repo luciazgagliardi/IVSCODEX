@@ -13,6 +13,14 @@ on:
       - 'backend/scripts/cosecharSaij.mjs'
       - 'backend/test/provinciasSaij.prueba.js'
       - 'backend/lib/indiceCatamarca.js'
+      - 'backend/lib/indiceChubut.js'
+      - 'backend/lib/indiceTfn.js'
+      - 'backend/lib/indiceSantaCruz.js'
+      - 'backend/lib/indiceHudoc.js'
+      - 'backend/lib/indiceHybridJurisprudencia.js'
+      - 'backend/lib/avanceTerminos.js'
+      - 'backend/test/avanceTerminos.prueba.js'
+      - 'backend/test/fuentesNuevas.prueba.js'
       - 'backend/test/catamarca.prueba.js'
       - 'backend/scripts/ampliarCorteidh.mjs'
       - 'backend/scripts/armarAcervo.mjs'
@@ -71,6 +79,7 @@ jobs:
           node --check scripts/ampliarCorteidh.mjs
           node --check scripts/armarAcervo.mjs
           node --test test/ampliacionAcervo.prueba.js
+          node --test test/avanceTerminos.prueba.js test/fuentesNuevas.prueba.js
           node --test test/jujuy.prueba.js test/indiceCabaHost.prueba.js
           node --check ../ops/diagnosticar-en-vivo.mjs
 
@@ -83,7 +92,7 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, jujuy]
+        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, jujuy, chubut, tfn, santacruz, hudoc]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
@@ -114,14 +123,14 @@ jobs:
         working-directory: backend
         env:
           FUENTE: ${{ matrix.fuente }}
-          MAX_PAGINAS: ${{ matrix.fuente == 'catamarca' && '360' || '600' }}
+          MAX_PAGINAS: '600'
           MAX_TERMINOS: '240'
           PAGINAS_POR_TAREA: '8'
           MAX_PDFS: '150'
           PAUSA_MS: '2000'
         run: |
           if test "$FUENTE" = catamarca; then
-            MAX_DETALLES=160 node scripts/cosecharCatamarca.mjs
+            MAX_DETALLES=300 node scripts/cosecharCatamarca.mjs
           else
             node scripts/ampliarFuentes.mjs "$FUENTE"
           fi
@@ -172,8 +181,8 @@ jobs:
           echo "Estado cosecha nacional: $NACIONAL; Mendoza: $MENDOZA"
           if test "$NACIONAL" -ne 0 || test "$MENDOZA" -ne 0; then
             echo "::warning::SAIJ respondió parcialmente; sólo se integran tandas disponibles, preservando el acervo anterior"
+            exit 1
           fi
-          exit 0
       - name: Guardar tandas SAIJ y avance, aunque la fuente haya cortado
         if: always()
         uses: actions/upload-artifact@v4
