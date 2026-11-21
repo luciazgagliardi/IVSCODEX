@@ -7640,6 +7640,14 @@ function panelIndice(f){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">'+esc(FALLA_SIN_COPIA)+'</p></div>';
     return out;
   }
+  if(!im.resultados.length&&(Number(im.totalFuente)>0||Number(im.total)>0)){
+    // SAIJ y algunas fuentes informan candidatos antes de que el servidor
+    // pueda convertirlos en fichas utilizables. Un total preliminar positivo
+    // con una página vacía NO es un cero de resultados.
+    out+=avisoLocal+'<div class="rz-aviso" role="status">La fuente informó documentos para esta consulta, pero no devolvió fichas utilizables en esta página. No se puede afirmar que no haya resultados. '+
+      '<button type="button" class="mini" data-act="buscar-indice" data-fuente="'+esc(f.slug)+'">Reintentar la consulta</button></div></div>';
+    return out;
+  }
   if(!im.resultados.length){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+
       (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
