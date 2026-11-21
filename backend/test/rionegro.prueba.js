@@ -8,6 +8,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { parsear, totalDe } from '../lib/indiceRioNegro.js';
 
 const FILA = `<div class="summary">Mostrando <b>1-10</b> de <b>1,205</b> elementos.</div>
