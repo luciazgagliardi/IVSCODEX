@@ -321,8 +321,8 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
     // la primera fila del orden documental (fallo primero) y no mostrar cuatro.
     const vistos = new Set();
     const unicos = filas.filter((f) => {
-      const caratula = String(f.caratula || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim();
-      const tribunal = String(f.tribunal || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim();
+      const caratula = String(f.caratula || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      const tribunal = String(f.tribunal || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
       const fecha = String(f.fecha || '').trim();
       let clave;
       if ((fuente === 'saij' || fuente === 'csjn') && caratula) clave = [caratula, fecha, tribunal].join('|');
