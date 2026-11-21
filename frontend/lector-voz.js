@@ -191,7 +191,7 @@
       lector.controller = null;
       lector.estado = "error";
       actualizarControles();
-      estadoTexto("No se pudo generar la voz argentina. Revisá la conexión y volvé a intentarlo.");
+      estadoTexto("No se pudo generar la voz argentina: el servicio de síntesis no respondió. Puede ser una falla del servicio y no de tu conexión; volvé a intentarlo en unos minutos.");
     }
   }
 

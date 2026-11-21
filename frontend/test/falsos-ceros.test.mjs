@@ -56,3 +56,17 @@ test('copia local en 0 + sitio oficial caído: error, no «sin coincidencias»',
 test('el contador general dice cuántas bases no respondieron', () => {
   assert.match(html, /en las bases que respondieron · <b>'\+basesSinRespuesta\(vis\)\+'<\/b> sin respuesta/);
 });
+
+test('privacidad: los textos dicen lo que la plataforma hace (F-11)', async () => {
+  const portada = await readFile(new URL('../portada/index.html', import.meta.url), 'utf8');
+  assert.doesNotMatch(html, /El Lector opera directamente en su navegador/);
+  assert.match(html, /se envían al servidor de la plataforma para extraer el texto: se leen en memoria y no se guardan/);
+  assert.match(html, /servicio de síntesis de voz de Microsoft/);
+  assert.doesNotMatch(portada, /el archivo que se sube para leerlo en el Lector, y el análisis que realiza Lexia sobre el fallo abierto, se procesan en su navegador/);
+  assert.match(portada, /servicio de síntesis de voz de Microsoft/);
+});
+
+test('intereses: la tasa elegida no se presenta como obtenida por la plataforma (F-10)', () => {
+  assert.match(html, /La plataforma no obtiene ni controla el valor de la tasa/);
+  assert.match(html, /valor no obtenido ni verificado por la plataforma/);
+});

@@ -7949,7 +7949,7 @@ function vistaLector(){
         '<div class="panel vivo op-caja">'+
           '<div class="rotulo" style="margin-top:0"><strong>Opción 2 · Adjuntar el archivo desde su dispositivo</strong></div>'+
           '<p style="font-size:13px;color:var(--humo);margin:0 0 10px">Admite archivos en formato PDF o Word (.doc/.docx) almacenados localmente, '+
-          'tales como documentos recibidos por correo electrónico o descargados de plataformas oficiales.</p>'+
+          'tales como documentos recibidos por correo electrónico o descargados de plataformas oficiales. El archivo se envía al servidor de la plataforma para extraer su texto; no se guarda.</p>'+
           '<div class="acciones" style="margin-top:4px">'+
             '<button class="btn" data-act="elegir-archivo"'+((estado.cargando||estado.cargandoOcr)?" disabled":"")+'>'+
               (estado.cargando?"Leyendo…":"Elegir archivo")+'</button>'+
@@ -7966,8 +7966,8 @@ function vistaLector(){
 
     return '<div class="aviso sin-filete"><span class="av-tit">Cargue el fallo aquí para visualizarlo con su búsqueda destacada</span>'+
       'Puede proceder ingresando el enlace, subiendo el archivo o pegando el texto manualmente. '+
-      'El Lector opera directamente en su navegador y asegura total fidelidad al documento original, '+
-      'garantizando que el contenido desplegado sea exactamente el del texto fuente, sin alteraciones ni elementos simulados.</div>'+
+      'El texto pegado y el análisis de Lexia se procesan en su navegador. Los enlaces y los archivos que adjunte se envían al servidor de la plataforma para extraer el texto: se leen en memoria y no se guardan. '+
+      'El contenido desplegado es el del documento fuente, sin alteraciones ni elementos simulados.</div>'+
       porLink+
       '<div class="panel op-caja">'+
         '<div class="rotulo" style="margin-top:0">'+(estado.api?"<strong>Opción 3 · Transcribir o pegar el texto manualmente</strong>":"Pegar el texto del fallo")+'</div>'+
@@ -8004,7 +8004,7 @@ function vistaLector(){
         '<output id="voz-velocidad">1×</output>'+
         '<button type="button" data-act="voz-vel-mas" aria-label="Aumentar velocidad">+</button>'+
       '</div>'+
-      '<span class="lector-voz__estado" id="voz-estado" aria-live="polite">Voz neuronal argentina · requiere internet; el fragmento se envía al servicio de voz para generar el audio.</span>'+
+      '<span class="lector-voz__estado" id="voz-estado" aria-live="polite">Voz neuronal argentina · requiere internet. Para generar el audio, el texto se envía al servidor de la plataforma y al servicio de síntesis de voz de Microsoft. No la use con documentos que no deban salir de su equipo.</span>'+
     '</section>'+
     (estado.cargando?'<div class="aviso" style="margin:0 0 14px">Trayendo el documento nuevo… esto puede tardar unos segundos. Mientras tanto se sigue viendo el fallo anterior.</div>':'')+
     '<div class="barra-doc">'+
@@ -9863,7 +9863,7 @@ function calcIntereses(){
   return {titulo:"Capital más intereses",total:pesos(cap+total),
     sub:"Intereses: "+pesos(total)+" ("+porc(total/cap*100)+" del capital, "+dias+" días)",
     filas:[["Capital",pesos(cap)]].concat(filas),
-    avisos:R.avisos.concat(["Interés simple sobre el capital, por días y sobre un año de 365, con la "+nombreTasa+" que se cargó para cada tramo. Los días se cuentan del «desde» al «hasta»: un tramo que empieza el día en que termina el anterior no repite ese día."]),
+    avisos:R.avisos.concat(["Interés simple sobre el capital, por días y sobre un año de 365, con el porcentaje que usted cargó para cada tramo como "+nombreTasa+" (valor no obtenido ni verificado por la plataforma). Los días se cuentan del «desde» al «hasta»: un tramo que empieza el día en que termina el anterior no repite ese día."]),
     base:"Art. 768 CCyC: a partir de su mora el deudor debe los intereses correspondientes; la tasa se determina por lo que acuerden las partes, por lo que dispongan las leyes especiales y, en subsidio, por las tasas que se fijen según las reglamentaciones del Banco Central. Art. 770 CCyC: no se deben intereses de los intereses, salvo las excepciones que prevé.",
     aLiquidacion:{capital:cap,intereses:total,desde:c.tramos[0].desde,hasta:c.tramos[c.tramos.length-1].hasta},
     texto:"Capital: "+pesos(cap)+"\n"+filas.map(function(f){return f[0]+": "+f[1];}).join("\n")+"\nIntereses: "+pesos(total)+"\nTotal: "+pesos(cap+total)};
@@ -9872,7 +9872,8 @@ function formIntereses(){
   var c=CALC.intereses;
   return campoC("Capital","intereses.capital",c.capital,{ph:"1.500.000",num:true})+
     '<fieldset class="grupo" style="border:0;padding:0;margin:0"><legend class="busq-rotulo">Tasa aplicable</legend>'+
-      chipsC("intereses.tipo",c.tipo,[["activa","Activa del Banco de la Nación"],["pasiva","Pasiva promedio del BCRA"],["otra","Otra que fije el tribunal"]])+'</fieldset>'+
+      chipsC("intereses.tipo",c.tipo,[["activa","Activa del Banco de la Nación"],["pasiva","Pasiva promedio del BCRA"],["otra","Otra que fije el tribunal"]])+
+      '<p style="font-size:12px;color:var(--humo);margin:6px 0 0">Esta opción solo rotula el cálculo: el porcentaje de cada tramo lo carga usted. La plataforma no obtiene ni controla el valor de la tasa; verifíquelo en la fuente oficial.</p></fieldset>'+
     '<div class="tramos">'+c.tramos.map(function(t,i){
       return '<div class="tramo"><p class="tramo__n">Tramo '+(i+1)+'</p><div class="fila">'+
         campoC("Desde","intereses.tramos."+i+".desde",t.desde,{tipo:"date"})+
