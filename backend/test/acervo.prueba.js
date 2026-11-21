@@ -37,6 +37,8 @@ const registros = [
   { id: 'saij_4', fuente: 'saij', provincia: 'Mendoza', caratula: 'Bodega Andina c/ Pérez s/ cobro', fecha: '01/03/2020', sumario: 'El contrato de elaboración de vino en la vendimia obliga al bodeguero.', linkFicha: 'https://www.saij.gob.ar/123456789-0abc-defg0000-000asoiramus', tipo: 'fallo' },
   { id: 'saij_5', fuente: 'saij', caratula: 'Pérez c/ López s/ daños y perjuicios', tribunal: 'Cámara Civil', fecha: '10/03/2015', sumario: 'Indemnización del daño moral. Corresponde indemnizar los padecimientos de la víctima.', tipo: 'sumario' },
   { id: 'saij_6', fuente: 'saij', caratula: 'Rodríguez c/ Aseguradora s/ daños', tribunal: 'Cámara Civil', fecha: '04/07/2018', sumario: 'El daño moral debe indemnizarse atendiendo a la reparación integral.', tipo: 'sumario' },
+  { id: 'saij_7', fuente: 'saij', caratula: 'Asociación Verde c/ Industria Sur s/ amparo ambiental', tribunal: 'Cámara Contencioso Administrativa', fecha: '14/06/2024', sumario: 'Se acreditó la contaminación del suelo por filtraciones de sustancias industriales.', tipo: 'fallo' },
+  { id: 'saij_8', fuente: 'saij', caratula: 'Vecinos c/ Municipio s/ recomposición ambiental', tribunal: 'Cámara Contencioso Administrativa', fecha: '21/08/2023', sumario: 'Se investigó la contaminación en el suelo y el impacto sobre las napas.', tipo: 'fallo' },
   { id: 'scba_1', fuente: 'scba', caratula: 'Ripodas contra Turcuman. Despido', sumario: 'Si la relación laboral se hallaba deficientemente registrada procede la indemnización.' },
 ];
 fs.writeFileSync(path.join(process.env.DIR_ACERVO_DATOS, 'todo-001.jsonl.gz'), zlib.gzipSync(registros.map((r) => JSON.stringify(r)).join('\n')));
@@ -49,17 +51,28 @@ const e = await prepararAcervo({ esperar: true });
 test('las tandas se importan con sus conteos, la Corte aparte', () => {
   assert.equal(e.activo, true, e.error || '');
   assert.equal(e.version, 'prueba-1');
-  assert.deepEqual(estadoAcervo().conteos, { saij: 7, csjn: 1, scba: 1 });
+  assert.deepEqual(estadoAcervo().conteos, { saij: 9, csjn: 1, scba: 1 });
 });
 
 test('la consulta: raíces sin acentos, modos y exclusión', () => {
   assert.equal(consultaFts('daño moral'), '"dano"* AND "moral"*');
   assert.equal(consultaFts('indemnización despido', 'alguna'), '"indemnizaci"* OR "despido"*');
   assert.equal(consultaFts('registro domiciliario', 'exacta'), '"registro domiciliario"');
+  assert.equal(consultaFts('contaminación del suelo', 'exacta'), '"contaminacion del suelo"');
+  assert.equal(consultaFts('contaminacion en el suelo', 'exacta'), '"contaminacion en el suelo"');
+  assert.equal(consultaFts('contaminación del suelo'), '"contaminacion" AND "suelo"');
   assert.equal(consultaFts('daño', 'todas', 'moral'), '("dano"*) NOT ("moral"*)');
   assert.equal(consultaFts('de la'), null);
 });
 
+test('la frase exacta conserva los conectores y no confunde «del suelo» con «en el suelo»', () => {
+  const q = 'contaminación del suelo';
+  assert.deepEqual(buscarEnAcervo('saij', q, { modo: 'exacta' }).map((r) => r.id), ['saij_7']);
+  assert.deepEqual(buscarEnAcervo('saij', 'contaminacion en el suelo', { modo: 'exacta' }).map((r) => r.id), ['saij_8']);
+  assert.deepEqual(buscarEnAcervo('saij', 'contaminación suelo', { modo: 'exacta' }), [],
+    'la frase sin el conector no debe sustituir la expresión exacta');
+});
+ 
 test('busca por base, por la Corte, por años y en frase exacta', () => {
   const porDefecto = buscarEnAcervo('saij', 'daño moral');
   assert.equal(porDefecto[0].id, 'saij_2', 'la ficha del fallo precede al sumario más parecido');
@@ -100,10 +113,13 @@ test('la búsqueda de respaldo usa el acervo, con años', async () => {
   const porEquivalente = expandida.find((x) => x.id === 'saij_2');
   assert.ok(porEquivalente, 'el respaldo local conserva los equivalentes del tesauro');
   assert.equal(porEquivalente.variante, 'daño moral', 'identifica el equivalente que recuperó el fallo');
+  const exacta = await buscarEnIndice('saij', 'contaminación del suelo', { modo: 'exacta' });
+  assert.deepEqual(exacta.map((x) => x.id), ['saij_7'],
+    'la consulta exacta del buscador conserva «del» también en el recorrido completo del índice');
   const expandidaProvincial = await buscarEnIndice('scba', 'multa registral', { modo: 'todas', variantes: ['relación laboral deficientemente registrada'] });
   assert.ok(expandidaProvincial.some((x) => x.id === 'scba_1'), 'la expansión también llega a una base provincial');
   assert.equal((await buscarEnIndice('saij', 'daño moral', { anioHasta: 2010 })).length, 0);
-  assert.equal((await estadoIndice('saij')).acervo, 7);
+  assert.equal((await estadoIndice('saij')).acervo, 9);
 });
 
 test('lo cosechado por el servidor se suma al acervo, se busca y se actualiza cuando llega su texto', async () => {
