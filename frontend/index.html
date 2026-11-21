@@ -3394,7 +3394,11 @@ var FUENTES_INDICE=[
  {slug:"csjn",cod:"CSJN",clase:"nac",boton:"la Corte Suprema",
   nombre:"Corte Suprema de Justicia de la Nación",
   nota:"Fallos de la Corte primero; los sumarios asociados sólo completan cuando no hay suficientes fichas de fallos. Se consultan a través de SAIJ, que publica ese material de forma abierta: el buscador del sitio propio de la Corte exige resolver un captcha, así que no se puede consultar automáticamente.",
-  tribunales:[{v:"todo",n:"Fallos primero · sumarios de respaldo"}]},
+  tribunales:[
+    {v:"todo",n:"Fallos primero · sumarios de respaldo"},
+    {v:"fallos",n:"Sólo fallos"},
+    {v:"sumarios",n:"Sólo sumarios"}
+  ]},
  {slug:"saij",cod:"SAIJ",clase:"nac",boton:"SAIJ, todo el país",
   nombre:"Sistema Argentino de Información Jurídica",
   nota:"Jurisprudencia, legislación y doctrina unificada de fueros federales, nacionales y provinciales de toda la Argentina.",
@@ -3457,7 +3461,11 @@ var FUENTES_INDICE=[
  {slug:"chubut",cod:"CHU",clase:"prov",boton:"el Poder Judicial de Chubut",
   nombre:"Poder Judicial de Chubut · Eureka!",
   nota:"Sentencias anonimizadas y sumarios del sistema oficial Eureka!. No se accede a fallos sin anonimizar ni a expedientes reservados.",
-  tribunales:[{v:"sumarios",n:"Sumarios"},{v:"sentencias",n:"Sentencias anonimizadas"}]},
+  tribunales:[
+    {v:"todo",n:"Sentencias primero · sumarios de respaldo"},
+    {v:"sentencias",n:"Sólo sentencias anonimizadas"},
+    {v:"sumarios",n:"Sólo sumarios"}
+  ]},
  {slug:"formosa",cod:"FOR·S",clase:"prov",boton:"la jurisprudencia de Formosa vía SAIJ",
   nombre:"Jurisprudencia de Formosa (SAIJ)",
   nota:"Documentos de Formosa publicados por SAIJ; la procedencia se identifica como agregadora y se mantiene el enlace al documento original cuando está disponible."},
