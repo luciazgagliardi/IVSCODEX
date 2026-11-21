@@ -6,7 +6,7 @@
  * precedente. Se devuelve en cada respuesta para que la interfaz pueda
  * explicar al usuario qué está mirando.
  */
-import { PROVINCIAS_PRIORIZADAS } from './indiceProvincialSaij.js';
+import { VISTAS_PROVINCIALES_SAIJ } from './indiceProvincialSaij.js';
 
 const INFO = {
   mendoza: {
@@ -167,7 +167,7 @@ const INFO = {
   },
 };
 
-for (const [slug, provincia] of Object.entries(PROVINCIAS_PRIORIZADAS)) {
+for (const [slug, provincia] of Object.entries(VISTAS_PROVINCIALES_SAIJ)) {
   INFO[slug] = {
     linea: 'Jurisprudencia provincial vía agregador',
     lineas: ['jurisprudencia', 'provincial', 'agregador'],
