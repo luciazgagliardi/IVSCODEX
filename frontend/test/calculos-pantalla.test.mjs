@@ -120,3 +120,18 @@ test('portada · C-01 a C-04: los plazos usan el mismo cómputo', () => {
   assert.match(Pt.nodos.out.innerHTML, /sin plazo de gracia/);
   assert.equal(Pt.ctx.motivo(new Date('2026-11-09T00:00:00Z')), IVSCalculos.diaInhabil(new Date('2026-11-09T00:00:00Z'), 'mendoza').motivo);
 });
+
+test('C-08: el aviso del despido cita la ley que corresponde según la fecha de egreso', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const vm = await import('node:vm');
+  const h = await readFile(new URL('../index.html', import.meta.url), 'utf8');
+  const ini = h.indexOf('function avisoRegimenDespido(');
+  let i = h.indexOf('{', ini), prof = 0;
+  for (; i < h.length; i++) { if (h[i] === '{') prof++; else if (h[i] === '}' && --prof === 0) break; }
+  const ctx = {}; vm.runInNewContext(h.slice(ini, i + 1), ctx);
+  const ahora = ctx.avisoRegimenDespido(new Date('2026-11-20T00:00:00Z'));
+  assert.match(ahora, /art\. 245 LCT \(texto Ley 27\.802/);
+  assert.doesNotMatch(ahora, /Según la reforma de la Ley 27\.742 \(2024\), la base del art\. 245/);
+  assert.match(ctx.avisoRegimenDespido(new Date('2024-03-01T00:00:00Z')), /Ley 25\.323 si se cumplen sus recaudos/);
+  assert.match(ctx.avisoRegimenDespido(new Date('2025-05-01T00:00:00Z')), /arts\. 99 y 100/);
+});

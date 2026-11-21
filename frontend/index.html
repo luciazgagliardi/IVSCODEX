@@ -9967,6 +9967,19 @@ function pedirIndices(){
 }
 
 /* ================= INDEMNIZACIÓN POR DESPIDO ================= */
+/* El régimen aplicable depende de la fecha del egreso (auditoría C-08):
+   - Ley 27.742 (vigente desde el 09/07/2024): arts. 99 y 100 derogaron los
+     arts. 8 a 17 de la Ley 24.013 y toda la Ley 25.323; no modificó el 245.
+   - Ley 27.802 (B.O. 06/03/2026): art. 51 sustituyó el art. 245 LCT (base sin
+     SAC, vacaciones ni premios no mensuales; definiciones de «habitual» y
+     «normal»; piso del 67 %). Texto oficial verificado en argentina.gob.ar. */
+function avisoRegimenDespido(egreso){
+  var iso=egreso?egreso.toISOString().slice(0,10):"";
+  var pie=" No se calculan la indemnización del art. 80 LCT ni los agravamientos de otros regímenes. Verifique la norma vigente a la fecha del despido y el convenio aplicable.";
+  if(iso&&iso<"2024-07-09") return "Egreso anterior al 09/07/2024: pueden corresponder las multas de los arts. 8 a 15 de la Ley 24.013 y de los arts. 1 y 2 de la Ley 25.323 si se cumplen sus recaudos; esta calculadora no las incluye. La aplicación de la Ley 27.742 a relaciones anteriores es discutida."+pie;
+  if(iso&&iso<"2026-03-06") return "Egreso entre el 09/07/2024 y el 05/03/2026: la Ley 27.742 (arts. 99 y 100) derogó las multas de los arts. 8 a 17 de la Ley 24.013 y la Ley 25.323; no se incluyen. El art. 245 rige con su texto anterior a la Ley 27.802."+pie;
+  return "Egreso desde el 06/03/2026: art. 245 LCT (texto Ley 27.802, art. 51): la base no incluye el SAC, las vacaciones ni los premios de pago no mensual; «habitual» es lo devengado al menos seis meses en el último año calendario y, para conceptos variables, «normal» es el promedio de los últimos seis meses o del último año, el que sea más favorable. Las multas de la Ley 24.013 y la Ley 25.323 están derogadas por la Ley 27.742."+pie;
+}
 function calcDespido(){
   var c=CALC.despido,s=num(c.sueldo),a=fechaDe(c.ingreso),b=fechaDe(c.egreso);
   if(String(c.sueldo||"").trim()===""||!c.ingreso||!c.egreso) return null;
@@ -9982,7 +9995,7 @@ function calcDespido(){
   var avisos=[];
   if(K.prueba) avisos.push(K.prueba.aviso);
   if(notaTope) avisos.push(notaTope);
-  avisos.push("Según la reforma de la Ley 27.742 (2024), la base del art. 245 no incluye el SAC ni los conceptos de pago no mensual, y quedaron derogadas las multas de los arts. 8, 9, 10 y 15 de la Ley 24.013 y de los arts. 1 y 2 de la Ley 25.323: no se incluyen. Tampoco se calculan la indemnización del art. 80 LCT ni los agravamientos de otros regímenes. Verifique la norma vigente y el convenio aplicable.");
+  avisos.push(avisoRegimenDespido(b));
   return {titulo:"Liquidación final por despido sin causa",total:pesos(total),
     sub:"Antigüedad: "+ant.anios+(ant.anios===1?" año":" años")+(ant.meses?" y "+ant.meses+(ant.meses===1?" mes":" meses"):"")+" (contando el día del egreso) · "+(c.prueba?"período de prueba: sin indemnización por antigüedad":computables+" computables"),
     filas:rubros.map(function(r){ return [esc(r[0])+' <span class="calc-ley">'+r[1]+'</span>',pesos(r[2])]; }),
