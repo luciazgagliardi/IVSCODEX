@@ -182,9 +182,9 @@
     },
     "[\"clasificación arancelaria\",{\"tribunal\":\"doctrinas\"}]": {
       "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1,
       "errores": 1,
       "ultimoError": "El buscador de \"tfn\" no respondió como se esperaba: respuesta HTTP 429. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -3205,9 +3205,2877 @@
       "pagina": 2,
       "completas": true,
       "paginas": 1
+    },
+    "[\"derecho de riego\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho de riego\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"departamento general de irrigación\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"departamento general de irrigación\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"canon de riego\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"canon de riego\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso hídrico\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso hídrico\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"licencia ambiental minera\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"licencia ambiental minera\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"actividad minera metalífera\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"actividad minera metalífera\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"uso del suelo rural\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"uso del suelo rural\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"servidumbre administrativa de acueducto\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"servidumbre administrativa de acueducto\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuenca hídrica\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuenca hídrica\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley 9001 mendoza\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley 9001 mendoza\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"audiencia inicial\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"audiencia inicial\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"audiencia final\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"audiencia final\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso extraordinario provincial\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso extraordinario provincial\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso de inconstitucionalidad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso de inconstitucionalidad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso de casación\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso de casación\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"caducidad de instancia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"caducidad de instancia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medida cautelar genérica\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medida cautelar genérica\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"costas por su orden\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"costas por su orden\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"beneficio de litigar sin gastos\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"beneficio de litigar sin gastos\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"honorarios regulación\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"honorarios regulación\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"carga dinámica de la prueba\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"carga dinámica de la prueba\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"jurisdicción internacional\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"jurisdicción internacional\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley aplicable al contrato\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley aplicable al contrato\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"exequátur\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"exequátur\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reconocimiento de sentencia extranjera\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reconocimiento de sentencia extranjera\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"restitución internacional de menores\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"restitución internacional de menores\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"convenio de la haya 1980\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"convenio de la haya 1980\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"orden público internacional\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"orden público internacional\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"arbitraje internacional\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"arbitraje internacional\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"foro de necesidad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"foro de necesidad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cooperación jurídica internacional\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cooperación jurídica internacional\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"confusión marcaria\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"confusión marcaria\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"oposición al registro de marca\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"oposición al registro de marca\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho de autor plagio\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho de autor plagio\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"habeas data\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"habeas data\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho al olvido\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho al olvido\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"protección de datos personales\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"protección de datos personales\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad de buscadores\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad de buscadores\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nombre de dominio\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nombre de dominio\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia desleal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia desleal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"software y obra por encargo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"software y obra por encargo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"perspectiva de género\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"perspectiva de género\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley 26.485\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley 26.485\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"violencia económica\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"violencia económica\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medidas de protección urgentes\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medidas de protección urgentes\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"femicidio\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"femicidio\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"denuncia por violencia familiar\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"denuncia por violencia familiar\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"revictimización\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"revictimización\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"testimonio único de la víctima\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"testimonio único de la víctima\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reparación con enfoque de género\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reparación con enfoque de género\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"violencia digital\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"violencia digital\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho a ser oído\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho a ser oído\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medida de protección excepcional\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medida de protección excepcional\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"adoptabilidad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"adoptabilidad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"abogado del niño\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"abogado del niño\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"penal juvenil\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"penal juvenil\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"situación de calle\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"situación de calle\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"alimentos a favor del hijo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"alimentos a favor del hijo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"tutela\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"tutela\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"oficialización de listas\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"oficialización de listas\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"paridad de género en listas\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"paridad de género en listas\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"financiamiento de campañas\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"financiamiento de campañas\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reconocimiento de partido político\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"reconocimiento de partido político\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia electoral\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia electoral\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"boleta única\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"boleta única\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"impugnación de candidatura\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"impugnación de candidatura\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño extrapatrimonial\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño extrapatrimonial\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"agravio moral\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"agravio moral\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño inmaterial\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño inmaterial\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño psicológico\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño psicológico\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"usucapión\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"usucapión\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prescripción veinteañal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prescripción veinteañal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia arbitraria\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia arbitraria\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"doctrina de la arbitrariedad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"doctrina de la arbitrariedad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"indemnización por despido\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"indemnización por despido\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"indemnización por antigüedad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"indemnización por antigüedad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"despido sin causa\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"despido sin causa\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"empleo no registrado\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"empleo no registrado\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"relación laboral no registrada\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"relación laboral no registrada\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad médica\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad médica\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"praxis médica\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"praxis médica\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"consentimiento informado\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"consentimiento informado\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"probation\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"probation\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"suspensión del proceso a prueba\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"suspensión del proceso a prueba\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"obligación alimentaria\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"obligación alimentaria\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prestación alimentaria\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prestación alimentaria\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"multa civil\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"multa civil\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sanción pecuniaria disuasiva\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sanción pecuniaria disuasiva\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"régimen de visitas\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"régimen de visitas\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho de comunicación\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho de comunicación\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuidado personal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuidado personal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"tenencia de los hijos\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"tenencia de los hijos\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente en el trayecto\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente en el trayecto\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente in itínere\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente in itínere\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"autodespido\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"autodespido\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"enfermedad laboral\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"enfermedad laboral\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"enfermedad accidente\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"enfermedad accidente\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pérdida de oportunidad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pérdida de oportunidad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"chance frustrada\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"chance frustrada\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"siniestro vial\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"siniestro vial\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente de tránsito automotor\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidente de tránsito automotor\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"vicio o riesgo de la cosa\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"vicio o riesgo de la cosa\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad objetiva\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad objetiva\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"amparo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"amparo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sucesión intestada\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sucesión intestada\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"porción legítima\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"porción legítima\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"carta de pobreza\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"carta de pobreza\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prisión preventiva\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prisión preventiva\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"detención preventiva\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"detención preventiva\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"excarcelación\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"excarcelación\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"divorcio vincular\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"divorcio vincular\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"adopción guarda\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"adopción guarda\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"usucapión prescripción adquisitiva\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"usucapión prescripción adquisitiva\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"desalojo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"desalojo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño moral procedencia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daño moral procedencia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"escrituración boleto de compraventa\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"escrituración boleto de compraventa\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sucesión testamentaria\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sucesión testamentaria\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"amparo procedencia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"amparo procedencia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medida cautelar\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medida cautelar\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso extraordinario federal admisibilidad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso extraordinario federal admisibilidad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"hábeas corpus\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"hábeas corpus\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"hábeas data\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"hábeas data\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"concurso preventivo apertura\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"concurso preventivo apertura\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pedido de quiebra\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pedido de quiebra\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"despido justa causa injuria\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"despido justa causa injuria\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"excarcelación cese prisión preventiva\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"excarcelación cese prisión preventiva\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"queja\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"queja\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daños y perjuicios\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"daños y perjuicios\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"insuficiencia del agravio\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"insuficiencia del agravio\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"procedencia del recurso\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"procedencia del recurso\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"confirmación de sentencia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"confirmación de sentencia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prueba\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prueba\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"denegatoria del recurso\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"denegatoria del recurso\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"improcedencia del recurso\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"improcedencia del recurso\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestión no constitucional\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestión no constitucional\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"revocación de sentencia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"revocación de sentencia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medidas cautelares\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medidas cautelares\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho procesal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho procesal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"aplicación de la ley\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"aplicación de la ley\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"intereses\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"intereses\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"concursos\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"concursos\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"indemnización\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"indemnización\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"regulación de honorarios\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"regulación de honorarios\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"queja por denegación del recurso de inconstitucionalidad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"queja por denegación del recurso de inconstitucionalidad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestiones de competencia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestiones de competencia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"proceso penal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"proceso penal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho laboral\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho laboral\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"honorarios\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"honorarios\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"costas\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"costas\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"interpretación de la ley\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"interpretación de la ley\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"contratos\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"contratos\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"inadmisibilidad del recurso\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"inadmisibilidad del recurso\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"defensa en juicio\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"defensa en juicio\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso extraordinario\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso extraordinario\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"apreciación de la prueba\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"apreciación de la prueba\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidentes de trabajo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"accidentes de trabajo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fundamentación de sentencias\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fundamentación de sentencias\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"corte suprema de justicia provincial\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"corte suprema de justicia provincial\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"seguros\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"seguros\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"juicio ejecutivo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"juicio ejecutivo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recursos\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recursos\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"debido proceso\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"debido proceso\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"despido\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"despido\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prescripción\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prescripción\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia condenatoria\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia condenatoria\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"quiebra\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"quiebra\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"incumplimiento del contrato\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"incumplimiento del contrato\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"admisibilidad del recurso\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"admisibilidad del recurso\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"declaración de inconstitucionalidad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"declaración de inconstitucionalidad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"violencia de género\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"violencia de género\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derechos y garantías constitucionales\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derechos y garantías constitucionales\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"empleo público\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"empleo público\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"inconstitucionalidad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"inconstitucionalidad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"defensa del consumidor\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"defensa del consumidor\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"falta de prueba\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"falta de prueba\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"carga de la prueba\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"carga de la prueba\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia suficientemente fundada\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia suficientemente fundada\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fallos de la corte suprema\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fallos de la corte suprema\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso de apelación (procesal)\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso de apelación (procesal)\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"deberes del juez\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"deberes del juez\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley de defensa del consumidor\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley de defensa del consumidor\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"código civil y comercial\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"código civil y comercial\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso de queja (procesal)\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso de queja (procesal)\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"constitución nacional\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"constitución nacional\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"jurisprudencia aplicable\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"jurisprudencia aplicable\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"imputado\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"imputado\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad contractual\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad contractual\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley vigente\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley vigente\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"juicio ordinario\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"juicio ordinario\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"multa\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"multa\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"rechazo de la demanda\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"rechazo de la demanda\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho a la salud\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"derecho a la salud\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"resoluciones judiciales\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"resoluciones judiciales\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prueba testimonial\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"prueba testimonial\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pena\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"pena\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia definitiva\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia definitiva\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"concurso preventivo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"concurso preventivo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestión federal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestión federal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia no definitiva\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sentencia no definitiva\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"coronavirus\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"coronavirus\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad civil\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"responsabilidad civil\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"abuso sexual\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"abuso sexual\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"efectos entre partes\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"efectos entre partes\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"emergencia sanitaria\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"emergencia sanitaria\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ejecución de sentencia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ejecución de sentencia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"corte suprema de justicia nacional\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"corte suprema de justicia nacional\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sobreseimiento\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sobreseimiento\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fundamentación del recurso\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"fundamentación del recurso\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"rechazo del recurso\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"rechazo del recurso\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"excepciones procesales\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"excepciones procesales\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nulidad procesal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nulidad procesal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sociedades comerciales\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"sociedades comerciales\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"arbitrariedad\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"arbitrariedad\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"falta de fundamentación\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"falta de fundamentación\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"asegurador por riesgos del trabajo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"asegurador por riesgos del trabajo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nulidad de sentencia\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"nulidad de sentencia\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cobro de sumas de dinero\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cobro de sumas de dinero\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"plazo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"plazo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ejecución fiscal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ejecución fiscal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"comisiones médicas\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"comisiones médicas\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medios de prueba\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"medios de prueba\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"monto del juicio\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"monto del juicio\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"facultades del juez\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"facultades del juez\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"grupos vulnerables\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"grupos vulnerables\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"incidentes\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"incidentes\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"calificación legal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"calificación legal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia federal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia federal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia contravencional y de faltas\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"competencia contravencional y de faltas\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación procesal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"legitimación procesal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cesantía\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cesantía\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestiones procesales\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestiones procesales\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"tipo penal\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"tipo penal\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"contrato de trabajo\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"contrato de trabajo\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"diferencias salariales\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"diferencias salariales\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"inexistencia de cuestión federal suficiente\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"inexistencia de cuestión federal suficiente\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestión constitucional\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuestión constitucional\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"procesamiento\",{\"tribunal\":\"objetos\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"procesamiento\",{\"tribunal\":\"doctrinas\"}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
     }
   },
-  "indiceTerminos": 240,
+  "indiceTerminos": 480,
   "versionIds": 2,
   "versionAvanceTerminos": 2
 }

@@ -1,10 +1,10 @@
 {
   "tareas": {
     "[\"freedom of expression\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"incumplimiento contractual\",{}]": {
       "desde": 0,
@@ -13,10 +13,10 @@
       "paginas": 1
     },
     "[\"right to a fair trial\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"pacto comisorio\",{}]": {
       "desde": 0,
@@ -25,10 +25,10 @@
       "paginas": 1
     },
     "[\"right to life\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 0,
@@ -37,10 +37,10 @@
       "paginas": 1
     },
     "[\"right to respect for private and family life\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"mora automática\",{}]": {
       "desde": 0,
@@ -49,10 +49,10 @@
       "paginas": 1
     },
     "[\"protection of property\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"intereses moratorios\",{}]": {
       "desde": 20,
@@ -61,10 +61,10 @@
       "paginas": 2
     },
     "[\"freedom of religion\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"tasa activa\",{}]": {
       "desde": 0,
@@ -73,10 +73,10 @@
       "paginas": 1
     },
     "[\"prohibition of torture\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"resolución contractual\",{}]": {
       "desde": 0,
@@ -85,10 +85,10 @@
       "paginas": 1
     },
     "[\"discrimination\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"seña\",{}]": {
       "desde": 60,
@@ -97,10 +97,10 @@
       "paginas": 4
     },
     "[\"effective remedy\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"boleto de compraventa\",{}]": {
       "desde": 0,
@@ -109,10 +109,10 @@
       "paginas": 1
     },
     "[\"presumption of innocence\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"locación de inmueble\",{}]": {
       "desde": 0,
@@ -121,10 +121,10 @@
       "paginas": 1
     },
     "[\"access to court\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"desalojo falta de pago\",{}]": {
       "desde": 0,
@@ -133,10 +133,10 @@
       "paginas": 1
     },
     "[\"environmental protection\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"obligación de valor\",{}]": {
       "desde": 0,
@@ -157,10 +157,10 @@
       "paginas": 1
     },
     "[\"data protection\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"cesión de créditos\",{}]": {
       "desde": 0,
@@ -169,10 +169,10 @@
       "paginas": 1
     },
     "[\"immigration detention\",{}]": {
-      "desde": 160,
-      "pagina": 9,
-      "completas": false,
-      "paginas": 8
+      "desde": 200,
+      "pagina": 12,
+      "completas": true,
+      "paginas": 11
     },
     "[\"buena fe contractual\",{}]": {
       "desde": 0,
@@ -181,22 +181,22 @@
       "paginas": 1
     },
     "[\"reasonable time\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"daño moral\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"judicial independence\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"consecuencias no patrimoniales\",{}]": {
       "desde": 0,
@@ -205,10 +205,10 @@
       "paginas": 1
     },
     "[\"article 6\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"incapacidad sobreviniente\",{}]": {
       "desde": 0,
@@ -217,10 +217,10 @@
       "paginas": 1
     },
     "[\"article 8\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"fórmula acciarri\",{}]": {
       "desde": 0,
@@ -229,10 +229,10 @@
       "paginas": 1
     },
     "[\"article 10\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"pérdida de chance\",{}]": {
       "desde": 0,
@@ -253,10 +253,10 @@
       "paginas": 1
     },
     "[\"droit à un procès équitable\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"riesgo de la cosa\",{}]": {
       "desde": 0,
@@ -265,10 +265,10 @@
       "paginas": 1
     },
     "[\"droit à la vie\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"accidente de tránsito\",{}]": {
       "desde": 0,
@@ -277,10 +277,10 @@
       "paginas": 1
     },
     "[\"respect de la vie privée et familiale\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"mala praxis médica\",{}]": {
       "desde": 0,
@@ -301,10 +301,10 @@
       "paginas": 3
     },
     "[\"liberté de religion\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"eximentes de responsabilidad\",{}]": {
       "desde": 0,
@@ -313,10 +313,10 @@
       "paginas": 1
     },
     "[\"interdiction de la torture\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"culpa de la víctima\",{}]": {
       "desde": 0,
@@ -325,10 +325,10 @@
       "paginas": 1
     },
     "[\"recours effectif\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"valor vida\",{}]": {
       "desde": 0,
@@ -349,10 +349,10 @@
       "paginas": 1
     },
     "[\"accès à un tribunal\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"legitimación activa daño moral\",{}]": {
       "desde": 0,
@@ -385,10 +385,10 @@
       "paginas": 1
     },
     "[\"protection des données\",{}]": {
-      "desde": 160,
-      "pagina": 9,
-      "completas": false,
-      "paginas": 8
+      "desde": 260,
+      "pagina": 15,
+      "completas": true,
+      "paginas": 14
     },
     "[\"acción reivindicatoria\",{}]": {
       "desde": 0,
@@ -409,10 +409,10 @@
       "paginas": 1
     },
     "[\"délai raisonnable\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"propiedad horizontal\",{}]": {
       "desde": 0,
@@ -433,10 +433,10 @@
       "paginas": 1
     },
     "[\"liberté de réunion\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"servidumbre de paso\",{}]": {
       "desde": 0,
@@ -457,10 +457,10 @@
       "paginas": 1
     },
     "[\"expulsion\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"posesión y tenencia\",{}]": {
       "desde": 0,
@@ -1303,10 +1303,10 @@
       "paginas": 1
     },
     "[\"in dubio pro reo\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8
+      "paginas": 16
     },
     "[\"exclusión probatoria\",{}]": {
       "desde": 0,
@@ -1679,6 +1679,96 @@
       "pagina": 2,
       "completas": true,
       "paginas": 1
+    },
+    "[\"derecho de riego\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"departamento general de irrigación\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"canon de riego\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso hídrico\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"licencia ambiental minera\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"actividad minera metalífera\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"uso del suelo rural\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"servidumbre administrativa de acueducto\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"cuenca hídrica\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"ley 9001 mendoza\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"audiencia inicial\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"audiencia final\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso extraordinario provincial\",{}]": {
+      "desde": 0,
+      "pagina": 2,
+      "completas": true,
+      "paginas": 1
+    },
+    "[\"recurso de inconstitucionalidad\",{}]": {
+      "desde": 40,
+      "pagina": 4,
+      "completas": true,
+      "paginas": 3
+    },
+    "[\"recurso de casación\",{}]": {
+      "desde": 160,
+      "pagina": 9,
+      "completas": false,
+      "paginas": 8
     }
   },
   "indiceTerminos": 15,

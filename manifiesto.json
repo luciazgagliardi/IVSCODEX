@@ -1,6 +1,6 @@
 {
- "version": "20261121-3295f4f5",
- "generado": "2026-11-21T09:18:16.904Z",
+ "version": "20261121-beb8d1fc",
+ "generado": "2026-11-21T21:26:06.662Z",
  "archivos": [
   "caba-001.jsonl.gz",
   "catamarca-001.jsonl.gz",
@@ -28,18 +28,18 @@
   "tfn-001.jsonl.gz"
  ],
  "conteos": {
-  "caba": 17264,
+  "caba": 18557,
   "csjn": 61810,
   "catamarca": 5160,
-  "dialnet": 3806,
-  "hudoc": 4440,
-  "jujuy": 17371,
-  "juristeca": 32753,
-  "mendoza": 34116,
+  "dialnet": 3912,
+  "hudoc": 7948,
+  "jujuy": 22368,
+  "juristeca": 34583,
+  "mendoza": 38347,
   "mendozalegal": 180,
   "saij": 779900,
-  "santacruz": 2538,
-  "scba": 31338,
-  "tfn": 7549
+  "santacruz": 2740,
+  "scba": 34354,
+  "tfn": 10360
  }
 }
