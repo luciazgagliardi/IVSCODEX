@@ -222,7 +222,7 @@ jobs:
         env:
           PROVINCIA: ${{ matrix.provincia }}
           TIPOS: sumarios,fallos
-          DESDE: '2024'
+          DESDE: '2000'
           HASTA: '2026'
           PAUSA_MS: '1750'
           ESPERA_CORTE_MS: '30000'
