@@ -48,6 +48,9 @@ function normalizarResultado(fila, fuente, searchIn) {
     : 'https://jurisprudencia.jussantacruz.gob.ar/');
   const urlPdf = campo(meta, 'pdf_url', 'url_pdf', 'documento_pdf', 'linkFallo');
   const generado = searchIn === 'doctrinas' || Boolean(fila?.objeto_texto) || doctrinas.length > 0 || sumarios.length > 0;
+  const tipoDocumento = generado
+    ? 'Candidato temático asistido por IA; no es un extracto literal del fallo'
+    : (fuente === 'tfn' ? 'Resolución o fallo tributario' : 'Sentencia del Tribunal Superior de Justicia');
   return {
     id, caratula, tribunal,
     fecha: fecha(campo(meta, 'fecha', 'fecha_fallo', 'fecha_resolucion', 'date')),
@@ -61,6 +64,7 @@ function normalizarResultado(fila, fuente, searchIn) {
     ...(urlPdf ? { linkFallo: String(urlPdf) } : {}),
     tipo: fuente === 'tfn' ? (generado ? 'dictamen_o_doctrina_asistida' : 'resolucion_tfn') :
       (generado ? 'doctrina_asistida' : 'sentencia_santacruz'),
+    tipoDocumento,
     metadatosAsistidos: generado,
     fuente,
   };
