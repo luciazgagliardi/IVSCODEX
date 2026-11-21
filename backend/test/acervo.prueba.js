@@ -18,6 +18,17 @@ process.env.DIR_ACERVO = path.join(tmp, 'base');
 process.env.DIR_ACERVO_DATOS = path.join(tmp, 'tandas');
 process.env.DIR_INDICE = path.join(tmp, 'indice');
 fs.mkdirSync(process.env.DIR_ACERVO_DATOS, { recursive: true });
+fs.mkdirSync(process.env.DIR_INDICE, { recursive: true });
+fs.writeFileSync(path.join(process.env.DIR_INDICE, 'rionegro_saij.json'), JSON.stringify({
+  registros: {
+    saij_vista_rn_1: {
+      id: 'saij_vista_rn_1', caratula: 'Sosa c/ Provincia de Río Negro s/ responsabilidad',
+      tribunal: 'Superior Tribunal de Justicia', fecha: '12/10/2025',
+      sumario: 'Cobertura territorial y responsabilidad civil en Río Negro.',
+      tipo: 'fallo', linkFallo: 'https://www.saij.gob.ar/fallo-rionegro',
+    },
+  },
+}));
 
 const registros = [
   { id: 'saij_1', fuente: 'saij', corte: true, caratula: 'Fiorentino, Diego Enrique s/ tenencia ilegítima de estupefacientes', tribunal: 'CORTE SUPREMA DE JUSTICIA DE LA NACION', fecha: '27/11/1984', sumario: 'Establecida la invalidez del registro domiciliario, igual suerte debe correr el secuestro de marihuana practicado en esas circunstancias.', tipo: 'fallo' },
@@ -38,7 +49,7 @@ const e = await prepararAcervo({ esperar: true });
 test('las tandas se importan con sus conteos, la Corte aparte', () => {
   assert.equal(e.activo, true, e.error || '');
   assert.equal(e.version, 'prueba-1');
-  assert.deepEqual(estadoAcervo().conteos, { saij: 6, csjn: 1, scba: 1 });
+  assert.deepEqual(estadoAcervo().conteos, { saij: 7, csjn: 1, scba: 1 });
 });
 
 test('la consulta: raíces sin acentos, modos y exclusión', () => {
@@ -74,6 +85,14 @@ test('busca por base, por la Corte, por años y en frase exacta', () => {
   assert.ok(r.sumario.startsWith('Establecida la invalidez'));
 });
 
+test('las vistas provinciales SAIJ guardadas se incorporan como SAIJ con provincia y UUID únicos', async () => {
+  const nacional = buscarEnAcervo('saij', 'cobertura territorial');
+  assert.ok(nacional.some((r) => r.id === 'saij_vista_rn_1'));
+  const local = await buscarEnIndice('rionegro_saij', 'cobertura territorial', { modo: 'todas' });
+  assert.ok(local.some((r) => r.id === 'saij_vista_rn_1'));
+  assert.equal(local.find((r) => r.id === 'saij_vista_rn_1').tipo, 'fallo');
+});
+
 test('la búsqueda de respaldo usa el acervo, con años', async () => {
   const r = await buscarEnIndice('saij', 'despido', { modo: 'todas' });
   assert.deepEqual(r.map((x) => x.id), ['saij_3']);
@@ -84,7 +103,7 @@ test('la búsqueda de respaldo usa el acervo, con años', async () => {
   const expandidaProvincial = await buscarEnIndice('scba', 'multa registral', { modo: 'todas', variantes: ['relación laboral deficientemente registrada'] });
   assert.ok(expandidaProvincial.some((x) => x.id === 'scba_1'), 'la expansión también llega a una base provincial');
   assert.equal((await buscarEnIndice('saij', 'daño moral', { anioHasta: 2010 })).length, 0);
-  assert.equal((await estadoIndice('saij')).acervo, 6);
+  assert.equal((await estadoIndice('saij')).acervo, 7);
 });
 
 test('lo cosechado por el servidor se suma al acervo, se busca y se actualiza cuando llega su texto', async () => {
