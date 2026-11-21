@@ -4,6 +4,33 @@
  * recién incorporadas con FTS íntegro (no desde el respaldo parcial).
  */
 const api='https://iuris-cvehbxasbkbwccas.brazilsouth-01.azurewebsites.net/api';
+const ORIGEN_PUBLICO = 'https://luciazgagliardi.github.io';
+
+// Una API puede responder desde GitHub Actions y, aun así, ser inutilizable
+// desde el navegador si CORS no permite el origen real de GitHub Pages.
+// Esta preflight reproduce el POST JSON que hace cada buscador.
+const preflight = await fetch(api + '/indice/saij/buscar', {
+  method: 'OPTIONS',
+  headers: {
+    Origin: ORIGEN_PUBLICO,
+    'Access-Control-Request-Method': 'POST',
+    'Access-Control-Request-Headers': 'content-type',
+  },
+  signal: AbortSignal.timeout(15000),
+});
+const origenPermitido = preflight.headers.get('access-control-allow-origin');
+const metodosPermitidos = preflight.headers.get('access-control-allow-methods') || '';
+const headersPermitidos = preflight.headers.get('access-control-allow-headers') || '';
+if (!preflight.ok || origenPermitido !== ORIGEN_PUBLICO ||
+    !metodosPermitidos.toUpperCase().includes('POST') ||
+    !headersPermitidos.toLowerCase().includes('content-type')) {
+  throw Error('CORS bloquea las consultas del navegador: ' + JSON.stringify({
+    http: preflight.status, origenPermitido, metodosPermitidos, headersPermitidos,
+  }));
+}
+console.log('CORS_NAVEGADOR_OK ' + JSON.stringify({
+  origen: origenPermitido, metodos: metodosPermitidos, headers: headersPermitidos,
+}));
 const manifestUrl='https://raw.githubusercontent.com/luciazgagliardi/IVSCODEX/acervo/manifiesto.json';
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
 async function json(url,init={}){
