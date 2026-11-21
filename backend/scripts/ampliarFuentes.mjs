@@ -11,7 +11,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { FUENTES } from '../lib/fuentes.js';
-import { siguienteCursor, combinarRegistro, idDocumentalValido } from '../lib/avanceCosecha.js';
+import { siguienteCursor, registrarCursor, combinarRegistro, idDocumentalValido } from '../lib/avanceCosecha.js';
 import { avanzarIndiceTerminos } from '../lib/avanceTerminos.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -239,6 +239,16 @@ if (!PLAN[base]) {
     const clave = claveDe(q, variante);
     const estado = progreso.tareas[clave] || { desde: 0, pagina: 1, completas: false, paginas: 0 };
     if (estado.completas) continue;
+    if (base === 'juristeca') {
+      // El ID es cursor opaco: el orden de resultados no implica orden
+      // numérico. Recuperar el historial al reanudar y prevenir ciclos.
+      estado.cursoresVistos = Array.isArray(estado.cursoresVistos)
+        ? estado.cursoresVistos.map(String) : [];
+      if (estado.desde != null && String(estado.desde) !== '0' &&
+          !estado.cursoresVistos.includes(String(estado.desde)))
+        estado.cursoresVistos.push(String(estado.desde));
+      estado.cursoresVistos = estado.cursoresVistos.slice(-2000);
+    }
     informeCosecha.procesadas++;
     for (let n = 0; n < PAGINAS_POR_TAREA && informeCosecha.paginas < MAX_PAGINAS; n++) {
       let respuesta;
@@ -267,7 +277,11 @@ if (!PLAN[base]) {
         if (ultimoError) throw ultimoError;
         // Una página válida rompe la racha de rechazos consecutivos de la fuente.
         rechazosDeAcceso = 0;
-        const cursor = siguienteCursor(estado.desde, respuesta, { cursorDescendente: base === 'juristeca' });
+        // Juristeca devuelve el ID del último fallo como cursor opaco. No
+        // asumir que IDs numéricos consecutivos bajan: detectar sólo ciclos.
+        const cursor = siguienteCursor(estado.desde, respuesta, { cursorNoMonotono: base === 'juristeca' });
+        if (base === 'juristeca' && !cursor.agotada)
+          estado.cursoresVistos = registrarCursor(estado.cursoresVistos, cursor.desde);
         for (const r of respuesta.resultados) {
           if (!idDocumentalValido(r?.id)) continue;
           const limpio = limpiar({ ...r, fuente: base });
