@@ -6856,6 +6856,9 @@ function anexarResultadosOficiales(slug,im,d){
       if(enriquecerResultadoLocal(existente,r)) cambios=true;
       return;
     }
+    // No repetir en pantalla un fallo que ya existe en el acervo completo,
+    // aunque no haya quedado dentro de la primera página local.
+    if(idsConfirmados&&!idsConfirmados.has(r.id)) return;
     if(vistos[clave]) return;
     vistos[clave]=true;
     if(r.id) porId[r.id]=r;
