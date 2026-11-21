@@ -12,6 +12,7 @@ on:
   workflow_dispatch: {}
   workflow_run:
     workflows: ['Publicar backend en Azure App Service']
+    branches: [main]
     types: [completed]
 permissions:
   contents: read
@@ -20,7 +21,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   voz:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    needs: smoke
+    if: always() && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:

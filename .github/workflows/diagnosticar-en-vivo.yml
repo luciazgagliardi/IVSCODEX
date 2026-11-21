@@ -7,8 +7,9 @@ on:
       - 'ops/diagnosticar-en-vivo.mjs'
       - '.github/workflows/diagnosticar-en-vivo.yml'
   workflow_dispatch: {}
+  # Espera a que termine el smoke de Azure: el FTS no compite con 37 consultas simultáneas.
   workflow_run:
-    workflows: ['Publicar backend en Azure App Service']
+    workflows: ['Verificar búsqueda real tras publicar Azure']
     branches: [main]
     types: [completed]
 
@@ -34,7 +35,7 @@ jobs:
   consultar:
     # Nunca probar el backend por el evento push: ese evento corre en paralelo
     # con el despliegue y puede medir la versión anterior. Esperar Azure o ejecutar manualmente.
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
