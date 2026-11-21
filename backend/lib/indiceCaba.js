@@ -1,9 +1,9 @@
 /**
  * Cliente del buscador de jurisprudencia del TSJ de la Ciudad de Buenos Aires.
  *
- * Sistema viejo (IIS 6, sin HTTPS) pero simple: un único POST a
+ * Formulario ASP clásico disponible por HTTPS: un único POST a
  * resultadoBusqueda.asp con campos de texto plano, sin sesión obligatoria
- * ni token. Confirmado en vivo antes de escribir este archivo:
+ * ni token. El endpoint vigente usa jurisprudencia.tsjbaires.gov.ar:
  *
  *   - "acto administrativo" -> 827 resultados reales, filas con expediente,
  *     carátula, secretaría y un link a PDF por sentencia.
