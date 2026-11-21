@@ -12,6 +12,7 @@ on:
   workflow_dispatch: {}
   workflow_run:
     workflows: ['Publicar backend en Azure App Service']
+    branches: [main]
     types: [completed]
 permissions:
   contents: read
