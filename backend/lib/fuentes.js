@@ -119,7 +119,7 @@ export const FUENTES = [
     // sumario es doctrina suelta (título armado con descriptores del
     // tesauro, sin carátula ni expediente), así que no sirve para confirmar
     // que un expediente concreto existe. Ver lib/indiceSaij.js.
-    tribunalPorDefecto: 'fallos',
+    tribunalPorDefecto: 'todo',
     buscar: (args) => buscarSaij(args),
   },
   // La Corte Suprema sale de SAIJ filtrando por su faceta de tribunal: el
@@ -128,9 +128,9 @@ export const FUENTES = [
   {
     slug: 'csjn',
     nombre: 'Corte Suprema de Justicia de la Nación (vía SAIJ)',
-    // Sólo lo usa el verificador de citas: necesita las fichas de los fallos.
-    // Buscar no manda tribunal y recibe los sumarios, que son los que tienen texto.
-    tribunalPorDefecto: 'fallos',
+    // El buscador general muestra fichas de fallos primero y recurre a sumarios
+    // sólo cuando la búsqueda de fallos se agotó.
+    tribunalPorDefecto: 'todo',
     buscar: (args) => buscarSaij({ ...args, soloCsjn: true }),
   },
   {
@@ -204,13 +204,13 @@ export const FUENTES = [
   ...Object.entries(VISTAS_PROVINCIALES_SAIJ).map(([slug, provincia]) => ({
     slug,
     nombre: 'Jurisprudencia de ' + provincia + ' (vía SAIJ)',
-    tribunalPorDefecto: 'sumarios',
+    tribunalPorDefecto: 'todo',
     buscar: (args) => buscarProvinciaSaij(slug, args),
   })),
   {
     slug: 'chubut',
     nombre: 'Superior Tribunal de Justicia de Chubut · Eureka!',
-    tribunalPorDefecto: 'sumarios',
+    tribunalPorDefecto: 'todo',
     buscar: (args) => buscarChubut(args),
   },
   {
