@@ -5600,7 +5600,10 @@ function franjaBuscar(){
 function estadoBase(f){
   var im=estado.indices[f.slug]||{};
   if(im.cargando) return {c:" consultando",t:""};
-  if(im.busco&&im.error) return {c:" con-error",t:'<span class="rf-n" aria-label="Fuente sin respuesta" title="Fuente sin respuesta">—</span>'};
+  if(im.busco&&im.error){
+    var etiqueta=/demasiadas|límite/i.test(String(im.error))?"límite de consultas":"sin respuesta";
+    return {c:" con-error",t:'<span class="rf-n" aria-label="'+etiqueta+'" title="'+etiqueta+'">—</span>'};
+  }
   if(im.busco){
     var cantidad=cuantosDe(f,im),sufijo=im.totalPendiente?"+":"";
     return {c:"",t:'<span class="rf-n">'+cantidad.toLocaleString("es-AR")+sufijo+'</span>'};
