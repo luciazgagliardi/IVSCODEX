@@ -48,7 +48,10 @@ test('cosechas SAIJ en las 24 jurisdicciones con progreso y artefactos independi
   assert.match(workflow, /max-parallel: 2/);
   assert.match(workflow, /max-parallel: 4/);
   assert.match(workflow, /needs: \[pruebas, fuentes, saij, saij_provincial\]/);
-  for (const [slug] of vistas) assert.match(workflow, new RegExp('slug: ' + slug + ','));
+  for (const [slug] of vistas) {
+    const cosechaSlug = slug === 'chubut_saij' ? 'chubut' : slug === 'santacruz_saij' ? 'santacruz' : slug;
+    assert.match(workflow, new RegExp('slug: ' + cosechaSlug + ','));
+  }
   assert.match(workflow, /fuente-saij-\$\{\{ matrix\.slug \}\}/);
 });
 
