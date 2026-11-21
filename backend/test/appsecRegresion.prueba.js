@@ -47,7 +47,7 @@ test('el endpoint de fragmentos sólo acepta URL y variante para extraer pasajes
   const ruta = await fs.readFile(path.join(raiz, 'routes', 'indice.js'), 'utf8');
   assert.match(ruta, /req\.body\?\.registros/);
   assert.match(ruta, /typeof r\?\.url === 'string' && pedidas\.includes\(r\.url\)/);
-  assert.match(ruta, /typeof r\?\.variante === 'string'/);
+  assert.match(ruta, /typeof r\.variante === 'string'/);
   assert.doesNotMatch(ruta, /agregarAlAcervo\s*\(/);
   assert.doesNotMatch(ruta, /upsertRegistros\s*\(/);
   assert.match(ruta, /const doc = await obtenerDocumento\(url, \{ automatico: true \}\)/);
