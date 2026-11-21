@@ -1,6 +1,7 @@
 import express from 'express';
 import { createHash, randomBytes } from 'node:crypto';
 import WebSocket from 'ws';
+import { normalizarParaVoz } from '../lib/vozJuridica.js';
 
 export const routerVoz = express.Router();
 
@@ -103,7 +104,7 @@ function escapeXml(value) {
 async function sintetizarVozArgentina(input) {
   const texto = String(input || '').trim();
   if (!texto) throw new TypeError('El texto está vacío.');
-  if (texto.length > 900) throw new RangeError('El fragmento supera el máximo de 900 caracteres.');
+  if (texto.length > 3000) throw new RangeError('El fragmento supera el máximo de caracteres.');
 
   const url = 'wss://api.msedgeservices.com/tts/cognitiveservices/websocket/v1' +
     '?Ocp-Apim-Subscription-Key=' + TRUSTED_CLIENT_TOKEN +
@@ -158,7 +159,7 @@ async function sintetizarVozArgentina(input) {
         const config = {
           context: { synthesis: { audio: {
             metadataoptions: { sentenceBoundaryEnabled: 'false', wordBoundaryEnabled: 'false' },
-            outputFormat: 'audio-24khz-48kbitrate-mono-mp3',
+            outputFormat: 'audio-24khz-96kbitrate-mono-mp3',
           } } },
         };
         socket.send(
@@ -200,21 +201,109 @@ async function sintetizarVozArgentina(input) {
   });
 }
 
+/* ------------------------------------------------------------------ *
+ * Lo que se dice no es lo que está escrito: antes de sintetizar, el texto
+ * pasa por lib/vozJuridica.js (c/ → contra, art. → artículo, 24.240 → …).
+ * Además: el audio de un fragmento ya generado se guarda un rato (releer o
+ * retroceder no vuelve a pedirlo) y se limita cuántas síntesis corren a la vez.
+ * ------------------------------------------------------------------ */
+
+const MAX_ENTRADA = 900;
+const MAX_TRAMO_VOZ = 700;
+const CACHE_MAX_BYTES = 24 * 1024 * 1024;
+const MAX_SIMULTANEAS = 4;
+const cache = new Map();
+let cacheBytes = 0;
+let enCurso = 0;
+const espera = [];
+
+function cacheLeer(clave) {
+  const audio = cache.get(clave);
+  if (audio) { cache.delete(clave); cache.set(clave, audio); }
+  return audio;
+}
+
+function cacheGuardar(clave, audio) {
+  if (cache.has(clave)) return;
+  cache.set(clave, audio);
+  cacheBytes += audio.length;
+  while (cacheBytes > CACHE_MAX_BYTES && cache.size > 1) {
+    const [viejaClave, vieja] = cache.entries().next().value;
+    cache.delete(viejaClave);
+    cacheBytes -= vieja.length;
+  }
+}
+
+async function conCupo(tarea) {
+  if (enCurso >= MAX_SIMULTANEAS) await new Promise((r) => espera.push(r));
+  enCurso++;
+  try { return await tarea(); } finally {
+    enCurso--;
+    const sig = espera.shift();
+    if (sig) sig();
+  }
+}
+
+/** Parte un texto largo en pedazos que terminan en un corte natural. */
+function partirParaVoz(texto) {
+  if (texto.length <= MAX_TRAMO_VOZ) return [texto];
+  const frases = texto.match(/[^.;:!?]+[.;:!?]*\s*/g) || [texto];
+  const partes = [];
+  let actual = '';
+  for (let f of frases) {
+    while (f.length > MAX_TRAMO_VOZ) {
+      let corte = f.lastIndexOf(', ', MAX_TRAMO_VOZ);
+      if (corte < 200) corte = f.lastIndexOf(' ', MAX_TRAMO_VOZ);
+      if (corte < 200) corte = MAX_TRAMO_VOZ;
+      if (actual) { partes.push(actual.trim()); actual = ''; }
+      partes.push(f.slice(0, corte + 1).trim());
+      f = f.slice(corte + 1);
+    }
+    if (actual && actual.length + f.length > MAX_TRAMO_VOZ) { partes.push(actual.trim()); actual = f; }
+    else actual += f;
+  }
+  if (actual.trim()) partes.push(actual.trim());
+  return partes.filter(Boolean);
+}
+
+async function audioDe(textoOriginal) {
+  const hablado = normalizarParaVoz(textoOriginal);
+  if (!hablado) throw new TypeError('El texto está vacío.');
+  const clave = createHash('sha1').update(hablado).digest('hex');
+  const guardado = cacheLeer(clave);
+  if (guardado) return guardado;
+  const trozos = [];
+  for (const parte of partirParaVoz(hablado)) {
+    const intento = () => conCupo(() => sintetizarVozArgentina(parte));
+    // el servicio a veces corta la conexión: un reintento resuelve casi todo
+    trozos.push(await intento().catch(() => intento()));
+  }
+  const audio = Buffer.concat(trozos);
+  cacheGuardar(clave, audio);
+  return audio;
+}
+
 routerVoz.post('/voz', async (req, res, next) => {
   try {
     const texto = String(req.body?.texto || '').trim();
     if (!texto) return res.status(400).json({ ok: false, mensaje: 'No hay texto para leer.' });
-    if (texto.length > 900) {
+    if (texto.length > MAX_ENTRADA) {
       return res.status(413).json({ ok: false, mensaje: 'El fragmento supera el límite de lectura.' });
     }
-    const audio = await sintetizarVozArgentina(texto);
+    const audio = await audioDe(texto);
     res.status(200).set({
       'Content-Type': 'audio/mpeg',
       'Content-Length': String(audio.length),
-      'Cache-Control': 'no-store',
+      'Cache-Control': 'private, max-age=3600',
       'X-Content-Type-Options': 'nosniff',
     }).send(audio);
   } catch (error) {
     next(error);
   }
+});
+
+// Cómo quedaría leído un texto, sin sintetizar: sirve para revisar el normalizador.
+routerVoz.post('/voz/texto', (req, res) => {
+  const texto = String(req.body?.texto || '').slice(0, MAX_ENTRADA * 4);
+  res.json({ ok: true, hablado: normalizarParaVoz(texto) });
 });
