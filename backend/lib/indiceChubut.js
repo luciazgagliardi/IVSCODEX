@@ -157,7 +157,7 @@ function claveCasoChubut(r) {
   const exp = limpiar(r?.expediente || '');
   const tribunal = limpiar(r?.tribunal || '').toLowerCase();
   if (exp) return tribunal + '|exp|' + exp.toLowerCase();
-  const caratula = limpiar(r?.caratula || '').normalize('NFD').replace(/\\p{M}/gu, '').toLowerCase();
+  const caratula = limpiar(r?.caratula || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   return caratula ? [tribunal, caratula, r?.fecha || ''].join('|') : 'id|' + String(r?.id || '');
 }
 
