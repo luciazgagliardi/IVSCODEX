@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/ampliacion-integral.yml'
       - 'backend/scripts/ampliarFuentes.mjs'
+      - 'backend/scripts/ampliarCorteidh.mjs'
       - 'backend/lib/indiceProvincialSaij.js'
       - 'backend/lib/acervoConsulta.js'
       - 'backend/test/provinciasSaij.prueba.js'
@@ -279,11 +280,56 @@ jobs:
             backend/acervo-crudo/saij-*
             backend/acervo-crudo/progreso-saij-*.json
 
+  corteidh:
+    # El catálogo oficial devuelve el conjunto de documentos y sus enlaces;
+    # los PDFs se extraen por tandas con un límite propio y cursores de fallidos.
+    if: github.event_name != 'pull_request'
+    needs: pruebas
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Instalar dependencias y recuperar documentos y fallidos
+        working-directory: backend
+        run: |
+          npm ci
+          mkdir -p acervo-crudo/respaldo
+          if test -f acervo-base/_fuentes/corteidh.json.gz; then
+            cp acervo-base/_fuentes/corteidh.json.gz acervo-crudo/respaldo/corteidh.json.gz
+          fi
+          if test -f acervo-base/_avance/avance-corteidh.json; then
+            cp acervo-base/_avance/avance-corteidh.json acervo-crudo/respaldo/avance-corteidh.json
+          fi
+      - name: Actualizar catálogo oficial y extraer PDFs públicos
+        working-directory: backend
+        env:
+          DIR_COSECHA: acervo-crudo/respaldo
+          MAX_PDFS: '150'
+          PAUSA_MS: '2000'
+        run: node scripts/ampliarCorteidh.mjs
+      - name: Retener catálogo, textos y avance aunque algún PDF falle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fuente-corteidh
+          retention-days: 14
+          if-no-files-found: warn
+          path: backend/acervo-crudo/respaldo/
+
   publicar:
     # Al fallar una fuente no perder los lotes válidos de las demás fuentes.
     # Solo el fracaso de las pruebas impide publicar.
     if: ${{ always() && github.event_name != 'pull_request' && needs.pruebas.result == 'success' }}
-    needs: [pruebas, fuentes, saij, saij_provincial]
+    needs: [pruebas, fuentes, saij, saij_provincial, corteidh]
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
