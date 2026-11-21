@@ -23,19 +23,22 @@ test('conservar textos, enlaces y metadatos más completos al deduplicar', () =>
   assert.equal(combinarRegistro(null, nuevo), nuevo);
 });
 
-test('la expansión contempla las ocho fuentes paginadas, más SAIJ y Corte IDH', () => {
+test('la expansión contempla todas las fuentes paginadas, incluidas Jujuy, más SAIJ y Corte IDH', () => {
   const archivo = fs.readFileSync(new URL('../scripts/ampliarFuentes.mjs', import.meta.url), 'utf8');
   const corte = fs.readFileSync(new URL('../scripts/ampliarCorteidh.mjs', import.meta.url), 'utf8');
   const armado = fs.readFileSync(new URL('../scripts/armarAcervo.mjs', import.meta.url), 'utf8');
-  for (const slug of ['mendoza', 'caba', 'scba', 'juristeca', 'santafe', 'rionegro', 'dialnet', 'mendozalegal']) {
+  for (const slug of ['mendoza', 'caba', 'scba', 'juristeca', 'santafe', 'rionegro', 'dialnet', 'mendozalegal', 'jujuy']) {
     assert.match(archivo, new RegExp('\\b' + slug + ': \\{'));
   }
   assert.match(corte, /listarTodo\(\)/);
   assert.match(corte, /extraerDesdeBuffer/);
   assert.match(armado, /'corteidh'/);
+  assert.match(armado, /'jujuy'/);
   assert.match(armado, /DIR_BASE/);
   assert.match(archivo, /avance-/);
   assert.match(archivo, /MAX_PAGINAS/);
+  assert.match(archivo, /MAX_TERMINOS/);
+  assert.match(archivo, /PAGINAS_POR_TAREA/);
 });
 
 test('ids reales de Mendoza, CABA, SCBA y Río Negro se incorporan, no se descartan', () => {
