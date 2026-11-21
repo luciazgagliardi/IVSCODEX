@@ -8,17 +8,35 @@
  */
 import { buscarSaij } from './indiceSaij.js';
 
-export const PROVINCIAS_PRIORIZADAS = Object.freeze({
-  cordoba: 'Córdoba',
-  entrerrios: 'Entre Ríos',
-  neuquen: 'Neuquén',
-  tucuman: 'Tucumán',
+export const VISTAS_PROVINCIALES_SAIJ = Object.freeze({
+  buenosaires: 'Buenos Aires',
+  caba_saij: 'Ciudad Autónoma de Buenos Aires',
+  catamarca_saij: 'Catamarca',
   chaco: 'Chaco',
+  chubut: 'Chubut',
+  cordoba: 'Córdoba',
   corrientes: 'Corrientes',
+  entrerrios: 'Entre Ríos',
+  formosa: 'Formosa',
+  jujuy_saij: 'Jujuy',
+  lapampa: 'La Pampa',
+  larioja: 'La Rioja',
+  mendoza_saij: 'Mendoza',
+  misiones: 'Misiones',
+  neuquen: 'Neuquén',
+  rionegro_saij: 'Río Negro',
+  salta: 'Salta',
+  sanjuan: 'San Juan',
+  sanluis: 'San Luis',
+  santacruz: 'Santa Cruz',
+  santafe_saij: 'Santa Fe',
+  santiagodelestero: 'Santiago del Estero',
+  tierradelfuego: 'Tierra del Fuego',
+  tucuman: 'Tucumán',
 });
 
 export function provinciaSaijDe(slug) {
-  return PROVINCIAS_PRIORIZADAS[String(slug || '')] || null;
+  return VISTAS_PROVINCIALES_SAIJ[String(slug || '')] || null;
 }
 
 export async function buscarProvinciaSaij(slug, opciones = {}) {
