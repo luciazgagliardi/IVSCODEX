@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const rutas = fs.readFileSync(new URL('../routes/indice.js', import.meta.url), 'utf8');
 const html = fs.readFileSync(new URL('../../frontend/index.html', import.meta.url), 'utf8');
+const saij = fs.readFileSync(new URL('../lib/indiceSaij.js', import.meta.url), 'utf8');
 
 test('el cliente vivo cancela solicitudes viejas de la misma fuente y no las deja bloquear la cola', () => {
   assert.match(html, /var TOPE_ORIGEN_NAVEGADOR=135000/);
@@ -66,6 +67,14 @@ test('los buscadores no muestran contadores técnicos del acervo ni cifras cruda
 test('un sumario sólo se usa como pasaje si contiene todos los términos en modo todas', () => {
   assert.ok(html.includes('function sumarioCumpleConsulta(texto,consulta)'));
   assert.ok(html.includes('IVSPasajes.coincidencias(texto,[t],{modo:"todas",tope:1})'));
+});
+test('el servidor consulta primero los sumarios SAIJ cuando exige frase o todas las palabras', () => {
+  assert.match(saij, /TANDAS_POR_MODO = \{ exacta: 12, todas: 10, alguna: 3 \}/);
+  assert.match(saij, /CURSOR_FALLOS_RESALDO = 2_000_000_000/);
+  assert.match(saij, /opciones\.modo === 'exacta' \|\| opciones\.modo === 'todas'/);
+  assert.match(saij, /tribunal: 'sumarios'/);
+  assert.match(saij, /tipoConsulta: 'sumarios_frase_exacta'/);
+  assert.match(saij, /CURSOR_FALLOS_RESALDO \+ Number\(fallos\.siguienteDesde\)/);
 });
 test('el fallback de navegador prioriza el texto de SAIJ para consultas estrictas y conserva el cursor de fallos', () => {
   assert.ok(html.includes('async function buscarSaijNavegadorSimple(cuerpo,slug)'));
