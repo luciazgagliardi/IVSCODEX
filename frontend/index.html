@@ -6468,12 +6468,9 @@ var SAIJ_TIPOS={
   doctrina:"Total|Tipo de Documento/Doctrina",
   dictamenes:"Total|Tipo de Documento/Dictamen"
 };
-/* La Corte Suprema sale de SAIJ filtrando por su faceta de tribunal. Solo
-   los fallos traen ese campo, así que va siempre por fallos (ver la nota en
-   lib/indiceSaij.js del servidor). */
-/* Igual que el servidor (lib/indiceSaij.js): la Corte se busca en el texto de
-   sus SUMARIOS, que son federales y llevan número con "A"; las fichas de fallos
-   no tienen texto y el filtro por modo las descartaba todas. */
+/* La Corte Suprema sale de SAIJ por su faceta de tribunal. En la búsqueda
+   general se prueban primero sus fichas de fallos y luego los sumarios de
+   respaldo; el verificador de citas sigue usando sólo fallos. */
 var SAIJ_FACETA_CSJN="Total|Tipo de Documento/Jurisprudencia/Sumario|Jurisdicción/Federal";
 // las fichas de los fallos de la Corte (con la carátula entera): para buscar un fallo por su nombre
 var SAIJ_FACETA_CSJN_FALLOS="Total|Tipo de Documento/Jurisprudencia/Fallo|Tribunal/CORTE SUPREMA DE JUSTICIA DE LA NACION";
@@ -6563,7 +6560,8 @@ function saijARegistro(bruto){
       .filter(Boolean).filter(function(v,i,a){ return a.indexOf(v)===i; }).join(" · "),
     magistrados:c.magistrados||"",
     linkFicha:"https://www.saij.gob.ar/"+uuid,
-    linkFallo:null
+    linkFallo:null,
+    tipo:esSumario?"sumario":"fallo"
   };
 }
 
@@ -6595,13 +6593,13 @@ function saijEnVivo(cuerpo,slug,delServidor){
     return (delServidor&&delServidor.ok)?delServidor:n;
   },function(e){ if(delServidor&&delServidor.ok) return delServidor; throw e; });
 }
-function buscarSaijNavegador(cuerpo,slug){
+async function buscarSaijNavegadorSimple(cuerpo,slug){
   var formas=formasDeArticulo(cuerpo);
   if(formas){
     var porId={}, orden=[], pendientes=formas.length, resolver;
     var listo=new Promise(function(res){ resolver=res; });
     formas.forEach(function(forma,idx){
-      buscarSaijNavegador(Object.assign({},cuerpo,{q:forma,articulo:""}),slug)
+      buscarSaijNavegador(Object.assign({},cuerpo,{q:forma,articulo:"",tribunal:"fallos"}),slug)
         .then(function(d){
           (d&&d.resultados||[]).forEach(function(x){
             if(!x||!x.id) return;
@@ -6622,7 +6620,7 @@ function buscarSaijNavegador(cuerpo,slug){
   var faceta=fichasCsjn?SAIJ_FACETA_CSJN_FALLOS:slug==="csjn"?SAIJ_FACETA_CSJN:(SAIJ_TIPOS[cuerpo.tribunal]||SAIJ_TIPOS.sumarios);
   if(slug==="saij"&&PROVINCIAS_SAIJ.indexOf(cuerpo.provincia)!==-1&&cuerpo.tribunal!=="doctrina"&&cuerpo.tribunal!=="dictamenes")
     faceta+="|Jurisdicción/Local/"+cuerpo.provincia;
-  var porPagina=20, porPedido=100;
+  var porPagina=Math.min(20,Math.max(1,Number(cuerpo.porPagina)||20)), porPedido=100;
   // Espejo de backend/lib/paginarFiltrado.js, y tiene que seguir siéndolo:
   // este camino se usa justo donde MÁS importa, el servidor publicado, al
   // que SAIJ le responde 403. Si acá quedara el cálculo viejo por número de
@@ -6695,6 +6693,70 @@ function buscarSaijNavegador(cuerpo,slug){
       resultados:resultados,
       desdeNavegador:true
     };
+  });
+}
+
+// Mismo contrato que backend/lib/indiceSaij.js. Cuando el servidor no
+// puede consultar SAIJ, el navegador también prioriza fichas de fallos y sólo
+// recurre a sumarios cuando ya agotó los fallos y la página quedó incompleta.
+var SAIJ_CURSOR_SUMARIOS_RESALDO=1000000000;
+function saijClaveCaso(r){
+  function n(v){return String(v||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().trim();}
+  return n(r.caratula)||r.fecha?[n(r.caratula),String(r.fecha||""),n(r.tribunal)].join("|"):"id:"+String(r.id||"");
+}
+function buscarSaijNavegador(cuerpo,slug){
+  var tribunal=cuerpo.tribunal||"todo";
+  if(tribunal!=="todo") return buscarSaijNavegadorSimple(Object.assign({},cuerpo,{tribunal:tribunal}),slug);
+  var desde=Number(cuerpo.desde);
+  if(Number.isFinite(desde)&&desde>=SAIJ_CURSOR_SUMARIOS_RESALDO){
+    var offset=desde-SAIJ_CURSOR_SUMARIOS_RESALDO;
+    return buscarSaijNavegadorSimple(Object.assign({},cuerpo,{
+      tribunal:"sumarios",desde:offset,pagina:1
+    }),slug).then(function(d){
+      var resultados=(d.resultados||[]).map(function(r){return Object.assign({},r,{
+        tipo:"sumario",esSumarioRespaldo:true
+      });});
+      return Object.assign({},d,{resultados:resultados,
+        siguienteDesde:d.siguienteDesde==null?null:SAIJ_CURSOR_SUMARIOS_RESALDO+d.siguienteDesde,
+        complementoSumarios:true,cantidadFallos:0,cantidadSumarios:resultados.length,
+        tipoConsulta:"sumarios_de_respaldo"});
+    });
+  }
+  return buscarSaijNavegadorSimple(Object.assign({},cuerpo,{tribunal:"fallos"}),slug).then(function(fallos){
+    var listaFallos=fallos.resultados||[];
+    var tamano=Math.min(20,Math.max(1,Number(cuerpo.porPagina)||20));
+    // Un HTTP rechazado se propaga. No equivale a una búsqueda agotada.
+    if(listaFallos.length>=tamano||fallos.siguienteDesde!=null)
+      return Object.assign({},fallos,{cantidadFallos:listaFallos.length,cantidadSumarios:0,
+        complementoSumarios:false,tipoConsulta:"fallos"});
+    var faltan=tamano-listaFallos.length;
+    if(!faltan) return fallos;
+    return buscarSaijNavegadorSimple(Object.assign({},cuerpo,{
+      tribunal:"sumarios",desde:0,pagina:1,porPagina:faltan
+    }),slug).then(function(sumarios){
+      var vistos={};
+      listaFallos.forEach(function(r){vistos[saijClaveCaso(r)]=1;});
+      var relleno=[];
+      (sumarios.resultados||[]).forEach(function(r){
+        var clave=saijClaveCaso(r);
+        if(vistos[clave]||listaFallos.length+relleno.length>=tamano) return;
+        vistos[clave]=1;
+        relleno.push(Object.assign({},r,{tipo:"sumario",esSumarioRespaldo:true}));
+      });
+      return Object.assign({},fallos,{
+        total:listaFallos.length+relleno.length,
+        totalFuente:Number(fallos.totalFuente||0)+Number(sumarios.totalFuente||0),
+        totalFuenteFallos:Number(fallos.totalFuente||0),
+        totalFuenteSumarios:Number(sumarios.totalFuente||0),
+        totalParcial:!!(fallos.totalParcial||sumarios.totalParcial),
+        revisados:Number(fallos.revisados||0)+Number(sumarios.revisados||0),
+        siguienteDesde:sumarios.siguienteDesde==null?null:SAIJ_CURSOR_SUMARIOS_RESALDO+sumarios.siguienteDesde,
+        resultados:listaFallos.concat(relleno),
+        complementoSumarios:relleno.length>0,cantidadFallos:listaFallos.length,
+        cantidadSumarios:relleno.length,
+        tipoConsulta:relleno.length?"fallos_con_sumarios_de_respaldo":"fallos"
+      });
+    });
   });
 }
 
