@@ -22,11 +22,11 @@ jobs:
   consultar:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Consultar Mendoza CABA y SAIJ desde Azure
+      - name: Consultar las 19 fuentes automáticas y el acervo local desde Azure
         run: node ops/diagnosticar-en-vivo.mjs
