@@ -28,6 +28,10 @@
  * está fijada expresamente en lib/verificarCita.js.
  */
 
+import { buscarChubut } from './indiceChubut.js';
+import { buscarTfn } from './indiceTfn.js';
+import { buscarSantaCruz } from './indiceSantaCruz.js';
+import { buscarHudoc } from './indiceHudoc.js';
 import { buscarMza } from './indiceMza.js';
 import { buscarCaba } from './indiceCaba.js';
 import { buscarSaij } from './indiceSaij.js';
@@ -69,6 +73,10 @@ import { buscarProvinciaSaij, VISTAS_PROVINCIALES_SAIJ } from './indiceProvincia
  */
 const COMO_SE_CITA = {
   mendoza: (n) => `art ${n}`,
+  chubut: (n) => `art. ${n}`,
+  tfn: (n) => `artículo ${n}`,
+  santacruz: (n) => `artículo ${n}`,
+  hudoc: (n) => `Article ${n}`,
   mendozalegal: (n) => `art ${n}`,
   caba: (n) => `art ${n}`,
   saij: (n) => `artículo ${n}`,
@@ -199,6 +207,30 @@ export const FUENTES = [
     tribunalPorDefecto: 'sumarios',
     buscar: (args) => buscarProvinciaSaij(slug, args),
   })),
+  {
+    slug: 'chubut',
+    nombre: 'Superior Tribunal de Justicia de Chubut · Eureka!',
+    tribunalPorDefecto: 'sumarios',
+    buscar: (args) => buscarChubut(args),
+  },
+  {
+    slug: 'tfn',
+    nombre: 'Tribunal Fiscal de la Nación',
+    tribunalPorDefecto: 'objetos',
+    buscar: (args) => buscarTfn(args),
+  },
+  {
+    slug: 'santacruz',
+    nombre: 'Tribunal Superior de Justicia de Santa Cruz',
+    tribunalPorDefecto: 'objetos',
+    buscar: (args) => buscarSantaCruz(args),
+  },
+  {
+    slug: 'hudoc',
+    nombre: 'Tribunal Europeo de Derechos Humanos · HUDOC',
+    tribunalPorDefecto: null,
+    buscar: (args) => buscarHudoc(args),
+  },
   {
     slug: 'scba',
     nombre: 'Suprema Corte de la Provincia de Buenos Aires (JUBA)',
