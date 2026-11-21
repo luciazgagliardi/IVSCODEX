@@ -32,6 +32,22 @@ test('las 24 jurisdicciones tienen vistas SAIJ válidas, sin slugs duplicados', 
   assert.ok(FUENTES.some(x => x.slug === 'santacruz' && /Santa Cruz/.test(x.nombre)));
 });
 
+
+test('el diagnóstico en vivo prueba cada fuente registrada una sola vez, incluidas las vistas SAIJ de Chubut y Santa Cruz', () => {
+  const diagnostico = fs.readFileSync(new URL('../../ops/diagnosticar-en-vivo.mjs', import.meta.url), 'utf8');
+  const bloque = diagnostico.match(/const pruebas = \\[([\\s\\S]*?)\\n\\];/);
+  assert.ok(bloque, 'el diagnóstico declara su matriz de pruebas');
+  const slugs = [...bloque[1].matchAll(/\\{\\s*slug:\\s*'([^']+)'/g)].map(m => m[1]);
+  const esperados = FUENTES.map(f => f.slug).sort();
+  assert.equal(slugs.length, esperados.length, 'cada fuente tiene una consulta de humo');
+  assert.equal(new Set(slugs).size, slugs.length, 'no se prueba dos veces una fuente por un slug equivocado');
+  assert.deepEqual([...slugs].sort(), esperados);
+  assert.ok(slugs.includes('chubut_saij'));
+  assert.ok(slugs.includes('santacruz_saij'));
+  assert.ok(!slugs.includes('chubut_saij') || slugs.includes('chubut'));
+  assert.ok(!slugs.includes('santacruz_saij') || slugs.includes('santacruz'));
+});
+
 test('el texto y la metadata provincial no se reemplazan por fichas más cortas al fusionar', () => {
   const armar = fs.readFileSync(new URL('../scripts/armarAcervo.mjs', import.meta.url), 'utf8');
   assert.match(armar, /const combinado = \{ \.\.\.ya \}/);
