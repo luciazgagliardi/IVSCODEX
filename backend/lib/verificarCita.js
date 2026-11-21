@@ -307,6 +307,24 @@ export function puntuarCandidato(registro, campos) {
     }
   }
 
+  // Datos de la cita que el candidato CONTRADICE. Que coincida la carátula no
+  // alcanza si la cita dice 1979 y el fallo es de 2007, o si cita un tomo de
+  // Fallos distinto del que figura en el registro: sería dar por buena una
+  // cita con datos falsos (caso medido: «Halabi», Fallos 301:999, 1979).
+  const contradicciones = [];
+  if (campos.fecha && !fechaIgual) {
+    const anios = String(registro.fecha || '').match(/\b(1[89]\d{2}|20\d{2})\b/g);
+    if (anios && !anios.includes(String(campos.fecha.anio))) {
+      contradicciones.push(`la cita dice ${campos.fecha.anio} y el fallo encontrado es de ${anios[0]}`);
+    }
+  }
+  if (campos.fallos && !exacto) {
+    const otros = [...String(pajar).matchAll(/fallos:?\s*(\d{1,3})\s*:\s*(\d{1,4})/g)];
+    if (otros.length && !otros.some((m) => Number(m[1]) === Number(campos.fallos.tomo) && Number(m[2]) === Number(campos.fallos.pagina))) {
+      contradicciones.push(`la cita dice Fallos ${campos.fallos.tomo}:${campos.fallos.pagina} y el registro indica Fallos ${otros[0][1]}:${otros[0][2]}`);
+    }
+  }
+
   const claves = (campos.palabrasClave || []).filter((p) => pajar.includes(p));
   if (claves.length) {
     puntaje += Math.min(claves.length * PESOS.palabraClave, PESOS.topePalabrasClave);
@@ -344,7 +362,7 @@ export function puntuarCandidato(registro, campos) {
   // confianza, y leer el motivo contando renglones ya se equivocó una vez:
   // dos razones podían ser "coincide Fallos" + "comparte palabras sueltas",
   // que no es corroboración de nada.
-  return { puntaje, fuerza, porQue, senales: { exacto, partes, fechaIgual, materiaCoincide } };
+  return { puntaje, fuerza, porQue, contradicciones, senales: { exacto, partes, actorCoincide, fechaIgual, materiaCoincide, contradice: contradicciones.length > 0 } };
 }
 
 /** El enlace al documento, que es lo que hace citable a un resultado. */
@@ -448,7 +466,7 @@ export async function verificarCita(texto, { buscar = buscarEnFuenteReal } = {})
       registro.ok = true;
       registro.resultados = resultados.length;
       for (const r of resultados) {
-        const { puntaje, fuerza, porQue, senales } = puntuarCandidato(r, campos);
+        const { puntaje, fuerza, porQue, senales, contradicciones } = puntuarCandidato(r, campos);
         if (!puntaje) continue;
         candidatos.push({
           senales,
@@ -462,6 +480,7 @@ export async function verificarCita(texto, { buscar = buscarEnFuenteReal } = {})
           puntaje,
           fuerza,
           porQue,
+          contradicciones,
         });
       }
     } catch (e) {
@@ -500,6 +519,19 @@ export async function verificarCita(texto, { buscar = buscarEnFuenteReal } = {})
       'verificada',
       confianza,
       `Se encontró en ${mejor.nombreFuente} un fallo que coincide por un dato exacto: ${mejor.porQue.slice(0, 3).join('; ')}. Abra el documento y confirme que dice lo que la cita le atribuye — que el fallo exista no significa que sostenga lo que se le hace decir.`,
+      arranque
+    );
+  }
+
+  // La carátula coincide pero la fecha o el tomo citados contradicen el
+  // fallo encontrado: no se da por verificada. Puede ser un error de la cita
+  // o una cita fabricada sobre un caso real.
+  if (mejor && mejor.fuerza !== 'fuerte' && mejor.senales.actorCoincide && mejor.senales.contradice) {
+    return terminar(
+      base,
+      'datos_no_coinciden',
+      'media',
+      `Se encontró en ${mejor.nombreFuente} un fallo con la misma carátula, pero los datos de la cita no coinciden: ${mejor.contradicciones.join('; ')}. No use la cita así: confirme tomo, página y fecha en el documento oficial.`,
       arranque
     );
   }

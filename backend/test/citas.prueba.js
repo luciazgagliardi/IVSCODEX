@@ -18,6 +18,7 @@
  */
 
 import test from 'node:test';
+import assert from 'node:assert/strict';
 import express from 'express';
 import { parsearCita, clasificarTribunal, normalizarExpediente } from '../lib/citas.js';
 import { verificarCita } from '../lib/verificarCita.js';
@@ -418,4 +419,29 @@ test('la ruta /api/verificar-cita responde como corresponde', async () => {
 
   console.log(`\nOK ${ok} · fallas ${fallas}`);
   if (fallas > antes) throw new Error(`${fallas - antes} prueba(s) fallaron`);
+});
+
+test('carátula correcta con tomo o fecha falsos: no se da por verificada (caso Halabi)', async () => {
+  const halabi = reg({
+    id: 'h1',
+    caratula: 'Halabi, Ernesto c/ P.E.N. - ley 25.873 - dto. 1563/04 s/ amparo ley 16.986',
+    expediente: 'H. 270. XLII',
+    fecha: '14/08/2007',
+    sumario: 'Amparo colectivo. Derechos de incidencia colectiva referentes a intereses individuales homogéneos.',
+  });
+  const r = await verificarCita('CSJN, «Halabi, Ernesto c/ P.E.N. - ley 25.873 - dto. 1563/04 s/ amparo ley 16.986», Fallos: 301:999, 24/02/1979', {
+    buscar: buscadorFalso([halabi]),
+  });
+  assert.notEqual(r.veredicto, 'verificada', r.explicacion);
+  assert.equal(r.veredicto, 'datos_no_coinciden');
+  assert.match(r.explicacion, /1979/);
+  assert.ok(r.candidatos[0].contradicciones.length > 0);
+});
+
+test('la guía de verificación no presume inexistente lo que no se encontró', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const html = await readFile(new URL('../../frontend/index.html', import.meta.url), 'utf8');
+  assert.doesNotMatch(html, /se presume inexistente/);
+  assert.doesNotMatch(html, /Descarte citas que no registren/);
+  assert.match(html, /datos_no_coinciden:\{clase:"duda"/);
 });

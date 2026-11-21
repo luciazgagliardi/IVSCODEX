@@ -8371,7 +8371,10 @@ function vistaCitas(){
 var VEREDICTOS={
   verificada:{clase:"si",rotulo:"Coincidencia encontrada"},
   no_encontrada:{clase:"no",rotulo:"No la encontramos"},
-  no_verificable:{clase:"duda",rotulo:"No se pudo verificar"}
+  no_verificable:{clase:"duda",rotulo:"No se pudo verificar"},
+  // La carátula coincide, pero la fecha o el tomo citados contradicen el
+  // fallo encontrado: advertencia, nunca la píldora verde.
+  datos_no_coinciden:{clase:"duda",rotulo:"La carátula coincide, los datos de la cita no"}
 };
 
 function verificarCitaPegada(){
@@ -8435,6 +8438,8 @@ function fichaCandidato(c){
     (meta?'<p style="font-size:12px;color:var(--humo);margin:3px 0 0">'+meta+'</p>':'')+
     '<ul class="porque">'+(c.porQue||[]).map(function(p){
       return '<li>'+esc(p)+'</li>';}).join("")+'</ul>'+
+    ((c.contradicciones||[]).length?'<ul class="porque" style="color:var(--rojo)">'+c.contradicciones.map(function(p){
+      return '<li>No coincide: '+esc(p)+'</li>';}).join("")+'</ul>':'')+
     '<div class="f-acc">'+
       '<span class="tag">'+esc(FUERZA_CITA[c.fuerza]||c.fuerza)+'</span>'+
       (c.link?'<a class="mini" href="'+escU(c.link)+'" target="_blank" rel="noopener noreferrer">Abrir en la fuente oficial</a>':
@@ -8552,7 +8557,7 @@ function vistaVerificar(){
       '<span class="solo-cel">La ausencia de coincidencias no prueba falsedad, asimismo, la confirmación de existencia del expediente no garantiza la veracidad del criterio atribuido. Verifique siempre los considerandos.</span></div>'+
     '<div class="guias-grid">'+
       '<section class="guia-card"><h3>Guía de verificación</h3><ol class="guia-lista">'+
-        '<li><span>Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, el antecedente se presume inexistente.</span></li>'+
+        '<li><span>Verifique la carátula en la base oficial del tribunal emisor; ante su ausencia, la cita no puede tenerse por confirmada: consúltela en mesa de entradas o en el expediente. Que no figure en un buscador no prueba que no exista.</span></li>'+
         '<li><span>Coteje el tomo y la página en la colección <em>Fallos</em> de la CSJN o el número de expediente en jurisdicciones provinciales.</span></li>'+
         '<li><span>Analice el texto íntegro y el considerando específico a citar, evitando fundarse en sumarios donde el criterio principal (<em>holding</em>) pueda diferir.</span></li>'+
         '<li><span>Identifique la distribución de votos para evitar citar una disidencia como postura mayoritaria.</span></li>'+
@@ -8564,7 +8569,7 @@ function vistaVerificar(){
         '<li><span>Invalide referencias que figuren únicamente en resúmenes o modelos lingüísticos y no consten en registros oficiales.</span></li>'+
         '<li><span>Verifique la coherencia temporal entre el tomo de <em>Fallos</em> y el año de dictado de la sentencia.</span></li>'+
         '<li><span>Asegúrese de que el tribunal citado contara con competencia en la materia a la fecha del fallo.</span></li>'+
-        '<li><span>Descarte citas que no registren menciones en doctrina, jurisprudencia posterior ni en el buscador del propio organismo.</span></li>'+
+        '<li><span>No dé por confirmada una cita que no registre menciones en doctrina, jurisprudencia posterior ni en el buscador del propio organismo: los buscadores oficiales no publican todo lo que dictan sus tribunales.</span></li>'+
       '</ol></section>'+
     '</div>';
 
