@@ -294,6 +294,7 @@ export const DOMINIOS_PERMITIDOS = [
   'jusrionegro.gov.ar',
   'jussantiago.gov.ar',
   'jusbaires.gob.ar',
+  'tsjbaires.gob.ar',
   'tsjbaires.gov.ar',
 
   // Internacional
