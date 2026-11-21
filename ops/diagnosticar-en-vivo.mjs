@@ -51,15 +51,23 @@ async function unaPrueba(caso) {
     const enVivo = !caso.local && d.enVivo === true && d.desdeIndiceLocal !== true;
     const copiaLocal = caso.local && d.desdeIndiceLocal === true;
     const ok = Boolean(d.ok) && (caso.local ? copiaLocal : enVivo);
-    const total = Number.isFinite(Number(d.total)) ? Number(d.total) : null;
+    const totalPendiente = Boolean(d.totalPendiente);
+    const total = totalPendiente || d.total == null
+      ? null : (Number.isFinite(Number(d.total)) ? Number(d.total) : null);
+    const documentos = Array.isArray(d.resultados) ? d.resultados.length : 0;
+    const inconsistente = !totalPendiente && total === 0 && documentos > 0;
+    const consultaOk = ok && !inconsistente;
     return {
       fuente: caso.slug, consulta: caso.q, tribunal: caso.tribunal || 'TODOS',
-      http: respuesta.status, ok, enVivo, copiaLocal,
-      estado: !d.ok ? 'error_aplicacion' : caso.local ? (copiaLocal ? 'acervo_local' : 'respuesta_no_local')
-        : enVivo ? (total === 0 ? 'cero_valido' : 'vivo') : 'no_confirmado_en_vivo',
-      total, documentos: (d.resultados || []).length,
+      http: respuesta.status, ok: consultaOk, enVivo, copiaLocal,
+      estado: !d.ok ? 'error_aplicacion' : inconsistente ? 'total_inconsistente'
+        : totalPendiente ? 'conteo_pendiente'
+          : caso.local ? (copiaLocal ? 'acervo_local' : 'respuesta_no_local')
+            : enVivo ? (total === 0 ? 'cero_valido' : 'vivo') : 'no_confirmado_en_vivo',
+      total, totalPendiente, documentos,
       codigo: d.codigo || null, mensaje: d.mensaje || d.error || null,
-      detalle: d.detalle || null, ms: Date.now() - inicio,
+      avisoFalla: d.avisoFalla || null, detalle: d.detalle || null,
+      ms: Date.now() - inicio,
       externa: Boolean(caso.externa), sensible: Boolean(caso.sensible),
     };
   } catch (error) {
