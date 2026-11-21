@@ -53,8 +53,11 @@ async function modulo() {
 
 function abrir(archivo) {
   const d = new sqlite.DatabaseSync(archivo);
-  d.exec('PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;');
-  d.exec(ESQUEMA);
+  // No ejecutar DDL al abrir una base compartida: varias instancias pueden
+  // arrancar a la vez. El esquema ya lo creó y validó el importador.
+  const modo = d.prepare('PRAGMA journal_mode').get()?.journal_mode;
+  if (modo !== 'wal') d.exec('PRAGMA journal_mode=WAL');
+  d.exec('PRAGMA synchronous=NORMAL');
   return d;
 }
 const leerManifiesto = () => { try { return JSON.parse(fs.readFileSync(path.join(DIR_TANDAS, 'manifiesto.json'), 'utf8')); } catch { return null; } };
