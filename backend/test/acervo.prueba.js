@@ -21,9 +21,10 @@ fs.mkdirSync(process.env.DIR_ACERVO_DATOS, { recursive: true });
 
 const registros = [
   { id: 'saij_1', fuente: 'saij', corte: true, caratula: 'Fiorentino, Diego Enrique s/ tenencia ilegítima de estupefacientes', tribunal: 'CORTE SUPREMA DE JUSTICIA DE LA NACION', fecha: '27/11/1984', sumario: 'Establecida la invalidez del registro domiciliario, igual suerte debe correr el secuestro de marihuana practicado en esas circunstancias.', tipo: 'fallo' },
-  { id: 'saij_2', fuente: 'saij', caratula: 'Pérez c/ López s/ daños y perjuicios', tribunal: 'Cámara Civil', fecha: '10/03/2015', sumario: 'Corresponde indemnizar el daño moral sufrido por la víctima del accidente.', voces: ['daño moral', 'accidente de tránsito'] },
-  { id: 'saij_3', fuente: 'saij', caratula: 'Gómez c/ Banco s/ despido', fecha: '02/05/2021', sumario: 'La indemnización por despido debe calcularse con la mejor remuneración mensual.' },
-  { id: 'saij_4', fuente: 'saij', provincia: 'Mendoza', caratula: 'Bodega Andina c/ Pérez s/ cobro', fecha: '01/03/2020', sumario: 'El contrato de elaboración de vino en la vendimia obliga al bodeguero.', linkFicha: 'https://www.saij.gob.ar/123456789-0abc-defg0000-000asoiramus' },
+  { id: 'saij_2', fuente: 'saij', caratula: 'Pérez c/ López s/ daños y perjuicios', tribunal: 'Cámara Civil', fecha: '10/03/2015', sumario: 'Corresponde indemnizar el daño moral sufrido por la víctima del accidente.', voces: ['daño moral', 'accidente de tránsito'], tipo: 'fallo' },
+  { id: 'saij_3', fuente: 'saij', caratula: 'Gómez c/ Banco s/ despido', fecha: '02/05/2021', sumario: 'La indemnización por despido debe calcularse con la mejor remuneración mensual.', tipo: 'fallo' },
+  { id: 'saij_4', fuente: 'saij', provincia: 'Mendoza', caratula: 'Bodega Andina c/ Pérez s/ cobro', fecha: '01/03/2020', sumario: 'El contrato de elaboración de vino en la vendimia obliga al bodeguero.', linkFicha: 'https://www.saij.gob.ar/123456789-0abc-defg0000-000asoiramus', tipo: 'fallo' },
+  { id: 'saij_5', fuente: 'saij', caratula: 'Pérez c/ López s/ daños y perjuicios', tribunal: 'Cámara Civil', fecha: '10/03/2015', sumario: 'Indemnización del daño moral. Corresponde indemnizar los padecimientos de la víctima.', tipo: 'sumario' },
   { id: 'scba_1', fuente: 'scba', caratula: 'Ripodas contra Turcuman. Despido', sumario: 'Si la relación laboral se hallaba deficientemente registrada procede la indemnización.' },
 ];
 fs.writeFileSync(path.join(process.env.DIR_ACERVO_DATOS, 'todo-001.jsonl.gz'), zlib.gzipSync(registros.map((r) => JSON.stringify(r)).join('\n')));
@@ -36,7 +37,7 @@ const e = await prepararAcervo({ esperar: true });
 test('las tandas se importan con sus conteos, la Corte aparte', () => {
   assert.equal(e.activo, true, e.error || '');
   assert.equal(e.version, 'prueba-1');
-  assert.deepEqual(estadoAcervo().conteos, { saij: 4, csjn: 1, scba: 1 });
+  assert.deepEqual(estadoAcervo().conteos, { saij: 5, csjn: 1, scba: 1 });
 });
 
 test('la consulta: raíces sin acentos, modos y exclusión', () => {
@@ -48,7 +49,12 @@ test('la consulta: raíces sin acentos, modos y exclusión', () => {
 });
 
 test('busca por base, por la Corte, por años y en frase exacta', () => {
-  assert.deepEqual(buscarEnAcervo('saij', 'daño moral').map((r) => r.id), ['saij_2']);
+  const porDefecto = buscarEnAcervo('saij', 'daño moral');
+  assert.equal(porDefecto[0].id, 'saij_2', 'la ficha del fallo precede al sumario más parecido');
+  assert.equal(porDefecto[0].tipo, 'fallo');
+  assert.ok(porDefecto.some((r) => r.id === 'saij_5' && r.esSumarioRespaldo), 'el sumario queda identificado como respaldo');
+  assert.deepEqual(buscarEnAcervo('saij', 'daño moral', { tribunal: 'fallos' }).map((r) => r.id), ['saij_2']);
+  assert.deepEqual(buscarEnAcervo('saij', 'daño moral', { tribunal: 'sumarios' }).map((r) => r.id), ['saij_5']);
   // Las formas equivalentes deben recuperar también el mismo documento en
   // fuentes distintas de Mendoza y sin que el término canónico esté presente.
   assert.deepEqual(buscarEnAcervo('saij', 'consecuencias no patrimoniales', { variantes: ['daño moral'] }).map((r) => r.id), ['saij_2']);
@@ -76,7 +82,7 @@ test('la búsqueda de respaldo usa el acervo, con años', async () => {
   const expandidaProvincial = await buscarEnIndice('scba', 'multa registral', { modo: 'todas', variantes: ['relación laboral deficientemente registrada'] });
   assert.ok(expandidaProvincial.some((x) => x.id === 'scba_1'), 'la expansión también llega a una base provincial');
   assert.equal((await buscarEnIndice('saij', 'daño moral', { anioHasta: 2010 })).length, 0);
-  assert.equal((await estadoIndice('saij')).acervo, 4);
+  assert.equal((await estadoIndice('saij')).acervo, 5);
 });
 
 test('lo cosechado por el servidor se suma al acervo, se busca y se actualiza cuando llega su texto', async () => {
@@ -100,4 +106,16 @@ test('una base provincial suma, de respaldo, los fallos de SAIJ de su provincia'
   const r = await buscarEnIndice('mendoza', 'vendimia', { modo: 'todas' });
   assert.ok(r.some((x) => x.id === 'saij_4'), 'el fallo de SAIJ de Mendoza');
   assert.equal((await buscarEnIndice('scba', 'vendimia', { modo: 'todas' })).length, 0, 'no es de Buenos Aires');
+});
+
+
+test('las fuentes adicionales también se incorporan al acervo y quedan consultables', async () => {
+  const { agregarAlAcervo } = await import('../lib/acervo.js');
+  const fuentes = ['catamarca', 'jujuy', 'chubut', 'tfn', 'santacruz', 'hudoc'];
+  for (const fuente of fuentes) {
+    const id = 'prueba_' + fuente;
+    await agregarAlAcervo([{ id, fuente, tipo: 'fallo', caratula: 'Caso prueba ' + fuente,
+      sumario: 'Responsabilidad y cobertura jurídica de la fuente ' + fuente }]);
+    assert.ok(buscarEnAcervo(fuente, 'cobertura jurídica').some((r) => r.id === id), fuente);
+  }
 });
