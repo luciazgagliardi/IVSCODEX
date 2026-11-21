@@ -99,10 +99,6 @@ test('buscador expone las 24 vistas territoriales SAIJ y las distingue de los si
   assert.match(acervo, /const origen = territorial \? 'saij' : fuente/);
   assert.match(acervo, /UPDATE fallos SET provincia/);
 });
-));
-  assert.ok(!clasificacion.includes('chubut|') && !clasificacion.includes('|santacruz|'),
-    'las fuentes directas no se cuentan como facetas agregadas SAIJ');
-});
 
 test('el diagnóstico de las 41 fuentes corre después del smoke de Azure, sin workflow_run encadenado', () => {
   const smoke = fs.readFileSync(new URL('../../.github/workflows/smoke-acervo-azure.yml', import.meta.url), 'utf8');
