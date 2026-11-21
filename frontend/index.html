@@ -5728,6 +5728,9 @@ function esJuridico(r,pas){
 }
 function conTexto(f,r){
   if(f.slug==="dialnet"){ var pd=pasajeDe(f,r); return !!pd&&esJuridico(r,pd); }
+  // Algunas APIs oficiales devuelven fichas/candidatos válidos sin texto
+  // íntegro. Se muestran sus metadatos y enlace, sin fabricar un pasaje.
+  if(r.coincidenciaFuente===true) return true;
   if(pasajeDe(f,r)) return true;
   if(r.coincideNombre) return true;
   var im=estado.indices[f.slug]||{}, uf=urlFragmento(f.slug,r);
