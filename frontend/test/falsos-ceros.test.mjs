@@ -147,7 +147,7 @@ test('el panel de una fuente conserva resultados locales mientras sigue cargando
 
 test('las fichas recibidas no se convierten en «sin coincidencias» si falla la verificación del pasaje', () => {
   assert.match(html, /La fuente devolvió '\+im\.resultados\.length\+/);
-  assert.match(html, /se conservan las fichas para inspeccionar sus datos y abrir la fuente oficial/);
+  assert.match(html, /Se conservan las fichas para inspeccionar sus datos y abrir la fuente oficial/i);
   assert.match(html, /fichas pendientes de comprobación/);
 });
 
