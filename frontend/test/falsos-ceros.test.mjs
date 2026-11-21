@@ -83,3 +83,15 @@ test('el total general no suma las vistas de SAIJ cuando SAIJ respondió (F-03)'
   ctx.estado.indices.saij = { busco: true, error: 'sin respuesta' };
   assert.equal(ctx.totalGeneral(vis), 45, 'si SAIJ falló, las vistas son la única fuente de esos fallos');
 });
+
+test('un error HTTP no se informa como corte de conexión, y hay reintento de las fallidas (F-05)', async () => {
+  const ctx = {};
+  vm.runInNewContext(extraer('leerRespuesta'), ctx);
+  const html503 = { status: 503, headers: { get: () => 'text/html' }, json: () => Promise.reject(new Error('x')) };
+  const d = await ctx.leerRespuesta(html503);
+  assert.equal(d.ok, false);
+  assert.match(d.mensaje, /HTTP 503/);
+  assert.match(d.mensaje, /no fue un corte de su conexión/);
+  assert.match(html, /setTimeout\(function\(\)\{control\.abort\(\);\},50000\)/);
+  assert.match(html, /if\(act==="reintentar-fallidas"\)/);
+});

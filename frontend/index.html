@@ -5822,7 +5822,8 @@ function rielBuscar(vis){
     return '<div class="bz-fila f-'+f.slug+e.c+(estado.verBase===f.slug?" on":"")+'" data-act="ver-base" data-fuente="'+f.slug+'" title="'+esc(f.nombre)+'"><span class="rf-punto"></span><span class="rf-nom">'+esc(f.cod)+'</span>'+e.t+
       '<button type="button" class="rf-buscar" data-act="buscar-indice" data-fuente="'+f.slug+'"'+(im.cargando?' disabled':'')+' title="Buscar sólo en '+esc(f.nombre)+'">'+(im.busco?"Repetir":"Buscar")+'</button></div>';
   }).join("");
-  return h+'<button type="button" class="rf-todas" data-act="buscar-todas">Buscar en todas</button>';
+  return h+(basesSinRespuesta(vis)?'<button type="button" class="rf-todas" data-act="reintentar-fallidas">Reintentar las bases sin respuesta ('+basesSinRespuesta(vis)+')</button>':'')+
+    '<button type="button" class="rf-todas" data-act="buscar-todas">Buscar en todas</button>';
 }
 function vistaBuscar(){
   var sug="";
@@ -6901,6 +6902,14 @@ function cargarMasOficial(slug){
    Una búsqueda en 15 portales no debe saturar el mismo Azure que está
    entregando las primeras fichas del acervo. Se hacen cuatro en paralelo;
    las ya obsoletas no consumen conexión. */
+/* Una respuesta que no es JSON (p. ej. un 503 en HTML de la infraestructura)
+   es un error del servidor, no «se cortó la comunicación». */
+function leerRespuesta(r){
+  if(!r) return null;
+  var tipo=(r.headers&&r.headers.get("content-type"))||"";
+  if(tipo.indexOf("json")>=0) return r.json()["catch"](function(){ return {ok:false,mensaje:"El servidor respondió de forma ilegible (HTTP "+r.status+")."}; });
+  return {ok:false,mensaje:"El servidor respondió con un error (HTTP "+r.status+"); no fue un corte de su conexión. Pruebe de nuevo en unos minutos."};
+}
 var colaOrigenPantalla=[],origenPantallaActivos=0;
 function despacharOrigenPantalla(){
   while(origenPantallaActivos<4&&colaOrigenPantalla.length){
@@ -6909,11 +6918,14 @@ function despacharOrigenPantalla(){
     origenPantallaActivos++;
     (function(t){
       var control=new AbortController();
-      var reloj=setTimeout(function(){control.abort();},35000);
+      // El servidor puede tardar hasta ~45 s en una fuente (25 s de la
+      // consulta más hasta 20 s de variantes): cortar a los 35 s perdía
+      // respuestas que iban a llegar.
+      var reloj=setTimeout(function(){control.abort();},50000);
       fetch(estado.api+"/indice/"+t.slug+"/buscar",{
         method:"POST",headers:{"Content-Type":"application/json"},
         body:t.cuerpo,signal:control.signal
-      }).then(t.resolver,t.rechazar).finally(function(){
+      }).then(t.resolver,function(e){ t.rechazar(e&&e.name==="AbortError"?{tope:true}:e); }).finally(function(){
         clearTimeout(reloj);
         origenPantallaActivos--;
         despacharOrigenPantalla();
@@ -7074,7 +7086,7 @@ function buscarEnFuente(slug,pagina){
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify(cuerpo)
     });
-  }).then(function(r){return r? r.json():null;})
+  }).then(leerRespuesta)
     .then(function(d){
       // SAIJ no atiende al servidor donde está publicada la web, pero sí a
       // los navegadores (ver el bloque de "SAIJ desde el navegador"). Si el
@@ -7174,10 +7186,10 @@ function buscarEnFuente(slug,pagina){
       imBusco.cargando=false; imBusco.busco=true;
       if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
       imBusco.error=(err&&err.tope)
-        ?"Tardó demasiado y no llegó respuesta — puede haberse cortado la conexión a mitad de camino. Pruebe de nuevo."
+        ?"El sitio oficial no respondió en 50 segundos. No es un resultado vacío: pruebe de nuevo con «Reintentar las bases sin respuesta»."
         :(slug==="saij"||slug==="csjn")
           ?"No fue posible consultar SAIJ, ni desde el servidor ni desde el navegador. Intente nuevamente en unos minutos."
-          :"Se cortó la comunicación con el servidor.";
+          :"No se pudo completar la consulta con el servidor ("+String((err&&err.message)||"error de red").slice(0,80)+"). No es un resultado vacío: pruebe «Reintentar las bases sin respuesta».";
       render();
     });
 }
@@ -10846,6 +10858,11 @@ document.addEventListener("click",function(ev){
   }
   if(act==="buscar-indice"){
     buscarEnFuente(b.getAttribute("data-fuente"));
+    return;
+  }
+  if(act==="reintentar-fallidas"){
+    // Solo las bases que no respondieron; las demás conservan sus resultados.
+    basesVisibles().forEach(function(f){ var im=estado.indices[f.slug]||{}; if(im.busco&&im.error) buscarEnFuente(f.slug); });
     return;
   }
   if(act==="tog-sug"){
