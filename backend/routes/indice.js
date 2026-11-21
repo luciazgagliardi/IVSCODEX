@@ -706,7 +706,7 @@ for (const { slug, buscar } of FUENTES) {
           if (cerrado) { porUrl.set(url, { url, fragmento: '', error: cerrado.mensaje }); return; }
           // Pasajes de fondo: sin acción puntual del usuario, se respeta robots.txt (lib/robots.js).
           const doc = await obtenerDocumento(url, { automatico: true });
-          porUrl.set(url, { url, fragmento: recortarPasaje(doc.texto, q, { exigir: slug === 'dialnet' }), error: null });
+          porUrl.set(url, { url, fragmento: recortarPasaje(doc.texto, q, { exigir: true }), error: null });
         } catch (e) {
           const mensaje = e instanceof ErrorApp ? e.message : 'No se pudo leer este documento.';
           if (e?.codigo === 'RESPUESTA_NO_OK' && [401, 403].includes(e.extra?.estadoOrigen)) {
