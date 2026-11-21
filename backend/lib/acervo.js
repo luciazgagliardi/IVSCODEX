@@ -316,7 +316,24 @@ export function buscarEnAcervo(fuente, q, { modo = 'todas', excluir = '', anioDe
     const pesoTipo = priorizaFallos ? "CASE WHEN f.tipo = 'sumario' THEN 1 ELSE 0 END," : '';
     const filas = db.prepare(`SELECT f.* FROM fts JOIN fallos f ON f.rid = fts.rowid WHERE fts MATCH ? AND ${donde.join(' AND ')}
       ORDER BY ${pesoTipo} bm25(fts, 4.0, 1.0, 2.0, 0.0${ftsConMagistrados(db) ? ', 1.0' : ''}), f.rid LIMIT ?`).all(...args);
-    return filas.map((f) => {
+    // El acervo es una copia de fallos, no una lista de todos sus sumarios.
+    // Si la ficha del fallo y tres sumarios describen la misma causa, conservar
+    // la primera fila del orden documental (fallo primero) y no mostrar cuatro.
+    const vistos = new Set();
+    const unicos = filas.filter((f) => {
+      const caratula = String(f.caratula || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim();
+      const tribunal = String(f.tribunal || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim();
+      const fecha = String(f.fecha || '').trim();
+      let clave;
+      if ((fuente === 'saij' || fuente === 'csjn') && caratula) clave = [caratula, fecha, tribunal].join('|');
+      else if (f.linkFallo) clave = 'url|' + String(f.linkFallo).trim();
+      else if (caratula) clave = [caratula, fecha, tribunal].join('|');
+      else clave = 'id|' + f.id;
+      if (vistos.has(clave)) return false;
+      vistos.add(clave);
+      return true;
+    });
+    return unicos.map((f) => {
       const r = { id: f.id, caratula: f.caratula, tribunal: f.tribunal, fecha: f.fecha, expediente: f.expediente, sumario: f.sumario,
         voces: f.voces ? f.voces.split(' · ') : undefined, magistrados: f.magistrados, materia: f.materia, linkFicha: f.linkFicha, linkFallo: f.linkFallo, tipo: f.tipo,
         ...(priorizaFallos && f.tipo === 'sumario' ? { esSumarioRespaldo: true } : {}),
