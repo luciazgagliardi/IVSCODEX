@@ -65,11 +65,11 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: pruebas
     runs-on: ubuntu-latest
-    timeout-minutes: 110
+    timeout-minutes: 180
     strategy:
       fail-fast: false
       matrix:
-        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, corteidh]
+        fuente: [mendoza, caba, scba, juristeca, santafe, rionegro, dialnet, mendozalegal, catamarca, corteidh, jujuy]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
@@ -100,16 +100,16 @@ jobs:
         working-directory: backend
         env:
           FUENTE: ${{ matrix.fuente }}
-          MAX_PAGINAS: ${{ matrix.fuente == 'juristeca' && '700' || matrix.fuente == 'catamarca' && '180' || matrix.fuente == 'mendoza' && '300' || matrix.fuente == 'caba' && '220' || matrix.fuente == 'scba' && '220' || '120' }}
-          MAX_TERMINOS: ${{ matrix.fuente == 'juristeca' && '200' || matrix.fuente == 'mendoza' && '100' || '70' }}
-          PAGINAS_POR_TAREA: '6'
-          MAX_PDFS: '70'
+          MAX_PAGINAS: ${{ matrix.fuente == 'catamarca' && '360' || '600' }}
+          MAX_TERMINOS: '240'
+          PAGINAS_POR_TAREA: '8'
+          MAX_PDFS: '150'
           PAUSA_MS: '2000'
         run: |
           if test "$FUENTE" = corteidh; then
             node scripts/ampliarCorteidh.mjs
           elif test "$FUENTE" = catamarca; then
-            MAX_DETALLES=80 node scripts/cosecharCatamarca.mjs
+            MAX_DETALLES=160 node scripts/cosecharCatamarca.mjs
           else
             node scripts/ampliarFuentes.mjs "$FUENTE"
           fi
@@ -232,7 +232,7 @@ jobs:
             backend/acervo-crudo/progreso-saij-*.json
 
   publicar:
-    # Al fallar una fuente no perder los lotes válidos de las otras ocho.
+    # Al fallar una fuente no perder los lotes válidos de las demás fuentes.
     # Solo el fracaso de las pruebas impide publicar.
     if: ${{ always() && github.event_name != 'pull_request' && needs.pruebas.result == 'success' }}
     needs: [pruebas, fuentes, saij, saij_provincial]
@@ -249,7 +249,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Recuperar lotes de las diez fuentes independientes
+      - name: Recuperar lotes de las once fuentes independientes
         uses: actions/download-artifact@v4
         with:
           pattern: fuente-*
