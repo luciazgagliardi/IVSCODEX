@@ -9,7 +9,7 @@ import {
 } from '../lib/fuentesInfo.js';
 
 test('el router Express registra buscar, local y estado para todas las fuentes', async () => {
-  const { default: router } = await import('../routes/indice.js');
+  const { router } = await import('../routes/indice.js');
   const rutas = new Set(router.stack.map((layer) => layer.route?.path).filter(Boolean));
   for (const fuente of FUENTES) {
     for (const accion of ['buscar', 'local', 'estado']) {
