@@ -1,36 +1,493 @@
 {
-  "descripcion": "Relaciones terminológicas fundadas en una norma: cambios de denominación por reforma, figuras que se confunden y conceptos contrapuestos. Cada una cita la norma que la sostiene. La política se decide caso por caso: un cambio de nombre no implica siempre identidad conceptual.",
-  "relaciones": [
-    {"concepto": "cuidado personal", "termino": "tenencia", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC (Ley 26.994) arts. 648-657", "alcance": "El CCyC reemplazó la «tenencia» por el «cuidado personal» y dio preferencia al cuidado compartido (art. 651).", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Denominación sustituida por la ley para la misma institución."},
-    {"concepto": "cuidado personal compartido", "termino": "tenencia compartida", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 650-651", "alcance": "Modalidad alternada o indistinta del cuidado personal.", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Denominación sustituida por la ley."},
-    {"concepto": "régimen de comunicación", "termino": "régimen de visitas", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 555 y 652", "alcance": "Derecho y deber de comunicación del progenitor no conviviente y de los parientes.", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Denominación sustituida por la ley."},
-    {"concepto": "responsabilidad parental", "termino": "patria potestad", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC art. 638", "alcance": "Cambió el enfoque (deberes en interés del hijo, autonomía progresiva), no la institución.", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Denominación sustituida por la ley."},
-    {"concepto": "comunidad de ganancias", "termino": "sociedad conyugal", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 463 y ss.", "alcance": "Desde 2015 coexiste con el régimen de separación de bienes por opción de los cónyuges (art. 446).", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Régimen patrimonial supletorio rebautizado."},
-    {"concepto": "atribución del uso de la vivienda familiar", "termino": "atribución del hogar conyugal", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 443-445 y 526", "alcance": "El CCyC fija pautas y plazos que antes no existían; también se aplica a uniones convivenciales.", "estado": "propuesta", "politica": "sugerir", "fuente": "normativa", "evidencia": "La figura se reguló con requisitos nuevos."},
-    {"concepto": "unión convivencial", "termino": "concubinato", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 509-528", "alcance": "No toda convivencia previa es unión convivencial: el art. 510 exige, entre otros requisitos, dos años de convivencia.", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Figura regulada con requisitos propios: no hay identidad conceptual plena."},
-    {"concepto": "divorcio", "termino": "divorcio vincular", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 435-445", "alcance": "El CCyC eliminó las causales y la separación personal: la jurisprudencia anterior sobre culpa no es trasladable.", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Cambio de régimen sustancial."},
-    {"concepto": "restricción a la capacidad", "termino": "insania", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 31-50; Ley 26.657", "alcance": "La declaración de incapacidad es excepcional (art. 32); el modelo de apoyos reemplaza la sustitución.", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Cambio de paradigma: no hay identidad conceptual plena."},
-    {"concepto": "inhabilitación por prodigalidad", "termino": "inhabilitación del art. 152 bis", "tipo": "equivalencia_historica", "rama": "fam", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 48-50", "alcance": "El CCyC limita la inhabilitación a la prodigalidad.", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Supuestos reducidos."},
-    {"concepto": "legitimarios", "termino": "herederos forzosos", "tipo": "equivalencia_historica", "rama": "suc", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC art. 2444", "alcance": "Cambiaron las porciones (art. 2445), no la categoría.", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Denominación sustituida por la ley."},
-    {"concepto": "contrato de obra", "termino": "locación de obra", "tipo": "equivalencia_historica", "rama": "civ", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 1251-1277", "alcance": "Mismo contrato con nueva denominación.", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Denominación sustituida por la ley."},
-    {"concepto": "contrato de servicios", "termino": "locación de servicios", "tipo": "equivalencia_historica", "rama": "civ", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 1251 y 1278-1279", "alcance": "No confundir con el contrato de trabajo (LCT art. 23).", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Denominación sustituida por la ley."},
-    {"concepto": "conjuntos inmobiliarios", "termino": "barrios cerrados", "tipo": "equivalencia_historica", "rama": "rea", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 2073-2086", "alcance": "Clubes de campo, barrios cerrados y parques industriales son especies del conjunto inmobiliario (art. 2073).", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Relación de especie a género, no sinonimia."},
-    {"concepto": "derecho de superficie", "termino": "superficie forestal", "tipo": "equivalencia_historica", "rama": "rea", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 2114-2128; Ley 25.509 (derogada)", "alcance": "El CCyC amplió el derecho de superficie más allá de lo forestal.", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Figura ampliada."},
-    {"concepto": "negocio en participación", "termino": "sociedad accidental o en participación", "tipo": "equivalencia_historica", "rama": "com", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "CCyC arts. 1448-1452; Ley 26.994 (derogó arts. 361-366 de la Ley 19.550)", "alcance": "Pasó a ser un contrato asociativo, sin personalidad.", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Figura trasladada y rebautizada."},
-    {"concepto": "Ley General de Sociedades", "termino": "Ley de Sociedades Comerciales", "tipo": "equivalencia_historica", "rama": "com", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "Ley 19.550, denominación dada por la Ley 26.994", "alcance": "Misma ley (19.550), con reformas.", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Cambio de denominación de la misma ley."},
-    {"concepto": "sociedades de la Sección IV", "termino": "sociedad de hecho", "tipo": "equivalencia_historica", "rama": "com", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2015-07-31"}, "norma": "Ley 19.550 arts. 21-26 (texto Ley 26.994)", "alcance": "La Sección IV también comprende sociedades irregulares y atípicas, con un régimen de responsabilidad distinto del anterior.", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Régimen modificado."},
-    {"concepto": "delitos contra la integridad sexual", "termino": "delitos contra la honestidad", "tipo": "equivalencia_historica", "rama": "pen", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "1999-05-13"}, "norma": "Ley 25.087 (Código Penal, Libro II, Título III)", "alcance": "Cambió el bien jurídico protegido y la tipificación.", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Reforma del título y de los tipos."},
-    {"concepto": "abuso sexual con acceso carnal", "termino": "violación", "tipo": "equivalencia_historica", "rama": "pen", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "1999-05-13"}, "norma": "CP art. 119, tercer párrafo (Ley 25.087; Ley 27.352)", "alcance": "«Violación» sigue usándose en sentencias y doctrina; el tipo vigente es más amplio.", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Tipo reformulado."},
-    {"concepto": "ARCA", "termino": "AFIP", "tipo": "equivalencia_historica", "rama": "trib", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2024-10-24"}, "norma": "Decreto 953/2024", "alcance": "La Agencia de Recaudación y Control Aduanero sucedió a la AFIP; la jurisprudencia anterior nombra a la AFIP.", "estado": "verificada", "politica": "expandir", "fuente": "normativa", "evidencia": "Organismo sucesor."},
-    {"concepto": "Sistema Integrado Previsional Argentino", "termino": "régimen de capitalización", "tipo": "equivalencia_historica", "rama": "prev", "jurisdiccion": "Nación", "vigenciaTermino": {"hasta": "2008-12-08"}, "norma": "Ley 26.425", "alcance": "La ley eliminó el régimen de capitalización (AFJP) y lo absorbió en el régimen de reparto.", "estado": "verificada", "politica": "sugerir", "fuente": "normativa", "evidencia": "Sustitución de régimen, no sinonimia."},
-    {"concepto": "recurso extraordinario provincial", "termino": "recurso de casación", "tipo": "equivalencia_historica", "rama": "proc_civ", "jurisdiccion": "Mendoza", "vigenciaTermino": {"hasta": "2018-01-31"}, "norma": "CPCCyT de Mendoza (Ley 9001) art. 145; CPC Ley 2269 (derogado)", "alcance": "El CPCCyT unificó en un recurso los antiguos recursos de inconstitucionalidad y casación. Verificar fecha exacta de vigencia en cada caso.", "estado": "propuesta", "politica": "sugerir", "fuente": "normativa", "evidencia": "Unificación de vías recursivas; requiere revisión de alcance."},
-    {"concepto": "recurso extraordinario provincial", "termino": "recurso de inconstitucionalidad", "tipo": "equivalencia_historica", "rama": "proc_civ", "jurisdiccion": "Mendoza", "vigenciaTermino": {"hasta": "2018-01-31"}, "norma": "CPCCyT de Mendoza (Ley 9001) art. 145; CPC Ley 2269 (derogado)", "alcance": "Ver la relación anterior.", "estado": "propuesta", "politica": "sugerir", "fuente": "normativa", "evidencia": "Unificación de vías recursivas; requiere revisión de alcance."},
-    {"concepto": "trabajo no registrado", "termino": "trabajo en negro", "tipo": "expresion_coloquial", "rama": "lab", "jurisdiccion": "Nación", "norma": "Ley 24.013 arts. 7-17; LCT art. 52", "alcance": "Expresión de uso común y frecuente en escritos para la relación laboral no registrada o registrada deficientemente.", "estado": "propuesta", "politica": "sugerir", "fuente": "normativa", "evidencia": "Uso coloquial; la ley usa «no registrado»."},
-    {"concepto": "daño moral", "termino": "daño punitivo", "tipo": "figura_que_se_confunde", "rama": "dan", "jurisdiccion": "Nación", "norma": "CCyC art. 1741; Ley 24.240 art. 52 bis", "alcance": "El daño punitivo es una multa civil con fin sancionatorio, no un rubro resarcitorio. El Tesauro SAIJ lo ubica como especie de daño moral: esa jerarquía no debe usarse para expandir.", "estado": "verificada", "politica": "no_expandir", "fuente": "normativa", "evidencia": "Naturaleza jurídica distinta según la ley."},
-    {"concepto": "prescripción liberatoria", "termino": "caducidad", "tipo": "figura_que_se_confunde", "rama": "civ", "jurisdiccion": "Nación", "norma": "CCyC arts. 2554-2572", "alcance": "La caducidad no se suspende ni se interrumpe (art. 2567).", "estado": "verificada", "politica": "no_expandir", "fuente": "normativa", "evidencia": "Regímenes distintos según la ley."},
-    {"concepto": "posesión", "termino": "tenencia (derechos reales)", "tipo": "figura_que_se_confunde", "rama": "rea", "jurisdiccion": "Nación", "norma": "CCyC arts. 1909-1910", "alcance": "No confundir con la «tenencia» de hijos (cuidado personal).", "estado": "verificada", "politica": "no_expandir", "fuente": "normativa", "evidencia": "Relaciones de poder distintas según la ley."},
-    {"concepto": "despido indirecto", "termino": "despido directo", "tipo": "concepto_contrapuesto", "rama": "lab", "jurisdiccion": "Nación", "norma": "LCT arts. 242 y 246", "alcance": "En uno denuncia el empleador; en el otro, el trabajador por injuria del empleador.", "estado": "verificada", "politica": "no_expandir", "fuente": "normativa", "evidencia": "Supuestos opuestos según la ley."},
-    {"concepto": "contrato de trabajo", "termino": "contrato de servicios", "tipo": "concepto_contrapuesto", "rama": "lab", "jurisdiccion": "Nación", "norma": "LCT art. 23; CCyC art. 1252", "alcance": "La prestación de servicios hace presumir el contrato de trabajo salvo prueba en contrario: es una línea útil para buscar fallos sobre fraude laboral.", "estado": "verificada", "politica": "no_expandir", "fuente": "normativa", "evidencia": "Presunción legal que separa ambas figuras."},
-    {"concepto": "nulidad absoluta", "termino": "nulidad relativa", "tipo": "concepto_contrapuesto", "rama": "civ", "jurisdiccion": "Nación", "norma": "CCyC arts. 386-388", "alcance": "Difieren en la legitimación, la confirmación y la prescripción.", "estado": "verificada", "politica": "no_expandir", "fuente": "normativa", "evidencia": "Clasificación legal."}
-  ]
+ "descripcion": "Relaciones terminológicas fundadas en una norma: cambios de denominación por reforma, figuras que se confunden y conceptos contrapuestos. Cada una cita la norma que la sostiene. La política se decide caso por caso: un cambio de nombre no implica siempre identidad conceptual.",
+ "relaciones": [
+  {
+   "concepto": "cuidado personal",
+   "termino": "tenencia",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC (Ley 26.994) arts. 648-657",
+   "alcance": "El CCyC reemplazó la «tenencia» por el «cuidado personal» y dio preferencia al cuidado compartido (art. 651). «Tenencia» sola también designa la tenencia de estupefacientes y la relación de poder de los derechos reales: la expansión exige contexto familiar en la consulta.",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Denominación sustituida por la ley para la misma institución.",
+   "soloConContexto": "hij|menor|nin|nene|adolescent|progenitor|padre|madre|cuidado|alimento|familia|convivien"
+  },
+  {
+   "concepto": "cuidado personal compartido",
+   "termino": "tenencia compartida",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 650-651",
+   "alcance": "Modalidad alternada o indistinta del cuidado personal. «Tenencia» sola también designa la tenencia de estupefacientes y la relación de poder de los derechos reales: la expansión exige contexto familiar en la consulta.",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Denominación sustituida por la ley.",
+   "soloConContexto": "hij|menor|nin|nene|adolescent|progenitor|padre|madre|cuidado|alimento|familia|convivien"
+  },
+  {
+   "concepto": "régimen de comunicación",
+   "termino": "régimen de visitas",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 555 y 652",
+   "alcance": "Derecho y deber de comunicación del progenitor no conviviente y de los parientes. No comprende las visitas a personas privadas de libertad (ejecución penal).",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Denominación sustituida por la ley.",
+   "noSiSigue": "carcelari|penitenciari|intern|detenid|pres[oa]s|establecimiento"
+  },
+  {
+   "concepto": "responsabilidad parental",
+   "termino": "patria potestad",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC art. 638",
+   "alcance": "Cambió el enfoque (deberes en interés del hijo, autonomía progresiva), no la institución.",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Denominación sustituida por la ley."
+  },
+  {
+   "concepto": "comunidad de ganancias",
+   "termino": "sociedad conyugal",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 463 y ss.",
+   "alcance": "Desde 2015 coexiste con el régimen de separación de bienes por opción de los cónyuges (art. 446).",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Régimen patrimonial supletorio rebautizado."
+  },
+  {
+   "concepto": "atribución del uso de la vivienda familiar",
+   "termino": "atribución del hogar conyugal",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 443-445 y 526",
+   "alcance": "El CCyC fija pautas y plazos que antes no existían; también se aplica a uniones convivenciales.",
+   "estado": "propuesta",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "La figura se reguló con requisitos nuevos."
+  },
+  {
+   "concepto": "unión convivencial",
+   "termino": "concubinato",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 509-528",
+   "alcance": "No toda convivencia previa es unión convivencial: el art. 510 exige, entre otros requisitos, dos años de convivencia.",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Figura regulada con requisitos propios: no hay identidad conceptual plena."
+  },
+  {
+   "concepto": "divorcio",
+   "termino": "divorcio vincular",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 435-445",
+   "alcance": "El CCyC eliminó las causales y la separación personal: la jurisprudencia anterior sobre culpa no es trasladable.",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Cambio de régimen sustancial."
+  },
+  {
+   "concepto": "restricción a la capacidad",
+   "termino": "insania",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 31-50; Ley 26.657",
+   "alcance": "La declaración de incapacidad es excepcional (art. 32); el modelo de apoyos reemplaza la sustitución.",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Cambio de paradigma: no hay identidad conceptual plena."
+  },
+  {
+   "concepto": "inhabilitación por prodigalidad",
+   "termino": "inhabilitación del art. 152 bis",
+   "tipo": "equivalencia_historica",
+   "rama": "fam",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 48-50",
+   "alcance": "El CCyC limita la inhabilitación a la prodigalidad.",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Supuestos reducidos."
+  },
+  {
+   "concepto": "legitimarios",
+   "termino": "herederos forzosos",
+   "tipo": "equivalencia_historica",
+   "rama": "suc",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC art. 2444",
+   "alcance": "Cambiaron las porciones (art. 2445), no la categoría.",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Denominación sustituida por la ley."
+  },
+  {
+   "concepto": "contrato de obra",
+   "termino": "locación de obra",
+   "tipo": "equivalencia_historica",
+   "rama": "civ",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 1251-1277",
+   "alcance": "Mismo contrato con nueva denominación.",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Denominación sustituida por la ley."
+  },
+  {
+   "concepto": "contrato de servicios",
+   "termino": "locación de servicios",
+   "tipo": "equivalencia_historica",
+   "rama": "civ",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 1251 y 1278-1279",
+   "alcance": "No confundir con el contrato de trabajo (LCT art. 23).",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Denominación sustituida por la ley."
+  },
+  {
+   "concepto": "conjuntos inmobiliarios",
+   "termino": "barrios cerrados",
+   "tipo": "equivalencia_historica",
+   "rama": "rea",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 2073-2086",
+   "alcance": "Clubes de campo, barrios cerrados y parques industriales son especies del conjunto inmobiliario (art. 2073).",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Relación de especie a género, no sinonimia."
+  },
+  {
+   "concepto": "derecho de superficie",
+   "termino": "superficie forestal",
+   "tipo": "equivalencia_historica",
+   "rama": "rea",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 2114-2128; Ley 25.509 (derogada)",
+   "alcance": "El CCyC amplió el derecho de superficie más allá de lo forestal.",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Figura ampliada."
+  },
+  {
+   "concepto": "negocio en participación",
+   "termino": "sociedad accidental o en participación",
+   "tipo": "equivalencia_historica",
+   "rama": "com",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "CCyC arts. 1448-1452; Ley 26.994 (derogó arts. 361-366 de la Ley 19.550)",
+   "alcance": "Pasó a ser un contrato asociativo, sin personalidad.",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Figura trasladada y rebautizada."
+  },
+  {
+   "concepto": "Ley General de Sociedades",
+   "termino": "Ley de Sociedades Comerciales",
+   "tipo": "equivalencia_historica",
+   "rama": "com",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "Ley 19.550, denominación dada por la Ley 26.994",
+   "alcance": "Misma ley (19.550), con reformas.",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Cambio de denominación de la misma ley."
+  },
+  {
+   "concepto": "sociedades de la Sección IV",
+   "termino": "sociedad de hecho",
+   "tipo": "equivalencia_historica",
+   "rama": "com",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2015-07-31"
+   },
+   "norma": "Ley 19.550 arts. 21-26 (texto Ley 26.994)",
+   "alcance": "La Sección IV también comprende sociedades irregulares y atípicas, con un régimen de responsabilidad distinto del anterior.",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Régimen modificado."
+  },
+  {
+   "concepto": "delitos contra la integridad sexual",
+   "termino": "delitos contra la honestidad",
+   "tipo": "equivalencia_historica",
+   "rama": "pen",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "1999-05-13"
+   },
+   "norma": "Ley 25.087 (Código Penal, Libro II, Título III)",
+   "alcance": "Cambió el bien jurídico protegido y la tipificación.",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Reforma del título y de los tipos."
+  },
+  {
+   "concepto": "abuso sexual con acceso carnal",
+   "termino": "violación",
+   "tipo": "equivalencia_historica",
+   "rama": "pen",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "1999-05-13"
+   },
+   "norma": "CP art. 119, tercer párrafo (Ley 25.087; Ley 27.352)",
+   "alcance": "«Violación» sigue usándose en sentencias y doctrina; el tipo vigente es más amplio.",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Tipo reformulado."
+  },
+  {
+   "concepto": "ARCA",
+   "termino": "AFIP",
+   "tipo": "equivalencia_historica",
+   "rama": "trib",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2024-10-24"
+   },
+   "norma": "Decreto 953/2024",
+   "alcance": "La Agencia de Recaudación y Control Aduanero sucedió a la AFIP; la jurisprudencia anterior nombra a la AFIP.",
+   "estado": "verificada",
+   "politica": "expandir",
+   "fuente": "normativa",
+   "evidencia": "Organismo sucesor."
+  },
+  {
+   "concepto": "Sistema Integrado Previsional Argentino",
+   "termino": "régimen de capitalización",
+   "tipo": "equivalencia_historica",
+   "rama": "prev",
+   "jurisdiccion": "Nación",
+   "vigenciaTermino": {
+    "hasta": "2008-12-08"
+   },
+   "norma": "Ley 26.425",
+   "alcance": "La ley eliminó el régimen de capitalización (AFJP) y lo absorbió en el régimen de reparto.",
+   "estado": "verificada",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Sustitución de régimen, no sinonimia."
+  },
+  {
+   "concepto": "recurso extraordinario provincial",
+   "termino": "recurso de casación",
+   "tipo": "equivalencia_historica",
+   "rama": "proc_civ",
+   "jurisdiccion": "Mendoza",
+   "vigenciaTermino": {
+    "hasta": "2018-01-31"
+   },
+   "norma": "CPCCyT de Mendoza (Ley 9001) art. 145; CPC Ley 2269 (derogado)",
+   "alcance": "La Ley 9001 (CPCCyT) unificó los recursos de inconstitucionalidad y casación en materia civil, comercial y tributaria. En materia penal el recurso de casación sigue vigente (Código Procesal Penal de Mendoza). Verificar la fecha de vigencia en cada caso.",
+   "estado": "propuesta",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Unificación de vías recursivas; requiere revisión de alcance.",
+   "materias": [
+    "civil",
+    "comercial",
+    "tributaria"
+   ]
+  },
+  {
+   "concepto": "recurso extraordinario provincial",
+   "termino": "recurso de inconstitucionalidad",
+   "tipo": "equivalencia_historica",
+   "rama": "proc_civ",
+   "jurisdiccion": "Mendoza",
+   "vigenciaTermino": {
+    "hasta": "2018-01-31"
+   },
+   "norma": "CPCCyT de Mendoza (Ley 9001) art. 145; CPC Ley 2269 (derogado)",
+   "alcance": "La Ley 9001 (CPCCyT) unificó los recursos de inconstitucionalidad y casación en materia civil, comercial y tributaria. En materia penal el recurso de casación sigue vigente (Código Procesal Penal de Mendoza). Verificar la fecha de vigencia en cada caso.",
+   "estado": "propuesta",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Unificación de vías recursivas; requiere revisión de alcance.",
+   "materias": [
+    "civil",
+    "comercial",
+    "tributaria"
+   ]
+  },
+  {
+   "concepto": "trabajo no registrado",
+   "termino": "trabajo en negro",
+   "tipo": "expresion_coloquial",
+   "rama": "lab",
+   "jurisdiccion": "Nación",
+   "norma": "Ley 24.013 arts. 7-17; LCT art. 52",
+   "alcance": "Expresión de uso común y frecuente en escritos para la relación laboral no registrada o registrada deficientemente.",
+   "estado": "propuesta",
+   "politica": "sugerir",
+   "fuente": "normativa",
+   "evidencia": "Uso coloquial; la ley usa «no registrado»."
+  },
+  {
+   "concepto": "daño moral",
+   "termino": "daño punitivo",
+   "tipo": "figura_que_se_confunde",
+   "rama": "dan",
+   "jurisdiccion": "Nación",
+   "norma": "CCyC art. 1741; Ley 24.240 art. 52 bis",
+   "alcance": "El daño punitivo es una multa civil con fin sancionatorio (art. 52 bis, Ley 24.240), no un rubro resarcitorio. El Tesauro SAIJ ubica «daños punitivos» como término específico de «daño moral» y, a la vez, «daño punitivo» bajo «multa civil»: esa jerarquía no debe usarse para expandir.",
+   "estado": "verificada",
+   "politica": "no_expandir",
+   "fuente": "normativa",
+   "evidencia": "Naturaleza jurídica distinta según la ley."
+  },
+  {
+   "concepto": "prescripción liberatoria",
+   "termino": "caducidad",
+   "tipo": "figura_que_se_confunde",
+   "rama": "civ",
+   "jurisdiccion": "Nación",
+   "norma": "CCyC arts. 2554-2572",
+   "alcance": "La caducidad no se suspende ni se interrumpe (art. 2567).",
+   "estado": "verificada",
+   "politica": "no_expandir",
+   "fuente": "normativa",
+   "evidencia": "Regímenes distintos según la ley."
+  },
+  {
+   "concepto": "posesión",
+   "termino": "tenencia (derechos reales)",
+   "tipo": "figura_que_se_confunde",
+   "rama": "rea",
+   "jurisdiccion": "Nación",
+   "norma": "CCyC arts. 1909-1910",
+   "alcance": "No confundir con la «tenencia» de hijos (cuidado personal).",
+   "estado": "verificada",
+   "politica": "no_expandir",
+   "fuente": "normativa",
+   "evidencia": "Relaciones de poder distintas según la ley."
+  },
+  {
+   "concepto": "despido indirecto",
+   "termino": "despido directo",
+   "tipo": "concepto_contrapuesto",
+   "rama": "lab",
+   "jurisdiccion": "Nación",
+   "norma": "LCT arts. 242 y 246",
+   "alcance": "En uno denuncia el empleador; en el otro, el trabajador por injuria del empleador.",
+   "estado": "verificada",
+   "politica": "no_expandir",
+   "fuente": "normativa",
+   "evidencia": "Supuestos opuestos según la ley."
+  },
+  {
+   "concepto": "contrato de trabajo",
+   "termino": "contrato de servicios",
+   "tipo": "concepto_contrapuesto",
+   "rama": "lab",
+   "jurisdiccion": "Nación",
+   "norma": "LCT art. 23; CCyC art. 1252",
+   "alcance": "La prestación de servicios hace presumir el contrato de trabajo salvo prueba en contrario: es una línea útil para buscar fallos sobre fraude laboral.",
+   "estado": "verificada",
+   "politica": "no_expandir",
+   "fuente": "normativa",
+   "evidencia": "Presunción legal que separa ambas figuras."
+  },
+  {
+   "concepto": "nulidad absoluta",
+   "termino": "nulidad relativa",
+   "tipo": "concepto_contrapuesto",
+   "rama": "civ",
+   "jurisdiccion": "Nación",
+   "norma": "CCyC arts. 386-388",
+   "alcance": "Difieren en la legitimación, la confirmación y la prescripción.",
+   "estado": "verificada",
+   "politica": "no_expandir",
+   "fuente": "normativa",
+   "evidencia": "Clasificación legal."
+  }
+ ]
 }

@@ -5487,7 +5487,7 @@ function pedirVocabulario(){
       })["catch"](function(){ vocabCache[k]={fallo:true}; });
   },320);
 }
-var NOMBRE_ORIGEN={saij:"Tesauro SAIJ",ivs_codex:"Anillo curado",normativa:"Norma"};
+var NOMBRE_ORIGEN={saij:"Tesauro SAIJ",ivs_codex:"Anillo curado",normativa:"Norma",medicion_auditoria:"Propuesta medida"};
 function tiraVariantesVocab(){
   if(estado.tab!=="buscar") return "";
   var v=vocabDe(estado.q);
@@ -5503,6 +5503,7 @@ function tiraVariantesVocab(){
 var GRUPOS_LINEA=[
   ["descriptorOficial","Descriptor oficial","descriptor oficial del tesauro"],
   ["historicas","Antes y después de la reforma","denominación vinculada por una reforma legislativa"],
+  ["equivalentesPropuestos","Equivalencia propuesta · medida, pendiente de revisión","equivalencia propuesta y pendiente de revisión"],
   ["denominaciones","Denominaciones registradas por SAIJ · alcance por revisar","denominación que SAIJ indexa bajo el mismo descriptor, sin revisión de alcance"],
   ["siglas","Siglas","sigla registrada"],
   ["coloquiales","Expresiones de uso común","expresión de uso común"],
@@ -5520,7 +5521,9 @@ function tiraLineas(){
     var origenes=(c.origenes||[c.origen]).map(function(o){ return NOMBRE_ORIGEN[o]||o; }).join(" · ");
     var cab='<p class="sug-nota" style="margin:10px 0 6px"><b>'+esc(comoTitulo(c.canonico))+'</b>'+
       (c.rama?' · '+esc(comoTitulo(nombreRama(c.rama)||c.rama)):(c.especialidad?' · '+esc(c.especialidad):''))+
-      ' <span style="opacity:.75">('+esc(origenes)+(c.vozScjm?' · voz de la SCJM':'')+')</span></p>';
+      ' <span style="opacity:.75">('+esc(origenes)+(c.vozScjm?' · voz de la SCJM':'')+')</span>'+
+      (c.ambiguo?' <span style="opacity:.75">· término ambiguo: elija el concepto, no se sumó a la búsqueda</span>':'')+
+      (c.calificado?' <span style="opacity:.75">· el calificador escrito cambia el sentido: no se sumaron equivalentes</span>':'')+'</p>';
     var filas=GRUPOS_LINEA.map(function(g){
       var items=(c.grupos&&c.grupos[g[0]])||[];
       if(!items.length) return "";

@@ -45,12 +45,13 @@ test('denominaciones anteriores a la reforma llevan a la vigente, con su norma',
   const r = analizar('tenencia');
   const c = r.conceptos.find((x) => x.canonico === 'cuidado personal');
   assert.ok(c, JSON.stringify(r.conceptos.map((x) => x.canonico)));
-  const h = c.expandir.find((x) => normalizar(x.termino) === 'cuidado personal');
-  assert.ok(h && /648/.test(h.norma));
-  // «tenencia» sola es ambigua: también es la tenencia simple de estupefacientes.
-  // Se devuelven los dos conceptos por separado, sin elegir en silencio.
+  // «tenencia» sola también es la de estupefacientes o la de los derechos
+  // reales: se ofrece con la norma a la vista, pero no se expande sin contexto.
   assert.ok(r.conceptos.some((x) => x.canonico === 'tenencia simple'));
-  assert.ok(!c.expandir.some((x) => /tenencia simple/.test(x.termino)));
+  assert.equal(c.expandir.length, 0);
+  assert.ok(c.grupos.historicas.some((x) => /648/.test(x.norma || '')));
+  const conHijos = analizar('tenencia de mi hijo').conceptos.find((x) => x.canonico === 'cuidado personal');
+  assert.ok(conHijos && conHijos.expandir.some((x) => /648/.test(x.norma || '')));
   assert.ok(expandidos('régimen de visitas').includes('regimen de comunicacion'));
 });
 
@@ -87,4 +88,26 @@ test('una consulta sin conceptos no inventa nada', () => {
   const r = analizar('zzzz qqqq');
   assert.equal(r.conceptos.length, 0);
   assert.equal(r.variantes.length, 0);
+});
+
+test('«régimen de visitas carcelarias» no se expande a «régimen de comunicación»', () => {
+  assert.ok(!expandidos('régimen de visitas carcelarias').includes('regimen de comunicacion'));
+});
+
+test('singular y plural comparten clave aunque el singular termine en «e»', () => {
+  const r = analizar('accidente de trabajo');
+  assert.ok(r.conceptos.some((c) => normalizar(c.canonico) === 'accidentes de trabajo'), JSON.stringify(r.conceptos.map((c) => c.canonico)));
+});
+
+test('una palabra genérica suelta no se toma como concepto', () => {
+  assert.equal(analizar('daños').conceptos.length, 0);
+  assert.equal(analizar('acción').conceptos.length, 0);
+});
+
+test('una equivalencia propuesta y medida se muestra, pero no se expande sin revisión', () => {
+  const r = analizar('despido incausado');
+  const c = r.conceptos.find((x) => x.canonico === 'despido sin causa');
+  assert.ok(c, JSON.stringify(r.conceptos.map((x) => x.canonico)));
+  assert.ok((c.grupos.equivalentesPropuestos || []).some((x) => x.estado === 'propuesta'));
+  assert.ok(!expandidos('despido incausado').includes('despido sin causa'));
 });

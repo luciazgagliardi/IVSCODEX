@@ -29,10 +29,23 @@ export function normalizar(s) {
 
 /** Forma singular aproximada de cada palabra (solo número gramatical). */
 export function singular(n) {
-  return n.split(' ').map((w) => (w.length > 4 && /[^aeiou]es$/.test(w) && !w.endsWith('ces') ? w.slice(0, -2)
-    : w.length > 4 && w.endsWith('ces') ? w.slice(0, -3) + 'z'
-      : w.length > 3 && w.endsWith('s') ? w.slice(0, -1) : w)).join(' ');
+  // Clave de comparación, no una forma gramatical: se quita la «s» final y
+  // después la «e» final, así «accidentes» y «accidente», «cauces» y «cauce»,
+  // «consumidores» y «consumidor» comparten clave. (Quitar «-es» de una vez
+  // fallaba con los singulares terminados en «e»: «accidentes» → «accident»
+  // no coincidía con «accidente».)
+  return n.split(' ').map((w) => {
+    if (w.length <= 3) return w;
+    let x = w.endsWith('s') ? w.slice(0, -1) : w;
+    if (x.length > 3 && x.endsWith('e')) x = x.slice(0, -1);
+    return x;
+  }).join(' ');
 }
+
+/** Palabras sueltas demasiado genéricas para afirmar un concepto por sí solas. */
+const GENERICAS = new Set(['accion', 'acciones', 'dano', 'danos', 'garantia', 'garantias', 'recurso', 'recursos', 'demanda', 'sentencia',
+  'juicio', 'proceso', 'causa', 'derecho', 'derechos', 'ley', 'norma', 'caso', 'fallo', 'prueba', 'pago', 'contrato', 'responsabilidad',
+  'internacion', 'salvataje', 'moratoria', 'tribunal', 'juez', 'estado', 'persona', 'personas', 'plazo', 'nulidad', 'multa']);
 
 /** Palabras de la consulta tal como se escribieron, alineadas con su forma normalizada. */
 function palabrasDe(consulta) {
@@ -43,6 +56,8 @@ function palabrasDe(consulta) {
 }
 
 const singularIgual = (a, b) => singular(normalizar(a)) === singular(normalizar(b));
+
+const VIAS_FUERTES = new Set(['descriptor', 'voz_scjm', 'equivalencia_conceptual', 'equivalencia_historica', 'equivalencia_ortografica', 'variacion_morfologica']);
 
 let cache = null;
 
@@ -97,9 +112,17 @@ export function cargar(ruta = RUTA) {
       if (r.tipo === 'equivalencia_historica' || r.tipo === 'expresion_coloquial') indexar(r.termino, e.id, r.tipo);
     }
   }
+  for (const pr of inv.propuestas || []) {
+    entradas.set(`prop:${pr.id}`, { ...pr, id: `prop:${pr.id}`, origen: 'medicion_auditoria' });
+    for (const r of pr.relaciones) indexar(r.termino, `prop:${pr.id}`, 'equivalencia_propuesta');
+  }
+  // Calificadores que cambian el sentido del término escrito, cualquiera sea
+  // la relación por la que se expandiría («régimen de visitas carcelarias»).
+  const bloqueos = new Map();
+  for (const h of inv.historicas) if (h.noSiSigue) bloqueos.set(normalizar(h.termino), new RegExp(`^(?:${h.noSiSigue})`));
   const vocesScjm = new Map();
   for (const v of inv.vocesSoloScjm) { vocesScjm.set(normalizar(v), v); vocesScjm.set('~' + singular(normalizar(v)), v); }
-  cache = { ruta, inv, entradas, indice, vocesScjm };
+  cache = { ruta, inv, entradas, indice, vocesScjm, bloqueos };
   return cache;
 }
 
@@ -116,7 +139,7 @@ function tramos(palabras, indice, vocesScjm) {
     for (let n = Math.min(MAX_PALABRAS_TERMINO, palabras.length - i); n >= 1; n--) {
       const t = palabras.slice(i, i + n).join(' ');
       // Una sola palabra muy corta o genérica no alcanza para afirmar un concepto.
-      if (n === 1 && t.length < 4) continue;
+      if (n === 1 && (t.length < 4 || GENERICAS.has(t))) continue;
       const s = '~' + singular(t);
       if (indice.has(t)) { hallado = { desde: i, hasta: i + n, termino: t, ids: indice.get(t) }; break; }
       if (indice.has(s)) { hallado = { desde: i, hasta: i + n, termino: t, ids: indice.get(s) }; break; }
@@ -130,11 +153,11 @@ function tramos(palabras, indice, vocesScjm) {
 const GRUPOS = {
   equivalencia_conceptual: 'equivalentes', equivalencia_historica: 'historicas', equivalencia_ortografica: 'equivalentes',
   variacion_morfologica: 'equivalentes', sigla: 'siglas', denominacion_extendida: 'denominaciones', descriptor_no_preferido: 'denominaciones',
-  variante_oculta: 'denominaciones', concepto_mas_amplio: 'masAmplios', concepto_mas_especifico: 'masEspecificos',
+  variante_oculta: 'denominaciones', equivalencia_propuesta: 'equivalentesPropuestos', concepto_mas_amplio: 'masAmplios', concepto_mas_especifico: 'masEspecificos',
   concepto_relacionado: 'relacionados', concepto_contrapuesto: 'contrapuestos', figura_que_se_confunde: 'seConfundeCon', expresion_coloquial: 'coloquiales',
 };
 
-function describir(e, via, termino) {
+function describir(e, via, termino, siguiente = '', consulta = '') {
   const grupos = {};
   const expandir = [];
   const relaciones = e.relaciones || [];
@@ -146,7 +169,9 @@ function describir(e, via, termino) {
     if (normalizar(t) === termino) continue;
     const item = { termino: t, tipo: r.tipo, estado: r.estado, fuente: r.fuente, evidencia: r.evidencia,
       ...(r.norma ? { norma: r.norma } : {}), ...(r.alcance ? { alcance: r.alcance } : {}), ...(r.vigenciaTermino ? { vigenciaTermino: r.vigenciaTermino } : {}) };
-    if (r.politica === 'expandir' && r.estado === 'verificada') expandir.push(item);
+    const bloqueada = (r.noSiSigue && siguiente && new RegExp(`^(?:${r.noSiSigue})`).test(siguiente)) ||
+      (r.soloConContexto && !new RegExp(`(?:^|\\s)(?:${r.soloConContexto})`).test(consulta));
+    if (r.politica === 'expandir' && r.estado === 'verificada' && !bloqueada) expandir.push(item);
     const g = GRUPOS[r.tipo] || 'otras';
     (grupos[g] ||= []).length < MAX_POR_GRUPO && grupos[g].push(item);
   }
@@ -154,11 +179,16 @@ function describir(e, via, termino) {
   // forma por la que se entró es una equivalencia verificada, y se sugiere
   // como descriptor oficial si es un término no preferido sin revisar.
   if (e.origen !== 'normativa' && normalizar(e.canonico) !== termino && !singularIgual(e.canonico, termino)) {
-    const verificada = /^(equivalencia_conceptual|equivalencia_ortografica|variacion_morfologica)$/.test(via);
+    const verificada = e.origen !== 'medicion_auditoria' && /^(equivalencia_conceptual|equivalencia_ortografica|variacion_morfologica)$/.test(via);
     const item = { termino: e.canonico, tipo: verificada ? via : 'descriptor_preferido', estado: verificada ? 'verificada' : 'verificada_en_fuente',
       fuente: e.origen, evidencia: verificada ? 'Forma canónica del anillo por el que se reconoció la consulta.' : 'Descriptor preferido del tesauro oficial para el término escrito.' };
-    if (verificada) expandir.unshift(item);
-    (grupos[verificada ? 'equivalentes' : 'descriptorOficial'] ||= []).unshift(item);
+    if (e.origen === 'medicion_auditoria') {
+      const r0 = e.relaciones[0] || {};
+      (grupos.equivalentesPropuestos ||= []).unshift({ ...item, tipo: 'equivalencia_propuesta', estado: 'propuesta', evidencia: r0.evidencia, ...(r0.norma ? { norma: r0.norma } : {}) });
+    } else {
+      if (verificada) expandir.unshift(item);
+      (grupos[verificada ? 'equivalentes' : 'descriptorOficial'] ||= []).unshift(item);
+    }
   }
   return {
     id: e.id, canonico: e.canonico, origen: e.origen, rama: e.rama || null,
@@ -174,7 +204,7 @@ function describir(e, via, termino) {
  * merecen sumarse y qué líneas de investigación conviene ofrecer.
  */
 export function analizar(consulta, { maxVariantes = 4 } = {}) {
-  const { entradas, indice, vocesScjm } = cargar();
+  const { entradas, indice, vocesScjm, bloqueos } = cargar();
   const { originales, normalizadas: palabras } = palabrasDe(consulta);
   const conceptos = [];
   const descriptoresScjm = [];
@@ -189,7 +219,7 @@ export function analizar(consulta, { maxVariantes = 4 } = {}) {
     const porCanonico = new Map();
     for (const { id, via } of [...t.ids].sort((a, b) => prioridad(a.id) - prioridad(b.id))) {
       const e = entradas.get(id); if (!e) continue;
-      const d = describir(e, via, t.termino);
+      const d = describir(e, via, t.termino, palabras[t.hasta] || '', palabras.join(' '));
       const k = normalizar(d.canonico);
       const prev = porCanonico.get(k);
       if (!prev) { porCanonico.set(k, { ...d, origenes: [d.origen], tramo: [t.desde, t.hasta], termino: originales.slice(t.desde, t.hasta).join(' ') }); continue; }
@@ -204,7 +234,18 @@ export function analizar(consulta, { maxVariantes = 4 } = {}) {
         for (const x of items) if (!vistos.has(normalizar(x.termino)) && lista.length < MAX_POR_GRUPO) lista.push(x);
       }
     }
-    conceptos.push(...porCanonico.values());
+    // Un mismo tramo que lleva a conceptos distintos es ambiguo («tenencia»:
+    // cuidado personal o tenencia de estupefacientes). No se expande nada en
+    // silencio: se ofrecen todos los conceptos para que se elija.
+    // Solo cuentan los reconocimientos fuertes: un término no preferido de
+    // SAIJ sin revisar («régimen de visitas» bajo «plan de parentalidad») no
+    // vuelve ambigua una equivalencia respaldada por norma.
+    const reconocidos = [...porCanonico.values()];
+    const bloqueo = bloqueos.get(t.termino);
+    if (bloqueo && bloqueo.test(palabras[t.hasta] || '')) for (const c of reconocidos) { c.expandir = []; c.calificado = true; }
+    const fuertes = reconocidos.filter((c) => VIAS_FUERTES.has(c.reconocidoPor));
+    if (fuertes.length > 1) for (const c of reconocidos) { c.ambiguo = true; c.expandir = []; }
+    conceptos.push(...reconocidos);
   }
 
   // Variantes de la consulta: se reemplaza el tramo reconocido por cada

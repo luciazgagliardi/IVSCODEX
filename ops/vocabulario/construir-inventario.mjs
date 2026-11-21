@@ -202,6 +202,25 @@ async function main() {
   // Relaciones históricas por reforma, con su norma.
   for (const h of historicas.relaciones) contar(h);
 
+  // Equivalencias PROPUESTAS y medidas en vivo por la auditoría de ramas
+  // (docs/auditoria-integral-2026/datos/anillos-propuestos.json). Entran
+  // como «propuesta» con política «sugerir» aunque la medición las valide:
+  // una propuesta no pasa al tesauro definitivo sin revisión humana. Las
+  // rechazadas, sin aporte o inconclusas no se cargan.
+  const rutaProp = path.join(RAIZ, 'docs/auditoria-integral-2026/datos/anillos-propuestos.json');
+  const propuestas = [];
+  if (fs.existsSync(rutaProp)) {
+    for (const x of JSON.parse(fs.readFileSync(rutaProp, 'utf8')).equivalenciasMedidas || []) {
+      const v = String(x.medicion?.validacion || '');
+      if (!/^validada/.test(v) || x.politicaSugerida === 'no_expandir') continue;
+      const r = { termino: x.termino, tipo: x.tipo || 'equivalencia_conceptual', estado: 'propuesta', politica: 'sugerir', fuente: 'medicion_auditoria',
+        evidencia: [x.medicion?.lectura, ...(Array.isArray(x.evidencia) ? x.evidencia : [])].filter(Boolean).join(' '),
+        ...(x.norma ? { norma: x.norma } : {}), validacion: v, politicaSugerida: x.politicaSugerida, medida: x.medicion?.fecha || null };
+      contar(r);
+      propuestas.push({ id: x.id, canonico: x.canonico, rama: x.rama || null, relaciones: [r] });
+    }
+  }
+
   // Voces de la SCJM que no coinciden con ningún descriptor SAIJ: quedan como
   // descriptores jurisdiccionales (Mendoza), útiles para el filtro de tesauro
   // del buscador oficial, sin relaciones inventadas.
@@ -214,14 +233,15 @@ async function main() {
       { id: 'scjm', nombre: 'Tesauro de jurisprudencia del Poder Judicial de Mendoza', organismo: 'Suprema Corte de Justicia de Mendoza (biblioteca de jurisprudencia)', url: 'https://wwwjuri.jus.mendoza.gov.ar/bib/jurisprudencia/consultar.php', voces: scjm.length, nota: 'Consultado por prefijo (una petición por letra). Mismo tesauro para SC, CC y CT.' },
       { id: 'ivs_codex', nombre: 'Anillos curados de IVS CODEX', url: 'frontend/index.html (var TESAURO)' },
       { id: 'normativa', nombre: 'Relaciones históricas por reforma legislativa', url: 'ops/vocabulario/relaciones-historicas.json' },
+      { id: 'medicion_auditoria', nombre: 'Equivalencias propuestas y medidas en vivo (pendientes de revisión)', url: 'docs/auditoria-integral-2026/datos/anillos-propuestos.json' },
     ],
     esquema: {
       tipos: ['equivalencia_conceptual', 'equivalencia_historica', 'equivalencia_ortografica', 'variacion_morfologica', 'sigla', 'denominacion_extendida', 'descriptor_no_preferido', 'variante_oculta', 'concepto_mas_amplio', 'concepto_mas_especifico', 'concepto_relacionado', 'concepto_contrapuesto', 'figura_que_se_confunde'],
       estados: { verificada: 'Comprobada (identidad léxica, medición en vivo o norma expresa).', verificada_en_fuente: 'La relación existe en el tesauro oficial; no implica sinonimia.', propuesta: 'Pendiente de revisión jurídica.', controvertida: 'Hay razones para dudar; no expandir.', rechazada: 'Descartada.' },
       politicas: { expandir: 'Se suma automáticamente a la búsqueda.', sugerir: 'Se ofrece como línea de investigación rotulada.', no_expandir: 'Se muestra con advertencia.' },
     },
-    estadisticas: { conceptosSaij: conceptos.length, anillosCurados: anillos.length, relacionesHistoricas: historicas.relaciones.length, vocesScjm: scjm.length, vocesSoloScjm: vocesSoloScjm.length, ...contadores },
-    conceptos, anillos, historicas: historicas.relaciones, vocesSoloScjm,
+    estadisticas: { conceptosSaij: conceptos.length, anillosCurados: anillos.length, relacionesHistoricas: historicas.relaciones.length, propuestasMedidas: propuestas.length, vocesScjm: scjm.length, vocesSoloScjm: vocesSoloScjm.length, ...contadores },
+    conceptos, anillos, historicas: historicas.relaciones, propuestas, vocesSoloScjm,
   };
   // Compactar: los valores que dependen solo del tipo viven en esquema.porDefecto.
   const porDefecto = {
