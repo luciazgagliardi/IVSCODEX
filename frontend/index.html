@@ -5625,12 +5625,14 @@ function resultadosDe(f){
    pasaje: no hay nada que marcar. Se recuerda por consulta. */
 function sumarioCumpleConsulta(texto){
   if(!texto) return false;
-  var coincidencias=IVSPasajes.coincidencias(texto,estado.q,{modo:estado.modo,tope:6000});
-  if(!coincidencias.length) return false;
+  if(!IVSPasajes.coincidencias(texto,estado.q,{modo:estado.modo,tope:1}).length) return false;
   if(estado.modo!=="todas") return true;
-  var requeridos=IVSPasajes.terminos(estado.q,estado.modo),presentes={};
-  coincidencias.forEach(function(c){ presentes[c.k]=true; });
-  return requeridos.length>0&&requeridos.every(function(t){ return !!presentes[t.k]; });
+  // coincidencias() une marcas superpuestas y conserva sólo una clave por tramo;
+  // por eso cada término se comprueba por separado y no se deduce de las marcas unidas.
+  var requeridos=IVSPasajes.terminos(estado.q,estado.modo);
+  return requeridos.length>0&&requeridos.every(function(t){
+    return IVSPasajes.coincidencias(texto,[t],{modo:"todas",tope:1}).length>0;
+  });
 }
 function sumarioCoincide(r){
   if(!r.sumario) return false;
