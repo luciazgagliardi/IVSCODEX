@@ -3,7 +3,7 @@
  *
  * Formulario ASP clásico disponible por HTTPS: un único POST a
  * resultadoBusqueda.asp con campos de texto plano, sin sesión obligatoria
- * ni token. El endpoint vigente usa jurisprudencia.tsjbaires.gov.ar:
+ * ni token. La página oficial del TSJ enlaza jurisprudencia.tsjbaires.gob.ar;
  *
  *   - "acto administrativo" -> 827 resultados reales, filas con expediente,
  *     carátula, secretaría y un link a PDF por sentencia.
@@ -41,10 +41,10 @@ import { consultarConNavegador, dominioConNavegador } from './navegadorCf.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 
-// El buscador se mudó: jurisprudencia.tsjbaires.gob.ar ya no resuelve en DNS
-// (verificado el 20/11/2026) y el mismo formulario responde por HTTPS en el
-// dominio .gov.ar. Con el host viejo, CABA quedaba siempre «sin respuesta».
-const HOST = 'jurisprudencia.tsjbaires.gov.ar';
+// El host primario es el publicado en el enlace oficial del TSJ (.gob.ar).
+// El dominio .gov.ar queda habilitado en navegador para instalaciones que
+// todavía tengan esa ruta operativa, pero no se usa como autoridad primaria.
+const HOST = 'jurisprudencia.tsjbaires.gob.ar';
 const URL_BUSQUEDA = `https://${HOST}/jurisprudencia/resultadoBusqueda.asp`;
 
 /**
