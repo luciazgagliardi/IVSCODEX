@@ -246,6 +246,7 @@ function sondear(slug, buscarVivo) {
 async function paginaLocal(slug, consulta, { modo, excluir, anioDesde, anioHasta, provincia, tribunal, variantes = [], desde = 0, porPagina = 20, rapida = false, soloConteo = false }, { respaldo = true } = {}) {
   const o = { modo: MODOS.has(modo) ? modo : 'todas', excluir: typeof excluir === 'string' ? excluir.slice(0, 200) : '',
     variantes: Array.isArray(variantes) ? variantes : [],
+    tribunal: typeof tribunal === 'string' && tribunal ? tribunal : 'todo',
     ...(anioValido(anioDesde) ? { anioDesde: Number(anioDesde) } : {}), ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}) };
   // a pedido de la pantalla (vista previa) se espera poco; cuando el sitio no contestó, la copia es la respuesta y se la espera más
   let p = await buscarPagina(slug, consulta, { ...o, provincia: slug === 'saij' && typeof provincia === 'string' ? provincia.slice(0, 60) : '',
