@@ -149,20 +149,21 @@ const agenteSeguro = new Agent({
  * 3. Cortesia con el sitio de origen
  * ------------------------------------------------------------------ */
 
-const ultimoPedido = new Map();
+// Próximo instante reservado por host. Se reserva el turno ANTES de
+// esperar: con una Map de "último pedido" varias búsquedas simultáneas leían
+// el mismo valor y salían juntas, anulando toda la cortesía entre peticiones.
+const siguienteTurno = new Map();
 
-/**
- * Espera lo necesario para no golpear dos veces seguidas el mismo host.
- * Se exporta para que otros clientes HTTP del backend (ej. lib/indiceMza.js)
- * respeten la misma cortesía sin duplicar la lógica.
- */
-// sitios que sirven archivos fijos (los PDF de Juristeca): con menos espera entre pedidos alcanza
+// Sitios que sirven archivos fijos (PDF de Juristeca): menos espera entre pedidos.
 const ESPERA_PROPIA = { 'juristeca.jusbaires.gob.ar': 400 };
+
 export async function esperarTurno(host) {
-  const previo = ultimoPedido.get(host) || 0;
-  const falta = previo + (ESPERA_PROPIA[host] ?? ESPERA_POR_HOST_MS) - Date.now();
-  if (falta > 0) await new Promise((r) => setTimeout(r, falta));
-  ultimoPedido.set(host, Date.now());
+  const ahora = Date.now();
+  const intervalo = ESPERA_PROPIA[host] ?? ESPERA_POR_HOST_MS;
+  const turno = Math.max(ahora, siguienteTurno.get(host) || 0);
+  siguienteTurno.set(host, turno + intervalo);
+  const falta = turno - ahora;
+  if (falta > 0) await new Promise((resolve) => setTimeout(resolve, falta));
 }
 
 /* ------------------------------------------------------------------ *
