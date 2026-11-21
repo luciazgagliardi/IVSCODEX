@@ -188,7 +188,7 @@ function completarAnios() {
  * también al acervo: así la copia local crece de a poco con cada búsqueda que el
  * sitio sí contestó, sin barridos.
  */
-const BASES_DEL_ACERVO = new Set(['mendoza', 'mendozalegal', 'caba', 'csjn', 'saij', 'dialnet', 'scba', 'juristeca', 'santafe', 'rionegro', 'corteidh']);
+const BASES_DEL_ACERVO = new Set(['mendoza', 'mendozalegal', 'caba', 'csjn', 'saij', 'dialnet', 'scba', 'juristeca', 'santafe', 'rionegro', 'corteidh', 'catamarca', 'jujuy', 'chubut', 'tfn', 'santacruz', 'hudoc']);
 async function sumarIndiceGuardado() {
   let archivos = [];
   try { archivos = (await fsp.readdir(DIR_INDICE)).filter((a) => a.endsWith('.json')); } catch { return; }
