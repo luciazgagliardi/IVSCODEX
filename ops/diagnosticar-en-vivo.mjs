@@ -47,7 +47,7 @@ const pruebas = [
   { slug: 'santafe_saij', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
   { slug: 'santiagodelestero', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
   { slug: 'tierradelfuego', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
-  { slug: 'catamarca', q: 'sentencia', modo: 'todas' },
+  { slug: 'catamarca', q: 'sentencia', modo: 'todas', local: true },
 ];
 
 async function comprobarRegistroApi() {
