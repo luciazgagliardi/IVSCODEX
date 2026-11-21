@@ -169,6 +169,7 @@ function parsear(html) {
       magistrados,
       linkFicha: null,
       linkFallo: idFallo ? `https://${HOST}/VerTextoCompleto.aspx?idFallo=${idFallo}` : null,
+      tipo: 'sumario',
     });
   }
   return registros;
