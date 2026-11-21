@@ -36,6 +36,12 @@ for (const archivo of man.archivos) {
   d.exec('COMMIT');
 }
 d.exec("INSERT INTO fts(fts) VALUES('rebuild')");
+// No publicar nunca una base que SQLite o el índice externo FTS5 consideren
+// dañados. La comprobación FTS compara también el índice con la tabla fallos.
+const integridad = d.prepare('PRAGMA quick_check').all();
+if (integridad.length !== 1 || integridad[0].quick_check !== 'ok')
+  throw new Error('SQLite importado no superó PRAGMA quick_check');
+d.prepare("INSERT INTO fts(fts, rank) VALUES('integrity-check', 1)").run();
 // Optimizar FTS5 es una compactación opcional, no un requisito para buscar.
 // Hacerla en cada arranque duplicaba trabajo de disco justo en el cuello de
 // botella de Azure (/home sobre almacenamiento de red). Los tests garantizan
