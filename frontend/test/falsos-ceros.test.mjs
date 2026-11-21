@@ -92,6 +92,10 @@ test('un error HTTP no se informa como corte de conexión, y hay reintento de la
   assert.equal(d.ok, false);
   assert.match(d.mensaje, /HTTP 503/);
   assert.match(d.mensaje, /no fue un corte de su conexión/);
-  assert.match(html, /setTimeout\(function\(\)\{control\.abort\(\);\},50000\)/);
+  assert.match(html, /var TOPE_ORIGEN_NAVEGADOR=135000/);
+  assert.match(html, /function cancelarOrigenPantalla\(slug\)/);
+  assert.match(html, /function pedirOrigenConReintento\(t,control\)/);
+  assert.match(html, /intento<2/);
+  assert.match(html, /cancelarOrigenPantalla\(slug\)/);
   assert.match(html, /if\(act==="reintentar-fallidas"\)/);
 });

@@ -25,6 +25,7 @@ import { IVSPasajes } from '../lib/pasajes.js';
 import { marcarUsoCaba, estadoCosechaCaba } from '../lib/cosechaCaba.js';
 import { sinRepetidos } from '../lib/claveFallo.js';
 import { errores, ErrorApp } from '../lib/errores.js';
+import { sinClave } from '../lib/proxyOrigen.js';
 import { proponerAnillo, hayModelo } from '../lib/proponerAnillo.js';
 import { requiereSesion } from './auth.js';
 import { reservarConsultaIA } from '../lib/consumoIA.js';
@@ -531,9 +532,15 @@ for (const { slug, buscar } of FUENTES) {
             ['TIEMPO_AGOTADO', 'RED_INALCANZABLE', 'INDICE_FUENTE_FALLA', 'INDICE_MZA_FALLA'].includes(codigo) ||
             (estadoOrigen !== null && estadoOrigen >= 500)
           );
+          // Diagnóstico reservado a la respuesta de API: no se renderiza en la
+          // interfaz. Conserva DNS/TLS/HTTP/forma de respuesta para que la
+          // comprobación de las fuentes no reduzca todas las causas a «falló».
+          const detalleDiagnostico = sinClave(
+            e?.cause?.code || e?.cause?.message || e?.code || e?.message || e?.name || 'error desconocido'
+          ).replace(/https?:\/\/[^\s]+/gi, '[URL]').slice(0, 180);
           return res.json({
             ok: false, fuente: slug, enVivo: false,
-            codigo, mensaje, reintentable,
+            codigo, mensaje, reintentable, detalleDiagnostico,
             ...(estadoOrigen ? { estadoOrigen } : {}),
             ms: Date.now() - arranque,
           });

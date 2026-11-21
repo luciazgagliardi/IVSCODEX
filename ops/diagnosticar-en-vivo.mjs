@@ -47,7 +47,7 @@ const pruebas = [
   { slug: 'santafe_saij', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
   { slug: 'santiagodelestero', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
   { slug: 'tierradelfuego', q: 'amparo', tribunal: 'sumarios', modo: 'todas' },
-  { slug: 'catamarca', q: 'sentencia', modo: 'todas', local: true },
+  { slug: 'catamarca', q: 'sentencia', modo: 'todas' },
 ];
 
 async function comprobarRegistroApi() {
@@ -116,7 +116,7 @@ async function unaPrueba(caso) {
             : enVivo ? (total === 0 ? 'cero_valido' : 'vivo') : 'no_confirmado_en_vivo',
       total, totalPendiente, documentos,
       codigo: d.codigo || null, mensaje: d.mensaje || d.error || null,
-      avisoFalla: d.avisoFalla || null, detalle: d.detalle || null,
+      avisoFalla: d.avisoFalla || null, detalle: d.detalle || d.detalleDiagnostico || null,
       ms: Date.now() - inicio,
       externa: Boolean(caso.externa), sensible: Boolean(caso.sensible),
     };
