@@ -85,6 +85,70 @@ test('Chubut inicia acceso anónimo, conserva sesión y pagina en el JSON oficia
   assert.equal(llamadas[3].opciones.headers['X-Requested-With'], 'XMLHttpRequest');
 });
 
+test('Chubut sigue redirecciones de acceso anónimo y renueva una sesión expirada sin mostrar HTML como resultado', async () => {
+  const llamadas = [];
+  let busquedas = 0;
+  let registrosAnonimos = 0;
+  await conFetch(async (url, opciones = {}) => {
+    const u = new URL(url);
+    llamadas.push({ url: u, opciones });
+    if (u.pathname.endsWith('/Home/Index')) {
+      return new Response('Portada Eureka', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaVisit=visit-redirect; Path=/' },
+      });
+    }
+    if (u.pathname.endsWith('/RegistrarAccesoAnonimo')) {
+      registrosAnonimos++;
+      if (u.pathname.endsWith('/RegistrarAccesoAnonimo') && !u.searchParams.has('confirmado')) {
+        return new Response('', {
+          status: 302,
+          headers: {
+            Location: '/eureka/Home/RegistrarAccesoAnonimo?confirmado=1',
+            'Set-Cookie': 'AnonTicket=anon-redirect; Path=/',
+          },
+        });
+      }
+      return new Response('Acceso anónimo habilitado', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaSession=renewed-' + registrosAnonimos + '; Path=/' },
+      });
+    }
+    if (u.searchParams.has('confirmado')) {
+      return new Response('Acceso anónimo confirmado', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaSession=renewed-' + registrosAnonimos + '; Path=/' },
+      });
+    }
+    assert.ok(u.pathname.endsWith('/Sumarios/BuscarPorCriterios'));
+    busquedas++;
+    assert.match(opciones.headers.Cookie || '', /EurekaVisit=visit-redirect/);
+    assert.match(opciones.headers.Cookie || '', /AnonTicket=anon-redirect/);
+    assert.match(opciones.headers.Cookie || '', /EurekaSession=renewed-/);
+    assert.equal(opciones.headers['X-Requested-With'], 'XMLHttpRequest');
+    if (busquedas === 1) {
+      return new Response('<html><title>Sistema Eureka</title><body>Su tiempo de sesión ha finalizado. Acceso restringido.</body></html>', {
+        status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      });
+    }
+    return respuesta({
+      idBusqueda: 'reintento-ok', pageCount: 1, totalFilas: 1,
+      rows: [{ idSumario: 88099, cell: {
+        numero: '111', anio: '2026', organismo: 'Cámara Civil',
+        competencia: 'Civil', fechaFirma: '20/11/2026',
+        sumario: 'Responsabilidad civil reconocida en el fallo.',
+        caratula: 'Gómez c/ Empresa',
+      } }],
+    });
+  }, async () => {
+    const salida = await buscarChubut({ q: 'responsabilidad civil', tribunal: 'sumarios' });
+    assert.equal(salida.resultados.length, 1);
+    assert.equal(salida.resultados[0].id, 'chubut_sumario_88099');
+    assert.equal(salida.resultados[0].tipo, 'sumario');
+  });
+  assert.equal(busquedas, 2, 'la primera HTML de sesión expirada debe activar una renovación y repetir sólo una vez');
+  assert.equal(registrosAnonimos, 2, 'la sesión anónima se renueva una sola vez');
+  assert.equal(llamadas.filter(x => x.url.pathname.endsWith('/Home/Index')).length, 2);
+  assert.ok(llamadas.some(x => x.url.pathname.endsWith('/RegistrarAccesoAnonimo') && x.url.searchParams.has('confirmado')));
+});
+
 test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fallos', async () => {
   const llamadas = [];
   await conFetch(async (url, opciones = {}) => {
