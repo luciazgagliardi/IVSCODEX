@@ -40,6 +40,9 @@ test('la cosecha cubre fuentes habilitadas y detiene reintentos ante bloqueos y 
   assert.ok(archivo.includes('PAGINAS_POR_TAREA'));
   assert.ok(archivo.includes('TimeoutError|AbortError'));
   assert.ok(archivo.includes('ECONNRESET'));
+  assert.ok(archivo.includes('ECONNABORTED'));
+  assert.ok(archivo.includes('rechazosDeAcceso = 0;'));
+  assert.ok(archivo.includes('if (pareceBloqueoDeRed(estado.ultimoError)) rechazosDeAcceso++'));
   assert.ok(archivo.includes('cursorPreservado: true'));
   assert.ok(corte.includes('listarTodo()'));
   assert.ok(!workflow.includes('node scripts/ampliarCorteidh.mjs'));
