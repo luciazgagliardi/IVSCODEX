@@ -51,6 +51,6 @@ test('el buscador del TSJ CABA apunta al dominio vigente por HTTPS', async () =>
   const { readFile } = await import('node:fs/promises');
   const src = await readFile(path.join(raiz, 'lib', 'indiceCaba.js'), 'utf8');
   // jurisprudencia.tsjbaires.gob.ar dejó de resolver en DNS (20/11/2026).
-  assert.match(src, /const HOST = 'jurisprudencia\.tsjbaires\.gov\.ar'/);
+  assert.match(src, /const HOST = 'jurisprudencia\.tsjbaires\.gob\.ar'/);
   assert.match(src, /https:\/\/\$\{HOST\}\/jurisprudencia\/resultadoBusqueda\.asp/);
 });

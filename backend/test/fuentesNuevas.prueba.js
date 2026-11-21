@@ -36,6 +36,11 @@ test('Chubut inicia acceso anónimo, conserva sesión y pagina en el JSON oficia
   await conFetch(async (url, opciones = {}) => {
     const u = new URL(url);
     llamadas.push({ url: u, opciones });
+    if (u.pathname.endsWith('/Home/Index')) {
+      return new Response('Inicio Eureka', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaVisit=visit-1; Path=/' },
+      });
+    }
     if (u.pathname.endsWith('/RegistrarAccesoAnonimo')) {
       return new Response('Acceso anónimo habilitado', {
         status: 200, headers: { 'Set-Cookie': 'EurekaSession=anon-123; Path=/; HttpOnly' },
@@ -68,12 +73,75 @@ test('Chubut inicia acceso anónimo, conserva sesión y pagina en el JSON oficia
     assert.equal(segunda.pagina, 2);
     assert.equal(segunda.resultados[0].id, 'chubut_sumario_64708');
   });
+  assert.equal(llamadas.filter(x => x.url.pathname.endsWith('/Home/Index')).length, 1);
   assert.equal(llamadas.filter(x => x.url.pathname.endsWith('/RegistrarAccesoAnonimo')).length, 1);
   assert.equal(llamadas.filter(x => x.url.pathname.endsWith('/BuscarPorCriterios')).length, 2);
-  assert.equal(llamadas[1].url.searchParams.get('PageIndex'), '1');
-  assert.equal(llamadas[2].url.searchParams.get('PageIndex'), '2');
-  assert.equal(llamadas[1].url.searchParams.get('Tipo'), '');
+  assert.equal(llamadas[2].url.searchParams.get('PageIndex'), '1');
+  assert.equal(llamadas[3].url.searchParams.get('PageIndex'), '2');
+  assert.equal(llamadas[2].url.searchParams.get('Tipo'), '');
+  assert.match(llamadas[2].opciones.headers.Cookie || '', /EurekaVisit=visit-1/);
   assert.match(llamadas[2].opciones.headers.Cookie || '', /EurekaSession=anon-123/);
+  assert.equal(llamadas[2].opciones.headers['X-Requested-With'], 'XMLHttpRequest');
+  assert.equal(llamadas[3].opciones.headers['X-Requested-With'], 'XMLHttpRequest');
+});
+
+test('Chubut sigue redirecciones de acceso anónimo y renueva una sesión expirada sin mostrar HTML como resultado', async () => {
+  const llamadas = [];
+  let busquedas = 0;
+  let registrosAnonimos = 0;
+  await conFetch(async (url, opciones = {}) => {
+    const u = new URL(url);
+    llamadas.push({ url: u, opciones });
+    if (u.pathname.endsWith('/Home/Index')) {
+      return new Response('Portada Eureka', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaVisit=visit-redirect; Path=/' },
+      });
+    }
+    if (u.pathname.endsWith('/RegistrarAccesoAnonimo')) {
+      if (!u.searchParams.has('confirmado')) {
+        registrosAnonimos++;
+        return new Response('', {
+          status: 302,
+          headers: {
+            Location: '/eureka/Home/RegistrarAccesoAnonimo?confirmado=1',
+            'Set-Cookie': 'AnonTicket=anon-redirect; Path=/',
+          },
+        });
+      }
+      return new Response('Acceso anónimo confirmado', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaSession=renewed-' + registrosAnonimos + '; Path=/' },
+      });
+    }
+    assert.ok(u.pathname.endsWith('/Sumarios/BuscarPorCriterios'));
+    busquedas++;
+    assert.match(opciones.headers.Cookie || '', /EurekaVisit=visit-redirect/);
+    assert.match(opciones.headers.Cookie || '', /AnonTicket=anon-redirect/);
+    assert.match(opciones.headers.Cookie || '', /EurekaSession=renewed-/);
+    assert.equal(opciones.headers['X-Requested-With'], 'XMLHttpRequest');
+    if (busquedas === 1) {
+      return new Response('<html><title>Sistema Eureka</title><body>Su tiempo de sesión ha finalizado. Acceso restringido.</body></html>', {
+        status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      });
+    }
+    return respuesta({
+      idBusqueda: 'reintento-ok', pageCount: 1, totalFilas: 1,
+      rows: [{ idSumario: 88099, cell: {
+        numero: '111', anio: '2026', organismo: 'Cámara Civil',
+        competencia: 'Civil', fechaFirma: '20/11/2026',
+        sumario: 'Responsabilidad civil reconocida en el fallo.',
+        caratula: 'Gómez c/ Empresa',
+      } }],
+    });
+  }, async () => {
+    const salida = await buscarChubut({ q: 'responsabilidad renovada', tribunal: 'sumarios' });
+    assert.equal(salida.resultados.length, 1);
+    assert.equal(salida.resultados[0].id, 'chubut_sumario_88099');
+    assert.equal(salida.resultados[0].tipo, 'sumario');
+  });
+  assert.equal(busquedas, 2, 'la primera HTML de sesión expirada debe activar una renovación y repetir sólo una vez');
+  assert.equal(registrosAnonimos, 2, 'la sesión anónima se renueva una sola vez');
+  assert.equal(llamadas.filter(x => x.url.pathname.endsWith('/Home/Index')).length, 2);
+  assert.ok(llamadas.some(x => x.url.pathname.endsWith('/RegistrarAccesoAnonimo') && x.url.searchParams.has('confirmado')));
 });
 
 test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fallos', async () => {
@@ -81,6 +149,11 @@ test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fa
   await conFetch(async (url, opciones = {}) => {
     const u = new URL(url);
     llamadas.push({ url: u, opciones });
+    if (u.pathname.endsWith('/Home/Index')) {
+      return new Response('Inicio Eureka', {
+        status: 200, headers: { 'Set-Cookie': 'EurekaVisit=visit-1; Path=/' },
+      });
+    }
     if (u.pathname.endsWith('/RegistrarAccesoAnonimo')) {
       return new Response('Acceso anónimo habilitado', {
         status: 200, headers: { 'Set-Cookie': 'EurekaSession=fallos-first; Path=/; HttpOnly' },
@@ -148,7 +221,10 @@ test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fa
 
   assert.ok(llamadas.some((x) => x.url.pathname.endsWith('/Sentencias/BuscarPorCriterios')));
   assert.ok(llamadas.some((x) => x.url.pathname.endsWith('/Sumarios/BuscarPorCriterios')));
+  assert.equal(llamadas.filter((x) => x.url.pathname.endsWith('/Home/Index')).length, 2);
   assert.equal(llamadas.filter((x) => x.url.pathname.endsWith('/RegistrarAccesoAnonimo')).length, 2);
+  for (const x of llamadas.filter((x) => /BuscarPorCriterios/.test(x.url.pathname)))
+    assert.equal(x.opciones.headers['X-Requested-With'], 'XMLHttpRequest');
   const pathOrden = llamadas.filter((x) => /BuscarPorCriterios/.test(x.url.pathname)).map((x) => x.url.pathname);
   assert.ok(pathOrden[0].endsWith('/Sentencias/BuscarPorCriterios'));
   assert.ok(pathOrden[1].endsWith('/Sumarios/BuscarPorCriterios'));

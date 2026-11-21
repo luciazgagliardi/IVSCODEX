@@ -7,6 +7,7 @@
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { errores } from './errores.js';
+import { sinClave } from './proxyOrigen.js';
 
 export const ORIGEN_CHUBUT = 'https://apps1cloud.juschubut.gov.ar/eureka';
 const HOST = new URL(ORIGEN_CHUBUT).hostname;
@@ -32,41 +33,88 @@ function valor(obj, ...nombres) {
   }
   return '';
 }
-async function pedir(url, { cookie = '', method = 'GET', body } = {}) {
-  await esperarTurno(HOST);
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
-  try {
-    const resp = await fetch(url, {
-      method, signal: control.signal,
-      headers: {
-        'User-Agent': USER_AGENT,
-        Accept: 'application/json, text/html;q=0.9, */*;q=0.8',
-        Referer: ORIGEN_CHUBUT + '/',
-        ...(cookie ? { Cookie: cookie } : {}),
-        ...(body ? { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } : {}),
-      },
-      ...(body ? { body: new URLSearchParams(body).toString() } : {}),
-    });
-    if (!resp.ok) throw errores.indiceFuenteFalla('chubut', `respuesta HTTP ${resp.status}`);
-    const text = await resp.text();
-    return { text, cookies: cookiesNuevas(resp) };
-  } catch (e) {
-    if (e?.codigo) throw e;
-    if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
-    throw errores.indiceFuenteFalla('chubut', e?.cause?.code || e?.message || 'error de red');
-  } finally { clearTimeout(reloj); }
+async function pedir(urlTexto, { cookie = '', method = 'GET', body } = {}) {
+  let actual = new URL(urlTexto);
+  if (actual.hostname !== HOST) throw new Error('Destino fuera del portal Eureka');
+  let metodo = method;
+  let cuerpo = body ? new URLSearchParams(body).toString() : undefined;
+  let cookieJar = String(cookie || '');
+  let ultimoTipo = '';
+  for (let salto = 0; salto <= 5; salto++) {
+    await esperarTurno(HOST);
+    const control = new AbortController();
+    const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
+    let resp;
+    try {
+      resp = await fetch(actual, {
+        method: metodo,
+        redirect: 'manual',
+        signal: control.signal,
+        headers: {
+          'User-Agent': USER_AGENT,
+          Accept: 'application/json, text/javascript, text/html;q=0.9, */*;q=0.8',
+          'Accept-Language': 'es-AR,es;q=0.9,en;q=0.5',
+          Origin: ORIGEN_CHUBUT,
+          Referer: ORIGEN_CHUBUT + '/Home/Index',
+          'X-Requested-With': 'XMLHttpRequest',
+          ...(cookieJar ? { Cookie: cookieJar } : {}),
+          ...(cuerpo ? { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } : {}),
+        },
+        ...(cuerpo ? { body: cuerpo } : {}),
+      });
+      const nuevas = cookiesNuevas(resp);
+      cookieJar = unirCookies(cookieJar, nuevas);
+      ultimoTipo = resp.headers.get('content-type') || '';
+      if ([301, 302, 303, 307, 308].includes(resp.status)) {
+        const destino = resp.headers.get('location');
+        if (!destino) throw errores.indiceFuenteFalla('chubut', 'redirección sin destino');
+        const siguiente = new URL(destino, actual);
+        if (siguiente.hostname !== HOST) {
+          throw errores.indiceFuenteFalla('chubut', 'redirección fuera del portal oficial');
+        }
+        if ([301, 302, 303].includes(resp.status) && metodo !== 'GET' && metodo !== 'HEAD') {
+          metodo = 'GET';
+          cuerpo = undefined;
+        }
+        actual = siguiente;
+        continue;
+      }
+      if (!resp.ok) throw errores.indiceFuenteFalla('chubut', 'respuesta HTTP ' + resp.status);
+      const text = await resp.text();
+      return { text, cookies: nuevas, cookieJar, contentType: ultimoTipo, status: resp.status, urlFinal: actual.toString() };
+    } catch (e) {
+      if (e?.codigo) throw e;
+      if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
+      const error = errores.indiceFuenteFalla('chubut', e?.cause?.code || e?.message || 'error de red');
+      error.cause = new Error(sinClave(e?.cause?.code || e?.cause?.message || e?.message || 'error de red'));
+      throw error;
+    } finally {
+      clearTimeout(reloj);
+    }
+  }
+  throw errores.indiceFuenteFalla('chubut', 'demasiadas redirecciones del portal');
 }
 
 async function sesion(clave) {
   const previa = SESIONES.get(clave);
   if (previa && previa.vence > Date.now()) return previa;
-  const inicio = await pedir(ORIGEN_CHUBUT + '/Home/RegistrarAccesoAnonimo');
-  const actual = { cookie: unirCookies('', inicio.cookies), idBusqueda: '', vence: Date.now() + 20 * 60_000 };
+
+  // Eureka emite primero cookies de visita y después habilita el acceso
+  // anónimo. Pedir directamente RegistrarAccesoAnonimo omite ese primer
+  // paso en algunas respuestas del portal y termina devolviendo HTML de
+  // sesión vencida en vez del JSON AJAX.
+  const portada = await pedir(ORIGEN_CHUBUT + '/Home/Index');
+  const inicio = await pedir(ORIGEN_CHUBUT + '/Home/RegistrarAccesoAnonimo', {
+    cookie: portada.cookieJar,
+  });
+  const actual = {
+    cookie: inicio.cookieJar || unirCookies(portada.cookieJar, inicio.cookies),
+    idBusqueda: '',
+    vence: Date.now() + 20 * 60_000,
+  };
   SESIONES.set(clave, actual);
   return actual;
 }
-
 function fechaChubut(v) {
   const s = limpiar(v);
   const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(s);
@@ -102,7 +150,7 @@ function filaChubut(row, tipo) {
   };
 }
 
-async function buscarChubutSimple({ q, tribunal = 'sumarios', modo = 'todas', pagina = 1, desde = null, porPagina = 20 }) {
+async function buscarChubutSimple({ q, tribunal = 'sumarios', modo = 'todas', pagina = 1, desde = null, porPagina = 20, _reintentoSesion = false }) {
   const consulta = limpiar(q);
   if (!consulta) throw errores.consultaVacia();
   const tipo = tribunal === 'sentencias' || tribunal === 'fallos' ? 'sentencias' : 'sumarios';
@@ -127,9 +175,24 @@ async function buscarChubutSimple({ q, tribunal = 'sumarios', modo = 'todas', pa
   const resp = await pedir(ORIGEN_CHUBUT + ruta + params.toString(), { cookie: sess.cookie });
   let datos;
   try { datos = JSON.parse(resp.text); }
-  catch { throw errores.indiceFuenteFalla('chubut', 'la API no devolvió JSON'); }
+  catch (parseError) {
+    const sesionExpirada = /sistema eureka|tiempo de sesi[oó]n|acceso restringido|ingresar usuario y clave/i.test(resp.text.slice(0, 5000));
+    if (sesionExpirada && !_reintentoSesion) {
+      SESIONES.delete(clave);
+      return buscarChubutSimple({
+        q: consulta, tribunal, modo, pagina, desde, porPagina,
+        _reintentoSesion: true,
+      });
+    }
+    const error = errores.indiceFuenteFalla('chubut', 'la búsqueda anónima no devolvió el JSON del portal');
+    error.cause = new Error(sinClave(
+      'HTTP ' + (resp.status || 200) + '; content-type ' + (resp.contentType || 'desconocido') +
+      '; sesión expirada ' + String(sesionExpirada)
+    ));
+    throw error;
+  }
   if (!datos || !Array.isArray(datos.rows)) throw errores.indiceFuenteFalla('chubut', 'respuesta JSON sin filas');
-  sess.cookie = unirCookies(sess.cookie, resp.cookies);
+  sess.cookie = resp.cookieJar || unirCookies(sess.cookie, resp.cookies);
   sess.idBusqueda = valor(datos, 'idBusqueda', 'IdBusqueda') || sess.idBusqueda;
   const resultados = datos.rows.map(row => filaChubut(row, tipo)).filter(Boolean);
   const total = Number(valor(datos, 'totalFilas', 'total', 'records') || 0);

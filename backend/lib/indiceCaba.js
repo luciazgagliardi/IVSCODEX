@@ -3,7 +3,7 @@
  *
  * Formulario ASP clásico disponible por HTTPS: un único POST a
  * resultadoBusqueda.asp con campos de texto plano, sin sesión obligatoria
- * ni token. El endpoint vigente usa jurisprudencia.tsjbaires.gov.ar:
+ * ni token. La página oficial del TSJ enlaza jurisprudencia.tsjbaires.gob.ar;
  *
  *   - "acto administrativo" -> 827 resultados reales, filas con expediente,
  *     carátula, secretaría y un link a PDF por sentencia.
@@ -37,13 +37,14 @@ import iconv from 'iconv-lite';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
 import { esperarTurno } from './descargador.js';
 import { urlParaPedir, sinClave } from './proxyOrigen.js';
+import { consultarConNavegador, dominioConNavegador } from './navegadorCf.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 
-// El buscador se mudó: jurisprudencia.tsjbaires.gob.ar ya no resuelve en DNS
-// (verificado el 20/11/2026) y el mismo formulario responde por HTTPS en el
-// dominio .gov.ar. Con el host viejo, CABA quedaba siempre «sin respuesta».
-const HOST = 'jurisprudencia.tsjbaires.gov.ar';
+// El host primario es el publicado en el enlace oficial del TSJ (.gob.ar).
+// El dominio .gov.ar queda habilitado en navegador para instalaciones que
+// todavía tengan esa ruta operativa, pero no se usa como autoridad primaria.
+const HOST = 'jurisprudencia.tsjbaires.gob.ar';
 const URL_BUSQUEDA = `https://${HOST}/jurisprudencia/resultadoBusqueda.asp`;
 
 /**
@@ -72,47 +73,81 @@ function cuerpoWin1252(parametros) {
 
 async function pedirBusqueda(parametros) {
   await esperarTurno(HOST);
-
-  // Si este host le niega la conexión al datacenter publicado, el pedido se
-  // envuelve para pasar por ScraperAPI en vez de ir directo (ver
-  // lib/proxyOrigen.js). Sin key configurada esto no hace nada y va
-  // directo, como siempre.
   const url = urlParaPedir(URL_BUSQUEDA, HOST);
   const porProxy = url !== URL_BUSQUEDA;
+  const headers = {
+    'User-Agent': USER_AGENT,
+    'Content-Type': porProxy
+      ? 'application/x-www-form-urlencoded'
+      : 'application/x-www-form-urlencoded; charset=windows-1252',
+    Accept: 'text/html, */*;q=0.8',
+  };
+  const body = cuerpoWin1252(parametros);
+
+  const browserFallback = async (detalleDirecto) => {
+    try {
+      if (!dominioConNavegador(HOST)) throw new Error('dominio no habilitado');
+      const salida = await consultarConNavegador(URL_BUSQUEDA, {
+        method: 'POST',
+        headers: { 'Content-Type': headers['Content-Type'], Accept: headers.Accept },
+        body,
+      }, { fuente: 'caba', operacion: 'busqueda' });
+      if (!salida || salida.estado < 200 || salida.estado >= 400) {
+        throw new Error('respuesta del navegador HTTP ' + (salida?.estado || 'sin estado'));
+      }
+      const texto = decodificarWin1252(salida.buffer);
+      if (/just a moment|checking your browser|attention required/i.test(texto.slice(0, 1600))) {
+        throw new Error('el portal devolvió un desafío también en el navegador');
+      }
+      return texto;
+    } catch (errorNavegador) {
+      // El detalle queda en cause para el diagnóstico interno del servidor.
+      // El mensaje que recibe la interfaz sigue siendo genérico.
+      const error = errores.indiceFuenteFalla('caba', 'la consulta oficial no pudo completarse');
+      error.cause = new Error(sinClave(
+        'directo: ' + (detalleDirecto || 'bloqueado') +
+        '; navegador: ' + (errorNavegador?.cause?.code || errorNavegador?.message || 'falló')
+      ).slice(0, 180));
+      throw error;
+    }
+  };
+
   const control = new AbortController();
   const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const resp = await fetch(url, {
-      method: 'POST',
-      signal: control.signal,
-      headers: {
-        'User-Agent': USER_AGENT,
-        // ScraperAPI devuelve 415 si el Content-Type trae un "charset" que
-        // no reconoce; el sitio de destino no lo necesita para nada (decide
-        // la codificación por los bytes que le llegan, no por este header),
-        // así que yendo por ahí se manda sin ese parámetro.
-        'Content-Type': porProxy
-          ? 'application/x-www-form-urlencoded'
-          : 'application/x-www-form-urlencoded; charset=windows-1252',
-        Accept: 'text/html, */*;q=0.8',
-      },
-      body: cuerpoWin1252(parametros),
-    });
-    if (!resp.ok) throw errores.indiceFuenteFalla('caba', `respuesta ${resp.status}`);
-    // Yendo directo la respuesta viene en windows-1252 —decodificarla como
-    // UTF-8 (lo que hace resp.text() a ciegas) es lo que dejaba "ACCIÓN"
-    // como "ACCI�N" en las carátulas—. Por ScraperAPI, en cambio, ya llega
-    // en UTF-8: normaliza la codificación de este lado.
-    if (porProxy) return await resp.text();
-    const buffer = Buffer.from(await resp.arrayBuffer());
-    return decodificarWin1252(buffer);
-  } catch (e) {
-    if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
-    if (e?.codigo) throw e; // ya es un ErrorApp
-    // fetch() envuelve el error real en uno generico ("fetch failed"); el
-    // motivo de verdad (DNS, conexion rechazada, TLS, auth del proxy...)
-    // vive en .cause. Sin esto, cualquier falla de red se ve identica.
-    throw errores.indiceFuenteFalla('caba', sinClave(e?.cause?.message || e?.cause?.code || e?.message));
+    let resp;
+    try {
+      resp = await fetch(url, { method: 'POST', signal: control.signal, headers, body });
+    } catch (errorDirecto) {
+      // Un reset de red o timeout del datacenter también puede superarse
+      // desde Chromium, que mantiene cookies y resuelve los desafíos del sitio.
+      return await browserFallback(errorDirecto?.cause?.code || errorDirecto?.message || 'falló la conexión directa');
+    }
+
+    if (resp.ok) {
+      if (porProxy) return await resp.text();
+      const buffer = Buffer.from(await resp.arrayBuffer());
+      const texto = decodificarWin1252(buffer);
+      // Algunos bloqueos entregan 200 con una página de desafío en lugar
+      // de un 403. No tratar ese HTML como una respuesta válida del buscador.
+      if (!/just a moment|checking your browser|attention required/i.test(texto.slice(0, 1600)))
+        return texto;
+      return await browserFallback('el servidor directo entregó un desafío HTTP 200');
+    }
+
+    // No insistir ante límites de uso ni enlaces inexistentes. El relevo se
+    // reserva para los bloqueos y errores de infraestructura que Chromium
+    // puede resolver desde una sesión de navegador.
+    if (resp.status === 403 || [500, 502, 503, 504].includes(resp.status)) {
+      return await browserFallback('HTTP ' + resp.status);
+    }
+    throw errores.indiceFuenteFalla('caba', 'respuesta HTTP ' + resp.status);
+  } catch (error) {
+    if (error?.codigo) throw error;
+    if (error?.name === 'AbortError') {
+      return await browserFallback('timeout de la conexión directa');
+    }
+    throw errores.indiceFuenteFalla('caba', sinClave(error?.cause?.message || error?.cause?.code || error?.message));
   } finally {
     clearTimeout(reloj);
   }
