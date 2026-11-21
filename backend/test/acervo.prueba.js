@@ -60,7 +60,7 @@ test('la consulta: raíces sin acentos, modos y exclusión', () => {
   assert.equal(consultaFts('registro domiciliario', 'exacta'), '"registro domiciliario"');
   assert.equal(consultaFts('contaminación del suelo', 'exacta'), '"contaminacion del suelo"');
   assert.equal(consultaFts('contaminacion en el suelo', 'exacta'), '"contaminacion en el suelo"');
-  assert.equal(consultaFts('contaminación del suelo'), '"contaminacion" AND "suelo"');
+  assert.equal(consultaFts('contaminación del suelo'), '"contaminaci"* AND "suelo"*');
   assert.equal(consultaFts('daño', 'todas', 'moral'), '("dano"*) NOT ("moral"*)');
   assert.equal(consultaFts('de la'), null);
 });
