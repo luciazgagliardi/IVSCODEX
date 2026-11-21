@@ -133,7 +133,7 @@ test('Chubut sigue redirecciones de acceso anónimo y renueva una sesión expira
       } }],
     });
   }, async () => {
-    const salida = await buscarChubut({ q: 'responsabilidad civil', tribunal: 'sumarios' });
+    const salida = await buscarChubut({ q: 'responsabilidad renovada', tribunal: 'sumarios' });
     assert.equal(salida.resultados.length, 1);
     assert.equal(salida.resultados[0].id, 'chubut_sumario_88099');
     assert.equal(salida.resultados[0].tipo, 'sumario');
