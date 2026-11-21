@@ -177,8 +177,10 @@ async function buscarChubutSimple({ q, tribunal = 'sumarios', modo = 'todas', pa
   let datos;
   try { datos = JSON.parse(resp.text); }
   catch (parseError) {
-    const sesionExpirada = /sistema eureka|tiempo de sesi[oó]n|acceso restringido|ingresar usuario y clave/i.test(resp.text.slice(0, 5000));
-    if (sesionExpirada && !_reintentoSesion) {
+    // Algunas respuestas de sesión caducada cambian de plantilla y no
+    // incluyen un texto reconocible. Ante cualquier cuerpo no JSON se renueva
+    // una sola vez la sesión anónima; si vuelve a fallar, el wrapper usa SAIJ.
+    if (!_reintentoSesion) {
       SESIONES.delete(clave);
       return buscarChubutSimple({
         q: consulta, tribunal, modo, pagina, desde, porPagina,
@@ -308,8 +310,9 @@ export async function buscarChubut(opciones = {}) {
   try {
     return await buscarChubutEureka(opciones);
   } catch (error) {
-    const tribunal = ['fallos', 'sentencias', 'sumarios', 'todo'].includes(opciones.tribunal)
+    const pedido = ['fallos', 'sentencias', 'sumarios', 'todo'].includes(opciones.tribunal)
       ? opciones.tribunal : 'todo';
+    const tribunal = pedido === 'sentencias' ? 'fallos' : pedido;
     let alternativa = null;
     let ultimoError = null;
     const intentos = tribunal === 'todo' ? ['todo', 'sumarios'] : [tribunal];
