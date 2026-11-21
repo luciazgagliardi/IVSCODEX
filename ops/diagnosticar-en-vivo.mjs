@@ -66,7 +66,7 @@ async function comprobarRegistroApi() {
     const resultado = {
       http: respuesta.status, ok: respuesta.ok && faltantes.length === 0 && estadoRuta === 200,
       totalFuentesApi: slugs.length, totalEsperadas: esperados.length,
-      nuevasFacetasRegistradas: esperados.filter((s) => /_saij$|^(buenosaires|chubut|formosa|lapampa|larioja|misiones|salta|sanjuan|sanluis|santacruz|santiagodelestero|tierradelfuego)$/.test(s) && slugs.includes(s)),
+      nuevasFacetasRegistradas: esperados.filter((s) => /_saij$|^(buenosaires|formosa|lapampa|larioja|misiones|salta|sanjuan|sanluis|santiagodelestero|tierradelfuego)$/.test(s) && slugs.includes(s)),
       faltantes, rutaEstadoBuenosAires: estadoRuta, ms: Date.now() - inicio,
     };
     console.log('PREFLIGHT_API ' + JSON.stringify(resultado));
