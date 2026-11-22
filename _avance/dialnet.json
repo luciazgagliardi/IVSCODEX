@@ -5,40 +5,40 @@
       "pagina": 8,
       "completas": false,
       "paginas": 7,
-      "errores": 11,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 12,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{}]": {
-      "desde": 60,
-      "pagina": 4,
+      "desde": 100,
+      "pagina": 6,
       "completas": false,
-      "paginas": 3,
-      "errores": 4,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "paginas": 5,
+      "errores": 5,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daño moral\",{}]": {
       "desde": 60,
       "pagina": 4,
       "completas": false,
       "paginas": 3,
-      "errores": 11,
+      "errores": 12,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"pacto comisorio\",{}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 0,
-      "errores": 4,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "paginas": 3,
+      "errores": 5,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"responsabilidad civil\",{}]": {
       "desde": 120,
       "pagina": 7,
       "completas": false,
       "paginas": 6,
-      "errores": 11,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 12,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"teoría de la imprevisión\",{}]": {
       "desde": 80,
@@ -51,40 +51,40 @@
       "pagina": 5,
       "completas": false,
       "paginas": 4,
-      "errores": 11,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 12,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"mora automática\",{}]": {
-      "desde": 80,
-      "pagina": 5,
+      "desde": 160,
+      "pagina": 9,
       "completas": false,
-      "paginas": 4,
-      "errores": 3,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "paginas": 8,
+      "errores": 4,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"derecho penal\",{}]": {
       "desde": 80,
       "pagina": 5,
       "completas": false,
       "paginas": 4,
-      "errores": 8,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: Client network socket disconnected before secure TLS connection was established. Puede estar caído, lento o haber cambiado de formato; intente n"
+      "errores": 9,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses moratorios\",{}]": {
       "desde": 40,
       "pagina": 3,
       "completas": false,
       "paginas": 2,
-      "errores": 2,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: Client network socket disconnected before secure TLS connection was established. Puede estar caído, lento o haber cambiado de formato; intente n"
+      "errores": 3,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"derecho laboral\",{}]": {
       "desde": 140,
       "pagina": 8,
       "completas": false,
       "paginas": 7,
-      "errores": 9,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: Client network socket disconnected before secure TLS connection was established. Puede estar caído, lento o haber cambiado de formato; intente n"
+      "errores": 10,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"tasa activa\",{}]": {
       "desde": 20,
