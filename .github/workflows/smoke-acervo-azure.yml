@@ -67,10 +67,10 @@ jobs:
         run: node ops/smoke-acervo-azure.mjs
 
   consultas:
-    # La validación real de todas las rutas corre en el mismo flujo que acaba
-    # de confirmar Azure/FTS; evita depender de un segundo workflow_run encadenado.
+    # La conectividad de los portales oficiales es independiente del acervo local.
+    # Un fallo de FTS no debe impedir medir las búsquedas oficiales en vivo.
     needs: smoke
-    if: ${{ github.event_name != 'pull_request' && needs.smoke.result == 'success' }}
+    if: ${{ always() && github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
