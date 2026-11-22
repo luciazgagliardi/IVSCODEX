@@ -5,7 +5,7 @@
       "pagina": 8,
       "completas": false,
       "paginas": 7,
-      "errores": 12,
+      "errores": 13,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{}]": {
@@ -13,22 +13,22 @@
       "pagina": 6,
       "completas": false,
       "paginas": 5,
-      "errores": 5,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 6,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"daño moral\",{}]": {
       "desde": 60,
       "pagina": 4,
       "completas": false,
       "paginas": 3,
-      "errores": 12,
+      "errores": 13,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"pacto comisorio\",{}]": {
-      "desde": 60,
-      "pagina": 4,
-      "completas": false,
-      "paginas": 3,
+      "desde": 100,
+      "pagina": 7,
+      "completas": true,
+      "paginas": 6,
       "errores": 5,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -37,7 +37,7 @@
       "pagina": 7,
       "completas": false,
       "paginas": 6,
-      "errores": 12,
+      "errores": 13,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"teoría de la imprevisión\",{}]": {
@@ -51,14 +51,14 @@
       "pagina": 5,
       "completas": false,
       "paginas": 4,
-      "errores": 12,
+      "errores": 13,
       "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"mora automática\",{}]": {
-      "desde": 160,
-      "pagina": 9,
+      "desde": 320,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 4,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -67,30 +67,30 @@
       "pagina": 5,
       "completas": false,
       "paginas": 4,
-      "errores": 9,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 10,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"intereses moratorios\",{}]": {
-      "desde": 40,
-      "pagina": 3,
+      "desde": 60,
+      "pagina": 4,
       "completas": false,
-      "paginas": 2,
-      "errores": 3,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "paginas": 3,
+      "errores": 4,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"derecho laboral\",{}]": {
       "desde": 140,
       "pagina": 8,
       "completas": false,
       "paginas": 7,
-      "errores": 10,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 11,
+      "ultimoError": "Página vacía con resultados informados por el sitio"
     },
     "[\"tasa activa\",{}]": {
-      "desde": 20,
-      "pagina": 2,
+      "desde": 180,
+      "pagina": 10,
       "completas": false,
-      "paginas": 1,
+      "paginas": 9,
       "errores": 2,
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: Client network socket disconnected before secure TLS connection was established. Puede estar caído, lento o haber cambiado de formato; intente n"
     },
@@ -107,8 +107,8 @@
       "pagina": 4,
       "completas": false,
       "paginas": 3,
-      "errores": 1,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: Client network socket disconnected before secure TLS connection was established. Puede estar caído, lento o haber cambiado de formato; intente n"
+      "errores": 2,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: respuesta 503. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"consumidor\",{}]": {
       "desde": 100,
@@ -123,8 +123,8 @@
       "pagina": 3,
       "completas": false,
       "paginas": 2,
-      "errores": 2,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+      "errores": 3,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: respuesta 503. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"derechos humanos\",{}]": {
       "desde": 20,
@@ -3191,12 +3191,12 @@
       "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: read ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"derecho de familia\",{}]": {
-      "desde": 20,
-      "pagina": 2,
+      "desde": 40,
+      "pagina": 3,
       "completas": false,
-      "paginas": 1,
-      "errores": 2,
-      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: Client network socket disconnected before secure TLS connection was established. Puede estar caído, lento o haber cambiado de formato; intente n"
+      "paginas": 2,
+      "errores": 3,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: ECONNRESET. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"inadmisibilidad del recurso\",{}]": {
       "desde": 0,
@@ -3211,8 +3211,8 @@
       "pagina": 2,
       "completas": false,
       "paginas": 1,
-      "errores": 2,
-      "ultimoError": "Página vacía con resultados informados por el sitio"
+      "errores": 3,
+      "ultimoError": "El buscador de \"dialnet\" no respondió como se esperaba: respuesta 503. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"defensa en juicio\",{}]": {
       "desde": 0,

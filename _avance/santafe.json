@@ -5,7 +5,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 12,
+      "errores": 13,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{}]": {
@@ -13,7 +13,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"sentencia\",{}]": {
@@ -21,7 +21,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 12,
+      "errores": 13,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{}]": {
@@ -29,7 +29,7 @@
       "pagina": 1,
       "completas": false,
       "paginas": 0,
-      "errores": 5,
+      "errores": 6,
       "ultimoError": "El buscador de \"santafe\" no respondió como se esperaba: UND_ERR_CONNECT_TIMEOUT. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daños\",{}]": {

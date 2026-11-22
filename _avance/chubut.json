@@ -1,58 +1,58 @@
 {
   "tareas": {
     "[\"daño moral\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 33,
-      "pagina": 33,
+      "desde": 49,
+      "pagina": 49,
       "completas": false,
-      "paginas": 32,
+      "paginas": 48,
       "errores": 4,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daño moral\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 33,
-      "pagina": 33,
+      "desde": 49,
+      "pagina": 49,
       "completas": false,
-      "paginas": 32,
+      "paginas": 48,
       "errores": 4,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incumplimiento contractual\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"responsabilidad civil\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pacto comisorio\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
-      "completas": false,
-      "paginas": 16,
+      "desde": 19,
+      "pagina": 20,
+      "completas": true,
+      "paginas": 19,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"responsabilidad civil\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -65,10 +65,10 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daños y perjuicios\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -81,10 +81,10 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daños y perjuicios\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -97,10 +97,10 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"despido\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -113,122 +113,122 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"despido\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"mora automática\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"accidente de trabajo\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses moratorios\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"accidente de trabajo\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"intereses moratorios\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"amparo\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"tasa activa\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"amparo\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"tasa activa\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"derecho a la salud\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"resolución contractual\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
-      "completas": false,
-      "paginas": 16,
+      "desde": 22,
+      "pagina": 23,
+      "completas": true,
+      "paginas": 22,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"derecho a la salud\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"resolución contractual\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"alimentos\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -241,10 +241,10 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"alimentos\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -257,42 +257,42 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"familia\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"boleto de compraventa\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"familia\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"boleto de compraventa\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"prescripción\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -305,26 +305,26 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"prescripción\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"locación de inmueble\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"contrato\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -337,58 +337,58 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"contrato\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"desalojo falta de pago\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"nulidad\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"obligación de valor\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"nulidad\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"obligación de valor\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"competencia\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -401,10 +401,10 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"competencia\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -417,10 +417,10 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"prueba\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -433,74 +433,74 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"prueba\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"cesión de créditos\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
-      "completas": false,
-      "paginas": 16,
+      "desde": 18,
+      "pagina": 19,
+      "completas": true,
+      "paginas": 18,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"medida cautelar\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"buena fe contractual\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"medida cautelar\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"buena fe contractual\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"empleo público\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"empleo público\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"responsabilidad del Estado\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -513,50 +513,50 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"responsabilidad del Estado\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"consecuencias no patrimoniales\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"derecho administrativo\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incapacidad sobreviniente\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"derecho administrativo\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"incapacidad sobreviniente\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -577,10 +577,10 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"contratación pública\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
@@ -593,22 +593,30 @@
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"servicios públicos\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
-      "completas": false,
-      "paginas": 16,
+      "desde": 23,
+      "pagina": 24,
+      "completas": true,
+      "paginas": 23,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pérdida de chance\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 17,
-      "pagina": 17,
+      "desde": 25,
+      "pagina": 25,
       "completas": false,
-      "paginas": 16,
+      "paginas": 24,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"servicios públicos\",{\"tribunal\":\"sentencias\"}]": {
+      "desde": 25,
+      "pagina": 25,
+      "completas": false,
+      "paginas": 24,
+      "errores": 2,
+      "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"pérdida de chance\",{\"tribunal\":\"sentencias\"}]": {
       "desde": 17,
       "pagina": 17,
       "completas": false,
@@ -616,63 +624,71 @@
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
-    "[\"pérdida de chance\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 9,
-      "pagina": 9,
-      "completas": false,
-      "paginas": 8,
-      "errores": 2,
-      "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
-    },
     "[\"seguridad social\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 9,
-      "pagina": 9,
+      "desde": 17,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daño punitivo\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 9,
-      "pagina": 9,
+      "desde": 17,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"seguridad social\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 9,
-      "pagina": 9,
+      "desde": 17,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"daño punitivo\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 9,
-      "pagina": 9,
+      "desde": 17,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"jubilación\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 9,
-      "pagina": 9,
+      "desde": 17,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"riesgo de la cosa\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 9,
-      "pagina": 9,
+      "desde": 17,
+      "pagina": 17,
       "completas": false,
-      "paginas": 8,
+      "paginas": 16,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"jubilación\",{\"tribunal\":\"sentencias\"}]": {
+      "desde": 17,
+      "pagina": 17,
+      "completas": false,
+      "paginas": 16,
+      "errores": 2,
+      "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"riesgo de la cosa\",{\"tribunal\":\"sentencias\"}]": {
+      "desde": 10,
+      "pagina": 10,
+      "completas": false,
+      "paginas": 9,
+      "errores": 2,
+      "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
+    },
+    "[\"pensión\",{\"tribunal\":\"sumarios\"}]": {
       "desde": 9,
       "pagina": 9,
       "completas": false,
@@ -680,43 +696,27 @@
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
-    "[\"riesgo de la cosa\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 2,
-      "pagina": 2,
-      "completas": false,
-      "paginas": 1,
-      "errores": 2,
-      "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
-    },
-    "[\"pensión\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 0,
-      "pagina": 1,
-      "completas": false,
-      "paginas": 0,
-      "errores": 2,
-      "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
-    },
     "[\"accidente de tránsito\",{\"tribunal\":\"sumarios\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 9,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"pensión\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 9,
+      "pagina": 9,
       "completas": false,
-      "paginas": 0,
+      "paginas": 8,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
     "[\"accidente de tránsito\",{\"tribunal\":\"sentencias\"}]": {
-      "desde": 0,
-      "pagina": 1,
+      "desde": 7,
+      "pagina": 7,
       "completas": false,
-      "paginas": 0,
+      "paginas": 6,
       "errores": 2,
       "ultimoError": "El buscador de \"chubut\" no respondió como se esperaba: la API no devolvió JSON. Puede estar caído, lento o haber cambiado de formato; intente nuevamente en unos minutos."
     },
