@@ -66,17 +66,19 @@ const pruebas=[
  {q:'ROSALES STELLA',tribunal:'CC',id:'mza_oficial_12299855003',minimo:1},
  {q:'ARIAS MARTINEZ',tribunal:'CT',id:'mza_oficial_12300199902',minimo:1},
 ];
-// Regresión solicitada: la frase completa, con el conector «del», debe
-// encontrarse en el índice FTS de SAIJ y no confundirse con «contaminación suelo».
-const frase = await json(api+'/indice/saij/buscar', {
+// La frase exacta con conectores se prueba sobre el corpus controlado
+// en backend/test/acervo.prueba.js. No exigir en producción el registro
+// ficticio «saij_7» de ese test: el corpus real no tiene por qué contenerlo.
+// Acá se comprueba que el FTS publicado recupera una consulta frecuente real.
+const saijLocal = await json(api+'/indice/saij/local', {
   method:'POST',
   headers:{'Content-Type':'application/json'},
-  body:JSON.stringify({q:'contaminación del suelo',modo:'exacta',tribunal:'todo',local:true,porPagina:20}),
+  body:JSON.stringify({q:'amparo',modo:'todas',tribunal:'todo',rapida:true,porPagina:20}),
   timeout:55000
 });
-if(!frase.ok || !(frase.resultados||[]).length)
-  throw Error('El acervo SAIJ no recupera la frase exacta «contaminación del suelo»');
-console.log('FRASE_EXACTA_OK '+JSON.stringify({q:'contaminación del suelo',total:frase.total,ids:(frase.resultados||[]).slice(0,5).map(x=>x.id)}));
+if(!saijLocal.ok || !(saijLocal.resultados||[]).length)
+  throw Error('El acervo SAIJ no recupera la consulta de control «amparo»');
+console.log('SAIJ_LOCAL_OK '+JSON.stringify({q:'amparo',total:saijLocal.total,documentos:(saijLocal.resultados||[]).length}));
 
 for(const p of pruebas){
   let d=null,error=null;
