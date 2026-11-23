@@ -201,7 +201,7 @@ await fs.rm(SALIDA, { recursive: true, force: true });
 await fs.mkdir(SALIDA, { recursive: true });
 const porFuente = {};
 for (const r of porId.values()) (porFuente[r.fuente] = porFuente[r.fuente] || []).push(r);
-const archivos = [], conteos = {}, hash = crypto.createHash('sha1');
+const archivos = [], hashesArchivos = {}, conteos = {}, hash = crypto.createHash('sha1');
 for (const [fuente, regs] of Object.entries(porFuente).sort()) {
   regs.sort((a, b) => (a.id < b.id ? -1 : 1));
   conteos[fuente] = regs.length;
@@ -210,11 +210,18 @@ for (const [fuente, regs] of Object.entries(porFuente).sort()) {
     const nombre = `${fuente}-${String(k).padStart(3, '0')}.jsonl.gz`;
     const cuerpo = regs.slice(i, i + POR_TANDA).map((r) => JSON.stringify(r)).join('\n');
     hash.update(cuerpo);
-    await fs.writeFile(path.join(SALIDA, nombre), zlib.gzipSync(cuerpo, { level: 9 }));
+    const comprimido = zlib.gzipSync(cuerpo, { level: 9 });
+    await fs.writeFile(path.join(SALIDA, nombre), comprimido);
+    hashesArchivos[nombre] = crypto.createHash('sha256').update(comprimido).digest('hex');
     archivos.push(nombre);
   }
 }
 const version = `${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${hash.digest('hex').slice(0, 8)}`;
-await fs.writeFile(path.join(SALIDA, 'manifiesto.json'), JSON.stringify({ version, generado: new Date().toISOString(), archivos, conteos }, null, 1));
+const generado = new Date().toISOString();
+const manifiesto = {
+  version, generado, archivos, conteos,
+  integridad: { algoritmo: 'sha256', archivos: hashesArchivos },
+};
+await fs.writeFile(path.join(SALIDA, 'manifiesto.json'), JSON.stringify(manifiesto, null, 1));
 const peso = archivos.reduce((a, f) => a + fss.statSync(path.join(SALIDA, f)).size, 0);
 console.log(`acervo ${version}: ${Object.entries(conteos).map(([k, v]) => `${k} ${v}`).join(', ')} · ${archivos.length} tandas, ${(peso / 1e6).toFixed(1)} MB`);
