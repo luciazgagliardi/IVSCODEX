@@ -44,7 +44,7 @@ const conteos = {};
 for (const archivo of man.archivos) {
   // Los manifiestos antiguos siguen siendo válidos. Los nuevos traen SHA-256
   // de cada archivo comprimido y se verifican antes de abrirlo.
-  if (path.basename(archivo) !== archivo || !/^[a-z]+-\\d+\\.jsonl\\.gz$/.test(archivo))
+  if (path.basename(archivo) !== archivo || !/^[a-z]+-[0-9]+[.]jsonl[.]gz$/.test(archivo))
     throw new Error(`Nombre de tanda inválido en manifiesto: ${archivo}`);
   const ruta = path.join(dirTandas, archivo);
   if (man.integridad) {
