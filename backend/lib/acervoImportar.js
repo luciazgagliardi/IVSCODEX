@@ -8,11 +8,28 @@ import { parentPort, workerData } from 'node:worker_threads';
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
+import crypto from 'node:crypto';
 import readline from 'node:readline';
 import { DatabaseSync } from 'node:sqlite';
 import { ESQUEMA, ESQUEMA_V, anioDe } from './acervoConsulta.js';
 
 const { man, dirTandas, nueva } = workerData;
+
+async function sha256Archivo(archivo) {
+  const hash = crypto.createHash('sha256');
+  for await (const bloque of fs.createReadStream(archivo)) hash.update(bloque);
+  return hash.digest('hex');
+}
+
+if (!man || !Array.isArray(man.archivos) || !man.archivos.length)
+  throw new Error('Manifiesto inválido: no contiene una lista de tandas');
+if (new Set(man.archivos).size !== man.archivos.length)
+  throw new Error('Manifiesto inválido: contiene tandas duplicadas');
+if (man.integridad && (
+  man.integridad.algoritmo !== 'sha256' ||
+  !man.integridad.archivos || typeof man.integridad.archivos !== 'object'
+)) throw new Error('Manifiesto inválido: esquema de integridad desconocido');
+
 let d;
 try {
   d = new DatabaseSync(nueva);
@@ -25,20 +42,66 @@ const ins = d.prepare(`INSERT OR IGNORE INTO fallos(id,fuente,corte,provincia,ca
   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
 const conteos = {};
 for (const archivo of man.archivos) {
-  const entrada = readline.createInterface({ input: fs.createReadStream(path.join(dirTandas, archivo)).pipe(zlib.createGunzip()), crlfDelay: Infinity });
-  d.exec('BEGIN');
-  let n = 0;
-  for await (const linea of entrada) {
-    if (!linea) continue;
-    let r; try { r = JSON.parse(linea); } catch { continue; }
-    ins.run(r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, anioDe(r.fecha),
-      r.expediente || null, r.sumario || null, Array.isArray(r.voces) ? r.voces.join(' · ') : (r.voces || null), r.magistrados || null, r.materia || null,
-      r.linkFicha || null, r.linkFallo || null, r.tipo || null, `zf${r.fuente}${r.corte ? ' zfcsjn' : ''}`);
-    conteos[r.fuente] = (conteos[r.fuente] || 0) + 1;
-    if (r.corte) conteos.csjn = (conteos.csjn || 0) + 1;
-    if (++n % 20000 === 0) { d.exec('COMMIT'); d.exec('BEGIN'); }
+  // Los manifiestos antiguos siguen siendo válidos. Los nuevos traen SHA-256
+  // de cada archivo comprimido y se verifican antes de abrirlo.
+  if (path.basename(archivo) !== archivo || !/^[a-z]+-\\d+\\.jsonl\\.gz$/.test(archivo))
+    throw new Error(`Nombre de tanda inválido en manifiesto: ${archivo}`);
+  const ruta = path.join(dirTandas, archivo);
+  if (man.integridad) {
+    const esperado = man.integridad.archivos[archivo];
+    if (!/^[a-f0-9]{64}$/i.test(esperado || ''))
+      throw new Error(`Manifiesto sin SHA-256 válido para ${archivo}`);
+    const real = await sha256Archivo(ruta);
+    if (real !== esperado.toLowerCase())
+      throw new Error(`SHA-256 incorrecto para ${archivo}: la tanda está dañada o no corresponde al manifiesto`);
   }
-  d.exec('COMMIT');
+
+  const entrada = readline.createInterface({ input: fs.createReadStream(ruta).pipe(zlib.createGunzip()), crlfDelay: Infinity });
+  d.exec('BEGIN');
+  let n = 0, lineaN = 0;
+  try {
+    for await (const linea of entrada) {
+      lineaN++;
+      if (!linea.trim()) continue;
+      let r;
+      try { r = JSON.parse(linea); }
+      catch (e) { throw new Error(`JSON inválido en ${archivo}, línea ${lineaN}: ${e.message}`); }
+      if (!r || typeof r !== 'object' || Array.isArray(r) ||
+          typeof r.id !== 'string' || !r.id.trim() ||
+          typeof r.fuente !== 'string' || !r.fuente.trim())
+        throw new Error(`Registro sin id o fuente válidos en ${archivo}, línea ${lineaN}`);
+
+      const insercion = ins.run(r.id, r.fuente, r.corte ? 1 : 0, r.provincia || null, r.caratula || null, r.tribunal || null, r.fecha || null, anioDe(r.fecha),
+        r.expediente || null, r.sumario || null, Array.isArray(r.voces) ? r.voces.join(' · ') : (r.voces || null), r.magistrados || null, r.materia || null,
+        r.linkFicha || null, r.linkFallo || null, r.tipo || null, `zf${r.fuente}${r.corte ? ' zfcsjn' : ''}`);
+      if (Number(insercion.changes) !== 1)
+        throw new Error(`Documento duplicado (id ${r.id}) en ${archivo}, línea ${lineaN}`);
+      conteos[r.fuente] = (conteos[r.fuente] || 0) + 1;
+      if (r.corte) conteos.csjn = (conteos.csjn || 0) + 1;
+      if (++n % 20000 === 0) { d.exec('COMMIT'); d.exec('BEGIN'); }
+    }
+    d.exec('COMMIT');
+  } catch (e) {
+    try { entrada.close(); } catch { /* ya cerrada */ }
+    try { d.exec('ROLLBACK'); } catch { /* la transacción pudo estar confirmada */ }
+    throw e;
+  }
+}
+
+// Un manifiesto con conteos es un contrato: publicar menos o más registros
+// que los anunciados es un error de integridad, nunca una importación válida.
+if (man.conteos && typeof man.conteos === 'object') {
+  for (const [fuente, esperado] of Object.entries(man.conteos)) {
+    if (!Number.isSafeInteger(esperado) || esperado < 0)
+      throw new Error(`Conteo inválido en manifiesto para ${fuente}`);
+    const real = conteos[fuente] || 0;
+    if (real !== esperado)
+      throw new Error(`Conteo de ${fuente} no coincide: manifiesto=${esperado}, importado=${real}`);
+  }
+  for (const [fuente, real] of Object.entries(conteos)) {
+    if (!Object.hasOwn(man.conteos, fuente))
+      throw new Error(`La tanda contiene una fuente ausente del manifiesto: ${fuente} (${real})`);
+  }
 }
 d.exec("INSERT INTO fts(fts) VALUES('rebuild')");
 // No publicar nunca una base que SQLite o el índice externo FTS5 consideren
