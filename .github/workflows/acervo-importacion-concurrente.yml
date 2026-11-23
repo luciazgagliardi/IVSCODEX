@@ -5,7 +5,9 @@ on:
     paths:
       - 'backend/lib/acervo.js'
       - 'backend/lib/acervoArchivos.js'
+      - 'backend/lib/acervoImportar.js'
       - 'backend/test/acervoImportacionConcurrente.prueba.js'
+      - 'backend/test/acervoManifiesto.prueba.js'
       - '.github/workflows/acervo-importacion-concurrente.yml'
   workflow_dispatch: {}
 permissions:
@@ -19,6 +21,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Probar dos importaciones SQLite FTS simultáneas
+      - name: Verificar concurrencia e integridad del manifiesto del acervo
         working-directory: backend
-        run: node --test test/acervoImportacionConcurrente.prueba.js
+        run: node --test test/acervoImportacionConcurrente.prueba.js test/acervoManifiesto.prueba.js
