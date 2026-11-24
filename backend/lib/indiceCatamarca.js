@@ -87,7 +87,7 @@ export function parsearDetalleCatamarca(html, id) {
 
 /** HTTP de lectura: espera por host, timeout y nada de saltar captchas. */
 export async function pedirCatamarca(ruta) {
-  if (!/^\\/(?:sentencias|sumarios)(?:\\?page=\\d{1,5})?$/.test(ruta) && !/^\\/sentencia\\/\\d+$/.test(ruta))
+  if (!/^\/(?:sentencias|sumarios)(?:\\?page=\\d{1,5})?$/.test(ruta) && !/^\/sentencia\/\\d+$/.test(ruta))
     throw new Error('Ruta pública no permitida');
   try {
     const r = await fetchOrigen(ORIGEN_CATAMARCA + ruta, {
