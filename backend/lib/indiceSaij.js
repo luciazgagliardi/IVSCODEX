@@ -33,7 +33,7 @@
  */
 
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
 import { raicesDe } from './relevancia.js';
@@ -107,13 +107,8 @@ const FACETA_CSJN_SUMARIOS = 'Total|Tipo de Documento/Jurisprudencia/Sumario|Jur
 const esSumarioDeLaCorte = (r) => Boolean(r) && /^A\d/i.test(r._numero || '');
 
 async function pedirBusqueda(parametros) {
-  await esperarTurno(HOST);
-
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const resp = await fetch(`${URL_BUSQUEDA}?${parametros}`, {
-      signal: control.signal,
+    const resp = await fetchOrigen(`${URL_BUSQUEDA}?${parametros}`, {
       headers: {
         // Sin User-Agent de navegador y sin Referer propio, el sitio corta
         // con 403 antes de mirar la consulta.
@@ -127,10 +122,8 @@ async function pedirBusqueda(parametros) {
     return await resp.json();
   } catch (e) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
-    if (e?.codigo) throw e; // ya es un ErrorApp
+    if (e?.codigo) throw e;
     throw errores.indiceFuenteFalla('saij', e?.message);
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
