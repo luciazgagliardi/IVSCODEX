@@ -433,7 +433,32 @@ export function crearFetchOrigen({
   };
 }
 
-export const fetchOrigen = crearFetchOrigen();
+// En producción, cada consulta pasa por el fetch de Undici con el agente
+// que fija y vuelve a validar la IP de conexión. No delegar esto en el fetch
+// global mutable de Node.
+const fetchOrigenSeguro = crearFetchOrigen({ request: fetchSeguro });
+let fetchOrigenActivo = fetchOrigenSeguro;
+
+/**
+ * Sustitución temporal del transporte para pruebas de adaptadores.
+ * Permite simular DNS, pausas y respuestas sin abrir conexiones reales.
+ * Devuelve una función que restaura el transporte anterior.
+ */
+export function configurarFetchOrigenParaPruebas({
+  request,
+  validar = async (url) => new URL(url),
+  esperar = async () => {},
+} = {}) {
+  const anterior = fetchOrigenActivo;
+  fetchOrigenActivo = crearFetchOrigen({
+    request: request || fetchSeguro,
+    validar,
+    esperar,
+  });
+  return () => { fetchOrigenActivo = anterior; };
+}
+
+export const fetchOrigen = (...args) => fetchOrigenActivo(...args);
 
 /* ------------------------------------------------------------------ *
  * 4. Validacion completa de una URL
