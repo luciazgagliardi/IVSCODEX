@@ -93,11 +93,16 @@ test('valida cada redirección y transforma POST a GET ante HTTP 302', async () 
   assert.equal(solicitudes[1].body, undefined);
 });
 
-test('reintenta fallos DNS transitorios tanto en el destino inicial como en una redirección', async () => {
+test('reintenta fallos DNS transitorios en el destino inicial y en cada redirección', async () => {
   let validaciones = 0;
   let pedidos = 0;
   const fetchOrigen = crearFetchOrigen({
-    request: async () => { pedidos++; return new Response('ok', { status: 200 }); },
+    request: async () => {
+      pedidos++;
+      return pedidos === 1
+        ? new Response(null, { status: 302, headers: { location: '/resultado' } })
+        : new Response('ok', { status: 200 });
+    },
     validar: async (url) => {
       validaciones++;
       if (validaciones === 1 || validaciones === 3) {
@@ -114,9 +119,11 @@ test('reintenta fallos DNS transitorios tanto en el destino inicial como en una 
 
   const respuesta = await fetchOrigen('https://fuente.test/buscar', {}, { reintentos: 2 });
   assert.equal(respuesta.status, 200);
-  assert.equal(validaciones, 2);
-  assert.equal(pedidos, 1);
+  assert.equal(await respuesta.text(), 'ok');
+  assert.equal(validaciones, 4);
+  assert.equal(pedidos, 2);
 });
+
 
 test('no repite un HTTP 429 cuando el portal pide una espera prolongada', async () => {
   let intentos = 0;
