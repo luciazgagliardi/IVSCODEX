@@ -8,7 +8,7 @@
  */
 import { JSDOM } from 'jsdom';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { errores } from './errores.js';
 import { buscarEnIndice } from './indice.js';
 import { buscarPagina, acervoCubre } from './acervo.js';
@@ -87,14 +87,12 @@ export function parsearDetalleCatamarca(html, id) {
 
 /** HTTP de lectura: espera por host, timeout y nada de saltar captchas. */
 export async function pedirCatamarca(ruta) {
-  if (!/^\/(?:sentencias|sumarios)(?:\?page=\d{1,5})?$/.test(ruta) && !/^\/sentencia\/\d+$/.test(ruta))
+  if (!/^\\/(?:sentencias|sumarios)(?:\\?page=\\d{1,5})?$/.test(ruta) && !/^\\/sentencia\\/\\d+$/.test(ruta))
     throw new Error('Ruta pública no permitida');
-  await esperarTurno(HOST);
-  const controlador = new AbortController();
-  const reloj = setTimeout(() => controlador.abort(), TIMEOUT_MS);
   try {
-    const r = await fetch(ORIGEN_CATAMARCA + ruta, { signal: controlador.signal,
-      headers: { 'User-Agent': USER_AGENT, Accept: 'text/html', 'Accept-Language': 'es-AR,es;q=0.9' } });
+    const r = await fetchOrigen(ORIGEN_CATAMARCA + ruta, {
+      headers: { 'User-Agent': USER_AGENT, Accept: 'text/html', 'Accept-Language': 'es-AR,es;q=0.9' },
+    });
     if (!r.ok) throw errores.indiceFuenteFalla('catamarca', 'respuesta ' + r.status);
     const html = await r.text();
     if (!/<html|<table/i.test(html)) throw errores.indiceFuenteFalla('catamarca', 'formato HTML no reconocido');
@@ -102,7 +100,7 @@ export async function pedirCatamarca(ruta) {
   } catch (e) {
     if (e?.codigo) throw e;
     throw errores.indiceFuenteFalla('catamarca', e?.name === 'AbortError' ? 'tiempo agotado' : String(e?.message || e).slice(0, 120));
-  } finally { clearTimeout(reloj); }
+  }
 }
 
 /**
