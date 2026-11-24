@@ -117,7 +117,7 @@ async function pedirBusqueda(parametros) {
         'Accept-Language': 'es-AR,es;q=0.9',
         Referer: `https://${HOST}/`,
       },
-    });
+    }, { respetarTurno: false, reintentos: 1 });;
     if (!resp.ok) throw errores.indiceFuenteFalla('saij', `respuesta ${resp.status}`);
     return await resp.json();
   } catch (e) {
@@ -304,7 +304,7 @@ async function textoDeSumario(numero, senal) {
   if (!guid) return null;
   let salida = null;
   try {
-    const resp = await fetch(`https://${HOST}/view-document?guid=${encodeURIComponent(guid)}`, {
+    const resp = await fetchOrigen(`https://${HOST}/view-document?guid=${encodeURIComponent(guid)}`, {
       signal: senal,
       headers: {
         'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`,
@@ -312,7 +312,7 @@ async function textoDeSumario(numero, senal) {
         'Accept-Language': 'es-AR,es;q=0.9',
         Referer: `https://${HOST}/`,
       },
-    });
+    }, { respetarTurno: false, reintentos: 1 });;
     if (resp.ok) {
       const j = await resp.json();
       const c = j?.data ? JSON.parse(j.data)?.document?.content : null;
@@ -376,7 +376,7 @@ const MAX_CACHE_PASAJES = 600;
 
 async function contenidoDe(guid, senal) {
   try {
-    const resp = await fetch(`https://${HOST}/view-document?guid=${encodeURIComponent(guid)}`, {
+    const resp = await fetchOrigen(`https://${HOST}/view-document?guid=${encodeURIComponent(guid)}`, {
       signal: senal,
       headers: {
         'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`,
