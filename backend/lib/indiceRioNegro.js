@@ -14,11 +14,11 @@
  */
 
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 import { buscarProvinciaSaij } from './indiceProvincialSaij.js';
-import { urlParaPedir, sinClave } from './proxyOrigen.js';
+import { sinClave } from './proxyOrigen.js';
 
 const HOST = 'fallos.jusrionegro.gov.ar';
 const BASE = `https://${HOST}/protocoloweb`;
@@ -32,7 +32,6 @@ const decodificar = (t) => String(t || '').replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);/
 const texto = (h) => decodificar(String(h || '').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').replace(/\s+([,.;:)])/g, '$1').trim();
 
 async function pedir(q, modo, stj, pagina) {
-  await esperarTurno(HOST);
   const p = new URLSearchParams({
     'Datos[FilterProtocolo][texto]': q,
     'Datos[FilterProtocolo][option_text]': MODOS[modo] || '0',
@@ -40,13 +39,13 @@ async function pedir(q, modo, stj, pagina) {
     page: String(pagina),
     'per-page': String(POR_PAGINA_SITIO),
   });
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    // por el relevo, si está configurado: Río Negro no le contesta al datacenter publicado (ver lib/proxyOrigen.js)
-    const r = await fetch(urlParaPedir(`${BASE}/protocolo/buscar?${p}`, HOST), {
-      signal: control.signal,
-      headers: { 'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`, Accept: 'text/html', 'Accept-Language': 'es-AR,es;q=0.9' },
+    const r = await fetchOrigen(`${BASE}/protocolo/buscar?${p}`, {
+      headers: {
+        'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`,
+        Accept: 'text/html',
+        'Accept-Language': 'es-AR,es;q=0.9',
+      },
     });
     if (!r.ok) throw errores.indiceFuenteFalla('rionegro', `respuesta ${r.status}`);
     return await r.text();
@@ -54,8 +53,6 @@ async function pedir(q, modo, stj, pagina) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e;
     throw errores.indiceFuenteFalla('rionegro', sinClave(e?.cause?.code || e?.message));
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
