@@ -6,7 +6,7 @@
  * a una sentencia los extractos que el proveedor genera con IA.
  */
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { errores } from './errores.js';
 
 const texto = (v) => String(v ?? '').replace(/\s+/g, ' ').trim();
@@ -81,13 +81,9 @@ export async function buscarIndiceHybrid({
   const consulta = texto(q);
   if (!consulta) throw errores.consultaVacia();
   if (!['objetos', 'doctrinas'].includes(searchIn)) throw errores.consultaVacia();
-  const host = new URL(apiBase).hostname;
-  await esperarTurno(host);
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const respuesta = await fetch(`${apiBase.replace(/\/$/, '')}/hybridSearch`, {
-      method: 'POST', signal: control.signal,
+    const respuesta = await fetchOrigen(`${apiBase.replace(/\/$/, '')}/hybridSearch`, {
+      method: 'POST',
       headers: {
         'User-Agent': USER_AGENT,
         'Content-Type': 'application/json',
@@ -114,7 +110,5 @@ export async function buscarIndiceHybrid({
     if (e?.codigo) throw e;
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     throw errores.indiceFuenteFalla(fuente, e?.cause?.code || e?.message || 'error de red');
-  } finally {
-    clearTimeout(reloj);
   }
 }
