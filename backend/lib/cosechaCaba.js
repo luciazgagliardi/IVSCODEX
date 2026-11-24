@@ -23,7 +23,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DIR_DATOS } from '../config.js';
 import { buscarCabaOficial } from './indiceCaba.js';
-import { descargar } from './descargador.js';
+import { descargar, fetchOrigen } from './descargador.js';
 import { traerConNavegador } from './navegadorCf.js';
 import { extraerDesdeBuffer } from './documento.js';
 import { agregarAlAcervo, estadoAcervo, idsConTexto } from './acervo.js';
@@ -73,8 +73,11 @@ async function pasoListado() {
 async function destinoDe(url) {
   // el enlace redirige a www-test.tsjbaires.gov.ar: Chrome tiene que ir directo al destino
   try {
-    const r = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(15_000), headers: { 'User-Agent': 'Mozilla/5.0' } });
+    const r = await fetchOrigen(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    }, { seguirRedirecciones: false, timeoutMs: 15_000, reintentos: 0 });
     const l = r.headers.get('location');
+    try { await r.body?.cancel(); } catch { /* sólo necesitamos las cabeceras de redirección */ }
     return l ? new URL(l, url).toString() : url;
   } catch { return url; }
 }
