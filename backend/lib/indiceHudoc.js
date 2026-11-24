@@ -4,7 +4,7 @@
  * explícita por start/length. La ficha apunta al registro del propio TEDH.
  */
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { errores } from './errores.js';
 
 const HOST = 'hudoc.echr.coe.int';
@@ -57,12 +57,8 @@ export async function buscarHudoc({ q, pagina = 1, porPagina = 20, desde = null 
     start: String(inicio),
     length: String(cantidad),
   });
-  await esperarTurno(HOST);
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
-  try {
-    const respuesta = await fetch(`${ENDPOINT}?${parametros}`, {
-      signal: control.signal,
+    try {
+    const respuesta = await fetchOrigen(`${ENDPOINT}?${parametros}`, {
       headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
     });
     if (!respuesta.ok) throw errores.indiceFuenteFalla('hudoc', `respuesta HTTP ${respuesta.status}`);
@@ -81,7 +77,5 @@ export async function buscarHudoc({ q, pagina = 1, porPagina = 20, desde = null 
     if (e?.codigo) throw e;
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     throw errores.indiceFuenteFalla('hudoc', e?.cause?.code || e?.message || 'error de red');
-  } finally {
-    clearTimeout(reloj);
   }
 }
