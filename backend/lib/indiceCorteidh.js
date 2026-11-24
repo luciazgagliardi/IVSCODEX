@@ -23,7 +23,7 @@
  */
 
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { errores } from './errores.js';
 import { plegar, VACIAS } from './relevancia.js';
 import { buscarEnCorpus } from './corpusCorteidh.js';
@@ -118,13 +118,9 @@ function parsear(html) {
  * Devuelve también el total que declara el sitio.
  */
 async function pedir(texto, filas = 20) {
-  await esperarTurno(HOST);
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const resp = await fetch(URL_BUSQUEDA, {
+    const resp = await fetchOrigen(URL_BUSQUEDA, {
       method: 'POST',
-      signal: control.signal,
       headers: {
         'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`,
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -144,15 +140,13 @@ async function pedir(texto, filas = 20) {
     if (!resp.ok) throw errores.indiceFuenteFalla('corteidh', `respuesta ${resp.status}`);
     const cuerpo = await resp.text();
     if (cuerpo.trim() === '-1' || !cuerpo.trim()) return { total: 0, registros: [] };
-    const total = Number(/id="recordcount"[^>]*value="(\d+)"|value="(\d+)"[^>]*id="recordcount"/.exec(cuerpo)?.slice(1).find(Boolean)) || 0;
-    const registros = filas <= 1 ? [] : parsear(cuerpo); // con filas=1 sólo interesa el total
+    const total = Number(/id="recordcount"[^>]*value="(\\d+)"|value="(\\d+)"[^>]*id="recordcount"/.exec(cuerpo)?.slice(1).find(Boolean)) || 0;
+    const registros = filas <= 1 ? [] : parsear(cuerpo);
     return { total: total || registros.length, registros };
   } catch (e) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e;
     throw errores.indiceFuenteFalla('corteidh', e?.cause?.code || e?.message);
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
