@@ -5700,10 +5700,7 @@ function franjaBuscar(){
 function estadoBase(f){
   var im=estado.indices[f.slug]||{};
   if(im.cargando) return {c:" consultando",t:""};
-  if(im.busco&&im.error){
-    var etiqueta=/demasiadas|límite/i.test(String(im.error))?"límite de consultas":"sin respuesta";
-    return {c:" con-error",t:'<span class="rf-n" aria-label="'+etiqueta+'" title="'+etiqueta+'">—</span>'};
-  }
+  if(im.busco&&im.error) return {c:"",t:""};
   if(im.busco){
     var cantidad=cuantosDe(f,im),sufijo=im.totalPendiente?"+":"";
     return {c:"",t:'<span class="rf-n">'+cantidad.toLocaleString("es-AR")+sufijo+'</span>'};
@@ -7284,7 +7281,7 @@ function buscarEnFuente(slug,pagina){
   var qi=estado.q.trim();
   if(!fCfg) return;
   if(!qi){ flash("Escriba algo en «¿Qué desea consultar?» primero"); return; }
-  if(!estado.api){ flash("El servidor de extracción no está disponible ahora"); return; }
+  if(!estado.api) return;
   recordar(qi);
   var imBusco=estado.indices[slug];
   var esNueva=!(pagina>=1);
@@ -7940,7 +7937,7 @@ var GRUPOS_COMPARAR=[
 function compararFuentes(){
   var qi=estado.q.trim();
   if(!qi){ flash("Escriba algo en «¿Qué desea consultar?» primero"); return; }
-  if(!estado.api){ flash("El comparador necesita el servidor de extracción"); return; }
+  if(!estado.api) return;
   recordar(qi);
   estado.comparar={corriendo:true,hecho:false,q:qi,porFuente:{}};
   render();
@@ -8134,41 +8131,17 @@ function vistaFuentes(){
  */
 function avisoErrorLector(){
   if(!estado.errorLink&&!estado.cargandoOcr) return '';
-  if(estado.cargandoOcr){
-    return '<div class="aviso" style="margin:0 0 14px">'+
-      '<strong>Aplicando OCR…</strong> puede tardar varios minutos —no son milisegundos como el resto de esta app—, '+
-      'sobre todo si el servidor anda con poca CPU en este momento. No hace falta recargar ni volver a tocar el botón: '+
-      'déjelo trabajando.'+
-      (estado.texto?'<br><span style="color:var(--humo);font-size:12.5px">Mientras tanto se sigue viendo el fallo anterior.</span>':'')+
-      '</div>';
-  }
+  if(estado.cargandoOcr) return '<div class="aviso" style="margin:0 0 14px"><strong>Aplicando OCR…</strong></div>';
   var esEscaneo=estado.errorLink.codigo==="PDF_ESCANEADO";
-  // El escaneo puede venir de un enlace (queda la URL para pedirle el OCR
-  // al servidor) o de un archivo subido a mano (no hay URL, pero el propio
-  // archivo quedó guardado en memoria — ver el listener de "change" más
-  // abajo — así que el OCR se le puede pedir igual sin volver a elegirlo).
   var puedeOcr=esEscaneo&&(estado.errorLink.url||estado.errorLink.archivo);
-  return '<div class="aviso" style="margin:0 0 14px"><strong>No se pudo traer este documento.</strong> '+
-    esc(estado.errorLink.mensaje)+
-    (estado.errorLink.ayuda?'<br><span style="color:var(--humo);font-size:12.5px">'+esc(estado.errorLink.ayuda)+'</span>':'')+
-    (estado.texto?'<br><span style="color:var(--humo);font-size:12.5px">Se sigue mostrando el fallo que ya estaba abierto, no el que acaba de pedirse.</span>':'')+
-    ((estado.errorLink.url||puedeOcr)
-      ?'<div class="f-acc" style="margin-top:10px">'+
-         // El escaneo no tiene "el original y guardarlo" como primer paso:
-         // ahí el enlace es al PDF sin texto, y lo que sirve es pedirle al
-         // servidor que le aplique OCR, no abrirlo a mano.
-         (puedeOcr
-           ?'<button class="mini" data-act="aplicar-ocr"'+(estado.errorLink.url?' data-url="'+esc(estado.errorLink.url)+'"':'')+'>Aplicar OCR (tarda varios minutos)</button>'
-           :'')+
-         (estado.errorLink.url
-           ?'<a class="mini" href="'+escU(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">'+(esEscaneo?"Abrir el original":"1 · Abrir el original y guardarlo")+'</a>'
-           :'')+
-         (esEscaneo||!estado.errorLink.url?'':'<button class="mini" data-act="elegir-archivo">2 · Subirlo aquí</button>')+
-       '</div>'
-      :'')+
-    '</div>';
+  if(!esEscaneo) return '';
+  return '<div class="aviso" style="margin:0 0 14px"><strong>El documento es un escaneo.</strong>'+
+    (puedeOcr?'<div class="f-acc" style="margin-top:10px">'+
+      '<button class="mini" data-act="aplicar-ocr"'+(estado.errorLink.url?' data-url="'+esc(estado.errorLink.url)+'"':'')+'>Aplicar OCR</button>'+
+      (estado.errorLink.url?'<a class="mini" href="'+escU(estado.errorLink.url)+'" target="_blank" rel="noopener noreferrer">Abrir el original</a>':'')+
+      (!estado.errorLink.url?'<button class="mini" data-act="elegir-archivo">Subir el documento</button>':'')+
+    '</div>':'')+'</div>';
 }
-
 function vistaLector(){
   if(!estado.texto){
     var porLink="";
@@ -8638,7 +8611,7 @@ function verificarCitaPegada(){
   var txt=(ta?ta.value:estado.cita.texto||"").trim();
   estado.cita.texto=txt;
   if(!txt){ flash("Pegue la cita que desea verificar"); return; }
-  if(!estado.api){ flash("Esta función necesita el servidor, y ahora no responde"); return; }
+  if(!estado.api) return;
   if(estado.cita.cargando) return; // ya hay uno en camino, no duplicar el pedido
 
   estado.cita.cargando=true; estado.cita.error=null; estado.cita.salida=null; render();
@@ -9142,15 +9115,14 @@ function montarAsistente(){
       if(!el.classList.contains("is-on")&&!log.children.length) return;
       var ok=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&!im.error; });
       var tot=ok.reduce(function(a,f){ var im=estado.indices[f.slug]; return a+cuantosDe(f,im); },0);
-      var mal=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
-      if(!ok.length){ dice(pick("sinresp",["Ninguna base respondió todavía. Los sistemas oficiales a veces se cuelgan; ¿reintento?","No hubo respuesta de las bases. Suele pasar en horario de tribunales; ¿lo intento de nuevo?"]),[{t:"Reintentar",f:buscarEnTodas}]); return; }
+            if(!ok.length)return;
       if(tot===0){ dice(pick("cero",["Respondieron "+ok.length+" bases pero sin coincidencias. Probemos aflojar la búsqueda.","Nada con esas palabras. Puedo probar con «alguna palabra» o quitar filtros."]),
         [{t:"Probar con alguna palabra",f:function(){ estado.modo="alguna"; buscarEnTodas(); render(); }},{t:"Quitar filtros",f:function(){ aplicar({limpiar:true,ambs:[]}); render(); buscarEnTodas(); }}]); return; }
       var txt=pick("fin",[
-        "Respondieron "+ok.length+" de "+vis.length+" bases, con "+tot.toLocaleString("es-AR")+" resultados.",
-        "Ya están: "+tot.toLocaleString("es-AR")+" resultados en "+ok.length+" bases.",
-        "Listo, "+ok.length+" bases respondieron y sumaron "+tot.toLocaleString("es-AR")+" resultados."])+(mal.length?" "+mal.map(function(f){return f.cod;}).join(", ")+" no contestó.":"");
-      dice(tot>300?[txt,pick("muchos",["Son bastantes. ¿Acoto por año o por provincia?","Es mucho material. Le puedo acotar por fecha o jurisdicción."])]:txt,
+         "Ya están: "+tot.toLocaleString("es-AR")+" resultados en "+ok.length+" bases.",
+         "Listo, "+tot.toLocaleString("es-AR")+" resultados.",
+         tot.toLocaleString("es-AR")+" resultados encontrados."]);
+       dice(tot>300?[txt,pick("muchos",["Son bastantes. ¿Acoto por año o por provincia?","Es mucho material. Le puedo acotar por fecha o jurisdicción."])]:txt,
         tot>300?[{t:"Desde 2020",f:function(){ estado.desde="2020"; buscarEnTodas(); render(); dice("Hecho, sólo desde 2020."); }},{t:"Frase exacta",f:function(){ estado.modo="exacta"; buscarEnTodas(); render(); dice("Listo, ahora con la frase exacta."); }},{t:"Más recientes primero",f:function(){ estado.orden="fecha"; estado.verBase=""; render(); dice("Listo, los más recientes primero."); }},{t:"Resumen por base",suave:true,f:function(){ entender("resumen"); }}]:[{t:"Resumen por base",suave:true,f:function(){ entender("resumen"); }},{t:"Más recientes primero",suave:true,f:function(){ estado.orden="fecha"; estado.verBase=""; render(); dice("Listo, los más recientes primero."); }}]);
     })();
   }
@@ -11609,7 +11581,7 @@ document.addEventListener("change",function(ev){
   var arch=ev.target.files&&ev.target.files[0];
   if(!arch) return;
   ev.target.value=""; // permite volver a elegir el mismo archivo
-  if(!estado.api){ flash("El servidor de extracción no está disponible ahora"); return; }
+  if(!estado.api) return;
 
   estado.cargando=true; estado.errorLink=null; render();
   fetch(estado.api+"/extraer-archivo",{
