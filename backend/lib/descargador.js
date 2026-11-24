@@ -404,6 +404,7 @@ export function crearFetchOrigen({
         }
 
         if (respuesta.status >= 300 && respuesta.status < 400) {
+          if (politica.seguirRedirecciones === false) return respuesta;
           const destino = respuesta.headers.get('location');
           if (!destino) return respuesta;
           try { await respuesta.body?.cancel(); } catch { /* respuesta descartada */ }
