@@ -14,7 +14,7 @@
  */
 
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { errores } from './errores.js';
 import { filtrarPorModo } from './relevancia.js';
 
@@ -28,12 +28,8 @@ const decodificar = (t) => String(t || '').replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);/
 const texto = (h) => decodificar(String(h || '').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').replace(/\s+([,.;:)])/g, '$1').trim();
 
 async function pedir(params) {
-  await esperarTurno(HOST);
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const r = await fetch(`${BASE}?${new URLSearchParams(params)}`, {
-      signal: control.signal,
+    const r = await fetchOrigen(`${BASE}?${new URLSearchParams(params)}`, {
       headers: { 'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`, Accept: 'text/html', 'Accept-Language': 'es-AR,es;q=0.9' },
     });
     if (!r.ok) throw errores.indiceFuenteFalla('juristeca', `respuesta ${r.status}`);
@@ -42,8 +38,6 @@ async function pedir(params) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e;
     throw errores.indiceFuenteFalla('juristeca', e?.cause?.code || e?.message);
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
