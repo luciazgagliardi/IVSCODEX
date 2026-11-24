@@ -1391,9 +1391,11 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .cal-dia.feriado{border-color:var(--gold);color:var(--gold)}
 .cal-dia.extra{border-color:var(--gold-55);border-style:dashed;color:var(--gold)}
 .cal-dia.hoy{background:var(--fg);border-color:var(--fg);color:var(--bg)}
-.cal-lista{grid-column:2;grid-row:2 / span 2;display:grid;gap:10px}
-.cal-lista p{display:grid;grid-template-columns:2.4em minmax(0,1fr);gap:10px;margin:0;padding-top:10px;border-top:1px solid var(--line-2);font-size:14.5px;color:var(--fg-82)}
-.cal-lista b{font-weight:500;font-variant-numeric:tabular-nums}
+.cal-lista{grid-column:2;grid-row:2 / span 2;display:grid;gap:10px;min-width:0;width:100%}
+.cal-lista p{display:grid;grid-template-columns:2.4em minmax(0,1fr);align-items:start;gap:10px;min-width:0;width:100%;box-sizing:border-box;margin:0;padding-top:10px;border-top:1px solid var(--line-2);font-size:14.5px;color:var(--fg-82)}
+.cal-lista p>b{grid-column:1;grid-row:1;font-weight:500;font-variant-numeric:tabular-nums}
+.cal-lista p>.cal-lista__texto{grid-column:2;grid-row:1;min-width:0;overflow-wrap:break-word}
+.cal-lista p.calc-nota{display:block;width:100%}
 .cal-lista .cal-feriado{color:var(--gold)}
 .cal-lista .cal-extra{color:var(--gold-55)}
 .cal-extra{grid-column:1/-1;margin-top:24px;padding-top:24px;border-top:1px solid var(--line);display:grid;gap:16px}
@@ -10537,7 +10539,7 @@ function vistaCalendario(){
     '<div class="cal-grilla"><span class="cal-sem">lu</span><span class="cal-sem">ma</span><span class="cal-sem">mi</span><span class="cal-sem">ju</span><span class="cal-sem">vi</span><span class="cal-sem">sá</span><span class="cal-sem">do</span>'+celdas+'</div>'+
     falta.map(function(x){ return '<p class="calc-aviso">Datos incompletos: '+esc(x)+'</p>'; }).join("")+
     '<div class="cal-lista">'+(lista.length?lista.map(function(x){
-      return '<p><b class="cal-'+x[2]+'">'+x[0]+'</b>'+esc(x[1])+'</p>'; }).join(""):'<p class="calc-nota">Sin feriados ni días inhábiles en este mes.</p>')+'</div>'+
+      return '<p><b class="cal-'+x[2]+'">'+x[0]+'</b><span class="cal-lista__texto">'+esc(x[1])+'</span></p>'; }).join(""):'<p class="calc-nota">Sin feriados ni días inhábiles en este mes.</p>')+'</div>'+
     '<div class="cal-extra"><h3>Asuetos y otros días inhábiles</h3>'+
       '<p class="calc-nota">Los feriados, los no laborables, la feria de enero y la de julio ya cargada (con su norma) se descuentan solos. Agregue acá los asuetos o ferias que disponga el tribunal: se guardan para la jurisdicción elegida ('+esc(nombreJ)+') y solo se descuentan en los plazos de esa jurisdicción.</p>'+
       (CALC.inhabiles.length?'<div class="cal-cargados">'+CALC.inhabiles.map(function(x,i){
