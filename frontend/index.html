@@ -1375,15 +1375,16 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .her-texto{width:100%;margin:10px 0;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:none;color:var(--fg);font:400 14px/1.6 var(--sans);resize:vertical}
 
 /* ---------- calendario judicial ---------- */
-.cal{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,1fr);gap:28px clamp(28px,4vw,64px);align-items:start}
-.cal-hoy{grid-column:1/-1;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.cal{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(260px,1fr);grid-template-rows:auto minmax(0,auto) auto;gap:28px clamp(28px,4vw,64px);align-items:start}
+.cal-hoy{grid-column:1/-1;grid-row:1;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.cal-lateral{grid-column:1;grid-row:2;display:grid;align-content:start;gap:22px;min-width:0}
 .cal-hoy p{display:flex;align-items:center;gap:10px;margin:0;font-size:17px}
 .cal-hoy p::first-letter{text-transform:uppercase}
-.cal-cab{grid-column:1;display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.cal-cab{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 .cal-cab h3{min-width:11ch;margin:0;text-align:center;font:500 22px/1.2 var(--sans);letter-spacing:-.015em}
 .cal-cab h3::first-letter{text-transform:uppercase}
 .cal-juris{flex-basis:100%;margin-top:8px}
-.cal-grilla{grid-column:1;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;max-width:420px}
+.cal-grilla{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;max-width:420px}
 .cal-sem{padding-bottom:6px;font-size:12px;color:var(--mute-2);text-align:center}
 .cal-dia{display:grid;place-items:center;aspect-ratio:1;max-width:100%;border:1px solid var(--line-2);border-radius:50%;font-size:14px;font-variant-numeric:tabular-nums;color:var(--fg-82)}
 .cal-dia.vacio{border:0}
@@ -1391,18 +1392,18 @@ input[type=date]::-webkit-calendar-picker-indicator{opacity:.6;cursor:pointer}
 .cal-dia.feriado{border-color:var(--gold);color:var(--gold)}
 .cal-dia.extra{border-color:var(--gold-55);border-style:dashed;color:var(--gold)}
 .cal-dia.hoy{background:var(--fg);border-color:var(--fg);color:var(--bg)}
-.cal-lista{grid-column:2;grid-row:2 / span 2;display:grid;gap:10px;min-width:0;width:100%}
+.cal-lista{grid-column:2;grid-row:2;align-self:start;display:grid;gap:10px;min-width:0;width:100%}
 .cal-lista p{display:grid;grid-template-columns:2.4em minmax(0,1fr);align-items:start;gap:10px;min-width:0;width:100%;box-sizing:border-box;margin:0;padding-top:10px;border-top:1px solid var(--line-2);font-size:14.5px;color:var(--fg-82)}
 .cal-lista p>b{grid-column:1;grid-row:1;font-weight:500;font-variant-numeric:tabular-nums}
 .cal-lista p>.cal-lista__texto{grid-column:2;grid-row:1;min-width:0;overflow-wrap:break-word}
 .cal-lista p.calc-nota{display:block;width:100%}
 .cal-lista .cal-feriado{color:var(--gold)}
 .cal-lista .cal-extra{color:var(--gold-55)}
-.cal-extra{grid-column:1/-1;margin-top:24px;padding-top:24px;border-top:1px solid var(--line);display:grid;gap:16px}
+.cal-extra{grid-column:1/-1;grid-row:3;margin-top:0;padding-top:24px;border-top:1px solid var(--line);display:grid;gap:16px}
 .cal-extra h3{margin:0;font:500 20px/1.2 var(--sans)}
 .cal-cargados{display:grid;gap:8px}
 .cal-cargados p{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:0;font-size:14.5px;color:var(--fg-82)}
-@media (max-width:860px){ .cal{grid-template-columns:minmax(0,1fr)} .cal-lista{grid-column:1;grid-row:auto} }
+@media (max-width:860px){ .cal{grid-template-columns:minmax(0,1fr);grid-template-rows:auto} .cal-lateral,.cal-lista,.cal-extra{grid-column:1;grid-row:auto} }
 
 /* ---------- glosario ---------- */
 .glos-barra{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 32px}
@@ -10523,23 +10524,24 @@ function vistaCalendario(){
     var f=new Date(Date.UTC(c.anio,c.mes,d)),info=infoDia(f,c.juris),mot=info.motivo;
     var cls=info.tipo==="fin"?" fin":info.tipo==="feriado"?" feriado":mot?" extra":"";
     if(isoDe(f)===isoDe(h)) cls+=" hoy";
-    if(mot&&info.tipo!=="fin") lista.push([d,mot+(info.norma?" · "+info.norma:"")+(info.verificado===false?" · dato no verificado, confirme la acordada":""),info.tipo==="feriado"?"feriado":"extra"]);
+    if(mot&&info.tipo!=="fin"&&info.tipo!=="feria") lista.push([d,mot+(info.norma?" · "+info.norma:"")+(info.verificado===false?" · dato no verificado, confirme la acordada":""),info.tipo==="feriado"?"feriado":"extra"]);
     info.avisos.forEach(function(a){ lista.push([d,"Se cuenta como hábil · "+a,"extra"]); });
     celdas+='<span class="cal-dia'+cls+'"'+(mot?' title="'+esc(mot)+'"':'')+'>'+d+'</span>';
   }
+  if(c.mes===0&&IVSCalculos.FERIA_ENERO[c.juris]){ var fe=IVSCalculos.FERIA_ENERO[c.juris]; lista.push(["1 al "+dm,fe.motivo+" · "+fe.norma,"extra"]); }
   var falta=IVSCalculos.faltantes(primero,new Date(Date.UTC(c.anio,c.mes,dm)),c.juris,CALC.inhabiles);
   function estadoDe(x){ var m=motivoInhabil(x,c.juris); return fechaLarga(x)+": "+(m?"inhábil ("+m.toLowerCase()+")":"día hábil judicial"); }
   var nombreJ=JURIS.filter(function(j){ return j[0]===c.juris; })[0][1];
   return '<div class="cal">'+
     '<div class="cal-hoy"><p><span class="rf-srv'+(motivoInhabil(h,c.juris)?'':' ok')+'"></span>Hoy, '+estadoDe(h)+'.</p>'+
       '<p class="calc-nota" style="margin:6px 0 0">Mañana, '+estadoDe(masDias(h,1))+'.</p></div>'+
-    '<div class="cal-cab"><button class="mini" data-act="cal-mes" data-d="-1" aria-label="Mes anterior">‹</button>'+
+    '<div class="cal-lateral"><div class="cal-cab"><button class="mini" data-act="cal-mes" data-d="-1" aria-label="Mes anterior">‹</button>'+
       '<h3>'+MESES_N[c.mes]+' de '+c.anio+'</h3><button class="mini" data-act="cal-mes" data-d="1" aria-label="Mes siguiente">›</button>'+
       '<div class="cal-juris">'+chipsC("cal.juris",c.juris,JURIS)+'</div></div>'+
-    '<div class="cal-grilla"><span class="cal-sem">lu</span><span class="cal-sem">ma</span><span class="cal-sem">mi</span><span class="cal-sem">ju</span><span class="cal-sem">vi</span><span class="cal-sem">sá</span><span class="cal-sem">do</span>'+celdas+'</div>'+
+    '<div class="cal-grilla"><span class="cal-sem">lu</span><span class="cal-sem">ma</span><span class="cal-sem">mi</span><span class="cal-sem">ju</span><span class="cal-sem">vi</span><span class="cal-sem">sá</span><span class="cal-sem">do</span>'+celdas+'</div></div>'+
     falta.map(function(x){ return '<p class="calc-aviso">Datos incompletos: '+esc(x)+'</p>'; }).join("")+
     '<div class="cal-lista">'+(lista.length?lista.map(function(x){
-      return '<p><b class="cal-'+x[2]+'">'+x[0]+'</b><span class="cal-lista__texto">'+esc(x[1])+'</span></p>'; }).join(""):'<p class="calc-nota">Sin feriados ni días inhábiles en este mes.</p>')+'</div>'+
+      return '<p><b class="cal-'+x[2]+'">'+(typeof x[0]==="number"?x[0]:"Del "+x[0]+" de "+MESES_N[c.mes]) +'</b><span class="cal-lista__texto">'+esc(x[1])+'</span></p>'; }).join(""):'<p class="calc-nota">Sin feriados ni días inhábiles en este mes.</p>')+'</div>'+
     '<div class="cal-extra"><h3>Asuetos y otros días inhábiles</h3>'+
       '<p class="calc-nota">Los feriados, los no laborables, la feria de enero y la de julio ya cargada (con su norma) se descuentan solos. Agregue acá los asuetos o ferias que disponga el tribunal: se guardan para la jurisdicción elegida ('+esc(nombreJ)+') y solo se descuentan en los plazos de esa jurisdicción.</p>'+
       (CALC.inhabiles.length?'<div class="cal-cargados">'+CALC.inhabiles.map(function(x,i){
