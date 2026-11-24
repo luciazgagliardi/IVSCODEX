@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-import { esperarTurno } from '../lib/descargador.js';
+import { esperarTurno, configurarFetchOrigenParaPruebas } from '../lib/descargador.js';
 import { buscarDialnet } from '../lib/indiceDialnet.js';
 
 test('las peticiones simultáneas al mismo host reciben turnos separados', async () => {
@@ -33,6 +33,11 @@ test('Dialnet repite un reset transitorio y recupera la respuesta oficial', asyn
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
     });
   };
+  const restaurarTransporte = configurarFetchOrigenParaPruebas({
+    request: (...args) => globalThis.fetch(...args),
+    validar: async (url) => new URL(url),
+    esperar: async () => {},
+  });
   try {
     const salida = await buscarDialnet({ q: 'responsabilidad civil', modo: 'todas' });
     assert.equal(intentos, 2);
@@ -40,6 +45,7 @@ test('Dialnet repite un reset transitorio y recupera la respuesta oficial', asyn
     assert.deepEqual(salida.resultados, []);
   } finally {
     globalThis.fetch = original;
+    restaurarTransporte();
   }
 });
 
