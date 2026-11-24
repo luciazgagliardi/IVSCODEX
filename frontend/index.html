@@ -10529,6 +10529,13 @@ function vistaCalendario(){
     celdas+='<span class="cal-dia'+cls+'"'+(mot?' title="'+esc(mot)+'"':'')+'>'+d+'</span>';
   }
   if(c.mes===0&&IVSCalculos.FERIA_ENERO[c.juris]){ var fe=IVSCalculos.FERIA_ENERO[c.juris]; lista.push(["1 al "+dm,fe.motivo+" · "+fe.norma,"extra"]); }
+  /* Agrupa fechas próximas con idéntico fundamento; permite salvar sábados y domingos. */
+  var agrupada=[];
+  lista.forEach(function(x){ var ant=agrupada[agrupada.length-1],dia=typeof x[0]==="number"?x[0]:null,prev=ant&&typeof ant[0]==="number"?ant[0]:null;
+    if(dia!==null&&prev!==null&&x[1]===ant[1]&&x[2]===ant[2]&&dia-prev<=3){ ant[0]=prev+" al "+dia; }
+    else agrupada.push(x.slice());
+  });
+  lista=agrupada;
   var falta=IVSCalculos.faltantes(primero,new Date(Date.UTC(c.anio,c.mes,dm)),c.juris,CALC.inhabiles);
   function estadoDe(x){ var m=motivoInhabil(x,c.juris); return fechaLarga(x)+": "+(m?"inhábil ("+m.toLowerCase()+")":"día hábil judicial"); }
   var nombreJ=JURIS.filter(function(j){ return j[0]===c.juris; })[0][1];
