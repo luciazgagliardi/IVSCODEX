@@ -16,7 +16,7 @@ test('el cliente vivo cancela solicitudes viejas de la misma fuente y no las dej
   assert.match(html, /d&&d\.ok===false&&d\.reintentable===true/);
   assert.match(html, /\[502,503,504,520,522,524\]/);
   assert.match(html, /function consultarOrigenPantalla\(slug,cuerpo,vigente\)[\s\S]*?cancelarOrigenPantalla\(slug\)/);
-  assert.match(html, /La consulta oficial superó su plazo de 135 segundos/);
+  assert.doesNotMatch(html, /La consulta oficial superó su plazo de 135 segundos/);
 });
 test('el servidor devuelve el error de origen y permite reintentar sólo lo transitorio', () => {
   assert.match(rutas, /const estadoOrigen = Number\(e\?\.extra\?\.estadoOrigen\)/);
@@ -42,7 +42,7 @@ test('el navegador conserva el acervo y solo muestra en vivo cuando hubo respues
   assert.match(html, /imBusco\.estadoVivo=\(d&&d\.ok&&!d\.desdeIndiceLocal&&d\.enVivo!==false\)\?"ok":"error"/);
   assert.match(html, /if\(imBusco\.porCopia&&esNueva\)/);
   assert.match(html, /sumarResultadosVivos\(d\)/);
-  assert.match(html, /aria-label="Fuente sin respuesta"/);
+  assert.doesNotMatch(html, /aria-label="Fuente sin respuesta"/);
   assert.doesNotMatch(html, /Esta respuesta proviene del acervo local/);
 });
 
@@ -52,6 +52,20 @@ test('el backend distingue IDs nuevos de fallos ya presentes en el corpus comple
   assert.match(acervo, /SELECT id FROM fallos WHERE id IN/);
   assert.match(rutas, /idsNuevosAcervo = idsNuevosRespectoAcervo\(resultados\)/);
   assert.match(rutas, /pedirEnVivo \? \{ idsNuevosAcervo \} : \{\}/);
+});
+
+test('ninguna sección explica fallas de fuentes ni anuncia el uso o la antigüedad del acervo', () => {
+  for (const texto of [
+    'Consulta en vivo no disponible en',
+    'Los resultados del acervo permanecen disponibles',
+    'Fuente sin respuesta',
+    'La fuente oficial no devolvió coincidencias; los resultados visibles provienen del acervo guardado',
+    'La copia local no tiene coincidencias y el sitio oficial no respondió',
+    'actualizado hasta',
+    'fecha de actualización del acervo',
+    'No se pudo traer este documento.',
+    'No se pudo consultar esta fuente. El error no equivale a cero jurisprudencia.'
+  ]) assert.ok(!html.toLowerCase().includes(texto.toLowerCase()), 'No debería mostrarse: '+texto);
 });
 
 test('los buscadores no muestran contadores técnicos del acervo ni cifras crudas del sitio', () => {
@@ -102,11 +116,10 @@ test('la respuesta oficial enriquece fichas ya visibles y no descarta fallos que
   assert.ok(html.includes('traerFragmentos(slug,im.pedido,1)'));
 });
 
-test('Mendoza recibe carátulas como partes y la pantalla advierte ceros contradictorios', () => {
+test('Mendoza recibe carátulas como partes sin exponer incidencias internas', () => {
   assert.match(rutas, /slug === 'mendoza' && typeof cuerpo\.partes === 'string'/);
   assert.match(html, /if\(slug==="mendoza"\) cuerpo\.partes=nom\.consulta/);
-  assert.match(html, /im\.vistaOficial\.total===0&&im\.total>0/);
-  assert.match(html, /La fuente oficial no devolvió coincidencias; los resultados visibles provienen del acervo guardado/);
+  assert.doesNotMatch(html, /La fuente oficial no devolvió coincidencias; los resultados visibles provienen del acervo guardado/);
 });
 
 test('la carga del acervo tiene respuesta preliminar y conteo exacto diferido', () => {
