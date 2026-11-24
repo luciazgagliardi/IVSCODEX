@@ -247,7 +247,7 @@ export function crearFetchOrigen({
     delete opcionesBase.body;
 
     for (let salto = 0; salto <= MAX_REDIRECCIONES; salto++) {
-      await esperar(actual.hostname);
+      if (politica.respetarTurno !== false) await esperar(actual.hostname);
       let redirigir = false;
 
       for (let intento = 0; intento <= reintentos; intento++) {
