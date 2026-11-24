@@ -216,6 +216,105 @@ function quitarCabecerasDeCuerpo(headers) {
 }
 
 /**
+ * Mantiene vivo el timeout hasta que se consume el cuerpo de la respuesta.
+ * Los adaptadores suelen usar text()/json(), pero también se instrumenta
+ * body.getReader(), la iteración asíncrona y pipeTo() para no dejar un camino
+ * de lectura sin límite de tiempo.
+ */
+function envolverLector(lector, limpiar) {
+  return new Proxy(lector, {
+    get(objetivo, propiedad) {
+      const valor = Reflect.get(objetivo, propiedad, objetivo);
+      if (propiedad === 'read') {
+        return (...args) => Promise.resolve(Reflect.apply(valor, objetivo, args)).then(
+          (resultado) => {
+            if (resultado.done) limpiar();
+            return resultado;
+          },
+          (error) => {
+            limpiar();
+            throw error;
+          }
+        );
+      }
+      if (propiedad === 'cancel') {
+        return (...args) => Promise.resolve(Reflect.apply(valor, objetivo, args)).finally(limpiar);
+      }
+      return typeof valor === 'function' ? valor.bind(objetivo) : valor;
+    },
+  });
+}
+
+function envolverIterador(iterador, limpiar) {
+  return new Proxy(iterador, {
+    get(objetivo, propiedad) {
+      const valor = Reflect.get(objetivo, propiedad, objetivo);
+      if (propiedad === 'next') {
+        return (...args) => Promise.resolve(Reflect.apply(valor, objetivo, args)).then(
+          (resultado) => {
+            if (resultado.done) limpiar();
+            return resultado;
+          },
+          (error) => {
+            limpiar();
+            throw error;
+          }
+        );
+      }
+      if (propiedad === 'return' || propiedad === 'throw') {
+        return (...args) => Promise.resolve(Reflect.apply(valor, objetivo, args)).finally(limpiar);
+      }
+      return typeof valor === 'function' ? valor.bind(objetivo) : valor;
+    },
+  });
+}
+
+function envolverFlujo(flujo, limpiar) {
+  return new Proxy(flujo, {
+    get(objetivo, propiedad) {
+      const valor = Reflect.get(objetivo, propiedad, objetivo);
+      if (propiedad === 'getReader') {
+        return (...args) => envolverLector(Reflect.apply(valor, objetivo, args), limpiar);
+      }
+      if (propiedad === Symbol.asyncIterator) {
+        return (...args) => envolverIterador(Reflect.apply(valor, objetivo, args), limpiar);
+      }
+      if (propiedad === 'cancel' || propiedad === 'pipeTo') {
+        return (...args) => Promise.resolve(Reflect.apply(valor, objetivo, args)).finally(limpiar);
+      }
+      if (propiedad === 'pipeThrough') {
+        return (...args) => envolverFlujo(Reflect.apply(valor, objetivo, args), limpiar);
+      }
+      return typeof valor === 'function' ? valor.bind(objetivo) : valor;
+    },
+  });
+}
+
+function respuestaConTimeout(respuesta, reloj) {
+  let finalizada = false;
+  const limpiar = () => {
+    if (finalizada) return;
+    finalizada = true;
+    clearTimeout(reloj);
+  };
+  if (!respuesta.body) limpiar();
+
+  return new Proxy(respuesta, {
+    get(objetivo, propiedad) {
+      const valor = Reflect.get(objetivo, propiedad, objetivo);
+      if (propiedad === 'body' && valor) return envolverFlujo(valor, limpiar);
+      if (
+        ['text', 'json', 'arrayBuffer', 'blob', 'formData'].includes(propiedad) &&
+        typeof valor === 'function'
+      ) {
+        return (...args) => Promise.resolve(Reflect.apply(valor, objetivo, args)).finally(limpiar);
+      }
+      return typeof valor === 'function' ? valor.bind(objetivo) : valor;
+    },
+  });
+}
+
+/**
  * Cliente común de peticiones a portales oficiales.
  *
  * Usa el mismo agente de conexión segura que el descargador del Lector,
@@ -295,7 +394,7 @@ export function crearFetchOrigen({
           }
           throw e;
         }
-        clearTimeout(reloj);
+        respuesta = respuestaConTimeout(respuesta, reloj);
 
         const demora = demoraParaReintento(respuesta, intento);
         if (demora !== null && puedeRepetir && intento < reintentos) {
