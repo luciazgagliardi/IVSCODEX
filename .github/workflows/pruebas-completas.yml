@@ -2,7 +2,7 @@ name: Pruebas completas del backend
 
 on:
   push:
-    branches: [main]
+    branches: [main, development/ivscodex-2.0-live-engine]
     paths:
       - "backend/**"
       - "frontend/index.html"
