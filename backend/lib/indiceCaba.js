@@ -35,7 +35,7 @@
 import { JSDOM, VirtualConsole } from 'jsdom';
 import iconv from 'iconv-lite';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { urlParaPedir, sinClave } from './proxyOrigen.js';
 import { consultarConNavegador, dominioConNavegador } from './navegadorCf.js';
 import { errores } from './errores.js';
@@ -73,7 +73,6 @@ function cuerpoWin1252(parametros) {
 }
 
 async function pedirBusqueda(parametros) {
-  await esperarTurno(HOST);
   const url = urlParaPedir(URL_BUSQUEDA, HOST);
   const porProxy = url !== URL_BUSQUEDA;
   const headers = {
@@ -113,16 +112,18 @@ async function pedirBusqueda(parametros) {
     }
   };
 
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
     let resp;
     try {
-      resp = await fetch(url, { method: 'POST', signal: control.signal, headers, body });
+      resp = await fetchOrigen(URL_BUSQUEDA, {
+        method: 'POST',
+        headers,
+        body,
+      }, { reintentos: 1 });
     } catch (errorDirecto) {
       // Un reset de red o timeout del datacenter también puede superarse
       // desde Chromium, que mantiene cookies y resuelve los desafíos del sitio.
-      return await browserFallback(errorDirecto?.cause?.code || errorDirecto?.message || 'falló la conexión directa');
+      return await browserFallback(errorDirecto?.cause?.code || errorDirecto?.code || errorDirecto?.message || 'falló la conexión directa');
     }
 
     if (resp.ok) {
@@ -149,8 +150,6 @@ async function pedirBusqueda(parametros) {
       return await browserFallback('timeout de la conexión directa');
     }
     throw errores.indiceFuenteFalla('caba', sinClave(error?.cause?.message || error?.cause?.code || error?.message));
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
