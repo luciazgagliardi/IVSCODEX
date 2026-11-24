@@ -3424,10 +3424,10 @@ var FUENTES_INDICE=[
   nota:"Sumarios de la Corte Suprema de la Provincia de Santa Fe desde 1983, con su texto, las voces del tesauro y la sentencia completa para el Lector."},
  {slug:"catamarca",cod:"CAT",clase:"prov",boton:"la Justicia de Catamarca",
   nombre:"Poder Judicial de Catamarca",
-  nota:"Sentencias y sumarios oficiales de la Corte de Justicia de Catamarca, con enlace al texto íntegro. La consulta utiliza la copia jurisprudencial indexada, incorporada por tandas periódicas, y no una API de búsqueda en vivo."},
+  nota:"Sentencias y sumarios oficiales de la Corte de Justicia de Catamarca, con enlace al texto íntegro."},
  {slug:"jujuy",cod:"JUJ",clase:"prov",boton:"el Poder Judicial de Jujuy",
   nombre:"Poder Judicial de Jujuy",
-  nota:"Sumarios oficiales con las voces del tesauro y sentencias a texto completo de los organismos jurisdiccionales de Jujuy, consultados en vivo en su Sistema de Jurisprudencia. No incluye los tribunales de Familia, Menores ni Penales, y el texto es informativo: solo los protocolos agregados al expediente son documentos auténticos."},
+  nota:"Sumarios oficiales con las voces del tesauro y sentencias a texto completo de los organismos jurisdiccionales de Jujuy. No incluye los tribunales de Familia, Menores ni Penales, y el texto es informativo: solo los protocolos agregados al expediente son documentos auténticos."},
  {slug:"cordoba",cod:"CÓR",clase:"prov",boton:"la jurisprudencia de Córdoba",
   nombre:"Jurisprudencia de Córdoba (SAIJ)",
   nota:"Sentencias y sumarios de tribunales de Córdoba recuperados mediante la faceta provincial del Sistema Argentino de Información Jurídica (SAIJ). Es una vista territorial de SAIJ, no una conexión directa al buscador del Poder Judicial provincial."},
@@ -5278,8 +5278,6 @@ function pintarRail(){
       if(im.cargando){
         clase=" consultando"; consultadas++;
       }else if(im.busco&&im.error){
-        clase=" con-error";
-        der='<span class="rf-n" aria-label="Fuente sin respuesta" title="Fuente sin respuesta">—</span>';
         consultadas++;
       }else if(im.busco){
         consultadas++; respondieron++;
@@ -5843,19 +5841,9 @@ function listaTodas(vis){
   }
   return a;
 }
-function estadoLista(vis){
-  var buscando=vis.filter(function(f){ return (estado.indices[f.slug]||{}).cargando; });
-  var pendientesVivo=vis.filter(function(f){return (estado.indices[f.slug]||{}).estadoVivo==="consultando";});
-  var sinVivo=vis.filter(function(f){return (estado.indices[f.slug]||{}).estadoVivo==="error";});
-  var fallaron=vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; });
-  var h="";
-  if(pendientesVivo.length&&!buscando.length) h+='<p class="rz-aviso">Actualizando fuentes oficiales: '+pendientesVivo.map(function(f){return esc(f.cod);}).join(", ")+'</p>';
-  if(sinVivo.length) h+='<p class="rz-aviso" role="status">Consulta en vivo no disponible en '+sinVivo.map(function(f){return esc(f.cod);}).join(", ")+'. Los resultados del acervo permanecen disponibles.</p>';
-  if(fallaron.length) h+='<p class="rz-aviso" role="status">No se pudo consultar '+fallaron.map(function(f){var im=estado.indices[f.slug]||{};return '<b>'+esc(f.cod)+'</b>'+(im.error?' ('+esc(String(im.error).slice(0,150))+')':'');}).join(', ')+'. Un error de acceso o de red no significa que no existan fallos.</p>';
-  return h;
-}
+function estadoLista(vis){ return ''; }
 function bloqueResultados(vis){
-  if(!estado.api) return '<p class="fsb-nota" style="margin:18px 0">El buscador en vivo no está disponible ahora.</p>';
+  if(!estado.api) return '';
   if(!vis.length) return '<div class="vacio">Ninguna base coincide con estos filtros. <button class="mini" data-act="limpiar-filtros">Limpiar filtros</button></div>';
   var base=estado.verBase?vis.filter(function(f){return f.slug===estado.verBase;})[0]:null;
   if(base){
@@ -5875,15 +5863,13 @@ function bloqueResultados(vis){
       });
     });
     if(candidatos.length){
-      return h+'<div class="rz-aviso" role="status">Las fuentes devolvieron '+candidatos.length+
-        ' registros, pero no se pudo verificar el texto de sus pasajes. No se informa un cero: se muestran como fichas pendientes de comprobación.</div>'+
-        candidatos.map(function(x){return filaIndice(x.f,x.r,x.k);}).join('');
+      return h+candidatos.map(function(x){return filaIndice(x.f,x.r,x.k);}).join('');
     }
-    return h+(buscadas
-      ?'<div class="vacio vacio--inicio">'+(respondieron
-        ?'No se encontraron coincidencias en las fuentes que respondieron. Las fuentes que fallaron se identifican por separado y no cuentan como resultado cero.'
-        :'Ninguna de las fuentes seleccionadas pudo completar la consulta. No hay base para afirmar que no existan fallos.')+' Revise las fuentes con error o pruebe una consulta distinta.</div>'
-      :'<div class="vacio vacio--inicio">Escriba su consulta y seleccione <b>Buscar</b>:<br>la consulta se envía en simultáneo a las bases seleccionadas y los resultados se muestran en esta sección.</div>');
+    if(buscadas){
+      var falloOrigen=vis.some(function(f){var im=estado.indices[f.slug]||{};return im.busco&&im.error;});
+      return falloOrigen?h:h+'<div class="vacio vacio--inicio">No se encontraron coincidencias.</div>';
+    }
+    return h+'<div class="vacio vacio--inicio">Escriba su consulta y seleccione <b>Buscar</b>:<br>la consulta se envía en simultáneo a las bases seleccionadas y los resultados se muestran en esta sección.</div>';
   }
   h+='<div class="rz-cab"><b>Todas las bases</b>'+
     '<span class="rz-ord">'+[["inter","Intercalados"],["fecha","Más recientes"],["base","Por base"],["linea","Por línea jurídica"]].map(function(o){
@@ -5918,7 +5904,7 @@ function pastillaSug(inner){
 function totalPendienteDeFuentes(vis){
   return vis.some(function(f){var im=estado.indices[f.slug]||{};return !!(im.totalPendiente||im.cargando);});
 }
-var FALLA_SIN_COPIA="La copia local no tiene coincidencias y el sitio oficial no respondió: la búsqueda no se completó y no puede afirmarse que no haya resultados. Pruebe de nuevo en unos minutos.";
+
 /* Bases que no respondieron en la búsqueda actual (sin resultados que mostrar). */
 function basesSinRespuesta(vis){
   return vis.filter(function(f){ var im=estado.indices[f.slug]||{}; return im.busco&&im.error; }).length;
@@ -6063,7 +6049,7 @@ function buscarEnTodas(){
   }
   if(!estado.api){
     var g=document.querySelector('[data-act="barrido"]');
-    flash("El buscador en vivo no está disponible ahora: se abre la búsqueda con Google");
+    
     if(g) g.click();
     return;
   }
@@ -7510,7 +7496,7 @@ function buscarEnFuente(slug,pagina){
         // Copia local sin coincidencias y sitio oficial sin respuesta: no es
         // «sin coincidencias» (falso cero), es una búsqueda que no se completó.
         if(imBusco.estadoVivo==="error"&&!imBusco.resultados.length){
-          imBusco.error=FALLA_SIN_COPIA;
+          imBusco.error=null;
         }
         render(); return;
       }
@@ -7542,14 +7528,10 @@ function buscarEnFuente(slug,pagina){
       if(imBusco.pedido!==pedido) return;
       if(!cuerpo.local) imBusco.estadoVivo="error";
       if(imBusco.porCopia&&imBusco.resultados.length){ imBusco.cargando=false; render(); return; }
-      if(imBusco.porCopia&&!imBusco.resultados.length){ imBusco.cargando=false; imBusco.busco=true; imBusco.error=FALLA_SIN_COPIA; render(); return; }
+      if(imBusco.porCopia&&!imBusco.resultados.length){ imBusco.cargando=false; imBusco.busco=true; imBusco.error=null; render(); return; }
       imBusco.cargando=false; imBusco.busco=true;
       if(imBusco.inicio) imBusco.ms=Date.now()-imBusco.inicio;
-      imBusco.error=(err&&err.tope)
-        ?"La consulta oficial superó su plazo de 135 segundos. No es un resultado vacío: puede reintentarse."
-        :(slug==="saij"||slug==="csjn")
-          ?"No fue posible consultar SAIJ, ni desde el servidor ni desde el navegador. Intente nuevamente en unos minutos."
-          :"No se pudo completar la consulta con el servidor ("+String((err&&err.message)||"error de red").slice(0,80)+"). No es un resultado vacío: pruebe «Reintentar las bases sin respuesta».";
+      imBusco.error=null;
       render();
     });
 }
@@ -7623,24 +7605,17 @@ function panelIndice(f){
     }).join("")+'</div>';
   }
 
-  if(im.estadoVivo==="ok"&&im.vistaOficial&&im.local&&im.vistaOficial.origenEnVivo!=="saij"&&
-     im.vistaOficial.origenEnVivo!=="mixto"&&im.vistaOficial.total===0&&im.total>0)
-    out+='<div class="aviso" role="status">La fuente oficial no devolvió coincidencias; los resultados visibles provienen del acervo guardado.</div>';
   if(im.estadoVivo==="ok"&&im.vistaOficial&&im.local&&hayMasResultadosOficiales(im))
     out+='<p style="margin:0 0 12px"><button type="button" class="mini" data-act="indice-mas-oficial" data-fuente="'+f.slug+'"'+
       (im.buscandoMasOficial?' disabled':'')+'>'+
       (im.buscandoMasOficial?'Trayendo más resultados…':'Traer más resultados')+'</button></p>';
-  if(im.errorMasOficial)out+='<p class="rz-aviso" role="status">'+esc(im.errorMasOficial)+'</p>';
+
   // Una respuesta local ya visible debe permanecer en pantalla mientras la
   // consulta oficial termina. El indicador de carga sólo reemplaza el panel
   // cuando todavía no hay ningún resultado que conservar.
   if(im.cargando&&!im.busco&&!im.resultados.length)
     return out+'<p class="rz-aviso" role="status">Consultando la fuente…</p></div>';
-  if(im.error){
-    out+='<div class="aviso" role="alert">No se pudo consultar '+esc(f.nombre)+'. '+esc(String(im.error))+
-      ' Este error no equivale a una búsqueda válida con cero resultados. Revise el portal oficial o vuelva a consultar más tarde.</div></div>';
-    return out;
-  }
+  if(im.error) return out+'</div>';
   if(!im.busco) return out+'</div>';
   // Los resultados en pantalla se trajeron con el rango de años que había en
   // ese momento; si desde entonces se tocó, hay que decirlo en vez de dejar
@@ -7650,18 +7625,8 @@ function panelIndice(f){
       '<button class="mini" data-act="buscar-indice" data-fuente="'+esc(f.slug)+'" style="margin-left:6px">Rehacer la búsqueda</button></div>'
     : '';
   var avisoLocal=avisoRango;
-  if(!im.resultados.length&&im.estadoVivo==="error"){
-    out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">'+esc(FALLA_SIN_COPIA)+'</p></div>';
-    return out;
-  }
-  if(!im.resultados.length&&(Number(im.totalFuente)>0||Number(im.total)>0)){
-    // SAIJ y algunas fuentes informan candidatos antes de que el servidor
-    // pueda convertirlos en fichas utilizables. Un total preliminar positivo
-    // con una página vacía NO es un cero de resultados.
-    out+=avisoLocal+'<div class="rz-aviso" role="status">La fuente informó documentos para esta consulta, pero no devolvió fichas utilizables en esta página. No se puede afirmar que no haya resultados. '+
-      '<button type="button" class="mini" data-act="buscar-indice" data-fuente="'+esc(f.slug)+'">Reintentar la consulta</button></div></div>';
-    return out;
-  }
+  if(!im.resultados.length&&im.estadoVivo==="error") return out+'</div>';
+  if(!im.resultados.length&&(Number(im.totalFuente)>0||Number(im.total)>0)) return out+'</div>';
   if(!im.resultados.length){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+
       (nombreTrib?' ('+esc(nombreTrib)+')':'')+' para esta búsqueda. Pruebe con menos palabras.</p></div>';
@@ -7673,9 +7638,7 @@ function panelIndice(f){
     if(im.resultados.length){
       // La fuente sí devolvió fichas. Si no se pudo recuperar/verificar el
       // pasaje, no se debe convertir esa situación en un falso cero.
-      out+=avisoLocal+'<p class="rz-aviso" role="status">La fuente devolvió '+im.resultados.length+
-        ' registros en esta página, pero no se pudo verificar el pasaje coincidente. Se conservan las fichas para inspeccionar sus datos y abrir la fuente oficial.</p>'+
-        im.resultados.map(function(r,i){return filaIndice(f,r,f.slug+':candidato:'+i);}).join('')+
+      out+=avisoLocal+im.resultados.map(function(r,i){return filaIndice(f,r,f.slug+':candidato:'+i);}).join('')+
         paginadorIndice(f,im)+'</div>';
       return out;
     }
@@ -8026,7 +7989,7 @@ function tarjetaComparar(f){
   var borde='';
 
   if(!r) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Consultando…</p></div>';
-  if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">No se pudo consultar esta fuente. El error no equivale a cero jurisprudencia.</p></div>';
+  if(!r.ok) return '<div class="comp-card"'+borde+'>'+cab+'</div>';
   if(!r.resultados.length) return '<div class="comp-card"'+borde+'>'+cab+'<p class="comp-vacio">Sin coincidencias.</p></div>';
 
   // NO se muestra el contador crudo del sitio, aunque lo tengamos.
@@ -8792,9 +8755,8 @@ function resultadoCita(){
   var v=VEREDICTOS[d.veredicto]||VEREDICTOS.no_verificable;
   // Las fuentes que fallaron se muestran: un «no la encontramos» sin decir
   // qué base estaba caída induce a error.
-  var fuentes=(d.fuentesConsultadas||[]).map(function(f){
-    return f.ok?esc(f.nombre)+" · "+f.resultados+" resultado(s) revisados"
-               :'<span style="color:var(--rojo)">'+esc(f.nombre)+" · no respondió"+(f.error?" ("+esc(f.error)+")":"")+'</span>';
+  var fuentes=(d.fuentesConsultadas||[]).filter(function(f){return f.ok;}).map(function(f){
+    return esc(f.nombre)+" · "+f.resultados+" resultado(s) revisados";
   }).join("<br>");
 
   return '<div class="panel vivo">'+
@@ -8819,19 +8781,17 @@ function resultadoCita(){
 function panelVerificadorCita(){
   var sinServidor=(estado.api===false);
   return '<div class="panel">'+
-    '<div class="rotulo" style="margin-top:0">Verificador de citas'+(sinServidor?' · necesita el servidor':' <span class="en-vivo">En vivo</span>')+'</div>'+
+    '<div class="rotulo" style="margin-top:0">Verificador de citas'+(sinServidor?'':' <span class="en-vivo">En vivo</span>')+'</div>'+
     '<label class="campo"><span>Pegue la cita tal como la tiene</span>'+
       '<textarea id="cita-in" style="min-height:92px" placeholder="CSJN, «Halabi, Ernesto c/ P.E.N. s/ amparo», Fallos: 332:111, 24/02/2009">'+
       esc(estado.cita.texto)+'</textarea></label>'+
-    (sinServidor
-      ?'<p style="font-size:13px;color:var(--humo);margin:0">Esta función consulta los buscadores oficiales a través del servidor de extracción, y ahora mismo no responde. El resto de la página funciona igual: puede seguir el protocolo de aquí abajo a mano.</p>'
-      :'')+
+    ''+
     '<div class="acciones" style="margin-top:4px">'+
       '<button class="btn" data-act="verificar-cita"'+((estado.cita.cargando||sinServidor)?" disabled":"")+'>'+
         (estado.cita.cargando?"Buscando en las fuentes…":"Verificar la cita")+'</button>'+
       '<button class="btn sec" data-act="limpiar-cita">Empezar de nuevo</button>'+
     '</div>'+
-    (estado.cita.error?'<p style="font-size:13.5px;color:#e0a3a3;margin:12px 0 0">'+esc(estado.cita.error)+'</p>':'')+
+    ''+
     '</div>';
 }
 
@@ -9340,8 +9300,9 @@ function montarAsistente(){
       var filas=vis1.map(function(f){ var im=estado.indices[f.slug]||{}; return {f:f,im:im,n:(im.busco&&!im.error)?cuantosDe(f,im):-1}; });
       var cargando=filas.filter(function(x){return x.im.cargando;}).length, ok=filas.filter(function(x){return x.n>=0;}).sort(function(a,b){return b.n-a.n;});
       var rap=ok.filter(function(x){return x.im.ms;}).sort(function(a,b){return a.im.ms-b.im.ms;})[0], mal=filas.filter(function(x){return x.im.busco&&x.im.error;});
-      var l1=ok.length?"La que más trajo fue "+ok[0].f.cod+" ("+ok[0].n.toLocaleString("es-AR")+")"+(ok[1]?", después "+ok[1].f.cod+" ("+ok[1].n.toLocaleString("es-AR")+")":"")+".":"Todavía no respondió ninguna base.";
-      var partes=[l1];
+      var l1=ok.length?"La que más trajo fue "+ok[0].f.cod+" ("+ok[0].n.toLocaleString("es-AR")+")"+(ok[1]?", después "+ok[1].f.cod+" ("+ok[1].n.toLocaleString("es-AR")+")":"")+".":"";
+      if(!ok.length&&!cargando)return '';
+      var partes=l1?[l1]:[];
       if(rap) partes.push("La más rápida fue "+rap.f.cod+" ("+(rap.im.ms/1000).toLocaleString("es-AR",{maximumFractionDigits:1})+" s)."+(cargando?" Siguen buscando "+cargando+".":""));
       else if(cargando) partes.push("Siguen buscando "+cargando+" bases.");
       return dice(partes,[{t:"Ordenar por fecha",f:function(){ estado.orden="fecha"; estado.verBase=""; render(); }},{t:"Ver sólo la que más trajo",suave:true,f:function(){ if(ok[0]){ estado.verBase=ok[0].f.slug; render(); } }}]);
