@@ -19,7 +19,7 @@
  */
 
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { enCola } from './almacen.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
@@ -48,14 +48,9 @@ function camposDe(html) {
 }
 
 async function pedir(url, { cookie = '', cuerpo = null } = {}) {
-  await esperarTurno(HOST);
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const resp = await fetch(url, {
+    const resp = await fetchOrigen(url, {
       method: cuerpo ? 'POST' : 'GET',
-      signal: control.signal,
-      redirect: 'follow',
       headers: {
         'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`,
         Accept: 'text/html,application/xhtml+xml',
@@ -73,8 +68,6 @@ async function pedir(url, { cookie = '', cuerpo = null } = {}) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e;
     throw errores.indiceFuenteFalla('scba', e?.cause?.code || e?.message);
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
