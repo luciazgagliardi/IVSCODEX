@@ -24,7 +24,7 @@
  * informan en fuentesInfo.js.
  */
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 
@@ -86,12 +86,9 @@ export function registroDe(x) {
 }
 
 async function pedir(cuerpo, pagina, limite) {
-  await esperarTurno(HOST);
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const r = await fetch(`${URL_BUSQUEDA}?offset=${pagina}&limit=${limite}`, {
-      method: 'POST', signal: control.signal, body: JSON.stringify(cuerpo),
+    const r = await fetchOrigen(`${URL_BUSQUEDA}?offset=${pagina}&limit=${limite}`, {
+      method: 'POST', body: JSON.stringify(cuerpo),
       headers: { 'User-Agent': USER_AGENT, 'Content-Type': 'application/json', Accept: 'application/json', Referer: `${ORIGEN_JUJUY}/public/buscador` },
     });
     if (!r.ok) throw errores.indiceFuenteFalla('jujuy', `respuesta ${r.status}`);
@@ -102,8 +99,6 @@ async function pedir(cuerpo, pagina, limite) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e;
     throw errores.indiceFuenteFalla('jujuy', e?.cause?.code || e?.message);
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
