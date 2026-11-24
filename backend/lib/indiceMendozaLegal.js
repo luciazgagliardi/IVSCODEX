@@ -35,7 +35,7 @@
 
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno, dominioHabilitado } from './descargador.js';
+import { fetchOrigen, dominioHabilitado } from './descargador.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
 
@@ -89,8 +89,6 @@ const MAX_SUMARIO = 2500;
  * tanda pedida.
  */
 async function pedirTanda({ q, desde, cuantos }) {
-  await esperarTurno(HOST);
-
   const p = new URLSearchParams({
     categories: String(CATEGORIA_JURISPRUDENCIA),
     per_page: String(Math.min(POR_PAGINA_MAX, Math.max(1, cuantos))),
@@ -106,11 +104,8 @@ async function pedirTanda({ q, desde, cuantos }) {
   });
   if (q) p.set('search', q);
 
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const resp = await fetch(`${URL_API}?${p.toString()}`, {
-      signal: control.signal,
+    const resp = await fetchOrigen(`${URL_API}?${p.toString()}`, {
       headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
     });
 
@@ -136,8 +131,6 @@ async function pedirTanda({ q, desde, cuantos }) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e; // ya es un ErrorApp
     throw errores.indiceFuenteFalla('mendozalegal', e?.cause?.message || e?.cause?.code || e?.message);
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
