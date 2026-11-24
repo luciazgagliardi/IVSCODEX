@@ -326,7 +326,7 @@ function respuestaConTimeout(respuesta, reloj) {
  * La fábrica permite probar la política con dependencias simuladas sin red.
  */
 export function crearFetchOrigen({
-  request = (...args) => globalThis.fetch(...args),
+  request = fetchSeguro,
   validar = validarURL,
   esperar = esperarTurno,
   preparar = urlParaPedir,
