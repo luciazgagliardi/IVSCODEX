@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
+import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
@@ -25,6 +26,13 @@ test('rearmar no elimina registros publicados cuando falta la cosecha cruda', ()
     const man = JSON.parse(fs.readFileSync(path.join(salida,'manifiesto.json'),'utf8'));
     assert.ok(man.conteos.mendoza>=1);
     assert.ok(man.conteos.saij>=1);
+    assert.equal(man.integridad?.algoritmo, 'sha256');
+    assert.deepEqual(Object.keys(man.integridad.archivos).sort(), [...man.archivos].sort());
+    for (const nombre of man.archivos) {
+      const comprimido = fs.readFileSync(path.join(salida, nombre));
+      const hash = crypto.createHash('sha256').update(comprimido).digest('hex');
+      assert.equal(man.integridad.archivos[nombre], hash, `SHA-256 del archivo ${nombre}`);
+    }
     const ids = man.archivos.flatMap(nombre=>zlib.gunzipSync(fs.readFileSync(path.join(salida,nombre))).toString().split('\n').filter(Boolean).map(x=>JSON.parse(x).id));
     for (const x of filas) assert.ok(ids.includes(x.id), `La reconstrucción perdió ${x.id}`);
   } finally { fs.rmSync(dir,{recursive:true,force:true}); }

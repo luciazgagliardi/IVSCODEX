@@ -56,7 +56,9 @@ test('el diagnóstico de las 41 fuentes corre después del smoke de Azure, sin w
   const diagnostico = fs.readFileSync(new URL('../../.github/workflows/diagnosticar-en-vivo.yml', import.meta.url), 'utf8');
   assert.ok(smoke.includes('\n  consultas:\n'));
   assert.ok(smoke.includes('    needs: smoke'));
-  assert.ok(smoke.includes("needs.smoke.result == 'success'"));
+  assert.ok(smoke.includes('always() && github.event_name != \'pull_request\''));
+  assert.ok(smoke.includes("github.event.workflow_run.conclusion == 'success'"));
+  assert.doesNotMatch(smoke, /needs\.smoke\.result/);
   assert.ok(smoke.includes('node ops/diagnosticar-en-vivo.mjs'));
   assert.ok(smoke.includes('Consultar las 41 fuentes después de comprobar Azure y el índice FTS'));
   assert.ok(smoke.includes('cancel-in-progress: false'));
@@ -105,7 +107,9 @@ test('el diagnóstico de las 41 fuentes corre después del smoke de Azure, sin w
   const diagnostico = fs.readFileSync(new URL('../../.github/workflows/diagnosticar-en-vivo.yml', import.meta.url), 'utf8');
   assert.ok(smoke.includes('\n  consultas:\n'));
   assert.ok(smoke.includes('    needs: smoke'));
-  assert.ok(smoke.includes("needs.smoke.result == 'success'"));
+  assert.ok(smoke.includes('always() && github.event_name != \'pull_request\''));
+  assert.ok(smoke.includes("github.event.workflow_run.conclusion == 'success'"));
+  assert.doesNotMatch(smoke, /needs\.smoke\.result/);
   assert.ok(smoke.includes('node ops/diagnosticar-en-vivo.mjs'));
   assert.ok(smoke.includes('Consultar las 41 fuentes después de comprobar Azure y el índice FTS'));
   assert.ok(smoke.includes('cancel-in-progress: false'));
