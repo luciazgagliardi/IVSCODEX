@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import dns from 'node:dns/promises';
+import { configurarFetchOrigenParaPruebas } from '../lib/descargador.js';
 import { FUENTES, fuentePorSlug, consultaDeArticulo } from '../lib/fuentes.js';
 import { informacionFuente, catalogoFuentesIntegradas } from '../lib/fuentesInfo.js';
 import { buscarChubut } from '../lib/indiceChubut.js';
@@ -11,15 +11,16 @@ import { buscarHudoc } from '../lib/indiceHudoc.js';
 
 const conFetch = async (fn, ejecutar) => {
   const original = globalThis.fetch;
-  const lookupOriginal = dns.lookup;
   globalThis.fetch = fn;
-  // Estas pruebas reemplazan la red por respuestas simuladas: también fijan
-  // una resolución pública determinista para no consultar DNS externo.
-  dns.lookup = async () => [{ address: '93.184.216.34', family: 4 }];
+  const restaurarTransporte = configurarFetchOrigenParaPruebas({
+    request: (...args) => globalThis.fetch(...args),
+    validar: async (url) => new URL(url),
+    esperar: async () => {},
+  });
   try { return await ejecutar(); }
   finally {
     globalThis.fetch = original;
-    dns.lookup = lookupOriginal;
+    restaurarTransporte();
   }
 };
 const cabecera = (headers, nombre) =>
