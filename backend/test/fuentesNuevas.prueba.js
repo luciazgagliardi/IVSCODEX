@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import dns from 'node:dns/promises';
 import { FUENTES, fuentePorSlug, consultaDeArticulo } from '../lib/fuentes.js';
 import { informacionFuente, catalogoFuentesIntegradas } from '../lib/fuentesInfo.js';
 import { buscarChubut } from '../lib/indiceChubut.js';
@@ -10,10 +11,21 @@ import { buscarHudoc } from '../lib/indiceHudoc.js';
 
 const conFetch = async (fn, ejecutar) => {
   const original = globalThis.fetch;
+  const lookupOriginal = dns.lookup;
   globalThis.fetch = fn;
+  // Estas pruebas reemplazan la red por respuestas simuladas: también fijan
+  // una resolución pública determinista para no consultar DNS externo.
+  dns.lookup = async () => [{ address: '93.184.216.34', family: 4 }];
   try { return await ejecutar(); }
-  finally { globalThis.fetch = original; }
+  finally {
+    globalThis.fetch = original;
+    dns.lookup = lookupOriginal;
+  }
 };
+const cabecera = (headers, nombre) =>
+  headers instanceof Headers
+    ? headers.get(nombre)
+    : (headers?.[nombre] ?? headers?.[nombre.toLowerCase()] ?? null);
 
 const respuesta = (datos, status = 200, headers = {}) =>
   new Response(typeof datos === 'string' ? datos : JSON.stringify(datos), {
@@ -79,10 +91,10 @@ test('Chubut inicia acceso anónimo, conserva sesión y pagina en el JSON oficia
   assert.equal(llamadas[2].url.searchParams.get('PageIndex'), '1');
   assert.equal(llamadas[3].url.searchParams.get('PageIndex'), '2');
   assert.equal(llamadas[2].url.searchParams.get('Tipo'), '');
-  assert.match(llamadas[2].opciones.headers.Cookie || '', /EurekaVisit=visit-1/);
-  assert.match(llamadas[2].opciones.headers.Cookie || '', /EurekaSession=anon-123/);
-  assert.equal(llamadas[2].opciones.headers['X-Requested-With'], 'XMLHttpRequest');
-  assert.equal(llamadas[3].opciones.headers['X-Requested-With'], 'XMLHttpRequest');
+  assert.match(cabecera(llamadas[2].opciones.headers, 'Cookie') || '', /EurekaVisit=visit-1/);
+  assert.match(llamadas[2].cabecera(opciones.headers, 'Cookie') || '', /EurekaSession=anon-123/);
+  assert.equal(cabecera(llamadas[2].opciones.headers, 'X-Requested-With'), 'XMLHttpRequest');
+  assert.equal(cabecera(llamadas[3].opciones.headers, 'X-Requested-With'), 'XMLHttpRequest');
 });
 
 test('Chubut sigue redirecciones de acceso anónimo y renueva una sesión expirada sin mostrar HTML como resultado', async () => {
@@ -117,7 +129,7 @@ test('Chubut sigue redirecciones de acceso anónimo y renueva una sesión expira
     assert.match(opciones.headers.Cookie || '', /EurekaVisit=visit-redirect/);
     assert.match(opciones.headers.Cookie || '', /AnonTicket=anon-redirect/);
     assert.match(opciones.headers.Cookie || '', /EurekaSession=renewed-/);
-    assert.equal(opciones.headers['X-Requested-With'], 'XMLHttpRequest');
+    assert.equal(cabecera(opciones.headers, 'X-Requested-With'), 'XMLHttpRequest');
     if (busquedas === 1) {
       return new Response('<html><title>Sistema Eureka</title><body>Su tiempo de sesión ha finalizado. Acceso restringido.</body></html>', {
         status: 200, headers: { 'Content-Type': 'text/html; charset=utf-8' },
