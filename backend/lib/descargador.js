@@ -166,6 +166,153 @@ export async function esperarTurno(host) {
   if (falta > 0) await new Promise((resolve) => setTimeout(resolve, falta));
 }
 
+
+/* ------------------------------------------------------------------ *
+ * 3.b. Cliente HTTP común para consultas a fuentes
+ * ------------------------------------------------------------------ */
+
+const ESTADOS_REINTENTABLES = new Set([408, 425, 500, 502, 503, 504, 520, 522, 524]);
+const ERRORES_REINTENTABLES = new Set([
+  'ECONNRESET', 'ECONNREFUSED', 'EPIPE', 'ETIMEDOUT', 'EAI_AGAIN',
+  'ENOTFOUND', 'UND_ERR_SOCKET', 'UND_ERR_CONNECT_TIMEOUT',
+  'UND_ERR_HEADERS_TIMEOUT', 'UND_ERR_BODY_TIMEOUT', 'EPROTO',
+]);
+
+function codigoDeRed(e) {
+  return String(e?.cause?.code || e?.code || '');
+}
+
+function demoraParaReintento(respuesta, intento) {
+  if (respuesta?.status === 429) {
+    const valor = respuesta.headers.get('retry-after');
+    if (!valor) return null;
+    const segundos = Number(valor);
+    const ms = Number.isFinite(segundos)
+      ? segundos * 1000
+      : Math.max(0, Date.parse(valor) - Date.now());
+    return ms >= 0 && ms <= 1000 ? Math.max(100, ms) : null;
+  }
+  if (!ESTADOS_REINTENTABLES.has(respuesta?.status)) return null;
+  return Math.min(800, 250 * (2 ** intento));
+}
+
+function cuerpoRepetible(body) {
+  return body == null || typeof body === 'string' ||
+    Buffer.isBuffer(body) || body instanceof Uint8Array ||
+    body instanceof ArrayBuffer || body instanceof URLSearchParams ||
+    (typeof Blob !== 'undefined' && body instanceof Blob) ||
+    (typeof FormData !== 'undefined' && body instanceof FormData);
+}
+
+function quitarCabecerasDeCuerpo(headers) {
+  for (const nombre of ['content-length', 'content-type', 'content-encoding', 'transfer-encoding']) {
+    headers.delete(nombre);
+  }
+}
+
+/**
+ * Cliente común de peticiones a portales oficiales.
+ *
+ * Usa el mismo agente de conexión segura que el descargador del Lector,
+ * valida el dominio y el DNS de cada destino y redirección, respeta la
+ * cortesía por host y reintenta errores de transporte y respuestas 5xx
+ * transitorias. No insiste ante denegaciones permanentes ni 429 prolongados.
+ * Los adaptadores conservan sus métodos, cuerpos, cabeceras y cookies.
+ *
+ * La fábrica permite probar la política con dependencias simuladas sin red.
+ */
+export function crearFetchOrigen({
+  request = fetchSeguro,
+  validar = validarURL,
+  esperar = esperarTurno,
+  preparar = urlParaPedir,
+  timeoutMs = TIMEOUT_MS,
+} = {}) {
+  return async function fetchOrigen(urlInicial, opciones = {}, politica = {}) {
+    const timeout = Math.max(250, Number(politica.timeoutMs || timeoutMs));
+    const reintentos = Math.max(0, Math.min(3, Number(politica.reintentos ?? 2)));
+    const signalExterno = opciones.signal;
+    const headersIniciales = new Headers(opciones.headers || {});
+    if (!headersIniciales.has('user-agent')) headersIniciales.set('User-Agent', USER_AGENT);
+
+    let actual = await validar(String(urlInicial));
+    let metodo = String(opciones.method || 'GET').toUpperCase();
+    let cuerpo = opciones.body;
+    const puedeRepetir = cuerpoRepetible(cuerpo);
+    const opcionesBase = { ...opciones };
+    delete opcionesBase.signal;
+    delete opcionesBase.dispatcher;
+    delete opcionesBase.redirect;
+    delete opcionesBase.method;
+    delete opcionesBase.body;
+
+    for (let salto = 0; salto <= MAX_REDIRECCIONES; salto++) {
+      await esperar(actual.hostname);
+      let redirigir = false;
+
+      for (let intento = 0; intento <= reintentos; intento++) {
+        const control = new AbortController();
+        const signal = signalExterno
+          ? AbortSignal.any([signalExterno, control.signal])
+          : control.signal;
+        const reloj = setTimeout(() => control.abort(), timeout);
+        let respuesta;
+        try {
+          const pedida = preparar(actual.toString(), actual.hostname);
+          respuesta = await request(pedida, {
+            ...opcionesBase,
+            method: metodo,
+            ...(cuerpo !== undefined ? { body: cuerpo } : {}),
+            headers: new Headers(headersIniciales),
+            dispatcher: agenteSeguro,
+            redirect: 'manual',
+            signal,
+          });
+        } catch (e) {
+          clearTimeout(reloj);
+          if (signalExterno?.aborted) throw e;
+          const transitorio = ERRORES_REINTENTABLES.has(codigoDeRed(e));
+          if (transitorio && puedeRepetir && intento < reintentos) {
+            await new Promise((resolve) => setTimeout(resolve, Math.min(800, 250 * (2 ** intento))));
+            continue;
+          }
+          throw e;
+        }
+        clearTimeout(reloj);
+
+        const demora = demoraParaReintento(respuesta, intento);
+        if (demora !== null && puedeRepetir && intento < reintentos) {
+          try { await respuesta.body?.cancel(); } catch { /* respuesta descartada */ }
+          await new Promise((resolve) => setTimeout(resolve, demora));
+          continue;
+        }
+
+        if (respuesta.status >= 300 && respuesta.status < 400) {
+          const destino = respuesta.headers.get('location');
+          if (!destino) return respuesta;
+          try { await respuesta.body?.cancel(); } catch { /* respuesta descartada */ }
+          const siguiente = await validar(new URL(destino, actual).toString());
+          if (respuesta.status === 303 ||
+              ((respuesta.status === 301 || respuesta.status === 302) && metodo === 'POST')) {
+            metodo = metodo === 'HEAD' ? 'HEAD' : 'GET';
+            cuerpo = undefined;
+            quitarCabecerasDeCuerpo(headersIniciales);
+          }
+          actual = siguiente;
+          redirigir = true;
+          break;
+        }
+
+        return respuesta;
+      }
+      if (!redirigir) throw new Error('La consulta al origen terminó sin respuesta.');
+    }
+    throw errores.demasiadasRedirecciones(MAX_REDIRECCIONES);
+  };
+}
+
+export const fetchOrigen = crearFetchOrigen();
+
 /* ------------------------------------------------------------------ *
  * 4. Validacion completa de una URL
  * ------------------------------------------------------------------ */
