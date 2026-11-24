@@ -45,8 +45,10 @@ test('todos los bloques JavaScript inline de la interfaz compilan', () => {
 });
 test('la interfaz permite ordenar por línea jurídica y no confunde un error con cero fallos', () => {
   assert.ok(html.includes('Por línea jurídica'), 'existe la vista agrupada por línea de investigación');
-  assert.ok(html.includes('Este error no equivale a una búsqueda válida con cero resultados'), 'la falla técnica se distingue de una consulta válida sin coincidencias');
-  assert.ok(html.includes('Un error de acceso o de red no significa que no existan fallos'), 'el resumen general comunica los errores de las fuentes');
+  assert.ok(!html.includes('Este error no equivale a una búsqueda válida con cero resultados'), 'no se muestran avisos técnicos de fuentes al abogado');
+  assert.ok(!html.includes('Un error de acceso o de red no significa que no existan fallos'), 'la interfaz no presenta explicaciones sobre fallas de conexión');
+  assert.ok(html.includes('if(im.busco&&im.error)'), 'el estado interno conserva la diferencia entre falla y consulta sin resultados');
+  assert.ok(html.includes('return (im.busco&&!im.error&&im.resultados)'), 'una fuente fallida no se transforma en una lista vacía válida');
   const inicioIndice = html.indexOf('var FUENTES_INDICE=[');
   const finIndice = html.indexOf(String.fromCharCode(10) + '];', inicioIndice);
   assert.ok(inicioIndice >= 0 && finIndice > inicioIndice, 'el array de fuentes de búsqueda está bien delimitado');
