@@ -179,7 +179,12 @@ const ERRORES_REINTENTABLES = new Set([
 ]);
 
 function codigoDeRed(e) {
-  return String(e?.cause?.code || e?.code || '');
+  if (e?.cause?.code || e?.code) return String(e.cause?.code || e.code);
+  if (e?.codigo === 'RED_INALCANZABLE') {
+    const m = String(e.message || '').match(/\\b(EAI_AGAIN|ENOTFOUND|ETIMEDOUT|ECONNRESET)\\b/);
+    if (m) return m[1];
+  }
+  return '';
 }
 
 function demoraParaReintento(respuesta, intento) {
@@ -232,10 +237,22 @@ export function crearFetchOrigen({
     const timeout = Math.max(250, Number(politica.timeoutMs || timeoutMs));
     const reintentos = Math.max(0, Math.min(3, Number(politica.reintentos ?? 2)));
     const signalExterno = opciones.signal;
+    const validarConReintento = async (url) => {
+      for (let intento = 0; intento <= reintentos; intento++) {
+        try {
+          return await validar(String(url));
+        } catch (e) {
+          const transitorio = ERRORES_REINTENTABLES.has(codigoDeRed(e));
+          if (!transitorio || intento === reintentos || signalExterno?.aborted) throw e;
+          await new Promise((resolve) => setTimeout(resolve, Math.min(800, 250 * (2 ** intento))));
+        }
+      }
+      throw new Error('No se pudo validar el destino de la fuente.');
+    };
     const headersIniciales = new Headers(opciones.headers || {});
     if (!headersIniciales.has('user-agent')) headersIniciales.set('User-Agent', USER_AGENT);
 
-    let actual = await validar(String(urlInicial));
+    let actual = await validarConReintento(urlInicial);
     let metodo = String(opciones.method || 'GET').toUpperCase();
     let cuerpo = opciones.body;
     const puedeRepetir = cuerpoRepetible(cuerpo);
@@ -291,7 +308,12 @@ export function crearFetchOrigen({
           const destino = respuesta.headers.get('location');
           if (!destino) return respuesta;
           try { await respuesta.body?.cancel(); } catch { /* respuesta descartada */ }
-          const siguiente = await validar(new URL(destino, actual).toString());
+          const siguiente = await validarConReintento(new URL(destino, actual).toString());
+          if (siguiente.hostname !== actual.hostname) {
+            headersIniciales.delete('authorization');
+            headersIniciales.delete('cookie');
+            headersIniciales.delete('proxy-authorization');
+          }
           if (respuesta.status === 303 ||
               ((respuesta.status === 301 || respuesta.status === 302) && metodo === 'POST')) {
             metodo = metodo === 'HEAD' ? 'HEAD' : 'GET';
