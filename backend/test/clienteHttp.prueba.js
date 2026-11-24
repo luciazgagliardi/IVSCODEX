@@ -93,6 +93,31 @@ test('valida cada redirección y transforma POST a GET ante HTTP 302', async () 
   assert.equal(solicitudes[1].body, undefined);
 });
 
+test('reintenta fallos DNS transitorios tanto en el destino inicial como en una redirección', async () => {
+  let validaciones = 0;
+  let pedidos = 0;
+  const fetchOrigen = crearFetchOrigen({
+    request: async () => { pedidos++; return new Response('ok', { status: 200 }); },
+    validar: async (url) => {
+      validaciones++;
+      if (validaciones === 1 || validaciones === 3) {
+        const e = new Error('DNS EAI_AGAIN');
+        e.code = 'EAI_AGAIN';
+        throw e;
+      }
+      return new URL(url);
+    },
+    esperar: async () => {},
+    preparar: (url) => url,
+    timeoutMs: 500,
+  });
+
+  const respuesta = await fetchOrigen('https://fuente.test/buscar', {}, { reintentos: 2 });
+  assert.equal(respuesta.status, 200);
+  assert.equal(validaciones, 2);
+  assert.equal(pedidos, 1);
+});
+
 test('no repite un HTTP 429 cuando el portal pide una espera prolongada', async () => {
   let intentos = 0;
   const fetchOrigen = cliente(async () => {
