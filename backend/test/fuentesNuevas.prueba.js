@@ -92,7 +92,7 @@ test('Chubut inicia acceso anónimo, conserva sesión y pagina en el JSON oficia
   assert.equal(llamadas[3].url.searchParams.get('PageIndex'), '2');
   assert.equal(llamadas[2].url.searchParams.get('Tipo'), '');
   assert.match(cabecera(llamadas[2].opciones.headers, 'Cookie') || '', /EurekaVisit=visit-1/);
-  assert.match(llamadas[2].cabecera(opciones.headers, 'Cookie') || '', /EurekaSession=anon-123/);
+  assert.match(cabecera(llamadas[2].opciones.headers, 'Cookie') || '', /EurekaSession=anon-123/);
   assert.equal(cabecera(llamadas[2].opciones.headers, 'X-Requested-With'), 'XMLHttpRequest');
   assert.equal(cabecera(llamadas[3].opciones.headers, 'X-Requested-With'), 'XMLHttpRequest');
 });
@@ -126,9 +126,9 @@ test('Chubut sigue redirecciones de acceso anónimo y renueva una sesión expira
     }
     assert.ok(u.pathname.endsWith('/Sumarios/BuscarPorCriterios'));
     busquedas++;
-    assert.match(opciones.headers.Cookie || '', /EurekaVisit=visit-redirect/);
-    assert.match(opciones.headers.Cookie || '', /AnonTicket=anon-redirect/);
-    assert.match(opciones.headers.Cookie || '', /EurekaSession=renewed-/);
+    assert.match(cabecera(opciones.headers, 'Cookie') || '', /EurekaVisit=visit-redirect/);
+    assert.match(cabecera(opciones.headers, 'Cookie') || '', /AnonTicket=anon-redirect/);
+    assert.match(cabecera(opciones.headers, 'Cookie') || '', /EurekaSession=renewed-/);
     assert.equal(cabecera(opciones.headers, 'X-Requested-With'), 'XMLHttpRequest');
     if (busquedas === 1) {
       return new Response('<html><title>Sistema Eureka</title><body>Su tiempo de sesión ha finalizado. Acceso restringido.</body></html>', {
@@ -236,7 +236,7 @@ test('Chubut busca sentencias primero y sólo completa con sumarios al agotar fa
   assert.equal(llamadas.filter((x) => x.url.pathname.endsWith('/Home/Index')).length, 2);
   assert.equal(llamadas.filter((x) => x.url.pathname.endsWith('/RegistrarAccesoAnonimo')).length, 2);
   for (const x of llamadas.filter((x) => /BuscarPorCriterios/.test(x.url.pathname)))
-    assert.equal(x.opciones.headers['X-Requested-With'], 'XMLHttpRequest');
+    assert.equal(cabecera(x.opciones.headers, 'X-Requested-With'), 'XMLHttpRequest');
   const pathOrden = llamadas.filter((x) => /BuscarPorCriterios/.test(x.url.pathname)).map((x) => x.url.pathname);
   assert.ok(pathOrden[0].endsWith('/Sentencias/BuscarPorCriterios'));
   assert.ok(pathOrden[1].endsWith('/Sumarios/BuscarPorCriterios'));
