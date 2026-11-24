@@ -5,6 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buscarJujuy, cuerpoConsulta, registroDe, vocesDe } from '../lib/indiceJujuy.js';
+import { configurarFetchOrigenParaPruebas } from '../lib/descargador.js';
 import { fuentePorSlug } from '../lib/fuentes.js';
 import { informacionFuente } from '../lib/fuentesInfo.js';
 
@@ -41,6 +42,11 @@ test('pagina con offset = número de página (empieza en 1) y respeta el total d
     const filas = Array.from({ length: 20 }, (_, i) => ({ ...FILA, id_documento: pag * 100 + i }));
     return new Response(JSON.stringify({ response: filas, results: 45 }), { status: 200 });
   };
+  const restaurarTransporte = configurarFetchOrigenParaPruebas({
+    request: (...args) => globalThis.fetch(...args),
+    validar: async (url) => new URL(url),
+    esperar: async () => {},
+  });
   try {
     const p1 = await buscarJujuy({ q: 'daño moral', porPagina: 20 });
     assert.equal(p1.totalFuente, 45);
@@ -49,15 +55,20 @@ test('pagina con offset = número de página (empieza en 1) y respeta el total d
     const p2 = await buscarJujuy({ q: 'daño moral', porPagina: 20, desde: p1.siguienteDesde });
     assert.equal(p2.resultados[0].id, 'jujuy_200');
     assert.match(pedidos.at(-1).url, /offset=2&limit=20/);
-  } finally { globalThis.fetch = original; }
+  } finally { globalThis.fetch = original; restaurarTransporte(); }
 });
 
 test('una respuesta con forma inesperada es una falla, no cero resultados', async () => {
   const original = globalThis.fetch;
   globalThis.fetch = async () => new Response('<html>mantenimiento</html>', { status: 200 });
+  const restaurarTransporte = configurarFetchOrigenParaPruebas({
+    request: (...args) => globalThis.fetch(...args),
+    validar: async (url) => new URL(url),
+    esperar: async () => {},
+  });
   try {
     await assert.rejects(buscarJujuy({ q: 'daño' }), (e) => e.codigo === 'INDICE_FUENTE_FALLA' || /jujuy/.test(e.message));
-  } finally { globalThis.fetch = original; }
+  } finally { globalThis.fetch = original; restaurarTransporte(); }
 });
 
 test('registrada en el catálogo con su procedencia y sus límites', () => {
