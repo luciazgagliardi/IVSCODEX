@@ -140,7 +140,7 @@ async function pedir(texto, filas = 20) {
     if (!resp.ok) throw errores.indiceFuenteFalla('corteidh', `respuesta ${resp.status}`);
     const cuerpo = await resp.text();
     if (cuerpo.trim() === '-1' || !cuerpo.trim()) return { total: 0, registros: [] };
-    const total = Number(/id="recordcount"[^>]*value="(\\d+)"|value="(\\d+)"[^>]*id="recordcount"/.exec(cuerpo)?.slice(1).find(Boolean)) || 0;
+    const total = Number(/id="recordcount"[^>]*value="(\d+)"|value="(\d+)"[^>]*id="recordcount"/.exec(cuerpo)?.slice(1).find(Boolean)) || 0;
     const registros = filas <= 1 ? [] : parsear(cuerpo);
     return { total: total || registros.length, registros };
   } catch (e) {
