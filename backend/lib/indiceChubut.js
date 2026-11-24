@@ -5,7 +5,7 @@
  * credenciales de operadores, ni endpoints de documentos no anonimizados.
  */
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { errores } from './errores.js';
 import { sinClave } from './proxyOrigen.js';
 import { buscarProvinciaSaij } from './indiceProvincialSaij.js';
@@ -42,15 +42,10 @@ async function pedir(urlTexto, { cookie = '', method = 'GET', body } = {}) {
   let cookieJar = String(cookie || '');
   let ultimoTipo = '';
   for (let salto = 0; salto <= 5; salto++) {
-    await esperarTurno(HOST);
-    const control = new AbortController();
-    const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
     let resp;
     try {
-      resp = await fetch(actual, {
+      resp = await fetchOrigen(actual.toString(), {
         method: metodo,
-        redirect: 'manual',
-        signal: control.signal,
         headers: {
           'User-Agent': USER_AGENT,
           Accept: 'application/json, text/javascript, text/html;q=0.9, */*;q=0.8',
@@ -62,7 +57,7 @@ async function pedir(urlTexto, { cookie = '', method = 'GET', body } = {}) {
           ...(cuerpo ? { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' } : {}),
         },
         ...(cuerpo ? { body: cuerpo } : {}),
-      });
+      }, { seguirRedirecciones: false });
       const nuevas = cookiesNuevas(resp);
       cookieJar = unirCookies(cookieJar, nuevas);
       ultimoTipo = resp.headers.get('content-type') || '';
@@ -73,6 +68,7 @@ async function pedir(urlTexto, { cookie = '', method = 'GET', body } = {}) {
         if (siguiente.hostname !== HOST) {
           throw errores.indiceFuenteFalla('chubut', 'redirección fuera del portal oficial');
         }
+        try { await resp.body?.cancel(); } catch { /* el cuerpo de la redirección no se usa */ }
         if ([301, 302, 303].includes(resp.status) && metodo !== 'GET' && metodo !== 'HEAD') {
           metodo = 'GET';
           cuerpo = undefined;
@@ -89,8 +85,6 @@ async function pedir(urlTexto, { cookie = '', method = 'GET', body } = {}) {
       const error = errores.indiceFuenteFalla('chubut', e?.cause?.code || e?.message || 'error de red');
       error.cause = new Error(sinClave(e?.cause?.code || e?.cause?.message || e?.message || 'error de red'));
       throw error;
-    } finally {
-      clearTimeout(reloj);
     }
   }
   throw errores.indiceFuenteFalla('chubut', 'demasiadas redirecciones del portal');
