@@ -48,7 +48,7 @@
 
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
 import { cookieDeSesion } from './sesionMza.js';
@@ -58,14 +58,9 @@ const URL_CONSULTA = `https://${HOST}/bib/jurisprudencia/funciones/consultar.php
 
 /** Pedido POST comun a los dos pasos, con la misma cortesia que el descargador. */
 async function pedirConsulta(parametros, cookie = '') {
-  await esperarTurno(HOST);
-
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    const resp = await fetch(URL_CONSULTA, {
+    const resp = await fetchOrigen(URL_CONSULTA, {
       method: 'POST',
-      signal: control.signal,
       headers: {
         'User-Agent': USER_AGENT,
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -78,10 +73,8 @@ async function pedirConsulta(parametros, cookie = '') {
     return { texto: await resp.text(), cookie: cookieDeSesion(resp.headers, cookie) };
   } catch (e) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
-    if (e?.codigo) throw e; // ya es un ErrorApp
+    if (e?.codigo) throw e;
     throw errores.indiceMzaFalla(e?.message);
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
