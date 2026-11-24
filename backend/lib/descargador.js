@@ -181,7 +181,7 @@ const ERRORES_REINTENTABLES = new Set([
 function codigoDeRed(e) {
   if (e?.cause?.code || e?.code) return String(e.cause?.code || e.code);
   if (e?.codigo === 'RED_INALCANZABLE') {
-    const m = String(e.message || '').match(/\\b(EAI_AGAIN|ENOTFOUND|ETIMEDOUT|ECONNRESET)\\b/);
+    const m = String(e.message || '').match(/\b(EAI_AGAIN|ENOTFOUND|ETIMEDOUT|ECONNRESET)\b/);
     if (m) return m[1];
   }
   return '';
