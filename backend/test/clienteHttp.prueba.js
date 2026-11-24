@@ -39,6 +39,31 @@ test('reintenta una respuesta 503 transitoria y conserva el método y el cuerpo'
   assert.equal(solicitudes[1].body, cuerpo);
 });
 
+test('mantiene el timeout activo hasta terminar de leer el cuerpo HTTP', async () => {
+  let señal;
+  const fetchOrigen = crearFetchOrigen({
+    request: async (_url, opciones) => {
+      señal = opciones.signal;
+      return new Response(new ReadableStream({
+        start(controlador) {
+          señal.addEventListener('abort', () => {
+            controlador.error(señal.reason || new DOMException('Tiempo agotado', 'AbortError'));
+          }, { once: true });
+        },
+      }));
+    },
+    validar: async (url) => new URL(url),
+    esperar: async () => {},
+    preparar: (url) => url,
+    timeoutMs: 250,
+  });
+
+  const respuesta = await fetchOrigen('https://fuente.test/documento');
+  assert.equal(respuesta.status, 200);
+  await assert.rejects(respuesta.text(), (error) => error?.name === 'AbortError');
+  assert.equal(señal.aborted, true);
+});
+
 test('no reintenta denegaciones definitivas como HTTP 403', async () => {
   let intentos = 0;
   const fetchOrigen = cliente(async () => {
