@@ -11,10 +11,10 @@
  */
 
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno } from './descargador.js';
+import { fetchOrigen } from './descargador.js';
 import { errores } from './errores.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
-import { urlParaPedir, sinClave } from './proxyOrigen.js';
+import { sinClave } from './proxyOrigen.js';
 
 const HOST = 'portal.justiciasantafe.gov.ar';
 const URL_AJAX = `https://${HOST}/bdj/modulos/busqueda/ajax/funciones_ajax.php`;
@@ -28,17 +28,20 @@ const decodificar = (t) => String(t || '').replace(/&(#\d+|#x[0-9a-f]+|[a-z]+);?
 const texto = (h) => decodificar(String(h || '').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').replace(/\s+([,.;:)])/g, '$1').trim();
 
 async function pedir(q, inicio) {
-  await esperarTurno(HOST);
-  const cuerpo = new URLSearchParams({ x: 'default', ax: 'fun_resultado_buscador', m: 'busqueda', mo: 'busquedaModel', a: 'buscador_sumarios', palabra_tsquery: q,
+  const cuerpo = new URLSearchParams({
+    x: 'default', ax: 'fun_resultado_buscador', m: 'busqueda', mo: 'busquedaModel', a: 'buscador_sumarios', palabra_tsquery: q,
     // sin btn_buscar_sum=1 el sitio ignora «inicio» y devuelve siempre la primera página
     btn_buscar_sum: inicio > 0 ? '1' : '0', inicio: String(inicio) });
-  const control = new AbortController();
-  const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
   try {
-    // por el proxy, si está configurado: Santa Fe no le contesta al datacenter publicado (ver lib/proxyOrigen.js)
-    const r = await fetch(urlParaPedir(URL_AJAX, HOST), {
-      method: 'POST', signal: control.signal, body: cuerpo.toString(),
-      headers: { 'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`, 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest', Referer: `https://${HOST}/bdj/index.php` },
+    const r = await fetchOrigen(URL_AJAX, {
+      method: 'POST',
+      body: cuerpo.toString(),
+      headers: {
+        'User-Agent': `Mozilla/5.0 (compatible; ${USER_AGENT})`,
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest',
+        Referer: `https://${HOST}/bdj/index.php`,
+      },
     });
     if (!r.ok) throw errores.indiceFuenteFalla('santafe', `respuesta ${r.status}`);
     return await r.text();
@@ -46,8 +49,6 @@ async function pedir(q, inicio) {
     if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
     if (e?.codigo) throw e;
     throw errores.indiceFuenteFalla('santafe', sinClave(e?.cause?.code || e?.message));
-  } finally {
-    clearTimeout(reloj);
   }
 }
 
