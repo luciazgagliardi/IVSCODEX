@@ -24,7 +24,7 @@
 
 import { JSDOM, VirtualConsole } from 'jsdom';
 import { USER_AGENT, TIMEOUT_MS } from '../config.js';
-import { esperarTurno, descargar } from './descargador.js';
+import { fetchOrigen, descargar } from './descargador.js';
 import { paginarFiltrado } from './paginarFiltrado.js';
 import { errores } from './errores.js';
 
@@ -52,40 +52,17 @@ async function pedirBusqueda(q, inicio) {
   const p = new URLSearchParams({ 'querysDismax.DOCUMENTAL_TODO': q });
   if (inicio > 1) p.set('inicio', String(inicio));
   const url = `${URL_BUSQUEDA}?${p.toString()}`;
-  const transitorios = new Set([
-    'ECONNRESET', 'ECONNREFUSED', 'EPIPE', 'ETIMEDOUT',
-    'EAI_AGAIN', 'UND_ERR_SOCKET', 'UND_ERR_CONNECT_TIMEOUT',
-  ]);
-  let ultimoError;
-  // Dialnet cierra conexiones TLS ocasionalmente bajo carga. Repetir sólo
-  // fallos de transporte/timeout; nunca insistir ante 403, 404 o 429.
-  for (let intento = 0; intento < 3; intento++) {
-    await esperarTurno(HOST);
-    const control = new AbortController();
-    const reloj = setTimeout(() => control.abort(), TIMEOUT_MS);
-    try {
-      const resp = await fetch(url, {
-        signal: control.signal,
-        headers: { 'User-Agent': USER_AGENT, Accept: 'text/html, */*;q=0.8' },
-      });
-      if (!resp.ok) throw errores.indiceFuenteFalla('dialnet', `respuesta ${resp.status}`);
-      return await resp.text();
-    } catch (e) {
-      if (e?.codigo) throw e;
-      const codigo = e?.cause?.code || e?.code || '';
-      const agotado = e?.name === 'AbortError';
-      const recuperable = agotado || transitorios.has(codigo);
-      ultimoError = e;
-      if (!recuperable || intento === 2) {
-        if (agotado) throw errores.tiempoAgotado(TIMEOUT_MS);
-        throw errores.indiceFuenteFalla('dialnet', codigo || e?.cause?.message || e?.message);
-      }
-    } finally {
-      clearTimeout(reloj);
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500 * (intento + 1)));
+  try {
+    const resp = await fetchOrigen(url, {
+      headers: { 'User-Agent': USER_AGENT, Accept: 'text/html, */*;q=0.8' },
+    });
+    if (!resp.ok) throw errores.indiceFuenteFalla('dialnet', `respuesta ${resp.status}`);
+    return await resp.text();
+  } catch (e) {
+    if (e?.codigo) throw e;
+    if (e?.name === 'AbortError') throw errores.tiempoAgotado(TIMEOUT_MS);
+    throw errores.indiceFuenteFalla('dialnet', e?.cause?.code || e?.code || e?.cause?.message || e?.message);
   }
-  throw errores.indiceFuenteFalla('dialnet', ultimoError?.message || 'falló la conexión');
 }
 
 /**
