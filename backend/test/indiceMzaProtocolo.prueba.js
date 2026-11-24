@@ -6,6 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buscarMza, filtrosFormulario } from '../lib/indiceMza.js';
+import { configurarFetchOrigenParaPruebas } from '../lib/descargador.js';
 
 const FICHA = `<div class="ficha" id="cc_1_2"><div class="materia">DERECHO CIVIL</div>
 <div class="voces">DAÑO MORAL</div><div class="texto">Sumario</div>
@@ -21,7 +22,15 @@ function simular(respuestas) {
     const texto = respuestas[cuerpo.get('funcion')];
     return new Response(texto, { status: 200 });
   };
-  return { pedidos, restaurar: () => { globalThis.fetch = original; } };
+  const restaurarTransporte = configurarFetchOrigenParaPruebas({
+    request: (...args) => globalThis.fetch(...args),
+    validar: async (url) => new URL(url),
+    esperar: async () => {},
+  });
+  return { pedidos, restaurar: () => {
+    globalThis.fetch = original;
+    restaurarTransporte();
+  } };
 }
 
 test('buscar reenvía los filtros del formulario y no el SQL', async () => {
