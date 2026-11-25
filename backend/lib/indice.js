@@ -16,6 +16,7 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { DIR_INDICE } from '../config.js';
 import { filtrarPorModo } from './relevancia.js';
+import { coincideTribunal } from './acervoConsulta.js';
 import { acervoTiene, buscarEnAcervo, estadoAcervo } from './acervo.js';
 
 let listo = false;
@@ -93,13 +94,16 @@ export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = 
   const base = { ...(propios ? {} : await respaldoDe(fuente)), ...Object.fromEntries((delAcervo || []).map((r) => [r.id, r])) };
   // Lo guardado por las búsquedas + el acervo o el respaldo (sin repetir).
   const todos = { ...base, ...dato.registros };
+  // El respaldo JSON debe respetar el mismo filtro SC/CC/CT que el acervo SQLite.
+  // Sin esto, una caída de SQLite mezclaba fallos de cámaras en la búsqueda de la Suprema Corte.
+  const registros = Object.values(todos).filter((r) => coincideTribunal(fuente, r, tribunal));
   // Cada equivalente se valida por separado: no exigimos que un documento
   // contenga simultáneamente el término original y su otra denominación.
   // Se conserva el orden de la consulta principal; después vienen sus alias.
   const lista = [];
   const vistos = new Set();
   for (const termino of [q, ...listaVariantes]) {
-    const { lista: coincidencias } = filtrarPorModo(Object.values(todos), { q: termino, modo, excluir, anioDesde, anioHasta });
+    const { lista: coincidencias } = filtrarPorModo(registros, { q: termino, modo, excluir, anioDesde, anioHasta });
     for (const r of coincidencias) {
       if (!r?.id || vistos.has(r.id)) continue;
       vistos.add(r.id);
