@@ -69,6 +69,39 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
     }
   }
 
+
+  const candidatos = corpus.candidatosPendientesFuente ?? [];
+  assert.equal(candidatos.length, corpus.resumen.candidatosPendientesFuente);
+  const candidatosIds = new Set();
+  for (const candidato of candidatos) {
+    assert.ok(candidato.id);
+    assert.ok(!documentos.has(candidato.id), `candidato repetido en documentos gold: ${candidato.id}`);
+    assert.ok(!candidatosIds.has(candidato.id), `candidato duplicado: ${candidato.id}`);
+    candidatosIds.add(candidato.id);
+    assert.equal(candidato.fuente.officialUrl, null, 'no convertir un fixture pendiente en fuente oficial');
+    assert.match(candidato.fuente.estadoUrl, /fuente_primaria_pendiente/);
+    assert.ok(candidato.bloqueo.length > 30);
+    assert.ok(candidato.anclasTextuales.length > 0);
+    assert.ok(!/fecha_final_confirmada/.test(candidato.fuente.estadoUrl));
+
+    const fixture = path.resolve(repoRoot, candidato.fuente.fixturePath);
+    assert.ok(
+      fixture.startsWith(path.join(repoRoot, 'backend/test/fallos') + path.sep),
+      `fixture candidato fuera del directorio permitido: ${candidato.fuente.fixturePath}`
+    );
+    assert.ok(fs.existsSync(fixture), `falta fixture pendiente: ${candidato.fuente.fixturePath}`);
+    const texto = normalizar(fs.readFileSync(fixture, 'utf8'));
+    for (const ancla of candidato.anclasTextuales) {
+      assert.ok(texto.includes(normalizar(ancla)), `ancla pendiente «${ancla}» ausente en ${candidato.id}`);
+    }
+    assert.ok(
+      !corpus.casos.some((caso) =>
+        [...caso.positivos, ...caso.negativos].some((etiqueta) => etiqueta.documentoId === candidato.id)
+      ),
+      'un candidato sin fuente primaria no puede entrar como positivo/negativo gold'
+    );
+  }
+
   const casos = new Set();
   let positivos = 0;
   let negativos = 0;

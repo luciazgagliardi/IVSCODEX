@@ -111,9 +111,9 @@ No se debe completar un caso con una carátula inventada, una ficha sin enlace v
 
 ### 5.1 Lote piloto de recuperación documental (25/11/2026)
 
-Se incorporó `04-corpus-recuperacion-v1.json`: 3 textos completos que ya existían como fixtures, 3 consultas y 6 exclusiones justificadas. El piloto cubre una sentencia civil/seguros de Mendoza, una sentencia laboral de Mendoza y una sentencia del TSJ de CABA.
+Se incorporó `04-corpus-recuperacion-v1.json`: 3 textos completos que ya existían como fixtures, 3 consultas y 6 exclusiones justificadas. Además se inventariaron otros 4 fixtures en cola, excluidos de las etiquetas gold hasta verificar sus fuentes primarias. El piloto cubre una sentencia civil/seguros de Mendoza, una sentencia laboral de Mendoza y una sentencia del TSJ de CABA.
 
-**Estado deliberadamente provisional:** el enlace de Río Uruguay se conservó a partir del localizador declarado en el LEAME y del patrón de URL comprobado por una prueba existente; el endpoint no fue reabierto desde este entorno. Berro sigue sin enlace oficial directo. Rozen quedó localizado en la compilación oficial del TSJ, tomo V (2003), índice XVIII, entrada LVII, pp. impresas 418–419; no es una ficha individual. Los tres casos requieren revisión jurídica humana. Por tanto, **0/3 casos son aptos todavía para métricas de precisión o exhaustividad**.
+**Estado deliberadamente provisional:** el enlace de Río Uruguay se conservó a partir del localizador declarado en el LEAME y del patrón de URL comprobado por una prueba existente; el endpoint no fue reabierto desde este entorno. Berro sigue sin enlace oficial directo. Cuatro fixtures adicionales del TSJ CABA están inventariados como candidatos pendientes de procedencia y no participan en métricas. Rozen quedó localizado en la compilación oficial del TSJ, tomo V (2003), índice XVIII, entrada LVII, pp. impresas 418–419; no es una ficha individual. Los tres casos requieren revisión jurídica humana. Por tanto, **0/3 casos son aptos todavía para métricas de precisión o exhaustividad**.
 
 La validación estructural comprueba la existencia de fixtures y anclas textuales; no ejecuta búsquedas ni contacta portales. Véase `04-protocolo-corpus-recuperacion.md`.
 

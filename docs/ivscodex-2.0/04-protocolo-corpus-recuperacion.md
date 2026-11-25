@@ -26,6 +26,21 @@ El lote v1 contiene **3 documentos de texto completo, 3 consultas y 6 etiquetas 
 
 Las etiquetas son **preliminares**, no un dictamen jurídico. Los tres textos son fixtures existentes en `backend/test/fallos/`; no se crearon carátulas ni sentencias para completar el lote.
 
+Además se inventariaron **4 fixtures adicionales** en `candidatosPendientesFuente`. Son textos que ya existen en el repositorio, pero todavía no se incluyen como documentos gold ni como positivos/negativos porque falta confirmar sus localizadores oficiales. El registro Caja de Seguros/Burgos no debe confundirse con Caja de Seguros/Zerpa: son causas distintas. 
+
+### 2.1 Cola de fixtures pendientes de fuente primaria
+
+Se identificaron otros cuatro textos completos existentes en `backend/test/fallos/`:
+
+| Fixture | Identificador | Tema preliminar | Estado |
+|---|---|---|---|
+| `tsj-caja-de-seguros.txt` | TSJ 220909/2025-0 | Caja de Seguros c/ Burgos y Perfumo; daños de tránsito; efecto suspensivo | Fuente primaria pendiente; no confundir con Caja de Seguros c/ Zerpa |
+| `tsj-distribuidora-pompeya.txt` | TSJ 44430/2025-0 | Despido, jubilación y continuidad del vínculo laboral | Fuente primaria pendiente; fecha final no confirmada |
+| `tsj-federacion-patronal-firma-digital.txt` | TSJ 356291/2025-0 | Daños de tránsito, aseguradora y recurso extraordinario federal | El fixture registra firma digital del 09/09/2026 y Registro 3076/2026; falta la ficha oficial |
+| `tsj-lopez-viviana.txt` | QTS 36249/2018-3 y 36249/2018-4 | Empleo público, cesantía y revisión judicial | Fuente primaria pendiente; fecha final no confirmada |
+
+Estos candidatos quedan fuera de `documentos`, de las etiquetas gold y de toda métrica hasta comprobar su correspondencia con una fuente primaria. La fecha no se completa con una fecha de actuación ni con una referencia secundaria.
+
 ## 3. Cómo se etiqueta
 
 Cada consulta incluye texto exacto y variantes, clase de consulta, filtros de jurisdicción/tribunal/tipo documental, positivos con anclas textuales y negativos con motivo concreto.

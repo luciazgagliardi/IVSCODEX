@@ -250,6 +250,130 @@
       "Rozen quedó localizado en una compilación oficial del TSJ, no en una ficha individual.",
       "El endpoint individual de Río Uruguay no fue reabierto desde el entorno; el patrón de URL está respaldado por el repositorio.",
       "Los tres casos requieren revisión jurídica humana independiente."
-    ]
-  }
+    ],
+    "candidatosPendientesFuente": 4
+  },
+  "candidatosPendientesFuente": [
+    {
+      "id": "caba-tsj-caja-burgos-perfumo",
+      "jurisdiccion": "Ciudad Autónoma de Buenos Aires",
+      "tribunal": "Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires",
+      "tipoDocumento": "sentencia",
+      "fecha": null,
+      "expediente": "TSJ 220909/2025-0",
+      "caratula": "Caja de Seguros S.A. s/ queja por recurso de inconstitucionalidad denegado (civil) en Burgos Ezequiel Eduardo c/ Perfumo Federico Carlos y otro s/ daños y perjuicios (accidente de tránsito c/ lesiones o muerte) (expte. 67516/2021)",
+      "ramaPreliminar": [
+        "derecho civil",
+        "seguros",
+        "daños",
+        "accidentes de tránsito",
+        "intereses",
+        "efecto suspensivo de la queja"
+      ],
+      "fuente": {
+        "nombre": "Tribunal Superior de Justicia de CABA",
+        "officialUrl": null,
+        "estadoUrl": "fuente_primaria_pendiente; expediente y carátula leídos en fixture local",
+        "fixturePath": "backend/test/fallos/tsj-caja-de-seguros.txt"
+      },
+      "anclasTextuales": [
+        "Caja de Seguros S.A.",
+        "Burgos Ezequiel Eduardo",
+        "efecto suspensivo",
+        "67516/2021"
+      ],
+      "bloqueo": "No asignar la fuente oficial de la sentencia reciente sobre Caja de Seguros en Zerpa: es otro expediente y otra carátula."
+    },
+    {
+      "id": "caba-tsj-distribuidora-pompeya",
+      "jurisdiccion": "Ciudad Autónoma de Buenos Aires",
+      "tribunal": "Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires",
+      "tipoDocumento": "sentencia",
+      "fecha": null,
+      "expediente": "TSJ 44430/2025-0",
+      "caratula": "Distribuidora Pompeya SRL s/ queja por recurso de inconstitucionalidad denegado (laboral) en Goncalo Stella Maris c/ Distribuidora Pompeya S.R.L. y otros s/ despido (expte. 44847/2021)",
+      "ramaPreliminar": [
+        "derecho laboral",
+        "despido",
+        "jubilación",
+        "extinción del contrato de trabajo",
+        "buena fe"
+      ],
+      "fuente": {
+        "nombre": "Tribunal Superior de Justicia de CABA",
+        "officialUrl": null,
+        "estadoUrl": "fuente_primaria_pendiente; expediente y carátula leídos en fixture local",
+        "fixturePath": "backend/test/fallos/tsj-distribuidora-pompeya.txt"
+      },
+      "anclasTextuales": [
+        "Distribuidora Pompeya SRL",
+        "Goncalo Stella Maris",
+        "beneficio jubilatorio",
+        "artículo 252 de la LCT"
+      ],
+      "bloqueo": "La fecha 05/11/2025 aparece en fuentes secundarias consultadas, pero no se incorpora como fecha oficial hasta verificar el registro primario."
+    },
+    {
+      "id": "caba-tsj-federacion-gey",
+      "jurisdiccion": "Ciudad Autónoma de Buenos Aires",
+      "tribunal": "Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires",
+      "tipoDocumento": "sentencia",
+      "fecha": "2026-09-09",
+      "expediente": "TSJ 356291/2025-0",
+      "caratula": "Federación Patronal Seguros S.A.U. y otro s/ queja por recurso denegado (civil) en GEY c/ MJG y otros s/ daños y perjuicios (accidente de tránsito con lesiones o muerte) (expte. 7134/2016)",
+      "ramaPreliminar": [
+        "derecho civil",
+        "seguros",
+        "responsabilidad civil",
+        "accidentes de tránsito",
+        "daño moral",
+        "recurso extraordinario federal"
+      ],
+      "fuente": {
+        "nombre": "Tribunal Superior de Justicia de CABA",
+        "officialUrl": null,
+        "estadoUrl": "fuente_primaria_pendiente; datos de firma digital y registro en fixture local",
+        "fixturePath": "backend/test/fallos/tsj-federacion-patronal-firma-digital.txt",
+        "evidenciaLocalizador": "El fixture consigna firma digital 09/09/2026 13:29 y Registro Nro. 3076/2026."
+      },
+      "anclasTextuales": [
+        "Federación Patronal Seguros S.A.U.",
+        "356291/2025-0",
+        "Registro Nro 3076/2026",
+        "09/09/2026"
+      ],
+      "bloqueo": "El identificador del expediente TSJ no se utiliza como parámetro de descarga ni se transforma en URL sin confirmación oficial."
+    },
+    {
+      "id": "caba-tsj-lopez-viviana",
+      "jurisdiccion": "Ciudad Autónoma de Buenos Aires",
+      "tribunal": "Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires",
+      "tipoDocumento": "sentencia",
+      "fecha": null,
+      "expediente": "QTS 36249/2018-3 y QTS 36249/2018-4",
+      "caratula": "López, Viviana Alcira s/ queja por recurso de inconstitucionalidad denegado en López, Viviana Alcira contra GCBA sobre recurso directo de revisión por cesantías y exoneraciones de empleados públicos (arts. 464 y 465 CAYT)",
+      "ramaPreliminar": [
+        "derecho administrativo",
+        "empleo público",
+        "cesantía",
+        "nulidad del acto administrativo",
+        "reincorporación",
+        "responsabilidad estatal"
+      ],
+      "fuente": {
+        "nombre": "Tribunal Superior de Justicia de CABA",
+        "officialUrl": null,
+        "estadoUrl": "fuente_primaria_pendiente; expediente y carátula leídos en fixture local",
+        "fixturePath": "backend/test/fallos/tsj-lopez-viviana.txt"
+      },
+      "anclasTextuales": [
+        "López, Viviana Alcira",
+        "36249/2018-3",
+        "36249/2018-4",
+        "cesantía",
+        "reincorporación"
+      ],
+      "bloqueo": "El fixture contiene fechas de actuaciones previas, no una fecha de sentencia final confirmada."
+    }
+  ]
 }
