@@ -5,13 +5,15 @@ on:
     branches: [main, development/ivscodex-2.0-live-engine]
     paths:
       - "backend/**"
+      - "docs/ivscodex-2.0/**"
       - "frontend/index.html"
       - "frontend/pasajes.js"
       - ".github/workflows/pruebas-completas.yml"
   pull_request:
-    branches: [main]
+    branches: [main, development/ivscodex-2.0-live-engine]
     paths:
       - "backend/**"
+      - "docs/ivscodex-2.0/**"
       - "frontend/index.html"
       - "frontend/pasajes.js"
       - ".github/workflows/pruebas-completas.yml"

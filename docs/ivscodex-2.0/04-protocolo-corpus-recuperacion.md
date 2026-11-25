@@ -1,6 +1,6 @@
 # IVS Codex 2.0 — Protocolo del corpus de recuperación documental
 
-**Versión:** 1.1.5 (piloto provisional + índice local, deduplicación y filtros de tribunal)  
+**Versión:** 1.2.0 (corpus ampliado + índice local, deduplicación y filtros de tribunal)  
 **Fecha:** 25/11/2026  
 **Datos:** [04-corpus-recuperacion-v1.json](./04-corpus-recuperacion-v1.json)
 
@@ -16,7 +16,7 @@ Una consulta reconocida no implica que se haya recuperado una sentencia correcta
 
 ## 2. Lote piloto incorporado
 
-El lote v1.1 contiene **3 documentos gold provisionales, 3 consultas, 3 etiquetas positivas, 6 etiquetas negativas y 4 fixtures adicionales pendientes de fuente primaria**:
+La primera tanda v1.1.5 contenía **3 documentos gold provisionales, 3 consultas, 3 positivos, 6 negativos y 4 fixtures pendientes**; la ampliación v1.2.0 incorpora cinco sentencias oficiales adicionales. El conjunto actual contiene **8 documentos, 8 consultas, 8 positivos y 56 negativos**:
 
 | Documento | Jurisdicción / tribunal | Materia preliminar | Fuente y situación |
 |---|---|---|---|
@@ -24,7 +24,7 @@ El lote v1.1 contiene **3 documentos gold provisionales, 3 consultas, 3 etiqueta
 | Berro c/ Banco BBVA (12/08/2026) | Mendoza / SCJM | Despido y alegación de discriminación | Fixture completo con carátula, CUIJ y fecha; falta localizar y comprobar el enlace oficial directo. |
 | Rozen Frejda (02/07/2003) | CABA / TSJ | Expropiación inversa y retrocesión | Fixture completo con expediente y carátula; falta localizar y comprobar el enlace oficial directo. |
 
-Las etiquetas son **preliminares**, no un dictamen jurídico. Los tres textos son fixtures existentes en `backend/test/fallos/`; no se crearon carátulas ni sentencias para completar el lote.
+Las etiquetas son **preliminares**, no un dictamen jurídico. Los tres documentos iniciales eran fixtures existentes en `backend/test/fallos/`; la versión v1.2.0 incorpora cinco sentencias íntegras nuevas con sus fixtures y enlaces primarios individuales.
 
 Además se inventariaron **4 fixtures adicionales** en `candidatosPendientesFuente`. Son textos que ya existen en el repositorio, pero todavía no se incluyen como documentos gold ni como positivos/negativos porque falta confirmar sus localizadores oficiales. El registro Caja de Seguros/Burgos no debe confundirse con Caja de Seguros/Zerpa: son causas distintas. 
 
@@ -56,6 +56,22 @@ El boletín oficial del TSJ CABA de noviembre de 2025 identifica el expediente S
 Fuente oficial: https://www.tsjbaires.gob.ar/repositorio/indicesboletines/2025/2025_11_Boletin_indice.pdf
 
 El corpus conserva esta entrada en `referenciasOficialesNoGold`, separada del documento individual. Sirve para búsquedas de sumarios oficiales; no satisface filtros «sólo sentencias», no reemplaza el texto íntegro y no integra el conjunto gold. El portal institucional identifica un buscador público de sentencias completas desde 1998, recuperables por parámetros como carátula, fecha y Secretaría: https://www.tsjbaires.gob.ar/servicios/jurisprudencia/buscador-de-sentencias. El enlace individual de Pompeya sigue pendiente de extracción y cotejo.
+
+### 2.2 Lote documental oficial de Mendoza v1.2.0
+
+Se incorporan cinco sentencias íntegras del respaldo oficial del Poder Judicial de Mendoza, cada una con enlace individual `vertexto.php?ide=...`, carátula, tribunal, fecha, CUIJ y fixture de texto completo:
+
+| Documento | Tribunal / fecha | Materia |
+|---|---|---|
+| Godoy c/ Hospital Lagomaggiore | Primera Cámara del Trabajo, 18/09/2026 | Amparo sindical, tutela y restitución de haberes |
+| Municipalidad de Mendoza en J° Ureta | Suprema Corte, 19/08/2026 | Responsabilidad estatal, falta de servicio, vereda y Ley 8968 |
+| Codina en J° González Barberis c/ Ojeda Romero | Suprema Corte, 12/08/2026 | Base regulatoria de honorarios en alimentos definitivos, Ley 9131 |
+| Baldoni c/ Estilo Artesanal, Mercado Libre y Via Cargo | Segunda Cámara Civil, 10/06/2026 | Consumo, contratación electrónica, transporte y daño punitivo |
+| Garay Lira c/ Chevrolet y La Segunda | Tercera Cámara Civil, 15/09/2026 | Plan de ahorro, seguro, restitución de cuotas y privación de uso |
+
+El lote pasa de 3 a **8 documentos**, de 3 a **8 consultas**, con **8 positivos y 56 exclusiones**. Cada consulta etiqueta los otros siete documentos como negativos; Baldoni y Garay funcionan además como negativos difíciles recíprocos dentro del mismo campo del consumo, pero con contratos y pretensiones distintos.
+
+La suite verifica que el filtro estricto devuelva exactamente el documento positivo de cada consulta y que `buscarEnIndice` reproduzca el mismo conjunto en un índice temporal. Estos registros tienen fuentes oficiales y texto completo, pero sus etiquetas todavía requieren revisión jurídica humana; por tanto, los ocho casos siguen fuera de métricas oficiales de producto.
 
 ## 3. Cómo se etiqueta
 
@@ -89,7 +105,7 @@ El fixture conserva el texto completo, CUIJ 13-07662606-9/1, carátula, tribunal
 
 ## 5. Puerta de elegibilidad
 
-En la versión actual, **0 de 3 casos son aptos para calcular métricas**. Un caso pasa a ser elegible únicamente cuando:
+En la versión actual, **0 de 8 casos son aptos para calcular métricas**. Un caso pasa a ser elegible únicamente cuando:
 
 1. se abre y verifica el enlace de la fuente primaria;
 2. se confirma que el documento coincide con texto, carátula, tribunal, jurisdicción y fecha;
@@ -115,12 +131,12 @@ Una ficha SAIJ, un sumario editorial y una sentencia del tribunal no se etiqueta
 
 ## 7. Validación automatizada
 
-`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **308/308** en [GitHub Actions 45651559017](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45651559017). La ejecución incluye el filtro de relevancia real, `buscarEnIndice` sobre un índice temporal, deduplicación y el filtro de tribunales SC/CC/CT de Mendoza; la validación del frontend confirmó 8 scripts inline y 10 archivos JavaScript. No contacta portales ni reemplaza la revisión jurídica humana. La plantilla obligatoria para la revisión profesional es [05-ficha-revision-humana-corpus.md](./05-ficha-revision-humana-corpus.md).
+`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **308/308** en [GitHub Actions 45709647230](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45709647230). La ejecución sobre el commit `04460a0d5680c80d5b43ff49f4b83158865013e5` incluye el corpus v1.2.0: ocho consultas, ocho positivos y 56 negativos, igualdad exacta del conjunto recuperado, `buscarEnIndice` sobre un índice temporal, deduplicación y filtros Mendoza SC/CC/CT; la validación del frontend confirmó 8 scripts inline y 10 archivos JavaScript. No contacta portales ni reemplaza la revisión jurídica humana. La plantilla obligatoria para la revisión profesional es [05-ficha-revision-humana-corpus.md](./05-ficha-revision-humana-corpus.md).
 
 ### 7.1 Filtro de relevancia con documentos jurídicos de referencia
 
 La prueba invoca `filtrarPorModo` de `backend/lib/relevancia.js` sobre los textos completos versionados:
-- modo `todas` con `aflojar: false`: cada uno de los 3 positivos debe aparecer y los 6 negativos deben quedar afuera;
+- modo `todas` con `aflojar: false`: cada una de las 8 consultas debe devolver exactamente su positivo y excluir los otros siete documentos; en conjunto, se controlan 8 positivos y 56 negativos;
 - no se permite relajación silenciosa;
 - el negativo difícil de Río Uruguay puede aparecer en modo `alguna` por vocabulario genérico, pero no en modo `todas` para la consulta laboral.
 
@@ -128,9 +144,9 @@ Esta es una regresión del filtro real con fixtures completos usados como texto 
 
 ### 7.2 Índice local en almacenamiento temporal
 
-La misma suite invoca `upsertRegistros` y `buscarEnIndice` de `backend/lib/indice.js` sobre un directorio temporal del runner. Inserta los tres documentos, ejecuta las tres consultas, valida positivos y negativos, vuelve a insertar un ID y comprueba que el inventario siga en tres documentos y que no existan IDs repetidos. También verifica el control adversarial del modo `alguna`.
+La misma suite invoca `upsertRegistros` y `buscarEnIndice` de `backend/lib/indice.js` sobre un directorio temporal del runner. Inserta los ocho documentos, ejecuta las ocho consultas, valida los 8 positivos y 56 negativos, vuelve a insertar un ID y comprueba que el inventario siga en ocho documentos y que no existan IDs repetidos. También verifica el control adversarial del modo `alguna`.
 
-El test restaura `DIR_INDICE` y elimina el directorio temporal en `finally`. No llama a conectores, no importa el acervo persistente, no accede a Azure ni escribe en `/home/datos`. Además, ejecuta la ruta con la clave real `mendoza`: `SC`, `CC` y `CT` devuelven únicamente los registros cuyo campo `tribunal` corresponde al fuero; los registros sin tribunal no se atribuyen a ninguno y `todo` conserva los tres.
+El test restaura `DIR_INDICE` y elimina el directorio temporal en `finally`. No llama a conectores, no importa el acervo persistente, no accede a Azure ni escribe en `/home/datos`. Además, ejecuta la ruta con la clave real `mendoza`: `SC`, `CC` y `CT` devuelven únicamente los registros cuyo campo `tribunal` corresponde al fuero; el registro sin tribunal no se atribuye a ningún fuero y `todo` conserva los cuatro registros de control.
 
 Estas pruebas acreditan **relevancia textual sobre fixtures y búsqueda en el índice local**, no los campos reales de los portales, filtros HTTP, paginación remota, concurrencia del despliegue ni ranking integrado. La ejecución de matriz contra un entorno aislado completo sigue pendiente.
 

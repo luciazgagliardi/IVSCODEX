@@ -30,7 +30,7 @@ Un HTTP 200, una lista no vacía o una suite de mocks aprobada no bastan por sí
 | Pruebas de concurrencia | Que múltiples consultas no se pisan, no exceden límites internos y no corrompen cursores | Capacidad ilimitada de los organismos externos |
 | Diagnóstico de producción | Estado observado desde la infraestructura productiva en un momento concreto | Garantía futura de disponibilidad |
 
-La ejecución registrada de 306 pruebas aprobadas en la rama técnica sirve como línea de base de código. No debe rotularse como aceptación integral de IVS Codex 2.0.
+La suite completa registra 308/308 pruebas aprobadas para el corpus v1.2.0 en [GitHub Actions 45709647230](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45709647230). Es evidencia de regresión técnica, no aceptación integral de IVS Codex 2.0.
 
 ## 3. Matriz funcional transversal
 
@@ -111,9 +111,9 @@ No se debe completar un caso con una carátula inventada, una ficha sin enlace v
 
 ### 5.1 Lote piloto de recuperación documental (25/11/2026)
 
-Se incorporó `04-corpus-recuperacion-v1.json`: 3 textos completos que ya existían como fixtures, 3 consultas y 6 exclusiones justificadas. Además se inventariaron otros 4 fixtures en cola, excluidos de las etiquetas gold hasta verificar sus fuentes primarias. El piloto cubre una sentencia civil/seguros de Mendoza, una sentencia laboral de Mendoza y una sentencia del TSJ de CABA.
+La versión inicial v1.1.5 incorporó tres documentos completos, tres consultas y seis exclusiones justificadas. La ampliación v1.2.0 agrega cinco sentencias completas de Mendoza. El conjunto actual tiene **8 documentos, 8 consultas, 8 positivos y 56 negativos**; hay cuatro fixtures adicionales del TSJ CABA en cola, excluidos del gold hasta verificar sus fuentes primarias.
 
-**Estado deliberadamente provisional:** el enlace de Río Uruguay se conservó a partir del localizador declarado en el LEAME y del patrón de URL comprobado por una prueba existente; el endpoint no fue reabierto desde este entorno. Berro sigue sin enlace oficial directo. Cuatro fixtures adicionales del TSJ CABA están inventariados como candidatos pendientes de procedencia y no participan en métricas. Rozen quedó localizado en la compilación oficial del TSJ, tomo V (2003), índice XVIII, entrada LVII, pp. impresas 418–419; no es una ficha individual. Los tres casos requieren revisión jurídica humana. Por tanto, **0/3 casos son aptos todavía para métricas de precisión o exhaustividad**.
+**Estado deliberadamente provisional:** el enlace de Río Uruguay se conservó a partir del localizador declarado en el LEAME y del patrón de URL comprobado por una prueba existente; el endpoint no fue reabierto desde este entorno. Berro sigue sin enlace oficial directo. Cuatro fixtures adicionales del TSJ CABA están inventariados como candidatos pendientes de procedencia y no participan en métricas. Rozen quedó localizado en la compilación oficial del TSJ, tomo V (2003), índice XVIII, entrada LVII, pp. impresas 418–419; no es una ficha individual. Los ocho casos requieren revisión jurídica humana. Por tanto, **0/8 casos son aptos todavía para métricas de precisión o exhaustividad**.
 
 Se añadió una referencia institucional de control para el sumario oficial de Distribuidora Pompeya: queda clasificada como `sumario_jurisprudencial_oficial`, no como sentencia, no reemplaza el texto íntegro y no integra el gold. El Boletín oficial aclara que sus sumarios no forman parte de las sentencias ni expresan opinión jurisdiccional. La validación estructural comprueba la existencia de fixtures y anclas textuales; no ejecuta búsquedas ni contacta portales. Véase `04-protocolo-corpus-recuperacion.md`.
 
@@ -153,14 +153,15 @@ Se añadió una referencia institucional de control para el sumario oficial de D
 
 | Control | Estado |
 |---|---|
-| Suite automatizada de backend | 308/308 aprobadas en el commit `3b5893d9678e91510202707521fb6bf45c53cd54`; incluye validación del corpus, filtro de relevancia, búsqueda del índice local temporal, filtros de tribunal SC/CC/CT, deduplicación, ceros auténticos/parciales por artículo y regresiones; línea de base técnica, no aceptación de producto |
+| Suite automatizada de backend | Aprobada: 308/308 en [GitHub Actions 45709647230](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45709647230); ejecución sobre corpus v1.2.0, índice temporal y filtros SC/CC/CT |
 | Prueba de timeout durante lectura del cuerpo | Aprobada en la suite anterior de 297 pruebas; no fue modificada en el cambio posterior |
 | Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisados los flujos principales; regresiones para ceros parciales y filtros SC/CC/CT en respaldo JSON aprobadas; quedan pendientes integración desplegada y concurrencia real |
-| Corpus de recuperación documental | Piloto v1.1.5: 3 documentos gold provisionales, 3 consultas y 6 negativos; 4 fixtures adicionales en cola sin etiquetas gold; Pompeya tiene fecha/expediente en sumario oficial, no fallo individual; Federación/GEY conserva marca de firma sin fecha judicial validada; revisión jurídica pendiente; 1 sumario oficial separado del gold; 0 casos aptos para métricas |
-| Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en [GitHub Actions 45649974283](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283) |
+| Corpus de recuperación documental | Piloto v1.2.0: 8 documentos gold provisionales, 8 consultas, 8 positivos y 56 negativos; 4 fixtures adicionales en cola sin etiquetas gold; Pompeya tiene fecha/expediente en sumario oficial, no fallo individual; Federación/GEY conserva marca de firma sin fecha judicial validada; revisión jurídica pendiente; 1 sumario oficial separado del gold; 0 casos aptos para métricas; cinco nuevos enlaces primarios individuales de Mendoza y sus textos completos incorporados |
+| Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en [GitHub Actions 45709647230](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45709647230) |
 | Validación de sintaxis del diagnóstico 2.0 | Aprobada en [GitHub Actions](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45618792192), con un único job y sin consultas oficiales en vivo |
 | Separación entre sentencia íntegra y sumario oficial | Referencia institucional de Pompeya fuera del gold; no satisface filtros de «sólo sentencias» ni se presenta como texto completo |
-| Integridad y recuperación local del corpus | Aprobada: 308/308 en [GitHub Actions 45649974283](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283); recupera 3 positivos, excluye 6 negativos y verifica `buscarEnIndice` con almacenamiento temporal, deduplicación por ID y filtro de tribunal Mendoza SC/CC/CT; sin conectores ni producción |
+| Exhaustividad interna del lote v1.2.0 | Las ocho consultas etiquetan los otros siete documentos como negativos; la suite exige igualdad exacta entre resultados recuperados y positivos esperados |
+| Integridad y recuperación local del corpus | Aprobada: 308/308 en [GitHub Actions 45709647230](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45709647230); la suite v1.2.0 recuperó exactamente los 8 positivos y excluyó los 56 negativos; verificó `buscarEnIndice` con almacenamiento temporal, deduplicación por ID y filtros Mendoza SC/CC/CT; sin conectores ni producción |
 | Calendario judicial | Tres regresiones aprobadas: disposición responsive, agrupación de días por fundamento y fecha de los períodos en una sola línea |
 | Ejecución de matriz contra entorno aislado 2.0 | Pendiente: se validó el índice local temporal, no la API desplegada, los conectores reales ni el ranking integrado |
 | Diagnóstico de portales en vivo desde entorno aislado | Pendiente |
