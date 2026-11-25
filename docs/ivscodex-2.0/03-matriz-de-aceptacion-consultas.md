@@ -30,7 +30,7 @@ Un HTTP 200, una lista no vacía o una suite de mocks aprobada no bastan por sí
 | Pruebas de concurrencia | Que múltiples consultas no se pisan, no exceden límites internos y no corrompen cursores | Capacidad ilimitada de los organismos externos |
 | Diagnóstico de producción | Estado observado desde la infraestructura productiva en un momento concreto | Garantía futura de disponibilidad |
 
-La ejecución registrada de 302 pruebas aprobadas en la rama técnica sirve como línea de base de código. No debe rotularse como aceptación integral de IVS Codex 2.0.
+La ejecución registrada de 305 pruebas aprobadas en la rama técnica sirve como línea de base de código. No debe rotularse como aceptación integral de IVS Codex 2.0.
 
 ## 3. Matriz funcional transversal
 
@@ -145,11 +145,12 @@ No se debe completar un caso con una carátula inventada, una ficha sin enlace v
 
 | Control | Estado |
 |---|---|
-| Suite automatizada de backend | 302/302 aprobadas en el commit `a9c9a96da93c2b3e7331c2a950783e200998965b`; incluye cero auténtico, respuesta parcial, deduplicación y fallas completas en búsqueda por artículo; línea de base técnica, no aceptación de producto |
+| Suite automatizada de backend | 305/305 aprobadas en el commit `e3aa3c8f90a5f8e09fcf5ca4ee7b709c54a228e8`; incluye ceros auténticos/parciales por artículo y regresiones visuales del calendario; línea de base técnica, no aceptación de producto |
 | Prueba de timeout durante lectura del cuerpo | Aprobada en la suite anterior de 297 pruebas; no fue modificada en el cambio posterior |
 | Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisados los flujos principales y añadida regresión de ceros parciales; quedan pendientes pruebas de integración aisladas y concurrencia real |
 | Conjunto de recuperación documental con positivos y negativos revisados | Pendiente de construir |
-| Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en el workflow de la rama |\n| Ejecución de matriz contra entorno aislado 2.0 | Pendiente |
+| Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en el workflow de la rama |
+| Calendario judicial | Tres regresiones aprobadas: disposición responsive, agrupación de días por fundamento y fecha de los períodos en una sola línea |\n| Ejecución de matriz contra entorno aislado 2.0 | Pendiente |
 | Diagnóstico de portales en vivo desde entorno aislado | Pendiente |
 | Diagnóstico de producción | No ejecutado |
 | Despliegue o modificación de datos productivos | No ejecutado |
