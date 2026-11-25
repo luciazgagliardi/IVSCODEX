@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   validar:
-    if: github.event_name == 'pull_request'
+    # La validación es segura en cualquier evento: solo ejecuta node --check.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
