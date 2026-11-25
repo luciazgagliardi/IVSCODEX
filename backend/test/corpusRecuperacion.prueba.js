@@ -270,6 +270,8 @@ test('buscarEnIndice recupera el corpus en almacenamiento temporal y deduplica p
     for (const caso of corpus.casos) {
       const resultados = await buscarEnIndice('ivscodex2_corpus_test', caso.consulta, { modo: 'todas' });
       const ids = new Set(resultados.map((resultado) => resultado.id));
+      assert.ok(resultados.every((resultado) => typeof resultado.id === 'string' && resultado.id.length > 0),
+        `buscarEnIndice devolvió un registro sin ID en ${caso.id}`);
       assert.equal(ids.size, resultados.length, `IDs duplicados en ${caso.id}`);
 
       for (const positivo of caso.positivos) {
