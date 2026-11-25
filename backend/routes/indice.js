@@ -148,6 +148,7 @@ export async function buscarPorArticulo({ slug, buscar, art, norma, modo, exclui
   const porId = new Map();
   const usadas = [];
   let revisados = 0;
+  let incompleta = false;
   for (const forma of formas) {
     try {
       const r = await buscar({
@@ -167,6 +168,7 @@ export async function buscarPorArticulo({ slug, buscar, art, norma, modo, exclui
         ...(tribunal ? { tribunal } : {}),
       });
       revisados += (r.resultados || []).length;
+      incompleta ||= Boolean(r.totalParcial || r.siguienteDesde != null);
       const porNumero = formas.indexOf(forma) < formasPorNumero;
       let nuevos = 0;
       for (const x of (r.resultados || [])) {
@@ -183,8 +185,12 @@ export async function buscarPorArticulo({ slug, buscar, art, norma, modo, exclui
         porId.set(x.id, { ...x, citaElNumero: porNumero });
         nuevos++;
       }
-      usadas.push({ forma, encontrados: (r.resultados || []).length, nuevos });
+      usadas.push({ forma, encontrados: (r.resultados || []).length, nuevos,
+        total: Number.isFinite(Number(r.total)) ? Number(r.total) : null,
+        siguienteDesde: r.siguienteDesde ?? null,
+        totalParcial: Boolean(r.totalParcial || r.siguienteDesde != null) });
     } catch (e) {
+      incompleta = true;
       usadas.push({ forma, error: (e && e.message) || 'falló' });
     }
   }
