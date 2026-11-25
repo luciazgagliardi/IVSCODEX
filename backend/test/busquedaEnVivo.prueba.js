@@ -37,6 +37,11 @@ test('la consulta oficial no añade las demoras de respaldo local ni los 20 segu
   assert.match(rutas, /if \(!pedirEnVivo && slug === 'caba' && total === 0\)/);
 });
 
+test('una respuesta oficial parcial no se presenta como cero confirmado, aunque el acervo haya llegado primero', () => {
+  assert.ok(html.includes('imBusco.parcial=imBusco.parcial||!!d.totalParcial'));
+  assert.ok(html.includes('if(!im.resultados.length&&(im.estadoVivo==="error"||im.parcial)) return out'));
+});
+
 test('el navegador conserva el acervo y solo muestra en vivo cuando hubo respuesta oficial', () => {
   assert.match(html, /if\(!cuerpo\.local\) cuerpo\.pedirEnVivo=true/);
   assert.match(html, /imBusco\.estadoVivo=\(d&&d\.ok&&!d\.desdeIndiceLocal&&d\.enVivo!==false\)\?"ok":"error"/);
