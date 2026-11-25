@@ -1,5 +1,5 @@
 {
-  "version": "1.1.1",
+  "version": "1.1.2",
   "id": "ivscodex2-corpus-recuperacion-piloto",
   "fechaCreacion": "2026-11-25",
   "estado": "piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas",
@@ -249,8 +249,9 @@
       "Berro sigue sin enlace oficial directo; no se encontró un localizador oficial comprobable para el CUIJ 13-07662606-9/1.",
       "Rozen está localizado en una compilación oficial del TSJ, no en una ficha individual del texto completo.",
       "El endpoint individual de Río Uruguay no fue reabierto desde el entorno; el patrón de URL se respalda en el repositorio, no en una verificación en vivo.",
-      "Pompeya tiene un localizador en un sumario oficial del TSJ (05/11/2025), pero falta recuperar y cotejar la sentencia individual.",
-      "Los otros tres fixtures TSJ CABA permanecen con fuente primaria pendiente; se rechazaron emparejamientos de expedientes diferentes.",
+      "Pompeya tiene un sumario oficial que confirma identidad y fecha (05/11/2025), pero falta obtener y cotejar la sentencia individual.",
+      "Federación Patronal/GEY conserva una marca de firma digital en el fixture (09/09/2026), no una fecha judicial validada por fuente primaria.",
+      "Los otros dos fixtures pendientes (Caja/Burgos y López/Viviana) siguen sin localizador oficial comprobable.",
       "Los tres casos gold provisionales requieren revisión jurídica humana independiente."
     ],
     "candidatosPendientesFuente": 4
@@ -291,7 +292,7 @@
       "jurisdiccion": "Ciudad Autónoma de Buenos Aires",
       "tribunal": "Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires",
       "tipoDocumento": "sentencia",
-      "fecha": null,
+      "fecha": "2025-11-05",
       "expediente": "TSJ 44430/2025-0",
       "caratula": "Distribuidora Pompeya SRL s/ queja por recurso de inconstitucionalidad denegado (laboral) en Goncalo Stella Maris c/ Distribuidora Pompeya S.R.L. y otros s/ despido (expte. 44847/2021)",
       "ramaPreliminar": [
@@ -322,14 +323,15 @@
         "beneficio jubilatorio",
         "Art. 252 LCT"
       ],
-      "bloqueo": "El boletín oficial del TSJ confirma carátula, expediente SAL 44430/25-0 y fecha 05/11/2025, pero ofrece un sumario, no el texto íntegro. El enlace individual del fallo todavía debe recuperarse y cotejarse; por eso el documento permanece fuera del conjunto gold."
+      "bloqueo": "El boletín oficial del TSJ confirma carátula, expediente SAL 44430/25-0 y fecha 05/11/2025, pero ofrece un sumario, no el texto íntegro. El enlace individual del fallo todavía debe recuperarse y cotejarse; por eso el documento permanece fuera del conjunto gold.",
+      "fechaOrigen": "Boletín de Jurisprudencia TSJ CABA, noviembre 2025; resumen oficial, no texto individual"
     },
     {
       "id": "caba-tsj-federacion-gey",
       "jurisdiccion": "Ciudad Autónoma de Buenos Aires",
       "tribunal": "Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires",
       "tipoDocumento": "sentencia",
-      "fecha": "2026-09-09",
+      "fecha": null,
       "expediente": "TSJ 356291/2025-0",
       "caratula": "Federación Patronal Seguros S.A.U. y otro s/ queja por recurso denegado (civil) en GEY c/ MJG y otros s/ daños y perjuicios (accidente de tránsito con lesiones o muerte) (expte. 7134/2016)",
       "ramaPreliminar": [
@@ -345,7 +347,7 @@
         "officialUrl": null,
         "estadoUrl": "fuente_primaria_pendiente; datos de firma digital y registro en fixture local",
         "fixturePath": "backend/test/fallos/tsj-federacion-patronal-firma-digital.txt",
-        "evidenciaLocalizador": "El fixture consigna firma digital 09/09/2026 13:29 y Registro Nro. 3076/2026."
+        "evidenciaLocalizador": "El fixture consigna firma digital 09/09/2026 13:29 y Registro Nro. 3076/2026. Estos datos se conservan como observaciones del archivo, no como fecha judicial validada."
       },
       "anclasTextuales": [
         "Federación Patronal Seguros S.A.U.",
@@ -353,7 +355,9 @@
         "Registro Nro 3076/2026",
         "09/09/2026"
       ],
-      "bloqueo": "El identificador del expediente TSJ no se utiliza como parámetro de descarga ni se transforma en URL sin confirmación oficial."
+      "bloqueo": "El identificador del expediente TSJ no se utiliza como parámetro de descarga ni se transforma en URL sin confirmación oficial.",
+      "fechaObservadaEnFixture": "09/09/2026 13:29:26",
+      "fechaOrigen": "marca de firma digital transcripta en el fixture; no cotejada en fuente primaria oficial"
     },
     {
       "id": "caba-tsj-lopez-viviana",

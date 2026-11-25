@@ -1,6 +1,6 @@
 # IVS Codex 2.0 — Protocolo del corpus de recuperación documental
 
-**Versión:** 1.1.1 (piloto provisional + cola de fuentes pendientes)  
+**Versión:** 1.1.2 (piloto provisional + cola de fuentes pendientes)  
 **Fecha:** 25/11/2026  
 **Datos:** [04-corpus-recuperacion-v1.json](./04-corpus-recuperacion-v1.json)
 
@@ -36,10 +36,10 @@ Se identificaron otros cuatro textos completos existentes en `backend/test/fallo
 |---|---|---|---|
 | `tsj-caja-de-seguros.txt` | TSJ 220909/2025-0 | Caja de Seguros c/ Burgos y Perfumo; daños de tránsito; efecto suspensivo | Fuente primaria pendiente; no confundir con Caja de Seguros c/ Zerpa |
 | `tsj-distribuidora-pompeya.txt` | TSJ 44430/2025-0 | Despido, jubilación y continuidad del vínculo laboral | El Boletín oficial TSJ noviembre 2025 confirma carátula, expediente SAL 44430/25-0 y fecha 05/11/2025 (p. impresa 6); es un sumario, no la sentencia íntegra. URL individual pendiente |
-| `tsj-federacion-patronal-firma-digital.txt` | TSJ 356291/2025-0 | Daños de tránsito, aseguradora y recurso extraordinario federal | El fixture registra firma digital del 09/09/2026 y Registro 3076/2026; falta la ficha oficial |
+| `tsj-federacion-patronal-firma-digital.txt` | TSJ 356291/2025-0 | Daños de tránsito, aseguradora y recurso extraordinario federal | El fixture registra firma digital del 09/09/2026 y Registro 3076/2026; no se toma como fecha judicial validada. Falta el localizador oficial |
 | `tsj-lopez-viviana.txt` | QTS 36249/2018-3 y 36249/2018-4 | Empleo público, cesantía y revisión judicial | Fuente primaria pendiente; fecha final no confirmada |
 
-Estos candidatos quedan fuera de `documentos`, de las etiquetas gold y de toda métrica hasta comprobar su correspondencia con una fuente primaria. La fecha no se completa con una fecha de actuación ni con una referencia secundaria.
+Estos candidatos quedan fuera de `documentos`, de las etiquetas gold y de toda métrica hasta comprobar su correspondencia con una fuente primaria. La fecha no se completa con una fecha de actuación ni con una referencia secundaria. Para Federación Patronal/GEY, la marca horaria de la firma digital del fixture se conserva en `fechaObservadaEnFixture`, pero `fecha` permanece nula hasta cotejar la fuente primaria. Para Pompeya, la fecha 05/11/2025 sí se consigna porque aparece en el boletín oficial, aunque la sentencia íntegra siga pendiente.
 
 
 #### Comprobación oficial adicional: Distribuidora Pompeya

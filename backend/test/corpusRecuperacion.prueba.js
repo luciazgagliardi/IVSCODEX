@@ -21,7 +21,7 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.ok(fs.existsSync(corpusPath), 'falta el corpus versionado');
   const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
 
-  assert.equal(corpus.version, '1.1.1');
+  assert.equal(corpus.version, '1.1.2');
   assert.equal(corpus.estado, 'piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas');
   assert.equal(corpus.documentos.length, corpus.resumen.documentos);
   assert.equal(corpus.casos.length, corpus.resumen.consultas);
@@ -90,9 +90,16 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
       assert.equal(locator.fechaSentencia, '2025-11-05');
       assert.equal(locator.expedientePublicado, 'SAL 44430/25-0');
       assert.equal(locator.paginaImpreso, 6);
+      assert.equal(candidato.fecha, '2025-11-05');
+      assert.match(candidato.fechaOrigen, /Boletín de Jurisprudencia/);
       assert.match(candidato.fuente.estadoUrl, /fuente_primaria_pendiente/);
     } else {
       assert.equal(candidato.fuente.localizadorOficial, undefined);
+    }
+    if (candidato.id === 'caba-tsj-federacion-gey') {
+      assert.equal(candidato.fecha, null, 'la firma del fixture no valida la fecha judicial');
+      assert.equal(candidato.fechaObservadaEnFixture, '09/09/2026 13:29:26');
+      assert.match(candidato.fechaOrigen, /no cotejada en fuente primaria/);
     }
     assert.match(candidato.fuente.estadoUrl, /fuente_primaria_pendiente/);
     assert.ok(candidato.bloqueo.length > 30);
