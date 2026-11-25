@@ -33,6 +33,8 @@ test('la unión por artículo deduplica fichas y conserva la marca de cita numé
         return { resultados: [{ id: 'fallo-1', caratula: 'Pérez', citaElNumero: false }] };
       }
       return {
+        total: 25,
+        siguienteDesde: 20,
         resultados: [
           { id: 'fallo-1', caratula: 'Pérez' },
           { id: 'fallo-2', caratula: 'Gómez' },
@@ -47,6 +49,19 @@ test('la unión por artículo deduplica fichas y conserva la marca de cita numé
   assert.equal(salida.totalParcial, true);
   assert.deepEqual(salida.resultados.map((x) => x.id), ['fallo-1', 'fallo-2']);
   assert.ok(salida.resultados.every((x) => x.citaElNumero === true));
+});
+
+test('si todas las formas terminan correctamente sin resultados ni cursor, el cero sí es auténtico', async () => {
+  const salida = await buscarPorArticulo({
+    slug: 'mendoza',
+    art: '1741',
+    buscar: async () => ({ total: 0, resultados: [], siguienteDesde: null, totalParcial: false }),
+  });
+
+  assert.equal(salida.total, 0);
+  assert.equal(salida.totalParcial, false);
+  assert.equal(salida.porArticulo.formas.length, 2);
+  assert.ok(salida.porArticulo.formas.every((forma) => forma.error === undefined));
 });
 
 test('si fallan todas las formas de una búsqueda por artículo, devuelve un error y no cero', async () => {
