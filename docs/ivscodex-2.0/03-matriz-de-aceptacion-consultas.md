@@ -30,7 +30,7 @@ Un HTTP 200, una lista no vacía o una suite de mocks aprobada no bastan por sí
 | Pruebas de concurrencia | Que múltiples consultas no se pisan, no exceden límites internos y no corrompen cursores | Capacidad ilimitada de los organismos externos |
 | Diagnóstico de producción | Estado observado desde la infraestructura productiva en un momento concreto | Garantía futura de disponibilidad |
 
-La ejecución registrada de 301 pruebas aprobadas en la rama técnica sirve como línea de base de código. No debe rotularse como aceptación integral de IVS Codex 2.0.
+La ejecución registrada de 302 pruebas aprobadas en la rama técnica sirve como línea de base de código. No debe rotularse como aceptación integral de IVS Codex 2.0.
 
 ## 3. Matriz funcional transversal
 
@@ -145,11 +145,11 @@ No se debe completar un caso con una carátula inventada, una ficha sin enlace v
 
 | Control | Estado |
 |---|---|
-| Suite automatizada de backend | 301/301 aprobadas en el commit `4124fabc329c568b6b370277722f814152d96ada`; incluye regresiones de consulta parcial por artículo; línea de base técnica, no aceptación de producto |
-| Prueba de timeout durante lectura del cuerpo | Aprobada en esa misma ejecución |
-| Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisión del código y regresiones principales realizada; matriz de integración todavía pendiente |
+| Suite automatizada de backend | 302/302 aprobadas en el commit `a9c9a96da93c2b3e7331c2a950783e200998965b`; incluye cero auténtico, respuesta parcial, deduplicación y fallas completas en búsqueda por artículo; línea de base técnica, no aceptación de producto |
+| Prueba de timeout durante lectura del cuerpo | Aprobada en la suite anterior de 297 pruebas; no fue modificada en el cambio posterior |
+| Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisados los flujos principales y añadida regresión de ceros parciales; quedan pendientes pruebas de integración aisladas y concurrencia real |
 | Conjunto de recuperación documental con positivos y negativos revisados | Pendiente de construir |
-| Ejecución de matriz contra entorno aislado 2.0 | Pendiente |
+| Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en el workflow de la rama |\n| Ejecución de matriz contra entorno aislado 2.0 | Pendiente |
 | Diagnóstico de portales en vivo desde entorno aislado | Pendiente |
 | Diagnóstico de producción | No ejecutado |
 | Despliegue o modificación de datos productivos | No ejecutado |
