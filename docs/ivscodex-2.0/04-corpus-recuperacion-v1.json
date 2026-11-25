@@ -392,10 +392,10 @@
     }
   ],
   "validacionAutomatizada": {
-    "commit": null,
-    "runId": null,
-    "runUrl": null,
-    "resultado": "en_validacion",
+    "commit": "dcd330c4cd2feac359b71b5615a2afa819563779",
+    "runId": 45649974283,
+    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283",
+    "resultado": "success",
     "pruebas": {
       "total": 308,
       "aprobadas": 308,
@@ -406,7 +406,7 @@
       "archivosJavaScript": 10,
       "resultado": "success"
     },
-    "alcance": "pruebas automatizadas del repositorio; no equivalen a aceptación jurídica ni a medición de relevancia",
+    "alcance": "suite automatizada del repositorio, regresión de relevancia con fixtures jurídicos y prueba de buscarEnIndice sobre almacenamiento temporal; no equivale a aceptación jurídica ni a prueba de conectores externos",
     "fecha": "2026-11-25"
   },
   "pruebaMotorLocal": {
@@ -417,6 +417,8 @@
     "entradas": "fixtures íntegros escritos en un índice temporal mediante upsertRegistros; búsqueda con buscarEnIndice; sin red, sin acervo persistente y sin dependencias de Azure",
     "cobertura": "3 consultas gold provisionales; 3 positivos; 6 negativos; control adversarial «alguna» vs «todas»; recarga duplicada y unicidad de IDs",
     "pendiente": "no valida conectores, campos de sumario originales de los portales, filtros HTTP, paginación remota ni ranking global",
-    "estado": "pruebas locales integradas; ejecución CI pendiente"
+    "estado": "aprobada en CI; revisión jurídica humana y validación de conectores reales pendientes",
+    "runId": 45649974283,
+    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283"
   }
 }

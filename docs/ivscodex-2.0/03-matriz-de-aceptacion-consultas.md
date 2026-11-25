@@ -153,15 +153,15 @@ La validación estructural comprueba la existencia de fixtures y anclas textuale
 
 | Control | Estado |
 |---|---|
-| Suite automatizada de backend | 306/306 aprobadas en el commit `499b093697ca0f58c090ad4df3a5ea060193d9d4`; incluye validación de corpus, integridad de fuentes pendientes, ceros auténticos/parciales por artículo y regresiones visuales; línea de base técnica, no aceptación de producto |
+| Suite automatizada de backend | 308/308 aprobadas en el commit `dcd330c4cd2feac359b71b5615a2afa819563779`; incluye validación del corpus, filtro de relevancia, búsqueda del índice local temporal, deduplicación, ceros auténticos/parciales por artículo y regresiones; línea de base técnica, no aceptación de producto |
 | Prueba de timeout durante lectura del cuerpo | Aprobada en la suite anterior de 297 pruebas; no fue modificada en el cambio posterior |
 | Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisados los flujos principales y añadida regresión de ceros parciales; quedan pendientes pruebas de integración aisladas y concurrencia real |
-| Corpus de recuperación documental | Piloto v1.1.2: 3 documentos gold provisionales, 3 consultas y 6 negativos; 4 fixtures adicionales en cola sin etiquetas gold (Pompeya tiene fecha y expediente confirmados en boletín oficial, pero falta el texto individual; la firma de Federación/GEY no se considera fecha validada); revisión jurídica pendiente; Berro sin enlace oficial directo, Río Uruguay sin reapertura del endpoint, Rozen localizado en compilación oficial y Pompeya localizado sólo en sumario oficial; 0 casos aptos para métricas |
-| Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en el workflow de la rama |
+| Corpus de recuperación documental | Piloto v1.1.4: 3 documentos gold provisionales, 3 consultas y 6 negativos; 4 fixtures adicionales en cola sin etiquetas gold; Pompeya tiene fecha/expediente en sumario oficial, no fallo individual; Federación/GEY conserva marca de firma sin fecha judicial validada; revisión jurídica pendiente; 0 casos aptos para métricas |
+| Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en [GitHub Actions 45649974283](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283) |
 | Validación de sintaxis del diagnóstico 2.0 | Aprobada en [GitHub Actions](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45618792192), con un único job y sin consultas oficiales en vivo |
 | Integridad estructural del corpus y cola de fuentes | Aprobada: 306/306 en [GitHub Actions 45646579414](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45646579414); valida fixtures, anclas, fechas y exclusión de 4 candidatos sin fuente primaria |
 | Calendario judicial | Tres regresiones aprobadas: disposición responsive, agrupación de días por fundamento y fecha de los períodos en una sola línea |
-| Ejecución de matriz contra entorno aislado 2.0 | Pendiente: la suite estructural no sustituye una corrida del motor aislado |
+| Ejecución de matriz contra entorno aislado 2.0 | Pendiente: se validó el índice local temporal, no la API desplegada, los conectores reales ni el ranking integrado |
 | Diagnóstico de portales en vivo desde entorno aislado | Pendiente |
 | Diagnóstico de producción | No ejecutado |
 | Despliegue o modificación de datos productivos | No ejecutado |
