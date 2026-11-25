@@ -158,6 +158,7 @@ La validación estructural comprueba la existencia de fixtures y anclas textuale
 | Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisados los flujos principales y añadida regresión de ceros parciales; quedan pendientes pruebas de integración aisladas y concurrencia real |
 | Corpus de recuperación documental | Piloto v1 incorporado: 3 documentos, 3 consultas y 6 negativos justificados; revisión jurídica y dos localizadores oficiales pendientes; 0 casos aptos para métricas |
 | Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en el workflow de la rama |
+| Validación de sintaxis del diagnóstico 2.0 | Aprobada en [GitHub Actions](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45618792192), con un único job y sin consultas oficiales en vivo |
 | Integridad estructural del corpus piloto | Aprobada en la suite completa: 306/306 pruebas, incluida la validación de fixtures y etiquetas del corpus |
 | Calendario judicial | Tres regresiones aprobadas: disposición responsive, agrupación de días por fundamento y fecha de los períodos en una sola línea |\n| Ejecución de matriz contra entorno aislado 2.0 | Pendiente |
 | Diagnóstico de portales en vivo desde entorno aislado | Pendiente |
