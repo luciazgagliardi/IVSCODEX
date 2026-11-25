@@ -1,6 +1,6 @@
 # IVS Codex 2.0 — Protocolo del corpus de recuperación documental
 
-**Versión:** 1.1.3 (piloto provisional + prueba local del filtro de relevancia)  
+**Versión:** 1.1.4 (piloto provisional + filtro de relevancia e índice local temporal)  
 **Fecha:** 25/11/2026  
 **Datos:** [04-corpus-recuperacion-v1.json](./04-corpus-recuperacion-v1.json)
 
