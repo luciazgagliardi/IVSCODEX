@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { filtrarPorModo } from '../lib/relevancia.js';
 
 const testDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(testDir, '../..');
@@ -161,4 +162,74 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.equal(corpus.validacionAutomatizada?.pruebas?.total, 306);
   assert.equal(corpus.validacionAutomatizada?.pruebas?.fallidas, 0);
   assert.ok(corpus.casos.every((caso) => !caso.aptoParaMetricas));
+});
+
+
+test('el filtro de relevancia recupera positivos y excluye negativos difíciles del corpus real', () => {
+  const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
+  const registros = corpus.documentos.map((documento) => {
+    const fixturePath = path.resolve(repoRoot, documento.fuente.fixturePath);
+    const textoCompleto = fs.readFileSync(fixturePath, 'utf8');
+    // El filtro real consume carátula, sumario, voces y expediente.
+    // El texto íntegro del fixture se usa aquí como campo textual de referencia
+    // para probar el algoritmo sin red ni dependencia de los portales.
+    return {
+      id: documento.id,
+      jurisdiccion: documento.jurisdiccion,
+      tribunal: documento.tribunal,
+      tipoDocumento: documento.tipoDocumento,
+      fecha: documento.fecha,
+      caratula: documento.caratula,
+      expediente: documento.expediente,
+      sumario: textoCompleto,
+      voces: [],
+    };
+  });
+
+  const porId = new Map(registros.map((registro) => [registro.id, registro]));
+  for (const caso of corpus.casos) {
+    const salida = filtrarPorModo(registros, {
+      q: caso.consulta,
+      modo: 'todas',
+      aflojar: false,
+    });
+    const ids = new Set(salida.lista.map((registro) => registro.id));
+
+    for (const positivo of caso.positivos) {
+      assert.ok(
+        ids.has(positivo.documentoId),
+        `el filtro real omitió el positivo ${positivo.documentoId} en ${caso.id}`
+      );
+      const documento = porId.get(positivo.documentoId);
+      assert.equal(documento.jurisdiccion, caso.filtros.jurisdiccion);
+      assert.equal(documento.tribunal, caso.filtros.tribunal);
+      assert.ok(caso.filtros.tiposDocumentales.includes(documento.tipoDocumento));
+    }
+
+    for (const negativo of caso.negativos) {
+      assert.ok(
+        !ids.has(negativo.documentoId),
+        `el filtro real incorporó el negativo ${negativo.documentoId} en ${caso.id}`
+      );
+    }
+    assert.equal(salida.aflojado, false, 'la prueba estricta no debe relajar silenciosamente la consulta');
+  }
+
+  // Control adversarial: Río Uruguay comparte vocabulario genérico con la
+  // búsqueda laboral (indemnización, banco, laboral), pero no debe sobrevivir
+  // al modo «todas» para una consulta sobre despido discriminatorio en BBVA.
+  const laboral = corpus.casos.find((caso) => caso.id === 'REC-MZA-LAB-001');
+  const rio = porId.get('mza-scjm-rio-uruguay-2026-05-08');
+  const estricto = filtrarPorModo(registros, {
+    q: laboral.consulta,
+    modo: 'todas',
+    aflojar: false,
+  }).lista;
+  const amplio = filtrarPorModo(registros, {
+    q: laboral.consulta,
+    modo: 'alguna',
+  }).lista;
+  assert.ok(!estricto.some((registro) => registro.id === rio.id));
+  assert.ok(amplio.some((registro) => registro.id === rio.id),
+    'el negativo difícil debe mostrar por qué «alguna» no equivale a pertinencia jurídica');
 });
