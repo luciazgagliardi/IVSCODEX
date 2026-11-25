@@ -126,6 +126,37 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
     );
   }
 
+  const referencias = corpus.referenciasOficialesNoGold ?? [];
+  assert.equal(referencias.length, corpus.resumen.referenciasOficialesNoGold);
+  const referenciaPompeya = referencias.find((r) => r.id === 'caba-tsj-sumario-pompeya-2025-11');
+  assert.ok(referenciaPompeya, 'falta la referencia institucional del sumario de Pompeya');
+  assert.equal(referenciaPompeya.tipoDocumento, 'sumario_jurisprudencial_oficial');
+  assert.equal(referenciaPompeya.esSentencia, false);
+  assert.equal(referenciaPompeya.integraGold, false);
+  assert.equal(referenciaPompeya.metadatosPublicados.expediente, 'SAL 44430/25-0');
+  assert.equal(referenciaPompeya.metadatosPublicados.fechaSentencia, '2025-11-05');
+  assert.deepEqual(referenciaPompeya.fuente.paginasDeLaEntrada, [5, 6]);
+  assert.deepEqual(referenciaPompeya.fuente.paginasImpresas, [2, 4, 5, 6]);
+  const urlSumario = new URL(referenciaPompeya.fuente.url);
+  assert.equal(urlSumario.protocol, 'https:');
+  assert.equal(urlSumario.hostname, 'www.tsjbaires.gob.ar');
+  assert.equal(urlSumario.pathname, '/repositorio/indicesboletines/2025/2025_11_Boletin_indice.pdf');
+  assert.equal(referenciaPompeya.politicaDeUso.puedeSatisfacerFiltroSoloSentencias, false);
+  assert.equal(referenciaPompeya.politicaDeUso.puedePresentarseComoTextoCompleto, false);
+  assert.equal(referenciaPompeya.politicaDeUso.aptoParaMetricasGold, false);
+  const portalBuscador = new URL(referenciaPompeya.fuente.portalBuscadorSentencias);
+  assert.equal(portalBuscador.protocol, 'https:');
+  assert.equal(portalBuscador.hostname, 'www.tsjbaires.gob.ar');
+  assert.equal(portalBuscador.pathname, '/servicios/jurisprudencia/buscador-de-sentencias');
+  const candidatoPompeya = candidatos.find((c) => c.id === 'caba-tsj-distribuidora-pompeya');
+  assert.equal(candidatoPompeya.referenciaOficialNoGoldId, referenciaPompeya.id);
+  assert.equal(candidatoPompeya.fuente.officialUrl, null,
+    'el enlace a un boletín no sustituye la URL de la sentencia individual');
+  assert.ok(!corpus.documentos.some((d) => d.id === referenciaPompeya.id));
+  assert.ok(!corpus.casos.some((caso) =>
+    [...caso.positivos, ...caso.negativos].some((e) => e.documentoId === referenciaPompeya.id)
+  ));
+
   const casos = new Set();
   let positivos = 0;
   let negativos = 0;

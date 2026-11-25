@@ -49,6 +49,14 @@ Fuente oficial: https://www.tsjbaires.gob.ar/repositorio/indicesboletines/2025/2
 
 El propio Tribunal explica que sus boletines reúnen sumarios preparados por la Secretaría y que estos no forman parte de la sentencia; la sección «Novedades» normalmente incluye un hipervínculo al texto completo. Por ello el corpus registra este PDF como **localizador oficial de resumen**, conserva `officialUrl: null` para la sentencia individual y deja el candidato fuera del conjunto gold hasta obtener y cotejar el documento íntegro.
 
+### Referencia de control: sumario oficial de Distribuidora Pompeya
+
+El boletín oficial del TSJ CABA de noviembre de 2025 identifica el expediente SAL 44430/25-0 y la fecha 05/11/2025 en sus páginas impresas 5–6. Sus páginas 2 y 4 aclaran que los sumarios son elaborados por la Secretaría, no forman parte de las sentencias y no expresan opinión jurisdiccional.
+
+Fuente oficial: https://www.tsjbaires.gob.ar/repositorio/indicesboletines/2025/2025_11_Boletin_indice.pdf
+
+El corpus conserva esta entrada en `referenciasOficialesNoGold`, separada del documento individual. Sirve para búsquedas de sumarios oficiales; no satisface filtros «sólo sentencias», no reemplaza el texto íntegro y no integra el conjunto gold. El portal institucional identifica un buscador público de sentencias completas desde 1998, recuperables por parámetros como carátula, fecha y Secretaría: https://www.tsjbaires.gob.ar/servicios/jurisprudencia/buscador-de-sentencias. El enlace individual de Pompeya sigue pendiente de extracción y cotejo.
+
 ## 3. Cómo se etiqueta
 
 Cada consulta incluye texto exacto y variantes, clase de consulta, filtros de jurisdicción/tribunal/tipo documental, positivos con anclas textuales y negativos con motivo concreto.

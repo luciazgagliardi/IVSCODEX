@@ -254,7 +254,8 @@
       "Los otros dos fixtures pendientes (Caja/Burgos y López/Viviana) siguen sin localizador oficial comprobable.",
       "Los tres casos gold provisionales requieren revisión jurídica humana independiente."
     ],
-    "candidatosPendientesFuente": 4
+    "candidatosPendientesFuente": 4,
+    "referenciasOficialesNoGold": 1
   },
   "candidatosPendientesFuente": [
     {
@@ -314,7 +315,15 @@
           "fechaSentencia": "2025-11-05",
           "expedientePublicado": "SAL 44430/25-0",
           "paginaImpreso": 6,
-          "alcance": "El boletín oficial identifica expediente y fecha y contiene un sumario elaborado por la Secretaría de Jurisprudencia; no sustituye el texto íntegro de la sentencia ni la URL individual."
+          "alcance": "El boletín oficial identifica expediente y fecha y contiene un sumario elaborado por la Secretaría de Jurisprudencia; no sustituye el texto íntegro de la sentencia ni la URL individual.",
+          "paginasImpresas": [
+            5,
+            6
+          ],
+          "paginasPdfBaseCero": [
+            5,
+            6
+          ]
         }
       },
       "anclasTextuales": [
@@ -323,8 +332,9 @@
         "beneficio jubilatorio",
         "Art. 252 LCT"
       ],
-      "bloqueo": "El boletín oficial del TSJ confirma carátula, expediente SAL 44430/25-0 y fecha 05/11/2025, pero ofrece un sumario, no el texto íntegro. El enlace individual del fallo todavía debe recuperarse y cotejarse; por eso el documento permanece fuera del conjunto gold.",
-      "fechaOrigen": "Boletín de Jurisprudencia TSJ CABA, noviembre 2025; resumen oficial, no texto individual"
+      "bloqueo": "El boletín oficial confirma carátula, expediente SAL 44430/25-0, fecha 05/11/2025 y resume la decisión. Es un sumario institucional, no la sentencia íntegra; no puede usarse como documento gold ni presentarse como texto de sentencia. Falta recuperar y cotejar el hipervínculo individual al texto completo.",
+      "fechaOrigen": "Boletín de Jurisprudencia TSJ CABA, noviembre 2025; resumen oficial, no texto individual",
+      "referenciaOficialNoGoldId": "caba-tsj-sumario-pompeya-2025-11"
     },
     {
       "id": "caba-tsj-federacion-gey",
@@ -420,5 +430,80 @@
     "estado": "aprobada en CI; incluye fallback JSON, deduplicación y filtros SC/CC/CT",
     "runId": 45649974283,
     "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283"
-  }
+  },
+  "referenciasOficialesNoGold": [
+    {
+      "id": "caba-tsj-sumario-pompeya-2025-11",
+      "tipoDocumento": "sumario_jurisprudencial_oficial",
+      "esSentencia": false,
+      "integraGold": false,
+      "organismo": "Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires",
+      "jurisdiccion": "Ciudad Autónoma de Buenos Aires",
+      "fechaPublicacion": "2025-11",
+      "documentoJudicialAsociadoId": "caba-tsj-distribuidora-pompeya",
+      "fuente": {
+        "nombre": "Boletín de Jurisprudencia del TSJ CABA · noviembre de 2025",
+        "url": "https://www.tsjbaires.gob.ar/repositorio/indicesboletines/2025/2025_11_Boletin_indice.pdf",
+        "naturaleza": "publicación oficial de sumarios preparada por la Secretaría de Jurisprudencia y Biblioteca",
+        "paginasPdfBaseCero": [
+          2,
+          4,
+          5,
+          6
+        ],
+        "paginasImpresas": [
+          2,
+          4,
+          5,
+          6
+        ],
+        "paginasDeLaEntrada": [
+          5,
+          6
+        ],
+        "fechaVerificacion": "2026-11-25",
+        "portalJurisprudencia": "https://www.tsjbaires.gob.ar/servicios/jurisprudencia",
+        "portalBuscadorSentencias": "https://www.tsjbaires.gob.ar/servicios/jurisprudencia/buscador-de-sentencias",
+        "capacidadesBuscador": "busca textos completos de fallos desde 1998 por parámetros, incluida carátula, fecha y Secretaría; requiere completar el enlace individual en el portal."
+      },
+      "metadatosPublicados": {
+        "caratula": "Distribuidora Pompeya SRL s/ queja por recurso de inconstitucionalidad denegado (laboral) en Goncalo, Stella Maris c/ Distribuidora Pompeya S.R.L. y otros s/ despido (expte. 44847/2021)",
+        "expediente": "SAL 44430/25-0",
+        "fechaSentencia": "2025-11-05",
+        "decisionMayoritaria": "La mayoría revoca la sentencia de Cámara y hace lugar a la queja y al recurso de inconstitucionalidad.",
+        "votosDisidentes": [
+          "Alicia E. C. Ruiz",
+          "Luis Francisco Lozano"
+        ]
+      },
+      "evidencia": [
+        {
+          "paginaImpresa": 2,
+          "punto": "El Tribunal explica que el boletín reúne sumarios elaborados por la Secretaría; no forman parte de la sentencia y se crean para conveniencia del lector."
+        },
+        {
+          "paginaImpresa": 4,
+          "punto": "El Tribunal advierte que sus sumarios no contienen afirmación de hecho o de derecho ni opinión jurisdiccional."
+        },
+        {
+          "paginaImpresa": 5,
+          "punto": "Comienza la novedad laboral sobre extinción por jubilación, nuevo contrato, despido sin causa y buena fe."
+        },
+        {
+          "paginaImpresa": 6,
+          "punto": "La entrada identifica expediente SAL 44430/25-0 y sentencia del 05/11/2025, y resume mayoría y disidencias."
+        }
+      ],
+      "politicaDeUso": {
+        "etiquetaEnInterfaz": "Sumario oficial · no es sentencia íntegra",
+        "clasificacionDocumental": "sumario_oficial",
+        "puedeSatisfacerConsultaDeSumarios": true,
+        "puedeSatisfacerFiltroSoloSentencias": false,
+        "puedePresentarseComoTextoCompleto": false,
+        "aptoParaMetricasGold": false
+      },
+      "consultaDeControl": "extinción del contrato de trabajo por jubilación, continuidad de la relación laboral, art. 253 LCT, buena fe",
+      "estado": "sumario_oficial_verificado; portal_oficial_de_textos_completos_identificado; texto_individual_pendiente_de_recuperacion"
+    }
+  ]
 }
