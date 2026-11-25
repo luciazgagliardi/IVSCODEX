@@ -1,0 +1,32 @@
+name: Validar sintaxis del diagnóstico 2.0
+
+on:
+  push:
+    branches: [development/ivscodex-2.0-live-engine]
+    paths:
+      - 'ops/diagnosticar-en-vivo.mjs'
+      - '.github/workflows/validar-diagnostico-2.0.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'ops/diagnosticar-en-vivo.mjs'
+      - '.github/workflows/validar-diagnostico-2.0.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validar-diagnostico-2.0-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Validar sintaxis sin ejecutar consultas
+        run: node --check ops/diagnosticar-en-vivo.mjs

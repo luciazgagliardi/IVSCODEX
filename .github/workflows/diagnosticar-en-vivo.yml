@@ -1,11 +1,6 @@
 name: Diagnosticar consultas oficiales en vivo
 
 on:
-  push:
-    branches: [development/ivscodex-2.0-live-engine]
-    paths:
-      - 'ops/diagnosticar-en-vivo.mjs'
-      - '.github/workflows/diagnosticar-en-vivo.yml'
   pull_request:
     branches: [main]
     paths:
@@ -22,7 +17,7 @@ concurrency:
 
 jobs:
   validar:
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
