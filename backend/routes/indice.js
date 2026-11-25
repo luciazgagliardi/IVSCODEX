@@ -128,7 +128,7 @@ function recortarPasaje(texto, q, { exigir = false } = {}) {
  * repeticiones, y para "¿quién aplicó este artículo?" lo que importa es la
  * cobertura, no llegar al resultado número doscientos.
  */
-async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anioDesde, anioHasta, tribunal }) {
+export async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anioDesde, anioHasta, tribunal }) {
   const formas = [];
   const agregar = (t) => { const v = String(t || '').trim(); if (v && !formas.includes(v)) formas.push(v); };
 
@@ -147,6 +147,7 @@ async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anio
 
   const porId = new Map();
   const usadas = [];
+  let revisados = 0;
   for (const forma of formas) {
     try {
       const r = await buscar({
@@ -165,6 +166,7 @@ async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anio
         ...(anioValido(anioHasta) ? { anioHasta: Number(anioHasta) } : {}),
         ...(tribunal ? { tribunal } : {}),
       });
+      revisados += (r.resultados || []).length;
       const porNumero = formas.indexOf(forma) < formasPorNumero;
       let nuevos = 0;
       for (const x of (r.resultados || [])) {
@@ -204,7 +206,7 @@ async function buscarPorArticulo({ slug, buscar, art, norma, modo, excluir, anio
     siguienteDesde: null,
     // Es un piso: se unió la primera vuelta de cada forma, no todo lo que hay.
     totalParcial: true,
-    revisados: 0,
+    revisados,
     aflojado: false,
     pagina: 1,
     porPagina: resultados.length,
