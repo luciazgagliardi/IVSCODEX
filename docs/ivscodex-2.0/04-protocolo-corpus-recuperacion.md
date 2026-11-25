@@ -99,4 +99,4 @@ Una ficha SAIJ, un sumario editorial y una sentencia del tribunal no se etiqueta
 
 ## 7. Validación automatizada
 
-`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **306/306** en la ejecución [45644369644](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45644369644). Este test no ejecuta consultas de búsqueda, no contacta portales y no reemplaza la revisión jurídica humana.
+`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **306/306** en la ejecución [45644369644](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45644369644). Este test no ejecuta consultas de búsqueda, no contacta portales y no reemplaza la revisión jurídica humana. La plantilla obligatoria para la revisión profesional es [05-ficha-revision-humana-corpus.md](./05-ficha-revision-humana-corpus.md).
