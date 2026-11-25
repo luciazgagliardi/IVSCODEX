@@ -1,6 +1,6 @@
 # IVS Codex 2.0 — Protocolo del corpus de recuperación documental
 
-**Versión:** 1.1.4 (piloto provisional + filtro de relevancia e índice local temporal)  
+**Versión:** 1.1.5 (piloto provisional + índice local, deduplicación y filtros de tribunal)  
 **Fecha:** 25/11/2026  
 **Datos:** [04-corpus-recuperacion-v1.json](./04-corpus-recuperacion-v1.json)
 
@@ -107,7 +107,7 @@ Una ficha SAIJ, un sumario editorial y una sentencia del tribunal no se etiqueta
 
 ## 7. Validación automatizada
 
-`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **308/308** en [GitHub Actions 45649974283](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283). La ejecución incluye el filtro de relevancia real y la búsqueda de `buscarEnIndice` sobre un índice temporal; la validación del frontend confirmó 8 scripts inline y 10 archivos JavaScript. No contacta portales ni reemplaza la revisión jurídica humana. La plantilla obligatoria para la revisión profesional es [05-ficha-revision-humana-corpus.md](./05-ficha-revision-humana-corpus.md).
+`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **308/308** en [GitHub Actions 45651559017](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45651559017). La ejecución incluye el filtro de relevancia real, `buscarEnIndice` sobre un índice temporal, deduplicación y el filtro de tribunales SC/CC/CT de Mendoza; la validación del frontend confirmó 8 scripts inline y 10 archivos JavaScript. No contacta portales ni reemplaza la revisión jurídica humana. La plantilla obligatoria para la revisión profesional es [05-ficha-revision-humana-corpus.md](./05-ficha-revision-humana-corpus.md).
 
 ### 7.1 Filtro de relevancia con documentos jurídicos de referencia
 
@@ -122,7 +122,7 @@ Esta es una regresión del filtro real con fixtures completos usados como texto 
 
 La misma suite invoca `upsertRegistros` y `buscarEnIndice` de `backend/lib/indice.js` sobre un directorio temporal del runner. Inserta los tres documentos, ejecuta las tres consultas, valida positivos y negativos, vuelve a insertar un ID y comprueba que el inventario siga en tres documentos y que no existan IDs repetidos. También verifica el control adversarial del modo `alguna`.
 
-El test restaura `DIR_INDICE` y elimina el directorio temporal en `finally`. No llama a conectores, no importa el acervo persistente, no accede a Azure ni escribe en `/home/datos`.
+El test restaura `DIR_INDICE` y elimina el directorio temporal en `finally`. No llama a conectores, no importa el acervo persistente, no accede a Azure ni escribe en `/home/datos`. Además, ejecuta la ruta con la clave real `mendoza`: `SC`, `CC` y `CT` devuelven únicamente los registros cuyo campo `tribunal` corresponde al fuero; los registros sin tribunal no se atribuyen a ninguno y `todo` conserva los tres.
 
 Estas pruebas acreditan **relevancia textual sobre fixtures y búsqueda en el índice local**, no los campos reales de los portales, filtros HTTP, paginación remota, concurrencia del despliegue ni ranking integrado. La ejecución de matriz contra un entorno aislado completo sigue pendiente.
 

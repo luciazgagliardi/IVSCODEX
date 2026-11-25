@@ -1,5 +1,5 @@
 {
-  "version": "1.1.4",
+  "version": "1.1.5",
   "id": "ivscodex2-corpus-recuperacion-piloto",
   "fechaCreacion": "2026-11-25",
   "estado": "piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas",
@@ -392,9 +392,9 @@
     }
   ],
   "validacionAutomatizada": {
-    "commit": "dcd330c4cd2feac359b71b5615a2afa819563779",
-    "runId": 45649974283,
-    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283",
+    "commit": "3b5893d9678e91510202707521fb6bf45c53cd54",
+    "runId": 45651559017,
+    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45651559017",
     "resultado": "success",
     "pruebas": {
       "total": 308,
@@ -406,18 +406,18 @@
       "archivosJavaScript": 10,
       "resultado": "success"
     },
-    "alcance": "suite automatizada del repositorio, regresión de relevancia con fixtures jurídicos y prueba de buscarEnIndice sobre almacenamiento temporal; no equivale a aceptación jurídica ni a prueba de conectores externos",
+    "alcance": "suite automatizada del repositorio; regresión de relevancia con fixtures, búsqueda real en índice JSON temporal, deduplicación y filtros de tribunal Mendoza SC/CC/CT; no equivale a aceptación jurídica ni a prueba de conectores externos",
     "fecha": "2026-11-25"
   },
   "pruebaMotorLocal": {
     "test": "backend/test/corpusRecuperacion.prueba.js",
-    "motor": "backend/lib/indice.js::buscarEnIndice + backend/lib/relevancia.js::filtrarPorModo",
+    "motor": "backend/lib/indice.js::buscarEnIndice + backend/lib/acervoConsulta.js::coincideTribunal + backend/lib/relevancia.js::filtrarPorModo",
     "modo": "todas",
     "aflojar": false,
     "entradas": "fixtures íntegros escritos en un índice temporal mediante upsertRegistros; búsqueda con buscarEnIndice; sin red, sin acervo persistente y sin dependencias de Azure",
-    "cobertura": "3 consultas gold provisionales; 3 positivos; 6 negativos; control adversarial «alguna» vs «todas»; recarga duplicada y unicidad de IDs",
-    "pendiente": "no valida conectores, campos de sumario originales de los portales, filtros HTTP, paginación remota ni ranking global",
-    "estado": "aprobada en CI; revisión jurídica humana y validación de conectores reales pendientes",
+    "cobertura": "3 consultas gold provisionales; 3 positivos; 6 negativos; control adversarial «alguna» vs «todas»; recarga duplicada y unicidad de IDs; filtro SC/CC/CT en respaldo JSON de Mendoza; documentos sin tribunal no atribuidos a un fuero; «todo» conserva los tres fueros",
+    "pendiente": "no valida conectores externos, campos de sumario originales de portales, filtros HTTP del servidor desplegado, paginación remota, concurrencia real ni ranking global",
+    "estado": "aprobada en CI; incluye fallback JSON, deduplicación y filtros SC/CC/CT",
     "runId": 45649974283,
     "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283"
   }

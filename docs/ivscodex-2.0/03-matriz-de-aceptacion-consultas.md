@@ -153,13 +153,13 @@ La validación estructural comprueba la existencia de fixtures y anclas textuale
 
 | Control | Estado |
 |---|---|
-| Suite automatizada de backend | 308/308 aprobadas en el commit `dcd330c4cd2feac359b71b5615a2afa819563779`; incluye validación del corpus, filtro de relevancia, búsqueda del índice local temporal, deduplicación, ceros auténticos/parciales por artículo y regresiones; línea de base técnica, no aceptación de producto |
+| Suite automatizada de backend | 308/308 aprobadas en el commit `3b5893d9678e91510202707521fb6bf45c53cd54`; incluye validación del corpus, filtro de relevancia, búsqueda del índice local temporal, filtros de tribunal SC/CC/CT, deduplicación, ceros auténticos/parciales por artículo y regresiones; línea de base técnica, no aceptación de producto |
 | Prueba de timeout durante lectura del cuerpo | Aprobada en la suite anterior de 297 pruebas; no fue modificada en el cambio posterior |
-| Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisados los flujos principales y añadida regresión de ceros parciales; quedan pendientes pruebas de integración aisladas y concurrencia real |
+| Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisados los flujos principales; regresiones para ceros parciales y filtros SC/CC/CT en respaldo JSON aprobadas; quedan pendientes integración desplegada y concurrencia real |
 | Corpus de recuperación documental | Piloto v1.1.4: 3 documentos gold provisionales, 3 consultas y 6 negativos; 4 fixtures adicionales en cola sin etiquetas gold; Pompeya tiene fecha/expediente en sumario oficial, no fallo individual; Federación/GEY conserva marca de firma sin fecha judicial validada; revisión jurídica pendiente; 0 casos aptos para métricas |
 | Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en [GitHub Actions 45649974283](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283) |
 | Validación de sintaxis del diagnóstico 2.0 | Aprobada en [GitHub Actions](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45618792192), con un único job y sin consultas oficiales en vivo |
-| Integridad y recuperación local del corpus | Aprobada: 308/308 en [GitHub Actions 45649974283](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283); recupera 3 positivos, excluye 6 negativos y verifica `buscarEnIndice` con almacenamiento temporal y deduplicación por ID; sin conectores ni producción |
+| Integridad y recuperación local del corpus | Aprobada: 308/308 en [GitHub Actions 45649974283](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283); recupera 3 positivos, excluye 6 negativos y verifica `buscarEnIndice` con almacenamiento temporal, deduplicación por ID y filtro de tribunal Mendoza SC/CC/CT; sin conectores ni producción |
 | Calendario judicial | Tres regresiones aprobadas: disposición responsive, agrupación de días por fundamento y fecha de los períodos en una sola línea |
 | Ejecución de matriz contra entorno aislado 2.0 | Pendiente: se validó el índice local temporal, no la API desplegada, los conectores reales ni el ranking integrado |
 | Diagnóstico de portales en vivo desde entorno aislado | Pendiente |
