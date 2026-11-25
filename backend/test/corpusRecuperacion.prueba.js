@@ -325,6 +325,33 @@ test('buscarEnIndice recupera el corpus en almacenamiento temporal y deduplica p
       new Set(['mza_filtro_sc', 'mza_filtro_cc', 'mza_filtro_ct', 'mza_filtro_sin_tribunal'])
     );
 
+    const registrosSaij = [
+      { id: 'saij_fallo_mza', provincia: 'Mendoza', tipo: 'fallo' },
+      { id: 'saij_sumario_mza', provincia: 'Mendoza', tipo: 'sumario' },
+      { id: 'saij_fallo_cba', provincia: 'Córdoba', tipo: 'fallo' },
+      { id: 'saij_sin_tipo_mza', provincia: 'Mendoza' },
+      { id: 'saij_doctrina_mza', provincia: 'Mendoza', tipo: 'doctrina' },
+    ].map((registro) => ({
+      ...registro,
+      caratula: `Documento ${registro.id}`,
+      expediente: registro.id,
+      fecha: '12/03/2024',
+      tribunal: 'TRIBUNAL DE PRUEBA',
+      sumario: 'constelacionjuridicaunica',
+    }));
+    assert.equal(await upsertRegistros('saij', registrosSaij), 5);
+    const idsSaij = async (provincia, tribunal) => (await buscarEnIndice(
+      'saij',
+      'constelacionjuridicaunica',
+      { modo: 'todas', provincia, tribunal }
+    )).map((registro) => registro.id).sort();
+    assert.deepEqual(await idsSaij('Mendoza', 'todo'),
+      ['saij_fallo_mza', 'saij_sin_tipo_mza', 'saij_sumario_mza']);
+    assert.deepEqual(await idsSaij('Mendoza', 'fallos'), ['saij_fallo_mza']);
+    assert.deepEqual(await idsSaij('Mendoza', 'sumarios'), ['saij_sumario_mza']);
+    assert.deepEqual(await idsSaij('Córdoba', 'todo'), ['saij_fallo_cba']);
+    assert.deepEqual(await idsSaij('Mendoza', 'doctrina'), []);
+
     const laboral = corpus.casos.find((caso) => caso.id === 'REC-MZA-LAB-001');
     const algunTermino = await buscarEnIndice('ivscodex2_corpus_test', laboral.consulta, { modo: 'alguna' });
     assert.ok(algunTermino.some((resultado) => resultado.id === 'mza-scjm-rio-uruguay-2026-05-08'),

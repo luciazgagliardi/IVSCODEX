@@ -27,6 +27,25 @@ async function asegurarCarpeta() {
   listo = true;
 }
 
+function plegarFiltroIndice(valor) {
+  return String(valor || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLocaleLowerCase('es');
+}
+
+/** Repite en el respaldo JSON los filtros de jurisdicción y tipo del SQLite. */
+function coincideFiltrosIndice(fuente, registro, { provincia = '', tribunal = 'todo' } = {}) {
+  if (!coincideTribunal(fuente, registro, tribunal)) return false;
+  if (fuente === 'saij' && provincia &&
+      plegarFiltroIndice(registro?.provincia) !== plegarFiltroIndice(provincia)) return false;
+  if (fuente === 'saij' || fuente === 'csjn') {
+    const tipo = String(registro?.tipo || '').toLocaleLowerCase('es');
+    if (tribunal === 'fallos') return tipo === 'fallo';
+    if (tribunal === 'sumarios') return tipo === 'sumario';
+    if (tribunal === 'todo') return !registro?.tipo || tipo === 'fallo' || tipo === 'sumario';
+    if (['doctrina', 'legislacion', 'dictamenes'].includes(tribunal)) return false;
+  }
+  return true;
+}
+
 function archivoDe(fuente) {
   const nombre = String(fuente || '').replace(/[^a-z0-9_-]/gi, '');
   return path.join(DIR_INDICE, `${nombre}.json`);
@@ -96,7 +115,7 @@ export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = 
   const todos = { ...base, ...dato.registros };
   // El respaldo JSON debe respetar el mismo filtro SC/CC/CT que el acervo SQLite.
   // Sin esto, una caída de SQLite mezclaba fallos de cámaras en la búsqueda de la Suprema Corte.
-  const registros = Object.values(todos).filter((r) => coincideTribunal(fuente, r, tribunal));
+  const registros = Object.values(todos).filter((r) => coincideFiltrosIndice(fuente, r, { provincia, tribunal }));
   // Cada equivalente se valida por separado: no exigimos que un documento
   // contenga simultáneamente el término original y su otra denominación.
   // Se conserva el orden de la consulta principal; después vienen sus alias.
