@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.1.1",
   "id": "ivscodex2-corpus-recuperacion-piloto",
   "fechaCreacion": "2026-11-25",
   "estado": "piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas",
@@ -246,10 +246,12 @@
     "etiquetasNegativas": 6,
     "casosAptosParaMetricas": 0,
     "motivoNoAptos": [
-      "Berro sigue sin enlace oficial directo; sus referencias secundarias no reemplazan la fuente primaria.",
-      "Rozen quedó localizado en una compilación oficial del TSJ, no en una ficha individual.",
-      "El endpoint individual de Río Uruguay no fue reabierto desde el entorno; el patrón de URL está respaldado por el repositorio.",
-      "Los tres casos requieren revisión jurídica humana independiente."
+      "Berro sigue sin enlace oficial directo; no se encontró un localizador oficial comprobable para el CUIJ 13-07662606-9/1.",
+      "Rozen está localizado en una compilación oficial del TSJ, no en una ficha individual del texto completo.",
+      "El endpoint individual de Río Uruguay no fue reabierto desde el entorno; el patrón de URL se respalda en el repositorio, no en una verificación en vivo.",
+      "Pompeya tiene un localizador en un sumario oficial del TSJ (05/11/2025), pero falta recuperar y cotejar la sentencia individual.",
+      "Los otros tres fixtures TSJ CABA permanecen con fuente primaria pendiente; se rechazaron emparejamientos de expedientes diferentes.",
+      "Los tres casos gold provisionales requieren revisión jurídica humana independiente."
     ],
     "candidatosPendientesFuente": 4
   },
@@ -384,5 +386,23 @@
       ],
       "bloqueo": "El fixture contiene fechas de actuaciones previas, no una fecha de sentencia final confirmada."
     }
-  ]
+  ],
+  "validacionAutomatizada": {
+    "commit": "66e1348a76be0e8c377b4dc79fcdea38092d332a",
+    "runId": 45645750449,
+    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45645750449",
+    "resultado": "success",
+    "pruebas": {
+      "total": 306,
+      "aprobadas": 306,
+      "fallidas": 0
+    },
+    "frontend": {
+      "scriptsInline": 8,
+      "archivosJavaScript": 10,
+      "resultado": "success"
+    },
+    "alcance": "pruebas automatizadas del repositorio; no equivalen a aceptación jurídica ni a medición de relevancia",
+    "fecha": "2026-11-25"
+  }
 }

@@ -21,7 +21,7 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.ok(fs.existsSync(corpusPath), 'falta el corpus versionado');
   const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
 
-  assert.equal(corpus.version, '1.1.0');
+  assert.equal(corpus.version, '1.1.1');
   assert.equal(corpus.estado, 'piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas');
   assert.equal(corpus.documentos.length, corpus.resumen.documentos);
   assert.equal(corpus.casos.length, corpus.resumen.consultas);
@@ -150,5 +150,8 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.equal(positivos, corpus.resumen.etiquetasPositivas);
   assert.equal(negativos, corpus.resumen.etiquetasNegativas);
   assert.equal(corpus.resumen.casosAptosParaMetricas, 0);
+  assert.equal(corpus.validacionAutomatizada?.resultado, 'success');
+  assert.equal(corpus.validacionAutomatizada?.pruebas?.total, 306);
+  assert.equal(corpus.validacionAutomatizada?.pruebas?.fallidas, 0);
   assert.ok(corpus.casos.every((caso) => !caso.aptoParaMetricas));
 });

@@ -1,6 +1,6 @@
 # IVS Codex 2.0 — Protocolo del corpus de recuperación documental
 
-**Versión:** 1.1.0 (piloto provisional + cola de fuentes pendientes)  
+**Versión:** 1.1.1 (piloto provisional + cola de fuentes pendientes)  
 **Fecha:** 25/11/2026  
 **Datos:** [04-corpus-recuperacion-v1.json](./04-corpus-recuperacion-v1.json)
 
@@ -107,4 +107,4 @@ Una ficha SAIJ, un sumario editorial y una sentencia del tribunal no se etiqueta
 
 ## 7. Validación automatizada
 
-`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **306/306** en la ejecución [45644369644](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45644369644). Este test no ejecuta consultas de búsqueda, no contacta portales y no reemplaza la revisión jurídica humana. La plantilla obligatoria para la revisión profesional es [05-ficha-revision-humana-corpus.md](./05-ficha-revision-humana-corpus.md).
+`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **306/306** en la ejecución [45645750449](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45645750449), y la validación del frontend confirmó 8 scripts inline y 10 archivos JavaScript. Este test no ejecuta consultas de búsqueda, no contacta portales y no reemplaza la revisión jurídica humana. La plantilla obligatoria para la revisión profesional es [05-ficha-revision-humana-corpus.md](./05-ficha-revision-humana-corpus.md).
