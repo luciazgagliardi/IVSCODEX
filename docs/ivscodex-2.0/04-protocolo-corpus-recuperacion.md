@@ -107,4 +107,23 @@ Una ficha SAIJ, un sumario editorial y una sentencia del tribunal no se etiqueta
 
 ## 7. Validación automatizada
 
-`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **306/306** en la ejecución [45646579414](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45646579414), y la validación del frontend confirmó 8 scripts inline y 10 archivos JavaScript. Este test no ejecuta consultas de búsqueda, no contacta portales y no reemplaza la revisión jurídica humana. La plantilla obligatoria para la revisión profesional es [05-ficha-revision-humana-corpus.md](./05-ficha-revision-humana-corpus.md).
+`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **308/308** en [GitHub Actions 45649974283](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283). La ejecución incluye el filtro de relevancia real y la búsqueda de `buscarEnIndice` sobre un índice temporal; la validación del frontend confirmó 8 scripts inline y 10 archivos JavaScript. No contacta portales ni reemplaza la revisión jurídica humana. La plantilla obligatoria para la revisión profesional es [05-ficha-revision-humana-corpus.md](./05-ficha-revision-humana-corpus.md).
+
+### 7.1 Filtro de relevancia con documentos jurídicos de referencia
+
+La prueba invoca `filtrarPorModo` de `backend/lib/relevancia.js` sobre los textos completos versionados:
+- modo `todas` con `aflojar: false`: cada uno de los 3 positivos debe aparecer y los 6 negativos deben quedar afuera;
+- no se permite relajación silenciosa;
+- el negativo difícil de Río Uruguay puede aparecer en modo `alguna` por vocabulario genérico, pero no en modo `todas` para la consulta laboral.
+
+Esta es una regresión del filtro real con fixtures completos usados como texto de referencia. No supone que los conectores entreguen el documento completo como sumario.
+
+### 7.2 Índice local en almacenamiento temporal
+
+La misma suite invoca `upsertRegistros` y `buscarEnIndice` de `backend/lib/indice.js` sobre un directorio temporal del runner. Inserta los tres documentos, ejecuta las tres consultas, valida positivos y negativos, vuelve a insertar un ID y comprueba que el inventario siga en tres documentos y que no existan IDs repetidos. También verifica el control adversarial del modo `alguna`.
+
+El test restaura `DIR_INDICE` y elimina el directorio temporal en `finally`. No llama a conectores, no importa el acervo persistente, no accede a Azure ni escribe en `/home/datos`.
+
+Estas pruebas acreditan **relevancia textual sobre fixtures y búsqueda en el índice local**, no los campos reales de los portales, filtros HTTP, paginación remota, concurrencia del despliegue ni ranking integrado. La ejecución de matriz contra un entorno aislado completo sigue pendiente.
+
+
