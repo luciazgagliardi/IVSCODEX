@@ -7485,6 +7485,9 @@ function buscarEnFuente(slug,pagina){
           tribunalesSinRespuesta:Array.isArray(d.tribunalesSinRespuesta)?d.tribunalesSinRespuesta:[],
           idsConfirmados:Array.isArray(d.idsNuevosAcervo)
         }:null;
+        // Un cero parcial no acredita ausencia de jurisprudencia. Conservar
+        // la marca incluso si la copia local llegó antes que el portal oficial.
+        imBusco.parcial=imBusco.parcial||!!d.totalParcial;
       }
       // La consulta oficial complementa los resultados de la copia, no los sustituye.
       if(imBusco.porCopia&&esNueva){
@@ -7622,7 +7625,8 @@ function panelIndice(f){
       '<button class="mini" data-act="buscar-indice" data-fuente="'+esc(f.slug)+'" style="margin-left:6px">Rehacer la búsqueda</button></div>'
     : '';
   var avisoLocal=avisoRango;
-  if(!im.resultados.length&&im.estadoVivo==="error") return out+'</div>';
+  // Una consulta parcial sin resultados no es un cero confirmado.
+  if(!im.resultados.length&&(im.estadoVivo==="error"||im.parcial)) return out+'</div>';
   if(!im.resultados.length&&(Number(im.totalFuente)>0||Number(im.total)>0)) return out+'</div>';
   if(!im.resultados.length){
     out+=avisoLocal+'<p style="font-size:13px;color:var(--humo);margin:0">Sin coincidencias en '+esc(f.nombre)+
