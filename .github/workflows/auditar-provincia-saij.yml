@@ -1,0 +1,42 @@
+name: Auditoría SAIJ provincia Mendoza
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/scripts/auditarProvinciaSaij.mjs'
+      - 'backend/scripts/sondearListasMendoza.mjs'
+      - 'backend/scripts/probarSentenciasListasMza.mjs'
+      - '.github/workflows/auditar-provincia-saij.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: acervo
+          path: backend/acervo-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Identificar documentos SAIJ con jurisdicción mendocina pero sin metadato
+        working-directory: backend
+        run: node scripts/auditarProvinciaSaij.mjs
+      - name: Instalar dependencias del parser HTML
+        working-directory: backend
+        run: npm ci
+      - name: Medir sentencias civiles y laborales públicas de Mendoza
+        working-directory: backend
+        run: node scripts/probarSentenciasListasMza.mjs
+      - name: Comprobar formulario público de listas diarias
+        working-directory: backend
+        continue-on-error: true
+        run: node scripts/sondearListasMendoza.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: auditoria-provincia-saij
+          path: backend/auditoria-saij-mendoza.json
