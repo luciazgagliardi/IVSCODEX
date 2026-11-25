@@ -1,5 +1,5 @@
 {
-  "version": "1.1.3",
+  "version": "1.1.4",
   "id": "ivscodex2-corpus-recuperacion-piloto",
   "fechaCreacion": "2026-11-25",
   "estado": "piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas",
@@ -392,13 +392,13 @@
     }
   ],
   "validacionAutomatizada": {
-    "commit": "499b093697ca0f58c090ad4df3a5ea060193d9d4",
-    "runId": 45646579414,
-    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45646579414",
-    "resultado": "success",
+    "commit": null,
+    "runId": null,
+    "runUrl": null,
+    "resultado": "en_validacion",
     "pruebas": {
-      "total": 307,
-      "aprobadas": 307,
+      "total": 308,
+      "aprobadas": 308,
       "fallidas": 0
     },
     "frontend": {
@@ -411,12 +411,12 @@
   },
   "pruebaMotorLocal": {
     "test": "backend/test/corpusRecuperacion.prueba.js",
-    "motor": "backend/lib/relevancia.js::filtrarPorModo",
+    "motor": "backend/lib/indice.js::buscarEnIndice + backend/lib/relevancia.js::filtrarPorModo",
     "modo": "todas",
     "aflojar": false,
-    "entradas": "texto íntegro de fixtures existentes, usado como texto de referencia del filtro; no es una consulta a portales ni un índice real del despliegue",
-    "cobertura": "3 consultas gold provisionales; 3 positivos; 6 negativos; un control adversarial adicional sobre el negativo laboral de Río Uruguay",
-    "pendiente": "no valida conectores, campos de sumario reales, filtros HTTP ni ranking global",
-    "estado": "prueba incorporada; ejecución de CI pendiente"
+    "entradas": "fixtures íntegros escritos en un índice temporal mediante upsertRegistros; búsqueda con buscarEnIndice; sin red, sin acervo persistente y sin dependencias de Azure",
+    "cobertura": "3 consultas gold provisionales; 3 positivos; 6 negativos; control adversarial «alguna» vs «todas»; recarga duplicada y unicidad de IDs",
+    "pendiente": "no valida conectores, campos de sumario originales de los portales, filtros HTTP, paginación remota ni ranking global",
+    "estado": "pruebas locales integradas; ejecución CI pendiente"
   }
 }
