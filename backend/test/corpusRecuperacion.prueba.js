@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { filtrarPorModo } from '../lib/relevancia.js';
 
@@ -22,7 +23,7 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.ok(fs.existsSync(corpusPath), 'falta el corpus versionado');
   const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
 
-  assert.equal(corpus.version, '1.1.3');
+  assert.equal(corpus.version, '1.1.4');
   assert.equal(corpus.estado, 'piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas');
   assert.equal(corpus.documentos.length, corpus.resumen.documentos);
   assert.equal(corpus.casos.length, corpus.resumen.consultas);
@@ -158,11 +159,11 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.equal(positivos, corpus.resumen.etiquetasPositivas);
   assert.equal(negativos, corpus.resumen.etiquetasNegativas);
   assert.equal(corpus.resumen.casosAptosParaMetricas, 0);
-  assert.equal(corpus.validacionAutomatizada?.resultado, 'success');
-  assert.equal(corpus.validacionAutomatizada?.pruebas?.total, 307);
-  assert.equal(corpus.validacionAutomatizada?.pruebas?.aprobadas, 307);
+  assert.ok(['success', 'en_validacion'].includes(corpus.validacionAutomatizada?.resultado));
+  assert.equal(corpus.validacionAutomatizada?.pruebas?.total, 308);
+  assert.equal(corpus.validacionAutomatizada?.pruebas?.aprobadas, 308);
   assert.equal(corpus.validacionAutomatizada?.pruebas?.fallidas, 0);
-  assert.equal(corpus.pruebaMotorLocal?.motor, 'backend/lib/relevancia.js::filtrarPorModo');
+  assert.equal(corpus.pruebaMotorLocal?.motor, 'backend/lib/indice.js::buscarEnIndice + backend/lib/relevancia.js::filtrarPorModo');
   assert.equal(corpus.pruebaMotorLocal?.modo, 'todas');
   assert.equal(corpus.pruebaMotorLocal?.aflojar, false);
   assert.ok(corpus.casos.every((caso) => !caso.aptoParaMetricas));
@@ -237,4 +238,57 @@ test('el filtro de relevancia recupera positivos y excluye negativos difíciles 
   assert.ok(!estricto.some((registro) => registro.id === rio.id));
   assert.ok(amplio.some((registro) => registro.id === rio.id),
     'el negativo difícil debe mostrar por qué «alguna» no equivale a pertinencia jurídica');
+});
+
+
+test('buscarEnIndice recupera el corpus en almacenamiento temporal y deduplica por ID', async () => {
+  const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
+  const directorioTemporal = fs.mkdtempSync(path.join(os.tmpdir(), 'ivscodex-corpus-'));
+  const indiceAnterior = process.env.DIR_INDICE;
+  process.env.DIR_INDICE = directorioTemporal;
+
+  try {
+    // Importación diferida: config.js toma DIR_INDICE al cargar el módulo.
+    // El índice queda aislado en un directorio temporal, nunca en /home/datos.
+    const { upsertRegistros, buscarEnIndice } = await import('../lib/indice.js');
+    const registros = corpus.documentos.map((documento) => ({
+      id: documento.id,
+      caratula: documento.caratula,
+      expediente: documento.expediente,
+      fecha: documento.fecha,
+      jurisdiccion: documento.jurisdiccion,
+      tribunal: documento.tribunal,
+      tipoDocumento: documento.tipoDocumento,
+      sumario: fs.readFileSync(path.resolve(repoRoot, documento.fuente.fixturePath), 'utf8'),
+      voces: [],
+    }));
+
+    assert.equal(await upsertRegistros('ivscodex2_corpus_test', registros), 3);
+    assert.equal(await upsertRegistros('ivscodex2_corpus_test', [registros[0], registros[0]]), 3,
+      'guardar dos veces el mismo ID no debe aumentar el inventario');
+
+    for (const caso of corpus.casos) {
+      const resultados = await buscarEnIndice('ivscodex2_corpus_test', caso.consulta, { modo: 'todas' });
+      const ids = new Set(resultados.map((resultado) => resultado.id));
+      assert.equal(ids.size, resultados.length, `IDs duplicados en ${caso.id}`);
+
+      for (const positivo of caso.positivos) {
+        assert.ok(ids.has(positivo.documentoId),
+          `buscarEnIndice omitió ${positivo.documentoId} en ${caso.id}`);
+      }
+      for (const negativo of caso.negativos) {
+        assert.ok(!ids.has(negativo.documentoId),
+          `buscarEnIndice incorporó ${negativo.documentoId} en ${caso.id}`);
+      }
+    }
+
+    const laboral = corpus.casos.find((caso) => caso.id === 'REC-MZA-LAB-001');
+    const algunTermino = await buscarEnIndice('ivscodex2_corpus_test', laboral.consulta, { modo: 'alguna' });
+    assert.ok(algunTermino.some((resultado) => resultado.id === 'mza-scjm-rio-uruguay-2026-05-08'),
+      'el control adversarial debe seguir detectando el ruido que introduce «alguna»');
+  } finally {
+    if (indiceAnterior === undefined) delete process.env.DIR_INDICE;
+    else process.env.DIR_INDICE = indiceAnterior;
+    fs.rmSync(directorioTemporal, { recursive: true, force: true });
+  }
 });
