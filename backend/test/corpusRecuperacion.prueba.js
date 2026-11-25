@@ -198,6 +198,7 @@ test('el filtro de relevancia recupera positivos y excluye negativos difíciles 
       aflojar: false,
     });
     const ids = new Set(salida.lista.map((registro) => registro.id));
+    assert.equal(ids.size, salida.lista.length, `el filtro duplicó IDs en ${caso.id}`);
 
     for (const positivo of caso.positivos) {
       assert.ok(
