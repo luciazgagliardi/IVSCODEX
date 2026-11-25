@@ -984,10 +984,10 @@
     }
   ],
   "validacionAutomatizada": {
-    "commit": "3b5893d9678e91510202707521fb6bf45c53cd54",
-    "runId": 45651559017,
-    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45651559017",
-    "resultado": "en_validacion",
+    "commit": "04460a0d5680c80d5b43ff49f4b83158865013e5",
+    "runId": 45709647230,
+    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45709647230",
+    "resultado": "success",
     "pruebas": {
       "total": 308,
       "aprobadas": 308,
@@ -998,7 +998,7 @@
       "archivosJavaScript": 10,
       "resultado": "success"
     },
-    "alcance": "suite automatizada del repositorio; regresión de relevancia con fixtures, búsqueda real en índice JSON temporal, deduplicación y filtros de tribunal Mendoza SC/CC/CT; no equivale a aceptación jurídica ni a prueba de conectores externos",
+    "alcance": "Suite completa del repositorio sobre el commit indicado; incluye corpus v1.2.0 con 8 consultas, 8 positivos y 56 negativos, búsqueda en índice JSON temporal, igualdad exacta de resultados, deduplicación y filtros Mendoza SC/CC/CT; no equivale a aceptación jurídica ni a prueba de conectores externos.",
     "fecha": "2026-11-25"
   },
   "pruebaMotorLocal": {
@@ -1009,9 +1009,10 @@
     "entradas": "fixtures íntegros escritos en un índice temporal mediante upsertRegistros; búsqueda con buscarEnIndice; sin red, sin acervo persistente y sin dependencias de Azure",
     "cobertura": "8 consultas; 8 positivos; 56 negativos; control adversarial «alguna» vs «todas»; igualdad exacta del conjunto recuperado; recarga duplicada y unicidad; filtros SC/CC/CT; fallback JSON de Mendoza; documentos sin tribunal no atribuidos a un fuero; índice temporal sin conectores ni producción.",
     "pendiente": "no valida conectores externos, campos de sumario originales de portales, filtros HTTP del servidor desplegado, paginación remota, concurrencia real ni ranking global",
-    "estado": "pendiente CI para corpus v1.2.0",
-    "runId": null,
-    "runUrl": null
+    "estado": "aprobada_en_CI_sobre_indice_temporal",
+    "runId": 45709647230,
+    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45709647230",
+    "commit": "04460a0d5680c80d5b43ff49f4b83158865013e5"
   },
   "referenciasOficialesNoGold": [
     {
