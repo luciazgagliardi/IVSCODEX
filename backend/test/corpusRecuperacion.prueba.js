@@ -54,7 +54,7 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
       const url = new URL(documento.fuente.officialUrl);
       assert.equal(url.protocol, 'https:');
       assert.equal(url.hostname, 'wwwnoti.jus.mendoza.gov.ar');
-      assert.match(url.pathname, /^\\/listas\\/proveidos\\/vertexto\\.php$/);
+      assert.equal(url.pathname, '/listas/proveidos/vertexto.php');
       assert.equal(url.searchParams.get('ide'), '12010568712');
     } else if (documento.id === 'caba-tsj-rozen-2003-07-02') {
       const url = new URL(documento.fuente.officialUrl);
