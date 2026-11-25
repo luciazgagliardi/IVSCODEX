@@ -461,7 +461,10 @@
           5,
           6
         ],
-        "fechaVerificacion": "2026-11-25"
+        "fechaVerificacion": "2026-11-25",
+        "portalJurisprudencia": "https://www.tsjbaires.gob.ar/servicios/jurisprudencia",
+        "portalBuscadorSentencias": "https://www.tsjbaires.gob.ar/servicios/jurisprudencia/buscador-de-sentencias",
+        "capacidadesBuscador": "busca textos completos de fallos desde 1998 por parámetros, incluida carátula, fecha y Secretaría; requiere completar el enlace individual en el portal."
       },
       "metadatosPublicados": {
         "caratula": "Distribuidora Pompeya SRL s/ queja por recurso de inconstitucionalidad denegado (laboral) en Goncalo, Stella Maris c/ Distribuidora Pompeya S.R.L. y otros s/ despido (expte. 44847/2021)",
@@ -500,7 +503,7 @@
         "aptoParaMetricasGold": false
       },
       "consultaDeControl": "extinción del contrato de trabajo por jubilación, continuidad de la relación laboral, art. 253 LCT, buena fe",
-      "estado": "referencia_oficial_verificada; texto_individual_de_sentencia_pendiente"
+      "estado": "sumario_oficial_verificado; portal_oficial_de_textos_completos_identificado; texto_individual_pendiente_de_recuperacion"
     }
   ]
 }

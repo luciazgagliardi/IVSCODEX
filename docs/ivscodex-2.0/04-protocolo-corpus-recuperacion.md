@@ -55,7 +55,7 @@ El boletín oficial del TSJ CABA de noviembre de 2025 identifica el expediente S
 
 Fuente oficial: https://www.tsjbaires.gob.ar/repositorio/indicesboletines/2025/2025_11_Boletin_indice.pdf
 
-El corpus conserva esta entrada en `referenciasOficialesNoGold`, separada del documento individual. Sirve para búsquedas de sumarios oficiales; no satisface filtros «sólo sentencias», no reemplaza el texto íntegro y no integra el conjunto gold. El enlace de la sentencia individual sigue pendiente.
+El corpus conserva esta entrada en `referenciasOficialesNoGold`, separada del documento individual. Sirve para búsquedas de sumarios oficiales; no satisface filtros «sólo sentencias», no reemplaza el texto íntegro y no integra el conjunto gold. El portal institucional identifica un buscador público de sentencias completas desde 1998, recuperables por parámetros como carátula, fecha y Secretaría: https://www.tsjbaires.gob.ar/servicios/jurisprudencia/buscador-de-sentencias. El enlace individual de Pompeya sigue pendiente de extracción y cotejo.
 
 ## 3. Cómo se etiqueta
 

@@ -144,6 +144,10 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.equal(referenciaPompeya.politicaDeUso.puedeSatisfacerFiltroSoloSentencias, false);
   assert.equal(referenciaPompeya.politicaDeUso.puedePresentarseComoTextoCompleto, false);
   assert.equal(referenciaPompeya.politicaDeUso.aptoParaMetricasGold, false);
+  const portalBuscador = new URL(referenciaPompeya.fuente.portalBuscadorSentencias);
+  assert.equal(portalBuscador.protocol, 'https:');
+  assert.equal(portalBuscador.hostname, 'www.tsjbaires.gob.ar');
+  assert.equal(portalBuscador.pathname, '/servicios/jurisprudencia/buscador-de-sentencias');
   const candidatoPompeya = candidatos.find((c) => c.id === 'caba-tsj-distribuidora-pompeya');
   assert.equal(candidatoPompeya.referenciaOficialNoGoldId, referenciaPompeya.id);
   assert.equal(candidatoPompeya.fuente.officialUrl, null,
