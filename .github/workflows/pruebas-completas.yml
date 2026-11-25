@@ -9,7 +9,7 @@ on:
       - "frontend/pasajes.js"
       - ".github/workflows/pruebas-completas.yml"
   pull_request:
-    branches: [main]
+    branches: [main, development/ivscodex-2.0-live-engine]
     paths:
       - "backend/**"
       - "frontend/index.html"
