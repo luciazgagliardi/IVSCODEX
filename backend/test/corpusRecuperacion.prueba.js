@@ -194,7 +194,7 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.equal(corpus.validacionAutomatizada?.pruebas?.total, 308);
   assert.equal(corpus.validacionAutomatizada?.pruebas?.aprobadas, 308);
   assert.equal(corpus.validacionAutomatizada?.pruebas?.fallidas, 0);
-  assert.equal(corpus.pruebaMotorLocal?.motor, 'backend/lib/indice.js::buscarEnIndice + backend/lib/relevancia.js::filtrarPorModo');
+  assert.equal(corpus.pruebaMotorLocal?.motor, 'backend/lib/indice.js::buscarEnIndice + backend/lib/acervoConsulta.js::coincideTribunal + backend/lib/relevancia.js::filtrarPorModo');
   assert.equal(corpus.pruebaMotorLocal?.modo, 'todas');
   assert.equal(corpus.pruebaMotorLocal?.aflojar, false);
   assert.ok(corpus.casos.every((caso) => !caso.aptoParaMetricas));
