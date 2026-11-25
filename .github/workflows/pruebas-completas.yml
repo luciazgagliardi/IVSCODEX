@@ -47,3 +47,54 @@ jobs:
       - name: Ejecutar todas las pruebas
         working-directory: backend
         run: npm test
+
+      - name: Validar sintaxis de scripts del frontend
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import subprocess
+          import tempfile
+
+          class Scripts(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.current = None
+                  self.items = []
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() == "script":
+                      attrs = dict(attrs)
+                      self.current = [] if "src" not in attrs else None
+              def handle_data(self, data):
+                  if self.current is not None:
+                      self.current.append(data)
+              def handle_endtag(self, tag):
+                  if tag.lower() == "script" and self.current is not None:
+                      self.items.append("".join(self.current))
+                      self.current = None
+
+          pages = [Path("frontend/index.html"), Path("frontend/portada/index.html")]
+          with tempfile.TemporaryDirectory() as tmp:
+              count = 0
+              for page in pages:
+                  parser = Scripts()
+                  parser.feed(page.read_text(encoding="utf-8"))
+                  for i, source in enumerate(parser.items, 1):
+                      if not source.strip():
+                          continue
+                      target = Path(tmp) / f"{page.parent.name}-{page.stem}-{i}.js"
+                      target.write_text(source, encoding="utf-8")
+                      subprocess.run(["node", "--check", str(target)], check=True)
+                      count += 1
+
+              files = [
+                  "frontend/analisis-fallo.js", "frontend/calculos.js",
+                  "frontend/nombre-fallo.js", "frontend/pasajes.js",
+                  "frontend/lexia-picante.js", "frontend/herramientas.js",
+                  "frontend/lector-voz.js", "frontend/portada/shared.js",
+                  "frontend/portada/shared6.js", "frontend/portada/calculos.js",
+              ]
+              for name in files:
+                  subprocess.run(["node", "--check", name], check=True)
+              print(f"Sintaxis correcta: {count} scripts inline y {len(files)} archivos JavaScript.")
+          PY
