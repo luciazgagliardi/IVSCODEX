@@ -300,10 +300,19 @@
         "buena fe"
       ],
       "fuente": {
-        "nombre": "Tribunal Superior de Justicia de CABA",
+        "nombre": "Tribunal Superior de Justicia de CABA — Boletín de Jurisprudencia, noviembre de 2025",
         "officialUrl": null,
-        "estadoUrl": "fuente_primaria_pendiente; expediente y carátula leídos en fixture local",
-        "fixturePath": "backend/test/fallos/tsj-distribuidora-pompeya.txt"
+        "estadoUrl": "fuente_primaria_pendiente; localizador_oficial_de_sumario_verificado; no es texto individual de sentencia",
+        "fixturePath": "backend/test/fallos/tsj-distribuidora-pompeya.txt",
+        "localizadorOficial": {
+          "tipo": "boletin_oficial_sumario_no_texto_de_sentencia",
+          "url": "https://www.tsjbaires.gob.ar/repositorio/indicesboletines/2025/2025_11_Boletin_indice.pdf",
+          "publicacion": "Boletín de Jurisprudencia | Noviembre 2025",
+          "fechaSentencia": "2025-11-05",
+          "expedientePublicado": "SAL 44430/25-0",
+          "paginaImpreso": 6,
+          "alcance": "El boletín oficial identifica expediente y fecha y contiene un sumario elaborado por la Secretaría de Jurisprudencia; no sustituye el texto íntegro de la sentencia ni la URL individual."
+        }
       },
       "anclasTextuales": [
         "Distribuidora Pompeya SRL",
@@ -311,7 +320,7 @@
         "beneficio jubilatorio",
         "Art. 252 LCT"
       ],
-      "bloqueo": "La fecha 05/11/2025 aparece en fuentes secundarias consultadas, pero no se incorpora como fecha oficial hasta verificar el registro primario."
+      "bloqueo": "El boletín oficial del TSJ confirma carátula, expediente SAL 44430/25-0 y fecha 05/11/2025, pero ofrece un sumario, no el texto íntegro. El enlace individual del fallo todavía debe recuperarse y cotejarse; por eso el documento permanece fuera del conjunto gold."
     },
     {
       "id": "caba-tsj-federacion-gey",

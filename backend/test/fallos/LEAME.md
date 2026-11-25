@@ -17,3 +17,7 @@ proyecto (`lib/documento.js`). Los usa `test/analisis.prueba.js`.
 ## Estado de procedencia de los fixtures TSJ adicionales
 
 Los archivos `tsj-caja-de-seguros.txt`, `tsj-distribuidora-pompeya.txt`, `tsj-federacion-patronal-firma-digital.txt` y `tsj-lopez-viviana.txt` se mantienen como fixtures de prueba de extracción/análisis. Sus metadatos se inventariaron en el corpus 2.0 como candidatos pendientes, no como referencias gold: falta completar la correspondencia con la fuente oficial directa. En particular, `tsj-caja-de-seguros.txt` corresponde a Burgos c/ Perfumo (expte. 67516/2021), no a Zerpa c/ Maidana.
+
+### Localizador oficial de Distribuidora Pompeya
+
+El Boletín de Jurisprudencia del TSJ CABA de noviembre de 2025 identifica la causa del fixture `tsj-distribuidora-pompeya.txt`, expediente SAL 44430/25-0, con fecha 05/11/2025, página impresa 6: https://www.tsjbaires.gob.ar/repositorio/indicesboletines/2025/2025_11_Boletin_indice.pdf. Es un sumario oficial, no el texto íntegro del fallo. La URL individual de la sentencia permanece pendiente y el fixture no se incorpora todavía al conjunto gold.

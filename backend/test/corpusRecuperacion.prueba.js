@@ -78,8 +78,22 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
     assert.ok(!documentos.has(candidato.id), `candidato repetido en documentos gold: ${candidato.id}`);
     assert.ok(!candidatosIds.has(candidato.id), `candidato duplicado: ${candidato.id}`);
     candidatosIds.add(candidato.id);
-    assert.equal(candidato.fuente.officialUrl, null, 'no convertir un fixture pendiente en fuente oficial');
+    assert.equal(candidato.fuente.officialUrl, null, 'un localizador de boletín no equivale al texto individual de la sentencia');
     if (candidato.fecha !== null) assert.match(candidato.fecha, /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/);
+    if (candidato.id === 'caba-tsj-distribuidora-pompeya') {
+      const locator = candidato.fuente.localizadorOficial;
+      assert.equal(locator.tipo, 'boletin_oficial_sumario_no_texto_de_sentencia');
+      const locatorUrl = new URL(locator.url);
+      assert.equal(locatorUrl.protocol, 'https:');
+      assert.equal(locatorUrl.hostname, 'www.tsjbaires.gob.ar');
+      assert.equal(locatorUrl.pathname, '/repositorio/indicesboletines/2025/2025_11_Boletin_indice.pdf');
+      assert.equal(locator.fechaSentencia, '2025-11-05');
+      assert.equal(locator.expedientePublicado, 'SAL 44430/25-0');
+      assert.equal(locator.paginaImpreso, 6);
+      assert.match(candidato.fuente.estadoUrl, /fuente_primaria_pendiente/);
+    } else {
+      assert.equal(candidato.fuente.localizadorOficial, undefined);
+    }
     assert.match(candidato.fuente.estadoUrl, /fuente_primaria_pendiente/);
     assert.ok(candidato.bloqueo.length > 30);
     assert.ok(candidato.anclasTextuales.length > 0);
