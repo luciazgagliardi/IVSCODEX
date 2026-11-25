@@ -22,7 +22,7 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.ok(fs.existsSync(corpusPath), 'falta el corpus versionado');
   const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
 
-  assert.equal(corpus.version, '1.1.2');
+  assert.equal(corpus.version, '1.1.3');
   assert.equal(corpus.estado, 'piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas');
   assert.equal(corpus.documentos.length, corpus.resumen.documentos);
   assert.equal(corpus.casos.length, corpus.resumen.consultas);
@@ -159,8 +159,12 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.equal(negativos, corpus.resumen.etiquetasNegativas);
   assert.equal(corpus.resumen.casosAptosParaMetricas, 0);
   assert.equal(corpus.validacionAutomatizada?.resultado, 'success');
-  assert.equal(corpus.validacionAutomatizada?.pruebas?.total, 306);
+  assert.equal(corpus.validacionAutomatizada?.pruebas?.total, 307);
+  assert.equal(corpus.validacionAutomatizada?.pruebas?.aprobadas, 307);
   assert.equal(corpus.validacionAutomatizada?.pruebas?.fallidas, 0);
+  assert.equal(corpus.pruebaMotorLocal?.motor, 'backend/lib/relevancia.js::filtrarPorModo');
+  assert.equal(corpus.pruebaMotorLocal?.modo, 'todas');
+  assert.equal(corpus.pruebaMotorLocal?.aflojar, false);
   assert.ok(corpus.casos.every((caso) => !caso.aptoParaMetricas));
 });
 
