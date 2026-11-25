@@ -397,8 +397,8 @@
     "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45646579414",
     "resultado": "success",
     "pruebas": {
-      "total": 306,
-      "aprobadas": 306,
+      "total": 307,
+      "aprobadas": 307,
       "fallidas": 0
     },
     "frontend": {
@@ -416,6 +416,7 @@
     "aflojar": false,
     "entradas": "texto íntegro de fixtures existentes, usado como texto de referencia del filtro; no es una consulta a portales ni un índice real del despliegue",
     "cobertura": "3 consultas gold provisionales; 3 positivos; 6 negativos; un control adversarial adicional sobre el negativo laboral de Río Uruguay",
-    "pendiente": "no valida conectores, campos de sumario reales, filtros HTTP ni ranking global"
+    "pendiente": "no valida conectores, campos de sumario reales, filtros HTTP ni ranking global",
+    "estado": "prueba incorporada; ejecución de CI pendiente"
   }
 }
