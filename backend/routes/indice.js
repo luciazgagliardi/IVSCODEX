@@ -137,18 +137,19 @@ export async function buscarPorArticulo({ slug, buscar, art, norma, modo, exclui
   const formasPorNumero = formas.length;     // hasta acá, todo cita el número
 
   let rubrica = null;
+  let rubricaIncompleta = false;
   if (norma) {
     try {
       const ficha = await articuloDe(norma, art);   // cacheado en disco
       rubrica = rubricaDe(ficha.texto);
       agregar(rubrica);
-    } catch { /* sin rúbrica se busca igual, sólo por número */ }
+    } catch { rubricaIncompleta = true; /* sin rúbrica se busca igual, sólo por número */ }
   }
 
   const porId = new Map();
   const usadas = [];
   let revisados = 0;
-  let incompleta = false;
+  let incompleta = rubricaIncompleta;
   for (const forma of formas) {
     try {
       const r = await buscar({
@@ -186,7 +187,7 @@ export async function buscarPorArticulo({ slug, buscar, art, norma, modo, exclui
         nuevos++;
       }
       usadas.push({ forma, encontrados: (r.resultados || []).length, nuevos,
-        total: Number.isFinite(Number(r.total)) ? Number(r.total) : null,
+        total: typeof r.total === 'number' && Number.isFinite(r.total) ? r.total : null,
         siguienteDesde: r.siguienteDesde ?? null,
         totalParcial: Boolean(r.totalParcial || r.siguienteDesde != null) });
     } catch (e) {
@@ -210,8 +211,9 @@ export async function buscarPorArticulo({ slug, buscar, art, norma, modo, exclui
     total: resultados.length,
     totalFuente: null,
     siguienteDesde: null,
-    // Es un piso: se unió la primera vuelta de cada forma, no todo lo que hay.
-    totalParcial: true,
+    // La unión sólo es parcial si alguna forma falló o dejó páginas pendientes.
+    // Si todas respondieron con cero y sin cursor, el cero sí está confirmado.
+    totalParcial: incompleta,
     revisados,
     aflojado: false,
     pagina: 1,
