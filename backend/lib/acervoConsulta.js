@@ -108,7 +108,16 @@ export const PROVINCIA_DE_BASE = {
   santiagodelestero: 'Santiago del Estero', tierradelfuego: 'Tierra del Fuego'
 };
 /* El selector de tribunal de Mendoza (SC, CC, CT), por el nombre del tribunal que trae cada ficha. */
-const TRIBUNAL_DE = { mendoza: { SC: '%SUPREMA%', CC: '%CIVIL%', CT: '%TRABAJO%' } };
+export const TRIBUNAL_DE = { mendoza: { SC: '%SUPREMA%', CC: '%CIVIL%', CT: '%TRABAJO%' } };
+
+/** Mantiene el mismo criterio de tribunal entre SQLite y el respaldo JSON. */
+export function coincideTribunal(base, registro, tribunal) {
+  const patron = TRIBUNAL_DE[base]?.[tribunal];
+  if (!patron) return true;
+  const termino = patron.replace(/%/g, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+  const nombre = String(registro?.tribunal || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+  return Boolean(nombre && nombre.includes(termino));
+}
 /* Los «tipos» de SAIJ (sumarios, fallos, doctrina…): lo que el acervo guarda de SAIJ es sólo jurisprudencia, en sumarios y fallos. */
 const TIPO_SAIJ = { sumarios: ['sumario'], fallos: ['fallo'], todo: ['sumario', 'fallo'] };
 
