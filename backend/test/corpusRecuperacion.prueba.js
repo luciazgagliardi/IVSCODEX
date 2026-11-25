@@ -79,7 +79,7 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
     assert.ok(!candidatosIds.has(candidato.id), `candidato duplicado: ${candidato.id}`);
     candidatosIds.add(candidato.id);
     assert.equal(candidato.fuente.officialUrl, null, 'no convertir un fixture pendiente en fuente oficial');
-    if (candidato.fecha !== null) assert.match(candidato.fecha, /^\\d{4}-\\d{2}-\\d{2}$/);
+    if (candidato.fecha !== null) assert.match(candidato.fecha, /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/);
     assert.match(candidato.fuente.estadoUrl, /fuente_primaria_pendiente/);
     assert.ok(candidato.bloqueo.length > 30);
     assert.ok(candidato.anclasTextuales.length > 0);
