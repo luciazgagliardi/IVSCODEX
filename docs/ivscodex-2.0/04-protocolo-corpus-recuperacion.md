@@ -16,7 +16,7 @@ Una consulta reconocida no implica que se haya recuperado una sentencia correcta
 
 ## 2. Lote piloto incorporado
 
-El lote v1.1 contiene **3 documentos gold provisionales, 3 consultas, 3 etiquetas positivas, 6 etiquetas negativas y 4 fixtures adicionales pendientes de fuente primaria**:
+La primera tanda v1.1.5 contenía **3 documentos gold provisionales, 3 consultas, 3 positivos, 6 negativos y 4 fixtures pendientes**; la ampliación v1.2.0 incorpora cinco sentencias oficiales adicionales. El conjunto actual contiene **8 documentos, 8 consultas, 8 positivos y 56 negativos**:
 
 | Documento | Jurisdicción / tribunal | Materia preliminar | Fuente y situación |
 |---|---|---|---|
@@ -56,6 +56,22 @@ El boletín oficial del TSJ CABA de noviembre de 2025 identifica el expediente S
 Fuente oficial: https://www.tsjbaires.gob.ar/repositorio/indicesboletines/2025/2025_11_Boletin_indice.pdf
 
 El corpus conserva esta entrada en `referenciasOficialesNoGold`, separada del documento individual. Sirve para búsquedas de sumarios oficiales; no satisface filtros «sólo sentencias», no reemplaza el texto íntegro y no integra el conjunto gold. El portal institucional identifica un buscador público de sentencias completas desde 1998, recuperables por parámetros como carátula, fecha y Secretaría: https://www.tsjbaires.gob.ar/servicios/jurisprudencia/buscador-de-sentencias. El enlace individual de Pompeya sigue pendiente de extracción y cotejo.
+
+### 2.2 Lote documental oficial de Mendoza v1.2.0
+
+Se incorporan cinco sentencias íntegras del respaldo oficial del Poder Judicial de Mendoza, cada una con enlace individual `vertexto.php?ide=...`, carátula, tribunal, fecha, CUIJ y fixture de texto completo:
+
+| Documento | Tribunal / fecha | Materia |
+|---|---|---|
+| Godoy c/ Hospital Lagomaggiore | Primera Cámara del Trabajo, 18/09/2026 | Amparo sindical, tutela y restitución de haberes |
+| Municipalidad de Mendoza en J° Ureta | Suprema Corte, 19/08/2026 | Responsabilidad estatal, falta de servicio, vereda y Ley 8968 |
+| Codina en J° González Barberis c/ Ojeda Romero | Suprema Corte, 12/08/2026 | Base regulatoria de honorarios en alimentos definitivos, Ley 9131 |
+| Baldoni c/ Estilo Artesanal, Mercado Libre y Via Cargo | Segunda Cámara Civil, 10/06/2026 | Consumo, contratación electrónica, transporte y daño punitivo |
+| Garay Lira c/ Chevrolet y La Segunda | Tercera Cámara Civil, 15/09/2026 | Plan de ahorro, seguro, restitución de cuotas y privación de uso |
+
+El lote pasa de 3 a **8 documentos**, de 3 a **8 consultas**, con **8 positivos y 56 exclusiones**. Cada consulta etiqueta los otros siete documentos como negativos; Baldoni y Garay funcionan además como negativos difíciles recíprocos dentro del mismo campo del consumo, pero con contratos y pretensiones distintos.
+
+La suite verifica que el filtro estricto devuelva exactamente el documento positivo de cada consulta y que `buscarEnIndice` reproduzca el mismo conjunto en un índice temporal. Estos registros tienen fuentes oficiales y texto completo, pero sus etiquetas todavía requieren revisión jurídica humana; por tanto, los ocho casos siguen fuera de métricas oficiales de producto.
 
 ## 3. Cómo se etiqueta
 

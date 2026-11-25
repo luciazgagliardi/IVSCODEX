@@ -1,5 +1,5 @@
 {
-  "version": "1.1.5",
+  "version": "1.2.0",
   "id": "ivscodex2-corpus-recuperacion-piloto",
   "fechaCreacion": "2026-11-25",
   "estado": "piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas",
@@ -11,61 +11,6 @@
     "Ningún caso puede utilizarse para publicar precisión, exhaustividad o rankings de calidad."
   ],
   "documentos": [
-    {
-      "id": "mza-scjm-rio-uruguay-2026-05-08",
-      "jurisdiccion": "Mendoza",
-      "tribunal": "Suprema Corte de Justicia de Mendoza",
-      "tipoDocumento": "sentencia",
-      "fecha": "2026-05-08",
-      "expediente": "13-07241584-6/1",
-      "caratula": "Río Uruguay Cooperativa de Seguros Limitada en J° Campos Iván Esteban c/ González Tomás Raúl y Villarreal Rosana Paola p/ daños derivados de accidentes de tránsito p/ recurso extraordinario provincial",
-      "ramaPreliminar": [
-        "derecho civil",
-        "daños",
-        "seguros",
-        "accidentes de tránsito"
-      ],
-      "fuente": {
-        "nombre": "Poder Judicial de Mendoza",
-        "officialUrl": "https://wwwnoti.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12010568712",
-        "estadoUrl": "patron_de_ruta_validado_en_test_existente; host_e_ide_declarados_en_LEAME; endpoint_no_revalidado_en_red",
-        "fixturePath": "backend/test/fallos/scjm-rio-uruguay-2026-05-08.txt",
-        "evidenciaLocalizador": "backend/test/fallos/LEAME.md declara el host wwwnoti.jus.mendoza.gov.ar y el identificador ide=12010568712; backend/test/mendozaOficial.prueba.js valida el patrón /listas/proveidos/vertexto.php?ide= para enlaces oficiales."
-      },
-      "anclasTextuales": [
-        "Balthazard",
-        "capacidad restante",
-        "accidentes de tránsito"
-      ],
-      "revision": "pendiente_revision_juridica_humana"
-    },
-    {
-      "id": "mza-scjm-berro-2026-08-12",
-      "jurisdiccion": "Mendoza",
-      "tribunal": "Suprema Corte de Justicia de Mendoza",
-      "tipoDocumento": "sentencia",
-      "fecha": "2026-08-12",
-      "expediente": "13-07662606-9/1",
-      "caratula": "Berro Paula en J° 167543 Berro Paula c/ Banco BBVA Argentina S.A. p/ despido p/ recurso extraordinario provincial",
-      "ramaPreliminar": [
-        "derecho laboral",
-        "despido",
-        "discriminación"
-      ],
-      "fuente": {
-        "nombre": "Poder Judicial de Mendoza",
-        "officialUrl": null,
-        "estadoUrl": "localizador_directo_pendiente; no inferir el ide a partir de números de actuación o identificadores internos",
-        "fixturePath": "backend/test/fallos/scjm-berro-2026-08-12.txt",
-        "evidenciaLocalizador": "Texto completo extraído y conservado en el fixture del proyecto; contiene CUIJ, carátula, tribunal y fecha."
-      },
-      "anclasTextuales": [
-        "Banco BBVA Argentina",
-        "despido",
-        "discriminatorio"
-      ],
-      "revision": "pendiente_revision_juridica_humana"
-    },
     {
       "id": "caba-tsj-rozen-2003-07-02",
       "jurisdiccion": "Ciudad Autónoma de Buenos Aires",
@@ -101,6 +46,214 @@
         "expropiación inversa",
         "retrocesión",
         "2183/03"
+      ],
+      "revision": "pendiente_revision_juridica_humana"
+    },
+    {
+      "id": "mza-mendoza-baldoni-consumo-transporte-2026-06-10",
+      "jurisdiccion": "Mendoza",
+      "tribunal": "Segunda Cámara de Apelaciones en lo Civil de Mendoza",
+      "tipoDocumento": "sentencia",
+      "fecha": "2026-06-10",
+      "expediente": "13-05064242-3/1",
+      "caratula": "Baldoni Cecilia Noelia c/ Estilo Artesanal, Mercado Libre y Via Cargo p/ consumo de menor cuantía",
+      "ramaPreliminar": [
+        "derecho del consumidor",
+        "responsabilidad civil",
+        "contratación electrónica",
+        "transporte"
+      ],
+      "fuente": {
+        "nombre": "Poder Judicial de Mendoza · colección oficial de sentencias",
+        "officialUrl": "https://wwwnoti.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12065977405",
+        "identificadorOficial": "12065977405",
+        "estadoUrl": "enlace_primario_oficial_https; carátula_fecha_tribunal_y_texto_integral_contrastados_en_respaldo_versionado",
+        "fixturePath": "backend/test/fallos/mendoza-consumo-baldoni-via-cargo-2026-06-10.txt",
+        "evidenciaLocalizador": "Registro mza_oficial_12065977405 del respaldo versionado backend/respaldo/mendoza-oficial.json.gz; enlace individual del Poder Judicial con ide=12065977405."
+      },
+      "anclasTextuales": [
+        "Mercado Libre",
+        "Via Cargo",
+        "consumo de menor cuantía",
+        "daño punitivo",
+        "cuna"
+      ],
+      "revision": "pendiente_revision_juridica_humana"
+    },
+    {
+      "id": "mza-mendoza-garay-plan-ahorro-2026-09-15",
+      "jurisdiccion": "Mendoza",
+      "tribunal": "Tercera Cámara de Apelaciones en lo Civil de Mendoza",
+      "tipoDocumento": "sentencia",
+      "fecha": "2026-09-15",
+      "expediente": "13-07695086-9/1",
+      "caratula": "Garay Lira Catalina Antonieta c/ Chevrolet y La Segunda Seguros p/ proceso de consumo",
+      "ramaPreliminar": [
+        "derecho del consumidor",
+        "planes de ahorro",
+        "seguros",
+        "contratos de adhesión"
+      ],
+      "fuente": {
+        "nombre": "Poder Judicial de Mendoza · colección oficial de sentencias",
+        "officialUrl": "https://www2.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12291568097",
+        "identificadorOficial": "12291568097",
+        "estadoUrl": "enlace_primario_oficial_https; carátula_fecha_tribunal_y_texto_integral_contrastados_en_respaldo_versionado",
+        "fixturePath": "backend/test/fallos/mendoza-consumo-garay-chevrolet-2026-09-15.txt",
+        "evidenciaLocalizador": "Registro mza_oficial_12291568097 del respaldo versionado backend/respaldo/mendoza-oficial.json.gz; enlace individual del Poder Judicial con ide=12291568097."
+      },
+      "anclasTextuales": [
+        "plan de ahorro",
+        "Chevrolet",
+        "La Segunda Seguros",
+        "privación de uso",
+        "restitución de cuotas"
+      ],
+      "revision": "pendiente_revision_juridica_humana"
+    },
+    {
+      "id": "mza-mendoza-godoy-amparo-sindical-2026-09-18",
+      "jurisdiccion": "Mendoza",
+      "tribunal": "Primera Cámara del Trabajo de Mendoza",
+      "tipoDocumento": "sentencia",
+      "fecha": "2026-09-18",
+      "expediente": "13-08019310-0((010401-170005))",
+      "caratula": "Godoy Ariadna Romina c/ Hospital Luis C. Lagomaggiore p/ amparo sindical",
+      "ramaPreliminar": [
+        "derecho laboral",
+        "derecho sindical",
+        "empleo público",
+        "amparo"
+      ],
+      "fuente": {
+        "nombre": "Poder Judicial de Mendoza · colección oficial de sentencias",
+        "officialUrl": "https://www2.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12303901113",
+        "identificadorOficial": "12303901113",
+        "estadoUrl": "enlace_primario_oficial_https; carátula_fecha_tribunal_y_texto_integral_contrastados_en_respaldo_versionado",
+        "fixturePath": "backend/test/fallos/mendoza-amparo-sindical-godoy-2026-09-18.txt",
+        "evidenciaLocalizador": "Registro mza_oficial_12303901113 del respaldo versionado backend/respaldo/mendoza-oficial.json.gz; enlace individual del Poder Judicial con ide=12303901113."
+      },
+      "anclasTextuales": [
+        "amparo sindical",
+        "tutela sindical",
+        "descuento de haberes",
+        "restitución salarial"
+      ],
+      "revision": "pendiente_revision_juridica_humana"
+    },
+    {
+      "id": "mza-scjm-berro-2026-08-12",
+      "jurisdiccion": "Mendoza",
+      "tribunal": "Suprema Corte de Justicia de Mendoza",
+      "tipoDocumento": "sentencia",
+      "fecha": "2026-08-12",
+      "expediente": "13-07662606-9/1",
+      "caratula": "Berro Paula en J° 167543 Berro Paula c/ Banco BBVA Argentina S.A. p/ despido p/ recurso extraordinario provincial",
+      "ramaPreliminar": [
+        "derecho laboral",
+        "despido",
+        "discriminación"
+      ],
+      "fuente": {
+        "nombre": "Poder Judicial de Mendoza",
+        "officialUrl": null,
+        "estadoUrl": "localizador_directo_pendiente; no inferir el ide a partir de números de actuación o identificadores internos",
+        "fixturePath": "backend/test/fallos/scjm-berro-2026-08-12.txt",
+        "evidenciaLocalizador": "Texto completo extraído y conservado en el fixture del proyecto; contiene CUIJ, carátula, tribunal y fecha."
+      },
+      "anclasTextuales": [
+        "Banco BBVA Argentina",
+        "despido",
+        "discriminatorio"
+      ],
+      "revision": "pendiente_revision_juridica_humana"
+    },
+    {
+      "id": "mza-scjm-codina-honorarios-alimentos-2026-08-12",
+      "jurisdiccion": "Mendoza",
+      "tribunal": "Suprema Corte de Justicia de Mendoza",
+      "tipoDocumento": "sentencia",
+      "fecha": "2026-08-12",
+      "expediente": "13-08000633-5/1",
+      "caratula": "Codina Bárbara en J° González Barberis Natalia c/ Ojeda Romero Lucas p/ alimentos provisorios y definitivos p/ recurso extraordinario provincial",
+      "ramaPreliminar": [
+        "derecho de familia",
+        "alimentos",
+        "honorarios profesionales",
+        "regulación arancelaria"
+      ],
+      "fuente": {
+        "nombre": "Poder Judicial de Mendoza · colección oficial de sentencias",
+        "officialUrl": "https://www2.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12248556486",
+        "identificadorOficial": "12248556486",
+        "estadoUrl": "enlace_primario_oficial_https; carátula_fecha_tribunal_y_texto_integral_contrastados_en_respaldo_versionado",
+        "fixturePath": "backend/test/fallos/scjm-honorarios-alimentos-codina-2026-08-12.txt",
+        "evidenciaLocalizador": "Registro mza_oficial_12248556486 del respaldo versionado backend/respaldo/mendoza-oficial.json.gz; enlace individual del Poder Judicial con ide=12248556486."
+      },
+      "anclasTextuales": [
+        "base regulatoria",
+        "honorarios profesionales",
+        "alimentos definitivos",
+        "Ley 9131",
+        "art. 9 bis"
+      ],
+      "revision": "pendiente_revision_juridica_humana"
+    },
+    {
+      "id": "mza-scjm-rio-uruguay-2026-05-08",
+      "jurisdiccion": "Mendoza",
+      "tribunal": "Suprema Corte de Justicia de Mendoza",
+      "tipoDocumento": "sentencia",
+      "fecha": "2026-05-08",
+      "expediente": "13-07241584-6/1",
+      "caratula": "Río Uruguay Cooperativa de Seguros Limitada en J° Campos Iván Esteban c/ González Tomás Raúl y Villarreal Rosana Paola p/ daños derivados de accidentes de tránsito p/ recurso extraordinario provincial",
+      "ramaPreliminar": [
+        "derecho civil",
+        "daños",
+        "seguros",
+        "accidentes de tránsito"
+      ],
+      "fuente": {
+        "nombre": "Poder Judicial de Mendoza",
+        "officialUrl": "https://wwwnoti.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12010568712",
+        "estadoUrl": "patron_de_ruta_validado_en_test_existente; host_e_ide_declarados_en_LEAME; endpoint_no_revalidado_en_red",
+        "fixturePath": "backend/test/fallos/scjm-rio-uruguay-2026-05-08.txt",
+        "evidenciaLocalizador": "backend/test/fallos/LEAME.md declara el host wwwnoti.jus.mendoza.gov.ar y el identificador ide=12010568712; backend/test/mendozaOficial.prueba.js valida el patrón /listas/proveidos/vertexto.php?ide= para enlaces oficiales."
+      },
+      "anclasTextuales": [
+        "Balthazard",
+        "capacidad restante",
+        "accidentes de tránsito"
+      ],
+      "revision": "pendiente_revision_juridica_humana"
+    },
+    {
+      "id": "mza-scjm-ureta-responsabilidad-municipal-2026-08-19",
+      "jurisdiccion": "Mendoza",
+      "tribunal": "Suprema Corte de Justicia de Mendoza",
+      "tipoDocumento": "sentencia",
+      "fecha": "2026-08-19",
+      "expediente": "13-07441699-8/1",
+      "caratula": "Municipalidad de la Ciudad de Mendoza en J° Ureta Patricia Adriana c/ Municipalidad de la Ciudad de Mendoza p/ daños y perjuicios p/ recurso extraordinario provincial",
+      "ramaPreliminar": [
+        "derecho administrativo",
+        "responsabilidad del Estado",
+        "derecho civil",
+        "responsabilidad extracontractual"
+      ],
+      "fuente": {
+        "nombre": "Poder Judicial de Mendoza · colección oficial de sentencias",
+        "officialUrl": "https://wwwnoti.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12248552132",
+        "identificadorOficial": "12248552132",
+        "estadoUrl": "enlace_primario_oficial_https; carátula_fecha_tribunal_y_texto_integral_contrastados_en_respaldo_versionado",
+        "fixturePath": "backend/test/fallos/scjm-responsabilidad-municipal-ureta-2026-08-19.txt",
+        "evidenciaLocalizador": "Registro mza_oficial_12248552132 del respaldo versionado backend/respaldo/mendoza-oficial.json.gz; enlace individual del Poder Judicial con ide=12248552132."
+      },
+      "anclasTextuales": [
+        "responsabilidad del Estado",
+        "falta de servicio",
+        "Ley 8968",
+        "nexo causal"
       ],
       "revision": "pendiente_revision_juridica_humana"
     }
@@ -145,6 +298,31 @@
           "documentoId": "caba-tsj-rozen-2003-07-02",
           "clase": "negative_materia_y_jurisdiccion",
           "motivo": "Es una queja vinculada con expropiación inversa y retrocesión ante el TSJ de CABA."
+        },
+        {
+          "documentoId": "mza-mendoza-godoy-amparo-sindical-2026-09-18",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata amparo sindical de una delegada gremial y restitución de descuentos salariales; no resuelve incapacidad y daños por accidente vial asegurado. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-ureta-responsabilidad-municipal-2026-08-19",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata responsabilidad del Estado municipal por caída en vereda, falta de servicio y Ley 8968; no resuelve incapacidad y daños por accidente vial asegurado. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-codina-honorarios-alimentos-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata base regulatoria de honorarios profesionales en proceso de alimentos definitivos y art. 9 bis de Ley 9131; no resuelve incapacidad y daños por accidente vial asegurado. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-baldoni-consumo-transporte-2026-06-10",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata compra de una cuna por internet, extravío durante transporte por Via Cargo y responsabilidad de Mercado Libre; no resuelve incapacidad y daños por accidente vial asegurado. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-garay-plan-ahorro-2026-09-15",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata plan de ahorro Chevrolet, cobertura de seguro, restitución de cuotas y privación de uso; no resuelve incapacidad y daños por accidente vial asegurado. Se excluye por diferencia de hechos, institución jurídica y pretensión."
         }
       ],
       "revision": "pendiente_revision_juridica_humana",
@@ -189,6 +367,31 @@
           "documentoId": "caba-tsj-rozen-2003-07-02",
           "clase": "negative_materia_y_jurisdiccion",
           "motivo": "Es una controversia de expropiación inversa ante el TSJ de CABA, sin relación con el despido bancario."
+        },
+        {
+          "documentoId": "mza-mendoza-godoy-amparo-sindical-2026-09-18",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata amparo sindical de una delegada gremial y restitución de descuentos salariales; no resuelve despido y discriminación en el empleo. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-ureta-responsabilidad-municipal-2026-08-19",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata responsabilidad del Estado municipal por caída en vereda, falta de servicio y Ley 8968; no resuelve despido y discriminación en el empleo. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-codina-honorarios-alimentos-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata base regulatoria de honorarios profesionales en proceso de alimentos definitivos y art. 9 bis de Ley 9131; no resuelve despido y discriminación en el empleo. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-baldoni-consumo-transporte-2026-06-10",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata compra de una cuna por internet, extravío durante transporte por Via Cargo y responsabilidad de Mercado Libre; no resuelve despido y discriminación en el empleo. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-garay-plan-ahorro-2026-09-15",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata plan de ahorro Chevrolet, cobertura de seguro, restitución de cuotas y privación de uso; no resuelve despido y discriminación en el empleo. Se excluye por diferencia de hechos, institución jurídica y pretensión."
         }
       ],
       "revision": "pendiente_revision_juridica_humana",
@@ -233,6 +436,387 @@
           "documentoId": "mza-scjm-berro-2026-08-12",
           "clase": "negative_jurisdiccion_y_materia",
           "motivo": "Es una sentencia laboral de Mendoza sobre despido y Banco BBVA."
+        },
+        {
+          "documentoId": "mza-mendoza-godoy-amparo-sindical-2026-09-18",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata amparo sindical de una delegada gremial y restitución de descuentos salariales; no resuelve expropiación inversa y retrocesión ante el TSJ de CABA. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-ureta-responsabilidad-municipal-2026-08-19",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata responsabilidad del Estado municipal por caída en vereda, falta de servicio y Ley 8968; no resuelve expropiación inversa y retrocesión ante el TSJ de CABA. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-codina-honorarios-alimentos-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata base regulatoria de honorarios profesionales en proceso de alimentos definitivos y art. 9 bis de Ley 9131; no resuelve expropiación inversa y retrocesión ante el TSJ de CABA. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-baldoni-consumo-transporte-2026-06-10",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata compra de una cuna por internet, extravío durante transporte por Via Cargo y responsabilidad de Mercado Libre; no resuelve expropiación inversa y retrocesión ante el TSJ de CABA. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-garay-plan-ahorro-2026-09-15",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata plan de ahorro Chevrolet, cobertura de seguro, restitución de cuotas y privación de uso; no resuelve expropiación inversa y retrocesión ante el TSJ de CABA. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        }
+      ],
+      "revision": "pendiente_revision_juridica_humana",
+      "aptoParaMetricas": false
+    },
+    {
+      "id": "REC-MZA-LAB-002",
+      "consulta": "amparo sindical por tutela sindical descuentos salariales de haberes a delegada gremial",
+      "variantesConsulta": [
+        "hospital descontó días de sueldo a una delegada gremial sin trámite judicial de exclusión de tutela",
+        "restitución de haberes retenidos a representante sindical por descuentos indebidos"
+      ],
+      "clase": [
+        "tecnica",
+        "factica",
+        "coloquial"
+      ],
+      "filtros": {
+        "jurisdiccion": "Mendoza",
+        "tribunal": "Primera Cámara del Trabajo de Mendoza",
+        "tiposDocumentales": [
+          "sentencia"
+        ]
+      },
+      "positivos": [
+        {
+          "documentoId": "mza-mendoza-godoy-amparo-sindical-2026-09-18",
+          "anclas": [
+            "amparo sindical",
+            "tutela sindical",
+            "descuento de haberes",
+            "restitución salarial"
+          ],
+          "motivo": "La sentencia concede el amparo sindical, declara nulo el descuento salarial aplicado a una delegada de ATE y ordena restituir haberes y SAC."
+        }
+      ],
+      "negativos": [
+        {
+          "documentoId": "mza-scjm-rio-uruguay-2026-05-08",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata daños por accidente de tránsito, aseguradora y cálculo de incapacidad mediante capacidad restante/Balthazard; no resuelve tutela sindical y descuentos de haberes. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-berro-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata despido laboral contra Banco BBVA y alegación de discriminación; no resuelve tutela sindical y descuentos de haberes. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "caba-tsj-rozen-2003-07-02",
+          "clase": "negative_jurisdiccion_y_materia",
+          "motivo": "La sentencia trata queja por expropiación inversa y retrocesión ante el TSJ de CABA; no resuelve tutela sindical y descuentos de haberes. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-ureta-responsabilidad-municipal-2026-08-19",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata responsabilidad del Estado municipal por caída en vereda, falta de servicio y Ley 8968; no resuelve tutela sindical y descuentos de haberes. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-codina-honorarios-alimentos-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata base regulatoria de honorarios profesionales en proceso de alimentos definitivos y art. 9 bis de Ley 9131; no resuelve tutela sindical y descuentos de haberes. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-baldoni-consumo-transporte-2026-06-10",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata compra de una cuna por internet, extravío durante transporte por Via Cargo y responsabilidad de Mercado Libre; no resuelve tutela sindical y descuentos de haberes. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-garay-plan-ahorro-2026-09-15",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata plan de ahorro Chevrolet, cobertura de seguro, restitución de cuotas y privación de uso; no resuelve tutela sindical y descuentos de haberes. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        }
+      ],
+      "revision": "pendiente_revision_juridica_humana",
+      "aptoParaMetricas": false
+    },
+    {
+      "id": "REC-MZA-ADM-001",
+      "consulta": "Municipalidad de Mendoza responsabilidad por caída en vereda falta de servicio Ley 8968 nexo causal",
+      "variantesConsulta": [
+        "caída en vereda municipal y responsabilidad estatal por falta de mantenimiento",
+        "daños por caída en una vereda pública y nexo causal de la falta de servicio"
+      ],
+      "clase": [
+        "tecnica",
+        "factica"
+      ],
+      "filtros": {
+        "jurisdiccion": "Mendoza",
+        "tribunal": "Suprema Corte de Justicia de Mendoza",
+        "tiposDocumentales": [
+          "sentencia"
+        ]
+      },
+      "positivos": [
+        {
+          "documentoId": "mza-scjm-ureta-responsabilidad-municipal-2026-08-19",
+          "anclas": [
+            "responsabilidad del Estado",
+            "falta de servicio",
+            "Ley 8968",
+            "nexo causal"
+          ],
+          "motivo": "La sentencia analiza la responsabilidad municipal por una caída en la vía pública, el estándar de falta de servicio de la Ley 8968 y la prueba del nexo causal."
+        }
+      ],
+      "negativos": [
+        {
+          "documentoId": "mza-scjm-rio-uruguay-2026-05-08",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata daños por accidente de tránsito, aseguradora y cálculo de incapacidad mediante capacidad restante/Balthazard; no resuelve responsabilidad municipal y falta de servicio. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-berro-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata despido laboral contra Banco BBVA y alegación de discriminación; no resuelve responsabilidad municipal y falta de servicio. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "caba-tsj-rozen-2003-07-02",
+          "clase": "negative_jurisdiccion_y_materia",
+          "motivo": "La sentencia trata queja por expropiación inversa y retrocesión ante el TSJ de CABA; no resuelve responsabilidad municipal y falta de servicio. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-godoy-amparo-sindical-2026-09-18",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata amparo sindical de una delegada gremial y restitución de descuentos salariales; no resuelve responsabilidad municipal y falta de servicio. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-codina-honorarios-alimentos-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata base regulatoria de honorarios profesionales en proceso de alimentos definitivos y art. 9 bis de Ley 9131; no resuelve responsabilidad municipal y falta de servicio. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-baldoni-consumo-transporte-2026-06-10",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata compra de una cuna por internet, extravío durante transporte por Via Cargo y responsabilidad de Mercado Libre; no resuelve responsabilidad municipal y falta de servicio. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-garay-plan-ahorro-2026-09-15",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata plan de ahorro Chevrolet, cobertura de seguro, restitución de cuotas y privación de uso; no resuelve responsabilidad municipal y falta de servicio. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        }
+      ],
+      "revision": "pendiente_revision_juridica_humana",
+      "aptoParaMetricas": false
+    },
+    {
+      "id": "REC-MZA-FAM-001",
+      "consulta": "base regulatoria honorarios alimentos definitivos art 9 bis Ley 9131 cuota alimentaria",
+      "variantesConsulta": [
+        "cómo se calcula la base de honorarios del abogado en una causa de alimentos definitivos",
+        "regulación arancelaria por alimentos definitivos sobre la base de la cuota alimentaria"
+      ],
+      "clase": [
+        "tecnica",
+        "normativa",
+        "factica"
+      ],
+      "filtros": {
+        "jurisdiccion": "Mendoza",
+        "tribunal": "Suprema Corte de Justicia de Mendoza",
+        "tiposDocumentales": [
+          "sentencia"
+        ]
+      },
+      "positivos": [
+        {
+          "documentoId": "mza-scjm-codina-honorarios-alimentos-2026-08-12",
+          "anclas": [
+            "base regulatoria",
+            "honorarios profesionales",
+            "alimentos definitivos",
+            "Ley 9131",
+            "art. 9 bis"
+          ],
+          "motivo": "La sentencia resuelve el recurso de la letrada sobre la base regulatoria de honorarios en un expediente de alimentos definitivos y la aplicación del art. 9 bis de la Ley 9131."
+        }
+      ],
+      "negativos": [
+        {
+          "documentoId": "mza-scjm-rio-uruguay-2026-05-08",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata daños por accidente de tránsito, aseguradora y cálculo de incapacidad mediante capacidad restante/Balthazard; no resuelve base regulatoria de honorarios en alimentos. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-berro-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata despido laboral contra Banco BBVA y alegación de discriminación; no resuelve base regulatoria de honorarios en alimentos. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "caba-tsj-rozen-2003-07-02",
+          "clase": "negative_jurisdiccion_y_materia",
+          "motivo": "La sentencia trata queja por expropiación inversa y retrocesión ante el TSJ de CABA; no resuelve base regulatoria de honorarios en alimentos. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-godoy-amparo-sindical-2026-09-18",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata amparo sindical de una delegada gremial y restitución de descuentos salariales; no resuelve base regulatoria de honorarios en alimentos. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-ureta-responsabilidad-municipal-2026-08-19",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata responsabilidad del Estado municipal por caída en vereda, falta de servicio y Ley 8968; no resuelve base regulatoria de honorarios en alimentos. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-baldoni-consumo-transporte-2026-06-10",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata compra de una cuna por internet, extravío durante transporte por Via Cargo y responsabilidad de Mercado Libre; no resuelve base regulatoria de honorarios en alimentos. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-garay-plan-ahorro-2026-09-15",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata plan de ahorro Chevrolet, cobertura de seguro, restitución de cuotas y privación de uso; no resuelve base regulatoria de honorarios en alimentos. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        }
+      ],
+      "revision": "pendiente_revision_juridica_humana",
+      "aptoParaMetricas": false
+    },
+    {
+      "id": "REC-MZA-CONS-001",
+      "consulta": "Mercado Libre Via Cargo compra cuna entrega transporte consumo menor cuantía daño punitivo",
+      "variantesConsulta": [
+        "compré una cuna por internet y el transporte perdió el paquete",
+        "responsabilidad de Mercado Libre y la empresa de transporte por la entrega de un producto comprado online"
+      ],
+      "clase": [
+        "factica",
+        "coloquial",
+        "tecnica"
+      ],
+      "filtros": {
+        "jurisdiccion": "Mendoza",
+        "tribunal": "Segunda Cámara de Apelaciones en lo Civil de Mendoza",
+        "tiposDocumentales": [
+          "sentencia"
+        ]
+      },
+      "positivos": [
+        {
+          "documentoId": "mza-mendoza-baldoni-consumo-transporte-2026-06-10",
+          "anclas": [
+            "Mercado Libre",
+            "Via Cargo",
+            "consumo de menor cuantía",
+            "daño punitivo",
+            "cuna"
+          ],
+          "motivo": "La sentencia examina la compra de una cuna, la intervención de Mercado Libre y Via Cargo y la responsabilidad por el transporte y la entrega del producto."
+        }
+      ],
+      "negativos": [
+        {
+          "documentoId": "mza-scjm-rio-uruguay-2026-05-08",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata daños por accidente de tránsito, aseguradora y cálculo de incapacidad mediante capacidad restante/Balthazard; no resuelve compra por internet y pérdida de producto en transporte. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-berro-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata despido laboral contra Banco BBVA y alegación de discriminación; no resuelve compra por internet y pérdida de producto en transporte. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "caba-tsj-rozen-2003-07-02",
+          "clase": "negative_jurisdiccion_y_materia",
+          "motivo": "La sentencia trata queja por expropiación inversa y retrocesión ante el TSJ de CABA; no resuelve compra por internet y pérdida de producto en transporte. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-godoy-amparo-sindical-2026-09-18",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata amparo sindical de una delegada gremial y restitución de descuentos salariales; no resuelve compra por internet y pérdida de producto en transporte. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-ureta-responsabilidad-municipal-2026-08-19",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata responsabilidad del Estado municipal por caída en vereda, falta de servicio y Ley 8968; no resuelve compra por internet y pérdida de producto en transporte. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-codina-honorarios-alimentos-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata base regulatoria de honorarios profesionales en proceso de alimentos definitivos y art. 9 bis de Ley 9131; no resuelve compra por internet y pérdida de producto en transporte. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-garay-plan-ahorro-2026-09-15",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata plan de ahorro Chevrolet, cobertura de seguro, restitución de cuotas y privación de uso; no resuelve compra por internet y pérdida de producto en transporte. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        }
+      ],
+      "revision": "pendiente_revision_juridica_humana",
+      "aptoParaMetricas": false
+    },
+    {
+      "id": "REC-MZA-CONS-002",
+      "consulta": "plan de ahorro Chevrolet La Segunda seguro cuotas restitución proceso de consumo privación de uso",
+      "variantesConsulta": [
+        "plan de ahorro de un vehículo con seguro y discusión sobre devolución de cuotas",
+        "reclamo de consumo por plan Chevrolet y cobertura de La Segunda Seguros"
+      ],
+      "clase": [
+        "tecnica",
+        "factica"
+      ],
+      "filtros": {
+        "jurisdiccion": "Mendoza",
+        "tribunal": "Tercera Cámara de Apelaciones en lo Civil de Mendoza",
+        "tiposDocumentales": [
+          "sentencia"
+        ]
+      },
+      "positivos": [
+        {
+          "documentoId": "mza-mendoza-garay-plan-ahorro-2026-09-15",
+          "anclas": [
+            "plan de ahorro",
+            "Chevrolet",
+            "La Segunda Seguros",
+            "privación de uso",
+            "restitución de cuotas"
+          ],
+          "motivo": "La sentencia trata un plan de ahorro Chevrolet, la intervención de La Segunda Seguros, la restitución de cuotas y el rubro de privación de uso."
+        }
+      ],
+      "negativos": [
+        {
+          "documentoId": "mza-scjm-rio-uruguay-2026-05-08",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata daños por accidente de tránsito, aseguradora y cálculo de incapacidad mediante capacidad restante/Balthazard; no resuelve plan de ahorro y seguro automotor. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-berro-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata despido laboral contra Banco BBVA y alegación de discriminación; no resuelve plan de ahorro y seguro automotor. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "caba-tsj-rozen-2003-07-02",
+          "clase": "negative_jurisdiccion_y_materia",
+          "motivo": "La sentencia trata queja por expropiación inversa y retrocesión ante el TSJ de CABA; no resuelve plan de ahorro y seguro automotor. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-godoy-amparo-sindical-2026-09-18",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata amparo sindical de una delegada gremial y restitución de descuentos salariales; no resuelve plan de ahorro y seguro automotor. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-ureta-responsabilidad-municipal-2026-08-19",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata responsabilidad del Estado municipal por caída en vereda, falta de servicio y Ley 8968; no resuelve plan de ahorro y seguro automotor. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-scjm-codina-honorarios-alimentos-2026-08-12",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata base regulatoria de honorarios profesionales en proceso de alimentos definitivos y art. 9 bis de Ley 9131; no resuelve plan de ahorro y seguro automotor. Se excluye por diferencia de hechos, institución jurídica y pretensión."
+        },
+        {
+          "documentoId": "mza-mendoza-baldoni-consumo-transporte-2026-06-10",
+          "clase": "hard_negative_diferencia_de_hechos_y_pretension",
+          "motivo": "La sentencia trata compra de una cuna por internet, extravío durante transporte por Via Cargo y responsabilidad de Mercado Libre; no resuelve plan de ahorro y seguro automotor. Se excluye por diferencia de hechos, institución jurídica y pretensión."
         }
       ],
       "revision": "pendiente_revision_juridica_humana",
@@ -240,19 +824,17 @@
     }
   ],
   "resumen": {
-    "documentos": 3,
-    "consultas": 3,
-    "etiquetasPositivas": 3,
-    "etiquetasNegativas": 6,
+    "documentos": 8,
+    "consultas": 8,
+    "etiquetasPositivas": 8,
+    "etiquetasNegativas": 56,
     "casosAptosParaMetricas": 0,
     "motivoNoAptos": [
-      "Berro sigue sin enlace oficial directo; no se encontró un localizador oficial comprobable para el CUIJ 13-07662606-9/1.",
-      "Rozen está localizado en una compilación oficial del TSJ, no en una ficha individual del texto completo.",
-      "El endpoint individual de Río Uruguay no fue reabierto desde el entorno; el patrón de URL se respalda en el repositorio, no en una verificación en vivo.",
-      "Pompeya tiene un sumario oficial que confirma identidad y fecha (05/11/2025), pero falta obtener y cotejar la sentencia individual.",
-      "Federación Patronal/GEY conserva una marca de firma digital en el fixture (09/09/2026), no una fecha judicial validada por fuente primaria.",
-      "Los otros dos fixtures pendientes (Caja/Burgos y López/Viviana) siguen sin localizador oficial comprobable.",
-      "Los tres casos gold provisionales requieren revisión jurídica humana independiente."
+      "Los tres documentos gold iniciales siguen sujetos a revisión jurídica humana; Río Uruguay requiere reapertura del endpoint individual, Berro no tiene localizador oficial directo y Rozen está localizado en compilación oficial.",
+      "Los cinco nuevos fallos de Mendoza tienen texto completo y URL primaria individual del Poder Judicial; sus etiquetas positivas y negativas del lote v1.2.0 requieren revisión jurídica independiente.",
+      "Pompeya continúa representada sólo por una referencia oficial de sumario, no por la sentencia íntegra.",
+      "Cuatro fixtures adicionales del TSJ CABA siguen en cola de procedencia y no se incorporan como gold.",
+      "Ningún caso se habilita para métricas hasta revisión jurídica humana con responsable, fecha y versión aprobada."
     ],
     "candidatosPendientesFuente": 4,
     "referenciasOficialesNoGold": 1
@@ -405,7 +987,7 @@
     "commit": "3b5893d9678e91510202707521fb6bf45c53cd54",
     "runId": 45651559017,
     "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45651559017",
-    "resultado": "success",
+    "resultado": "en_validacion",
     "pruebas": {
       "total": 308,
       "aprobadas": 308,
@@ -425,11 +1007,11 @@
     "modo": "todas",
     "aflojar": false,
     "entradas": "fixtures íntegros escritos en un índice temporal mediante upsertRegistros; búsqueda con buscarEnIndice; sin red, sin acervo persistente y sin dependencias de Azure",
-    "cobertura": "3 consultas gold provisionales; 3 positivos; 6 negativos; control adversarial «alguna» vs «todas»; recarga duplicada y unicidad de IDs; filtro SC/CC/CT en respaldo JSON de Mendoza; documentos sin tribunal no atribuidos a un fuero; «todo» conserva los tres fueros",
+    "cobertura": "8 consultas; 8 positivos; 56 negativos; control adversarial «alguna» vs «todas»; igualdad exacta del conjunto recuperado; recarga duplicada y unicidad; filtros SC/CC/CT; fallback JSON de Mendoza; documentos sin tribunal no atribuidos a un fuero; índice temporal sin conectores ni producción.",
     "pendiente": "no valida conectores externos, campos de sumario originales de portales, filtros HTTP del servidor desplegado, paginación remota, concurrencia real ni ranking global",
-    "estado": "aprobada en CI; incluye fallback JSON, deduplicación y filtros SC/CC/CT",
-    "runId": 45649974283,
-    "runUrl": "https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45649974283"
+    "estado": "pendiente CI para corpus v1.2.0",
+    "runId": null,
+    "runUrl": null
   },
   "referenciasOficialesNoGold": [
     {

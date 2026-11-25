@@ -23,7 +23,7 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
   assert.ok(fs.existsSync(corpusPath), 'falta el corpus versionado');
   const corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf8'));
 
-  assert.equal(corpus.version, '1.1.5');
+  assert.equal(corpus.version, '1.2.0');
   assert.equal(corpus.estado, 'piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas');
   assert.equal(corpus.documentos.length, corpus.resumen.documentos);
   assert.equal(corpus.casos.length, corpus.resumen.consultas);
@@ -65,8 +65,14 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
       assert.equal(url.pathname, '/pgmedia/Media/PDFs/1.5740_D-05998.%20Fallos%20TSJ%20CABA%202003.pdf');
       assert.equal(documento.fuente.localizadorOficial.expediente, '2183/03');
       assert.deepEqual(documento.fuente.localizadorOficial.paginasImpresas, [418, 419]);
+    } else if (documento.fuente.officialUrl !== null) {
+      const url = new URL(documento.fuente.officialUrl);
+      assert.equal(url.protocol, 'https:');
+      assert.ok(['www2.jus.mendoza.gov.ar', 'wwwnoti.jus.mendoza.gov.ar'].includes(url.hostname));
+      assert.equal(url.pathname, '/listas/proveidos/vertexto.php');
+      assert.match(url.searchParams.get('ide') || '', /^\d+$/);
+      if (documento.fuente.identificadorOficial) assert.equal(url.searchParams.get('ide'), documento.fuente.identificadorOficial);
     } else {
-      assert.equal(documento.fuente.officialUrl, null);
       assert.match(documento.fuente.estadoUrl, /pendiente/);
     }
   }
@@ -231,6 +237,10 @@ test('el filtro de relevancia recupera positivos y excluye negativos difíciles 
     });
     const ids = new Set(salida.lista.map((registro) => registro.id));
     assert.equal(ids.size, salida.lista.length, `el filtro duplicó IDs en ${caso.id}`);
+    const expectedIds = caso.positivos.map((positivo) => positivo.documentoId).sort();
+    const labelledIds = new Set([...expectedIds, ...caso.negativos.map((negativo) => negativo.documentoId)]);
+    assert.equal(labelledIds.size, corpus.documentos.length, `el caso ${caso.id} no etiqueta todo el corpus`);
+    assert.deepEqual([...ids].sort(), expectedIds, `la búsqueda estricta de ${caso.id} no devuelve exactamente los positivos`);
 
     for (const positivo of caso.positivos) {
       assert.ok(
@@ -305,6 +315,8 @@ test('buscarEnIndice recupera el corpus en almacenamiento temporal y deduplica p
         `buscarEnIndice devolvió un registro sin ID en ${caso.id}`);
       assert.equal(ids.size, resultados.length, `IDs duplicados en ${caso.id}`);
 
+      const expectedIds = caso.positivos.map((positivo) => positivo.documentoId).sort();
+      assert.deepEqual([...ids].sort(), expectedIds, `buscarEnIndice no devolvió exactamente los positivos de ${caso.id}`);
       for (const positivo of caso.positivos) {
         assert.ok(ids.has(positivo.documentoId),
           `buscarEnIndice omitió ${positivo.documentoId} en ${caso.id}`);

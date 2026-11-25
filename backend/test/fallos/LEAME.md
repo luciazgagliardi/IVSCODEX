@@ -14,6 +14,12 @@ proyecto (`lib/documento.js`). Los usa `test/analisis.prueba.js`.
 | `tsj-federacion-patronal-firma-digital.txt` | TSJ CABA, 09/09/2026 | Firma digital «APELLIDO, NOMBRES / JUEZ/A», un juez de licencia, una disidencia y la mayoría sin autor. |
 
 
+| `mendoza-amparo-sindical-godoy-2026-09-18.txt` | Primera Cámara del Trabajo de Mendoza, 18/09/2026, CUIJ 13-08019310-0((010401-170005)) | Godoy c/ Hospital Lagomaggiore: tutela sindical, descuento de tres días y restitución de haberes. Fuente oficial: https://www2.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12303901113 |
+| `scjm-responsabilidad-municipal-ureta-2026-08-19.txt` | SCJM, 19/08/2026, CUIJ 13-07441699-8/1 | Municipalidad de Mendoza en J° Ureta: falta de servicio, caída en vereda y Ley 8968. Fuente oficial: https://wwwnoti.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12248552132 |
+| `scjm-honorarios-alimentos-codina-2026-08-12.txt` | SCJM, 12/08/2026, CUIJ 13-08000633-5/1 | Codina en J° González Barberis c/ Ojeda Romero: base regulatoria de honorarios en alimentos definitivos y Ley 9131. Fuente oficial: https://www2.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12248556486 |
+| `mendoza-consumo-baldoni-via-cargo-2026-06-10.txt` | Segunda Cámara de Apelaciones en lo Civil de Mendoza, 10/06/2026, CUIJ 13-05064242-3/1 | Baldoni c/ Estilo Artesanal, Mercado Libre y Via Cargo: consumo, producto no entregado y daño punitivo. Fuente oficial: https://wwwnoti.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12065977405 |
+| `mendoza-consumo-garay-chevrolet-2026-09-15.txt` | Tercera Cámara de Apelaciones en lo Civil de Mendoza, 15/09/2026, CUIJ 13-07695086-9/1 | Garay Lira c/ Chevrolet y La Segunda: plan de ahorro, seguro, restitución de cuotas y privación de uso. Fuente oficial: https://www2.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12291568097 |
+
 ## Estado de procedencia de los fixtures TSJ adicionales
 
 Los archivos `tsj-caja-de-seguros.txt`, `tsj-distribuidora-pompeya.txt`, `tsj-federacion-patronal-firma-digital.txt` y `tsj-lopez-viviana.txt` se mantienen como fixtures de prueba de extracción/análisis. Sus metadatos se inventariaron en el corpus 2.0 como candidatos pendientes, no como referencias gold: falta completar la correspondencia con la fuente oficial directa. En particular, `tsj-caja-de-seguros.txt` corresponde a Burgos c/ Perfumo (expte. 67516/2021), no a Zerpa c/ Maidana.
