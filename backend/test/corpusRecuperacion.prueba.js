@@ -284,6 +284,45 @@ test('buscarEnIndice recupera el corpus en almacenamiento temporal y deduplica p
       }
     }
 
+
+    const filtrosTribunal = [
+      { id: 'mza_filtro_sc', tribunal: 'SUPREMA CORTE DE JUSTICIA' },
+      { id: 'mza_filtro_cc', tribunal: '2ª CÁMARA EN LO CIVIL, COMERCIAL Y MINAS' },
+      { id: 'mza_filtro_ct', tribunal: 'CÁMARA DEL TRABAJO' },
+    ].map((registro) => ({
+      ...registro,
+      caratula: `Documento ${registro.id}`,
+      expediente: registro.id,
+      fecha: '12/03/2024 - Sentencia',
+      sumario: 'zebrafiltrounico',
+    }));
+    assert.equal(await upsertRegistros('ivscodex2_corpus_test', filtrosTribunal), 6);
+    for (const [codigo, esperado] of [
+      ['SC', 'mza_filtro_sc'],
+      ['CC', 'mza_filtro_cc'],
+      ['CT', 'mza_filtro_ct'],
+    ]) {
+      const salidaTribunal = await buscarEnIndice(
+        'ivscodex2_corpus_test',
+        'zebrafiltrounico',
+        { modo: 'todas', tribunal: codigo }
+      );
+      assert.deepEqual(
+        salidaTribunal.map((registro) => registro.id),
+        [esperado],
+        `el respaldo JSON debe respetar el filtro ${codigo}`
+      );
+    }
+    const todosLosFueros = await buscarEnIndice(
+      'ivscodex2_corpus_test',
+      'zebrafiltrounico',
+      { modo: 'todas', tribunal: 'todo' }
+    );
+    assert.deepEqual(
+      new Set(todosLosFueros.map((registro) => registro.id)),
+      new Set(['mza_filtro_sc', 'mza_filtro_cc', 'mza_filtro_ct'])
+    );
+
     const laboral = corpus.casos.find((caso) => caso.id === 'REC-MZA-LAB-001');
     const algunTermino = await buscarEnIndice('ivscodex2_corpus_test', laboral.consulta, { modo: 'alguna' });
     assert.ok(algunTermino.some((resultado) => resultado.id === 'mza-scjm-rio-uruguay-2026-05-08'),
