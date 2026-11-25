@@ -304,8 +304,9 @@ test('buscarEnIndice recupera el corpus en almacenamiento temporal y deduplica p
       voces: [],
     }));
 
-    assert.equal(await upsertRegistros('ivscodex2_corpus_test', registros), 3);
-    assert.equal(await upsertRegistros('ivscodex2_corpus_test', [registros[0], registros[0]]), 3,
+    const cantidadEsperada = corpus.documentos.length;
+    assert.equal(await upsertRegistros('ivscodex2_corpus_test', registros), cantidadEsperada);
+    assert.equal(await upsertRegistros('ivscodex2_corpus_test', [registros[0], registros[0]]), cantidadEsperada,
       'guardar dos veces el mismo ID no debe aumentar el inventario');
 
     for (const caso of corpus.casos) {
