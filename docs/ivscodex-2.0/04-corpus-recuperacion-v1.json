@@ -1,8 +1,8 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "id": "ivscodex2-corpus-recuperacion-piloto",
   "fechaCreacion": "2026-11-25",
-  "estado": "piloto_provisional_no_apto_para_metricas",
+  "estado": "piloto_provisional_con_cola_de_fuentes_pendientes_no_apto_para_metricas",
   "proposito": "Evaluar recuperación documental con positivos y negativos anotados. No sustituye la batería terminológica ni constituye aceptación jurídica del producto.",
   "politica": [
     "Los documentos y metadatos se toman de textos completos existentes en backend/test/fallos/.",

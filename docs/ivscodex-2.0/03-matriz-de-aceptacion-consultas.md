@@ -156,10 +156,10 @@ La validación estructural comprueba la existencia de fixtures y anclas textuale
 | Suite automatizada de backend | 305/305 aprobadas en el commit `e3aa3c8f90a5f8e09fcf5ca4ee7b709c54a228e8`; incluye ceros auténticos/parciales por artículo y regresiones visuales del calendario; línea de base técnica, no aceptación de producto |
 | Prueba de timeout durante lectura del cuerpo | Aprobada en la suite anterior de 297 pruebas; no fue modificada en el cambio posterior |
 | Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisados los flujos principales y añadida regresión de ceros parciales; quedan pendientes pruebas de integración aisladas y concurrencia real |
-| Corpus de recuperación documental | Piloto v1 incorporado: 3 documentos, 3 consultas y 6 negativos justificados; revisión jurídica pendiente; Berro sin enlace oficial directo, Río Uruguay sin reapertura del endpoint y Rozen localizado en compilación oficial; 0 casos aptos para métricas |
+| Corpus de recuperación documental | Piloto v1.1: 3 documentos gold provisionales, 3 consultas y 6 negativos; 4 fixtures adicionales en cola sin etiquetas gold; revisión jurídica pendiente; Berro sin enlace oficial directo, Río Uruguay sin reapertura del endpoint y Rozen localizado en compilación oficial; 0 casos aptos para métricas |
 | Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en el workflow de la rama |
 | Validación de sintaxis del diagnóstico 2.0 | Aprobada en [GitHub Actions](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45618792192), con un único job y sin consultas oficiales en vivo |
-| Integridad estructural del corpus piloto | Aprobada en la suite completa: 306/306 pruebas, incluida la validación de fixtures y etiquetas del corpus |
+| Integridad estructural del corpus y cola de fuentes | Aprobada: 306/306 en [GitHub Actions 45644369644](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45644369644); valida fixtures, anclas, fechas y exclusión de 4 candidatos sin fuente primaria |
 | Calendario judicial | Tres regresiones aprobadas: disposición responsive, agrupación de días por fundamento y fecha de los períodos en una sola línea |\n| Ejecución de matriz contra entorno aislado 2.0 | Pendiente |
 | Diagnóstico de portales en vivo desde entorno aislado | Pendiente |
 | Diagnóstico de producción | No ejecutado |

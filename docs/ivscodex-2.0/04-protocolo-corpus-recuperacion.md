@@ -1,6 +1,6 @@
 # IVS Codex 2.0 — Protocolo del corpus de recuperación documental
 
-**Versión:** 1.0.0 (piloto provisional)  
+**Versión:** 1.1.0 (piloto provisional + cola de fuentes pendientes)  
 **Fecha:** 25/11/2026  
 **Datos:** [04-corpus-recuperacion-v1.json](./04-corpus-recuperacion-v1.json)
 
@@ -16,7 +16,7 @@ Una consulta reconocida no implica que se haya recuperado una sentencia correcta
 
 ## 2. Lote piloto incorporado
 
-El lote v1 contiene **3 documentos de texto completo, 3 consultas y 6 etiquetas negativas**:
+El lote v1.1 contiene **3 documentos gold provisionales, 3 consultas, 3 etiquetas positivas, 6 etiquetas negativas y 4 fixtures adicionales pendientes de fuente primaria**:
 
 | Documento | Jurisdicción / tribunal | Materia preliminar | Fuente y situación |
 |---|---|---|---|
@@ -99,4 +99,4 @@ Una ficha SAIJ, un sumario editorial y una sentencia del tribunal no se etiqueta
 
 ## 7. Validación automatizada
 
-`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas en los textos y referencias coherentes entre positivos y negativos. Esta prueba no ejecuta consultas de búsqueda, no contacta portales y no reemplaza la revisión jurídica humana.
+`backend/test/corpusRecuperacion.prueba.js` comprueba estructura, unicidad de identificadores, existencia de fixtures, presencia de anclas, fechas válidas y exclusión de candidatos sin fuente primaria. La suite completa pasó **306/306** en la ejecución [45644369644](https://github.com/luciazgagliardi/IVSCODEX/actions/runs/45644369644). Este test no ejecuta consultas de búsqueda, no contacta portales y no reemplaza la revisión jurídica humana.
