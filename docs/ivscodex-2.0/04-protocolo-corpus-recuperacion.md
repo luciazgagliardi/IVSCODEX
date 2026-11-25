@@ -45,9 +45,16 @@ El fixture `scjm-rio-uruguay-2026-05-08.txt` contiene el texto íntegro utilizad
 Como corroboración independiente de la identificación y fecha del precedente, un pronunciamiento posterior publicado en el portal oficial de Mendoza cita la causa SCJM 13-07241584-6/1, Río Uruguay c/ Campos, González y Villarreal, del 08/05/2026:  
 https://www2.jus.mendoza.gov.ar/listas/proveidos/vertexto.php?ide=12151953977
 
-### Berro y Rozen
+### Rozen Frejda
 
-Los fixtures permiten comprobar contenido textual, carátula y datos presentes en cada documento. No se inventan enlaces a partir de números de actuación, códigos internos o identificadores impresos. Sus URLs oficiales directas permanecen pendientes.
+El PDF oficial del TSJ CABA, *Constitución y Justicia: Fallos del Tribunal Superior de Justicia de la Ciudad de Buenos Aires*, tomo V (2003), identifica el caso en el índice general XVIII, entrada LVII: «Rozen Frejda s/queja por recurso de inconstitucionalidad denegado en: “Rozen Frejda c/GCBA s/expropiación inversa. Retrocesión”». El índice asocia el expediente 2183/03, fecha 2/7/2003 y páginas impresas 418–419.  
+Fuente oficial: https://tsjcaba.opac.ar/pgmedia/Media/PDFs/1.5740_D-05998.%20Fallos%20TSJ%20CABA%202003.pdf
+
+El localizador apunta a la compilación oficial y su índice; no se declara que exista o se haya encontrado una ficha individual. La coincidencia de expediente, carátula y fecha con el fixture está documentada.
+
+### Berro
+
+El fixture conserva el texto completo, CUIJ 13-07662606-9/1, carátula, tribunal y fecha. Se encontraron referencias secundarias con esos datos, pero no un enlace oficial directo comprobable. No se infiere el parámetro `ide` a partir del número de actuación, la firma digital ni un identificador interno.
 
 ## 5. Puerta de elegibilidad
 

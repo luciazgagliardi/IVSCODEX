@@ -50,13 +50,21 @@ test('el corpus piloto conserva procedencia, fixtures y etiquetas positivas/nega
       assert.ok(texto.includes(normalizar(ancla)), `ancla «${ancla}» ausente en ${documento.id}`);
     }
 
-    if (documento.fuente.officialUrl !== null) {
+    if (documento.id === 'mza-scjm-rio-uruguay-2026-05-08') {
       const url = new URL(documento.fuente.officialUrl);
       assert.equal(url.protocol, 'https:');
       assert.equal(url.hostname, 'wwwnoti.jus.mendoza.gov.ar');
-      assert.match(url.pathname, /^\/listas\/proveidos\/vertexto\.php$/);
+      assert.match(url.pathname, /^\\/listas\\/proveidos\\/vertexto\\.php$/);
       assert.equal(url.searchParams.get('ide'), '12010568712');
+    } else if (documento.id === 'caba-tsj-rozen-2003-07-02') {
+      const url = new URL(documento.fuente.officialUrl);
+      assert.equal(url.protocol, 'https:');
+      assert.equal(url.hostname, 'tsjcaba.opac.ar');
+      assert.equal(url.pathname, '/pgmedia/Media/PDFs/1.5740_D-05998.%20Fallos%20TSJ%20CABA%202003.pdf');
+      assert.equal(documento.fuente.localizadorOficial.expediente, '2183/03');
+      assert.deepEqual(documento.fuente.localizadorOficial.paginasImpresas, [418, 419]);
     } else {
+      assert.equal(documento.fuente.officialUrl, null);
       assert.match(documento.fuente.estadoUrl, /pendiente/);
     }
   }

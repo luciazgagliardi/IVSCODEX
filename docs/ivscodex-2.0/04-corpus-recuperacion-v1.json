@@ -80,11 +80,22 @@
         "derecho procesal constitucional local"
       ],
       "fuente": {
-        "nombre": "Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires",
-        "officialUrl": null,
-        "estadoUrl": "localizador_directo_pendiente",
+        "nombre": "Tribunal Superior de Justicia de la Ciudad Autónoma de Buenos Aires · Constitución y Justicia, Tomo V (2003)",
+        "officialUrl": "https://tsjcaba.opac.ar/pgmedia/Media/PDFs/1.5740_D-05998.%20Fallos%20TSJ%20CABA%202003.pdf",
+        "estadoUrl": "compilacion_oficial_pdf_indice_verificado; no se identifico una ficha individual del fallo",
         "fixturePath": "backend/test/fallos/tsj-rozen-2003.txt",
-        "evidenciaLocalizador": "Texto completo conservado en el fixture del proyecto; el encabezado identifica expediente, carátula y fecha."
+        "evidenciaLocalizador": "El PDF oficial del TSJ identifica en su índice general XVIII la entrada LVII «Rozen Frejda s/queja...», con expediente 2183/03 y fecha 2/7/2003; la entrada remite a las páginas impresas 418-419. El enlace es a la compilación oficial, no a una ficha individual.",
+        "localizadorOficial": {
+          "tomo": "V",
+          "año": 2003,
+          "seccion": "Índice general XVIII, entrada LVII",
+          "paginasImpresas": [
+            418,
+            419
+          ],
+          "expediente": "2183/03",
+          "fecha": "2003-07-02"
+        }
       },
       "anclasTextuales": [
         "expropiación inversa",
@@ -235,7 +246,9 @@
     "etiquetasNegativas": 6,
     "casosAptosParaMetricas": 0,
     "motivoNoAptos": [
-      "Falta completar y abrir los localizadores oficiales directos de dos documentos.",
+      "Berro sigue sin enlace oficial directo; sus referencias secundarias no reemplazan la fuente primaria.",
+      "Rozen quedó localizado en una compilación oficial del TSJ, no en una ficha individual.",
+      "El endpoint individual de Río Uruguay no fue reabierto desde el entorno; el patrón de URL está respaldado por el repositorio.",
       "Los tres casos requieren revisión jurídica humana independiente."
     ]
   }
