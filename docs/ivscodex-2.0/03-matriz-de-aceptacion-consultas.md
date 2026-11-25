@@ -1,8 +1,8 @@
 # IVS Codex 2.0 — Matriz de aceptación de consultas y recuperación
 
 **Estado:** matriz inicial de aceptación; pendiente de ejecución sobre un entorno aislado de IVS Codex 2.0.  
-**Rama de trabajo:** \`development/ivscodex-2.0-live-engine\`.  
-**Documento rector:** \`docs/ivscodex-2.0/01-vision-y-alcance.md\`.  
+**Rama de trabajo:** `development/ivscodex-2.0-live-engine`.  
+**Documento rector:** `docs/ivscodex-2.0/01-vision-y-alcance.md`.  
 **Alcance:** comprobar la calidad de recuperación jurídica, la integridad de los resultados y la separación de fuentes. La suite unitaria del backend es un control técnico auxiliar, no equivale a aprobar el producto.
 
 ## 1. Qué cuenta como aceptación
@@ -30,7 +30,7 @@ Un HTTP 200, una lista no vacía o una suite de mocks aprobada no bastan por sí
 | Pruebas de concurrencia | Que múltiples consultas no se pisan, no exceden límites internos y no corrompen cursores | Capacidad ilimitada de los organismos externos |
 | Diagnóstico de producción | Estado observado desde la infraestructura productiva en un momento concreto | Garantía futura de disponibilidad |
 
-La ejecución registrada de 297 pruebas aprobadas en la rama técnica sirve como línea de base de código. No debe rotularse como aceptación integral de IVS Codex 2.0.
+La ejecución registrada de 301 pruebas aprobadas en la rama técnica sirve como línea de base de código. No debe rotularse como aceptación integral de IVS Codex 2.0.
 
 ## 3. Matriz funcional transversal
 
@@ -88,7 +88,7 @@ La batería de 280 consultas de vocabulario existente se conserva como una líne
 
 Cada caso nuevo debe incluir:
 
-- \`id\` estable y versión del conjunto;
+- `id` estable y versión del conjunto;
 - consulta exacta y clase de consulta;
 - rama, especialidad y jurisdicción;
 - período y filtros;
@@ -104,8 +104,8 @@ No se debe completar un caso con una carátula inventada, una ficha sin enlace v
 
 ### Fuentes de casos
 
-1. Los 280 casos de \`docs/auditoria-integral-2026/datos/consultas-referencia.json\`, conservando su objetivo de vocabulario.
-2. Las preguntas de diagnóstico de \`docs/auditoria-integral-2026/datos/preguntas-especialistas.json\`, tratadas como perspectivas simuladas y no como validación de profesionales reales.
+1. Los 280 casos de `docs/auditoria-integral-2026/datos/consultas-referencia.json`, conservando su objetivo de vocabulario.
+2. Las preguntas de diagnóstico de `docs/auditoria-integral-2026/datos/preguntas-especialistas.json`, tratadas como perspectivas simuladas y no como validación de profesionales reales.
 3. Nuevas consultas por rama y especialidad, anotadas a partir de documentos oficiales verificables.
 4. Casos adversariales: homónimos, conceptos contrapuestos, mismo artículo en normas distintas, misma carátula en jurisdicciones distintas y términos que el motor no debe expandir.
 
@@ -145,9 +145,9 @@ No se debe completar un caso con una carátula inventada, una ficha sin enlace v
 
 | Control | Estado |
 |---|---|
-| Suite automatizada de backend | 297/297 aprobadas en el commit \`e73992ca4551743dd7e46727a69c04e127999679\`; línea de base técnica, no aceptación de producto |
+| Suite automatizada de backend | 301/301 aprobadas en el commit `4124fabc329c568b6b370277722f814152d96ada`; incluye regresiones de consulta parcial por artículo; línea de base técnica, no aceptación de producto |
 | Prueba de timeout durante lectura del cuerpo | Aprobada en esa misma ejecución |
-| Auditoría completa de orquestación | En curso |
+| Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisión del código y regresiones principales realizada; matriz de integración todavía pendiente |
 | Conjunto de recuperación documental con positivos y negativos revisados | Pendiente de construir |
 | Ejecución de matriz contra entorno aislado 2.0 | Pendiente |
 | Diagnóstico de portales en vivo desde entorno aislado | Pendiente |
@@ -160,7 +160,7 @@ No se deben convertir estados pendientes en resultados aprobados ni extrapolar u
 
 Cada corrida de aceptación debe conservar un JSON/JSONL con:
 
-- \`run_id\`, fecha UTC y entorno;
+- `run_id`, fecha UTC y entorno;
 - commit de código y versión/hash del acervo;
 - identificador del caso y consulta;
 - filtros enviados;
