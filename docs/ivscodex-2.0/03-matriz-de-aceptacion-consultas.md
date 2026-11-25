@@ -109,6 +109,14 @@ No se debe completar un caso con una carátula inventada, una ficha sin enlace v
 3. Nuevas consultas por rama y especialidad, anotadas a partir de documentos oficiales verificables.
 4. Casos adversariales: homónimos, conceptos contrapuestos, mismo artículo en normas distintas, misma carátula en jurisdicciones distintas y términos que el motor no debe expandir.
 
+### 5.1 Lote piloto de recuperación documental (25/11/2026)
+
+Se incorporó `04-corpus-recuperacion-v1.json`: 3 textos completos que ya existían como fixtures, 3 consultas y 6 exclusiones justificadas. El piloto cubre una sentencia civil/seguros de Mendoza, una sentencia laboral de Mendoza y una sentencia del TSJ de CABA.
+
+**Estado deliberadamente provisional:** el enlace de Río Uruguay se conservó a partir del localizador declarado en el LEAME y del patrón de URL comprobado por una prueba existente; el endpoint no fue reabierto desde este entorno. Los enlaces directos de Berro y Rozen siguen pendientes. Los tres casos requieren revisión jurídica humana. Por tanto, **0/3 casos son aptos todavía para métricas de precisión o exhaustividad**.
+
+La validación estructural comprueba la existencia de fixtures y anclas textuales; no ejecuta búsquedas ni contacta portales. Véase `04-protocolo-corpus-recuperacion.md`.
+
 ## 6. Criterios de aceptación por etapa
 
 ### A. Puerta técnica
@@ -148,8 +156,9 @@ No se debe completar un caso con una carátula inventada, una ficha sin enlace v
 | Suite automatizada de backend | 305/305 aprobadas en el commit `e3aa3c8f90a5f8e09fcf5ca4ee7b709c54a228e8`; incluye ceros auténticos/parciales por artículo y regresiones visuales del calendario; línea de base técnica, no aceptación de producto |
 | Prueba de timeout durante lectura del cuerpo | Aprobada en la suite anterior de 297 pruebas; no fue modificada en el cambio posterior |
 | Auditoría de coordinación local/oficial, cursores y respuestas parciales | Revisados los flujos principales y añadida regresión de ceros parciales; quedan pendientes pruebas de integración aisladas y concurrencia real |
-| Conjunto de recuperación documental con positivos y negativos revisados | Pendiente de construir |
+| Corpus de recuperación documental | Piloto v1 incorporado: 3 documentos, 3 consultas y 6 negativos justificados; revisión jurídica y dos localizadores oficiales pendientes; 0 casos aptos para métricas |
 | Sintaxis del frontend | Aprobada: 8 scripts inline y 10 archivos JavaScript en el workflow de la rama |
+| Integridad estructural del corpus piloto | Prueba incorporada a la suite; ejecución CI pendiente |
 | Calendario judicial | Tres regresiones aprobadas: disposición responsive, agrupación de días por fundamento y fecha de los períodos en una sola línea |\n| Ejecución de matriz contra entorno aislado 2.0 | Pendiente |
 | Diagnóstico de portales en vivo desde entorno aislado | Pendiente |
 | Diagnóstico de producción | No ejecutado |
