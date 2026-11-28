@@ -28,7 +28,7 @@ async function asegurarCarpeta() {
 }
 
 function plegarFiltroIndice(valor) {
-  return String(valor || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLocaleLowerCase('es');
+  return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLocaleLowerCase('es');
 }
 
 /** Repite en el respaldo JSON los filtros de jurisdicción y tipo del SQLite. */
@@ -95,7 +95,7 @@ export async function upsertRegistros(fuente, registros) {
  * modo que el resto de la app (lib/relevancia.js).
  */
 const PROVINCIA_DE = { mendoza: 'Mendoza', mendoza_saij: 'Mendoza', scba: 'Buenos Aires', buenosaires: 'Buenos Aires', caba: 'Ciudad Autónoma de Buenos Aires', caba_saij: 'Ciudad Autónoma de Buenos Aires', catamarca: 'Catamarca', catamarca_saij: 'Catamarca', cordoba: 'Córdoba', entrerrios: 'Entre Ríos', neuquen: 'Neuquén', tucuman: 'Tucumán', chaco: 'Chaco', corrientes: 'Corrientes', chubut: 'Chubut', chubut_saij: 'Chubut', formosa: 'Formosa', jujuy: 'Jujuy', jujuy_saij: 'Jujuy', lapampa: 'La Pampa', larioja: 'La Rioja', misiones: 'Misiones', rionegro: 'Río Negro', rionegro_saij: 'Río Negro', salta: 'Salta', sanjuan: 'San Juan', sanluis: 'San Luis', santacruz: 'Santa Cruz', santacruz_saij: 'Santa Cruz', santafe: 'Santa Fe', santafe_saij: 'Santa Fe', santiagodelestero: 'Santiago del Estero', tierradelfuego: 'Tierra del Fuego' };
-export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [], tribunal = 'todo' } = {}) {
+export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = '', anioDesde = null, anioHasta = null, provincia = '', variantes = [], tribunal = 'todo', aflojar = false } = {}) {
   const q = String(texto || '').trim();
   if (!q) return [];
   const listaVariantes = Array.isArray(variantes)
@@ -116,13 +116,16 @@ export async function buscarEnIndice(fuente, texto, { modo = 'todas', excluir = 
   // El respaldo JSON debe respetar el mismo filtro SC/CC/CT que el acervo SQLite.
   // Sin esto, una caída de SQLite mezclaba fallos de cámaras en la búsqueda de la Suprema Corte.
   const registros = Object.values(todos).filter((r) => coincideFiltrosIndice(fuente, r, { provincia, tribunal }));
+  // El índice no relaja «todas» sin una petición explícita. La ruta local
+  // anuncia aflojado:false y el FTS exige todos los términos; devolver sólo
+  // una raíz aquí introduciría coincidencias parciales como si fueran completas.
   // Cada equivalente se valida por separado: no exigimos que un documento
   // contenga simultáneamente el término original y su otra denominación.
   // Se conserva el orden de la consulta principal; después vienen sus alias.
   const lista = [];
   const vistos = new Set();
   for (const termino of [q, ...listaVariantes]) {
-    const { lista: coincidencias } = filtrarPorModo(registros, { q: termino, modo, excluir, anioDesde, anioHasta });
+    const { lista: coincidencias } = filtrarPorModo(registros, { q: termino, modo, excluir, anioDesde, anioHasta, aflojar: aflojar === true });
     for (const r of coincidencias) {
       if (!r?.id || vistos.has(r.id)) continue;
       vistos.add(r.id);

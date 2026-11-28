@@ -105,7 +105,7 @@ export function raicesDe(q) {
       if (na !== nb) return na ? -1 : 1;
       return b.length - a.length;
     })
-    .map((p) => p.slice(0, 6));
+    .map((p) => /^\d+$/.test(p) ? p : p.slice(0, 6));
 }
 
 /** Todo el texto buscable de un resultado, ya plegado. */
@@ -218,22 +218,37 @@ export function filtrarPorModo(registros, { q, modo = 'todas', excluir = '', afl
     ? enFecha.filter((r) => cuantas(pajarDe(r), raicesFuera) === 0)
     : enFecha.slice();
 
+  // La frase exacta no depende de las raíces útiles: incluso «sin fe»
+  // o «CN» deben buscarse literalmente y no devolver toda la colección.
+  if (modo === 'exacta') {
+    const frase = plegar(q).replace(/\s+/g, ' ').trim();
+    if (!frase) return { lista: vivos, aflojado: false };
+    return {
+      lista: vivos.filter((r) =>
+        [r.caratula, r.sumario, ...(r.voces || []), r.expediente]
+          .some(campo => {
+            const texto = plegar(campo).replace(/\s+/g, ' ');
+            let pos = texto.indexOf(frase);
+            while (pos !== -1) {
+              const antes = pos === 0 || !/[a-z0-9]/.test(texto[pos - 1]);
+              const fin = pos + frase.length;
+              const despues = fin === texto.length || !/[a-z0-9]/.test(texto[fin]);
+              if (antes && despues) return true;
+              pos = texto.indexOf(frase, pos + 1);
+            }
+            return false;
+          })
+      ),
+      aflojado: false,
+    };
+  }
+
   if (!raices.length) return { lista: vivos, aflojado: false };
 
   if (modo === 'alguna') {
     return { lista: vivos.filter((r) => cuantas(pajarDe(r), raices) > 0), aflojado: false };
   }
 
-  if (modo === 'exacta') {
-    // La frase entera, con los espacios normalizados para que no la corten
-    // los saltos de linea ni el doble espacio del texto original.
-    const frase = plegar(q).replace(/\s+/g, ' ').trim();
-    if (!frase) return { lista: vivos, aflojado: false };
-    return {
-      lista: vivos.filter((r) => pajarDe(r).replace(/\s+/g, ' ').includes(frase)),
-      aflojado: false,
-    };
-  }
 
   // "todas": los que tienen todas las palabras.
   const completos = vivos.filter((r) => cuantas(pajarDe(r), raices) === raices.length);
@@ -246,5 +261,5 @@ export function filtrarPorModo(registros, { q, modo = 'todas', excluir = '', afl
   // "imprevision" si—, avisando que se aflojo. Sin ese aviso el resultado
   // enganaba: en "daño punitivo" devolvia causas penales sobre "requerimiento
   // de pena", que solo comparten la palabra "punitivo".
-  return { lista: vivos.filter((r) => pajarDe(r).includes(raices[0])), aflojado: true };
+  return { lista: vivos.filter((r) => apareceRaiz(pajarDe(r), raices[0])), aflojado: true };
 }

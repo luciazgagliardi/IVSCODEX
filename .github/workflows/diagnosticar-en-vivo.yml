@@ -1,23 +1,20 @@
 name: Diagnosticar consultas oficiales en vivo
 
+# El diagnóstico de red NO corre automáticamente en ramas de desarrollo.
+# La validación de sintaxis por push/PR está en validar-diagnostico-2.0.yml.
 on:
-  pull_request:
-    branches: [main]
-    paths:
-      - 'ops/diagnosticar-en-vivo.mjs'
-      - '.github/workflows/diagnosticar-en-vivo.yml'
   workflow_dispatch: {}
 
 permissions:
   contents: read
 
 concurrency:
-  group: diagnosticar-en-vivo
+  group: diagnosticar-en-vivo-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 jobs:
   validar:
-    # La validación es segura en cualquier evento: solo ejecuta node --check.
+    # Validación manual; la comprobación automática se hace en el workflow separado.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +27,7 @@ jobs:
   consultar:
     # La ejecución automática vive en smoke-acervo-azure.yml; aquí queda la
     # opción manual para repetir el diagnóstico cuando haga falta.
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
