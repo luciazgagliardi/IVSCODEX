@@ -218,22 +218,26 @@ export function filtrarPorModo(registros, { q, modo = 'todas', excluir = '', afl
     ? enFecha.filter((r) => cuantas(pajarDe(r), raicesFuera) === 0)
     : enFecha.slice();
 
+  // La frase exacta no depende de las raíces útiles: incluso «sin fe»
+  // o «CN» deben buscarse literalmente y no devolver toda la colección.
+  if (modo === 'exacta') {
+    const frase = plegar(q).replace(/\s+/g, ' ').trim();
+    if (!frase) return { lista: vivos, aflojado: false };
+    return {
+      lista: vivos.filter((r) =>
+        [r.caratula, r.sumario, ...(r.voces || []), r.expediente]
+          .some(campo => plegar(campo).replace(/\s+/g, ' ').includes(frase))
+      ),
+      aflojado: false,
+    };
+  }
+
   if (!raices.length) return { lista: vivos, aflojado: false };
 
   if (modo === 'alguna') {
     return { lista: vivos.filter((r) => cuantas(pajarDe(r), raices) > 0), aflojado: false };
   }
 
-  if (modo === 'exacta') {
-    // La frase entera, con los espacios normalizados para que no la corten
-    // los saltos de linea ni el doble espacio del texto original.
-    const frase = plegar(q).replace(/\s+/g, ' ').trim();
-    if (!frase) return { lista: vivos, aflojado: false };
-    return {
-      lista: vivos.filter((r) => pajarDe(r).replace(/\s+/g, ' ').includes(frase)),
-      aflojado: false,
-    };
-  }
 
   // "todas": los que tienen todas las palabras.
   const completos = vivos.filter((r) => cuantas(pajarDe(r), raices) === raices.length);

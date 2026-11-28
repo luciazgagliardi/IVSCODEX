@@ -135,3 +135,15 @@ test('filtro de relevancia por modo', () => {
   console.log(`\nOK ${ok} · fallas ${fallas}`);
   if (fallas) throw new Error(`${fallas} prueba(s) fallaron`);
 });
+
+test('frase exacta conserva términos cortos y no fabrica frases entre campos', () => {
+  const coincidencia = reg('Caso A', 'actuó sin fe');
+  const ajeno = reg('Caso B', 'actuación judicial');
+  const separada = reg('actuó sin', 'fe');
+  const vozSeparada = reg('Caso C', 'texto', ['daño', 'moral']);
+  const vozEntera = reg('Caso D', 'texto', ['daño moral']);
+  const corta = filtrarPorModo([coincidencia, ajeno, separada], { q: 'sin fe', modo: 'exacta' });
+  if (corta.lista.length !== 1 || corta.lista[0] !== coincidencia || corta.aflojado) throw new Error('frase corta ignorada o fabricada');
+  const voces = filtrarPorModo([vozSeparada, vozEntera], { q: 'daño moral', modo: 'exacta' });
+  if (voces.lista.length !== 1 || voces.lista[0] !== vozEntera) throw new Error('frase fabricada entre voces');
+});
