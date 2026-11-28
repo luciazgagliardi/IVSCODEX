@@ -28,7 +28,7 @@ async function asegurarCarpeta() {
 }
 
 function plegarFiltroIndice(valor) {
-  return String(valor || '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLocaleLowerCase('es');
+  return String(valor || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLocaleLowerCase('es');
 }
 
 /** Repite en el respaldo JSON los filtros de jurisdicción y tipo del SQLite. */

@@ -84,6 +84,19 @@ test('diagnóstico provisional de variantes jurídicas sobre filtro e índice ai
     assert.deepEqual(await buscarEnIndice(clave, qImposible, { modo: 'todas' }), []);
     assert.deepEqual(await buscarEnIndice(clave, qImposible, { modo: 'todas', variantes: ['Balthazard zzqy'] }), []);
     assert.ok((await buscarEnIndice(clave, qImposible, { modo: 'todas', aflojar: true })).some(r => r.id === 'mza-scjm-rio-uruguay-2026-05-08'));
+    // El filtro provincial del respaldo SAIJ debe plegar acentos, pero no
+    // eliminar letras o cifras de nombres de provincias diferentes.
+    await upsertRegistros('saij', [
+      { id: 'prov_cordoba', provincia: 'Córdoba', tipo: 'fallo', sumario: 'recurso extraordinario', caratula: 'Provincia A' },
+      { id: 'prov_sanjuan', provincia: 'San Juan', tipo: 'fallo', sumario: 'recurso extraordinario', caratula: 'Provincia B' },
+      { id: 'prov_sanluis', provincia: 'San Luis', tipo: 'fallo', sumario: 'recurso extraordinario', caratula: 'Provincia C' },
+    ]);
+    const idsProvincia = async provincia => (await buscarEnIndice('saij', 'recurso extraordinario', { provincia, modo: 'todas' })).map(r => r.id);
+    assert.deepEqual(await idsProvincia('Cordoba'), ['prov_cordoba']);
+    assert.deepEqual(await idsProvincia('CÓRDOBA'), ['prov_cordoba']);
+    assert.deepEqual(await idsProvincia('San Juan'), ['prov_sanjuan']);
+    assert.deepEqual(await idsProvincia('San Luis'), ['prov_sanluis']);
+    assert.deepEqual(await idsProvincia('Santa Fe'), []);
     assert.ok(variantes > 0);
     t.diagnostic(JSON.stringify({ consultasPrincipales: corpus.casos.length, variantes, alcance: 'fixtures completos en campo sumario; sin red, sin producción; etiquetas provisionales' }));
   } finally {
