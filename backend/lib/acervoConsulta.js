@@ -75,7 +75,7 @@ export function consultaFts(q, modo = 'todas', excluir = '', apellidosConocidos 
   if (!ts.length) return null;
   let expr;
   if (modo === 'exacta') expr = `"${ts.join(' ')}"`;
-  else expr = ts.map((w) => `"${raiz(w)}"*`).join(modo === 'alguna' ? ' OR ' : ' AND ');
+  else expr = ts.map((w) => /^\\d+$/.test(w) ? `"${w}"` : `"${raiz(w)}"*`).join(modo === 'alguna' ? ' OR ' : ' AND ');
   // La expansión por apellido es útil en búsquedas normales, pero rompería
   // el contrato de frase exacta al añadir coincidencias que sólo están en
   // el campo «magistrados».
@@ -85,7 +85,7 @@ export function consultaFts(q, modo = 'todas', excluir = '', apellidosConocidos 
       expr = `(${expr}) OR (magistrados : (${deApellido.map((w) => `"${w}"`).join(' OR ')}))`;
   }
   const fuera = terminos(excluir);
-  if (fuera.length) expr = `(${expr}) NOT (${fuera.map((w) => `"${raiz(w)}"*`).join(' OR ')})`;
+  if (fuera.length) expr = `(${expr}) NOT (${fuera.map((w) => /^\d+$/.test(w) ? `"${w}"` : `"${raiz(w)}"*`).join(' OR ')})`;
   return expr;
 }
 

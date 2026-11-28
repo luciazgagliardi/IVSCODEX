@@ -39,6 +39,9 @@ const registros = [
   { id: 'saij_6', fuente: 'saij', caratula: 'Rodríguez c/ Aseguradora s/ daños', tribunal: 'Cámara Civil', fecha: '04/07/2018', sumario: 'El daño moral debe indemnizarse atendiendo a la reparación integral.', tipo: 'sumario' },
   { id: 'saij_7', fuente: 'saij', caratula: 'Asociación Verde c/ Industria Sur s/ amparo ambiental', tribunal: 'Cámara Contencioso Administrativa', fecha: '14/06/2024', sumario: 'Se acreditó la contaminación del suelo por filtraciones de sustancias industriales.', tipo: 'fallo' },
   { id: 'saij_8', fuente: 'saij', caratula: 'Vecinos c/ Municipio s/ recomposición ambiental', tribunal: 'Cámara Contencioso Administrativa', fecha: '21/08/2023', sumario: 'Se investigó la contaminación en el suelo y el impacto sobre las napas.', tipo: 'fallo' },
+  { id: 'saij_art13', fuente: 'saij', caratula: 'Artículo 13 de la ley', sumario: 'Se aplica el artículo 13.', tipo: 'fallo' },
+  { id: 'saij_art130', fuente: 'saij', caratula: 'Artículo 130 de la ley', sumario: 'Se aplica el artículo 130.', tipo: 'fallo' },
+  { id: 'saij_art2013', fuente: 'saij', caratula: 'Artículo 2013 de la ley', sumario: 'Se aplica el artículo 2013.', tipo: 'fallo' },
   { id: 'scba_1', fuente: 'scba', caratula: 'Ripodas contra Turcuman. Despido', sumario: 'Si la relación laboral se hallaba deficientemente registrada procede la indemnización.' },
 ];
 fs.writeFileSync(path.join(process.env.DIR_ACERVO_DATOS, 'todo-001.jsonl.gz'), zlib.gzipSync(registros.map((r) => JSON.stringify(r)).join('\n')));
@@ -51,7 +54,7 @@ const e = await prepararAcervo({ esperar: true });
 test('las tandas se importan con sus conteos, la Corte aparte', () => {
   assert.equal(e.activo, true, e.error || '');
   assert.equal(e.version, 'prueba-1');
-  assert.deepEqual(estadoAcervo().conteos, { saij: 9, csjn: 1, scba: 1 });
+  assert.deepEqual(estadoAcervo().conteos, { saij: 12, csjn: 1, scba: 1 });
 });
 
 test('la consulta: raíces sin acentos, modos y exclusión', () => {
@@ -63,6 +66,9 @@ test('la consulta: raíces sin acentos, modos y exclusión', () => {
   assert.equal(consultaFts('contaminación del suelo'), '"contaminaci"* AND "suelo"*');
   assert.equal(consultaFts('daño', 'todas', 'moral'), '("dano"*) NOT ("moral"*)');
   assert.equal(consultaFts('de la'), null);
+  assert.equal(consultaFts('artículo 13'), '"articulo"* AND "13"');
+  assert.equal(consultaFts('13', 'alguna'), '"13"');
+  assert.equal(consultaFts('artículo', 'todas', '130'), '("articulo"*) NOT ("130")');
 });
 
 test('la frase exacta conserva los conectores y no confunde «del suelo» con «en el suelo»', () => {
@@ -155,4 +161,15 @@ test('las fuentes adicionales también se incorporan al acervo y quedan consulta
       sumario: 'Responsabilidad y cobertura jurídica de la fuente ' + fuente }]);
     assert.ok(buscarEnAcervo(fuente, 'cobertura jurídica').some((r) => r.id === id), fuente);
   }
+});
+
+test('FTS conserva números completos sin ampliar 13 a 130 o 2013', () => {
+  const ids = (q, opciones = {}) => buscarEnAcervo('saij', q, opciones).map(r => r.id);
+  assert.deepEqual(ids('artículo 13'), ['saij_art13']);
+  assert.deepEqual(ids('artículo 130'), ['saij_art130']);
+  assert.deepEqual(ids('artículo 2013'), ['saij_art2013']);
+  assert.deepEqual(ids('artículo 13', { excluir: '130' }), ['saij_art13']);
+  assert.deepEqual(ids('artículo 13', { modo: 'alguna' }).filter(id => id.startsWith('saij_art')).sort(),
+    ['saij_art13', 'saij_art130', 'saij_art2013'],
+    'el modo alguna puede coincidir por artículo, pero no por prefijo numérico');
 });
