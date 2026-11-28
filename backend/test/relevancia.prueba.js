@@ -147,3 +147,14 @@ test('frase exacta conserva términos cortos y no fabrica frases entre campos', 
   const voces = filtrarPorModo([vozSeparada, vozEntera], { q: 'daño moral', modo: 'exacta' });
   if (voces.lista.length !== 1 || voces.lista[0] !== vozEntera) throw new Error('frase fabricada entre voces');
 });
+
+test('raíces numéricas largas y límites de frase exacta', () => {
+  const largo = raicesDe('expediente 123456789');
+  if (!largo.includes('123456789')) throw new Error('identificador numérico truncado');
+  const exactos = [reg('A', 'artículo 13'), reg('B', 'artículo 130'), reg('C', 'artículo 2013')];
+  const encontrados = filtrarPorModo(exactos, { q: '13', modo: 'exacta' }).lista;
+  if (encontrados.length !== 1 || encontrados[0] !== exactos[0]) throw new Error('coincidencia numérica parcial');
+  const largos = [reg('A', 'expediente 123456789'), reg('B', 'expediente 123456780')];
+  const estrictos = filtrarPorModo(largos, { q: '123456789', modo: 'todas', aflojar: false }).lista;
+  if (estrictos.length !== 1 || estrictos[0] !== largos[0]) throw new Error('identificador largo mal filtrado');
+});

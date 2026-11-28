@@ -105,7 +105,7 @@ export function raicesDe(q) {
       if (na !== nb) return na ? -1 : 1;
       return b.length - a.length;
     })
-    .map((p) => p.slice(0, 6));
+    .map((p) => /^\d+$/.test(p) ? p : p.slice(0, 6));
 }
 
 /** Todo el texto buscable de un resultado, ya plegado. */
@@ -226,7 +226,18 @@ export function filtrarPorModo(registros, { q, modo = 'todas', excluir = '', afl
     return {
       lista: vivos.filter((r) =>
         [r.caratula, r.sumario, ...(r.voces || []), r.expediente]
-          .some(campo => plegar(campo).replace(/\s+/g, ' ').includes(frase))
+          .some(campo => {
+            const texto = plegar(campo).replace(/\s+/g, ' ');
+            let pos = texto.indexOf(frase);
+            while (pos !== -1) {
+              const antes = pos === 0 || !/[a-z0-9]/.test(texto[pos - 1]);
+              const fin = pos + frase.length;
+              const despues = fin === texto.length || !/[a-z0-9]/.test(texto[fin]);
+              if (antes && despues) return true;
+              pos = texto.indexOf(frase, pos + 1);
+            }
+            return false;
+          })
       ),
       aflojado: false,
     };
