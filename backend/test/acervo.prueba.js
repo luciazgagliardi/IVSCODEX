@@ -66,9 +66,9 @@ test('la consulta: raíces sin acentos, modos y exclusión', () => {
   assert.equal(consultaFts('contaminación del suelo'), '"contaminaci"* AND "suelo"*');
   assert.equal(consultaFts('daño', 'todas', 'moral'), '("dano"*) NOT ("moral"*)');
   assert.equal(consultaFts('de la'), null);
-  assert.equal(consultaFts('artículo 13'), '"articulo"* AND "13"');
+  assert.equal(consultaFts('artículo 13'), '"articu"* AND "13"');
   assert.equal(consultaFts('13', 'alguna'), '"13"');
-  assert.equal(consultaFts('artículo', 'todas', '130'), '("articulo"*) NOT ("130")');
+  assert.equal(consultaFts('artículo', 'todas', '130'), '("articu"*) NOT ("130")');
 });
 
 test('la frase exacta conserva los conectores y no confunde «del suelo» con «en el suelo»', () => {
