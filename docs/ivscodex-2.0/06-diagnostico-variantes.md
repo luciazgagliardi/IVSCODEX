@@ -39,3 +39,9 @@ Reproducción independiente de las reglas de coincidencia estricta (normalizaci�
 | REC-MZA-CONS-002 | plan de ahorro de un vehículo con seguro y discusión sobre devolución de cuotas | Omite Garay (raíz discus ausente) |
 
 No son métricas oficiales. Debe confirmarse el comportamiento en el módulo e índice reales con el nuevo test. No se deben retocar las variantes para forzar coincidencia: investigar expansión de equivalencias con anclaje jurídico, tratamiento de negaciones y verbos de hechos, y ruido de raíces presentes en citas o antecedentes. Comparar precisión y omisiones sin modificar las etiquetas antes de revisión independiente.
+
+## Confirmación en CI y corrección de coherencia
+
+CI de 83bfa51: https://github.com/luciazgagliardi/IVSCODEX/actions/runs/46138199762 — 309/309, sintaxis frontend 8+10. Los logs del job 140958112135 confirman los cuatro casos problemáticos y muestran que el índice JSON, a diferencia del filtro estricto, recupera Baldoni y Garay mediante relajación silenciosa, incluyendo respectivamente uno y dos negativos. La ruta local anunciaba `aflojado:false` incluso en esa situación. El índice ahora exige todas las raíces por defecto; sólo el llamante que pida `aflojar:true` puede obtener la relajación. La búsqueda relajada numérica usa límites de dígitos, igual que la estricta. La batería compara filtro estricto, índice estricto, índice flexible y expansión de variantes verificadas por el vocabulario real, sin introducir equivalencias no verificadas ni retocar el corpus. Las omisiones del modo estricto siguen siendo brechas de recuperación, no se ocultan.
+
+El workflow antiguo volvió a fallar sin jobs en 46138194494. Se amplió también el workflow independiente de sintaxis a las ramas auxiliares y PR de 2.0. No se da por resuelta la anomalía antigua hasta comprobar una ejecución real. La nueva CI queda pendiente de verificación.

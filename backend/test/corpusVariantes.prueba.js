@@ -5,6 +5,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { filtrarPorModo } from '../lib/relevancia.js';
+import { analizar } from '../lib/vocabulario.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const corpus = JSON.parse(fs.readFileSync(path.join(root, 'docs/ivscodex-2.0/04-corpus-recuperacion-v1.json'), 'utf8'));
@@ -47,12 +48,17 @@ test('diagnóstico provisional de variantes jurídicas sobre filtro e índice ai
         const filtro = filtrarPorModo(registros, { q: consulta, modo: 'todas', aflojar: false });
         assert.equal(filtro.aflojado, false);
         const indice = await buscarEnIndice(clave, consulta, { modo: 'todas' });
+        const indiceFlexible = await buscarEnIndice(clave, consulta, { modo: 'todas', aflojar: true });
+        const analisis = analizar(consulta);
+        const variantesVerificadas = analisis.variantes.map(v => v.consulta).filter(v => v.length <= 100);
+        const indiceExpandido = await buscarEnIndice(clave, consulta, { modo: 'todas', variantes: variantesVerificadas });
         const a = evaluar(filtro.lista.map(r => r.id), caso);
         const b = evaluar(indice.map(r => r.id), caso);
         assert.equal(a.duplicados, 0);
         assert.equal(b.duplicados, 0);
         assert.deepEqual(a.sinEtiqueta, []);
         assert.deepEqual(b.sinEtiqueta, []);
+        assert.deepEqual(b, a, 'el índice temporal debe conservar el modo estricto del filtro');
         if (i === 0) {
           // Las formulaciones ya aceptadas técnicamente siguen siendo una regresión estricta.
           assert.deepEqual(a.omitidos, []);
@@ -62,9 +68,22 @@ test('diagnóstico provisional de variantes jurídicas sobre filtro e índice ai
         } else variantes++;
         // Una variante fallida es evidencia de una brecha, no motivo para cambiar
         // sus etiquetas ni declarar el motor aprobado. Se publica el detalle en TAP.
-        t.diagnostic(JSON.stringify({ caso: caso.id, consulta, variante: i > 0, filtro: a, indice: b, aptoParaMetricas: false }));
+        t.diagnostic(JSON.stringify({ caso: caso.id, consulta, variante: i > 0, filtro: a, indice: b, indiceFlexible: evaluar(indiceFlexible.map(r => r.id), caso), variantesVerificadas, indiceExpandido: evaluar(indiceExpandido.map(r => r.id), caso), aptoParaMetricas: false }));
       }
     }
+    // Una raíz numérica no debe coincidir con un año ni con un número mayor.
+    const numericos = [
+      { id: 'numerico_13', sumario: 'artículo 13' },
+      { id: 'numerico_2013', sumario: 'artículo 2013' },
+    ];
+    const numerico = filtrarPorModo(numericos, { q: '13 inexistente', modo: 'todas', aflojar: true });
+    assert.equal(numerico.aflojado, true);
+    assert.deepEqual(numerico.lista.map(r => r.id), ['numerico_13']);
+    // La ruta ordinaria usa el comportamiento estricto por defecto, incluso si hay equivalentes.
+    const qImposible = 'Balthazard inexistentezebra';
+    assert.deepEqual(await buscarEnIndice(clave, qImposible, { modo: 'todas' }), []);
+    assert.deepEqual(await buscarEnIndice(clave, qImposible, { modo: 'todas', variantes: ['Balthazard otraimposiblezebra'] }), []);
+    assert.ok((await buscarEnIndice(clave, qImposible, { modo: 'todas', aflojar: true })).some(r => r.id === 'mza-scjm-rio-uruguay-2026-05-08'));
     assert.ok(variantes > 0);
     t.diagnostic(JSON.stringify({ consultasPrincipales: corpus.casos.length, variantes, alcance: 'fixtures completos en campo sumario; sin red, sin producción; etiquetas provisionales' }));
   } finally {

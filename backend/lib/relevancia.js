@@ -246,5 +246,5 @@ export function filtrarPorModo(registros, { q, modo = 'todas', excluir = '', afl
   // "imprevision" si—, avisando que se aflojo. Sin ese aviso el resultado
   // enganaba: en "daño punitivo" devolvia causas penales sobre "requerimiento
   // de pena", que solo comparten la palabra "punitivo".
-  return { lista: vivos.filter((r) => pajarDe(r).includes(raices[0])), aflojado: true };
+  return { lista: vivos.filter((r) => apareceRaiz(pajarDe(r), raices[0])), aflojado: true };
 }

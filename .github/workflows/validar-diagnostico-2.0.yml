@@ -2,15 +2,17 @@ name: Validar sintaxis del diagnóstico 2.0
 
 on:
   push:
-    branches: [development/ivscodex-2.0-live-engine]
+    branches: ['development/ivscodex-2.0-*']
     paths:
       - 'ops/diagnosticar-en-vivo.mjs'
       - '.github/workflows/validar-diagnostico-2.0.yml'
+      - '.github/workflows/diagnosticar-en-vivo.yml'
   pull_request:
-    branches: [main]
+    branches: [main, development/ivscodex-2.0-live-engine]
     paths:
       - 'ops/diagnosticar-en-vivo.mjs'
       - '.github/workflows/validar-diagnostico-2.0.yml'
+      - '.github/workflows/diagnosticar-en-vivo.yml'
 
 permissions:
   contents: read
