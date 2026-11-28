@@ -125,7 +125,7 @@ test('la búsqueda de respaldo usa el acervo, con años', async () => {
   const expandidaProvincial = await buscarEnIndice('scba', 'multa registral', { modo: 'todas', variantes: ['relación laboral deficientemente registrada'] });
   assert.ok(expandidaProvincial.some((x) => x.id === 'scba_1'), 'la expansión también llega a una base provincial');
   assert.equal((await buscarEnIndice('saij', 'daño moral', { anioHasta: 2010 })).length, 0);
-  assert.equal((await estadoIndice('saij')).acervo, 9);
+  assert.equal((await estadoIndice('saij')).acervo, 12);
 });
 
 test('lo cosechado por el servidor se suma al acervo, se busca y se actualiza cuando llega su texto', async () => {
