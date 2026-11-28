@@ -1,13 +1,8 @@
 name: Diagnosticar consultas oficiales en vivo
 
+# El diagnóstico de red NO corre automáticamente en ramas de desarrollo.
+# La validación de sintaxis por push/PR está en validar-diagnostico-2.0.yml.
 on:
-  push:
-    branches: ['development/ivscodex-2.0-*']
-  pull_request:
-    branches: [main, development/ivscodex-2.0-live-engine]
-    paths:
-      - 'ops/diagnosticar-en-vivo.mjs'
-      - '.github/workflows/diagnosticar-en-vivo.yml'
   workflow_dispatch: {}
 
 permissions:
@@ -19,7 +14,7 @@ concurrency:
 
 jobs:
   validar:
-    # La validación es segura en cualquier evento: solo ejecuta node --check.
+    # Validación manual; la comprobación automática se hace en el workflow separado.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
