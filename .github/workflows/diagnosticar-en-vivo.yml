@@ -2,7 +2,7 @@ name: Diagnosticar consultas oficiales en vivo
 
 on:
   push:
-    branches: [development/ivscodex-2.0-live-engine]
+    branches: ['development/ivscodex-2.0-*']
   pull_request:
     branches: [main, development/ivscodex-2.0-live-engine]
     paths:
