@@ -80,9 +80,9 @@ test('diagnóstico provisional de variantes jurídicas sobre filtro e índice ai
     assert.equal(numerico.aflojado, true);
     assert.deepEqual(numerico.lista.map(r => r.id), ['numerico_13']);
     // La ruta ordinaria usa el comportamiento estricto por defecto, incluso si hay equivalentes.
-    const qImposible = 'Balthazard inexistentezebra';
+    const qImposible = 'Balthazard zzqx';
     assert.deepEqual(await buscarEnIndice(clave, qImposible, { modo: 'todas' }), []);
-    assert.deepEqual(await buscarEnIndice(clave, qImposible, { modo: 'todas', variantes: ['Balthazard otraimposiblezebra'] }), []);
+    assert.deepEqual(await buscarEnIndice(clave, qImposible, { modo: 'todas', variantes: ['Balthazard zzqy'] }), []);
     assert.ok((await buscarEnIndice(clave, qImposible, { modo: 'todas', aflojar: true })).some(r => r.id === 'mza-scjm-rio-uruguay-2026-05-08'));
     assert.ok(variantes > 0);
     t.diagnostic(JSON.stringify({ consultasPrincipales: corpus.casos.length, variantes, alcance: 'fixtures completos en campo sumario; sin red, sin producción; etiquetas provisionales' }));
